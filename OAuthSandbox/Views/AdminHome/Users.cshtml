@@ -1,0 +1,44 @@
+﻿@model OAuthSandbox.Models.UserListModel
+
+@{
+    ViewBag.Title = "title";
+}
+
+@{
+    if (Model.ShopifyCredentials.Success == true)
+    {
+        <h2>Current Impersonation</h2>
+        <p>
+            You are currently impersonating this Shop:
+            <strong>@Model.ShopifyCredentials.ShopName</strong>
+        </p>
+        using (Html.BeginForm("ClearImpersonation", "AdminHome", FormMethod.Post, new {id = "clear-impersonation",}))
+        {
+            <input type="submit" class="btn btn-primary" name="submit" value="Clear Impersonation" title="Clear Impersonation"/>
+            @Html.AntiForgeryToken();
+        }
+    }
+}
+
+    <h2>Your Users</h2>
+    <p style="font-weight: 600; font-color: red;">@Model.Message</p>
+
+    <div style="clear:both; margin-bottom: 40px;">
+
+        @foreach (var user in Model.Users)
+        {
+            using (Html.BeginForm("Impersonate", "AdminHome", FormMethod.Post, new { id = "impersonate", }))
+            {
+                @Html.AntiForgeryToken();
+                <input type="hidden" name="userId" id="userId" value="@user.Id"/>
+
+                <p>
+                    <strong>@user.UserName</strong>
+                    <span>@user.Id</span>
+                    <input type="submit" class="btn btn-primary" name="submit" value="Impersonate User" title="Impersonate User" />
+                </p>
+            }
+        }
+
+    </div>
+ 

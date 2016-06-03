@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OAuthSandbox", "OAuthSandbox\OAuthSandbox.csproj", "{75D52D7A-E688-4A42-B442-323829E692BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Utilities.Web", "Push.Utilities.Web\Push.Utilities.Web.csproj", "{09B408FF-DD25-46D4-ABE6-012BAAC51296}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Utilities", "Push.Utilities\Push.Utilities.csproj", "{4E08819B-BAB3-46EE-9479-141AF7A4057D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75D52D7A-E688-4A42-B442-323829E692BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75D52D7A-E688-4A42-B442-323829E692BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75D52D7A-E688-4A42-B442-323829E692BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75D52D7A-E688-4A42-B442-323829E692BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09B408FF-DD25-46D4-ABE6-012BAAC51296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09B408FF-DD25-46D4-ABE6-012BAAC51296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09B408FF-DD25-46D4-ABE6-012BAAC51296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09B408FF-DD25-46D4-ABE6-012BAAC51296}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E08819B-BAB3-46EE-9479-141AF7A4057D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E08819B-BAB3-46EE-9479-141AF7A4057D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E08819B-BAB3-46EE-9479-141AF7A4057D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E08819B-BAB3-46EE-9479-141AF7A4057D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

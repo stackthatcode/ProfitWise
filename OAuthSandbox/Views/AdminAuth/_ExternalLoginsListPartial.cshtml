@@ -1,0 +1,24 @@
+﻿@model OAuthSandbox.Models.ExternalLoginListViewModel
+@using Microsoft.Owin.Security
+
+<h4>Login for Shop Users</h4>
+<hr />
+@{
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+
+    using (Html.BeginForm("ExternalLogin", "ShopifyAuth", new { ReturnUrl = Model.ReturnUrl })) {
+        @Html.AntiForgeryToken()
+        <div id="socialLoginList">
+            <p>
+                <label>Please Enter Your Shop Name:</label>
+                <input name="shopname" id="shopname"/>
+
+                @foreach (AuthenticationDescription p in loginProviders)
+                {
+                    <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" 
+                            value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+                }
+            </p>
+        </div>
+    }
+}
