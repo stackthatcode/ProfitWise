@@ -9,7 +9,13 @@ namespace ProfitWise.TestingSpike
         static void Main(string[] args)
         {
             var connection = ConnectionFactory.Make();
-            var query = @"SELECT * FROM OrderSkuHistory WHERE LineId > 1300000 AND LineId < 1300043";
+
+            var sp_query = @"EXEC Populate";
+            connection.Execute(sp_query);
+
+
+/*            var query = @"SELECT * FROM OrderSkuHistory WHERE LineId > 1300000 AND LineId < 1300043";
+
 
 
             Console.WriteLine("Starting... " + DateTime.Now);
@@ -29,6 +35,7 @@ namespace ProfitWise.TestingSpike
             Console.WriteLine("End... " + DateTime.Now);
 
             Console.ReadLine();
+            */
 
         }
     }
