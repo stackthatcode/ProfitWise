@@ -2,11 +2,7 @@
 
 SELECT * FROM OrderSkuHistory
 
-
-
 CREATE CLUSTERED INDEX i1 ON OrderSkuHistory (LineId);  
-
-
 
 DECLARE @counter int = 1
 
