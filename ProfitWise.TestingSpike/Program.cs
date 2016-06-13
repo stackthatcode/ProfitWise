@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Dapper;
-using MySql.Data;
+using Hangfire;
+using Push.Utilities.Logging;
 
 namespace ProfitWise.TestingSpike
 {
@@ -11,8 +13,50 @@ namespace ProfitWise.TestingSpike
     {
         static void Main(string[] args)
         {
-            MySqlTesting();
+            LoggerSingleton.Get = NLoggerImpl.RegistrationFactory("Initializer");
+            var logger = LoggerSingleton.Get();
+            
+            try
+            {
+                var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+                GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString);
+
+                // Wait for graceful server shutdown.
+                var server = new BackgroundJobServer();
+
+                // Logger
+                logger.Info("PROCESS START:" + DateTime.Now + Environment.NewLine);
+
+                //RecurringJob.AddOrUpdate(() => LoggerSingleton.Get().Info("Update Job Starting"), "");
+                //var id = BackgroundJob.Enqueue(() => Console.WriteLine("Hello, "));
+                //BackgroundJob.ContinueWith(id, () => Console.WriteLine("world!"));
+
+                //new Hangfire.BackgroundJobServer().
+
+                //Console.ReadLine();
+                //server.Dispose();
+
+                //throw new Exception("Wassup???");
+                // DoStuff();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                Console.ReadLine();
+
+            }
+            finally
+            {
+                logger.Info(Environment.NewLine + "PROCESS FINISH:" + DateTime.Now + Environment.NewLine);
+            }
         }
+
+
+        private static void DoStuff()
+        {
+            System.Threading.Thread.Sleep(5000);
+        }
+
 
         private static void MySqlTesting()
         {
@@ -51,9 +95,6 @@ namespace ProfitWise.TestingSpike
             Console.WriteLine("End... " + elapsedTime);
             Console.ReadLine();
         }
-
-
-
 
         private static void SqlServerTesting()
         {

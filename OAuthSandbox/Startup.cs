@@ -1,4 +1,6 @@
-﻿using Microsoft.Owin;
+﻿using System.Configuration;
+using Hangfire;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(OAuthSandbox.Startup))]
@@ -10,6 +12,10 @@ namespace OAuthSandbox
         {
             ConfigureAuth(app);
             ConfigureDefaultSecurityData();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;
+            GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString);
+            app.UseHangfireDashboard();
         }
     }
 }
