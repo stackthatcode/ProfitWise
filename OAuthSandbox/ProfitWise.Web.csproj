@@ -325,6 +325,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Push.ShopifyClient\Push.Shopify.csproj">
+      <Project>{98704840-5bbd-4175-ae04-45a40cd48adb}</Project>
+      <Name>Push.Shopify</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Push.Utilities.Web\Push.Utilities.Web.csproj">
       <Project>{09b408ff-dd25-46d4-abe6-012baac51296}</Project>
       <Name>Push.Utilities.Web</Name>

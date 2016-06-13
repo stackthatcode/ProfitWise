@@ -2,9 +2,10 @@
 using Hangfire;
 using Microsoft.Owin;
 using Owin;
+using ProfitWise.Web;
 
-[assembly: OwinStartupAttribute(typeof(OAuthSandbox.Startup))]
-namespace OAuthSandbox
+[assembly: OwinStartupAttribute(typeof(Startup))]
+namespace ProfitWise.Web
 {
     public partial class Startup
     {

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OAuthSandbox.Models;
+using Push.Utilities.Security;
 using Push.Utilities.Web.Helpers;
 using Push.Utilities.Web.Identity;
 
@@ -139,22 +141,22 @@ namespace OAuthSandbox.Controllers
             {
                 return View("ExternalLoginFailure");
             }
-
+            
+            // User does not exist in our System? 
             ApplicationUser user = await UserManager.FindAsync(externalLoginInfo.Login);
 
-            // User does not exist in our System? Create a new Application User
+            // If not, create a new Application User
             if (user == null)
             {
                 var new_domain_claim =
                     externalLoginInfo
-                        .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaim);
+                        .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaimExternal);
 
                 user = new ApplicationUser
                 {
                     UserName = new_domain_claim.Value,
                     Email = model.Email
                 };
-
                 
                 var result = await UserManager.CreateAsync(user);
                 if (!result.Succeeded)
@@ -167,8 +169,10 @@ namespace OAuthSandbox.Controllers
             }
 
             // Do we have this Login already?
-            if (user.Logins.FirstOrDefault(x => x.LoginProvider == externalLoginInfo.Login.LoginProvider &&
-                        x.ProviderKey == externalLoginInfo.Login.ProviderKey) == null)
+            if (user.Logins
+                    .FirstOrDefault(x =>    
+                            x.LoginProvider == externalLoginInfo.Login.LoginProvider &&
+                            x.ProviderKey == externalLoginInfo.Login.ProviderKey) == null)
             {
                 var result = await UserManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
                 if (!result.Succeeded)
@@ -178,7 +182,10 @@ namespace OAuthSandbox.Controllers
                 }
             }
 
+            // Save the Shopify Domain and Access Token to Persistence
             await CopyIdentityClaimsToPersistence(externalLoginInfo);
+
+            // Finally Sign-in Manager
             await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
             return RedirectToLocal(returnUrl);
@@ -186,22 +193,19 @@ namespace OAuthSandbox.Controllers
 
         private async Task CopyIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
-            var user = await UserManager.FindAsync(externalLoginInfo.Login);
+            ApplicationUser user = await UserManager.FindAsync(externalLoginInfo.Login);
+            var new_domain_claim =
+                externalLoginInfo
+                    .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaimExternal);
 
             var new_access_token_claim =
                 externalLoginInfo.ExternalIdentity.Claims.FirstOrDefault(
-                    x => x.Type == SecurityConfig.ShopifyOAuthAccessTokenClaim);
+                    x => x.Type == SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
 
-            var new_domain_claim =
-                externalLoginInfo.ExternalIdentity.Claims.FirstOrDefault(
-                    x => x.Type == SecurityConfig.ShopifyDomainClaim);
-
-            // NOTE => if you use this one, it will fail!!!
-            //var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-            
             var credentialService = new ShopifyCredentialService(UserManager);
             credentialService.SetUserCredentials(user.Id, new_domain_claim.Value, new_access_token_claim.Value);
         }
+
 
 
         // POST: /ShopifyAuth/LogOff

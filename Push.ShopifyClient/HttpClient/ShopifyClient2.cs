@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 
-namespace Push.Utilities.Shopify
+namespace Push.Shopify.HttpClient
 {
     public class ShopifyHttpClient2
     {

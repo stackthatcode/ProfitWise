@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Net.Mime;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -9,20 +7,24 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.Google;
 using Owin;
-using OAuthSandbox.Models;
 using Owin.Security.Providers.Shopify;
 using Push.Utilities.Helpers;
+using Push.Utilities.Security;
 using Push.Utilities.Web.Identity;
 
-namespace OAuthSandbox
+namespace ProfitWise.Web
 {
     public partial class Startup
     {
-        // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
+            // Credential Service
+            var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
+            var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
+            ShopifyCredentialService.EncryptionService = new EncryptionService(encryption_key, encryption_iv);
+
+
             // Configure the db context, user manager and signin manager to use a single instance per request
             app.CreatePerOwinContext(ApplicationDbContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
@@ -31,10 +33,10 @@ namespace OAuthSandbox
             // Customized Role Manager
             app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
 
+
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
             // Configure the sign in cookie
-
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
@@ -53,12 +55,12 @@ namespace OAuthSandbox
             });
 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-            
+
 
             // Temporary, before we create a custom configuration section that can be encrypted via machine key
             var shopify_config_apikey = ConfigurationManager.AppSettings["shopify_config_apikey"];
             var shopify_config_apisecret = ConfigurationManager.AppSettings["shopify_config_apisecret"];
-
+            
             var shopify_options = new ShopifyAuthenticationOptions()
             {
                 ApiKey = shopify_config_apikey,
@@ -68,6 +70,8 @@ namespace OAuthSandbox
                 {
                     OnAuthenticated = async context =>
                     {
+                        // TODO: simulate exception handling from this
+
                         // Retrieve the OAuth access token to store for subsequent API calls
                         string accessToken = context.AccessToken;
 
@@ -85,22 +89,18 @@ namespace OAuthSandbox
 
                         // You can even retrieve the full JSON-serialized shop
                         var serializedShopInformation = context.Shop;
-
-                        var encryptedAcessToken = context.AccessToken.ToSecureString().DpApiEncryptString();
+                        
+                        context.Identity.AddClaim(
+                            new Claim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal, accessToken));
 
                         context.Identity.AddClaim(
-                            new Claim(SecurityConfig.ShopifyOAuthAccessTokenClaim, encryptedAcessToken));
-
-                        context.Identity.AddClaim(
-                            new Claim(SecurityConfig.ShopifyDomainClaim, domain));
-                    }
+                            new Claim(SecurityConfig.ShopifyDomainClaimExternal, domain));
+                    },
                 }
             };
-            
-            // TODO: move scope request configuration
+
             shopify_options.Scope.Add("read_orders");
             app.UseShopifyAuthentication(shopify_options);
-
         }
 
 

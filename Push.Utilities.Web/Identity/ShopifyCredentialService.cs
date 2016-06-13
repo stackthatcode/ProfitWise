@@ -2,22 +2,22 @@
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
-using Push.Utilities.Helpers;
+using Push.Utilities.Security;
 
 namespace Push.Utilities.Web.Identity
 {
     public class ShopifyCredentialService
     {
         public ApplicationUserManager UserManager { get; set; }
+        public static IEncryptionService EncryptionService { get; set; }
 
-        
         public ShopifyCredentialService(ApplicationUserManager userManager)
         {
             UserManager = userManager;
         }
 
 
-        public class RetreiveResult
+        public class RetrieveResult
         {
             public string Message { get; set; }
             public bool Success { get; set; }
@@ -28,7 +28,7 @@ namespace Push.Utilities.Web.Identity
             public string ShopName { get; set; }
         }
 
-        public RetreiveResult Retrieve(string currentUserId)
+        public RetrieveResult Retrieve(string currentUserId)
         {
             var roles = UserManager.GetRoles(currentUserId);
             var isCurrentUserIsAdmin = roles.Contains(SecurityConfig.AdminRole);
@@ -40,7 +40,7 @@ namespace Push.Utilities.Web.Identity
 
                 if (shopUserId == null)
                 {
-                    return new RetreiveResult
+                    return new RetrieveResult
                     {
                         Success = false,
                         Message = "Admin User is does not currently have a User selected for impersonation."
@@ -57,7 +57,7 @@ namespace Push.Utilities.Web.Identity
 
             if (shop_name == null)
             {
-                return new RetreiveResult
+                return new RetrieveResult
                 {
                     Success = false,
                     Message = "Invalid/missing Shop Name",
@@ -69,19 +69,35 @@ namespace Push.Utilities.Web.Identity
 
             if (access_token_encrypted == null)
             {
-                return new RetreiveResult
+                return new RetrieveResult
                 {
                     Success = false,
                     Message = "Invalid/missing Access Token",
                 };
             }
 
+            var access_token = "";
 
-            return new RetreiveResult
+            try
+            {
+                access_token = EncryptionService.Decrypt(access_token_encrypted);
+            }
+            catch(Exception e)
+            {
+                // Log that Exception, homey!
+                return new RetrieveResult
+                {
+                    Success = false,
+                    Message = "Failed to decrypt Access Token",
+                };
+            }
+
+
+            return new RetrieveResult
             {
                 ShopOwnerUserId = shopUserId,
                 Success = true,
-                AccessToken = access_token_encrypted.DpApiDecryptString().ToInsecureString(),
+                AccessToken = access_token,
                 ShopName = shop_name,
                 Impersonated = shopUserId != currentUserId,
             };
@@ -98,12 +114,12 @@ namespace Push.Utilities.Web.Identity
             RemoveClaim(userId, SecurityConfig.UserImpersonationClaim);
         }
 
-        public void SetUserCredentials(string userId, string shopName, string accessToken)
+        public void SetUserCredentials(string userId, string shopName, string unencryptedAccessToken)
         {
             RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
             RemoveClaim(userId, SecurityConfig.ShopifyDomainClaim);
 
-            AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, accessToken);
+            AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, EncryptionService.Encrypt(unencryptedAccessToken));
             AddClaim(userId, SecurityConfig.ShopifyDomainClaim, shopName);
         }
 

@@ -9,6 +9,6 @@ namespace OAuthSandbox.Models
 
         public IList<ApplicationUser> Users { get; set; }
 
-        public ShopifyCredentialService.RetreiveResult ShopifyCredentials { get; set; }
+        public ShopifyCredentialService.RetrieveResult ShopifyCredentials { get; set; }
     }
 }
