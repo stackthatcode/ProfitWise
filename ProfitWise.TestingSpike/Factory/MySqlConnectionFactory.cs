@@ -8,7 +8,7 @@ namespace ProfitWise.Batch.Factory
         public static MySqlConnection Make()
         {
             var connectionstring = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            var connection = new MySql.Data.MySqlClient.MySqlConnection(connectionstring);
+            var connection = new MySqlConnection(connectionstring);
             connection.Open();
             return connection;
         }

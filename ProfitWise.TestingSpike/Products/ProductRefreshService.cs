@@ -46,6 +46,8 @@ namespace ProfitWise.Batch.Products
                 };
 
                 _productDataRepository.Delete(product.Id);
+                _variantDataRepository.DeleteByProduct(product.Id);
+
                 _productDataRepository.Insert(productData);
 
                 foreach (var variant in product.Variants)
@@ -54,6 +56,7 @@ namespace ProfitWise.Batch.Products
                     {
                         UserId = _userId,
                         ShopifyVariantId = variant.Id,
+                        ShopifyProductId = product.Id,
                         Price = variant.Price,
                         Sku = variant.Sku,
                         Title = variant.Title,

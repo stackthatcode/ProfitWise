@@ -33,14 +33,15 @@ namespace ProfitWise.Data.Repositories
         {
             product.UserId = _userId;
             var query =
-                    @"INSERT INTO shopifyvariant(UserId, ShopifyVariantId, Sku, Title, Price) 
-                        VALUES(@UserId, @ShopifyVariantId, @Sku, @Title, @Price)";
+                    @"INSERT INTO shopifyvariant(UserId, ShopifyVariantId, ShopifyProductId, Sku, Title, Price) 
+                        VALUES(@UserId, @ShopifyVariantId, @ShopifyProductId, @Sku, @Title, @Price)";
             _connection.Execute(query, product);
         }
 
         public void DeleteByProduct(long shopifyProductId)
         {
-            var query = @"DELETE FROM shopifyvariant WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";
+            var query = @"DELETE FROM shopifyvariant 
+                        WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";
             _connection.Execute(query, new { UserId = _userId, shopifyProductId});
         }
     }
