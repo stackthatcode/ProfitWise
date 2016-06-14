@@ -2,16 +2,19 @@
 using Newtonsoft.Json;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
+using Push.Utilities.Logging;
 
 namespace Push.Shopify.Repositories
 {
     public class OrderRepository
     {
         private readonly ShopifyHttpClient3 _client;
+        private readonly ILogger _logger;
 
-        public OrderRepository(ShopifyHttpClient3 client)
+        public OrderRepository(ShopifyHttpClient3 client, ILogger logger)
         {
             _client = client;
+            _logger = logger;
         }
 
 

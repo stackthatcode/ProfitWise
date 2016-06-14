@@ -1,9 +1,9 @@
 ﻿using System.Configuration;
 using System.Data.SqlClient;
 
-namespace ProfitWise.TestingSpike
+namespace ProfitWise.Batch.Factory
 {
-    public class ConnectionFactory
+    public class SqlServerConnectionFactory
     {
         public static SqlConnection Make()
         {

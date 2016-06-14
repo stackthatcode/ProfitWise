@@ -9,11 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Utilities.Web", "Push.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Utilities", "Push.Utilities\Push.Utilities.csproj", "{4E08819B-BAB3-46EE-9479-141AF7A4057D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.TestingSpike", "ProfitWise.TestingSpike\ProfitWise.TestingSpike.csproj", "{6BBA037F-DA5C-48E3-8D74-AF67B93AC37F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Batch", "ProfitWise.TestingSpike\ProfitWise.Batch.csproj", "{6BBA037F-DA5C-48E3-8D74-AF67B93AC37F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Server", "ProfitWise.Server\ProfitWise.Server.csproj", "{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Shopify", "Push.ShopifyClient\Push.Shopify.csproj", "{98704840-5BBD-4175-AE04-45A40CD48ADB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Data", "ProfitWise.Data\ProfitWise.Data.csproj", "{CE56511C-1D8F-4537-96B9-EF03DA326F90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{98704840-5BBD-4175-AE04-45A40CD48ADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98704840-5BBD-4175-AE04-45A40CD48ADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98704840-5BBD-4175-AE04-45A40CD48ADB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE56511C-1D8F-4537-96B9-EF03DA326F90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE56511C-1D8F-4537-96B9-EF03DA326F90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE56511C-1D8F-4537-96B9-EF03DA326F90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE56511C-1D8F-4537-96B9-EF03DA326F90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

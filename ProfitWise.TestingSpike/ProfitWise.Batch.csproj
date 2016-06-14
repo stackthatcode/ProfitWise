@@ -7,8 +7,8 @@
     <ProjectGuid>{6BBA037F-DA5C-48E3-8D74-AF67B93AC37F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProfitWise.TestingSpike</RootNamespace>
-    <AssemblyName>ProfitWise.TestingSpike</AssemblyName>
+    <RootNamespace>ProfitWise.Batch</RootNamespace>
+    <AssemblyName>ProfitWise.Batch</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -108,10 +108,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConnectionFactory.cs" />
-    <Compile Include="OrderSkuHistory.cs" />
+    <Compile Include="BatchConfiguration.cs" />
+    <Compile Include="Bootstrap.cs" />
+    <Compile Include="CodeDumps.cs" />
+    <Compile Include="Factory\MySqlConnectionFactory.cs" />
+    <Compile Include="Factory\SqlServerConnectionFactory.cs" />
+    <Compile Include="Orders\OrderRefreshService.cs" />
+    <Compile Include="Orders\OrderSkuHistory.cs" />
+    <Compile Include="Products\ProductRefreshService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Factory\ShopifyClientFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -120,6 +127,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">
+      <Project>{ce56511c-1d8f-4537-96b9-ef03da326f90}</Project>
+      <Name>ProfitWise.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Push.ShopifyClient\Push.Shopify.csproj">
       <Project>{98704840-5BBD-4175-AE04-45A40CD48ADB}</Project>
       <Name>Push.Shopify</Name>
@@ -133,6 +144,7 @@
       <Name>Push.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

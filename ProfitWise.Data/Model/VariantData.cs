@@ -4,14 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Push.Shopify.Model
+namespace ProfitWise.Data.Model
 {
-    public class Variant
+    public class VariantData
     {
-        public Product ParentProduct { get; set; }
-        public long Id { get; set; }
+        public string UserId { get; set; }
+        public long ShopifyVariantId { get; set; }
         public string Sku { get; set; }
         public string Title { get; set; }
         public decimal Price { get; set; }
+
+        public ProductData ParentProduct { get; set; }
     }
 }

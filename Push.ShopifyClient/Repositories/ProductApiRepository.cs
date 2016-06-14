@@ -8,12 +8,12 @@ using Push.Utilities.Logging;
 
 namespace Push.Shopify.Repositories
 {
-    public class ProductRepository
+    public class ProductApiRepository
     {
         private readonly ShopifyHttpClient3 _client;
         private readonly ILogger _logger;
 
-        public ProductRepository(ShopifyHttpClient3 client, ILogger logger)
+        public ProductApiRepository(ShopifyHttpClient3 client, ILogger logger)
         {
             _client = client;
             _logger = logger;
@@ -37,11 +37,28 @@ namespace Push.Shopify.Repositories
 
             foreach (var product in parent.products)
             {
-                results.Add(new Product()
+                var resultProduct = 
+                    new Product()
+                    {
+                        Id = product.id,
+                        Title = product.title,
+                    };
+                resultProduct.Variants = new List<Variant>();
+
+                foreach (var variant in product.variants)
                 {
-                    Id = product.id,
-                    Title = product.title,
-                });
+                    resultProduct.Variants.Add(
+                        new Variant()
+                        {
+                            Id = variant.id,
+                            Title = variant.title,
+                            Price = variant.price,
+                            Sku = variant.sku,
+                            ParentProduct = resultProduct,
+                        });
+                }
+
+                results.Add(resultProduct);
             }
 
             return results;
