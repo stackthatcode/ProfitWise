@@ -59,6 +59,7 @@
     <Compile Include="Helpers\DpApiEncryption.cs" />
     <Compile Include="Helpers\ExpressionHelpers.cs" />
     <Compile Include="Helpers\HelperMethods.cs" />
+    <Compile Include="Helpers\PagingFunctions.cs" />
     <Compile Include="Logging\ConsoleAndDebugLogger.cs" />
     <Compile Include="Logging\ExtensionMethods.cs" />
     <Compile Include="Logging\ILogger.cs" />

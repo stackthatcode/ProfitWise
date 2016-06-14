@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Push.Shopify.Model
 {
-    public class Order
+    public class Product
     {
         public long Id { get; set; }
-        public string Email { get; set; }
-        public IList<OrderLineItem> LineItems { get; set; }
+        public string Title { get; set; }
+        public IList<Variant> Variants { get; set; }
     }
 }

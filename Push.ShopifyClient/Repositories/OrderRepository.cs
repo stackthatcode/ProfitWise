@@ -1,0 +1,38 @@
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Push.Shopify.HttpClient;
+using Push.Shopify.Model;
+
+namespace Push.Shopify.Repositories
+{
+    public class OrderRepository
+    {
+        private readonly ShopifyHttpClient3 _client;
+
+        public OrderRepository(ShopifyHttpClient3 client)
+        {
+            _client = client;
+        }
+
+
+        // TODO => create all the variations of filtering Orders
+        public IList<Order> Retrieve()
+        {
+            var json = _client.HttpGet("/admin/orders.json?limit=10");
+            dynamic parent = JsonConvert.DeserializeObject(json.ResponseBody);
+
+            var results = new List<Order>();
+
+            foreach (var order in parent.orders)
+            {
+                results.Add(new Order
+                {
+                    Id = order.id,
+                    Email = order.email,
+                }); 
+            }
+            return results;
+        }
+
+    }
+}

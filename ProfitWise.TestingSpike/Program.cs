@@ -11,6 +11,8 @@ using Dapper;
 using Hangfire;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Push.Shopify.HttpClient;
+using Push.Shopify.Repositories;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 using Push.Utilities.Security;
@@ -26,10 +28,30 @@ namespace ProfitWise.TestingSpike
             TestShopifyApiCalls();
         }
 
+        public static void TestNumberOfPages()
+        {
+            Console.WriteLine(PagingFunctions.NumberOfPages(10, 0));
+            Console.WriteLine(PagingFunctions.NumberOfPages(10, 1));
+            Console.WriteLine(PagingFunctions.NumberOfPages(10, 10));
+            Console.WriteLine(PagingFunctions.NumberOfPages(10, 11));
+            Console.WriteLine(PagingFunctions.NumberOfPages(10, 20));
+            Console.WriteLine(PagingFunctions.NumberOfPages(10, 21));
+            Console.WriteLine(PagingFunctions.NumberOfPages(10, 30));
+            Console.ReadLine();
+            // 0 / 10 = 0
+            // 1 / 10 = 1
+            // 10 / 10 = 1
+            // 11 / 10 = 2
+            // 20 / 10 = 2
+            // 21 / 10 = 3            
+        }
+
+
+
         private static void TestEncryption()
         {           
             var inputText =
-                "This is all clear now! Now why da fuck isn't our sdgkjdslg glkjfklgjfdlgjfdklgjkldfjgljkljl 1234";
+                "This is all clear now! Now why da hell isn't our sdgkjdslg glkjfklgjfdlgjfdklgjkldfjgljkljl 1234";
 
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
             var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
@@ -83,25 +105,34 @@ namespace ProfitWise.TestingSpike
                 throw new Exception(shopifyFromClaims.Message);
             }
 
-            var shopifyClient = 
+
+            // STEP #5 - Hello World!!!
+            var shopifyClient =
                 ShopifyHttpClient3.Factory(apiKey, apiSecret, shopifyFromClaims.ShopName, shopifyFromClaims.AccessToken);
 
-            var result = shopifyClient.HttpGet("/admin/orders.json?limit=10");
-            if (result.StatusCode != HttpStatusCode.OK)
+            var repository = new OrderRepository(shopifyClient);
+            var results = repository.Retrieve();
+
+            foreach (var order in results)
             {
-                throw new Exception("Shopify Invocation failed");
+                var message = string.Format("Order found: {0} - {1}", order.Id, order.Email);
+                logger.Info(message);
             }
 
+            // STEP #6 - Shit's getting real! Let's cycle through multiple Page
+            // TODO - move to configuration
+            var page_size = 10;
+            var productRepository = new ProductRepository(shopifyClient, logger);
+            var allproducts = productRepository.RetrieveAll(page_size);
 
-            // Get my Claims
-            //var claimQuery = string.Format("SELECT * FROM aspnetuserclaims WHERE Id = {0}", userId);
-            //var claims = connection.ExecuteReader(claimQuery, userId);
 
-
-            // STEP #4 - Save my Orders
+            // STEP #5 - Save my Orders
             var connectionstring = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             var connection = new MySql.Data.MySqlClient.MySqlConnection(connectionstring);
             connection.Open();
+            // Get my Claims
+            //var claimQuery = string.Format("SELECT * FROM aspnetuserclaims WHERE Id = {0}", userId);
+            //var claims = connection.ExecuteReader(claimQuery, userId);
 
         }
 

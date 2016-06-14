@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using Push.Utilities.Shopify;
 
-namespace Push.Utilities.Shopify
+namespace Push.Shopify.HttpClient
 {
     public class ShopifyHttpClient3
     {
