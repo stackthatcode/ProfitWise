@@ -9,7 +9,6 @@ using OAuthSandbox.Attributes;
 using OAuthSandbox.Models;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Security;
-using Push.Utilities.Shopify;
 using Push.Utilities.Web.Helpers;
 using Push.Utilities.Web.Identity;
 
@@ -126,14 +125,10 @@ namespace OAuthSandbox.Controllers
             var credentialsService = new ShopifyCredentialService(owinContext.GetUserManager<ApplicationUserManager>());
 
             var userId = HttpContext.User.ExtractUserId();
-
             var credentials = credentialsService.Retrieve(userId);
 
-            var shopify_config_apikey = ConfigurationManager.AppSettings["shopify_config_apikey"];
-            var shopify_config_apisecret = ConfigurationManager.AppSettings["shopify_config_apisecret"];
-            var shopifyClient = 
-                ShopifyHttpClient3.Factory(
-                    shopify_config_apikey, shopify_config_apisecret, credentials.ShopName, credentials.AccessToken);
+            var httpClient = new HttpClient();
+            var shopifyClient = new ShopifyHttpClient(httpClient, credentials.ShopDomain, credentials.AccessToken);
 
             var orders = shopifyClient.HttpGet("/admin/orders.json");
             ViewBag.Orders = orders.ResponseBody;

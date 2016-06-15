@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Configuration;
 using Hangfire;
+using Microsoft.AspNet.Identity.EntityFramework;
 using ProfitWise.Batch.Factory;
+using ProfitWise.Batch.Orders;
 using ProfitWise.Batch.Products;
+using Push.Shopify.HttpClient;
 using Push.Shopify.Repositories;
 using Push.Utilities.Logging;
+using Push.Utilities.Web.Identity;
 
 namespace ProfitWise.Batch
 {
@@ -22,9 +26,14 @@ namespace ProfitWise.Batch
             var logger = LoggerSingleton.Get();
 
             var userId = "a4ae6621-57ec-4ca8-837f-0b439e3cc710";
-            var clientFactory = new ShopifyClientFactory();
-            var productRefreshService = new ProductRefreshService(userId, logger);
-            productRefreshService.Execute();
+            //var productRefreshService = new ProductRefreshService(userId, logger);
+            //productRefreshService.Execute();
+
+            var shopifyClientFactory = new ShopifyClientFactory();
+            var shopifyNaughtyClientFactory = new ShopifyNaughtyClientFactory();
+
+            var orderRefreshService = new OrderRefreshService(userId, logger, shopifyNaughtyClientFactory);
+            orderRefreshService.Execute();
         }
 
 
@@ -71,4 +80,7 @@ namespace ProfitWise.Batch
             }
         }
     }
+
+
+
 }

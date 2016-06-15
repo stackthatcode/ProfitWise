@@ -10,10 +10,10 @@ namespace Push.Shopify.Repositories
 {
     public class ProductApiRepository
     {
-        private readonly ShopifyHttpClient3 _client;
+        private readonly IShopifyHttpClient _client;
         private readonly ILogger _logger;
 
-        public ProductApiRepository(ShopifyHttpClient3 client, ILogger logger)
+        public ProductApiRepository(IShopifyHttpClient client, ILogger logger)
         {
             _client = client;
             _logger = logger;

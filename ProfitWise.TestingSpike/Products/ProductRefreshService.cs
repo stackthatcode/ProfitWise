@@ -16,13 +16,13 @@ namespace ProfitWise.Batch.Products
         private readonly ProductApiRepository _productApiRepository;
         private readonly ProductDataRepository _productDataRepository;
         private readonly VariantDataRepository _variantDataRepository;
-        private MySqlConnection _connection;
+        private readonly MySqlConnection _connection;
 
-        public ProductRefreshService(string userId, ILogger logger)
+        public ProductRefreshService(string userId, ILogger logger, IShopifyClientFactory shopifyClientFactory)
         {
             _userId = userId;
 
-            var shopifyClient = ShopifyClientFactory.Make(userId);
+            var shopifyClient = shopifyClientFactory.Make(userId);
             _productApiRepository = new ProductApiRepository(shopifyClient, logger);
 
             _connection = MySqlConnectionFactory.Make();

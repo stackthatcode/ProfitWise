@@ -45,14 +45,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="HttpClient\HttpClient.cs" />
+    <Compile Include="HttpClient\HttpWebResponseExtensions.cs" />
+    <Compile Include="HttpClient\IHttpClient.cs" />
+    <Compile Include="HttpClient\IShopifyHttpClient.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderLineItem.cs" />
     <Compile Include="Model\Product.cs" />
     <Compile Include="Model\Variant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HttpClient\ShopifyClient3.cs" />
-    <Compile Include="HttpClient\ShopifyClientResponse.cs" />
-    <Compile Include="Repositories\OrderRepository.cs" />
+    <Compile Include="HttpClient\ShopifyHttpClient.cs" />
+    <Compile Include="HttpClient\HttpClientResponse.cs" />
+    <Compile Include="Repositories\OrderApiRepository.cs" />
     <Compile Include="Repositories\ProductApiRepository.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,8 @@
 ﻿using System.Net;
 
-namespace Push.Utilities.Shopify
+namespace Push.Shopify.HttpClient
 {
-    public class ShopifyClientResponse
+    public class HttpClientResponse
     {
         public HttpStatusCode StatusCode { get; set; }
         public string ResponseBody { get; set; }

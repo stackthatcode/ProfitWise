@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Configuration;
+using System.Net;
 using Microsoft.AspNet.Identity.EntityFramework;
+using ProfitWise.Batch.Factory;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Web.Identity;
 
-namespace ProfitWise.Batch.Factory
+namespace ProfitWise.Batch
 {
-    public interface IShopifyClientFactory
-    {
-        IShopifyHttpClient Make(string userId);
-    }
-
-
-    public class ShopifyClientFactory : IShopifyClientFactory
+    public class ShopifyNaughtyClientFactory : IShopifyClientFactory
     {
         public IShopifyHttpClient Make(string userId)
-        {            
+        {
             var context = ApplicationDbContext.Create();
             var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
 
@@ -29,17 +25,38 @@ namespace ProfitWise.Batch.Factory
                 throw new Exception(shopifyFromClaims.Message);
             }
 
-            var httpClient = new HttpClient();
+            var httpClient = new NaughtyHttpClient();
             var shopifyClient =
                 new ShopifyHttpClient(httpClient, shopifyFromClaims.ShopDomain, shopifyFromClaims.AccessToken);
-
-            if (ConfigurationManager.AppSettings["ShopifyRetryLimit"] != null)
-                shopifyClient.ShopifyRetryLimit = Int32.Parse(ConfigurationManager.AppSettings["ShopifyRetryLimit"]);
-
-            if (ConfigurationManager.AppSettings["ShopifyTimeout"] != null)
-                shopifyClient.ShopifyRetryLimit = Int32.Parse(ConfigurationManager.AppSettings["ShopifyTimeout"]);
 
             return shopifyClient;
         }
     }
+
+    public class NaughtyHttpClient : IHttpClient
+    {
+        private IHttpClient _httpClient;
+        Random rnd = new Random();
+
+        public NaughtyHttpClient()
+        {
+            _httpClient = new HttpClient();
+        }        
+
+        public HttpClientResponse ProcessRequest(HttpWebRequest request)
+        {
+            int pick = rnd.Next(1, 10);
+
+            if (pick > 5)
+            {
+                return new HttpClientResponse()
+                {
+                    StatusCode = HttpStatusCode.Unauthorized,
+                };
+            }
+
+            return _httpClient.ProcessRequest(request);
+        }
+    }
+
 }

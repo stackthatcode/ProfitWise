@@ -25,7 +25,7 @@ namespace Push.Utilities.Web.Identity
             public bool Impersonated { get; set; }
 
             public string AccessToken { get; set; }
-            public string ShopName { get; set; }
+            public string ShopDomain { get; set; }
         }
 
         public RetrieveResult Retrieve(string currentUserId)
@@ -98,7 +98,7 @@ namespace Push.Utilities.Web.Identity
                 ShopOwnerUserId = shopUserId,
                 Success = true,
                 AccessToken = access_token,
-                ShopName = shop_name,
+                ShopDomain = shop_name,
                 Impersonated = shopUserId != currentUserId,
             };
         }

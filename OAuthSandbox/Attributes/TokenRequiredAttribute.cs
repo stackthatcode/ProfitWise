@@ -11,7 +11,6 @@ using OAuthSandbox.Controllers;
 using OAuthSandbox.Models;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Security;
-using Push.Utilities.Shopify;
 using Push.Utilities.Web.Helpers;
 using Push.Utilities.Web.Identity;
 
@@ -58,15 +57,11 @@ namespace OAuthSandbox.Attributes
             }
 
             // Step #2 - attempt to validate the Access Token 
-            var shopify_config_apikey = ConfigurationManager.AppSettings["shopify_config_apikey"];
-            var shopify_config_apisecret = ConfigurationManager.AppSettings["shopify_config_apisecret"];
-
+            var httpClient = new HttpClient();
             var client = 
-                ShopifyHttpClient3.Factory(
-                    shopify_config_apikey, shopify_config_apisecret, shopifyCredentials.ShopName, shopifyCredentials.AccessToken);
+                new ShopifyHttpClient(httpClient, shopifyCredentials.ShopDomain, shopifyCredentials.AccessToken);
 
             var response = client.HttpGet("/admin/orders.json?limit=1");
-
 
 
             if (response.StatusCode == HttpStatusCode.OK)

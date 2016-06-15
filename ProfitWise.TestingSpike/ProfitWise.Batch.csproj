@@ -113,6 +113,7 @@
     <Compile Include="CodeDumps.cs" />
     <Compile Include="Factory\MySqlConnectionFactory.cs" />
     <Compile Include="Factory\SqlServerConnectionFactory.cs" />
+    <Compile Include="NaughtyShopifyHttpClient.cs" />
     <Compile Include="Orders\OrderRefreshService.cs" />
     <Compile Include="Orders\OrderSkuHistory.cs" />
     <Compile Include="Products\ProductRefreshService.cs" />

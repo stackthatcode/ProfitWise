@@ -10,7 +10,7 @@
         <h2>Current Impersonation</h2>
         <p>
             You are currently impersonating this Shop:
-            <strong>@Model.ShopifyCredentials.ShopName</strong>
+            <strong>@Model.ShopifyCredentials.ShopDomain</strong>
         </p>
         using (Html.BeginForm("ClearImpersonation", "AdminHome", FormMethod.Post, new {id = "clear-impersonation",}))
         {
