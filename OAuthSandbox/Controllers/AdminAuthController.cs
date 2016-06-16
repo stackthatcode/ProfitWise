@@ -1,65 +1,25 @@
-﻿using System.Threading.Tasks;
-using System.Web;
+﻿using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
 using OAuthSandbox.Models;
-using Push.Utilities.Web.Identity;
+using ProfitWise.Web.Plumbing;
 using Push.Utilities.Helpers;
 using Push.Utilities.Web.Helpers;
 
-namespace OAuthSandbox.Controllers
+namespace ProfitWise.Web.Controllers
 {
     [Authorize]
     public class AdminAuthController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private readonly OwinServices _owinServices;
 
         public AdminAuthController()
         {
+            _owinServices = new OwinServices(this);
         }
 
-        public AdminAuthController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set 
-            { 
-                _signInManager = value; 
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
-
-        
 
         // GET: /AdminAuth/Login
         [AllowAnonymous]
@@ -83,7 +43,7 @@ namespace OAuthSandbox.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = 
-                await SignInManager.PasswordSignInAsync(
+                await _owinServices.SignInManager.PasswordSignInAsync(
                         model.Email, model.Password, model.RememberMe, shouldLockout: false);
 
             switch (result)
@@ -113,7 +73,7 @@ namespace OAuthSandbox.Controllers
             {
                 return View("Error");
             }
-            var result = await UserManager.ConfirmEmailAsync(userId, code);
+            var result = await _owinServices.UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
@@ -133,8 +93,8 @@ namespace OAuthSandbox.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                var user = await _owinServices.UserManager.FindByNameAsync(model.Email);
+                if (user == null || !(await _owinServices.UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -177,14 +137,14 @@ namespace OAuthSandbox.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await _owinServices.UserManager.FindByNameAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "AdminAuth");
             }
 
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            var result = await _owinServices.UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction("ResetPasswordConfirmation", "AdminAuth");
@@ -207,7 +167,7 @@ namespace OAuthSandbox.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            _owinServices.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
 
@@ -216,17 +176,7 @@ namespace OAuthSandbox.Controllers
         {
             if (disposing)
             {
-                if (_userManager != null)
-                {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
-
-                if (_signInManager != null)
-                {
-                    _signInManager.Dispose();
-                    _signInManager = null;
-                }
+                _owinServices.Cleanup();
             }
 
             base.Dispose(disposing);

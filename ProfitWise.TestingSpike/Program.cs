@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using Hangfire;
-using Microsoft.AspNet.Identity.EntityFramework;
-using ProfitWise.Batch.Factory;
-using ProfitWise.Batch.Orders;
-using ProfitWise.Batch.Products;
-using Push.Shopify.HttpClient;
-using Push.Shopify.Repositories;
 using Push.Utilities.Logging;
-using Push.Utilities.Web.Identity;
+
 
 namespace ProfitWise.Batch
 {
@@ -17,8 +11,23 @@ namespace ProfitWise.Batch
         static void Main(string[] args)
         {
             Bootstrap.ConfigureApp();
-            InvokeRefreshServices();
+            DependencyInjectionSchool.Test();
+            Console.ReadLine();
         }
+
+
+
+        //private static void ProxyPoc()
+        //{
+        //    ProxyGenerator _generator = new ProxyGenerator();
+        //    var logger = LoggerSingleton.Get();
+        //    var freezableInterceptor = new ErrorForensicsInterceptor(logger);
+        //    var proxy = _generator.CreateClassProxy<JaaamySimon>(freezableInterceptor );
+
+        //    proxy.Method(1, "Bad Data");
+        //}
+
+
 
 
         private static void InvokeRefreshServices()
@@ -26,27 +35,34 @@ namespace ProfitWise.Batch
             var logger = LoggerSingleton.Get();
             try
             {
-
+                // This is for simulation purposes - in the future, we'll load a list of Users from database
                 var userId = "a4ae6621-57ec-4ca8-837f-0b439e3cc710";
-                //var productRefreshService = new ProductRefreshService(userId, logger);
-                //productRefreshService.Execute();
 
-                var shopifyClientFactory = new ShopifyHttpClientFactory(logger);
-                var shopifyNaughtyClientFactory = new ShopifyNaughtyClientFactory(logger);
-                var shopifyHttpClient = shopifyNaughtyClientFactory.Make(userId);
-                shopifyHttpClient.ShopifyRetriesEnabled = true;
-                shopifyHttpClient.ThrowExceptionOnBadHttpStatusCode = true;
-
-                var orderRefreshService = new OrderRefreshService(userId, logger, shopifyHttpClient);
-                var RefreshServiceShopifyOrderLimit =
-                    Int32.Parse(ConfigurationManager.AppSettings["RefreshServiceShopifyOrderLimit"]);
-                orderRefreshService.ShopifyOrderLimit = RefreshServiceShopifyOrderLimit;
-                orderRefreshService.Execute();
+                //ProxyPoc();
+                var masterProcess = new MasterProcess(logger);
+                masterProcess.Execute(userId);
             }
             catch (Exception e)
             {
                 logger.Error(e);
                 logger.Fatal(e.Message);
+
+
+                var trace = new System.Diagnostics.StackTrace();
+                
+                //var frame = trace.GetFrame(1);
+                //var methodName = frame.GetMethod().Name;
+                //var properties = this.GetType().GetProperties();
+                //var fields = this.GetType().GetFields(); // public fields
+                //                                         // for example:
+                //foreach (var prop in properties)
+                //{
+                //    var value = prop.GetValue(this, null);
+                //}
+                //foreach (var field in fields)
+                //{
+                //    var value = field.GetValue(this);
+                //}
             }
         }
 

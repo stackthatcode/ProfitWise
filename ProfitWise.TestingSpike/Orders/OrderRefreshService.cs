@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using MySql.Data.MySqlClient;
 using ProfitWise.Batch.Factory;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Shopify.Repositories;
+using Push.Utilities.General;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 
@@ -20,25 +20,34 @@ namespace ProfitWise.Batch.Orders
         private readonly ILogger _logger;
         private readonly MySqlConnection _connection;
 
-        public int ShopifyOrderLimit = 250;
+        public int ShopifyOrderLimit { get; set; }
 
-        public OrderRefreshService(string userId, ILogger logger, IShopifyHttpClient shopifyHttpClient)
+
+        public OrderRefreshService(
+                        string userId, 
+                        ILogger logger, 
+                        IShopifyHttpClient shopifyHttpClient,
+                        OrderApiRepository orderApiRepository,
+                        MySqlConnectionFactory connectionFactory,
+                        int shopifyOrderLimit = 250)
         {
             _userId = userId;
             _logger = logger;
-
-            _orderRepository = new OrderApiRepository(shopifyHttpClient, logger);
-            _connection = MySqlConnectionFactory.Make();
+            ShopifyOrderLimit = shopifyOrderLimit;
+            _orderRepository = orderApiRepository;
+            _connection = connectionFactory.Make();
         }
 
-        public void Execute()
+        public virtual void Execute()
         {
             var results = RetrieveAll();
 
             foreach (var order in results)
             {
                 var message = string.Format("Order found: {0} - {1}", order.Id, order.Email);
-                _logger.Info(message);
+                _logger.Debug(message);
+
+
             }
         }
 
@@ -51,12 +60,11 @@ namespace ProfitWise.Batch.Orders
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 _logger.Debug(
                     string.Format(
-                        "OrderApiRepository->RetrieveAll() - page {0} of {1} pages", pagenumber, numberofpages));
+                        "{3} - page {0} of {1} pages", pagenumber, numberofpages, this.ClassAndMethodName()));
                 
                 // This might throw an Error!!!
                 var orders = _orderRepository.Retrieve(pagenumber, ShopifyOrderLimit);
@@ -64,12 +72,13 @@ namespace ProfitWise.Batch.Orders
             }
 
             TimeSpan ts = stopWatch.Elapsed;
-            _logger.Debug("End... " + ts.ToFormattedString());
+            _logger.Debug(
+                string.Format(
+                    "OrderApiRepository.RetrieveAll total execution time {0} to fetch {1} Orders", 
+                        ts.ToFormattedString(), results.Count));
 
             return results;
         }
-
-
     }
 }
 

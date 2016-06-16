@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -7,7 +8,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using OAuthSandbox.Attributes;
 using OAuthSandbox.Models;
+using ProfitWise.Web.Attributes;
 using Push.Shopify.HttpClient;
+using Push.Utilities.Logging;
 using Push.Utilities.Security;
 using Push.Utilities.Web.Helpers;
 using Push.Utilities.Web.Identity;
@@ -18,47 +21,19 @@ namespace OAuthSandbox.Controllers
     [Authorize(Roles = "ADMIN, USER")]
     public class UserHomeController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
         private ShopifyCredentialService _shopifyCredentialService;
 
         public UserHomeController()
         {
         }
 
-        public UserHomeController(
-                ApplicationUserManager userManager, 
-                ApplicationSignInManager signInManager,
-                ShopifyCredentialService shopifyCredentialService)
+        public UserHomeController(ShopifyCredentialService shopifyCredentialService)
         {
-            UserManager = userManager;
-            SignInManager = signInManager;
+
             ShopifyCredentialService = shopifyCredentialService;
         }
 
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
-        }
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
         public ShopifyCredentialService ShopifyCredentialService
         {
             get
@@ -109,6 +84,12 @@ namespace OAuthSandbox.Controllers
             return View();
         }
 
+        public ActionResult Error()
+        {
+            throw new Exception("Oh noes! I'm throwing an Exception");
+        }
+
+
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
@@ -127,8 +108,10 @@ namespace OAuthSandbox.Controllers
             var userId = HttpContext.User.ExtractUserId();
             var credentials = credentialsService.Retrieve(userId);
 
+            var logger = LoggerSingleton.Get();
+
             var httpClient = new HttpClient();
-            var shopifyClient = new ShopifyHttpClient(httpClient, null, credentials.ShopDomain, credentials.AccessToken);
+            var shopifyClient = new ShopifyHttpClient(httpClient, logger, credentials.ShopDomain, credentials.AccessToken);
 
             var orders = shopifyClient.HttpGet("/admin/orders.json");
             ViewBag.Orders = orders.Body;

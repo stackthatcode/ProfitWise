@@ -1,0 +1,2 @@
+2016-06-16 16:56:55.0034|Info|About to execute method Method on instance of ProfitWise.Batch.DependencyInjectionSchool+Z2
+2016-06-16 16:56:55.0324|Info|Just finished executing method Method on instance of ProfitWise.Batch.DependencyInjectionSchool+Z2

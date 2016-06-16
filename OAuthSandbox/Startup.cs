@@ -13,7 +13,9 @@ namespace ProfitWise.Web
         {
             ConfigureAuth(app);
             ConfigureDefaultSecurityData();
+            LoggingConfig.Register();
 
+            // Hangfire Configuration
             var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;
             GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString);
             app.UseHangfireDashboard();

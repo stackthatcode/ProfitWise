@@ -22,7 +22,7 @@ namespace ProfitWise.Batch.Factory
             _logger = logger;
         }
 
-        public IShopifyHttpClient Make(string userId)
+        public virtual IShopifyHttpClient Make(string userId)
         {            
             var context = ApplicationDbContext.Create();
             var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));

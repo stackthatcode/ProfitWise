@@ -5,10 +5,11 @@ namespace ProfitWise.Batch.Factory
 {
     public class SqlServerConnectionFactory
     {
-        public static SqlConnection Make()
+        public virtual SqlConnection Make()
         {
             var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             return new SqlConnection(connectionString);
         }
     }
 }
+

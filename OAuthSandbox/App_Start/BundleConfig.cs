@@ -1,7 +1,6 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
-namespace OAuthSandbox
+namespace ProfitWise.Web
 {
     public class BundleConfig
     {

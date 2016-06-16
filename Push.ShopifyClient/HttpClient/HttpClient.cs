@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Net;
 
@@ -6,7 +5,7 @@ namespace Push.Shopify.HttpClient
 {
     public class HttpClient : IHttpClient
     {
-        public HttpClientResponse ProcessRequest(HttpWebRequest request)
+        public virtual HttpClientResponse ProcessRequest(HttpWebRequest request)
         {
             using (HttpWebResponse resp = (HttpWebResponse) request.GetResponse())
             {

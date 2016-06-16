@@ -67,7 +67,7 @@ namespace Push.Shopify.HttpClient
             ShopifyThrottlingDelay = 500;
         }
 
-        public HttpClientResponse HttpGet(string path)
+        public virtual HttpClientResponse HttpGet(string path)
         {
             var request = ShopifyRequestFactory(path);
             request.Method = "GET";
@@ -90,14 +90,15 @@ namespace Push.Shopify.HttpClient
             if (_shopLastExecutionTime.ContainsKey(_shopDomain))
             {
                 var lastExecutionTime = _shopLastExecutionTime[_shopDomain];
+                var timeSinceLastExecutionTimeSpan = DateTime.Now - lastExecutionTime;
 
-                var timeSinceLastExecution = DateTime.Now - lastExecutionTime;
-
-                if (timeSinceLastExecution.Milliseconds < ShopifyThrottlingDelay)
+                var ShopifyThrottlingDelayTimeSpan = new TimeSpan(0, 0, 0, 0, ShopifyThrottlingDelay);
+                
+                if (timeSinceLastExecutionTimeSpan < ShopifyThrottlingDelayTimeSpan)
                 {
-                    var remainingTimeToDelay = ShopifyThrottlingDelay - timeSinceLastExecution.Milliseconds;
-                    System.Threading.Thread.Sleep(timeSinceLastExecution);
+                    var remainingTimeToDelay = ShopifyThrottlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
                     _logger.Debug(string.Format("Intentional delay before next call: {0} ms", remainingTimeToDelay));
+                    System.Threading.Thread.Sleep(remainingTimeToDelay);
                 }
             }
 
@@ -105,6 +106,8 @@ namespace Push.Shopify.HttpClient
             _shopLastExecutionTime[_shopDomain] = DateTime.Now;
 
             var response = _httpClient.ProcessRequest(request);
+
+            // TODO => work in the logic to catch 429's and retry
 
             if (response.StatusCode != HttpStatusCode.OK && ThrowExceptionOnBadHttpStatusCode)
             {
@@ -156,30 +159,6 @@ namespace Push.Shopify.HttpClient
             return string.Format("https://{0}", domain);
         }
 
-        private HttpWebRequest ShopifyRequestFactory(string path)
-        {
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-
-            var url = _baseurl + path;
-            var req = (HttpWebRequest)WebRequest.Create(url);
-            req.Timeout = ShopifyHttpTimeout;
-
-            if (_token.IsNullOrEmpty())
-            {
-                // This is what we would use for 3D Universe Automation only
-                var credentialCache = new CredentialCache();
-                credentialCache.Add(new Uri(url), "Basic", new NetworkCredential(_key, _secret));
-                req.Credentials = credentialCache;
-            }
-            else
-            {
-                // This is normal Shopify Owner plug-in authentication
-                req.Headers["X-Shopify-Access-Token"] = _token;
-            }
-            return req;
-        }
 
 
         //public string HttpPut(string path, string json)

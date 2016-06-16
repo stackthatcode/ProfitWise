@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using OAuthSandbox.Models;
+using ProfitWise.Web.Plumbing;
 using Push.Utilities.Security;
 using Push.Utilities.Web.Helpers;
 using Push.Utilities.Web.Identity;
@@ -14,30 +15,19 @@ namespace OAuthSandbox.Controllers
     [Authorize(Roles = "ADMIN")]
     public class AdminHomeController : Controller
     {
-        private ApplicationUserManager _userManager;
         private ShopifyCredentialService _shopifyCredentialService;
-
-        public AdminHomeController(ApplicationUserManager userManager, ShopifyCredentialService shopifyCredentialService)
-        {
-            _userManager = userManager;
-            _shopifyCredentialService = shopifyCredentialService;
-        }
+        private readonly OwinServices _owinServices;
 
         public AdminHomeController()
         {
+            _owinServices = new OwinServices(this);
         }
 
-        public ApplicationUserManager UserManager
+        public AdminHomeController(ShopifyCredentialService shopifyCredentialService)
         {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            _shopifyCredentialService = shopifyCredentialService;
         }
+        
 
         public ShopifyCredentialService ShopifyCredentialService
         {
@@ -45,8 +35,7 @@ namespace OAuthSandbox.Controllers
             {
                 if (_shopifyCredentialService == null)
                 {
-                    var context = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                    _shopifyCredentialService = new ShopifyCredentialService(context);
+                    _shopifyCredentialService = new ShopifyCredentialService(_owinServices.UserManager);
                 }
                 return _shopifyCredentialService;
             }

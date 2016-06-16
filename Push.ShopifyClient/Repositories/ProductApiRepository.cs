@@ -27,7 +27,7 @@ namespace Push.Shopify.Repositories
             return count;
         }
 
-        public IList<Product> Retrieve(int page = 1, int limit = 250)
+        public virtual IList<Product> Retrieve(int page = 1, int limit = 250)
         {
             var path = string.Format("/admin/products.json?page={0}&limit={1}", page, limit);
             var json = _client.HttpGet(path);
@@ -59,26 +59,6 @@ namespace Push.Shopify.Repositories
                 }
 
                 results.Add(resultProduct);
-            }
-
-            return results;
-        }
-
-        public IList<Product> RetrieveAll(int limit = 250, int delay = 500)
-        {
-            var count = RetrieveCount();
-            var numberofpages = PagingFunctions.NumberOfPages(limit, count);
-            var results = new List<Product>();
-
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
-            {
-                _logger.Debug(
-                    string.Format(
-                        "ProductRepository->RetrieveAll() - page {0} of {1} pages", pagenumber, numberofpages));
-
-                var products = Retrieve(pagenumber, limit);
-                results.AddRange(products);
-                Thread.Sleep(delay);
             }
 
             return results;

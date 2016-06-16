@@ -18,7 +18,7 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
-        public IList<ProductData> RetrieveAll()
+        public virtual IList<ProductData> RetrieveAll(string userId)
         {
             var query = @"SELECT * FROM shopifyproduct WHERE UserId";
             return
@@ -27,7 +27,7 @@ namespace ProfitWise.Data.Repositories
                     .ToList();
         }
 
-        public void Insert(ProductData product)
+        public virtual void Insert(ProductData product)
         {
             product.UserId = _userId;
             var query = @"INSERT INTO shopifyproduct(UserId, ShopifyProductId, Title) 
@@ -35,7 +35,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, product);
         }
 
-        public void Delete(long shopifyProductId)
+        public virtual void Delete(long shopifyProductId)
         {
             var query = @"DELETE FROM shopifyproduct 
                         WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";

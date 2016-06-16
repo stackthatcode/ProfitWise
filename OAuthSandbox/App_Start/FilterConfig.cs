@@ -1,14 +1,14 @@
-﻿using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using OAuthSandbox.Attributes;
+using ProfitWise.Web.Attributes;
 
-namespace OAuthSandbox
+namespace ProfitWise.Web
 {
     public class FilterConfig
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
+            filters.Add(new HandleErrorAttributeImpl());
 
             filters.Add(new IdentityCachingAttribute());
         }

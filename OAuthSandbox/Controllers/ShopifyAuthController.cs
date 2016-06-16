@@ -1,65 +1,27 @@
 ﻿using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using OAuthSandbox.Controllers;
 using OAuthSandbox.Models;
-using Push.Utilities.Security;
+using ProfitWise.Web.Plumbing;
 using Push.Utilities.Web.Helpers;
 using Push.Utilities.Web.Identity;
 
-namespace OAuthSandbox.Controllers
+namespace ProfitWise.Web.Controllers
 {
     public class ShopifyAuthController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private readonly OwinServices _owinServices;
 
         public ShopifyAuthController()
         {
+            _owinServices = new OwinServices(this);
         }
-
-        public ShopifyAuthController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
-
+        
 
 
         // GET: /ShopifyAuth/Index
@@ -86,14 +48,14 @@ namespace OAuthSandbox.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
-            var externalLoginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+            var externalLoginInfo = await _owinServices.AuthenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
                 return RedirectToAction("Index", "ShopifyAuth");
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
+            var result = await _owinServices.SignInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -136,14 +98,14 @@ namespace OAuthSandbox.Controllers
             }
 
             // Get the information about the user from the external login provider
-            var externalLoginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+            var externalLoginInfo = await _owinServices.AuthenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
                 return View("ExternalLoginFailure");
             }
             
             // User does not exist in our System? 
-            ApplicationUser user = await UserManager.FindAsync(externalLoginInfo.Login);
+            ApplicationUser user = await _owinServices.UserManager.FindAsync(externalLoginInfo.Login);
 
             // If not, create a new Application User
             if (user == null)
@@ -158,14 +120,14 @@ namespace OAuthSandbox.Controllers
                     Email = model.Email
                 };
                 
-                var result = await UserManager.CreateAsync(user);
+                var result = await _owinServices.UserManager.CreateAsync(user);
                 if (!result.Succeeded)
                 {
                     this.AddErrors(result);
                     return View(model);
                 }
 
-                UserManager.AddToRole(user.Id, SecurityConfig.UserRole);
+                _owinServices.UserManager.AddToRole(user.Id, SecurityConfig.UserRole);
             }
 
             // Do we have this Login already?
@@ -174,7 +136,7 @@ namespace OAuthSandbox.Controllers
                             x.LoginProvider == externalLoginInfo.Login.LoginProvider &&
                             x.ProviderKey == externalLoginInfo.Login.ProviderKey) == null)
             {
-                var result = await UserManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
+                var result = await _owinServices.UserManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
                 if (!result.Succeeded)
                 {
                     this.AddErrors(result);
@@ -186,14 +148,14 @@ namespace OAuthSandbox.Controllers
             await CopyIdentityClaimsToPersistence(externalLoginInfo);
 
             // Finally Sign-in Manager
-            await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            await _owinServices.SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
             return RedirectToLocal(returnUrl);
         }
 
         private async Task CopyIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
-            ApplicationUser user = await UserManager.FindAsync(externalLoginInfo.Login);
+            ApplicationUser user = await _owinServices.UserManager.FindAsync(externalLoginInfo.Login);
             var new_domain_claim =
                 externalLoginInfo
                     .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaimExternal);
@@ -202,7 +164,7 @@ namespace OAuthSandbox.Controllers
                 externalLoginInfo.ExternalIdentity.Claims.FirstOrDefault(
                     x => x.Type == SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
 
-            var credentialService = new ShopifyCredentialService(UserManager);
+            var credentialService = new ShopifyCredentialService(_owinServices.UserManager);
             credentialService.SetUserCredentials(user.Id, new_domain_claim.Value, new_access_token_claim.Value);
         }
 
@@ -213,7 +175,7 @@ namespace OAuthSandbox.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            _owinServices.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "ShopifyAuth");
         }
 

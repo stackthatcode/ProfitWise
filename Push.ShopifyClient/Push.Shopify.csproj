@@ -49,6 +49,7 @@
     <Compile Include="HttpClient\HttpWebResponseExtensions.cs" />
     <Compile Include="HttpClient\IHttpClient.cs" />
     <Compile Include="HttpClient\IShopifyHttpClient.cs" />
+    <Compile Include="HttpClient\ShopifyRequestFactory.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderLineItem.cs" />
     <Compile Include="Model\Product.cs" />

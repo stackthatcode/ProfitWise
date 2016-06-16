@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -8,13 +7,13 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using OAuthSandbox.Controllers;
-using OAuthSandbox.Models;
+using ProfitWise.Web.Controllers;
 using Push.Shopify.HttpClient;
-using Push.Utilities.Security;
+using Push.Utilities.Logging;
 using Push.Utilities.Web.Helpers;
 using Push.Utilities.Web.Identity;
 
-namespace OAuthSandbox.Attributes
+namespace ProfitWise.Web.Attributes
 {
     public class TokenRequiredAttribute : AuthorizeAttribute
     {
@@ -25,7 +24,6 @@ namespace OAuthSandbox.Attributes
                 return HttpContext.Current.ExtractUserId();
             }
         }
-
 
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
@@ -58,11 +56,12 @@ namespace OAuthSandbox.Attributes
 
             // Step #2 - attempt to validate the Access Token 
             var httpClient = new HttpClient();
+            var logger = LoggerSingleton.Get();
             var client = 
-                new ShopifyHttpClient(httpClient, null, shopifyCredentials.ShopDomain, shopifyCredentials.AccessToken);
+                new ShopifyHttpClient(
+                        httpClient, logger, shopifyCredentials.ShopDomain, shopifyCredentials.AccessToken);
 
             var response = client.HttpGet("/admin/orders.json?limit=1");
-
 
             if (response.StatusCode == HttpStatusCode.OK)
             {

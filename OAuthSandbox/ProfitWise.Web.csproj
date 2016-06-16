@@ -218,8 +218,10 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\LoggingConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\IdentityCachingAttribute.cs" />
     <Compile Include="Attributes\TokenRequiredAttribute.cs" />
@@ -239,6 +241,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ShopifyAuthModels.cs" />
     <Compile Include="Attributes\UserBrief.cs" />
+    <Compile Include="Plumbing\OwinServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -314,7 +317,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Plumbing\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
