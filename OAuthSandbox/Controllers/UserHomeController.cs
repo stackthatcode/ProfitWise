@@ -128,10 +128,10 @@ namespace OAuthSandbox.Controllers
             var credentials = credentialsService.Retrieve(userId);
 
             var httpClient = new HttpClient();
-            var shopifyClient = new ShopifyHttpClient(httpClient, credentials.ShopDomain, credentials.AccessToken);
+            var shopifyClient = new ShopifyHttpClient(httpClient, null, credentials.ShopDomain, credentials.AccessToken);
 
             var orders = shopifyClient.HttpGet("/admin/orders.json");
-            ViewBag.Orders = orders.ResponseBody;
+            ViewBag.Orders = orders.Body;
 
             return View();
         }

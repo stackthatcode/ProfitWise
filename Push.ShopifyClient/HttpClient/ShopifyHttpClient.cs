@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using Push.Utilities.Helpers;
+using Push.Utilities.Logging;
 
 namespace Push.Shopify.HttpClient
 {
@@ -11,64 +12,142 @@ namespace Push.Shopify.HttpClient
     {
         private readonly string _key;
         private readonly string _secret;
-
         private readonly string _baseurl;
         private readonly string _token;
 
+        private readonly string _shopDomain;
+
         private readonly IHttpClient _httpClient;
+        private readonly ILogger _logger;
 
-        public bool ShopifyRetriesEnabled = false;
-        public int ShopifyTimeout = 30000;
-        public int ShopifyRetryLimit = 3;
-        
+        //public bool ThrowExceptionOnNonHttp200 = true;
 
-        // TODO: add Logger for verbose
+        public int ShopifyRetryLimit { get; set; }
+        public int ShopifyHttpTimeout { get; set; }
+        public int ShopifyThrottlingDelay { get; set; }
+        public bool ShopifyRetriesEnabled { get; set; }
+
+        public bool ThrowExceptionOnBadHttpStatusCode { get; set; }
 
 
-        public ShopifyHttpClient(IHttpClient httpClient, string shop_domain, string token)
+        private static readonly 
+            IDictionary<string, DateTime> _shopLastExecutionTime 
+                    = new ConcurrentDictionary<string, DateTime>();
+
+
+        public ShopifyHttpClient(IHttpClient httpClient, ILogger logger, string shop_domain, string token)
         {
+            _httpClient = httpClient;
+            _logger = logger;
+
             _baseurl = ShopUrlFromDomain(shop_domain);
             _token = token;
-            _httpClient = httpClient;
+            _shopDomain = shop_domain;
+
+            ConfigureDefaultSettings();
         }
 
-        public ShopifyHttpClient(IHttpClient httpClient, string shop_domain, string key, string secret)
+        public ShopifyHttpClient(IHttpClient httpClient, ILogger logger, string shop_domain, string key, string secret)
         {
             _baseurl = ShopUrlFromDomain(shop_domain);
             _key = key;
             _secret = secret;
+
             _httpClient = httpClient;
-            
+            _logger = logger;
+
+            ConfigureDefaultSettings();
         }
 
+        private void ConfigureDefaultSettings()
+        {
+            ShopifyRetryLimit = 3;
+            ShopifyRetriesEnabled = false;
+            ShopifyHttpTimeout = 30000;
+            ShopifyThrottlingDelay = 500;
+        }
 
         public HttpClientResponse HttpGet(string path)
         {
             var request = ShopifyRequestFactory(path);
             request.Method = "GET";
 
-            return ShopifyRetriesEnabled
-                ? HttpInvocationWithRetries(request)
-                : _httpClient.ProcessRequest(request);
+            if (ShopifyRetriesEnabled)
+            {
+                return HttpInvocationWithRetries(request);
+            }
+            else
+            {
+                string message = String.Format("Invoking HTTP GET on {0}", path);
+                _logger.Debug(message);
+                return HttpInvocationWithThrottling(request);
+            }
         }
 
-
-        private HttpClientResponse HttpInvocationWithRetries(HttpWebRequest request)
+        // NOTE: all HTTP calls must be routed through this method
+        private HttpClientResponse HttpInvocationWithThrottling(HttpWebRequest request)
         {
-            for (int counter = 1; counter <= ShopifyRetryLimit; counter++)
+            if (_shopLastExecutionTime.ContainsKey(_shopDomain))
             {
-                var response = _httpClient.ProcessRequest(request);
+                var lastExecutionTime = _shopLastExecutionTime[_shopDomain];
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                var timeSinceLastExecution = DateTime.Now - lastExecutionTime;
+
+                if (timeSinceLastExecution.Milliseconds < ShopifyThrottlingDelay)
                 {
-                    return response;
+                    var remainingTimeToDelay = ShopifyThrottlingDelay - timeSinceLastExecution.Milliseconds;
+                    System.Threading.Thread.Sleep(timeSinceLastExecution);
+                    _logger.Debug(string.Format("Intentional delay before next call: {0} ms", remainingTimeToDelay));
                 }
             }
 
-            var message = string.Format(
-                    "Retry limit of {0} reached for HTTP invocation of {1}", 
-                    ShopifyRetryLimit, request.RequestUri);
-            throw new Exception(message);
+            _logger.Debug(String.Format("Invoking HTTP GET on {0}", request.RequestUri.AbsoluteUri));
+            _shopLastExecutionTime[_shopDomain] = DateTime.Now;
+
+            var response = _httpClient.ProcessRequest(request);
+
+            if (response.StatusCode != HttpStatusCode.OK && ThrowExceptionOnBadHttpStatusCode)
+            {
+                throw new BadShopifyHttpStatusCodeException(response.StatusCode);
+            }
+
+            var executionTime = DateTime.Now - _shopLastExecutionTime[_shopDomain];
+            _logger.Debug(string.Format("Call performance - {0} ms", executionTime));
+
+            return response;
+        }
+
+        private HttpClientResponse HttpInvocationWithRetries(HttpWebRequest request)
+        {
+            var counter = 1;
+
+            while (true)
+            {
+                try
+                {
+                    var response = HttpInvocationWithThrottling(request);
+                    return response;
+                }
+                catch (BadShopifyHttpStatusCodeException e)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex);
+                    counter++;
+
+                    if (counter > ShopifyRetryLimit)
+                    {
+                        _logger.Fatal("Retry Limit has been exceeded... throwing exception");
+                        throw;
+                    }
+                    else
+                    {
+                        _logger.Debug(String.Format("Encountered an exception. Retrying invocation..."));
+                    }
+                }
+            }
         }
 
 
@@ -85,7 +164,7 @@ namespace Push.Shopify.HttpClient
 
             var url = _baseurl + path;
             var req = (HttpWebRequest)WebRequest.Create(url);
-            req.Timeout = ShopifyTimeout;
+            req.Timeout = ShopifyHttpTimeout;
 
             if (_token.IsNullOrEmpty())
             {
@@ -124,11 +203,6 @@ namespace Push.Shopify.HttpClient
         //    }
         //    return ProcessRequest(request);
         //}
-
-        public HttpClientResponse HttpGet(string path, bool onlyHttp200WithRetries = false)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 

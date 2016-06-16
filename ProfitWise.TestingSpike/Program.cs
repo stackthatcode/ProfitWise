@@ -17,23 +17,37 @@ namespace ProfitWise.Batch
         static void Main(string[] args)
         {
             Bootstrap.ConfigureApp();
-            InvokeProductRefreshService();
+            InvokeRefreshServices();
         }
 
 
-        private static void InvokeProductRefreshService()
+        private static void InvokeRefreshServices()
         {
             var logger = LoggerSingleton.Get();
+            try
+            {
 
-            var userId = "a4ae6621-57ec-4ca8-837f-0b439e3cc710";
-            //var productRefreshService = new ProductRefreshService(userId, logger);
-            //productRefreshService.Execute();
+                var userId = "a4ae6621-57ec-4ca8-837f-0b439e3cc710";
+                //var productRefreshService = new ProductRefreshService(userId, logger);
+                //productRefreshService.Execute();
 
-            var shopifyClientFactory = new ShopifyClientFactory();
-            var shopifyNaughtyClientFactory = new ShopifyNaughtyClientFactory();
+                var shopifyClientFactory = new ShopifyHttpClientFactory(logger);
+                var shopifyNaughtyClientFactory = new ShopifyNaughtyClientFactory(logger);
+                var shopifyHttpClient = shopifyNaughtyClientFactory.Make(userId);
+                shopifyHttpClient.ShopifyRetriesEnabled = true;
+                shopifyHttpClient.ThrowExceptionOnBadHttpStatusCode = true;
 
-            var orderRefreshService = new OrderRefreshService(userId, logger, shopifyNaughtyClientFactory);
-            orderRefreshService.Execute();
+                var orderRefreshService = new OrderRefreshService(userId, logger, shopifyHttpClient);
+                var RefreshServiceShopifyOrderLimit =
+                    Int32.Parse(ConfigurationManager.AppSettings["RefreshServiceShopifyOrderLimit"]);
+                orderRefreshService.ShopifyOrderLimit = RefreshServiceShopifyOrderLimit;
+                orderRefreshService.Execute();
+            }
+            catch (Exception e)
+            {
+                logger.Error(e);
+                logger.Fatal(e.Message);
+            }
         }
 
 

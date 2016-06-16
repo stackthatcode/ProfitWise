@@ -59,7 +59,7 @@ namespace OAuthSandbox.Attributes
             // Step #2 - attempt to validate the Access Token 
             var httpClient = new HttpClient();
             var client = 
-                new ShopifyHttpClient(httpClient, shopifyCredentials.ShopDomain, shopifyCredentials.AccessToken);
+                new ShopifyHttpClient(httpClient, null, shopifyCredentials.ShopDomain, shopifyCredentials.AccessToken);
 
             var response = client.HttpGet("/admin/orders.json?limit=1");
 

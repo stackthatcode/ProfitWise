@@ -22,7 +22,7 @@ namespace Push.Shopify.Repositories
         public int RetrieveCount()
         {
             var json = _client.HttpGet("/admin/products/count.json");
-            dynamic parent = JsonConvert.DeserializeObject(json.ResponseBody);
+            dynamic parent = JsonConvert.DeserializeObject(json.Body);
             var count = parent.count;
             return count;
         }
@@ -31,7 +31,7 @@ namespace Push.Shopify.Repositories
         {
             var path = string.Format("/admin/products.json?page={0}&limit={1}", page, limit);
             var json = _client.HttpGet(path);
-            dynamic parent = JsonConvert.DeserializeObject(json.ResponseBody);
+            dynamic parent = JsonConvert.DeserializeObject(json.Body);
 
             var results = new List<Product>();
 

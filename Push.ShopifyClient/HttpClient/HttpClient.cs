@@ -15,7 +15,7 @@ namespace Push.Shopify.HttpClient
                 return new HttpClientResponse()
                 {
                     StatusCode = resp.StatusCode,
-                    ResponseBody = sr.ReadToEnd()
+                    Body = sr.ReadToEnd()
                 };
             }
         }

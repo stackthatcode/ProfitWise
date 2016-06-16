@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="HttpClient\BadShopifyHttpStatusCodeException.cs" />
     <Compile Include="HttpClient\HttpClient.cs" />
     <Compile Include="HttpClient\HttpWebResponseExtensions.cs" />
     <Compile Include="HttpClient\IHttpClient.cs" />

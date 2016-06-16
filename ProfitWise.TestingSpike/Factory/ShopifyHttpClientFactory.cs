@@ -2,6 +2,7 @@
 using System.Configuration;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Push.Shopify.HttpClient;
+using Push.Utilities.Logging;
 using Push.Utilities.Web.Identity;
 
 namespace ProfitWise.Batch.Factory
@@ -12,8 +13,15 @@ namespace ProfitWise.Batch.Factory
     }
 
 
-    public class ShopifyClientFactory : IShopifyClientFactory
+    public class ShopifyHttpClientFactory : IShopifyClientFactory
     {
+        private readonly ILogger _logger;
+
+        public ShopifyHttpClientFactory(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public IShopifyHttpClient Make(string userId)
         {            
             var context = ApplicationDbContext.Create();
@@ -23,7 +31,6 @@ namespace ProfitWise.Batch.Factory
             var shopifyFromClaims = shopifyCredentialService.Retrieve(userId);
 
             // TODO - notify the Alerting Service on this type of failure
-
             if (shopifyFromClaims.Success == false)
             {
                 throw new Exception(shopifyFromClaims.Message);
@@ -31,13 +38,15 @@ namespace ProfitWise.Batch.Factory
 
             var httpClient = new HttpClient();
             var shopifyClient =
-                new ShopifyHttpClient(httpClient, shopifyFromClaims.ShopDomain, shopifyFromClaims.AccessToken);
+                new ShopifyHttpClient(httpClient, _logger, shopifyFromClaims.ShopDomain, shopifyFromClaims.AccessToken);
 
+            // Load configuration values
             if (ConfigurationManager.AppSettings["ShopifyRetryLimit"] != null)
                 shopifyClient.ShopifyRetryLimit = Int32.Parse(ConfigurationManager.AppSettings["ShopifyRetryLimit"]);
-
-            if (ConfigurationManager.AppSettings["ShopifyTimeout"] != null)
-                shopifyClient.ShopifyRetryLimit = Int32.Parse(ConfigurationManager.AppSettings["ShopifyTimeout"]);
+            if (ConfigurationManager.AppSettings["ShopifyHttpTimeout"] != null)
+                shopifyClient.ShopifyHttpTimeout = Int32.Parse(ConfigurationManager.AppSettings["ShopifyHttpTimeout"]);
+            if (ConfigurationManager.AppSettings["ShopifyThrottlingDelay"] != null)
+                shopifyClient.ShopifyThrottlingDelay = Int32.Parse(ConfigurationManager.AppSettings["ShopifyThrottlingDelay"]);
 
             return shopifyClient;
         }

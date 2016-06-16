@@ -119,7 +119,7 @@
     <Compile Include="Products\ProductRefreshService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Factory\ShopifyClientFactory.cs" />
+    <Compile Include="Factory\ShopifyHttpClientFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

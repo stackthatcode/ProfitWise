@@ -28,8 +28,8 @@ namespace Push.Shopify.Repositories
 
         public int RetrieveCount()
         {
-            var json = _client.HttpGet("/admin/orders/count.json" + "?" + TempDateFilter);
-            dynamic parent = JsonConvert.DeserializeObject(json.ResponseBody);
+            var clientResponse = _client.HttpGet("/admin/orders/count.json" + "?" + TempDateFilter);
+            dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             var count = parent.count;
             return count;
         }
@@ -40,8 +40,8 @@ namespace Push.Shopify.Repositories
         public IList<Order> Retrieve(int page = 1, int limit = 250)
         {
             var path = string.Format("/admin/orders.json?page={0}&limit={1}" + "&" + TempDateFilter, page, limit);
-            var json = _client.HttpGet(path);
-            dynamic parent = JsonConvert.DeserializeObject(json.ResponseBody);
+            var clientResponse = _client.HttpGet(path);
+            dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
 
             var results = new List<Order>();
 

@@ -18,12 +18,10 @@ namespace ProfitWise.Batch.Products
         private readonly VariantDataRepository _variantDataRepository;
         private readonly MySqlConnection _connection;
 
-        public ProductRefreshService(string userId, ILogger logger, IShopifyClientFactory shopifyClientFactory)
+        public ProductRefreshService(string userId, ILogger logger, IShopifyHttpClient shopifyHttpClient)
         {
             _userId = userId;
-
-            var shopifyClient = shopifyClientFactory.Make(userId);
-            _productApiRepository = new ProductApiRepository(shopifyClient, logger);
+            _productApiRepository = new ProductApiRepository(shopifyHttpClient, logger);
 
             _connection = MySqlConnectionFactory.Make();
             _productDataRepository = new ProductDataRepository(_userId, _connection);
@@ -67,10 +65,10 @@ namespace ProfitWise.Batch.Products
             }
         }
 
-
         public void Dispose()
         {
             _connection.Close();
         }
     }
 }
+
