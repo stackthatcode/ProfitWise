@@ -1,6 +1,6 @@
 ﻿using Push.Shopify.HttpClient;
 
-namespace Push.Shopify.Repositories
+namespace Push.Shopify.Aspect
 {
     interface IShopifyCredentialConsumer
     {

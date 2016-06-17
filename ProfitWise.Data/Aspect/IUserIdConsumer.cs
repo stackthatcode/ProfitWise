@@ -1,6 +1,6 @@
 ﻿namespace ProfitWise.Data.Aspect
 {
-    interface IUserIdConsumer
+    public interface IUserIdConsumer
     {
         string UserId { get; set; }
     }

@@ -19,21 +19,7 @@ namespace ProfitWise.Batch
             }
             
             Console.ReadLine();
-        }
-
-
-
-        //private static void ProxyPoc()
-        //{
-        //    ProxyGenerator _generator = new ProxyGenerator();
-        //    var logger = LoggerSingleton.Get();
-        //    var freezableInterceptor = new ErrorForensicsInterceptor(logger);
-        //    var proxy = _generator.CreateClassProxy<JaaamySimon>(freezableInterceptor );
-
-        //    proxy.Method(1, "Bad Data");
-        //}
-
-
+        }        
 
 
         private static void InvokeRefreshServices(IContainer container)
@@ -50,23 +36,9 @@ namespace ProfitWise.Batch
             catch (Exception e)
             {
                 logger.Error(e);
-                logger.Fatal(e.Message);
 
-                var trace = new System.Diagnostics.StackTrace();
-                
-                //var frame = trace.GetFrame(1);
-                //var methodName = frame.GetMethod().Name;
-                //var properties = this.GetType().GetProperties();
-                //var fields = this.GetType().GetFields(); // public fields
-                //                                         // for example:
-                //foreach (var prop in properties)
-                //{
-                //    var value = prop.GetValue(this, null);
-                //}
-                //foreach (var field in fields)
-                //{
-                //    var value = field.GetValue(this);
-                //}
+                // Add notification service call here
+                logger.Fatal(e.Message);
             }
         }
 

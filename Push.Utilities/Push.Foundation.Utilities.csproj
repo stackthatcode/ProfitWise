@@ -88,7 +88,6 @@
     <Compile Include="Logging\NLoggerImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\SecureString.cs" />
-    <Compile Include="Proxy\Interceptor.cs" />
     <Compile Include="Security\EncryptionService.cs" />
   </ItemGroup>
   <ItemGroup>

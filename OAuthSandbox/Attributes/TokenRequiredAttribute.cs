@@ -17,13 +17,7 @@ namespace ProfitWise.Web.Attributes
 {
     public class TokenRequiredAttribute : AuthorizeAttribute
     {
-        public string CurrentUserId
-        {
-            get
-            {
-                return HttpContext.Current.ExtractUserId();
-            }
-        }
+        public string CurrentUserId => HttpContext.Current.ExtractUserId();
 
         public override void OnAuthorization(AuthorizationContext filterContext)
         {

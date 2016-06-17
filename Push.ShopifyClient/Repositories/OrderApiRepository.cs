@@ -8,7 +8,6 @@ using Push.Shopify.Model;
 namespace Push.Shopify.Repositories
 {
     [Intercept(typeof(ShopifyCredentialRequired))]
-
     public class OrderApiRepository : IShopifyCredentialConsumer
     {
         private readonly IShopifyHttpClient _client;
@@ -27,7 +26,7 @@ namespace Push.Shopify.Repositories
         public string TempDateFilter = "status=any&created_at_min=2016-01-01T00%3A00%3A00-04%3A00%0A";
 
         public virtual int RetrieveCount()
-        {
+        {            
             var request = _requestFactory.HttpGet(ShopifyCredentials, "/admin/orders/count.json" + "?" + TempDateFilter);
             var clientResponse = _client.ExecuteRequest(request);
 

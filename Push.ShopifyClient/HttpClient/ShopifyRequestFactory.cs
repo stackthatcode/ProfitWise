@@ -13,7 +13,6 @@ namespace Push.Shopify.HttpClient
             _configuration = configuration;
         }
 
-
         public HttpWebRequest HttpGet(ShopifyCredentials credentials, string path)
         {
             var request = FactoryWorker(credentials, path);

@@ -6,7 +6,6 @@ using Push.Utilities.Logging;
 
 namespace Push.Shopify.HttpClient
 {
-
     public class ShopifyHttpClient : IShopifyHttpClient
     {
         private readonly IHttpClient _httpClient;

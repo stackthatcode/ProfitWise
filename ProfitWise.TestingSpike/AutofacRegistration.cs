@@ -2,17 +2,14 @@
 using System.Data.SqlClient;
 using Autofac;
 using Autofac.Extras.DynamicProxy2;
-using Microsoft.AspNet.Identity.EntityFramework;
 using MySql.Data.MySqlClient;
 using ProfitWise.Batch.Processes;
 using ProfitWise.Batch.RefreshServices;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
-using Push.Foundation.Web.Identity;
 using Push.Shopify.Factories;
 using Push.Utilities.Errors;
-using Push.Utilities.Security;
 
 
 namespace ProfitWise.Batch
@@ -32,6 +29,7 @@ namespace ProfitWise.Batch
 
             // ProfitWise.Data registration
             ProfitWise.Data.AutofacRegistration.Build(builder);
+
 
             // SQL connections
             // ... load configuration into local variables

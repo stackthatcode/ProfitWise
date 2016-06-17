@@ -22,7 +22,6 @@ namespace ProfitWise.Web
             // Credential Service
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
             var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
-            ShopifyCredentialService.EncryptionService = new EncryptionService(encryption_key, encryption_iv);
 
 
             // Configure the db context, user manager and signin manager to use a single instance per request

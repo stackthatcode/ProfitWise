@@ -5,7 +5,6 @@
         public int ShopifyRetryLimit { get; set; }
         public int ShopifyHttpTimeout { get; set; }
         public int ShopifyThrottlingDelay { get; set; }
-
         public bool ShopifyRetriesEnabled { get; set; }
         public bool ThrowExceptionOnBadHttpStatusCode { get; set; }
 

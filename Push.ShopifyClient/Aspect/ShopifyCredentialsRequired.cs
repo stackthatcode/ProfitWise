@@ -1,6 +1,5 @@
 ﻿using System;
 using Castle.DynamicProxy;
-using Push.Shopify.Repositories;
 
 namespace Push.Shopify.Aspect
 {
