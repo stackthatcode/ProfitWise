@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Push.Utilities.Helpers;
 
 namespace Push.Shopify.HttpClient
 {
     public class ShopifyRequestFactory
     {
-        public int ShopifyHttpTimeout = 60000;
+        private readonly ShopifyHttpClientConfig _configuration;
+
+        public ShopifyRequestFactory(ShopifyHttpClientConfig configuration)
+        {
+            _configuration = configuration;
+        }
 
 
         public HttpWebRequest HttpGet(ShopifyCredentials credentials, string path)
@@ -20,7 +21,6 @@ namespace Push.Shopify.HttpClient
             return request;
         }
 
-
         private HttpWebRequest FactoryWorker(ShopifyCredentials credentials, string path)
         {
             ServicePointManager.Expect100Continue = true;
@@ -29,7 +29,7 @@ namespace Push.Shopify.HttpClient
 
             var url = credentials.ShopBaseUrl + path;
             var req = (HttpWebRequest)WebRequest.Create(url);
-            req.Timeout = ShopifyHttpTimeout;
+            req.Timeout = _configuration.ShopifyHttpTimeout;
 
             if (credentials.AccessToken.IsNullOrEmpty())
             {

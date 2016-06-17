@@ -5,9 +5,9 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Web", "OAuthSandbox\ProfitWise.Web.csproj", "{75D52D7A-E688-4A42-B442-323829E692BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Utilities.Web", "Push.Utilities.Web\Push.Utilities.Web.csproj", "{09B408FF-DD25-46D4-ABE6-012BAAC51296}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Foundation.Web", "Push.Utilities.Web\Push.Foundation.Web.csproj", "{09B408FF-DD25-46D4-ABE6-012BAAC51296}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Utilities", "Push.Utilities\Push.Utilities.csproj", "{4E08819B-BAB3-46EE-9479-141AF7A4057D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Foundation.Utilities", "Push.Utilities\Push.Foundation.Utilities.csproj", "{4E08819B-BAB3-46EE-9479-141AF7A4057D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Batch", "ProfitWise.TestingSpike\ProfitWise.Batch.csproj", "{6BBA037F-DA5C-48E3-8D74-AF67B93AC37F}"
 EndProject

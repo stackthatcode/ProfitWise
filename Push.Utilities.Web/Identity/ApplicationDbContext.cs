@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace Push.Utilities.Web.Identity
+namespace Push.Foundation.Web.Identity
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

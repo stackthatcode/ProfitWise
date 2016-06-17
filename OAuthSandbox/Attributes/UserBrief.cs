@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Push.Utilities.Web.Identity;
+using Push.Foundation.Web.Identity;
 
 namespace OAuthSandbox.Attributes
 {

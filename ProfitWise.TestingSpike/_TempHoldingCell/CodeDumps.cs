@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
 using Push.Utilities.Helpers;
 
-namespace ProfitWise.Batch
+namespace ProfitWise.Batch._TempHoldingCell
 {
     class CodeDumps
     {

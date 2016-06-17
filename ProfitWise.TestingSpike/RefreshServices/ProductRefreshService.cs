@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ProfitWise.Batch.MultiTenantFactories;
+using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Utilities.General;

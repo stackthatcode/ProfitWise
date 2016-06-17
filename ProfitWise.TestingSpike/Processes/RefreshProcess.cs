@@ -2,7 +2,7 @@
 using ProfitWise.Batch.RefreshServices;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Logging;
-using Push.Utilities.Web.Identity;
+using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Batch.Processes
 {

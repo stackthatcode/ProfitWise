@@ -12,8 +12,8 @@ using ProfitWise.Web.Attributes;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Logging;
 using Push.Utilities.Security;
-using Push.Utilities.Web.Helpers;
-using Push.Utilities.Web.Identity;
+using Push.Foundation.Web.Helpers;
+using Push.Foundation.Web.Identity;
 
 
 namespace OAuthSandbox.Controllers

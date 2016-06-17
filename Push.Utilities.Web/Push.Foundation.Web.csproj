@@ -7,8 +7,8 @@
     <ProjectGuid>{09B408FF-DD25-46D4-ABE6-012BAAC51296}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Push.Utilities.Web</RootNamespace>
-    <AssemblyName>Push.Utilities.Web</AssemblyName>
+    <RootNamespace>Push.Foundation.Web</RootNamespace>
+    <AssemblyName>Push.Foundation.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -118,7 +118,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Car.cs" />
     <Compile Include="Helpers\ActivityId.cs" />
     <Compile Include="Helpers\ControllerHelpers.cs" />
     <Compile Include="Helpers\RouteValueDictionaryExtensions.cs" />
@@ -138,9 +137,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Push.Utilities\Push.Utilities.csproj">
+    <ProjectReference Include="..\Push.Utilities\Push.Foundation.Utilities.csproj">
       <Project>{4e08819b-bab3-46ee-9479-141af7a4057d}</Project>
-      <Name>Push.Utilities</Name>
+      <Name>Push.Foundation.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

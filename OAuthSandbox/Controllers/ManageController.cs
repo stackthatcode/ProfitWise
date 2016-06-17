@@ -7,7 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OAuthSandbox.Models;
-using Push.Utilities.Web.Identity;
+using Push.Foundation.Web.Identity;
 
 namespace OAuthSandbox.Controllers
 {

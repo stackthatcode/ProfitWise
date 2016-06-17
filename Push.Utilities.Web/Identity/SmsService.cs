@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 
-namespace Push.Utilities.Web.Identity
+namespace Push.Foundation.Web.Identity
 {
     public class SmsService : IIdentityMessageService
     {

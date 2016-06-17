@@ -11,7 +11,7 @@ using Owin;
 using Owin.Security.Providers.Shopify;
 using Push.Utilities.Helpers;
 using Push.Utilities.Security;
-using Push.Utilities.Web.Identity;
+using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web
 {

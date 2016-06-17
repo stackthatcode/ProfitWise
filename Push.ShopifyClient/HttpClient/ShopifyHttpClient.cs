@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
-using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 
 namespace Push.Shopify.HttpClient
@@ -11,48 +10,31 @@ namespace Push.Shopify.HttpClient
     public class ShopifyHttpClient : IShopifyHttpClient
     {
         private readonly IHttpClient _httpClient;
+        private readonly ShopifyHttpClientConfig _configuration;
         private readonly ILogger _logger;
 
-        //public bool ThrowExceptionOnNonHttp200 = true;
-
-        public int ShopifyRetryLimit { get; set; }
-        public int ShopifyHttpTimeout { get; set; }
-        public int ShopifyThrottlingDelay { get; set; }
-        public bool ShopifyRetriesEnabled { get; set; }
-
-        public bool ThrowExceptionOnBadHttpStatusCode { get; set; }
 
         private static readonly 
             IDictionary<string, DateTime> _shopLastExecutionTime 
                     = new ConcurrentDictionary<string, DateTime>();
 
         
-        public ShopifyHttpClient(IHttpClient httpClient, ILogger logger)
+        public ShopifyHttpClient(IHttpClient httpClient, ShopifyHttpClientConfig configuration, ILogger logger)
         {
+            _configuration = configuration;
             _httpClient = httpClient;
             _logger = logger;
-
-            ConfigureDefaultSettings();
-        }
-
-        private void ConfigureDefaultSettings()
-        {
-            ShopifyRetryLimit = 3;
-            ShopifyRetriesEnabled = false;
-            ShopifyHttpTimeout = 30000;
-            ShopifyThrottlingDelay = 500;
-            ThrowExceptionOnBadHttpStatusCode = false;
         }
 
         public virtual HttpClientResponse ExecuteRequest(HttpWebRequest request)
         {
-            if (ShopifyRetriesEnabled)
+            if (_configuration.ShopifyRetriesEnabled)
             {
                 return HttpInvocationWithRetries(request);
             }
             else
             {
-                string message = String.Format("Invoking HTTP GET on {0}", request.RequestUri.AbsolutePath);
+                string message = $"Invoking HTTP GET on {request.RequestUri.AbsolutePath}";
                 _logger.Debug(message);
                 return HttpInvocationWithThrottling(request);
             }
@@ -68,11 +50,11 @@ namespace Push.Shopify.HttpClient
                 var lastExecutionTime = _shopLastExecutionTime[hostname];
                 var timeSinceLastExecutionTimeSpan = DateTime.Now - lastExecutionTime;
 
-                var ShopifyThrottlingDelayTimeSpan = new TimeSpan(0, 0, 0, 0, ShopifyThrottlingDelay);
+                var shopifyThrottlingDelayTimeSpan = new TimeSpan(0, 0, 0, 0, _configuration.ShopifyThrottlingDelay);
                 
-                if (timeSinceLastExecutionTimeSpan < ShopifyThrottlingDelayTimeSpan)
+                if (timeSinceLastExecutionTimeSpan < shopifyThrottlingDelayTimeSpan)
                 {
-                    var remainingTimeToDelay = ShopifyThrottlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
+                    var remainingTimeToDelay = shopifyThrottlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
                     _logger.Debug(string.Format("Intentional delay before next call: {0} ms", remainingTimeToDelay));
                     System.Threading.Thread.Sleep(remainingTimeToDelay);
                 }
@@ -85,7 +67,7 @@ namespace Push.Shopify.HttpClient
 
             // TODO => work in the logic to catch 429's and retry
 
-            if (response.StatusCode != HttpStatusCode.OK && ThrowExceptionOnBadHttpStatusCode)
+            if (response.StatusCode != HttpStatusCode.OK && _configuration.ThrowExceptionOnBadHttpStatusCode)
             {
                 throw new BadShopifyHttpStatusCodeException(response.StatusCode);
             }
@@ -116,7 +98,7 @@ namespace Push.Shopify.HttpClient
                     _logger.Error(ex);
                     counter++;
 
-                    if (counter > ShopifyRetryLimit)
+                    if (counter > _configuration.ShopifyRetryLimit)
                     {
                         _logger.Fatal("Retry Limit has been exceeded... throwing exception");
                         throw;
@@ -128,9 +110,7 @@ namespace Push.Shopify.HttpClient
                 }
             }
         }
-
-
-
     }
 }
+
 

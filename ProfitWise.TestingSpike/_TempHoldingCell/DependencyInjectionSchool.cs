@@ -2,7 +2,7 @@
 using Autofac.Extras.DynamicProxy2;
 using Push.Utilities.Logging;
 
-namespace ProfitWise.Batch
+namespace ProfitWise.Batch.TempHoldingCell
 {
     public class DependencyInjectionSchool
     {

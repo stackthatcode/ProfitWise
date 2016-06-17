@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ProfitWise.Batch.MultiTenantFactories;
+using ProfitWise.Data.Factories;
+using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Utilities.General;
@@ -15,19 +16,20 @@ namespace ProfitWise.Batch.RefreshServices
         private readonly ILogger _logger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly SqlRepositoryFactory _sqlRepositoryFactory;
+        private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
 
-        public int ShopifyOrderLimit = 250;
-        
 
         public OrderRefreshService(
-                ILogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
-                SqlRepositoryFactory sqlRepositoryFactory)
+                SqlRepositoryFactory sqlRepositoryFactory,
+                RefreshServiceConfiguration refreshServiceConfiguration,
+                ILogger logger)
 
         {
             _logger = logger;
             _apiRepositoryFactory = apiRepositoryFactory;
             _sqlRepositoryFactory = sqlRepositoryFactory;
+            _refreshServiceConfiguration = refreshServiceConfiguration;
         }
 
 
@@ -49,7 +51,10 @@ namespace ProfitWise.Batch.RefreshServices
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
 
             var count = orderApiRepository.RetrieveCount();
-            var numberofpages = PagingFunctions.NumberOfPages(ShopifyOrderLimit, count);
+            var numberofpages = 
+                PagingFunctions.NumberOfPages(
+                    _refreshServiceConfiguration.RefreshServiceMaxOrderRate, count);
+
             var results = new List<Order>();
 
             Stopwatch stopWatch = new Stopwatch();
@@ -61,7 +66,7 @@ namespace ProfitWise.Batch.RefreshServices
                     $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
                 
                 // This might throw an Error!!!
-                var orders = orderApiRepository.Retrieve(pagenumber, ShopifyOrderLimit);
+                var orders = orderApiRepository.Retrieve(pagenumber, _refreshServiceConfiguration.RefreshServiceMaxOrderRate);
                 results.AddRange(orders);
             }
 

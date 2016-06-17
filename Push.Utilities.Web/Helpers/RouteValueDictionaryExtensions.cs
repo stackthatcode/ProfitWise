@@ -4,7 +4,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Push.Utilities.Helpers;
 
-namespace Push.Utilities.Web.Helpers
+namespace Push.Foundation.Web.Helpers
 {
     public static class RouteValueDictionaryExtensions
     {

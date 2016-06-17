@@ -1,5 +1,5 @@
 ﻿using Push.Utilities.Logging;
-using Push.Utilities.Web.Helpers;
+using Push.Foundation.Web.Helpers;
 
 namespace ProfitWise.Web
 {

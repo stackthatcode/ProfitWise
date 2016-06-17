@@ -2,13 +2,12 @@
 using Push.Shopify.HttpClient;
 using Push.Shopify.Repositories;
 
-namespace ProfitWise.Batch.MultiTenantFactories
+namespace Push.Shopify.Factories
 {
     public class ApiRepositoryFactory
     {
         private readonly Func<OrderApiRepository> _orderApiRepositoryFactory;
         private readonly Func<ProductApiRepository> _productApiRepositoryFactory;
-
 
         public ApiRepositoryFactory(
             Func<OrderApiRepository> orderApiRepositoryFactory,

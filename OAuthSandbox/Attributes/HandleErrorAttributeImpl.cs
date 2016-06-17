@@ -3,7 +3,7 @@ using System.Web;
 using System.Web.Mvc;
 using Push.Utilities.General;
 using Push.Utilities.Logging;
-using Push.Utilities.Web.Helpers;
+using Push.Foundation.Web.Helpers;
 
 namespace ProfitWise.Web.Attributes
 {

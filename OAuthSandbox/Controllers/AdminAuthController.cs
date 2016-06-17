@@ -6,7 +6,7 @@ using Microsoft.AspNet.Identity.Owin;
 using OAuthSandbox.Models;
 using ProfitWise.Web.Plumbing;
 using Push.Utilities.Helpers;
-using Push.Utilities.Web.Helpers;
+using Push.Foundation.Web.Helpers;
 
 namespace ProfitWise.Web.Controllers
 {

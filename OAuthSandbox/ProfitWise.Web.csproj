@@ -331,13 +331,13 @@
       <Project>{98704840-5bbd-4175-ae04-45a40cd48adb}</Project>
       <Name>Push.Shopify</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Push.Utilities.Web\Push.Utilities.Web.csproj">
+    <ProjectReference Include="..\Push.Utilities.Web\Push.Foundation.Web.csproj">
       <Project>{09b408ff-dd25-46d4-abe6-012baac51296}</Project>
-      <Name>Push.Utilities.Web</Name>
+      <Name>Push.Foundation.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Push.Utilities\Push.Utilities.csproj">
+    <ProjectReference Include="..\Push.Utilities\Push.Foundation.Utilities.csproj">
       <Project>{4E08819B-BAB3-46EE-9479-141AF7A4057D}</Project>
-      <Name>Push.Utilities</Name>
+      <Name>Push.Foundation.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

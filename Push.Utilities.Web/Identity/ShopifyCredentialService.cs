@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 using Push.Utilities.Security;
 
-namespace Push.Utilities.Web.Identity
+namespace Push.Foundation.Web.Identity
 {
     public class ShopifyCredentialService
     {

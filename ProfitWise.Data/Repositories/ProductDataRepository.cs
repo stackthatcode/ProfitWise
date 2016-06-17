@@ -1,16 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
+using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
+
 
 namespace ProfitWise.Data.Repositories
 {
+    [Intercept(typeof(UserIdRequiredInterceptor))]
     public class ProductDataRepository : IUserIdConsumer
     {
         private readonly MySqlConnection _connection;
-        public string UserId { get; set; }
 
+        public string UserId { get; set; }
 
         public ProductDataRepository(MySqlConnection connection)
         {
@@ -40,7 +44,6 @@ namespace ProfitWise.Data.Repositories
                         WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";
             _connection.Execute(query, new { UserId, shopifyProductId });
         }
-
     }
 }
 

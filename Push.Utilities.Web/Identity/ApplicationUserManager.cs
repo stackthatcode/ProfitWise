@@ -4,7 +4,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 
-namespace Push.Utilities.Web.Identity
+namespace Push.Foundation.Web.Identity
 {
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {

@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using Microsoft.Owin.Security;
-using Push.Utilities.Web.Identity;
+using Push.Foundation.Web.Identity;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace ProfitWise.Web.Plumbing

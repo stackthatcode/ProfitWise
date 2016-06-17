@@ -4,7 +4,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 
-namespace Push.Utilities.Web.Helpers
+namespace Push.Foundation.Web.Helpers
 {
     public static class ControllerHelpers
     {

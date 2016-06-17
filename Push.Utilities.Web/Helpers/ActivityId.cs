@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web;
 
-namespace Push.Utilities.Web.Helpers
+namespace Push.Foundation.Web.Helpers
 {
     public class ActivityId
     {
@@ -21,7 +21,7 @@ namespace Push.Utilities.Web.Helpers
 
         public static string MessageFormatter(string message)
         {
-            return ActivityId.Current.ToString() + "|" + message ?? "";
+            return Current + "|" + (message ?? "");
         }
     }
 }

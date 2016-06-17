@@ -10,8 +10,8 @@ using OAuthSandbox.Controllers;
 using ProfitWise.Web.Controllers;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Logging;
-using Push.Utilities.Web.Helpers;
-using Push.Utilities.Web.Identity;
+using Push.Foundation.Web.Helpers;
+using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web.Attributes
 {

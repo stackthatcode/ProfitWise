@@ -4,7 +4,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 
-namespace Push.Utilities.Web.Identity
+namespace Push.Foundation.Web.Identity
 {
 
     // Configure the application sign-in manager which is used in this application.
