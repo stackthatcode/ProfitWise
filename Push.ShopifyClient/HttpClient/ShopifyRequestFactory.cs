@@ -4,44 +4,72 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Push.Utilities.Helpers;
 
 namespace Push.Shopify.HttpClient
 {
     public class ShopifyRequestFactory
     {
-        public Re
+        public int ShopifyHttpTimeout = 60000;
 
-        public virtual HttpClientResponse HttpGet(string path)
+
+        public HttpWebRequest HttpGet(ShopifyCredentials credentials, string path)
         {
-            var request = ShopifyRequestFactory(path);
+            var request = FactoryWorker(credentials, path);
             request.Method = "GET";
             return request;
         }
 
 
-        private HttpWebRequest ShopifyRequestFactory(string path)
+        private HttpWebRequest FactoryWorker(ShopifyCredentials credentials, string path)
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            var url = _baseurl + path;
+            var url = credentials.ShopBaseUrl + path;
             var req = (HttpWebRequest)WebRequest.Create(url);
             req.Timeout = ShopifyHttpTimeout;
 
-            if (_token.IsNullOrEmpty())
+            if (credentials.AccessToken.IsNullOrEmpty())
             {
                 // This is what we would use for 3D Universe Automation only
                 var credentialCache = new CredentialCache();
-                credentialCache.Add(new Uri(url), "Basic", new NetworkCredential(_key, _secret));
+                credentialCache.Add(new Uri(url), "Basic", new NetworkCredential(credentials.Key, credentials.Secret));
                 req.Credentials = credentialCache;
             }
             else
             {
                 // This is normal Shopify Owner plug-in authentication
-                req.Headers["X-Shopify-Access-Token"] = _token;
+                req.Headers["X-Shopify-Access-Token"] = credentials.AccessToken;
             }
             return req;
         }
+
+
+
+
+        //public string HttpPut(string path, string json)
+        //{
+        //    var request = RequestFactory(path);
+        //    request.Method = "PUT";
+        //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+        //    {
+        //        streamWriter.Write(json);
+        //    }
+        //    return ProcessRequest(request);
+        //}
+
+        //public string HttpPost(string path, string json)
+        //{
+        //    var request = RequestFactory(path);
+        //    request.Method = "POST";
+        //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+        //    {
+        //        streamWriter.Write(json);
+        //    }
+        //    return ProcessRequest(request);
+        //}
     }
 }
+

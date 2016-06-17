@@ -122,20 +122,18 @@
   <ItemGroup>
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="CodeDumps.cs" />
-    <Compile Include="DependencyInjectionSchool.cs" />
-    <Compile Include="Factory\ApiRepositoryFactory.cs" />
-    <Compile Include="Factory\MySqlConnectionFactory.cs" />
-    <Compile Include="Factory\SqlServerConnectionFactory.cs" />
+    <Compile Include="CodeDump\CodeDumps.cs" />
+    <Compile Include="CodeDump\DependencyInjectionSchool.cs" />
+    <Compile Include="MultiTenantFactories\ApiRepositoryFactory.cs" />
     <Compile Include="Interceptors.cs" />
     <Compile Include="MasterProcess.cs" />
-    <Compile Include="NaughtyShopifyHttpClient.cs" />
+    <Compile Include="CodeDump\NaughtyShopifyHttpClient.cs" />
+    <Compile Include="MultiTenantFactories\SqlRepositoryFactory.cs" />
     <Compile Include="Orders\OrderRefreshService.cs" />
     <Compile Include="Orders\OrderSkuHistory.cs" />
     <Compile Include="Products\ProductRefreshService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Factory\ShopifyHttpClientFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

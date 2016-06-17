@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -7,14 +6,14 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories
 {
-    public class ProductDataRepository
+    public class ProductDataRepository : IUserIdConsumer
     {
-        private readonly string _userId;
         private readonly MySqlConnection _connection;
+        public string UserId { get; set; }
 
-        public ProductDataRepository(string userId, MySqlConnection connection)
+
+        public ProductDataRepository(MySqlConnection connection)
         {
-            _userId = userId;
             _connection = connection;
         }
 
@@ -23,13 +22,13 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM shopifyproduct WHERE UserId";
             return
                 _connection
-                    .Query<ProductData>(query, new { UserId = _userId })
+                    .Query<ProductData>(query, new { UserId })
                     .ToList();
         }
 
         public virtual void Insert(ProductData product)
         {
-            product.UserId = _userId;
+            product.UserId = UserId;
             var query = @"INSERT INTO shopifyproduct(UserId, ShopifyProductId, Title) 
                         VALUES(@UserId, @ShopifyProductId, @Title)";
             _connection.Execute(query, product);
@@ -39,7 +38,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"DELETE FROM shopifyproduct 
                         WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";
-            _connection.Execute(query, new { UserId = _userId, shopifyProductId });
+            _connection.Execute(query, new { UserId, shopifyProductId });
         }
 
     }

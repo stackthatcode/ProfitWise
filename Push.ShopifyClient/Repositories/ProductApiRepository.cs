@@ -1,28 +1,31 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using Newtonsoft.Json;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
-using Push.Utilities.Helpers;
-using Push.Utilities.Logging;
 
 namespace Push.Shopify.Repositories
 {
-    public class ProductApiRepository
+    public class ProductApiRepository : IShopifyCredentialConsumer
     {
         private readonly IShopifyHttpClient _client;
-        private readonly ILogger _logger;
+        private readonly ShopifyRequestFactory _requestFactory;
+        public ShopifyCredentials ShopifyCredentials { get; set; }
 
-        public ProductApiRepository(IShopifyHttpClient client, ILogger logger)
+
+        public ProductApiRepository(
+                IShopifyHttpClient client, 
+                ShopifyRequestFactory requestFactory)
         {
             _client = client;
-            _logger = logger;
+            _requestFactory = requestFactory;
         }
 
         public int RetrieveCount()
         {
-            var json = _client.HttpGet("/admin/products/count.json");
-            dynamic parent = JsonConvert.DeserializeObject(json.Body);
+            var request = _requestFactory.HttpGet(ShopifyCredentials, "/admin/products/count.json");
+            var clientResponse = _client.ExecuteRequest(request);
+
+            dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             var count = parent.count;
             return count;
         }
@@ -30,8 +33,10 @@ namespace Push.Shopify.Repositories
         public virtual IList<Product> Retrieve(int page = 1, int limit = 250)
         {
             var path = string.Format("/admin/products.json?page={0}&limit={1}", page, limit);
-            var json = _client.HttpGet(path);
-            dynamic parent = JsonConvert.DeserializeObject(json.Body);
+            var request = _requestFactory.HttpGet(ShopifyCredentials, path);
+            var clientResponse = _client.ExecuteRequest(request);
+
+            dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
 
             var results = new List<Product>();
 

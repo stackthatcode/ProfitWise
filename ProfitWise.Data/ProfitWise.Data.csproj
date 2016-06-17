@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Model\ProductData.cs" />
     <Compile Include="Model\VariantData.cs" />
+    <Compile Include="Repositories\IUserIdConsumer.cs" />
     <Compile Include="Repositories\VariantDataRepository.cs" />
     <Compile Include="Repositories\ProductDataRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -21,6 +21,7 @@ namespace Push.Utilities.Web.Identity
         {
             public string Message { get; set; }
             public bool Success { get; set; }
+
             public string ShopOwnerUserId { get; set; }
             public bool Impersonated { get; set; }
 

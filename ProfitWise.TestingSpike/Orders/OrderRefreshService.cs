@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using MySql.Data.MySqlClient;
-using ProfitWise.Batch.Factory;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Shopify.Repositories;
@@ -14,31 +13,25 @@ namespace ProfitWise.Batch.Orders
 {
     public class OrderRefreshService
     {
-        private readonly string _userId;
-
         private readonly OrderApiRepository _orderRepository;
         private readonly ILogger _logger;
+        private readonly ShopifyRequestFactory _requestFactory;
         private readonly MySqlConnection _connection;
 
-        public int ShopifyOrderLimit { get; set; }
-
+        public int ShopifyOrderLimit = 250;
+        
 
         public OrderRefreshService(
-                        string userId, 
                         ILogger logger, 
-                        IShopifyHttpClient shopifyHttpClient,
                         OrderApiRepository orderApiRepository,
-                        MySqlConnectionFactory connectionFactory,
-                        int shopifyOrderLimit = 250)
+                        MySqlConnectionFactory connectionFactory)
         {
-            _userId = userId;
             _logger = logger;
-            ShopifyOrderLimit = shopifyOrderLimit;
             _orderRepository = orderApiRepository;
             _connection = connectionFactory.Make();
         }
 
-        public virtual void Execute()
+        public virtual void Execute(string userId)
         {
             var results = RetrieveAll();
 
@@ -51,7 +44,7 @@ namespace ProfitWise.Batch.Orders
             }
         }
 
-        public IList<Order> RetrieveAll()
+        public virtual IList<Order> RetrieveAll()
         {
             var count = _orderRepository.RetrieveCount();
             var numberofpages = PagingFunctions.NumberOfPages(ShopifyOrderLimit, count);

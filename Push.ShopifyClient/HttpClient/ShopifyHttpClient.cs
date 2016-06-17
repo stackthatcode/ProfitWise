@@ -10,13 +10,6 @@ namespace Push.Shopify.HttpClient
 
     public class ShopifyHttpClient : IShopifyHttpClient
     {
-        private readonly string _key;
-        private readonly string _secret;
-        private readonly string _baseurl;
-        private readonly string _token;
-
-        private readonly string _shopDomain;
-
         private readonly IHttpClient _httpClient;
         private readonly ILogger _logger;
 
@@ -29,30 +22,13 @@ namespace Push.Shopify.HttpClient
 
         public bool ThrowExceptionOnBadHttpStatusCode { get; set; }
 
-
         private static readonly 
             IDictionary<string, DateTime> _shopLastExecutionTime 
                     = new ConcurrentDictionary<string, DateTime>();
 
-
-        public ShopifyHttpClient(IHttpClient httpClient, ILogger logger, string shop_domain, string token)
+        
+        public ShopifyHttpClient(IHttpClient httpClient, ILogger logger)
         {
-            _httpClient = httpClient;
-            _logger = logger;
-
-            _baseurl = ShopUrlFromDomain(shop_domain);
-            _token = token;
-            _shopDomain = shop_domain;
-
-            ConfigureDefaultSettings();
-        }
-
-        public ShopifyHttpClient(IHttpClient httpClient, ILogger logger, string shop_domain, string key, string secret)
-        {
-            _baseurl = ShopUrlFromDomain(shop_domain);
-            _key = key;
-            _secret = secret;
-
             _httpClient = httpClient;
             _logger = logger;
 
@@ -65,20 +41,18 @@ namespace Push.Shopify.HttpClient
             ShopifyRetriesEnabled = false;
             ShopifyHttpTimeout = 30000;
             ShopifyThrottlingDelay = 500;
+            ThrowExceptionOnBadHttpStatusCode = false;
         }
 
-        public virtual HttpClientResponse HttpGet(string path)
+        public virtual HttpClientResponse ExecuteRequest(HttpWebRequest request)
         {
-            var request = ShopifyRequestFactory(path);
-            request.Method = "GET";
-
             if (ShopifyRetriesEnabled)
             {
                 return HttpInvocationWithRetries(request);
             }
             else
             {
-                string message = String.Format("Invoking HTTP GET on {0}", path);
+                string message = String.Format("Invoking HTTP GET on {0}", request.RequestUri.AbsolutePath);
                 _logger.Debug(message);
                 return HttpInvocationWithThrottling(request);
             }
@@ -87,9 +61,11 @@ namespace Push.Shopify.HttpClient
         // NOTE: all HTTP calls must be routed through this method
         private HttpClientResponse HttpInvocationWithThrottling(HttpWebRequest request)
         {
-            if (_shopLastExecutionTime.ContainsKey(_shopDomain))
+            var hostname = request.RequestUri.Host;
+
+            if (_shopLastExecutionTime.ContainsKey(hostname))
             {
-                var lastExecutionTime = _shopLastExecutionTime[_shopDomain];
+                var lastExecutionTime = _shopLastExecutionTime[hostname];
                 var timeSinceLastExecutionTimeSpan = DateTime.Now - lastExecutionTime;
 
                 var ShopifyThrottlingDelayTimeSpan = new TimeSpan(0, 0, 0, 0, ShopifyThrottlingDelay);
@@ -103,7 +79,7 @@ namespace Push.Shopify.HttpClient
             }
 
             _logger.Debug(String.Format("Invoking HTTP GET on {0}", request.RequestUri.AbsoluteUri));
-            _shopLastExecutionTime[_shopDomain] = DateTime.Now;
+            _shopLastExecutionTime[hostname] = DateTime.Now;
 
             var response = _httpClient.ProcessRequest(request);
 
@@ -114,7 +90,7 @@ namespace Push.Shopify.HttpClient
                 throw new BadShopifyHttpStatusCodeException(response.StatusCode);
             }
 
-            var executionTime = DateTime.Now - _shopLastExecutionTime[_shopDomain];
+            var executionTime = DateTime.Now - _shopLastExecutionTime[hostname];
             _logger.Debug(string.Format("Call performance - {0} ms", executionTime));
 
             return response;
@@ -154,34 +130,7 @@ namespace Push.Shopify.HttpClient
         }
 
 
-        private static string ShopUrlFromDomain(string domain)
-        {
-            return string.Format("https://{0}", domain);
-        }
 
-
-
-        //public string HttpPut(string path, string json)
-        //{
-        //    var request = RequestFactory(path);
-        //    request.Method = "PUT";
-        //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-        //    {
-        //        streamWriter.Write(json);
-        //    }
-        //    return ProcessRequest(request);
-        //}
-
-        //public string HttpPost(string path, string json)
-        //{
-        //    var request = RequestFactory(path);
-        //    request.Method = "POST";
-        //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-        //    {
-        //        streamWriter.Write(json);
-        //    }
-        //    return ProcessRequest(request);
-        //}
     }
 }
 

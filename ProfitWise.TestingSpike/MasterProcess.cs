@@ -4,10 +4,11 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProfitWise.Batch.Factory;
 using ProfitWise.Batch.Orders;
 using ProfitWise.Batch.Products;
+using Push.Shopify.HttpClient;
 using Push.Utilities.Logging;
+using Push.Utilities.Web.Identity;
 
 namespace ProfitWise.Batch
 {
@@ -19,32 +20,44 @@ namespace ProfitWise.Batch
 
     public class MasterProcess : IMasterProcess
     {
+        private readonly ShopifyCredentialService _shopifyCredentialService;
+        private readonly OrderRefreshService _orderRefreshService;
+        private readonly ProductRefreshService _productRefreshService;
         private readonly ILogger _logger;
-        private readonly int _refreshServiceShopifyOrderLimit;
 
-        public MasterProcess(ILogger logger)
+        public MasterProcess(
+                ShopifyCredentialService shopifyCredentialService,
+                OrderRefreshService orderRefreshService,
+                ProductRefreshService productRefreshService,
+                ILogger logger)
         {
-            _refreshServiceShopifyOrderLimit =
-                Int32.Parse(ConfigurationManager.AppSettings["RefreshServiceShopifyOrderLimit"]);
-
+            // TODO: move into Autofac configuration
+           
+            _shopifyCredentialService = shopifyCredentialService;
+            _orderRefreshService = orderRefreshService;
+            _productRefreshService = productRefreshService;
             _logger = logger;
         }
 
         public void Execute(string userId)
         {
-            var shopifyClientFactory = new ShopifyHttpClientFactory(_logger);
-            //var shopifyClientFactory = new ShopifyNaughtyClientFactory(_logger);
+            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
 
-            var shopifyHttpClient = shopifyClientFactory.Make(userId);
-            shopifyHttpClient.ShopifyRetriesEnabled = true;
-            shopifyHttpClient.ThrowExceptionOnBadHttpStatusCode = true;
+            if (shopifyFromClaims.Success == false)
+            {
+                throw new Exception(
+                    $"ShopifyCredentialService unable to Retrieve for User {userId}: {shopifyFromClaims.Message}");
+            }
 
-            var productRefreshService = new ProductRefreshService(userId, _logger, shopifyHttpClient);
-            productRefreshService.Execute();
+            var shopifyClientCredentials = new ShopifyCredentials()
+            {
+                ShopOwnerId = shopifyFromClaims.ShopOwnerUserId,
+                ShopDomain = shopifyFromClaims.ShopDomain,
+                AccessToken = shopifyFromClaims.AccessToken,
+            };
 
-            var orderRefreshService = new OrderRefreshService(userId, _logger, shopifyHttpClient);
-            orderRefreshService.ShopifyOrderLimit = _refreshServiceShopifyOrderLimit;
-            orderRefreshService.Execute();
+            _productRefreshService.Execute(shopifyClientCredentials);
+            _orderRefreshService.Execute(shopifyClientCredentials);
         }
     }
 }

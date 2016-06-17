@@ -11,7 +11,9 @@ namespace ProfitWise.Batch
         static void Main(string[] args)
         {
             Bootstrap.ConfigureApp();
-            DependencyInjectionSchool.Test();
+            var container = AutofacRegistration.Build();
+
+
             Console.ReadLine();
         }
 
