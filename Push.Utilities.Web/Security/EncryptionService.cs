@@ -1,14 +1,8 @@
 ﻿using System;
 using Push.Utilities.Helpers;
 
-namespace Push.Utilities.Security
+namespace Push.Foundation.Web.Security
 {
-    public interface IEncryptionService
-    {
-        string Encrypt(string input);
-        string Decrypt(string input);
-    }
-
     public class EncryptionService : IEncryptionService
     {
         public string Key { get; set; }

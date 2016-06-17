@@ -1,4 +1,4 @@
-﻿namespace ProfitWise.Data.Repositories
+﻿namespace ProfitWise.Data.Aspect
 {
     interface IUserIdConsumer
     {

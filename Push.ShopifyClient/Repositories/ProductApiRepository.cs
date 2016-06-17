@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
+using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
+using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Repositories
 {
+    [Intercept(typeof(ShopifyCredentialRequired))]
+
     public class ProductApiRepository : IShopifyCredentialConsumer
     {
         private readonly IShopifyHttpClient _client;
@@ -20,7 +24,7 @@ namespace Push.Shopify.Repositories
             _requestFactory = requestFactory;
         }
 
-        public int RetrieveCount()
+        public virtual int RetrieveCount()
         {
             var request = _requestFactory.HttpGet(ShopifyCredentials, "/admin/products/count.json");
             var clientResponse = _client.ExecuteRequest(request);

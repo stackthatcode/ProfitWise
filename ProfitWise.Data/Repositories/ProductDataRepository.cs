@@ -9,7 +9,7 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories
 {
-    [Intercept(typeof(UserIdRequiredInterceptor))]
+    [Intercept(typeof(UserIdRequired))]
     public class ProductDataRepository : IUserIdConsumer
     {
         private readonly MySqlConnection _connection;

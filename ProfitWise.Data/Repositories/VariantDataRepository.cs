@@ -2,6 +2,7 @@
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
+using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories

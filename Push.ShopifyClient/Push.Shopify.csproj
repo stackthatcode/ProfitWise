@@ -37,6 +37,9 @@
     <Reference Include="Autofac.Extras.DynamicProxy2">
       <HintPath>..\packages\Autofac.Extras.DynamicProxy2.3.0.7\lib\net40\Autofac.Extras.DynamicProxy2.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -51,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aspect\ShopifyCredentialsRequired.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Factories\ApiRepositoryFactory.cs" />
     <Compile Include="HttpClient\BadShopifyHttpStatusCodeException.cs" />
@@ -68,7 +72,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HttpClient\ShopifyHttpClient.cs" />
     <Compile Include="HttpClient\HttpClientResponse.cs" />
-    <Compile Include="Repositories\IShopifyCredentialConsumer.cs" />
+    <Compile Include="Aspect\IShopifyCredentialConsumer.cs" />
     <Compile Include="Repositories\OrderApiRepository.cs" />
     <Compile Include="Repositories\ProductApiRepository.cs" />
   </ItemGroup>

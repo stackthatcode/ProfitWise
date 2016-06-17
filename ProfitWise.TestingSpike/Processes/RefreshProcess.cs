@@ -13,6 +13,7 @@ namespace ProfitWise.Batch.Processes
         private readonly ProductRefreshService _productRefreshService;
         private readonly ILogger _logger;
 
+
         public RefreshProcess(
                 ShopifyCredentialService shopifyCredentialService,
                 OrderRefreshService orderRefreshService,

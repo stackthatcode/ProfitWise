@@ -3,17 +3,19 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 using Push.Utilities.Security;
+using IEncryptionService = Push.Foundation.Web.Security.IEncryptionService;
 
 namespace Push.Foundation.Web.Identity
 {
     public class ShopifyCredentialService
     {
-        public ApplicationUserManager UserManager { get; set; }
-        public static IEncryptionService EncryptionService { get; set; }
-
-        public ShopifyCredentialService(ApplicationUserManager userManager)
+        private readonly ApplicationUserManager _userManager;
+        private readonly IEncryptionService _encryptionService;
+        
+        public ShopifyCredentialService(ApplicationUserManager userManager, IEncryptionService encryptionService)
         {
-            UserManager = userManager;
+            _userManager = userManager;
+            _encryptionService = encryptionService;
         }
 
 
@@ -31,7 +33,7 @@ namespace Push.Foundation.Web.Identity
 
         public RetrieveResult Retrieve(string currentUserId)
         {
-            var roles = UserManager.GetRoles(currentUserId);
+            var roles = _userManager.GetRoles(currentUserId);
             var isCurrentUserIsAdmin = roles.Contains(SecurityConfig.AdminRole);
             var shopUserId = "";
 
@@ -81,7 +83,7 @@ namespace Push.Foundation.Web.Identity
 
             try
             {
-                access_token = EncryptionService.Decrypt(access_token_encrypted);
+                access_token = _encryptionService.Decrypt(access_token_encrypted);
             }
             catch(Exception e)
             {
@@ -120,7 +122,7 @@ namespace Push.Foundation.Web.Identity
             RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
             RemoveClaim(userId, SecurityConfig.ShopifyDomainClaim);
 
-            AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, EncryptionService.Encrypt(unencryptedAccessToken));
+            AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, _encryptionService.Encrypt(unencryptedAccessToken));
             AddClaim(userId, SecurityConfig.ShopifyDomainClaim, shopName);
         }
 
@@ -136,18 +138,18 @@ namespace Push.Foundation.Web.Identity
 
         public string RetrieveClaimValue(string userId, string claimId)
         {
-            var claims = UserManager.GetClaims(userId);
+            var claims = _userManager.GetClaims(userId);
             var claim = claims.FirstOrDefault(x => x.Type == claimId);
             return claim == null ? null : claim.Value;
         }
 
         public void RemoveClaim(string userId, string claimId)
         {
-            var claims = UserManager.GetClaims(userId);
+            var claims = _userManager.GetClaims(userId);
             var claim = claims.FirstOrDefault(x => x.Type == claimId);
             if (claim != null)
             {
-                var result = UserManager.RemoveClaim(userId, claim);
+                var result = _userManager.RemoveClaim(userId, claim);
                 if (result.Succeeded == false)
                 {
                     var errors = String.Join(Environment.NewLine, result.Errors);
@@ -159,7 +161,7 @@ namespace Push.Foundation.Web.Identity
 
         public void AddClaim(string userId, string claimId, string claimValue)
         {
-            var result = UserManager.AddClaim(userId, new Claim(claimId, claimValue));
+            var result = _userManager.AddClaim(userId, new Claim(claimId, claimValue));
 
             if (result.Succeeded == false)
             {

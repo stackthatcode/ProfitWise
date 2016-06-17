@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
+using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
+using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Repositories
 {
+    [Intercept(typeof(ShopifyCredentialRequired))]
+
     public class OrderApiRepository : IShopifyCredentialConsumer
     {
         private readonly IShopifyHttpClient _client;
         private readonly ShopifyRequestFactory _requestFactory;
 
         public ShopifyCredentials ShopifyCredentials { get; set; }
-
 
         public OrderApiRepository(
                 IShopifyHttpClient client, 

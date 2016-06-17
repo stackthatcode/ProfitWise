@@ -36,9 +36,6 @@ namespace Push.Utilities.Helpers
             }
         }
 
-
-
-
         public static string AesEncryptString(this string input, string keyString, string IVString)
         {
             var Key = Encoding.UTF8.GetBytes(keyString);

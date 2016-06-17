@@ -90,10 +90,10 @@ namespace ProfitWise.Batch.RefreshServices
 
                 foreach (var variant in product.Variants)
                 {
-                    if (variant.Id == 1190225328)
-                    {
-                        throw new Exception("fuck that shit!!! database no like!!!");
-                    }
+                    //if (variant.Id == 1190225328)
+                    //{
+                    //    throw new Exception("fuck that shit!!! database no like!!!");
+                    //}
 
                     var variantData = new VariantData()
                     {
