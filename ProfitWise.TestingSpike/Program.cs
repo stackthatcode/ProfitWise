@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
+using Autofac;
 using Hangfire;
+using ProfitWise.Batch.Processes;
 using Push.Utilities.Logging;
 
 
@@ -11,9 +13,11 @@ namespace ProfitWise.Batch
         static void Main(string[] args)
         {
             Bootstrap.ConfigureApp();
-            var container = AutofacRegistration.Build();
-
-
+            using (var container = AutofacRegistration.Build())
+            {
+                InvokeRefreshServices(container);
+            }
+            
             Console.ReadLine();
         }
 
@@ -32,23 +36,21 @@ namespace ProfitWise.Batch
 
 
 
-        private static void InvokeRefreshServices()
+        private static void InvokeRefreshServices(IContainer container)
         {
-            var logger = LoggerSingleton.Get();
+            var logger = container.Resolve<ILogger>();
             try
             {
                 // This is for simulation purposes - in the future, we'll load a list of Users from database
                 var userId = "a4ae6621-57ec-4ca8-837f-0b439e3cc710";
 
-                //ProxyPoc();
-                var masterProcess = new MasterProcess(logger);
-                masterProcess.Execute(userId);
+                var refreshProcess = container.Resolve<RefreshProcess>();
+                refreshProcess.Execute(userId);
             }
             catch (Exception e)
             {
                 logger.Error(e);
                 logger.Fatal(e.Message);
-
 
                 var trace = new System.Diagnostics.StackTrace();
                 

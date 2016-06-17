@@ -7,26 +7,17 @@ using Autofac.Extras.DynamicProxy2;
 using Microsoft.AspNet.Identity.EntityFramework;
 using MySql.Data.MySqlClient;
 using ProfitWise.Batch.MultiTenantFactories;
-using ProfitWise.Batch.Orders;
-using ProfitWise.Batch.Products;
+using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Repositories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Repositories;
+using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 using Push.Utilities.Web.Identity;
-using MySqlConnectionFactory = MySql.Data.Entity.MySqlConnectionFactory;
+
 
 namespace ProfitWise.Batch
 {
-
-    public static class ConfigurationExtension
-    {
-        public static int? AppSettingIntGet(this NameValueCollection collection, string name)
-        {
-            return collection[name] == null ? (int?)null : Int32.Parse(collection[name]);
-        }
-    }
-
     public class AutofacRegistration
     {
         public static IContainer Build()
@@ -35,12 +26,12 @@ namespace ProfitWise.Batch
             var mysqlConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             var hangFileConnectionString = ConfigurationManager.ConnectionStrings["HangFireConnection"].ConnectionString;
 
-            var shopifyRetryLimit = ConfigurationManager.AppSettings.AppSettingIntGet("ShopifyRetryLimit") ?? 3;
-            var shopifyHttpTimeout = ConfigurationManager.AppSettings.AppSettingIntGet("ShopifyHttpTimeout") ?? 60000;
-            var shopifyThrottlingDelay = ConfigurationManager.AppSettings.AppSettingIntGet("ShopifyThrottlingDelay") ?? 500;
-
+            var shopifyRetryLimit = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyRetryLimit", 3);
+            var shopifyHttpTimeout = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyHttpTimeout", 60000);
+            var shopifyThrottlingDelay = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyThrottlingDelay", 500);
             var refreshServiceShopifyOrderLimit =
-                ConfigurationManager.AppSettings.AppSettingIntGet("RefreshServiceShopifyOrderLimit") ?? 250;
+                ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceShopifyOrderLimit", 250);
+
 
 
             // Autofac registration sequence
@@ -49,26 +40,27 @@ namespace ProfitWise.Batch
             // Push.Shopify classes
             builder.RegisterType<HttpClient>().As<IHttpClient>().EnableClassInterceptors();
             builder.RegisterType<ShopifyHttpClient>().As<IShopifyHttpClient>().EnableClassInterceptors();
+            builder.RegisterType<ShopifyRequestFactory>().EnableClassInterceptors();
             builder.RegisterType<OrderApiRepository>().EnableClassInterceptors();
             builder.RegisterType<ProductApiRepository>().EnableClassInterceptors();
+            builder.RegisterType<ApiRepositoryFactory>();
 
             // ProfitWise.Data classes
             builder.RegisterType<ProductDataRepository>().EnableClassInterceptors();
             builder.RegisterType<VariantDataRepository>().EnableClassInterceptors();
+            builder.RegisterType<SqlRepositoryFactory>().EnableClassInterceptors();
 
-            // ProfitWise.Batch classes
+            // Push.Web Identity Stuff
             builder.RegisterType<ApplicationUserManager>();
             builder.RegisterType<UserStore<ApplicationUser>>();
 
-            //builder.Register(c  => 
-                    
-            //    ).As<IShopifyClientFactory>().EnableClassInterceptors();
+            // ProfitWise.Batch classes
             builder.RegisterType<OrderRefreshService>().EnableClassInterceptors();
             builder.RegisterType<ProductRefreshService>().EnableClassInterceptors();
             builder.RegisterType<ApiRepositoryFactory>().EnableClassInterceptors();
             builder.RegisterType<ApiRepositoryFactory>().EnableClassInterceptors();
 
-            // SQL Persistence
+            // SQL connections
             builder.Register<MySqlConnection>(ctx =>
             {
                 var connectionstring = mysqlConnectionString;
@@ -85,6 +77,8 @@ namespace ProfitWise.Batch
 
             // Infrastructure setup & configuration binding
             builder.Register(c => LoggerSingleton.Get()).As<ILogger>();
+
+            // Proxy Registration
             builder.RegisterType<LoggingInterceptor>();
             
             return builder.Build();

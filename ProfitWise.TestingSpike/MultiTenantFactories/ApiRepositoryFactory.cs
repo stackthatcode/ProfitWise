@@ -18,14 +18,14 @@ namespace ProfitWise.Batch.MultiTenantFactories
             _productApiRepositoryFactory = productApiRepositoryFactory;
         }
 
-        public OrderApiRepository MakeOrderApiRepository(ShopifyCredentials credentials)
+        public virtual OrderApiRepository MakeOrderApiRepository(ShopifyCredentials credentials)
         {
             var repository = _orderApiRepositoryFactory();
             repository.ShopifyCredentials = credentials;
             return repository;
         }
 
-        public ProductApiRepository MakeProductApiRepository(ShopifyCredentials credentials)
+        public virtual ProductApiRepository MakeProductApiRepository(ShopifyCredentials credentials)
         {
             var repository = _productApiRepositoryFactory();
             repository.ShopifyCredentials = credentials;

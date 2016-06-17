@@ -9,9 +9,9 @@ using Push.Utilities.General;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 
-namespace ProfitWise.Batch.Products
+namespace ProfitWise.Batch.RefreshServices
 {
-    public class ProductRefreshService : IDisposable
+    public class ProductRefreshService
     {
         private readonly ILogger _logger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
@@ -30,7 +30,6 @@ namespace ProfitWise.Batch.Products
             _sqlRepositoryFactory = sqlRepositoryFactory;
         }
 
-
         public virtual void Execute(ShopifyCredentials shopCredentials)
         {
             var allproducts = RetrieveAll(shopCredentials);
@@ -38,13 +37,12 @@ namespace ProfitWise.Batch.Products
             WriteAllProductsToDatabase(shopCredentials, allproducts);
         }
 
-
         public virtual IList<Product> RetrieveAll(ShopifyCredentials shopCredentials)
         {
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
             
             var count = productApiRepository.RetrieveCount();
-            _logger.Info(string.Format("{0} - Executing", this.ClassAndMethodName()));
+            _logger.Info($"{this.ClassAndMethodName()} - Executing");
 
             var numberofpages = PagingFunctions.NumberOfPages(ShopifyOrderLimit, count);
             var results = new List<Product>();
@@ -55,8 +53,7 @@ namespace ProfitWise.Batch.Products
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 _logger.Debug(
-                    string.Format(
-                        "{2} - page {0} of {1} pages", pagenumber, numberofpages, this.ClassAndMethodName()));
+                    $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
 
                 var products = productApiRepository.Retrieve(pagenumber, ShopifyOrderLimit);
                 results.AddRange(products);
@@ -64,9 +61,7 @@ namespace ProfitWise.Batch.Products
 
             TimeSpan ts = stopWatch.Elapsed;
             _logger.Debug(
-                string.Format(
-                    "{2} total execution time {0} to fetch {1} Products",
-                    ts.ToFormattedString(), results.Count, this.ClassAndMethodName()));
+                $"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to fetch {results.Count} Products");
 
             return results;
         }
@@ -75,7 +70,6 @@ namespace ProfitWise.Batch.Products
         {
             var productDataRepository = this._sqlRepositoryFactory.MakeProductDataRepository(shopCredentials.ShopOwnerId);
             var variantDataRepository = this._sqlRepositoryFactory.MakeVariantDataRepository(shopCredentials.ShopOwnerId);
-
 
             foreach (var product in allproducts)
             {
@@ -91,7 +85,7 @@ namespace ProfitWise.Batch.Products
 
                 productDataRepository.Insert(productData);
 
-                _logger.Debug(string.Format("{0} - Inserting Product: {1} ({2})", this.ClassAndMethodName(), product.Title, product.Id));
+                _logger.Debug($"{this.ClassAndMethodName()} - Inserting Product: {product.Title} ({product.Id})");
 
                 foreach (var variant in product.Variants)
                 {
@@ -99,6 +93,7 @@ namespace ProfitWise.Batch.Products
                     {
                         throw new Exception("fuck that shit!!! database no like!!!");
                     }
+
                     var variantData = new VariantData()
                     {
                         UserId = shopCredentials.ShopOwnerId,
@@ -109,12 +104,11 @@ namespace ProfitWise.Batch.Products
                         Title = variant.Title,
                     };
 
-                    _logger.Debug(string.Format("{0} - Inserting Variant: {1} ({2})", this.ClassAndMethodName(), variant.Title, variant.Id));
+                    _logger.Debug($"{this.ClassAndMethodName()} - Inserting Variant: {variant.Title} ({variant.Id})");
                     variantDataRepository.Insert(variantData);
                 };
             }
-        }
-        
+        }        
     }
 }
 

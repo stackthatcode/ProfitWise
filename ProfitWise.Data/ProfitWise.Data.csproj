@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factories\SqlRepositoryFactory.cs" />
     <Compile Include="Model\ProductData.cs" />
     <Compile Include="Model\VariantData.cs" />
     <Compile Include="Repositories\IUserIdConsumer.cs" />

@@ -126,12 +126,12 @@
     <Compile Include="CodeDump\DependencyInjectionSchool.cs" />
     <Compile Include="MultiTenantFactories\ApiRepositoryFactory.cs" />
     <Compile Include="Interceptors.cs" />
-    <Compile Include="MasterProcess.cs" />
+    <Compile Include="Processes\RefreshProcess.cs" />
     <Compile Include="CodeDump\NaughtyShopifyHttpClient.cs" />
     <Compile Include="MultiTenantFactories\SqlRepositoryFactory.cs" />
-    <Compile Include="Orders\OrderRefreshService.cs" />
-    <Compile Include="Orders\OrderSkuHistory.cs" />
-    <Compile Include="Products\ProductRefreshService.cs" />
+    <Compile Include="RefreshServices\OrderRefreshService.cs" />
+    <Compile Include="RefreshServices\OrderSkuHistory.cs" />
+    <Compile Include="RefreshServices\ProductRefreshService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,31 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProfitWise.Batch.Orders;
-using ProfitWise.Batch.Products;
+using ProfitWise.Batch.RefreshServices;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Logging;
 using Push.Utilities.Web.Identity;
 
-namespace ProfitWise.Batch
+namespace ProfitWise.Batch.Processes
 {
-    public interface IMasterProcess
-    {
-        void Execute(string userId);
-    }
-
-
-    public class MasterProcess : IMasterProcess
+    public class RefreshProcess
     {
         private readonly ShopifyCredentialService _shopifyCredentialService;
         private readonly OrderRefreshService _orderRefreshService;
         private readonly ProductRefreshService _productRefreshService;
         private readonly ILogger _logger;
 
-        public MasterProcess(
+        public RefreshProcess(
                 ShopifyCredentialService shopifyCredentialService,
                 OrderRefreshService orderRefreshService,
                 ProductRefreshService productRefreshService,
