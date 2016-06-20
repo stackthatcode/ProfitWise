@@ -16,5 +16,4 @@ namespace Push.Foundation.Web.Identity
             return userIdentity;
         }
     }
-
 }

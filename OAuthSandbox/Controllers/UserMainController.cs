@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace OAuthSandbox.Controllers
+namespace ProfitWise.Web.Controllers
 {
     public class UserMainController : Controller
     {

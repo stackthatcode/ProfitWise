@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Security.Claims;
+using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -9,29 +10,15 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 using Owin.Security.Providers.Shopify;
-using Push.Utilities.Helpers;
-using Push.Utilities.Security;
 using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web
 {
     public partial class Startup
     {
-        public void ConfigureAuth(IAppBuilder app)
+        public void ConfigureAuth(IAppBuilder app, IContainer autofacContainer)
         {
-            // Credential Service
-            var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
-            var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
-
-
-            // Configure the db context, user manager and signin manager to use a single instance per request
-            app.CreatePerOwinContext(ApplicationDbContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
-            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
-
-            // Customized Role Manager
-            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
-
+            app.UseAutofacMiddleware(autofacContainer);
 
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
@@ -55,11 +42,9 @@ namespace ProfitWise.Web
 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
-
-            // Temporary, before we create a custom configuration section that can be encrypted via machine key
+            // Shopify Authorization
             var shopify_config_apikey = ConfigurationManager.AppSettings["shopify_config_apikey"];
-            var shopify_config_apisecret = ConfigurationManager.AppSettings["shopify_config_apisecret"];
-            
+            var shopify_config_apisecret = ConfigurationManager.AppSettings["shopify_config_apisecret"];            
             var shopify_options = new ShopifyAuthenticationOptions()
             {
                 ApiKey = shopify_config_apikey,
@@ -104,24 +89,20 @@ namespace ProfitWise.Web
         }
 
 
-        public void ConfigureDefaultSecurityData()
+        public void SeedDefaultSecurityDataIfNeeded(IContainer container)
         {
-            // TODO: why does this work? What about the configuration operations? Hmmm...
-            var context = ApplicationDbContext.Create();
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
-
-            IdentityResult roleResult;
-
+            // Evil service locator, anti-pattern. But: it's ok enough, as this is close to composition root.
+            var userManager = container.Resolve<UserManager<ApplicationUser>>();
+            var roleManager = container.Resolve<RoleManager<IdentityRole>>();
 
             // Check to see if Role Exists, if not create it
             if (!roleManager.RoleExists(SecurityConfig.AdminRole))
             {
-                roleResult = roleManager.Create(new IdentityRole(SecurityConfig.AdminRole));
+                roleManager.Create(new IdentityRole(SecurityConfig.AdminRole));
             }
             if (!roleManager.RoleExists(SecurityConfig.UserRole))
             {
-                roleResult = roleManager.Create(new IdentityRole(SecurityConfig.UserRole));
+                roleManager.Create(new IdentityRole(SecurityConfig.UserRole));
             }
 
             var adminUser = userManager.FindByName(SecurityConfig.DefaultAdminEmail);

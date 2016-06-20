@@ -3,21 +3,30 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using OAuthSandbox.Models;
 using ProfitWise.Web.Plumbing;
 using Push.Utilities.Helpers;
 using Push.Foundation.Web.Helpers;
+using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web.Controllers
 {
     [Authorize]
     public class AdminAuthController : Controller
     {
-        private readonly OwinServices _owinServices;
+        private readonly ApplicationUserManager _userManager;
+        private readonly ApplicationSignInManager _signInManager;
+        private readonly IAuthenticationManager _authenticationManager;
 
-        public AdminAuthController()
+        public AdminAuthController(
+                ApplicationUserManager userManager, 
+                ApplicationSignInManager signInManager, 
+                IAuthenticationManager authenticationManager)
         {
-            _owinServices = new OwinServices(this);
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _authenticationManager = authenticationManager;
         }
 
 
@@ -43,7 +52,7 @@ namespace ProfitWise.Web.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = 
-                await _owinServices.SignInManager.PasswordSignInAsync(
+                await _signInManager.PasswordSignInAsync(
                         model.Email, model.Password, model.RememberMe, shouldLockout: false);
 
             switch (result)
@@ -73,7 +82,7 @@ namespace ProfitWise.Web.Controllers
             {
                 return View("Error");
             }
-            var result = await _owinServices.UserManager.ConfirmEmailAsync(userId, code);
+            var result = await _userManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
@@ -93,8 +102,8 @@ namespace ProfitWise.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _owinServices.UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await _owinServices.UserManager.IsEmailConfirmedAsync(user.Id)))
+                var user = await _userManager.FindByNameAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -137,14 +146,14 @@ namespace ProfitWise.Web.Controllers
             {
                 return View(model);
             }
-            var user = await _owinServices.UserManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByNameAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "AdminAuth");
             }
 
-            var result = await _owinServices.UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            var result = await _userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction("ResetPasswordConfirmation", "AdminAuth");
@@ -167,7 +176,7 @@ namespace ProfitWise.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            _owinServices.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            _authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
 

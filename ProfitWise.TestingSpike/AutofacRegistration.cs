@@ -1,14 +1,12 @@
 ﻿using System.Configuration;
 using System.Data.SqlClient;
 using Autofac;
-using Autofac.Extras.DynamicProxy2;
 using MySql.Data.MySqlClient;
-using ProfitWise.Batch.Processes;
 using ProfitWise.Batch.RefreshServices;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
-using Push.Shopify.Factories;
+using Push.Utilities.CastleProxies;
 using Push.Utilities.Errors;
 
 
@@ -24,7 +22,8 @@ namespace ProfitWise.Batch
 
             // Infrastructure setup & configuration binding
             builder.Register(c => LoggerSingleton.Get()).As<ILogger>();
-            builder.RegisterType<ErrorForensics>();
+            var registry = new InceptorRegistry();
+            registry.Add(typeof(ErrorForensics));
 
 
             // ProfitWise.Data registration
@@ -36,7 +35,7 @@ namespace ProfitWise.Batch
             var mysqlConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             var hangFileConnectionString = ConfigurationManager.ConnectionStrings["HangFireConnection"].ConnectionString;
 
-            // ... and register objects
+            // ... and register configurationa
             builder.Register<MySqlConnection>(ctx =>
             {
                 var connectionstring = mysqlConnectionString;
@@ -49,6 +48,15 @@ namespace ProfitWise.Batch
                 var connectionString = hangFileConnectionString;
                 return new SqlConnection(connectionString);
             });
+
+            builder.Register(x => new RefreshServiceConfiguration()
+            {
+                RefreshServiceMaxOrderRate =
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxOrderRate", 50),
+                RefreshServiceMaxProduceRate =
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProduceRate", 100),
+            });
+
 
 
             // Push.Shopify registration
@@ -70,37 +78,7 @@ namespace ProfitWise.Batch
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
             var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
             Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
-
             
-            // ProfitWise.Batch registration
-            builder.RegisterType<OrderRefreshService>()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
-
-            builder.RegisterType<ProductRefreshService>()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
-
-            builder.RegisterType<ApiRepositoryFactory>()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
-
-            builder.RegisterType<ApiRepositoryFactory>()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
-
-            builder.RegisterType<RefreshProcess>()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
-
-            builder.Register<RefreshServiceConfiguration>(x => new RefreshServiceConfiguration()
-            {
-                RefreshServiceMaxOrderRate =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxOrderRate", 50),
-                RefreshServiceMaxProduceRate =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProduceRate", 100),
-            });
-
 
             // Fin!
             return builder.Build();

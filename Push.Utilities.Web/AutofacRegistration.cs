@@ -1,8 +1,8 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Security;
 
@@ -18,21 +18,21 @@ namespace Push.Foundation.Web
                 .As<ApplicationDbContext>();
 
             builder.RegisterType<ApplicationRoleManager>();
-            builder.RegisterType<ShopifyCredentialService>();
+            builder.RegisterType<ApplicationUserManager>();
+            builder.RegisterType<ApplicationSignInManager>();
+
             builder.RegisterType<UserStore<ApplicationUser>>()
                 .As<IUserStore<ApplicationUser>>()
                 .As<UserStore<ApplicationUser>>();
+            builder.RegisterType<RoleStore<IdentityRole>>();
 
-            builder.RegisterType<ApplicationUserManager>();
+            builder.RegisterType<DataProtectorTokenProvider<ApplicationUser>>();
 
             builder.Register<EncryptionService>(
                 ctx => new EncryptionService(encryption_key, encryption_iv))
                 .As<IEncryptionService>();
 
             builder.RegisterType<ShopifyCredentialService>();
-
-            // TODO: how can we get around the sloppy OWIN stuff...?
-            //builder.RegisterType<ApplicationSignInManager>();
         }
     }
 }

@@ -10,7 +10,7 @@ using Push.Utilities.General;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 
-namespace ProfitWise.Batch.RefreshServices
+namespace ProfitWise.Data.RefreshServices
 {
     public class ProductRefreshService
     {

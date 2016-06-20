@@ -1,10 +1,10 @@
 ﻿using System;
-using ProfitWise.Batch.RefreshServices;
+using ProfitWise.Data.RefreshServices;
+using Push.Foundation.Web.Identity;
 using Push.Shopify.HttpClient;
 using Push.Utilities.Logging;
-using Push.Foundation.Web.Identity;
 
-namespace ProfitWise.Batch.Processes
+namespace ProfitWise.Data.Processes
 {
     public class RefreshProcess
     {

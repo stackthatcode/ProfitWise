@@ -1,50 +1,30 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using OAuthSandbox.Models;
 using ProfitWise.Web.Plumbing;
-using Push.Utilities.Security;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 
-namespace OAuthSandbox.Controllers
+namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN")]
     public class AdminHomeController : Controller
     {
-        private ShopifyCredentialService _shopifyCredentialService;
-        private readonly OwinServices _owinServices;
+        private readonly ShopifyCredentialService _shopifyCredentialService;
+        private readonly ApplicationDbContext _dbContext;
 
-        public AdminHomeController()
+        public AdminHomeController(ApplicationDbContext dbContext)
         {
-            _owinServices = new OwinServices(this);
+            _dbContext = dbContext;
         }
 
-        public AdminHomeController(ShopifyCredentialService shopifyCredentialService)
+        public AdminHomeController(ShopifyCredentialService shopifyCredentialService, ApplicationDbContext dbContext)
         {
             _shopifyCredentialService = shopifyCredentialService;
+            _dbContext = dbContext;
         }
-        
-
-        public ShopifyCredentialService ShopifyCredentialService
-        {
-            get
-            {
-                if (_shopifyCredentialService == null)
-                {
-                    _shopifyCredentialService = new ShopifyCredentialService(_owinServices.UserManager);
-                }
-                return _shopifyCredentialService;
-            }
-            private set
-            {
-                _shopifyCredentialService = value;
-            }
-        }
-
 
 
         // GET: AdminHome
@@ -58,12 +38,12 @@ namespace OAuthSandbox.Controllers
         [HttpGet]
         public ActionResult Users(string message = null)
         {
-            var dbContext = ApplicationDbContext.Create();
-            var adminRoleId = dbContext.Roles.First(x => x.Name == SecurityConfig.AdminRole).Id;
-            var credentials = this.ShopifyCredentialService.Retrieve(User.Identity.GetUserId());
+            var adminRoleId = _dbContext.Roles.First(x => x.Name == SecurityConfig.AdminRole).Id;
+
+            var credentials = _shopifyCredentialService.Retrieve(User.Identity.GetUserId());
             
             var users =
-                dbContext.Users
+                _dbContext.Users
                     .Where(x => x.Roles.All(role => role.RoleId != adminRoleId))
                     .ToList();
 
@@ -77,23 +57,21 @@ namespace OAuthSandbox.Controllers
             return View(model);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Impersonate(string userId)
         {
             var currentUserId = HttpContext.User.ExtractUserId();
-            ShopifyCredentialService.SetAdminImpersonation(currentUserId, userId);
+            _shopifyCredentialService.SetAdminImpersonation(currentUserId, userId);
             return RedirectToAction("Index", "UserHome");
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ClearImpersonation()
         {
             var currentUserId = HttpContext.User.ExtractUserId();
-            ShopifyCredentialService.ClearAdminImpersonation(currentUserId);
+            _shopifyCredentialService.ClearAdminImpersonation(currentUserId);
             return RedirectToAction("Users");
         }
     }

@@ -15,13 +15,21 @@ namespace ProfitWise.Web.Controllers
 {
     public class ShopifyAuthController : Controller
     {
-        private readonly OwinServices _owinServices;
+        private readonly IAuthenticationManager _authenticationManager;
+        private readonly ApplicationUserManager _userManager;
+        private readonly ApplicationSignInManager _signInManager;
+        private readonly ShopifyCredentialService _credentialService;
 
-        public ShopifyAuthController()
+        public ShopifyAuthController(
+                IAuthenticationManager authenticationManager, 
+                ApplicationUserManager userManager,
+                ApplicationSignInManager signInManager, ShopifyCredentialService credentialService)
         {
-            _owinServices = new OwinServices(this);
+            _authenticationManager = authenticationManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _credentialService = credentialService;
         }
-        
 
 
         // GET: /ShopifyAuth/Index
@@ -48,14 +56,14 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
-            var externalLoginInfo = await _owinServices.AuthenticationManager.GetExternalLoginInfoAsync();
+            var externalLoginInfo = await _authenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
                 return RedirectToAction("Index", "ShopifyAuth");
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await _owinServices.SignInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
+            var result = await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -98,14 +106,14 @@ namespace ProfitWise.Web.Controllers
             }
 
             // Get the information about the user from the external login provider
-            var externalLoginInfo = await _owinServices.AuthenticationManager.GetExternalLoginInfoAsync();
+            var externalLoginInfo = await _authenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
                 return View("ExternalLoginFailure");
             }
             
             // User does not exist in our System? 
-            ApplicationUser user = await _owinServices.UserManager.FindAsync(externalLoginInfo.Login);
+            ApplicationUser user = await _userManager.FindAsync(externalLoginInfo.Login);
 
             // If not, create a new Application User
             if (user == null)
@@ -120,14 +128,14 @@ namespace ProfitWise.Web.Controllers
                     Email = model.Email
                 };
                 
-                var result = await _owinServices.UserManager.CreateAsync(user);
+                var result = await _userManager.CreateAsync(user);
                 if (!result.Succeeded)
                 {
                     this.AddErrors(result);
                     return View(model);
                 }
 
-                _owinServices.UserManager.AddToRole(user.Id, SecurityConfig.UserRole);
+                _userManager.AddToRole(user.Id, SecurityConfig.UserRole);
             }
 
             // Do we have this Login already?
@@ -136,7 +144,7 @@ namespace ProfitWise.Web.Controllers
                             x.LoginProvider == externalLoginInfo.Login.LoginProvider &&
                             x.ProviderKey == externalLoginInfo.Login.ProviderKey) == null)
             {
-                var result = await _owinServices.UserManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
+                var result = await _userManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
                 if (!result.Succeeded)
                 {
                     this.AddErrors(result);
@@ -148,14 +156,14 @@ namespace ProfitWise.Web.Controllers
             await CopyIdentityClaimsToPersistence(externalLoginInfo);
 
             // Finally Sign-in Manager
-            await _owinServices.SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
             return RedirectToLocal(returnUrl);
         }
 
         private async Task CopyIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
-            ApplicationUser user = await _owinServices.UserManager.FindAsync(externalLoginInfo.Login);
+            ApplicationUser user = await _userManager.FindAsync(externalLoginInfo.Login);
             var new_domain_claim =
                 externalLoginInfo
                     .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaimExternal);
@@ -164,8 +172,7 @@ namespace ProfitWise.Web.Controllers
                 externalLoginInfo.ExternalIdentity.Claims.FirstOrDefault(
                     x => x.Type == SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
 
-            var credentialService = new ShopifyCredentialService(_owinServices.UserManager);
-            credentialService.SetUserCredentials(user.Id, new_domain_claim.Value, new_access_token_claim.Value);
+            _credentialService.SetUserCredentials(user.Id, new_domain_claim.Value, new_access_token_claim.Value);
         }
 
 
@@ -175,7 +182,7 @@ namespace ProfitWise.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            _owinServices.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            _authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "ShopifyAuth");
         }
 

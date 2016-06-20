@@ -2,7 +2,7 @@
 using System.Configuration;
 using Autofac;
 using Hangfire;
-using ProfitWise.Batch.Processes;
+using ProfitWise.Data.Processes;
 using Push.Utilities.Logging;
 
 

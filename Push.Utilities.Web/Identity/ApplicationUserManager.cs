@@ -1,22 +1,27 @@
 ﻿using System;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
 
 namespace Push.Foundation.Web.Identity
 {
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
-        public ApplicationUserManager(IUserStore<ApplicationUser> store)
+        public ApplicationUserManager(
+                IUserStore<ApplicationUser> store,
+                DataProtectorTokenProvider<ApplicationUser> userTokenProvider,
+                EmailService emailService, 
+                SmsService smsService)
             : base(store)
         {
+            this.EmailService = emailService;
+            this.SmsService = smsService;
+            this.UserTokenProvider = userTokenProvider;
+            ApplyDefaultSettings(this);
         }
 
-        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
-        {
-            var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
 
+        public static void ApplyDefaultSettings(ApplicationUserManager manager)
+        {
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
@@ -37,19 +42,7 @@ namespace Push.Foundation.Web.Identity
             // Configure user lockout defaults
             manager.UserLockoutEnabledByDefault = true;
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            manager.MaxFailedAccessAttemptsBeforeLockout = 5;
-
-
-            manager.EmailService = new EmailService();
-            manager.SmsService = new SmsService();
-
-            var dataProtectionProvider = options.DataProtectionProvider;
-            if (dataProtectionProvider != null)
-            {
-                manager.UserTokenProvider =
-                    new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
-            }
-            return manager;
+            manager.MaxFailedAccessAttemptsBeforeLockout = 5;            
         }
     }
 }

@@ -1,25 +1,37 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using OAuthSandbox.Controllers;
-using OAuthSandbox.Models;
+using OAuthSandbox.Attributes;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 
-namespace OAuthSandbox.Attributes
+namespace ProfitWise.Web.Attributes
 {
     public class IdentityCachingAttribute : ActionFilterAttribute, IActionFilter
     {
+        private readonly Func<RoleManager<IdentityRole>> _roleManagerFactory;
+        private readonly Func<ApplicationDbContext> _dbContextFactory;
+
+        public IdentityCachingAttribute(
+                Func<RoleManager<IdentityRole>> roleManagerFactory,
+                Func<ApplicationDbContext> dbContextFactory)
+        {
+            _roleManagerFactory = roleManagerFactory;
+            _dbContextFactory = dbContextFactory;
+        }
+
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var dbContext = new ApplicationDbContext();
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dbContext));
+            var dbContext = _dbContextFactory();
+            var roleManager = _roleManagerFactory();
 
+            // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
-            UserBrief userBrief = null;
+            UserBrief userBrief = null;            
 
             if (userId != null)
             {

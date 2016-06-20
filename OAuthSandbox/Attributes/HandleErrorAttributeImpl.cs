@@ -1,7 +1,5 @@
-﻿using System.Configuration;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
-using Push.Utilities.General;
 using Push.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 
@@ -9,6 +7,14 @@ namespace ProfitWise.Web.Attributes
 {
     public class HandleErrorAttributeImpl : HandleErrorAttribute
     {
+        private readonly ILogger _logger;
+
+        public HandleErrorAttributeImpl(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+
         public override void OnException(ExceptionContext filterContext)
         {
             if (filterContext.ExceptionHandled) return;
@@ -16,12 +22,11 @@ namespace ProfitWise.Web.Attributes
             if (!ExceptionType.IsInstanceOfType(filterContext.Exception)) return;
 
             // Log the Exception
-            var logger = LoggerSingleton.Get();
-            
-            logger.Error(
+            _logger.Error(
                     "URL:" + filterContext.HttpContext.Request.Url + " - " +
                     "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest());
-            logger.Error(filterContext.Exception);
+            _logger.Error(filterContext.Exception);
+
 
             // Notify System Admins
             //ErrorNotification.Send(filterContext.Exception);

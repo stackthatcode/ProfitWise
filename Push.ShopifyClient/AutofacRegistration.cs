@@ -4,6 +4,7 @@ using Push.Shopify.Aspect;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Repositories;
+using Push.Utilities.CastleProxies;
 using Push.Utilities.Errors;
 
 
@@ -14,35 +15,35 @@ namespace Push.Shopify
         public static void Build(ContainerBuilder builder)
         {
             builder.RegisterType<ErrorForensics>();
-            builder.RegisterType<ShopifyCredentialRequired>();
+            var registry = new InceptorRegistry();
+            registry.Add(typeof(ErrorForensics));
 
+            builder.RegisterType<ShopifyCredentialRequired>();
             builder.RegisterType<ShopifyHttpClientConfig>();
 
             builder.RegisterType<HttpClient.HttpClient>()
                 .As<IHttpClient>()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
+                .EnableClassInterceptorsWithRegistry(registry);
 
             builder
                 .RegisterType<ShopifyHttpClient>()
                 .As<IShopifyHttpClient>()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
+                .EnableClassInterceptorsWithRegistry(registry);
 
             builder
                 .RegisterType<ShopifyRequestFactory>()
                 .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
+                .EnableClassInterceptorsWithRegistry(registry);
 
             builder
                 .RegisterType<OrderApiRepository>()
                 .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
+                .EnableClassInterceptorsWithRegistry(registry);
 
             builder
                 .RegisterType<ProductApiRepository>()
                 .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorForensics));
+                .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ApiRepositoryFactory>();
         }

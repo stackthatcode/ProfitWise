@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
-using Push.Utilities.Security;
 using IEncryptionService = Push.Foundation.Web.Security.IEncryptionService;
 
 namespace Push.Foundation.Web.Identity

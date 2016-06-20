@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -9,7 +10,7 @@ using Push.Utilities.General;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 
-namespace ProfitWise.Batch.RefreshServices
+namespace ProfitWise.Data.RefreshServices
 {
     public class OrderRefreshService
     {

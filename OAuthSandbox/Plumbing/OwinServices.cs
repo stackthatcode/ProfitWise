@@ -9,13 +9,19 @@ namespace ProfitWise.Web.Plumbing
     public class OwinServices
     {
         private readonly Controller _controller;
+        private readonly HttpContextBase _context;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
 
         public OwinServices(Controller controller)
         {
-            _controller = controller;
+            _context = controller.HttpContext;
+        }
+
+        public OwinServices(HttpContextBase context)
+        {
+            _context = context;
         }
 
 
@@ -23,7 +29,7 @@ namespace ProfitWise.Web.Plumbing
         {
             get
             {
-                return _signInManager ?? _controller.HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                return _signInManager ?? _context.GetOwinContext().Get<ApplicationSignInManager>();
             }
             private set
             {
@@ -35,7 +41,7 @@ namespace ProfitWise.Web.Plumbing
         {
             get
             {
-                return _userManager ?? _controller.HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return _userManager ?? _context.GetOwinContext().GetUserManager<ApplicationUserManager>();
             }
             private set
             {
@@ -43,7 +49,7 @@ namespace ProfitWise.Web.Plumbing
             }
         }
 
-        public IAuthenticationManager AuthenticationManager => _controller.HttpContext.GetOwinContext().Authentication;
+        public IAuthenticationManager AuthenticationManager => _context.GetOwinContext().Authentication;
 
         public void Cleanup()
         {
