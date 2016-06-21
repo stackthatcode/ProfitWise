@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Data.Common;
 using System.Data.SqlClient;
 using Autofac;
 using MySql.Data.MySqlClient;
@@ -42,7 +43,8 @@ namespace ProfitWise.Batch
                 var connection = new MySqlConnection(connectionstring);
                 connection.Open();
                 return connection;
-            });
+            }).As<DbConnection>();
+
             builder.Register<SqlConnection>(ctx =>
             {
                 var connectionString = hangFileConnectionString;

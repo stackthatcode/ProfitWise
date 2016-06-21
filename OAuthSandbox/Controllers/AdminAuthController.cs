@@ -180,17 +180,7 @@ namespace ProfitWise.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _owinServices.Cleanup();
-            }
-
-            base.Dispose(disposing);
-        }
-
+        
 
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)

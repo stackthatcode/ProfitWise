@@ -4,40 +4,36 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
 using ProfitWise.Web.Controllers;
 using ProfitWise.Web.Plumbing;
 using Push.Shopify.HttpClient;
-using Push.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
-using Push.Shopify.Repositories;
 
 namespace ProfitWise.Web.Attributes
 {
     public class TokenRequiredAttribute : AuthorizeAttribute
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly ApplicationUserManager _applicationUserManager;
-        private readonly ShopifyCredentialService _shopifyCredentialService;
-        private readonly ShopifyHttpClient _shopifyHttpClient;
-        private readonly ShopifyRequestFactory _requestFactory;
+        public ApplicationDbContext _dbContext;
+        public ApplicationUserManager _applicationUserManager;
+        public ShopifyCredentialService _shopifyCredentialService;
+        public ShopifyHttpClient _shopifyHttpClient;
+        public ShopifyRequestFactory _requestFactory;
 
 
-        public TokenRequiredAttribute(
-                ApplicationDbContext dbContext,
-                ApplicationUserManager applicationUserManager,
-                ShopifyCredentialService shopifyCredentialService, 
-                ShopifyHttpClient shopifyHttpClient,
-                ShopifyRequestFactory requestFactory)
-        {
-            _dbContext = dbContext;
-            _applicationUserManager = applicationUserManager;
-            _shopifyCredentialService = shopifyCredentialService;
-            _shopifyHttpClient = shopifyHttpClient;
-            _requestFactory = requestFactory;
-        }
+        //public TokenRequiredAttribute(
+        //        ApplicationDbContext dbContext,
+        //        ApplicationUserManager applicationUserManager,
+        //        ShopifyCredentialService shopifyCredentialService, 
+        //        ShopifyHttpClient shopifyHttpClient,
+        //        ShopifyRequestFactory requestFactory)
+        //{
+        //    _dbContext = dbContext;
+        //    _applicationUserManager = applicationUserManager;
+        //    _shopifyCredentialService = shopifyCredentialService;
+        //    _shopifyHttpClient = shopifyHttpClient;
+        //    _requestFactory = requestFactory;
+        //}
 
         public string CurrentUserId => HttpContext.Current.ExtractUserId();
 

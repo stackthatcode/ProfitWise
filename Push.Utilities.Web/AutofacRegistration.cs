@@ -10,12 +10,18 @@ namespace Push.Foundation.Web
 {
     public class AutofacRegistration
     {
-        public static void Build(ContainerBuilder builder, string encryption_key, string encryption_iv)
+        public static void Build(
+            ContainerBuilder builder, string encryption_key, string encryption_iv)
         {
+            // This requires the User to have a DbConnection registered
             builder
+
                 .RegisterType<ApplicationDbContext>()
                 .As<DbContext>()
                 .As<ApplicationDbContext>();
+
+            builder.RegisterType<EmailService>().As<EmailService>();
+            builder.RegisterType<SmsService>().As<SmsService>();
 
             builder.RegisterType<ApplicationRoleManager>();
             builder.RegisterType<ApplicationUserManager>();
@@ -28,7 +34,7 @@ namespace Push.Foundation.Web
 
             builder.RegisterType<DataProtectorTokenProvider<ApplicationUser>>();
 
-            builder.Register<EncryptionService>(
+            builder.Register(
                 ctx => new EncryptionService(encryption_key, encryption_iv))
                 .As<IEncryptionService>();
 

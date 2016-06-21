@@ -1,11 +1,6 @@
 ﻿using System.Configuration;
-using System.Web.Mvc;
 using Autofac;
-using Autofac.Core;
-using Autofac.Integration.Mvc;
 using MySql.Data.MySqlClient;
-using OAuthSandbox.Controllers;
-using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Web.Helpers;
 using Push.Utilities.CastleProxies;

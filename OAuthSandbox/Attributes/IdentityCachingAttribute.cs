@@ -13,35 +13,36 @@ namespace ProfitWise.Web.Attributes
 {
     public class IdentityCachingAttribute : ActionFilterAttribute, IActionFilter
     {
-        private readonly Func<RoleManager<IdentityRole>> _roleManagerFactory;
-        private readonly Func<ApplicationDbContext> _dbContextFactory;
+        public RoleManager<IdentityRole> RoleManager { get; set; }
+        public ApplicationDbContext DbContext { get; set; }
 
-        public IdentityCachingAttribute(
-                Func<RoleManager<IdentityRole>> roleManagerFactory,
-                Func<ApplicationDbContext> dbContextFactory)
-        {
-            _roleManagerFactory = roleManagerFactory;
-            _dbContextFactory = dbContextFactory;
-        }
+        //private readonly Func<RoleManager<IdentityRole>> _roleManagerFactory;
+        //private readonly Func<ApplicationDbContext> _dbContextFactory;
 
+        //public IdentityCachingAttribute(
+        //        Func<RoleManager<IdentityRole>> roleManagerFactory,
+        //        Func<ApplicationDbContext> dbContextFactory)
+        //{
+        //    _roleManagerFactory = roleManagerFactory;
+        //    _dbContextFactory = dbContextFactory;
+        //}
+
+        
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var dbContext = _dbContextFactory();
-            var roleManager = _roleManagerFactory();
-
             // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
             UserBrief userBrief = null;            
 
             if (userId != null)
             {
-                var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
+                var user = DbContext.Users.FirstOrDefault(x => x.Id == userId);
 
                 if (user != null)
                 {
                     var userRoleIds = user.Roles.Select(x => x.RoleId);
                     var userRoles =
-                        roleManager.Roles
+                        RoleManager.Roles
                             .Where(x => userRoleIds.Contains(x.Id))
                             .Select(x => x.Name)
                             .ToList();
