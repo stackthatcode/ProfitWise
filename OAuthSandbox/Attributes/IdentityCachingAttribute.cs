@@ -30,7 +30,8 @@ namespace ProfitWise.Web.Attributes
         
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
-
+            var roleManager = DependencyResolver.Current.GetService<ApplicationRoleManager>();
+            var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
 
             // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
@@ -38,13 +39,13 @@ namespace ProfitWise.Web.Attributes
 
             if (userId != null)
             {
-                var user = DbContext.Users.FirstOrDefault(x => x.Id == userId);
+                var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
 
                 if (user != null)
                 {
                     var userRoleIds = user.Roles.Select(x => x.RoleId);
                     var userRoles =
-                        RoleManager.Roles
+                        roleManager.Roles
                             .Where(x => userRoleIds.Contains(x.Id))
                             .Select(x => x.Name)
                             .ToList();

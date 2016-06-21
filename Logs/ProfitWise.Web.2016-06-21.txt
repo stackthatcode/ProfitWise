@@ -5,3 +5,13 @@
 2016-06-21 15:40:36.4580|Error|065d838f-fc82-41f3-aba8-7757b56bd1d2|Parameter 1: System.Web.Routing.RequestContext
 2016-06-21 15:40:36.4580|Error|065d838f-fc82-41f3-aba8-7757b56bd1d2|Parameter 2: System.AsyncCallback
 2016-06-21 15:40:36.4800|Error|065d838f-fc82-41f3-aba8-7757b56bd1d2|Parameter 3: 
+2016-06-21 15:45:37.2164|Error|b5bb411d-9f49-43a8-b336-703e5ffb883a|BeginExecuteCore threw Exception System.NullReferenceException - dumping parameters
+2016-06-21 15:45:37.2164|Error|b5bb411d-9f49-43a8-b336-703e5ffb883a|Parameter 1: System.AsyncCallback
+2016-06-21 15:45:37.2294|Error|b5bb411d-9f49-43a8-b336-703e5ffb883a|Parameter 2: 
+2016-06-21 15:45:37.2294|Error|b5bb411d-9f49-43a8-b336-703e5ffb883a|BeginExecute threw Exception System.NullReferenceException - dumping parameters
+2016-06-21 15:45:37.2434|Error|b5bb411d-9f49-43a8-b336-703e5ffb883a|Parameter 1: System.Web.Routing.RequestContext
+2016-06-21 15:45:37.2434|Error|b5bb411d-9f49-43a8-b336-703e5ffb883a|Parameter 2: System.AsyncCallback
+2016-06-21 15:45:37.2574|Error|b5bb411d-9f49-43a8-b336-703e5ffb883a|Parameter 3: 
+2016-06-21 15:46:13.1482|Debug|c41a4f0b-d88d-4586-a64c-0590a95add8f|Invoking HTTP GET on /admin/orders.json
+2016-06-21 15:46:13.1482|Debug|c41a4f0b-d88d-4586-a64c-0590a95add8f|Invoking HTTP GET on https://3duniverse.myshopify.com/admin/orders.json?page=1&limit=1&status=any&created_at_min=2016-01-01T00%3A00%3A00-04%3A00%0A
+2016-06-21 15:46:13.4647|Debug|c41a4f0b-d88d-4586-a64c-0590a95add8f|Call performance - 00:00:00.2924943 ms
