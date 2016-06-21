@@ -233,9 +233,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\DefaultSecurityDataConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\IdentityCachingAttribute.cs" />

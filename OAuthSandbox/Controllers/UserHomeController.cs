@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;

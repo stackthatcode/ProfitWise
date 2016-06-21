@@ -13,12 +13,10 @@ namespace ProfitWise.Web
     {
         public void Configuration(IAppBuilder app)
         {
-            var autofacContainer = AutofacRegistration.Build();            
+            var autofacContainer = AutofacRegistration.Build();
 
-            ConfigureAuth(app, autofacContainer);
-            SeedDefaultSecurityDataIfNeeded(autofacContainer);
-
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(autofacContainer));
+            AuthConfig.Configure(app, autofacContainer);
+            DefaultSecurityDataConfig.Execute(autofacContainer);
 
             // Hangfire Configuration - TODO - move this into the ContainerBuilder
             var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;

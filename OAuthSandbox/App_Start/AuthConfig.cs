@@ -3,7 +3,6 @@ using System.Configuration;
 using System.Security.Claims;
 using Autofac;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
@@ -14,9 +13,9 @@ using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web
 {
-    public partial class Startup
+    public class AuthConfig
     {
-        public void ConfigureAuth(IAppBuilder app, IContainer autofacContainer)
+        public static void Configure(IAppBuilder app, IContainer autofacContainer)
         {
             app.UseAutofacMiddleware(autofacContainer);
 
@@ -89,36 +88,6 @@ namespace ProfitWise.Web
         }
 
 
-        public void SeedDefaultSecurityDataIfNeeded(IContainer container)
-        {
-            // Evil service locator, anti-pattern. But: it's ok enough, as this is close to composition root.
-            var userManager = container.Resolve<UserManager<ApplicationUser>>();
-            var roleManager = container.Resolve<RoleManager<IdentityRole>>();
-
-            // Check to see if Role Exists, if not create it
-            if (!roleManager.RoleExists(SecurityConfig.AdminRole))
-            {
-                roleManager.Create(new IdentityRole(SecurityConfig.AdminRole));
-            }
-            if (!roleManager.RoleExists(SecurityConfig.UserRole))
-            {
-                roleManager.Create(new IdentityRole(SecurityConfig.UserRole));
-            }
-
-            var adminUser = userManager.FindByName(SecurityConfig.DefaultAdminEmail);
-            if (adminUser == null)
-            {
-                var newAdminUser = new ApplicationUser()
-                {
-                    UserName = SecurityConfig.DefaultAdminEmail,
-                    Email = SecurityConfig.DefaultAdminEmail,
-                };
-
-                userManager.Create(newAdminUser, SecurityConfig.DefaultAdminPassword);
-                userManager.AddToRole(newAdminUser.Id, SecurityConfig.AdminRole);
-                userManager.AddToRole(newAdminUser.Id, SecurityConfig.UserRole);
-            }
-        }
     }
 }
 

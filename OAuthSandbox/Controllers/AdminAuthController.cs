@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -17,16 +18,13 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
-        private readonly IAuthenticationManager _authenticationManager;
 
         public AdminAuthController(
                 ApplicationUserManager userManager, 
-                ApplicationSignInManager signInManager, 
-                IAuthenticationManager authenticationManager)
+                ApplicationSignInManager signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _authenticationManager = authenticationManager;
         }
 
 
@@ -176,7 +174,8 @@ namespace ProfitWise.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            _authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            var authenticationManager = HttpContext.GetOwinContext().Authentication;
+            authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
 

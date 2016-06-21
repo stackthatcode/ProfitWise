@@ -1,5 +1,9 @@
 ﻿using System.Configuration;
+using System.Data;
+using System.Data.Common;
+using System.Web.Mvc;
 using Autofac;
+using Autofac.Integration.Mvc;
 using MySql.Data.MySqlClient;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Web.Helpers;
@@ -15,31 +19,41 @@ namespace ProfitWise.Web
         {            
             var builder = new ContainerBuilder();
 
-            LoggerSingleton.Get = NLoggerImpl.RegistrationFactory("ProfitWise.Web", ActivityId.MessageFormatter);
+            // Logging
+            LoggerSingleton.Get = 
+                NLoggerImpl.RegistrationFactory("ProfitWise.Web", ActivityId.MessageFormatter);
             builder.Register(c => LoggerSingleton.Get()).As<ILogger>();
 
-            ProfitWise.Data.AutofacRegistration.Build(builder);
-            Push.Shopify.AutofacRegistration.Build(builder);
-
-            // Database connection string...
-            var mysqlConnectionString = 
-                ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-
-            // ... and register configuration
-            builder.Register<MySqlConnection>(ctx =>
-            {
-                var connectionstring = mysqlConnectionString;
-                var connection = new MySqlConnection(connectionstring);
-                connection.Open();
-                return connection;
-            });
-
-            // TODO => register DbConnectionString...?
 
             // Push.Foundation.Web Identity Stuff
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
             var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
             Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
+
+
+            // ProfitWise.Data API registration
+            ProfitWise.Data.AutofacRegistration.Build(builder);
+
+            // Push.Shopify API registration
+            Push.Shopify.AutofacRegistration.Build(builder);
+
+
+            // Database connection string...
+            var mysqlConnectionString = 
+                ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            // ... and register configuration
+            builder
+                .Register<MySqlConnection>(ctx =>
+                {
+                    var connectionstring = mysqlConnectionString;
+                    var connection = new MySqlConnection(connectionstring);
+                    connection.Open();
+                    return connection;
+                })
+                .AsSelf()
+                .As<DbConnection>()
+                .As<IDbConnection>();
+
 
             // Error forensics interceptors
             builder.RegisterType<ErrorForensics>();
@@ -74,6 +88,8 @@ namespace ProfitWise.Web
 
 
             var container = builder.Build();
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
             return container;
         }
     }

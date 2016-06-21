@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using Autofac;
@@ -37,13 +38,18 @@ namespace ProfitWise.Batch
             var hangFileConnectionString = ConfigurationManager.ConnectionStrings["HangFireConnection"].ConnectionString;
 
             // ... and register configurationa
-            builder.Register<MySqlConnection>(ctx =>
-            {
-                var connectionstring = mysqlConnectionString;
-                var connection = new MySqlConnection(connectionstring);
-                connection.Open();
-                return connection;
-            }).As<DbConnection>();
+            builder
+                .Register<MySqlConnection>(ctx =>
+                {
+                    var connectionstring = mysqlConnectionString;
+                    var connection = new MySqlConnection(connectionstring);
+                    connection.Open();
+                    return connection;
+                })
+                .As<MySqlConnection>()
+                .As<DbConnection>()
+                .As<IDbConnection>();
+
 
             builder.Register<SqlConnection>(ctx =>
             {

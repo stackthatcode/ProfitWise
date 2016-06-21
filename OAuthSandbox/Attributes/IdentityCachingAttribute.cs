@@ -30,6 +30,8 @@ namespace ProfitWise.Web.Attributes
         
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
+
+
             // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
             UserBrief userBrief = null;            
