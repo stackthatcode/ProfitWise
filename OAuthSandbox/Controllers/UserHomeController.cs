@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Autofac;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
@@ -25,6 +26,12 @@ namespace ProfitWise.Web.Controllers
         public async Task<ActionResult> Index()
         {
             this.ViewBag.AccessToken = "User not authenticated - no access token";
+
+
+            // Security Testing stuff
+            DefaultSecurityDataConfig.Execute(DependencyResolver.Current.GetService<ILifetimeScope>());
+
+
 
             // TODO - why does OWIN allow for this without forcing database validation...?
             var userId = HttpContext.User.ExtractUserId();

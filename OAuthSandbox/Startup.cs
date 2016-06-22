@@ -1,6 +1,4 @@
 ﻿using System.Configuration;
-using System.Web.Mvc;
-using Autofac.Integration.Mvc;
 using Hangfire;
 using Microsoft.Owin;
 using Owin;
@@ -14,9 +12,10 @@ namespace ProfitWise.Web
         public void Configuration(IAppBuilder app)
         {
             var autofacContainer = AutofacRegistration.Build();
-
             AuthConfig.Configure(app, autofacContainer);
-            //DefaultSecurityDataConfig.Execute(autofacContainer);
+
+            // Maybe we'll create a separate bootstrapping app for this...?
+            DefaultSecurityDataConfig.Execute(autofacContainer);
 
             // Hangfire Configuration - TODO - move this into the ContainerBuilder
             var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;

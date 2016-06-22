@@ -86,8 +86,6 @@ namespace ProfitWise.Web
             shopify_options.Scope.Add("read_products");
             app.UseShopifyAuthentication(shopify_options);
         }
-
-
     }
 }
 
