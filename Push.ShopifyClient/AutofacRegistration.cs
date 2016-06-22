@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Autofac.Extras.DynamicProxy2;
 using Push.Shopify.Aspect;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;

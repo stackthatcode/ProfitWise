@@ -5,6 +5,6 @@ namespace Push.Utilities.Logging
 {
     public class LoggerSingleton
     {
-        public static Func<ILogger> Get = () => new ConsoleAndDebugLogger();
+        public static Func<IPushLogger> Get = () => new ConsoleAndDebugLogger();
     }
 }

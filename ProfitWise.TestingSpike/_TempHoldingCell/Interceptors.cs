@@ -5,18 +5,18 @@ namespace ProfitWise.Batch._TempHoldingCell
 {
     public class LoggingInterceptor : IInterceptor
     {
-        private readonly ILogger _logger;
+        private readonly IPushLogger _pushLogger;
 
-        public LoggingInterceptor(ILogger logger)
+        public LoggingInterceptor(IPushLogger logger)
         {
-            _logger = logger;
+            _pushLogger = logger;
         }
 
         public void Intercept(IInvocation invocation)
         {
-            _logger.Info("About to execute method " + invocation.Method.Name + " on instance of " + invocation.TargetType);
+            _pushLogger.Info("About to execute method " + invocation.Method.Name + " on instance of " + invocation.TargetType);
             invocation.Proceed();
-            _logger.Info("Just finished executing method " + invocation.Method.Name + " on instance of " + invocation.TargetType);
+            _pushLogger.Info("Just finished executing method " + invocation.Method.Name + " on instance of " + invocation.TargetType);
         }
     }    
 }

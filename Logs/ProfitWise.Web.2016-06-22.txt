@@ -1,0 +1,39 @@
+2016-06-22 11:41:36.4168|Error|644ef84d-44c3-4ceb-9d01-1bd999ecd019|URL:http://localhost/ProfitWise/UserHome/Error - IsAjaxRequest: False
+2016-06-22 11:41:36.4308|Error|644ef84d-44c3-4ceb-9d01-1bd999ecd019|System.Exception:Oh noes! I'm throwing an Exception
+   at ProfitWise.Web.Controllers.UserHomeController.Error() in C:\DEV\ProfitWise\OAuthSandbox\Controllers\UserHomeController.cs:line 56
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-06-22 11:45:26.9269|Debug|d5f83803-d272-452c-b26f-dc8b922819c7|Invoking HTTP GET on /admin/orders.json
+2016-06-22 11:45:26.9269|Debug|d5f83803-d272-452c-b26f-dc8b922819c7|Invoking HTTP GET on https://3duniverse.myshopify.com/admin/orders.json?page=1&limit=1&status=any&created_at_min=2016-01-01T00%3A00%3A00-04%3A00%0A
+2016-06-22 11:45:27.1910|Debug|d5f83803-d272-452c-b26f-dc8b922819c7|Call performance - 00:00:00.2531514 ms
+2016-06-22 11:47:19.2659|Debug|8523a021-0080-42ba-8718-91e62da33436|Invoking HTTP GET on /admin/orders.json
+2016-06-22 11:47:19.2729|Debug|8523a021-0080-42ba-8718-91e62da33436|Invoking HTTP GET on https://3duniverse.myshopify.com/admin/orders.json?page=1&limit=1&status=any&created_at_min=2016-01-01T00%3A00%3A00-04%3A00%0A
+2016-06-22 11:47:19.5001|Debug|8523a021-0080-42ba-8718-91e62da33436|Call performance - 00:00:00.2231833 ms
+2016-06-22 11:47:49.6818|Error|fd7f34e4-9120-4730-ace3-1c152419bc8e|URL:http://localhost/ProfitWise/UserHome/Error - IsAjaxRequest: False
+2016-06-22 11:47:49.6818|Error|fd7f34e4-9120-4730-ace3-1c152419bc8e|System.Exception:Oh noes! I'm throwing an Exception
+   at ProfitWise.Web.Controllers.UserHomeController.Error() in C:\DEV\ProfitWise\OAuthSandbox\Controllers\UserHomeController.cs:line 56
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-06-22 11:47:51.1534|Debug|30d2564d-7c64-4ed9-9043-d8d30fe186d5|Invoking HTTP GET on /admin/orders.json
+2016-06-22 11:47:51.1534|Debug|30d2564d-7c64-4ed9-9043-d8d30fe186d5|Invoking HTTP GET on https://3duniverse.myshopify.com/admin/orders.json?page=1&limit=1&status=any&created_at_min=2016-01-01T00%3A00%3A00-04%3A00%0A
+2016-06-22 11:47:51.3492|Debug|30d2564d-7c64-4ed9-9043-d8d30fe186d5|Call performance - 00:00:00.1828412 ms

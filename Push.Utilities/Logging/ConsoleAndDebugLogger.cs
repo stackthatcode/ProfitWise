@@ -3,7 +3,7 @@ using Push.Utilities.Logging;
 
 namespace Push.Utilities.Logging
 {
-    public class ConsoleAndDebugLogger : ILogger
+    public class ConsoleAndDebugLogger : IPushLogger
     {
         public void Trace(string message)
         {

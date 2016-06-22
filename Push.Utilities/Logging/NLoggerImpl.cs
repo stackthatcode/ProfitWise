@@ -3,14 +3,14 @@ using NLog;
 
 namespace Push.Utilities.Logging
 {
-    public class NLoggerImpl : ILogger
+    public class NLoggerImpl : IPushLogger
     {
         private readonly string _loggerName;
         private readonly Func<string, string> _messageFormatter = x => x;
 
-        public static Func<ILogger> RegistrationFactory(string loggerName, Func<string, string> formatter = null)
+        public static Func<IPushLogger> RegistrationFactory(string loggerName, Func<string, string> formatter = null)
         {
-            ILogger logger = new NLoggerImpl(loggerName, formatter);            
+            IPushLogger logger = new NLoggerImpl(loggerName, formatter);            
             return () => logger;
         }
 

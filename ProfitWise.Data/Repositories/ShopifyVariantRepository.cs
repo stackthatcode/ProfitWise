@@ -7,29 +7,28 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories
 {
-
-    public class VariantDataRepository : IUserIdConsumer
+    public class ShopifyVariantRepository : IShopIdFilter
     {
         private readonly MySqlConnection _connection;
-        public string UserId { get; set; }
+        public int? ShopId { get; set; }
 
-        public VariantDataRepository(MySqlConnection connection)
+        public ShopifyVariantRepository(MySqlConnection connection)
         {
             _connection = connection;
         }
 
-        public virtual IList<VariantData> Retrieve(long shopifyProductId)
+        public virtual IList<ShopifyVariant> Retrieve(long shopifyProductId)
         {
             var query = @"SELECT * FROM shopifyvariant WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";
             return 
                 _connection
-                    .Query<VariantData>(query, new { UserId, shopifyProductId })
+                    .Query<ShopifyVariant>(query, new { ShopId, shopifyProductId })
                     .ToList();
         }
 
-        public virtual void Insert(VariantData product)
+        public virtual void Insert(ShopifyVariant product)
         {
-            product.UserId = UserId;
+            product.ShopId = ShopId.Value;
             var query =
                     @"INSERT INTO shopifyvariant(UserId, ShopifyVariantId, ShopifyProductId, Sku, Title, Price) 
                         VALUES(@UserId, @ShopifyVariantId, @ShopifyProductId, @Sku, @Title, @Price)";
@@ -40,7 +39,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"DELETE FROM shopifyvariant 
                         WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";
-            _connection.Execute(query, new { UserId, shopifyProductId});
+            _connection.Execute(query, new { ShopId.Value, shopifyProductId});
         }
     }
 }

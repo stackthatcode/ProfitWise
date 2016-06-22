@@ -58,19 +58,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aspect\UserIdRequired.cs" />
-    <Compile Include="Factories\SqlRepositoryFactory.cs" />
-    <Compile Include="Model\ProductData.cs" />
-    <Compile Include="Model\VariantData.cs" />
+    <Compile Include="Aspect\ShopIdRequired.cs" />
+    <Compile Include="Factories\MultitenantSqlRepositoryFactory.cs" />
+    <Compile Include="Model\ShopifyOrder.cs" />
+    <Compile Include="Model\ShopifyOrderExtensions.cs" />
+    <Compile Include="Model\ShopifyOrderLineItem.cs" />
+    <Compile Include="Model\ShopifyProduct.cs" />
+    <Compile Include="Model\ShopifyShop.cs" />
+    <Compile Include="Model\ShopifyVariant.cs" />
     <Compile Include="AutofacRegistration.cs" />
-    <Compile Include="Aspect\IUserIdConsumer.cs" />
+    <Compile Include="Aspect\IShopIdFilter.cs" />
     <Compile Include="Processes\RefreshProcess.cs" />
     <Compile Include="RefreshServices\OrderRefreshService.cs" />
     <Compile Include="RefreshServices\OrderSkuHistory.cs" />
     <Compile Include="RefreshServices\ProductRefreshService.cs" />
     <Compile Include="RefreshServices\RefreshServiceConfiguration.cs" />
-    <Compile Include="Repositories\VariantDataRepository.cs" />
-    <Compile Include="Repositories\ProductDataRepository.cs" />
+    <Compile Include="RefreshServices\ShopRefreshService.cs" />
+    <Compile Include="Repositories\ShopifyOrderRepository.cs" />
+    <Compile Include="Repositories\ShopRepository.cs" />
+    <Compile Include="Repositories\ShopifyVariantRepository.cs" />
+    <Compile Include="Repositories\ShopifyProductRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

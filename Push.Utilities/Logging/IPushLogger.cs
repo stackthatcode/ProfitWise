@@ -2,7 +2,7 @@
 
 namespace Push.Utilities.Logging
 {
-    public interface ILogger
+    public interface IPushLogger
     {
         void Trace(string message);
         void Debug(string message);

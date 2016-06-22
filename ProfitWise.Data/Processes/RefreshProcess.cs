@@ -11,21 +11,21 @@ namespace ProfitWise.Data.Processes
         private readonly ShopifyCredentialService _shopifyCredentialService;
         private readonly OrderRefreshService _orderRefreshService;
         private readonly ProductRefreshService _productRefreshService;
-        private readonly ILogger _logger;
+        private readonly IPushLogger _pushLogger;
 
 
         public RefreshProcess(
                 ShopifyCredentialService shopifyCredentialService,
                 OrderRefreshService orderRefreshService,
                 ProductRefreshService productRefreshService,
-                ILogger logger)
+                IPushLogger logger)
         {
             // TODO: move into Autofac configuration
            
             _shopifyCredentialService = shopifyCredentialService;
             _orderRefreshService = orderRefreshService;
             _productRefreshService = productRefreshService;
-            _logger = logger;
+            _pushLogger = logger;
         }
 
         public void Execute(string userId)

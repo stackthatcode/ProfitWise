@@ -10,7 +10,7 @@ namespace Push.Shopify.HttpClient
     {
         private readonly IHttpClient _httpClient;
         private readonly ShopifyHttpClientConfig _configuration;
-        private readonly ILogger _logger;
+        private readonly IPushLogger _pushLogger;
 
 
         private static readonly 
@@ -18,11 +18,11 @@ namespace Push.Shopify.HttpClient
                     = new ConcurrentDictionary<string, DateTime>();
 
         
-        public ShopifyHttpClient(IHttpClient httpClient, ShopifyHttpClientConfig configuration, ILogger logger)
+        public ShopifyHttpClient(IHttpClient httpClient, ShopifyHttpClientConfig configuration, IPushLogger logger)
         {
             _configuration = configuration;
             _httpClient = httpClient;
-            _logger = logger;
+            _pushLogger = logger;
         }
 
         public virtual HttpClientResponse ExecuteRequest(HttpWebRequest request)
@@ -34,7 +34,7 @@ namespace Push.Shopify.HttpClient
             else
             {
                 string message = $"Invoking HTTP GET on {request.RequestUri.AbsolutePath}";
-                _logger.Debug(message);
+                _pushLogger.Debug(message);
                 return HttpInvocationWithThrottling(request);
             }
         }
@@ -54,12 +54,12 @@ namespace Push.Shopify.HttpClient
                 if (timeSinceLastExecutionTimeSpan < shopifyThrottlingDelayTimeSpan)
                 {
                     var remainingTimeToDelay = shopifyThrottlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
-                    _logger.Debug(string.Format("Intentional delay before next call: {0} ms", remainingTimeToDelay));
+                    _pushLogger.Debug(string.Format("Intentional delay before next call: {0} ms", remainingTimeToDelay));
                     System.Threading.Thread.Sleep(remainingTimeToDelay);
                 }
             }
 
-            _logger.Debug(String.Format("Invoking HTTP GET on {0}", request.RequestUri.AbsoluteUri));
+            _pushLogger.Debug(String.Format("Invoking HTTP GET on {0}", request.RequestUri.AbsoluteUri));
             _shopLastExecutionTime[hostname] = DateTime.Now;
 
             var response = _httpClient.ProcessRequest(request);
@@ -72,7 +72,7 @@ namespace Push.Shopify.HttpClient
             }
 
             var executionTime = DateTime.Now - _shopLastExecutionTime[hostname];
-            _logger.Debug(string.Format("Call performance - {0} ms", executionTime));
+            _pushLogger.Debug(string.Format("Call performance - {0} ms", executionTime));
 
             return response;
         }
@@ -94,17 +94,17 @@ namespace Push.Shopify.HttpClient
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex);
+                    _pushLogger.Error(ex);
                     counter++;
 
                     if (counter > _configuration.ShopifyRetryLimit)
                     {
-                        _logger.Fatal("Retry Limit has been exceeded... throwing exception");
+                        _pushLogger.Fatal("Retry Limit has been exceeded... throwing exception");
                         throw;
                     }
                     else
                     {
-                        _logger.Debug(String.Format("Encountered an exception. Retrying invocation..."));
+                        _pushLogger.Debug(String.Format("Encountered an exception. Retrying invocation..."));
                     }
                 }
             }

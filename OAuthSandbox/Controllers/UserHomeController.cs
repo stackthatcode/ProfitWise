@@ -65,7 +65,7 @@ namespace ProfitWise.Web.Controllers
 
         // TODO: register with Autofac
         //[TokenRequired]
-        public async Task<ActionResult> ShopifyOrders()
+        public virtual async Task<ActionResult> ShopifyOrders()
         {
             ViewBag.Message = "Hey, it looks like you're authorized!!!";
 
@@ -83,6 +83,5 @@ namespace ProfitWise.Web.Controllers
             ViewBag.Orders = orders;
             return View();
         }
-
     }
 }

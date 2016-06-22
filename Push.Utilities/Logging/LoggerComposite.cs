@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Push.Utilities.Logging
 {
-    public class LoggerComposite : ILogger
+    public class LoggerComposite : IPushLogger
     {
-        readonly List<ILogger> _loggers;
+        readonly List<IPushLogger> _loggers;
 
         public LoggerComposite()
         {
-            _loggers = new List<ILogger>();
+            _loggers = new List<IPushLogger>();
         }
 
-        public LoggerComposite Add(ILogger logger)
+        public LoggerComposite Add(IPushLogger logger)
         {
             _loggers.Add(logger);
             return this;

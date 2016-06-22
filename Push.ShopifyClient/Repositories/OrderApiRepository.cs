@@ -46,15 +46,35 @@ namespace Push.Shopify.Repositories
 
             foreach (var order in parent.orders)
             {
-                results.Add(new Order
+                var orderResult = new Order
                 {
                     Id = order.id,
                     Email = order.email,
-                }); 
+                    Name = order.name,
+                    TotalPrice = order.total_price,
+                    LineItems = new List<OrderLineItem>()
+                };
+
+                foreach (var line_item in order.line_items)
+                {
+                    var orderLineItemResult = new OrderLineItem
+                    {
+                        Id = line_item.id,
+                        Discount = line_item.total_discount,
+                        ProductId = line_item.product_id,
+                        VariantId = line_item.variant_id,
+                        Price = line_item.price,
+                        Quantity = line_item.quantity,
+                        Sku = line_item.sku,
+                        // Taxes = line_item. TODO *** pull in all the tax_lines...?
+                    };
+
+                    orderResult.LineItems.Add(orderLineItemResult);
+                }
+                results.Add(orderResult); 
             }
 
             return results;
         }
-
     }
 }

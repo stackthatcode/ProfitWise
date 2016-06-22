@@ -33,6 +33,7 @@ namespace ProfitWise.Web
                 };
 
                 userManager.Create(newAdminUser, SecurityConfig.DefaultAdminPassword);
+
                 userManager.AddToRole(newAdminUser.Id, SecurityConfig.AdminRole);
                 userManager.AddToRole(newAdminUser.Id, SecurityConfig.UserRole);
             }

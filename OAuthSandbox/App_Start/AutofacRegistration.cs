@@ -22,7 +22,7 @@ namespace ProfitWise.Web
             // Logging
             LoggerSingleton.Get = 
                 NLoggerImpl.RegistrationFactory("ProfitWise.Web", ActivityId.MessageFormatter);
-            builder.Register(c => LoggerSingleton.Get()).As<ILogger>();
+            builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
 
 
             // Push.Foundation.Web Identity Stuff

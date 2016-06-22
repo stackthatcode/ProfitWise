@@ -17,15 +17,15 @@ namespace ProfitWise.Data
             var registry = new InceptorRegistry();
             registry.Add(typeof(ErrorForensics));
 
-            builder.RegisterType<ProductDataRepository>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<VariantDataRepository>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<SqlRepositoryFactory>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ShopifyProductRepository>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ShopifyVariantRepository>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<MultitenantSqlRepositoryFactory>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<OrderRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
 
-            builder.RegisterType<UserIdRequired>();
+            builder.RegisterType<ShopIdRequired>();
         }
     }
 }

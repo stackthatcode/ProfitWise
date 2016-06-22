@@ -23,7 +23,7 @@ namespace ProfitWise.Batch
 
 
             // Infrastructure setup & configuration binding
-            builder.Register(c => LoggerSingleton.Get()).As<ILogger>();
+            builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
             var registry = new InceptorRegistry();
             registry.Add(typeof(ErrorForensics));
 

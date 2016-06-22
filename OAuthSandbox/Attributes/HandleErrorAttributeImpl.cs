@@ -7,19 +7,20 @@ namespace ProfitWise.Web.Attributes
 {
     public class HandleErrorAttributeImpl : HandleErrorAttribute
     {
-        public ILogger Logger { get; set; }
-
         public override void OnException(ExceptionContext filterContext)
         {
+            var container = DependencyResolver.Current;
+            var logger = container.GetService<IPushLogger>();
+
             if (filterContext.ExceptionHandled) return;
             if (new HttpException(null, filterContext.Exception).GetHttpCode() != 500) return;
             if (!ExceptionType.IsInstanceOfType(filterContext.Exception)) return;
 
             // Log the Exception
-            Logger.Error(
+            logger.Error(
                     "URL:" + filterContext.HttpContext.Request.Url + " - " +
                     "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest());
-            Logger.Error(filterContext.Exception);
+            logger.Error(filterContext.Exception);
 
 
             // Notify System Admins

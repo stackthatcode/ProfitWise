@@ -2,12 +2,12 @@
 
 namespace ProfitWise.Data.Model
 {
-    public class ProductData
+    public class ShopifyProduct
     {
-        public string UserId { get; set; }
+        public int ShopId { get; set; }
         public long ShopifyProductId { get; set; }
         public string Title { get; set; }
-        public IList<VariantData> Variants { get; set; }
+        public IList<ShopifyVariant> Variants { get; set; }
     }
 }
 

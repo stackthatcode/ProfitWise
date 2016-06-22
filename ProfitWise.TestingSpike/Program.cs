@@ -24,7 +24,7 @@ namespace ProfitWise.Batch
 
         private static void InvokeRefreshServices(IContainer container)
         {
-            var logger = container.Resolve<ILogger>();
+            var logger = container.Resolve<IPushLogger>();
             try
             {
                 // This is for simulation purposes - in the future, we'll load a list of Users from database

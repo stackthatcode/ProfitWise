@@ -31,8 +31,8 @@ namespace ProfitWise.Batch.TempHoldingCell
             builder.RegisterType<Y>().EnableClassInterceptors();
             builder.RegisterType<Z1>().EnableClassInterceptors();
             builder.RegisterType<Z2>().EnableClassInterceptors();
-            builder.Register(c => new NLoggerImpl("Test.Logger", x => x)).As<ILogger>();
-            builder.Register(c => new LoggingInterceptor(c.Resolve<ILogger>()));
+            builder.Register(c => new NLoggerImpl("Test.Logger", x => x)).As<IPushLogger>();
+            builder.Register(c => new LoggingInterceptor(c.Resolve<IPushLogger>()));
 
             var container = builder.Build();
             var injectedInstanceOfZ = container.Resolve<Z2>();

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using OAuthSandbox.Attributes;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Web.Helpers;
@@ -13,20 +10,6 @@ namespace ProfitWise.Web.Attributes
 {
     public class IdentityCachingAttribute : ActionFilterAttribute, IActionFilter
     {
-        public RoleManager<IdentityRole> RoleManager { get; set; }
-        public ApplicationDbContext DbContext { get; set; }
-
-        //private readonly Func<RoleManager<IdentityRole>> _roleManagerFactory;
-        //private readonly Func<ApplicationDbContext> _dbContextFactory;
-
-        //public IdentityCachingAttribute(
-        //        Func<RoleManager<IdentityRole>> roleManagerFactory,
-        //        Func<ApplicationDbContext> dbContextFactory)
-        //{
-        //    _roleManagerFactory = roleManagerFactory;
-        //    _dbContextFactory = dbContextFactory;
-        //}
-
         
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {

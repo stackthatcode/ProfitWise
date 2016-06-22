@@ -6,11 +6,11 @@ namespace Push.Utilities.Errors
 {
     public class ErrorForensics : IInterceptor
     {
-        private readonly ILogger _logger;
+        private readonly IPushLogger _pushLogger;
 
-        public ErrorForensics(ILogger logger)
+        public ErrorForensics(IPushLogger logger)
         {
-            _logger = logger;
+            _pushLogger = logger;
         }
 
         public void Intercept(IInvocation invocation)
@@ -21,11 +21,11 @@ namespace Push.Utilities.Errors
             }
             catch (Exception ex)
             {
-                _logger.Error(invocation.Method.Name + " threw Exception " + ex.GetType() + " - dumping parameters");
+                _pushLogger.Error(invocation.Method.Name + " threw Exception " + ex.GetType() + " - dumping parameters");
                 var counter = 1;
                 foreach (var arg in invocation.Arguments)
                 {
-                    _logger.Error($"Parameter {counter++}: {arg}");
+                    _pushLogger.Error($"Parameter {counter++}: {arg}");
                 }
                 throw;
             }
