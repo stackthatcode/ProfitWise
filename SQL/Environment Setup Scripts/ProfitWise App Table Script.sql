@@ -38,8 +38,6 @@ CREATE TABLE `shopifyvariant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
-
 CREATE TABLE `shopifyorder` (
   `ShopId` int(6) unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
@@ -61,20 +59,4 @@ CREATE TABLE `shopifyorderlineitem` (
   `TotalDiscount` decimal(15,2) DEFAULT NULL,   
   PRIMARY KEY  (`ShopId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-
-
-/* This is an old table... will probably nuke it soon */
-CREATE TABLE `orderskuhistory` (
-  `LineId` int(6) unsigned NOT NULL AUTO_INCREMENT,
-  `OrderNumber` varchar(30) NOT NULL,
-  `ProductSku` varchar(30) NOT NULL,
-  `Price` decimal(15,2) DEFAULT NULL,
-  `CoGS` decimal(15,2) DEFAULT NULL,
-  PRIMARY KEY (`LineId`)
-) ENGINE=InnoDB AUTO_INCREMENT=955973 DEFAULT CHARSET=utf8;
-
-
 

@@ -28,6 +28,9 @@ namespace Push.Utilities.Logging
             get { return LogManager.GetLogger(_loggerName); }
         }
 
+        public bool IsTraceEnabled => GetLogger.IsTraceEnabled;
+
+
         public void Trace(string message)
         {
             GetLogger.Trace(_messageFormatter(message));

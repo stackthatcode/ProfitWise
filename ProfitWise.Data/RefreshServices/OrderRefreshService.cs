@@ -52,37 +52,34 @@ namespace ProfitWise.Data.RefreshServices
             var orderRepository = _multitenantSqlRepositoryFactory.MakeOrderRepository(shop);
 
             _pushLogger.Info($"{this.ClassAndMethodName()} - {results.Count} Orders to process");
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
 
-            foreach (var order in results)
+            using (var trans = orderRepository.InitiateTransaction())
             {
-                _pushLogger.Debug($"Refresh Order: {order.Name} for {order.Email}");
 
-                var shopifyOrder = order.ToShopifyOrder(shop.ShopId);
-
-                orderRepository.DeleteOrder(shopifyOrder.ShopifyOrderId);
-                orderRepository.InsertOrder(shopifyOrder);
-
-                foreach (var line_item in shopifyOrder.LineItems)
+                foreach (var order in results)
                 {
-                    orderRepository.DeleteOrderLineItem(shopifyOrder.ShopifyOrderId);
-                    orderRepository.InsertOrderLineItem(line_item);
-                }
-            }
+                    _pushLogger.Debug($"Refresh Order: {order.Name} for {order.Email}");
 
-            TimeSpan ts = stopWatch.Elapsed;
-            _pushLogger.Info($"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to write {results.Count} Orders");
+                    var shopifyOrder = order.ToShopifyOrder(shop.ShopId);
+
+                    orderRepository.DeleteOrder(shopifyOrder.ShopifyOrderId);
+                    orderRepository.InsertOrder(shopifyOrder);
+
+                    foreach (var line_item in shopifyOrder.LineItems)
+                    {
+                        orderRepository.DeleteOrderLineItem(shopifyOrder.ShopifyOrderId);
+                        orderRepository.InsertOrderLineItem(line_item);
+                    }
+                }
+
+                trans.Commit();
+            }
         }
 
 
         public virtual IList<Order> RetrieveAllFromShopify(ShopifyCredentials shopCredentials)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
-
-            // SEE THIS JEREMY??? NO MORE!!!
-            //Stopwatch stopWatch = new Stopwatch();
-            //stopWatch.Start();
 
             var count = orderApiRepository.RetrieveCount();
             _pushLogger.Info($"{this.ClassAndMethodName()} - {count} Orders to process");
@@ -98,14 +95,9 @@ namespace ProfitWise.Data.RefreshServices
                 _pushLogger.Info(
                     $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
                 
-                // This might throw an Error!!!
                 var orders = orderApiRepository.Retrieve(pagenumber, _refreshServiceConfiguration.MaxOrderRate);
                 results.AddRange(orders);
             }
-
-            // SEE THIS JEREMY??? NO MORE!!!
-            //TimeSpan ts = stopWatch.Elapsed;
-            //_pushLogger.Info($"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to fetch {results.Count} Orders");
 
             return results;
         }

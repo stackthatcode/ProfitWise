@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -17,6 +18,13 @@ namespace ProfitWise.Data.Repositories
         }
 
         public int? ShopId { get; set; }
+
+
+        public MySqlTransaction InitiateTransaction()
+        {
+            return _connection.BeginTransaction();
+        }
+
 
         public virtual ShopifyOrder RetrieveOrders()
         {
@@ -60,6 +68,11 @@ namespace ProfitWise.Data.Repositories
 
         public virtual void InsertOrderLineItem(ShopifyOrderLineItem lineitem)
         {
+            if (lineitem.ShopifyOrderLineId == 5916139589)
+            {
+                throw new Exception("Simulating failure!!!");
+            }
+
             lineitem.ShopId = ShopId.Value;
             var query =
                 @"INSERT INTO shopifyorderlineitem

@@ -5,6 +5,8 @@ namespace Push.Utilities.Logging
 {
     public class ConsoleAndDebugLogger : IPushLogger
     {
+        public bool IsTraceEnabled => true;
+
         public void Trace(string message)
         {
             Console.WriteLine(message);

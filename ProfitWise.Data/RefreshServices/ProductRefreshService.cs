@@ -56,10 +56,6 @@ namespace ProfitWise.Data.RefreshServices
             var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProduceRate, count);
             var results = new List<Product>();
 
-            // SEE THIS JEREMY??? NO MORE!!!
-            //Stopwatch stopWatch = new Stopwatch();
-            //stopWatch.Start();
-
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 _pushLogger.Info(
@@ -69,20 +65,11 @@ namespace ProfitWise.Data.RefreshServices
                 results.AddRange(products);
             }
 
-            // SEE THIS JEREMY??? NO MORE!!!
-            //TimeSpan ts = stopWatch.Elapsed;
-            //_pushLogger.Info(
-            //    $"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to fetch {results.Count} Products");
-
             return results;
         }
 
         public virtual void WriteAllProductsToDatabase(ShopifyShop shop, IList<Product> allproducts)
-        {       
-            // SEE THIS JEREMY??? NO MORE!!!
-            //Stopwatch stopWatch = new Stopwatch();
-            //stopWatch.Start();
-            
+        {     
             _pushLogger.Info($"{this.ClassAndMethodName()} - {allproducts.Count} Products to process");
 
             var productDataRepository = this._multitenantSqlRepositoryFactory.MakeProductRepository(shop);
@@ -120,10 +107,6 @@ namespace ProfitWise.Data.RefreshServices
                     variantDataRepository.Insert(variantData);
                 };
             }
-
-            // SEE THIS JEREMY??? NO MORE!!!
-            //TimeSpan ts = stopWatch.Elapsed;
-            //_pushLogger.Info($"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to write {allproducts.Count} Products");
         }
     }
 }

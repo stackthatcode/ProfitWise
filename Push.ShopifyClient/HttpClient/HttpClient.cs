@@ -19,8 +19,7 @@ namespace Push.Shopify.HttpClient
             {
                 var sr = new StreamReader(resp.GetResponseStream());
                 var messageResponse = sr.ReadToEnd();
-                _logger.Trace(messageResponse);
-
+                
                 return new HttpClientResponse
                 {
                     StatusCode = resp.StatusCode,

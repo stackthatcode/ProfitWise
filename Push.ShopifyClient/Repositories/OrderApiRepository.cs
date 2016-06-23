@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Autofac.Extras.DynamicProxy2;
 using Castle.Core.Logging;
 using Newtonsoft.Json;
@@ -51,6 +52,13 @@ namespace Push.Shopify.Repositories
 
             foreach (var order in parent.orders)
             {
+                if (_logger.IsTraceEnabled)
+                {
+                    _logger.Trace($"Dump of Order ID: {order.id}" +
+                                    Environment.NewLine +
+                                    JsonConvert.SerializeObject(order));
+                }
+
                 _logger.Debug($"Deserializing Order {order.name} ({order.id})");
 
                 var orderResult = new Order
