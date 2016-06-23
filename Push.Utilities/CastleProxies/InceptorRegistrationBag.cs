@@ -19,6 +19,11 @@ namespace Push.Utilities.CastleProxies
         {
             return _registry;
         }
+
+        public int Count()
+        {
+            return _registry.Count;
+        }
     }
 
     public static class AutofacInterceptorExtensions
@@ -28,6 +33,9 @@ namespace Push.Utilities.CastleProxies
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registrationBuilder, InceptorRegistry interceptorRegistry) 
                     where TActivatorData : ConcreteReflectionActivatorData
         {
+            if (interceptorRegistry.Count() == 0)
+                return registrationBuilder;
+
             registrationBuilder.EnableClassInterceptors();
             foreach (var interceptorType in interceptorRegistry.Flush())
             {

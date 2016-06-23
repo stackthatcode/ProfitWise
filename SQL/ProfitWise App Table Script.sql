@@ -1,9 +1,13 @@
 USE profitwise;
 
+
 DROP TABLE IF EXISTS `orderskuhistory`; 
 DROP TABLE IF EXISTS `shopifyproduct`; 
 DROP TABLE IF EXISTS `shopifyvariant`; 
 DROP TABLE IF EXISTS `shop`; 
+
+DROP TABLE IF EXISTS `shopifyorder`; 
+DROP TABLE IF EXISTS `shopifyorderlineitem`; 
 
 
 /** TODO - rename these tables to shopifyproductdata ***/
@@ -16,21 +20,21 @@ CREATE TABLE `shop` (
 
 
 CREATE TABLE `shopifyproduct` (
-  `UserId` varchar(128) NOT NULL,
-  `ShopifyProductId` bigint(20) NOT NULL,
+  `ShopId` varchar(128) NOT NULL,
+  `ShopifyProductId` BIGINT NOT NULL,
   `Title` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`UserId`,`ShopifyProductId`)
+  PRIMARY KEY (`ShopId`,`ShopifyProductId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `shopifyvariant` (
-  `UserId` varchar(128) NOT NULL,
-  `ShopifyVariantId` bigint(20) NOT NULL,
-  `ShopifyProductId` bigint(20) DEFAULT NULL,
+  `ShopId` varchar(128) NOT NULL,
+  `ShopifyVariantId` BIGINT NOT NULL,
+  `ShopifyProductId` BIGINT NOT NULL,
   `Sku` varchar(100) DEFAULT NULL,
   `Title` varchar(200) DEFAULT NULL,
   `Price` decimal(15,2) DEFAULT NULL,
-  PRIMARY KEY (`UserId`,`ShopifyVariantId`)
+  PRIMARY KEY (`ShopId`,`ShopifyVariantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -38,7 +42,7 @@ CREATE TABLE `shopifyvariant` (
 
 CREATE TABLE `shopifyorder` (
   `ShopId` int(6) unsigned NOT NULL,
-  `ShopifyOrderId` int(6) unsigned NOT NULL,
+  `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `TotalPrice` decimal(15,2) DEFAULT NULL,
   `Email` varchar(128) DEFAULT NULL,
   `OrderNumber` varchar(128) DEFAULT NULL,  
@@ -47,10 +51,10 @@ CREATE TABLE `shopifyorder` (
 
 CREATE TABLE `shopifyorderlineitem` (
   `ShopId` int(6) unsigned NOT NULL,
-  `ShopifyOrderLineId` int(6) unsigned NOT NULL,
-  `ShopifyOrderId` int(6) unsigned NOT NULL,
-  `ProductId` int(6) unsigned NOT NULL,
-  `VariantId` int(6) unsigned NOT NULL,
+  `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
+  `ShopifyOrderId` BIGINT unsigned NOT NULL,
+  `ShopifyProductId` BIGINT unsigned NULL,
+  `ShopifyVariantId` BIGINT unsigned NULL,
   `ReportedSku` varchar(128) DEFAULT NULL,
   `Quantity` int(6) unsigned NOT NULL,
   `UnitPrice` decimal(15,2) DEFAULT NULL, 

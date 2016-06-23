@@ -8,7 +8,6 @@ using MySql.Data.MySqlClient;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Web.Helpers;
 using Push.Utilities.CastleProxies;
-using Push.Utilities.Errors;
 using Push.Utilities.Logging;
 
 namespace ProfitWise.Web
@@ -58,7 +57,7 @@ namespace ProfitWise.Web
             // Error forensics interceptors
             builder.RegisterType<ErrorForensics>();
             var registry = new InceptorRegistry();
-            registry.Add(typeof(ErrorForensics));
+            //registry.Add(typeof(ErrorForensics));
 
             // Controller registration
             builder.RegisterType<UserHomeController>()

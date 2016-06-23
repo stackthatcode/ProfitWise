@@ -25,13 +25,7 @@ namespace ProfitWise.Web.Controllers
 
         public async Task<ActionResult> Index()
         {
-            this.ViewBag.AccessToken = "User not authenticated - no access token";
-
-
-            // Security Testing stuff
-            DefaultSecurityDataConfig.Execute(DependencyResolver.Current.GetService<ILifetimeScope>());
-
-
+            this.ViewBag.AccessToken = "User not authenticated - no access token";            
 
             // TODO - why does OWIN allow for this without forcing database validation...?
             var userId = HttpContext.User.ExtractUserId();

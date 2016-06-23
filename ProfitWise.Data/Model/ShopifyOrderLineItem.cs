@@ -7,8 +7,8 @@ namespace ProfitWise.Data.Model
         public int ShopId { get; set; }
         public long ShopifyOrderLineId { get; set; }
         public long ShopifyOrderId { get; set; }
-        public long ProductId { get; set; }
-        public long VariantId { get; set; }
+        public long? ShopifyProductId { get; set; }
+        public long? ShopifyVariantId { get; set; }
         public string ReportedSku { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }

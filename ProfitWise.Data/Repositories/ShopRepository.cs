@@ -16,7 +16,7 @@ namespace ProfitWise.Data.Repositories
 
         public ShopifyShop RetrieveByShopId(int shopId)
         {
-            var query = @"SELECT FROM shop WHERE ShopId = @ShopId";
+            var query = @"SELECT * FROM shop WHERE ShopId = @ShopId";
             return _connection
                 .Query<ShopifyShop>(query, new {@ShopId = shopId})
                 .FirstOrDefault();
@@ -24,7 +24,7 @@ namespace ProfitWise.Data.Repositories
 
         public ShopifyShop RetrieveByUserId(string userId)
         {
-            var query = @"SELECT FROM shop WHERE UserId = @UserId";
+            var query = @"SELECT * FROM shop WHERE UserId = @UserId";
             return _connection
                 .Query<ShopifyShop>(query, new { @UserId = userId })
                 .FirstOrDefault();
@@ -36,7 +36,7 @@ namespace ProfitWise.Data.Repositories
                 @"INSERT INTO shop (UserId) VALUES (@UserId);
                 SELECT LAST_INSERT_ID();";
             return _connection
-                .Query<int>(query, new { shop })
+                .Query<int>(query, shop)
                 .First();
         }
     }

@@ -12,7 +12,7 @@ namespace ProfitWise.Batch.CodeDump
 
         public HttpClientThatThrowsUnauthorized()
         {
-            _httpClient = new HttpClient();
+            _httpClient = new HttpClient(null);
         }
 
         public HttpClientResponse ProcessRequest(HttpWebRequest request)
@@ -39,7 +39,7 @@ namespace ProfitWise.Batch.CodeDump
 
         public HttpClientThatThrowsErrors()
         {
-            _httpClient = new HttpClient();
+            _httpClient = new HttpClient(null);
         }
 
         public HttpClientResponse ProcessRequest(HttpWebRequest request)

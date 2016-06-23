@@ -1,0 +1,74 @@
+2016-06-23 13:01:07.2635|Info|RefreshProcessProxy.Execute for UserId: 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:01:10.2585|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - 248 Orders to process
+2016-06-23 13:01:10.2635|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 1 of 3 pages
+2016-06-23 13:01:10.8628|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 2 of 3 pages
+2016-06-23 13:01:11.2585|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 3 of 3 pages
+2016-06-23 13:01:11.6249|Info|ProfitWise.Data.RefreshServices.OrderRefreshService.System.Collections.Generic.IList`1[Push.Shopify.Model.Order] RetrieveAllFromShopify(Push.Shopify.HttpClient.ShopifyCredentials) total execution time 00:00:01.85
+2016-06-23 13:01:11.6699|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence - 248 Orders to process
+2016-06-23 13:01:16.8088|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence total execution time 00:00:05.13 to write 248 Orders
+2016-06-23 13:01:16.8088|Info|ProfitWise.Data.RefreshServices.OrderRefreshService.Void WriteOrdersToPersistence(ProfitWise.Data.Model.ShopifyShop, System.Collections.Generic.IList`1[Push.Shopify.Model.Order]) total execution time 00:00:05.18
+2016-06-23 13:01:16.8088|Info|ProfitWise.Data.RefreshServices.OrderRefreshService.Void Execute(Push.Shopify.HttpClient.ShopifyCredentials) total execution time 00:00:07.04
+2016-06-23 13:02:16.1232|Info|RefreshProcessProxy.Execute for UserId: 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:02:18.7129|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - 248 Orders to process
+2016-06-23 13:02:18.7129|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 1 of 3 pages
+2016-06-23 13:02:19.4125|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 2 of 3 pages
+2016-06-23 13:02:20.0155|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 3 of 3 pages
+2016-06-23 13:02:20.2706|Info|OrderRefreshServiceProxy.System.Collections.Generic.IList`1[Push.Shopify.Model.Order] RetrieveAllFromShopify(Push.Shopify.HttpClient.ShopifyCredentials) total execution time 00:00:01.90
+2016-06-23 13:02:20.3146|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence - 248 Orders to process
+2016-06-23 13:02:25.2776|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence total execution time 00:00:04.95 to write 248 Orders
+2016-06-23 13:02:25.2776|Info|OrderRefreshServiceProxy.Void WriteOrdersToPersistence(ProfitWise.Data.Model.ShopifyShop, System.Collections.Generic.IList`1[Push.Shopify.Model.Order]) total execution time 00:00:05.00
+2016-06-23 13:02:25.2925|Info|OrderRefreshServiceProxy.Void Execute(Push.Shopify.HttpClient.ShopifyCredentials) total execution time 00:00:06.92
+2016-06-23 13:02:37.8872|Info|RefreshProcessProxy.Execute for UserId: 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:02:40.5320|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - 248 Orders to process
+2016-06-23 13:02:40.5450|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 1 of 3 pages
+2016-06-23 13:02:41.2674|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 2 of 3 pages
+2016-06-23 13:02:41.7834|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 3 of 3 pages
+2016-06-23 13:07:45.0298|Info|RefreshProcessProxy.Execute for UserId: 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:07:48.0140|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - 248 Orders to process
+2016-06-23 13:07:48.0140|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 1 of 3 pages
+2016-06-23 13:07:48.9165|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 2 of 3 pages
+2016-06-23 13:07:49.4408|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 3 of 3 pages
+2016-06-23 13:07:57.9639|Info|OrderRefreshServiceProxy.System.Collections.Generic.IList`1[Push.Shopify.Model.Order] RetrieveAllFromShopify(Push.Shopify.HttpClient.ShopifyCredentials) total execution time 00:00:02.07
+2016-06-23 13:07:58.0090|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence - 248 Orders to process
+2016-06-23 13:08:01.6672|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence total execution time 00:00:03.64 to write 248 Orders
+2016-06-23 13:08:01.6672|Info|OrderRefreshServiceProxy.Void WriteOrdersToPersistence(ProfitWise.Data.Model.ShopifyShop, System.Collections.Generic.IList`1[Push.Shopify.Model.Order]) total execution time 00:00:03.69
+2016-06-23 13:08:01.6852|Info|OrderRefreshServiceProxy.Void Execute(Push.Shopify.HttpClient.ShopifyCredentials) total execution time 00:00:14.04
+2016-06-23 13:08:12.0581|Info|RefreshProcessProxy.Execute for UserId: 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:08:14.7131|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - 248 Orders to process
+2016-06-23 13:08:14.7131|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 1 of 3 pages
+2016-06-23 13:08:15.3557|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 2 of 3 pages
+2016-06-23 13:08:15.7164|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 3 of 3 pages
+2016-06-23 13:08:45.1525|Info|RefreshProcessProxy.Execute for UserId: 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:08:47.7740|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - 248 Orders to process
+2016-06-23 13:08:47.7840|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 1 of 3 pages
+2016-06-23 13:08:48.5709|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 2 of 3 pages
+2016-06-23 13:08:48.9689|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 3 of 3 pages
+2016-06-23 13:08:52.7588|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify total execution time 00:00:01.90
+2016-06-23 13:08:52.8068|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence - 248 Orders to process
+2016-06-23 13:08:59.4987|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence total execution time 00:00:06.68 to write 248 Orders
+2016-06-23 13:09:01.8208|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence total execution time 00:00:06.73
+2016-06-23 13:09:04.4769|Info|OrderRefreshServiceProxy.Execute total execution time 00:00:14.44
+2016-06-23 13:15:59.7615|Info|RefreshProcessProxy.Execute for UserId: 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:15:59.7895|Info|RefreshProcessProxy.Execute - retrieving Shopify Credentials Claims for 8c1f61cf-5446-4b06-bd5d-a55f51bb3e69
+2016-06-23 13:16:02.4667|Info|ProductRefreshServiceProxy.RetrieveAll - Executing
+2016-06-23 13:16:02.4667|Info|ProductRefreshServiceProxy.RetrieveAll - page 1 of 8 pages
+2016-06-23 13:16:03.0048|Info|ProductRefreshServiceProxy.RetrieveAll - page 2 of 8 pages
+2016-06-23 13:16:03.3534|Info|ProductRefreshServiceProxy.RetrieveAll - page 3 of 8 pages
+2016-06-23 13:16:03.9081|Info|ProductRefreshServiceProxy.RetrieveAll - page 4 of 8 pages
+2016-06-23 13:16:04.2952|Info|ProductRefreshServiceProxy.RetrieveAll - page 5 of 8 pages
+2016-06-23 13:16:04.7212|Info|ProductRefreshServiceProxy.RetrieveAll - page 6 of 8 pages
+2016-06-23 13:16:05.2041|Info|ProductRefreshServiceProxy.RetrieveAll - page 7 of 8 pages
+2016-06-23 13:16:05.7192|Info|ProductRefreshServiceProxy.RetrieveAll - page 8 of 8 pages
+2016-06-23 13:16:06.1820|Info|ProductRefreshService.RetrieveAll - metered execution time 00:00:04.12
+2016-06-23 13:16:06.2161|Info|ProductRefreshServiceProxy.WriteAllProductsToDatabase - 72 Products to process
+2016-06-23 13:16:07.3944|Info|ProductRefreshService.WriteAllProductsToDatabase - metered execution time 00:00:01.18
+2016-06-23 13:16:07.4044|Info|ProductRefreshService.Execute - metered execution time 00:00:05.35
+2016-06-23 13:16:07.4983|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - 248 Orders to process
+2016-06-23 13:16:07.5193|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 1 of 3 pages
+2016-06-23 13:16:08.4215|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 2 of 3 pages
+2016-06-23 13:16:08.8845|Info|OrderRefreshServiceProxy.RetrieveAllFromShopify - page 3 of 3 pages
+2016-06-23 13:16:09.1632|Info|OrderRefreshService.RetrieveAllFromShopify - metered execution time 00:00:01.74
+2016-06-23 13:16:09.2132|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence - 248 Orders to process
+2016-06-23 13:16:16.3180|Info|OrderRefreshServiceProxy.WriteOrdersToPersistence total execution time 00:00:07.09 to write 248 Orders
+2016-06-23 13:16:16.3500|Info|OrderRefreshService.WriteOrdersToPersistence - metered execution time 00:00:07.17
+2016-06-23 13:16:16.3730|Info|OrderRefreshService.Execute - metered execution time 00:00:08.95

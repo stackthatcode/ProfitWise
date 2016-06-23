@@ -9,7 +9,6 @@ using Push.Shopify.HttpClient;
 using Push.Utilities.Helpers;
 using Push.Utilities.Logging;
 using Push.Utilities.CastleProxies;
-using Push.Utilities.Errors;
 
 
 namespace ProfitWise.Batch
@@ -59,9 +58,9 @@ namespace ProfitWise.Batch
 
             builder.Register(x => new RefreshServiceConfiguration()
             {
-                RefreshServiceMaxOrderRate =
+                MaxOrderRate =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxOrderRate", 50),
-                RefreshServiceMaxProduceRate =
+                MaxProduceRate =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProduceRate", 100),
             });
 

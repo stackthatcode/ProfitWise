@@ -4,7 +4,6 @@ using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Repositories;
 using Push.Utilities.CastleProxies;
-using Push.Utilities.Errors;
 
 
 namespace Push.Shopify
@@ -15,7 +14,7 @@ namespace Push.Shopify
         {
             builder.RegisterType<ErrorForensics>();
             var registry = new InceptorRegistry();
-            registry.Add(typeof(ErrorForensics));
+            //registry.Add(typeof(ErrorForensics));
 
             builder.RegisterType<ShopifyCredentialRequired>();
             builder.RegisterType<ShopifyHttpClientConfig>();

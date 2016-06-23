@@ -114,18 +114,14 @@ namespace ProfitWise.Web.Controllers
             }
             
             // User does not exist in our System? 
-            ApplicationUser user = await _userManager.FindAsync(externalLoginInfo.Login);
+            ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
 
             // If not, create a new Application User
             if (user == null)
             {
-                var new_domain_claim =
-                    externalLoginInfo
-                        .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaimExternal);
-
                 user = new ApplicationUser
                 {
-                    UserName = new_domain_claim.Value,
+                    UserName = externalLoginInfo.DefaultUserName,
                     Email = model.Email
                 };
                 
@@ -164,7 +160,7 @@ namespace ProfitWise.Web.Controllers
 
         private async Task CopyIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
-            ApplicationUser user = await _userManager.FindAsync(externalLoginInfo.Login);
+            ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
             var new_domain_claim =
                 externalLoginInfo
                     .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaimExternal);

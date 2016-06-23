@@ -2,6 +2,7 @@
 using ProfitWise.Data.RefreshServices;
 using Push.Foundation.Web.Identity;
 using Push.Shopify.HttpClient;
+using Push.Utilities.General;
 using Push.Utilities.Logging;
 
 namespace ProfitWise.Data.Processes
@@ -11,6 +12,7 @@ namespace ProfitWise.Data.Processes
         private readonly ShopifyCredentialService _shopifyCredentialService;
         private readonly OrderRefreshService _orderRefreshService;
         private readonly ProductRefreshService _productRefreshService;
+        private readonly ShopRefreshService _shopRefreshService;
         private readonly IPushLogger _pushLogger;
 
 
@@ -18,6 +20,7 @@ namespace ProfitWise.Data.Processes
                 ShopifyCredentialService shopifyCredentialService,
                 OrderRefreshService orderRefreshService,
                 ProductRefreshService productRefreshService,
+                ShopRefreshService shopRefreshService,
                 IPushLogger logger)
         {
             // TODO: move into Autofac configuration
@@ -26,10 +29,14 @@ namespace ProfitWise.Data.Processes
             _orderRefreshService = orderRefreshService;
             _productRefreshService = productRefreshService;
             _pushLogger = logger;
+            _shopRefreshService = shopRefreshService;
         }
 
         public void Execute(string userId)
         {
+            _pushLogger.Info($"{this.ClassAndMethodName()} for UserId: {userId}");
+
+            _pushLogger.Info($"{this.ClassAndMethodName()} - retrieving Shopify Credentials Claims for {userId}");
             var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
 
             if (shopifyFromClaims.Success == false)
@@ -45,6 +52,7 @@ namespace ProfitWise.Data.Processes
                 AccessToken = shopifyFromClaims.AccessToken,
             };
 
+            _shopRefreshService.Execute(userId);
             _productRefreshService.Execute(shopifyClientCredentials);
             _orderRefreshService.Execute(shopifyClientCredentials);
         }

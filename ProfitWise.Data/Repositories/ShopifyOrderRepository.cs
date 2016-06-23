@@ -63,8 +63,17 @@ namespace ProfitWise.Data.Repositories
             lineitem.ShopId = ShopId.Value;
             var query =
                 @"INSERT INTO shopifyorderlineitem
-                VALUES ( @ShopId, @ShopifyOrderLineId, @ShopifyOrderId, @ProductId, @VariantId, @ReportedSku, @Quantity, @UnitPrice, @TotalDiscount )";
+                VALUES ( @ShopId, @ShopifyOrderLineId, @ShopifyOrderId, @ShopifyProductId, @ShopifyVariantId, @ReportedSku, @Quantity, @UnitPrice, @TotalDiscount )";
             _connection.Execute(query, lineitem);
+        }
+
+
+        public virtual void DeleteOrderLineItem(long shopifyOrderId)
+        {
+            var query =
+                @"DELETE FROM shopifyorderlineitem WHERE ShopId = @ShopId AND ShopifyOrderId = @shopifyOrderId";
+            _connection.Execute(query, new { ShopId, shopifyOrderId });
+
         }
     }
 }

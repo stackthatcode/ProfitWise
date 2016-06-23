@@ -26,23 +26,23 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM shopifyproduct WHERE ShopId";
             return
                 _connection
-                    .Query<ShopifyProduct>(query, new { ShopId.Value })
+                    .Query<ShopifyProduct>(query, new { ShopId })
                     .ToList();
         }
 
         public virtual void Insert(ShopifyProduct product)
         {
             product.ShopId = ShopId.Value;
-            var query = @"INSERT INTO shopifyproduct(UserId, ShopifyProductId, Title) 
-                        VALUES(@UserId, @ShopifyProductId, @Title)";
+            var query = @"INSERT INTO shopifyproduct(ShopId, ShopifyProductId, Title) 
+                        VALUES(@ShopId, @ShopifyProductId, @Title)";
             _connection.Execute(query, product);
         }
 
         public virtual void Delete(long shopifyProductId)
         {
             var query = @"DELETE FROM shopifyproduct 
-                        WHERE UserId = @UserId AND ShopifyProductId = @ShopifyProductId";
-            _connection.Execute(query, new { ShopId.Value, shopifyProductId });
+                        WHERE ShopId = @ShopId AND ShopifyProductId = @ShopifyProductId";
+            _connection.Execute(query, new { ShopId, shopifyProductId });
         }
     }
 }

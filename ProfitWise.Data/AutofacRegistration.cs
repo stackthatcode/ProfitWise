@@ -5,7 +5,6 @@ using ProfitWise.Data.Processes;
 using ProfitWise.Data.RefreshServices;
 using ProfitWise.Data.Repositories;
 using Push.Utilities.CastleProxies;
-using Push.Utilities.Errors;
 
 namespace ProfitWise.Data
 {
@@ -14,13 +13,18 @@ namespace ProfitWise.Data
         public static void Build(ContainerBuilder builder)
         {
             builder.RegisterType<ErrorForensics>();
+            builder.RegisterType<ExecutionTime>();
+
+            builder.RegisterType<MultitenantSqlRepositoryFactory>();
+            builder.RegisterType<ShopifyOrderRepository>();
+            builder.RegisterType<ShopifyProductRepository>();
+            builder.RegisterType<ShopifyVariantRepository>();            
+            builder.RegisterType<ShopRepository>();
+
             var registry = new InceptorRegistry();
-            registry.Add(typeof(ErrorForensics));
+            registry.Add(typeof(ExecutionTime));
 
-            builder.RegisterType<ShopifyProductRepository>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ShopifyVariantRepository>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<MultitenantSqlRepositoryFactory>().EnableClassInterceptorsWithRegistry(registry);
-
+            builder.RegisterType<ShopRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<OrderRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);

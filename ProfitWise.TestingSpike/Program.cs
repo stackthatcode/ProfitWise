@@ -28,7 +28,7 @@ namespace ProfitWise.Batch
             try
             {
                 // This is for simulation purposes - in the future, we'll load a list of Users from database
-                var userId = "a4ae6621-57ec-4ca8-837f-0b439e3cc710";
+                var userId = "8c1f61cf-5446-4b06-bd5d-a55f51bb3e69";
 
                 var refreshProcess = container.Resolve<RefreshProcess>();
                 refreshProcess.Execute(userId);

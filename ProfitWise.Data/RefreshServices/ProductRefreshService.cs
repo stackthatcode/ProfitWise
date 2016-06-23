@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
@@ -18,20 +19,22 @@ namespace ProfitWise.Data.RefreshServices
         private readonly IPushLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantSqlRepositoryFactory _multitenantSqlRepositoryFactory;
+        private readonly RefreshServiceConfiguration _configuration;
         private readonly ShopRepository _shopRepository;
 
-        public int ShopifyOrderLimit = 250;
         
 
         public ProductRefreshService(
                 IPushLogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantSqlRepositoryFactory multitenantSqlRepositoryFactory,
+                RefreshServiceConfiguration configuration,
                 ShopRepository shopRepository)
         {
             _pushLogger = logger;
             _apiRepositoryFactory = apiRepositoryFactory;
             _multitenantSqlRepositoryFactory = multitenantSqlRepositoryFactory;
+            _configuration = configuration;
             _shopRepository = shopRepository;
         }
 
@@ -50,30 +53,38 @@ namespace ProfitWise.Data.RefreshServices
             var count = productApiRepository.RetrieveCount();
             _pushLogger.Info($"{this.ClassAndMethodName()} - Executing");
 
-            var numberofpages = PagingFunctions.NumberOfPages(ShopifyOrderLimit, count);
+            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProduceRate, count);
             var results = new List<Product>();
 
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
+            // SEE THIS JEREMY??? NO MORE!!!
+            //Stopwatch stopWatch = new Stopwatch();
+            //stopWatch.Start();
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Debug(
+                _pushLogger.Info(
                     $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
 
-                var products = productApiRepository.Retrieve(pagenumber, ShopifyOrderLimit);
+                var products = productApiRepository.Retrieve(pagenumber, _configuration.MaxProduceRate);
                 results.AddRange(products);
             }
 
-            TimeSpan ts = stopWatch.Elapsed;
-            _pushLogger.Debug(
-                $"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to fetch {results.Count} Products");
+            // SEE THIS JEREMY??? NO MORE!!!
+            //TimeSpan ts = stopWatch.Elapsed;
+            //_pushLogger.Info(
+            //    $"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to fetch {results.Count} Products");
 
             return results;
         }
 
         public virtual void WriteAllProductsToDatabase(ShopifyShop shop, IList<Product> allproducts)
-        {
+        {       
+            // SEE THIS JEREMY??? NO MORE!!!
+            //Stopwatch stopWatch = new Stopwatch();
+            //stopWatch.Start();
+            
+            _pushLogger.Info($"{this.ClassAndMethodName()} - {allproducts.Count} Products to process");
+
             var productDataRepository = this._multitenantSqlRepositoryFactory.MakeProductRepository(shop);
             var variantDataRepository = this._multitenantSqlRepositoryFactory.MakeVariantRepository(shop);
 
@@ -94,12 +105,7 @@ namespace ProfitWise.Data.RefreshServices
                 _pushLogger.Debug($"{this.ClassAndMethodName()} - Inserting Product: {product.Title} ({product.Id})");
 
                 foreach (var variant in product.Variants)
-                {
-                    if (variant.Id == 1190225328)
-                    {
-                        throw new Exception("Oh noes!!! database no like!!!");
-                    }
-
+                {                    
                     var variantData = new ShopifyVariant()
                     {
                         ShopId = shop.ShopId,
@@ -114,7 +120,11 @@ namespace ProfitWise.Data.RefreshServices
                     variantDataRepository.Insert(variantData);
                 };
             }
-        }        
+
+            // SEE THIS JEREMY??? NO MORE!!!
+            //TimeSpan ts = stopWatch.Elapsed;
+            //_pushLogger.Info($"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to write {allproducts.Count} Products");
+        }
     }
 }
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using Castle.DynamicProxy;
+using Push.Utilities.General;
 using Push.Utilities.Logging;
 
-namespace Push.Utilities.Errors
+namespace Push.Utilities.CastleProxies
 {
     public class ErrorForensics : IInterceptor
     {
@@ -15,20 +16,24 @@ namespace Push.Utilities.Errors
 
         public void Intercept(IInvocation invocation)
         {
-            try
-            {
-                invocation.Proceed();
-            }
-            catch (Exception ex)
-            {
-                _pushLogger.Error(invocation.Method.Name + " threw Exception " + ex.GetType() + " - dumping parameters");
-                var counter = 1;
-                foreach (var arg in invocation.Arguments)
-                {
-                    _pushLogger.Error($"Parameter {counter++}: {arg}");
-                }
-                throw;
-            }
+            invocation.Proceed();
+
+            // TODO: fix this shit up!
+            //try
+            //{
+            //    invocation.Proceed();
+            //}
+            //catch (Exception ex)
+            //{
+            //    _pushLogger.Error(invocation.Method.Name + " threw Exception " + ex.GetType() + " - dumping parameters");
+            //    var counter = 1;
+            //    foreach (var arg in invocation.Arguments)
+            //    {
+            //        _pushLogger.Error($"Parameter: {counter++}: {arg}");
+            //        //_pushLogger.Error($"{arg.DumpProperties()}");
+            //    }
+            //    throw;
+            //}
         }
     }
 }

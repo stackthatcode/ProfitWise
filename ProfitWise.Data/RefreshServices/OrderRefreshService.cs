@@ -51,15 +51,28 @@ namespace ProfitWise.Data.RefreshServices
         {
             var orderRepository = _multitenantSqlRepositoryFactory.MakeOrderRepository(shop);
 
+            _pushLogger.Info($"{this.ClassAndMethodName()} - {results.Count} Orders to process");
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             foreach (var order in results)
             {
+                _pushLogger.Debug($"Refresh Order: {order.Name} for {order.Email}");
+
                 var shopifyOrder = order.ToShopifyOrder(shop.ShopId);
+
                 orderRepository.DeleteOrder(shopifyOrder.ShopifyOrderId);
                 orderRepository.InsertOrder(shopifyOrder);
 
-                var message = $"Refreshing Order: {shopifyOrder.OrderNumber} for {shopifyOrder.Email}";
-                _pushLogger.Debug(message);
+                foreach (var line_item in shopifyOrder.LineItems)
+                {
+                    orderRepository.DeleteOrderLineItem(shopifyOrder.ShopifyOrderId);
+                    orderRepository.InsertOrderLineItem(line_item);
+                }
             }
+
+            TimeSpan ts = stopWatch.Elapsed;
+            _pushLogger.Info($"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to write {results.Count} Orders");
         }
 
 
@@ -67,29 +80,32 @@ namespace ProfitWise.Data.RefreshServices
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
 
+            // SEE THIS JEREMY??? NO MORE!!!
+            //Stopwatch stopWatch = new Stopwatch();
+            //stopWatch.Start();
+
             var count = orderApiRepository.RetrieveCount();
+            _pushLogger.Info($"{this.ClassAndMethodName()} - {count} Orders to process");
+
             var numberofpages = 
                 PagingFunctions.NumberOfPages(
-                    _refreshServiceConfiguration.RefreshServiceMaxOrderRate, count);
+                    _refreshServiceConfiguration.MaxOrderRate, count);
 
             var results = new List<Order>();
 
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Debug(
+                _pushLogger.Info(
                     $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
                 
                 // This might throw an Error!!!
-                var orders = orderApiRepository.Retrieve(pagenumber, _refreshServiceConfiguration.RefreshServiceMaxOrderRate);
+                var orders = orderApiRepository.Retrieve(pagenumber, _refreshServiceConfiguration.MaxOrderRate);
                 results.AddRange(orders);
             }
 
-            TimeSpan ts = stopWatch.Elapsed;
-            _pushLogger.Debug(
-                $"OrderApiRepository.RetrieveAll total execution time {ts.ToFormattedString()} to fetch {results.Count} Orders");
+            // SEE THIS JEREMY??? NO MORE!!!
+            //TimeSpan ts = stopWatch.Elapsed;
+            //_pushLogger.Info($"{this.ClassAndMethodName()} total execution time {ts.ToFormattedString()} to fetch {results.Count} Orders");
 
             return results;
         }

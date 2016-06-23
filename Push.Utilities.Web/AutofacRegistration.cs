@@ -8,6 +8,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Security;
+using Push.Utilities.CastleProxies;
 
 namespace Push.Foundation.Web
 {
@@ -16,15 +17,12 @@ namespace Push.Foundation.Web
         public static void Build(
             ContainerBuilder builder, string encryption_key, string encryption_iv)
         {
-            // This requires the User to have a DbConnection registered
+            // OWIN framework objects
             builder
                 .RegisterType<ApplicationDbContext>()
                 .As<DbContext>()
                 .As<ApplicationDbContext>();
 
-            builder.RegisterType<EmailService>().As<EmailService>();
-            builder.RegisterType<SmsService>().As<SmsService>();
-            
             builder.RegisterType<ApplicationRoleManager>();
             builder.RegisterType<ApplicationUserManager>();
             builder.RegisterType<ApplicationSignInManager>();
@@ -55,7 +53,23 @@ namespace Push.Foundation.Web
                 ctx => new EncryptionService(encryption_key, encryption_iv))
                 .As<IEncryptionService>();
 
-            builder.RegisterType<ShopifyCredentialService>();
+            // Our customer Push Services
+            var registry = new InceptorRegistry();
+            registry.Add(typeof(ExecutionTime));
+
+            builder
+                .RegisterType<EmailService>()
+                .As<EmailService>()
+                .EnableClassInterceptorsWithRegistry(registry);
+
+            builder
+                .RegisterType<SmsService>()
+                .As<SmsService>()
+                .EnableClassInterceptorsWithRegistry(registry);
+
+            builder
+                .RegisterType<ShopifyCredentialService>()
+                .EnableClassInterceptorsWithRegistry(registry);
         }
     }
 }

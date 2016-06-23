@@ -23,18 +23,18 @@ namespace ProfitWise.Data.Model
 
             foreach (var line_item in order.LineItems)
             {
-                var shopifyOrderLineItem = new ShopifyOrderLineItem()
-                {
-                    ShopId = shopId,
-                    VariantId = line_item.VariantId,
-                    ProductId = line_item.ProductId,
-                    ShopifyOrderId = order.Id,
-                    ShopifyOrderLineId = line_item.Id,
-                    Quantity = line_item.Quantity,
-                    ReportedSku = line_item.Sku,
+                var shopifyOrderLineItem = new ShopifyOrderLineItem();
+                shopifyOrderLineItem.ShopId = shopId;
+                shopifyOrderLineItem.ShopifyVariantId = line_item.VariantId;
+                shopifyOrderLineItem.ShopifyProductId = line_item.ProductId;
+                shopifyOrderLineItem.ShopifyOrderId = order.Id;
+                shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
+                shopifyOrderLineItem.Quantity = line_item.Quantity;
+                shopifyOrderLineItem.ReportedSku = line_item.Sku;
                     //TotalDiscount = line_item => ON HOLD
-                    UnitPrice = line_item.Price,
-                };
+                shopifyOrderLineItem.UnitPrice = line_item.Price;
+
+                shopifyOrder.LineItems.Add(shopifyOrderLineItem);
             }
 
             return shopifyOrder;
