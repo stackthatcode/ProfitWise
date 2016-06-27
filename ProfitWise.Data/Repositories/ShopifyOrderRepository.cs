@@ -58,6 +58,18 @@ namespace ProfitWise.Data.Repositories
         }
 
 
+        public virtual void MassDelete(IList<ShopifyOrder> orders)
+        {
+            var orderIdList = orders.Select(x => x.ShopifyOrderId).ToList();
+
+            var query = @"DELETE FROM shopifyorderlineitem WHERE ShopifyOrderId IN @orderIdList";
+            _connection.Execute(query, new { orderIdList });
+
+            var query2 = @"DELETE FROM shopifyorder WHERE ShopifyOrderId IN @orderIdList";
+            _connection.Execute(query2, new { orderIdList });
+        }
+
+
         public virtual IList<ShopifyOrderLineItem> RetrieveOrderLineItems(long shopifyOrderId)
         {
             var query = @"SELECT * FROM shopifyorderlineitem WHERE ShopId = @ShopId AND shopifyOrderId = @shopifyOrderId";
@@ -68,11 +80,6 @@ namespace ProfitWise.Data.Repositories
 
         public virtual void InsertOrderLineItem(ShopifyOrderLineItem lineitem)
         {
-            if (lineitem.ShopifyOrderLineId == 5916139589)
-            {
-                throw new Exception("Simulating failure!!!");
-            }
-
             lineitem.ShopId = ShopId.Value;
             var query =
                 @"INSERT INTO shopifyorderlineitem
@@ -81,7 +88,7 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        public virtual void DeleteOrderLineItem(long shopifyOrderId)
+        public virtual void DeleteOrderLineItems(long shopifyOrderId)
         {
             var query =
                 @"DELETE FROM shopifyorderlineitem WHERE ShopId = @ShopId AND ShopifyOrderId = @shopifyOrderId";

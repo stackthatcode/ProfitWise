@@ -5,6 +5,7 @@ using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Shopify.Factories;
+using Push.Shopify.Model;
 
 namespace ProfitWise.Web.Controllers
 {
@@ -78,7 +79,8 @@ namespace ProfitWise.Web.Controllers
 
             var credentials = credentialServiceResults.ToShopifyCredentials();
             var orderApiRepository = _factory.MakeOrderApiRepository(credentials);
-            var orders = orderApiRepository.Retrieve(1, 1);
+            var filter = new OrderFilter(); 
+            var orders = orderApiRepository.Retrieve(filter,1, 1);
 
             ViewBag.Orders = orders;
             return View();

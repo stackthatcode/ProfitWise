@@ -66,6 +66,7 @@
     <Compile Include="HttpClient\ShopifyHttpClientConfig.cs" />
     <Compile Include="HttpClient\ShopifyRequestFactory.cs" />
     <Compile Include="Model\Order.cs" />
+    <Compile Include="Model\OrderFilter.cs" />
     <Compile Include="Model\OrderLineItem.cs" />
     <Compile Include="Model\Product.cs" />
     <Compile Include="Model\Variant.cs" />

@@ -62,7 +62,7 @@ namespace ProfitWise.Batch
                 MaxOrderRate =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxOrderRate", 50),
                 MaxProduceRate =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProduceRate", 100),
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProductRate", 100),
             });
 
 

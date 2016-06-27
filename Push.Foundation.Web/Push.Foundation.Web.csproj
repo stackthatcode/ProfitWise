@@ -132,6 +132,7 @@
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Helpers\ActivityId.cs" />
     <Compile Include="Helpers\ControllerHelpers.cs" />
+    <Compile Include="Helpers\QueryStringBuilder.cs" />
     <Compile Include="Helpers\RouteValueDictionaryExtensions.cs" />
     <Compile Include="Identity\ApplicationDbContext.cs" />
     <Compile Include="Identity\ApplicationRoleManager.cs" />

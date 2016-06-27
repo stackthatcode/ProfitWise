@@ -3,6 +3,7 @@ using ProfitWise.Data.RefreshServices;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Shopify.HttpClient;
+using Push.Shopify.Model;
 using Push.Utilities.General;
 
 namespace ProfitWise.Data.Processes
@@ -52,9 +53,14 @@ namespace ProfitWise.Data.Processes
                 AccessToken = shopifyFromClaims.AccessToken,
             };
 
+            var filter = new OrderFilter()
+            {
+                CreatedAtMin = new DateTime(2014, 5, 1)
+            };
+
             _shopRefreshService.Execute(userId);
             _productRefreshService.Execute(shopifyClientCredentials);
-            _orderRefreshService.Execute(shopifyClientCredentials);
+            _orderRefreshService.Execute(filter, shopifyClientCredentials);
         }
     }
 }

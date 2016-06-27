@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -39,13 +38,29 @@ namespace ProfitWise.Data.RefreshServices
         }
 
 
-        public virtual void Execute(ShopifyCredentials shopCredentials)
+        public virtual void Execute(OrderFilter filter, ShopifyCredentials shopCredentials)
         {
-            var results = RetrieveAllFromShopify(shopCredentials);
-
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
-            WriteOrdersToPersistence(shop, results);
+            var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
+
+            var count = orderApiRepository.RetrieveCount(filter);
+            _pushLogger.Info($"{this.ClassAndMethodName()} - {count} Orders to process");
+
+            var numberofpages = 
+                PagingFunctions.NumberOfPages(
+                    _refreshServiceConfiguration.MaxOrderRate, count);
+
+            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
+            {
+                _pushLogger.Info(
+                    $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
+                
+                var orders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+
+                WriteOrdersToPersistence(shop, orders);
+            }
         }
+
 
         protected virtual void WriteOrdersToPersistence(ShopifyShop shop, IList<Order> results)
         {
@@ -55,19 +70,18 @@ namespace ProfitWise.Data.RefreshServices
 
             using (var trans = orderRepository.InitiateTransaction())
             {
+                var shopifyOrders = results.Select(x => x.ToShopifyOrder(shop.ShopId)).ToList();
 
-                foreach (var order in results)
+                orderRepository.MassDelete(shopifyOrders);
+
+                foreach (var order in shopifyOrders)
                 {
-                    _pushLogger.Debug($"Refresh Order: {order.Name} for {order.Email}");
+                    _pushLogger.Debug($"Refresh Order: {order.OrderNumber} / {order.ShopifyOrderId} for {order.Email}");
 
-                    var shopifyOrder = order.ToShopifyOrder(shop.ShopId);
+                    orderRepository.InsertOrder(order);
 
-                    orderRepository.DeleteOrder(shopifyOrder.ShopifyOrderId);
-                    orderRepository.InsertOrder(shopifyOrder);
-
-                    foreach (var line_item in shopifyOrder.LineItems)
+                    foreach (var line_item in order.LineItems)
                     {
-                        orderRepository.DeleteOrderLineItem(shopifyOrder.ShopifyOrderId);
                         orderRepository.InsertOrderLineItem(line_item);
                     }
                 }
@@ -76,31 +90,6 @@ namespace ProfitWise.Data.RefreshServices
             }
         }
 
-
-        public virtual IList<Order> RetrieveAllFromShopify(ShopifyCredentials shopCredentials)
-        {
-            var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
-
-            var count = orderApiRepository.RetrieveCount();
-            _pushLogger.Info($"{this.ClassAndMethodName()} - {count} Orders to process");
-
-            var numberofpages = 
-                PagingFunctions.NumberOfPages(
-                    _refreshServiceConfiguration.MaxOrderRate, count);
-
-            var results = new List<Order>();
-
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
-            {
-                _pushLogger.Info(
-                    $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
-                
-                var orders = orderApiRepository.Retrieve(pagenumber, _refreshServiceConfiguration.MaxOrderRate);
-                results.AddRange(orders);
-            }
-
-            return results;
-        }
     }
 }
 
