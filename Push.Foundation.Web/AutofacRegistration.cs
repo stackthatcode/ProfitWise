@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
+using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Security;
 using Push.Utilities.CastleProxies;

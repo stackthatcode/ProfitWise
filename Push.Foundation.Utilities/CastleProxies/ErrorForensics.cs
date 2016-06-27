@@ -1,9 +1,7 @@
-﻿using System;
-using Castle.DynamicProxy;
-using Push.Utilities.General;
-using Push.Utilities.Logging;
+﻿using Castle.DynamicProxy;
+using Push.Foundation.Utilities.Logging;
 
-namespace Push.Utilities.CastleProxies
+namespace Push.Foundation.Utilities.CastleProxies
 {
     public class ErrorForensics : IInterceptor
     {

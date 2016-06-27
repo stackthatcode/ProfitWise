@@ -1,7 +1,7 @@
 ﻿using System;
 using NLog;
 
-namespace Push.Utilities.Logging
+namespace Push.Foundation.Utilities.Logging
 {
     public class NLoggerImpl : IPushLogger
     {

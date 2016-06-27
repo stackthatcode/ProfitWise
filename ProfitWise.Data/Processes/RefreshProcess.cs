@@ -1,9 +1,9 @@
 ﻿using System;
 using ProfitWise.Data.RefreshServices;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Shopify.HttpClient;
 using Push.Utilities.General;
-using Push.Utilities.Logging;
 
 namespace ProfitWise.Data.Processes
 {

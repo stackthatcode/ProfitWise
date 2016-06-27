@@ -2,7 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
-using Push.Utilities.Logging;
+using Push.Foundation.Utilities.Logging;
+
 
 namespace Push.Shopify.HttpClient
 {

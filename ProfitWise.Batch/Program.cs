@@ -3,8 +3,7 @@ using System.Configuration;
 using Autofac;
 using Hangfire;
 using ProfitWise.Data.Processes;
-using Push.Utilities.General;
-using Push.Utilities.Logging;
+using Push.Foundation.Utilities.Logging;
 
 
 namespace ProfitWise.Batch

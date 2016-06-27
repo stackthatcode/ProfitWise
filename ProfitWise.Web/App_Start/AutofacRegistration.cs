@@ -6,9 +6,11 @@ using Autofac;
 using Autofac.Integration.Mvc;
 using MySql.Data.MySqlClient;
 using ProfitWise.Web.Controllers;
+using Push.Foundation.Utilities.CastleProxies;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Utilities.CastleProxies;
-using Push.Utilities.Logging;
+
 
 namespace ProfitWise.Web
 {

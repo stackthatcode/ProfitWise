@@ -1,4 +1,4 @@
-﻿using Push.Utilities.Logging;
+﻿using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Batch
 {

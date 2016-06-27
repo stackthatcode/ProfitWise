@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Autofac.Extras.DynamicProxy2;
 using Castle.Core.Logging;
 using Newtonsoft.Json;
+using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
-using Push.Utilities.Logging;
 
 namespace Push.Shopify.Repositories
 {

@@ -1,9 +1,8 @@
 ﻿using Autofac;
 using Autofac.Extras.DynamicProxy2;
-using ProfitWise.Batch._TempHoldingCell;
-using Push.Utilities.Logging;
+using Push.Foundation.Utilities.Logging;
 
-namespace ProfitWise.Batch.TempHoldingCell
+namespace ProfitWise.Batch._TempHoldingCell
 {
     public class DependencyInjectionSchool
     {

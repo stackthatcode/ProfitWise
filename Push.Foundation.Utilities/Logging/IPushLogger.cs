@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Push.Utilities.Logging
+namespace Push.Foundation.Utilities.Logging
 {
     public interface IPushLogger
     {

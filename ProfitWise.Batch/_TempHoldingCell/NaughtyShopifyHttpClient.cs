@@ -2,7 +2,7 @@
 using System.Net;
 using Push.Shopify.HttpClient;
 
-namespace ProfitWise.Batch.CodeDump
+namespace ProfitWise.Batch._TempHoldingCell
 {
 
     public class HttpClientThatThrowsUnauthorized : IHttpClient

@@ -5,10 +5,11 @@ using System.Data.SqlClient;
 using Autofac;
 using MySql.Data.MySqlClient;
 using ProfitWise.Batch.RefreshServices;
+using Push.Foundation.Utilities.CastleProxies;
+using Push.Foundation.Utilities.Logging;
 using Push.Shopify.HttpClient;
-using Push.Utilities.Helpers;
-using Push.Utilities.Logging;
 using Push.Utilities.CastleProxies;
+using Push.Utilities.Helpers;
 
 
 namespace ProfitWise.Batch

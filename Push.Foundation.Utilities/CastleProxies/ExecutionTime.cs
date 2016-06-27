@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using Castle.DynamicProxy;
+using Push.Foundation.Utilities.Logging;
 using Push.Utilities.Helpers;
-using Push.Utilities.Logging;
 
-namespace Push.Utilities.CastleProxies
+namespace Push.Foundation.Utilities.CastleProxies
 {
     public class ExecutionTime : IInterceptor
     {

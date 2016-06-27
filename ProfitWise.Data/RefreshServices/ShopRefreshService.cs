@@ -1,7 +1,7 @@
 ﻿using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.Logging;
 using Push.Utilities.General;
-using Push.Utilities.Logging;
 
 namespace ProfitWise.Data.RefreshServices
 {

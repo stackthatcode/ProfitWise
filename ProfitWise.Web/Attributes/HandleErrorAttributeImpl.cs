@@ -1,6 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
-using Push.Utilities.Logging;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 
 namespace ProfitWise.Web.Attributes

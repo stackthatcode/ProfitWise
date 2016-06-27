@@ -1,7 +1,6 @@
 ﻿using System;
-using Push.Utilities.Logging;
 
-namespace Push.Utilities.Logging
+namespace Push.Foundation.Utilities.Logging
 {
     public class LoggerSingleton
     {

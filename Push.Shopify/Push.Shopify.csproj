@@ -80,7 +80,16 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Push.Foundation.Utilities\Push.Foundation.Utilities.csproj">
+      <Project>{4e08819b-bab3-46ee-9479-141af7a4057d}</Project>
+      <Name>Push.Foundation.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Push.Foundation.Web\Push.Foundation.Web.csproj">
+      <Project>{09b408ff-dd25-46d4-abe6-012baac51296}</Project>
+      <Name>Push.Foundation.Web</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

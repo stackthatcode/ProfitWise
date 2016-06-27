@@ -7,8 +7,8 @@
     <ProjectGuid>{4E08819B-BAB3-46EE-9479-141AF7A4057D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Push.Utilities</RootNamespace>
-    <AssemblyName>Push.Utilities</AssemblyName>
+    <RootNamespace>Push.Foundation.Utilities</RootNamespace>
+    <AssemblyName>Push.Foundation.Utilities</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

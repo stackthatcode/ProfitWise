@@ -152,7 +152,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Push.Utilities\Push.Foundation.Utilities.csproj">
+    <ProjectReference Include="..\Push.Foundation.Utilities\Push.Foundation.Utilities.csproj">
       <Project>{4e08819b-bab3-46ee-9479-141af7a4057d}</Project>
       <Name>Push.Foundation.Utilities</Name>
     </ProjectReference>

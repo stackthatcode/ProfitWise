@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Push.Foundation.Web.Identity;
 
-namespace OAuthSandbox.Models
+namespace ProfitWise.Web.Models
 {
     public class UserListModel
     {

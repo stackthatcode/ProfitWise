@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Push.Foundation.Utilities.CastleProxies;
 using Push.Shopify.Aspect;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;

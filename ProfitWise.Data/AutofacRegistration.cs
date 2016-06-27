@@ -4,6 +4,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.RefreshServices;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.CastleProxies;
 using Push.Utilities.CastleProxies;
 
 namespace ProfitWise.Data
