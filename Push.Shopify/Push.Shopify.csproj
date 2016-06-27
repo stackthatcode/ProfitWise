@@ -80,12 +80,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Push.Utilities\Push.Foundation.Utilities.csproj">
-      <Project>{4E08819B-BAB3-46EE-9479-141AF7A4057D}</Project>
-      <Name>Push.Foundation.Utilities</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -18,9 +18,9 @@ namespace ProfitWise.Web
             DefaultSecurityDataConfig.Execute(autofacContainer);
 
             // Hangfire Configuration - TODO - move this into the ContainerBuilder
-            var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;
-            GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString);
-            app.UseHangfireDashboard();
+            //var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;
+            //GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString);
+            //app.UseHangfireDashboard();
         }
     }
 }

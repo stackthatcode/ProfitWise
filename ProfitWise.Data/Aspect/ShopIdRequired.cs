@@ -1,6 +1,5 @@
 ﻿using System;
 using Castle.DynamicProxy;
-using ProfitWise.Data.Repositories;
 
 namespace ProfitWise.Data.Aspect
 {
