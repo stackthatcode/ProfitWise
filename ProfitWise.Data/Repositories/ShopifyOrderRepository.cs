@@ -46,7 +46,7 @@ namespace ProfitWise.Data.Repositories
         public virtual void InsertOrder(ShopifyOrder order)
         {
             order.ShopId = ShopId.Value;
-            var query = @"INSERT INTO shopifyorder VALUES(@ShopId, @ShopifyOrderId, @TotalPrice, @Email, @OrderNumber)";
+            var query = @"INSERT INTO shopifyorder VALUES(@ShopId, @ShopifyOrderId, @TotalPrice, @Email, @OrderNumber, @CreatedAt, @UpdatedAt)";
             _connection.Execute(query, order);
         }
 

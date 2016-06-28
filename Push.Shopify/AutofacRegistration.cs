@@ -13,25 +13,22 @@ namespace Push.Shopify
     {
         public static void Build(ContainerBuilder builder)
         {
-            builder.RegisterType<ErrorForensics>();
-            var registry = new InceptorRegistry();
-            //registry.Add(typeof(ErrorForensics));
-
             builder.RegisterType<ShopifyCredentialRequired>();
             builder.RegisterType<ShopifyHttpClientConfig>();
 
             builder.RegisterType<HttpClient.HttpClient>()
-                .As<IHttpClient>()
-                .EnableClassInterceptorsWithRegistry(registry);
+                .As<IHttpClient>();
 
             builder
                 .RegisterType<ShopifyHttpClient>()
-                .As<IShopifyHttpClient>()
-                .EnableClassInterceptorsWithRegistry(registry);
+                .As<IShopifyHttpClient>();
 
             builder
-                .RegisterType<ShopifyRequestFactory>()
-                .EnableClassInterceptorsWithRegistry(registry);
+                .RegisterType<ShopifyRequestFactory>();
+
+            builder.RegisterType<ErrorForensics>();
+            var registry = new InceptorRegistry();
+            registry.Add(typeof(ExecutionTime));
 
             builder
                 .RegisterType<OrderApiRepository>()
@@ -42,7 +39,7 @@ namespace Push.Shopify
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ApiRepositoryFactory>();
-        }
-        
+        }        
     }
 }
+

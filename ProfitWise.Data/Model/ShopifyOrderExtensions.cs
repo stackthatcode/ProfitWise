@@ -18,6 +18,8 @@ namespace ProfitWise.Data.Model
                 Email = order.Email,
                 OrderNumber = order.Name,
                 ShopifyOrderId = order.Id,
+                CreatedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
                 LineItems = new List<ShopifyOrderLineItem>()
             };
 

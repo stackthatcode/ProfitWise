@@ -76,6 +76,8 @@ namespace Push.Shopify.Repositories
                     Email = order.email,
                     Name = order.name,
                     TotalPrice = order.total_price,
+                    CreatedAt = order.created_at,
+                    UpdatedAt = order.updated_at,
                     LineItems = new List<OrderLineItem>()
                 };
 

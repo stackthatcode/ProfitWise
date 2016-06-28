@@ -9,6 +9,9 @@ DROP TABLE IF EXISTS `shop`;
 DROP TABLE IF EXISTS `shopifyorder`; 
 DROP TABLE IF EXISTS `shopifyorderlineitem`; 
 
+DROP TABLE IF EXISTS `profitwisedatelookup`; 
+
+
 
 /** TODO - rename these tables to shopifyproductdata ***/
 
@@ -44,19 +47,32 @@ CREATE TABLE `shopifyorder` (
   `TotalPrice` decimal(15,2) DEFAULT NULL,
   `Email` varchar(128) DEFAULT NULL,
   `OrderNumber` varchar(128) DEFAULT NULL,  
+  `CreatedAt` datetime NOT NULL,
+  `UpdatedAt` datetime NOT NULL,
   PRIMARY KEY  (`ShopId`, `ShopifyOrderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `shopifyorderlineitem` (
   `ShopId` int(6) unsigned NOT NULL,
-  `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
+  `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
   `ShopifyProductId` BIGINT unsigned NULL,
   `ShopifyVariantId` BIGINT unsigned NULL,
   `ReportedSku` varchar(128) DEFAULT NULL,
   `Quantity` int(6) unsigned NOT NULL,
   `UnitPrice` decimal(15,2) DEFAULT NULL, 
   `TotalDiscount` decimal(15,2) DEFAULT NULL,   
-  PRIMARY KEY  (`ShopId`, `ShopifyOrderLineId`)
+  PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE `profitwisedatelookup` (
+	`StartDate` DATE NOT NULL,
+    `EndDate` DATE NOT NULL,
+    PRIMARY KEY (`StartDate`, `EndDate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 
