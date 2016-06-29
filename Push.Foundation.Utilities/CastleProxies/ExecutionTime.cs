@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using Castle.DynamicProxy;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
-using Push.Utilities.Helpers;
 
 namespace Push.Foundation.Utilities.CastleProxies
 {

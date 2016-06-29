@@ -7,7 +7,7 @@ delimiter #
 create procedure load_foo_test_data()
 begin
 
-declare v_max int unsigned default 500;
+declare v_max int unsigned default 1000;
 declare v_counter int unsigned default 1;
 
   while v_counter < v_max do
@@ -26,12 +26,13 @@ end #
 delimiter ;
 
 
+CALL load_foo_test_data();
+
 
 SET SQL_SAFE_UPDATES = 0;
 
 
 drop procedure load_datelookup;
-
 
 delimiter #
 CREATE PROCEDURE load_datelookup()
@@ -59,44 +60,6 @@ BEGIN
 END #
 
 delimiter ;
-
-
-
-
-SELECT CURRENT_DATE();
-
-call load_datelookup;
-
-SELECT * FROM profitwisedatelookup;
-
-SELECT * FROM shopifyorder;
-
-
-
-
-
-
-CALL load_foo_test_data;
-
-SELECT * FROM shopifyorderlineitem;
-
-SELECT ShopifyVariantId, ReportedSku, SUM(Quantity * UnitPrice) FROM shopifyorderlineitem WHERE ShopId = 955973 GROUP BY ShopifyVariantId;
-
-
-SELECT * FROM profitwisedatelookup;
-
-
-
-
-SELECT DATE(t2.CreatedAt), t3.ReportedSku, SUM(t3.UnitPrice * t3.Quantity)
-FROM shopifyorder t2 
-	INNER JOIN shopifyorderlineitem t3
-		ON t2.ShopifyOrderId = t3.ShopifyOrderId
-WHERE t3.ReportedSku = 'UM2PLUS'
-GROUP BY DATE(t2.CreatedAt), t3.ReportedSku;
-
-
-
 
 
 

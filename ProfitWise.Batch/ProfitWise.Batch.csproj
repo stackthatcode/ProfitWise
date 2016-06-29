@@ -120,6 +120,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncQuerySimPart2.cs" />
+    <Compile Include="AsyncForay.cs" />
+    <Compile Include="AsyncQuerySimulation.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Bootstrap.cs" />
     <Compile Include="_TempHoldingCell\CodeDumps.cs" />

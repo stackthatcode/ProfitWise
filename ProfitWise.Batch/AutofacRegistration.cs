@@ -79,6 +79,8 @@ namespace ProfitWise.Batch
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyHttpTimeout", 60000),
                 ShopifyThrottlingDelay =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyThrottlingDelay", 500),
+                ShopifyRetriesEnabled = 
+                    ConfigurationManager.AppSettings.GetAndTryParseAsBool("ShopifyRetriesEnabled", true)
             });
 
 

@@ -1,7 +1,5 @@
 USE profitwise;
 
-
-DROP TABLE IF EXISTS `orderskuhistory`; 
 DROP TABLE IF EXISTS `shopifyproduct`; 
 DROP TABLE IF EXISTS `shopifyvariant`; 
 DROP TABLE IF EXISTS `shop`; 
@@ -62,7 +60,8 @@ CREATE TABLE `shopifyorderlineitem` (
   `Quantity` int(6) unsigned NOT NULL,
   `UnitPrice` decimal(15,2) DEFAULT NULL, 
   `TotalDiscount` decimal(15,2) DEFAULT NULL,   
-  PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
+  PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`),
+  INDEX (`ReportedSku`(10)) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

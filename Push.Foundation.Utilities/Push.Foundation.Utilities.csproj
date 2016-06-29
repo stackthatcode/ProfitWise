@@ -85,7 +85,7 @@
     <Compile Include="Helpers\HelperMethods.cs" />
     <Compile Include="Helpers\NameValueCollectionExtensions.cs" />
     <Compile Include="Helpers\PagingFunctions.cs" />
-    <Compile Include="Helpers\TimeSpanFunctions.cs" />
+    <Compile Include="Helpers\TimeFormatExtensions.cs" />
     <Compile Include="Logging\ConsoleAndDebugLogger.cs" />
     <Compile Include="Logging\ExtensionMethods.cs" />
     <Compile Include="Logging\IPushLogger.cs" />

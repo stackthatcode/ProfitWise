@@ -16,7 +16,7 @@
 
             // These will be more often than not be set at an instance-level
             ThrowExceptionOnBadHttpStatusCode = false;
-            ShopifyRetriesEnabled = false;
+            ShopifyRetriesEnabled = true;
         }
     }
 }

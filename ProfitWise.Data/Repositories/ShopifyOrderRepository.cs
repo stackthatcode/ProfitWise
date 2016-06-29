@@ -82,8 +82,8 @@ namespace ProfitWise.Data.Repositories
         {
             lineitem.ShopId = ShopId.Value;
             var query =
-                @"INSERT INTO shopifyorderlineitem
-                VALUES ( @ShopId, @ShopifyOrderLineId, @ShopifyOrderId, @ShopifyProductId, @ShopifyVariantId, @ReportedSku, @Quantity, @UnitPrice, @TotalDiscount )";
+                @"INSERT INTO shopifyorderlineitem ( ShopId, ShopifyOrderId, ShopifyOrderLineId, ShopifyProductId, ShopifyVariantId, ReportedSku, Quantity, UnitPrice, TotalDiscount )
+                VALUES ( @ShopId, @ShopifyOrderId, @ShopifyOrderLineId, @ShopifyProductId, @ShopifyVariantId, @ReportedSku, @Quantity, @UnitPrice, @TotalDiscount )";
             _connection.Execute(query, lineitem);
         }
 

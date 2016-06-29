@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Threading.Tasks;
 using Autofac;
 using Hangfire;
 using ProfitWise.Data.Processes;
@@ -15,11 +16,11 @@ namespace ProfitWise.Batch
             Bootstrap.ConfigureApp();
             using (var container = AutofacRegistration.Build())
             {
-                InvokeRefreshServices(container);
+                //InvokeRefreshServices(container);
+
+                Console.ReadLine();
             }
-            
-            Console.ReadLine();
-        }        
+        }
 
 
         private static void InvokeRefreshServices(IContainer container)
