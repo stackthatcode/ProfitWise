@@ -23,6 +23,12 @@ DROP VIEW TESTVIEW;
 
 CREATE VIEW TESTVIEW
 AS
+SELECT * FROM shopifyorderlineitem;
+
+
+
+CREATE VIEW TESTVIEW
+AS
 SELECT t2.ShopId, DATE(t2.CreatedAt) AS CreatedAt, t3.ReportedSku, SUM(Quantity * UnitPrice) AS LineTotal
 FROM shopifyorder t2 
 	INNER JOIN shopifyorderlineitem t3
