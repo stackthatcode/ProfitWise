@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -82,8 +81,12 @@ namespace ProfitWise.Data.Repositories
         {
             lineitem.ShopId = ShopId.Value;
             var query =
-                @"INSERT INTO shopifyorderlineitem ( ShopId, ShopifyOrderId, ShopifyOrderLineId, ShopifyProductId, ShopifyVariantId, ReportedSku, Quantity, UnitPrice, TotalDiscount )
-                VALUES ( @ShopId, @ShopifyOrderId, @ShopifyOrderLineId, @ShopifyProductId, @ShopifyVariantId, @ReportedSku, @Quantity, @UnitPrice, @TotalDiscount )";
+                @"INSERT INTO shopifyorderlineitem ( 
+                    ShopId, ShopifyOrderId, ShopifyOrderLineId, ShopifyProductId, ShopifyVariantId, Sku, Quantity, UnitPrice, TotalDiscount,
+                    ProductTitle, VariantTitle, Name, PwProductId)
+                VALUES ( 
+                    @ShopId, @ShopifyOrderId, @ShopifyOrderLineId, @ShopifyProductId, @ShopifyVariantId, @Sku, @Quantity, @UnitPrice, @TotalDiscount,
+                    @ProductTitle, @VariantTitle, @Name, @PwProductId)";
             _connection.Execute(query, lineitem);
         }
 

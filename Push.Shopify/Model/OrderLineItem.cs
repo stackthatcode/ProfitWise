@@ -10,5 +10,9 @@
         public decimal Discount { get; set; }
         public decimal Taxes { get; set; }
         public decimal Price { get; set; }
+
+        public string ProductTitle { get; set; }
+        public string VariantTitle { get; set; }
+        public string Name { get; set; }
     }
 }

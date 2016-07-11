@@ -95,6 +95,10 @@ namespace Push.Shopify.Repositories
                     orderLineItemResult.Quantity = line_item.quantity;
                     orderLineItemResult.Sku = line_item.sku;
 
+                    orderLineItemResult.ProductTitle = line_item.title;
+                    orderLineItemResult.VariantTitle = line_item.variant_title;
+                    orderLineItemResult.Name = line_item.name;
+
                     // Taxes = line_item. TODO *** pull in all the tax_lines...?
 
                     orderResult.LineItems.Add(orderLineItemResult);

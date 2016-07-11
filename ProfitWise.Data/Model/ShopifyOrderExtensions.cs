@@ -28,8 +28,12 @@ namespace ProfitWise.Data.Model
                 shopifyOrderLineItem.ShopifyOrderId = order.Id;
                 shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
                 shopifyOrderLineItem.Quantity = line_item.Quantity;
-                shopifyOrderLineItem.ReportedSku = line_item.Sku;
-                    //TotalDiscount = line_item => ON HOLD
+                shopifyOrderLineItem.Sku = line_item.Sku;
+
+                shopifyOrderLineItem.ProductTitle = line_item.ProductTitle;
+                shopifyOrderLineItem.VariantTitle = line_item.VariantTitle;
+                shopifyOrderLineItem.Name = line_item.Name;
+
                 shopifyOrderLineItem.UnitPrice = line_item.Price;
 
                 shopifyOrder.LineItems.Add(shopifyOrderLineItem);

@@ -36,7 +36,7 @@ CREATE TABLE `shopifyvariant` (
   `Sku` varchar(100) DEFAULT NULL,
   `Title` varchar(200) DEFAULT NULL,
   `Price` decimal(15,2) DEFAULT NULL,
-  `PwProductId` BIGINT unsigned NOT NULL, 
+  `PwProductId` BIGINT unsigned NULL, 
   PRIMARY KEY (`ShopId`,`ShopifyVariantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,7 +68,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `VariantTitle` varchar(128) DEFAULT NULL,  
   `Name` varchar(256) DEFAULT NULL,  
   
-  `PwProductId` BIGINT unsigned NOT NULL, 
+  `PwProductId` BIGINT unsigned NULL, 
   PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

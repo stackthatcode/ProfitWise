@@ -16,7 +16,7 @@ namespace ProfitWise.Batch
             Bootstrap.ConfigureApp();
             using (var container = AutofacRegistration.Build())
             {
-                //InvokeRefreshServices(container);
+                InvokeRefreshServices(container);
 
                 Console.ReadLine();
             }
