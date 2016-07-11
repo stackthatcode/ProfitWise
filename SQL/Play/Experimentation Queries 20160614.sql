@@ -1,39 +1,60 @@
-USE ProfitWise;
-
 
 SET SQL_SAFE_UPDATES = 0;
 
 
-DELETE FROM aspnetusers;
-DELETE FROM aspnetroles;
-DELETE FROM aspnetuserclaims;
-DELETE FROM aspnetuserlogins;
-DELETE FROM aspnetuserroles;
-
-
-
-SELECT * FROM aspnetusers;
-
-SELECT * FROM aspnetroles;
-
-SELECT * FROM aspnetuserclaims;
-
-SELECT * FROM aspnetuserlogins;
-
-SELECT * FROM aspnetuserroles;
-
-
-
 SELECT * FROM shop;
+
+/****/
 
 SELECT * FROM shopifyproduct;
 
-SELECT * FROM shopifyvariant;
+SELECT *, PwProductId FROM shopifyvariant WHERE ShopId = 955973;
+
+SELECT *, PwProductId FROM shopifyorderlineitem WHERE ShopId = 955973 AND ReportedSku LIKE '%SIMPLE%';
+
+/****/
+
+
+SELECT ShopId, PwProductId, ProductTitle, VariantTitle, `Name` FROM profitwiseproduct;
+
+
+
+
+
+
+++ Some entrie for SKU's from Order Line Items
+
+
+
+/*SELECT ShopId, PwProductId, */
+
+
+
 
 SELECT COUNT(*) FROM shopifyorderlineitem;
 
-SELECT ShopifyOrderId, COUNT(*) FROM shopifyorderlineitem GROUP BY ShopifyOrderId;
+SELECT * FROM shopifyorderlineitem WHERE ShopId = 955973 AND ShopifyProductId IS NULL;
 
+
+
+
+
+
+CREATE TEMPORARY TABLE IF NOT EXISTS ttanalysis AS (SELECT DISTINCT ShopifyVariantId, ReportedSku FROM shopifyorderlineitem WHERE ShopId = 955973);
+
+SELECT * FROM ttanalysis;
+
+SELECT ReportedSku, COUNT(*) FROM ttanalysis GROUP BY ReportedSku ORDER BY COUNT(*);
+
+SELECT ShopifyVariantId FROM shopifyorderlineitem WHERE ShopId = 955973 AND ReportedSku = 'UM2EXTPLUS' GROUP BY ShopifyVariantId;
+
+SELECT * FROM shopifyorderlineitem WHERE ShopId = 955973 AND ReportedSku = 'UM2EXTPLUS' AND ShopifyVariantId IS NULL;
+
+
+
+
+
+OPTIMIZE TABLE shopifyorderlineitem;
 
 
 

@@ -27,14 +27,11 @@
     <link href="../vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
 
     <!-- Custom Theme Style -->
-    <link href="../build/css/custom.min.css" rel="stylesheet">
-	
-
-        <link href='http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>
-		
+    <link href="../build/css/custom.min.css" rel="stylesheet">	
+	<link href='http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700' rel='stylesheet' type='text/css'>		
 	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-
-				<script type="text/javascript">
+	
+<script type="text/javascript">
 $(function () {
     // Create the chart
 	Highcharts.setOptions({
@@ -63,7 +60,7 @@ $(function () {
 
         },
         legend: {
-            enabled: false
+            enabled: true
         },
         plotOptions: {
             series: {
@@ -76,30 +73,75 @@ $(function () {
         },
 
         tooltip: {
-            headerFormat: '', /*'<span style="font-size:11px">{series.name}</span><br>',*/
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
             pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>${point.y:,.2f}</b> total profit<br/>'
         },
 
         series: [
 			{ 
-				name: 'Selected Years',
+				name: 'Ultimaker',
 				colorByPoint: false,
 				data: [{
 					name: 2013,
 					y: 23000,
-					drilldown: '2016'
+					drilldown: 'Ultimaker 2016'
 				}, {
 					name: 2014,
 					y: 47355,
-					drilldown: '2016'
+					drilldown: 'Ultimaker 2016'
 				}, {
 					name: 2015,
 					y: 173899,
-					drilldown: '2016'
+					drilldown: 'Ultimaker 2016'
 				}, {
 					name: 2016,
 					y: 53709,
-					drilldown: '2016'
+					drilldown: 'Ultimaker 2016'
+				},
+				]
+			},			
+			{ 
+				name: 'Zortrax',
+				colorByPoint: false,
+				data: [{
+					name: 2013,
+					y: 17000,
+					drilldown: 'Zortrax 2016'
+				}, {
+					name: 2014,
+					y: 7355,
+					drilldown: 'Zortrax 2016'
+				}, {
+					name: 2015,
+					y: 38309,
+					drilldown: 'Zortrax 2016'
+				}, {
+					name: 2016,
+					y: 19333,
+					drilldown: 'Zortrax 2016'
+				},
+				]
+			},
+			
+			{ 
+				name: 'Altair',
+				colorByPoint: false,
+				data: [{
+					name: 2013,
+					y: 3111,
+					drilldown: 'Altair 2016'
+				}, {
+					name: 2014,
+					y: 4000,
+					drilldown: 'Altair 2016'
+				}, {
+					name: 2015,
+					y: 9000,
+					drilldown: 'Altair 2016'
+				}, {
+					name: 2016,
+					y: 9333,
+					drilldown: 'Altair 2016'
 				},
 				]
 			}
@@ -108,8 +150,8 @@ $(function () {
         drilldown: {
             series: [			
 				{
-					id: '2016',
-					name: '2016 Profits',
+					id: 'Ultimaker 2016',
+					name: '2016 Ultimaker Profits',
 					data: [{
 						name: 'January',
 						y: 5633,	
@@ -160,7 +202,118 @@ $(function () {
 						drilldown: 'June 2016'
 					}
 					]
-				},				
+				},
+
+				{
+					id: 'Zortrax 2016',
+					name: 'Zortrax Zortax Profits',
+					data: [{
+						name: 'January',
+						y: 8033,	
+						drilldown: 'January 2016'
+					}, {
+						name: 'February',
+						y: 2400,
+						drilldown: 'February 2016'
+					}, {
+						name: 'March',
+						y: 10308,
+						drilldown: 'March 2016'
+					}, {
+						name: 'April',
+						y: 4007,
+						drilldown: 'April 2016'
+					}, {
+						name: 'May',
+						y: 1088,
+						drilldown: 'May 2016'
+					}, {
+						name: 'June',
+						y: 20900,
+						drilldown: 'June 2016'
+					}, {
+						name: 'July',
+						y: 33766,
+						drilldown: 'June 2016'
+					}, {
+						name: 'August',
+						y: 33766,
+						drilldown: 'June 2016'
+					}, {
+						name: 'September',
+						y: 8766,
+						drilldown: 'June 2016'
+					}, {
+						name: 'October',
+						y: 16000,
+						drilldown: 'June 2016'
+					}, {
+						name: 'November',
+						y: 19000,
+						drilldown: 'June 2016'
+					}, {
+						name: 'December',
+						y: 22000,
+						drilldown: 'June 2016'
+					}
+					]
+				},
+				
+				{
+					id: 'Altair 2016',
+					name: 'Altair Profits',
+					data: [{
+						name: 'January',
+						y: 8033,	
+						drilldown: 'January 2016'
+					}, {
+						name: 'February',
+						y: 2400,
+						drilldown: 'February 2016'
+					}, {
+						name: 'March',
+						y: 10308,
+						drilldown: 'March 2016'
+					}, {
+						name: 'April',
+						y: 4007,
+						drilldown: 'April 2016'
+					}, {
+						name: 'May',
+						y: 1088,
+						drilldown: 'May 2016'
+					}, {
+						name: 'June',
+						y: 20900,
+						drilldown: 'June 2016'
+					}, {
+						name: 'July',
+						y: 33766,
+						drilldown: 'June 2016'
+					}, {
+						name: 'August',
+						y: 33766,
+						drilldown: 'June 2016'
+					}, {
+						name: 'September',
+						y: 8766,
+						drilldown: 'June 2016'
+					}, {
+						name: 'October',
+						y: 27111,
+						drilldown: 'June 2016'
+					}, {
+						name: 'November',
+						y: 27111,
+						drilldown: 'June 2016'
+					}, {
+						name: 'December',
+						y: 27111,
+						drilldown: 'June 2016'
+					}
+					]
+				},
+				
 			{
                 name: 'January 2016',
                 id: 'January 2016',

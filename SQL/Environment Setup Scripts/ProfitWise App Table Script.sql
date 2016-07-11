@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS `shopifyorder`;
 DROP TABLE IF EXISTS `shopifyorderlineitem`; 
 
 DROP TABLE IF EXISTS `profitwisedatelookup`; 
+DROP TABLE IF EXISTS `profitwiseproduct`;
 
 
 
@@ -35,6 +36,7 @@ CREATE TABLE `shopifyvariant` (
   `Sku` varchar(100) DEFAULT NULL,
   `Title` varchar(200) DEFAULT NULL,
   `Price` decimal(15,2) DEFAULT NULL,
+  `PwProductId` BIGINT unsigned NOT NULL, 
   PRIMARY KEY (`ShopId`,`ShopifyVariantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -50,19 +52,41 @@ CREATE TABLE `shopifyorder` (
   PRIMARY KEY  (`ShopId`, `ShopifyOrderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE `shopifyorderlineitem` (
   `ShopId` int(6) unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
   `ShopifyProductId` BIGINT unsigned NULL,
   `ShopifyVariantId` BIGINT unsigned NULL,
-  `ReportedSku` varchar(128) DEFAULT NULL,
+  `Sku` varchar(128) DEFAULT NULL,
   `Quantity` int(6) unsigned NOT NULL,
-  `UnitPrice` decimal(15,2) DEFAULT NULL, 
-  `TotalDiscount` decimal(15,2) DEFAULT NULL,   
-  PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`),
-  INDEX (`ReportedSku`(10)) 
+  `UnitPrice` decimal(15,2) DEFAULT NULL,   
+  `TotalDiscount` decimal(15,2) DEFAULT NULL,
+  
+  `ProductTitle` varchar(128) DEFAULT NULL,
+  `VariantTitle` varchar(128) DEFAULT NULL,  
+  `Name` varchar(256) DEFAULT NULL,  
+  
+  `PwProductId` BIGINT unsigned NOT NULL, 
+  PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `profitwiseproduct` (
+  `ShopId` int(6) unsigned NOT NULL,
+  `PwProductId` BIGINT unsigned NOT NULL,
+  
+  `ProductTitle` varchar(128) DEFAULT NULL,
+  `VariantTitle` varchar(128) DEFAULT NULL,
+  `Name` varchar(256) DEFAULT NULL,  
+  
+  `Sku` varchar(128) DEFAULT NULL, 
+  PRIMARY KEY  (`ShopId`, `PwProductId` )  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 
 
 
