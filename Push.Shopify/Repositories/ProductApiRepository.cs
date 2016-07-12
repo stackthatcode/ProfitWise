@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
+using Push.Foundation.Web.Helpers;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -24,9 +26,11 @@ namespace Push.Shopify.Repositories
             _requestFactory = requestFactory;
         }
 
-        public virtual int RetrieveCount()
+        public virtual int RetrieveCount(ProductFilter filter)
         {
-            var request = _requestFactory.HttpGet(ShopifyCredentials, "/admin/products/count.json");
+            var path = "/admin/products/count.json?" + filter.ToQueryStringBuilder();
+
+            var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
@@ -34,9 +38,17 @@ namespace Push.Shopify.Repositories
             return count;
         }
 
-        public virtual IList<Product> Retrieve(int page = 1, int limit = 250)
+        public virtual IList<Product> Retrieve(ProductFilter filter, int page = 1, int limit = 250)
         {
-            var path = string.Format("/admin/products.json?page={0}&limit={1}", page, limit);
+            var querystring
+                = new QueryStringBuilder()
+                    .Add("page", page)
+                    .Add("limit", limit)
+                    .Add(filter.ToQueryStringBuilder())
+                    .ToString();
+
+            var path = "/admin/products.json?" + querystring;
+
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 

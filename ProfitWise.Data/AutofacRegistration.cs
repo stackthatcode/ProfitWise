@@ -16,11 +16,14 @@ namespace ProfitWise.Data
             builder.RegisterType<ErrorForensics>();
             builder.RegisterType<ExecutionTime>();
 
-            builder.RegisterType<MultitenantSqlRepositoryFactory>();
+            builder.RegisterType<MultitenantRepositoryFactory>();
             builder.RegisterType<ShopifyOrderRepository>();
             builder.RegisterType<ShopifyProductRepository>();
             builder.RegisterType<ShopifyVariantRepository>();            
             builder.RegisterType<ShopRepository>();
+            builder.RegisterType<ProfitWiseBatchStateRepository>();
+            builder.RegisterType<ProfitWiseProductRepository>();
+
 
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));

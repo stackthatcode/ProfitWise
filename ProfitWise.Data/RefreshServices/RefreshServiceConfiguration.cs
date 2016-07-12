@@ -5,10 +5,10 @@
         public RefreshServiceConfiguration()
         {
             MaxOrderRate = 50;
-            MaxProduceRate = 100;
+            MaxProductRate = 100;
         }
 
         public int MaxOrderRate { get; set; }
-        public int MaxProduceRate { get; set; }
+        public int MaxProductRate { get; set; }
     }
 }

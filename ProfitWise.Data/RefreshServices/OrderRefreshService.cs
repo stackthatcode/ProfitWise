@@ -17,14 +17,14 @@ namespace ProfitWise.Data.RefreshServices
     {
         private readonly IPushLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
-        private readonly MultitenantSqlRepositoryFactory _multitenantSqlRepositoryFactory;
+        private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
         private readonly ShopRepository _shopRepository;
 
 
         public OrderRefreshService(
                 ApiRepositoryFactory apiRepositoryFactory,
-                MultitenantSqlRepositoryFactory multitenantSqlRepositoryFactory,
+                MultitenantRepositoryFactory multitenantRepositoryFactory,
                 RefreshServiceConfiguration refreshServiceConfiguration,
                 ShopRepository shopRepository,
                 IPushLogger logger)
@@ -32,7 +32,7 @@ namespace ProfitWise.Data.RefreshServices
         {
             _pushLogger = logger;
             _apiRepositoryFactory = apiRepositoryFactory;
-            _multitenantSqlRepositoryFactory = multitenantSqlRepositoryFactory;
+            _multitenantRepositoryFactory = multitenantRepositoryFactory;
             _refreshServiceConfiguration = refreshServiceConfiguration;
             _shopRepository = shopRepository;
         }
@@ -64,7 +64,7 @@ namespace ProfitWise.Data.RefreshServices
 
         protected virtual void WriteOrdersToPersistence(ShopifyShop shop, IList<Order> results)
         {
-            var orderRepository = _multitenantSqlRepositoryFactory.MakeOrderRepository(shop);
+            var orderRepository = _multitenantRepositoryFactory.MakeOrderRepository(shop);
 
             _pushLogger.Info($"{this.ClassAndMethodName()} - {results.Count} Orders to process");
 

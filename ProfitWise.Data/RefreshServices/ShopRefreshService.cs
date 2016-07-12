@@ -1,4 +1,5 @@
-﻿using ProfitWise.Data.Model;
+﻿using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.Logging;
 using Push.Utilities.General;
@@ -9,11 +10,16 @@ namespace ProfitWise.Data.RefreshServices
     {
         private readonly IPushLogger _pushLogger;
         private readonly ShopRepository _shopRepository;
+        private readonly MultitenantRepositoryFactory _factory;
 
-        public ShopRefreshService(IPushLogger pushLogger, ShopRepository shopRepository)
+        public ShopRefreshService(
+                    IPushLogger pushLogger, 
+                    ShopRepository shopRepository,
+                    MultitenantRepositoryFactory factory)
         {
             _pushLogger = pushLogger;
             _shopRepository = shopRepository;
+            _factory = factory;
         }
 
         public int Execute(string userId)
@@ -24,7 +30,17 @@ namespace ProfitWise.Data.RefreshServices
 
             if (shop == null)
             {
-                return _shopRepository.Insert(new ShopifyShop {UserId = userId});
+                var newShopId = _shopRepository.Insert(new ShopifyShop {UserId = userId});
+
+                var state = new ProfitWiseBatchState
+                {
+                    ShopId = newShopId,                    
+                };
+
+                var newShop = _shopRepository.RetrieveByShopId(newShopId);
+                var profitWiseBatchStateRepository = _factory.MakeProfitWiseBatchStateRepository(newShop);
+                profitWiseBatchStateRepository.Insert(state);
+                return newShopId;
             }
             else
             {

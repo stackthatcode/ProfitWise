@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -18,42 +17,61 @@ namespace ProfitWise.Data.RefreshServices
     {
         private readonly IPushLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
-        private readonly MultitenantSqlRepositoryFactory _multitenantSqlRepositoryFactory;
+        private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
         private readonly RefreshServiceConfiguration _configuration;
         private readonly ShopRepository _shopRepository;
 
-        
 
         public ProductRefreshService(
                 IPushLogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
-                MultitenantSqlRepositoryFactory multitenantSqlRepositoryFactory,
+                MultitenantRepositoryFactory multitenantRepositoryFactory,
                 RefreshServiceConfiguration configuration,
                 ShopRepository shopRepository)
         {
             _pushLogger = logger;
             _apiRepositoryFactory = apiRepositoryFactory;
-            _multitenantSqlRepositoryFactory = multitenantSqlRepositoryFactory;
+            _multitenantRepositoryFactory = multitenantRepositoryFactory;
             _configuration = configuration;
             _shopRepository = shopRepository;
         }
 
+
         public virtual void Execute(ShopifyCredentials shopCredentials)
         {
-            var allproducts = RetrieveAll(shopCredentials);
+            // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
 
+            // Load Batch State
+            var batchStateRepository = _multitenantRepositoryFactory.MakeProfitWiseBatchStateRepository(shop);
+            var batchState = batchStateRepository.Retrieve();
+
+            // Retreive Products from Shopify
+            var allproducts = RetrieveAll(shopCredentials, batchState);
+            
+            // Write Products to our database
             WriteAllProductsToDatabase(shop, allproducts);
+
+            // Update Batch State
+            batchState.ProductsLastUpdated = DateTime.Now;
+            batchStateRepository.Update(batchState);
         }
 
-        public virtual IList<Product> RetrieveAll(ShopifyCredentials shopCredentials)
+
+
+        public virtual IList<Product> RetrieveAll(ShopifyCredentials shopCredentials, ProfitWiseBatchState batchState)
         {
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
-            
-            var count = productApiRepository.RetrieveCount();
+            var filter = new ProductFilter()
+            {
+                UpdatedAtMin = batchState.ProductsLastUpdated,
+            };
+            var count = productApiRepository.RetrieveCount(filter);
+
+
             _pushLogger.Info($"{this.ClassAndMethodName()} - Executing");
 
-            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProduceRate, count);
+            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
             var results = new List<Product>();
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
@@ -61,7 +79,7 @@ namespace ProfitWise.Data.RefreshServices
                 _pushLogger.Info(
                     $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
 
-                var products = productApiRepository.Retrieve(pagenumber, _configuration.MaxProduceRate);
+                var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
             }
 
@@ -72,8 +90,8 @@ namespace ProfitWise.Data.RefreshServices
         {     
             _pushLogger.Info($"{this.ClassAndMethodName()} - {allproducts.Count} Products to process");
 
-            var productDataRepository = this._multitenantSqlRepositoryFactory.MakeProductRepository(shop);
-            var variantDataRepository = this._multitenantSqlRepositoryFactory.MakeVariantRepository(shop);
+            var productDataRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
+            var variantDataRepository = this._multitenantRepositoryFactory.MakeVariantRepository(shop);
 
             foreach (var product in allproducts)
             {

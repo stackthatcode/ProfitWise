@@ -59,7 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aspect\ShopIdRequired.cs" />
-    <Compile Include="Factories\MultitenantSqlRepositoryFactory.cs" />
+    <Compile Include="Factories\MultitenantRepositoryFactory.cs" />
     <Compile Include="Model\ProfitWiseBatchState.cs" />
     <Compile Include="Model\ProfitWiseProduct.cs" />
     <Compile Include="Model\ShopifyOrder.cs" />
@@ -72,7 +72,6 @@
     <Compile Include="Aspect\IShopIdFilter.cs" />
     <Compile Include="Processes\RefreshProcess.cs" />
     <Compile Include="RefreshServices\OrderRefreshService.cs" />
-    <Compile Include="RefreshServices\OrderSkuHistory.cs" />
     <Compile Include="RefreshServices\ProductRefreshService.cs" />
     <Compile Include="RefreshServices\RefreshServiceConfiguration.cs" />
     <Compile Include="RefreshServices\ShopRefreshService.cs" />

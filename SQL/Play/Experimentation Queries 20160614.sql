@@ -53,3 +53,7 @@ AND t2.ShopId = 955973;
 
 
 
+SELECT * FROM profitwisebatchstate;
+
+
+

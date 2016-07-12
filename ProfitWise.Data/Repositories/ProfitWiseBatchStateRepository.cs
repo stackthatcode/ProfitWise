@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -9,7 +8,7 @@ using ProfitWise.Data.Model;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopIdRequired))]
-    public class ProfitWiseBatchStateRepository
+    public class ProfitWiseBatchStateRepository : IShopIdFilter
     {
         private readonly MySqlConnection _connection;
         public int? ShopId { get; set; }

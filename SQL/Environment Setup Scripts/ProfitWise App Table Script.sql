@@ -76,8 +76,9 @@ CREATE TABLE `shopifyorderlineitem` (
 
 
 CREATE TABLE `profitwiseproduct` (
+  `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
+  
   `ShopId` int(6) unsigned NOT NULL,
-  `PwProductId` BIGINT unsigned NOT NULL,
   
   `ProductTitle` varchar(128) DEFAULT NULL,
   `VariantTitle` varchar(128) DEFAULT NULL,
