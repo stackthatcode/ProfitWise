@@ -8,32 +8,32 @@ using ProfitWise.Data.Model;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopIdRequired))]
-    public class ProfitWiseBatchStateRepository : IShopIdFilter
+    public class PwBatchStateRepository : IShopIdFilter
     {
         private readonly MySqlConnection _connection;
         public int? ShopId { get; set; }
 
-        public ProfitWiseBatchStateRepository(MySqlConnection connection)
+        public PwBatchStateRepository(MySqlConnection connection)
         {
             _connection = connection;
         }
 
-        public ProfitWiseBatchState Retrieve()
+        public PwBatchState Retrieve()
         {
             var query = @"SELECT * FROM profitwisebatchstate WHERE ShopId = @ShopId";
             return
                 _connection
-                    .Query<ProfitWiseBatchState>(query, new {ShopId})
+                    .Query<PwBatchState>(query, new {ShopId})
                     .FirstOrDefault();
         }
 
-        public void Insert(ProfitWiseBatchState state)
+        public void Insert(PwBatchState state)
         {
             var query = @"INSERT INTO profitwisebatchstate VALUES (@ShopId, @ProductsLastUpdated, @OrderDatasetStart, @OrderDatasetEnd)";
             _connection.Execute(query, state);
         }
 
-        public void Update(ProfitWiseBatchState state)
+        public void Update(PwBatchState state)
         {
             var query = @"UPDATE profitwisebatchstate SET 
                             ProductsLastUpdated = @ProductsLastUpdated, 

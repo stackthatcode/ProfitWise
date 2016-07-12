@@ -35,7 +35,7 @@ namespace Push.Shopify.HttpClient
             else
             {
                 string message = $"Invoking HTTP GET on {request.RequestUri.AbsolutePath}";
-                _pushLogger.Debug(message);
+                _pushLogger.Info(message);
                 return HttpInvocationWithThrottling(request);
             }
         }
@@ -55,12 +55,12 @@ namespace Push.Shopify.HttpClient
                 if (timeSinceLastExecutionTimeSpan < shopifyThrottlingDelayTimeSpan)
                 {
                     var remainingTimeToDelay = shopifyThrottlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
-                    _pushLogger.Debug(string.Format("Intentional delay before next call: {0} ms", remainingTimeToDelay));
+                    _pushLogger.Info($"Intentional delay before next call: {remainingTimeToDelay} ms");
                     System.Threading.Thread.Sleep(remainingTimeToDelay);
                 }
             }
 
-            _pushLogger.Debug(String.Format("Invoking HTTP GET on {0}", request.RequestUri.AbsoluteUri));
+            _pushLogger.Info($"Invoking HTTP GET on {request.RequestUri.AbsoluteUri}");
             _shopLastExecutionTime[hostname] = DateTime.Now;
 
             var response = _httpClient.ProcessRequest(request);

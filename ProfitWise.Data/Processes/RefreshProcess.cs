@@ -53,16 +53,11 @@ namespace ProfitWise.Data.Processes
                 AccessToken = shopifyFromClaims.AccessToken,
             };
 
-            var filter = new OrderFilter()
-            {
-                CreatedAtMin = new DateTime(2014, 5, 1)
-            };
-
             _shopRefreshService.Execute(userId);
 
             _productRefreshService.Execute(shopifyClientCredentials);
 
-            //_orderRefreshService.Execute(filter, shopifyClientCredentials);
+            _orderRefreshService.Execute(shopifyClientCredentials);
         }
     }
 }

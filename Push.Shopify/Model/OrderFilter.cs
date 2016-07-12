@@ -11,8 +11,10 @@ namespace Push.Shopify.Model
         }
 
         public string Status { get; set;  }
-        public DateTime? CreatedAtMin { get; set; }
 
+        public DateTime? CreatedAtMin { get; set; }
+        public DateTime? CreatedAtMax { get; set; }
+        public DateTime? UpdatedAtMin { get; set; }
 
         public QueryStringBuilder ToQueryStringBuilder()
         {
@@ -26,6 +28,17 @@ namespace Push.Shopify.Model
                 builder.Add("created_at_min",
                     CreatedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
             }
+            if (CreatedAtMax != null)
+            {
+                builder.Add("created_at_max",
+                     CreatedAtMax.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+            }
+            if (UpdatedAtMin != null)
+            {
+                builder.Add("updated_at_min",
+                     UpdatedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+            }
+
             return builder;
         }
     }

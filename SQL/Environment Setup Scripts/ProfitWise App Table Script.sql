@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS `profitwisedatelookup`;
 DROP TABLE IF EXISTS `profitwiseproduct`;
 
 DROP TABLE IF EXISTS `profitwisebatchstate`;
-
+DROP TABLE IF EXISTS `profitwisepreferences`;
 
 
 /** TODO - rename these tables to shopifyproductdata ***/
@@ -96,7 +96,8 @@ CREATE TABLE `profitwisebatchstate` (
   `ShopId` int(6) unsigned NOT NULL,
   `ProductsLastUpdated` datetime NULL,
   `OrderDatasetStart` datetime NULL,
-  `OrderDatasetEnd` datetime NULL  
+  `OrderDatasetEnd` datetime NULL,
+   PRIMARY KEY (`ShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -106,6 +107,14 @@ CREATE TABLE `profitwisedatelookup` (
 	`StartDate` DATE NOT NULL,
     `EndDate` DATE NOT NULL,
     PRIMARY KEY (`StartDate`, `EndDate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE `profitwisepreferences` (
+  `ShopId` int(6) unsigned NOT NULL,
+  `StartingDateForOrders` datetime NULL,
+  PRIMARY KEY (`ShopId`)    
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

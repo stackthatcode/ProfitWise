@@ -32,13 +32,13 @@ namespace ProfitWise.Data.RefreshServices
             {
                 var newShopId = _shopRepository.Insert(new ShopifyShop {UserId = userId});
 
-                var state = new ProfitWiseBatchState
+                var state = new PwBatchState
                 {
                     ShopId = newShopId,                    
                 };
 
                 var newShop = _shopRepository.RetrieveByShopId(newShopId);
-                var profitWiseBatchStateRepository = _factory.MakeProfitWiseBatchStateRepository(newShop);
+                var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(newShop);
                 profitWiseBatchStateRepository.Insert(state);
                 return newShopId;
             }

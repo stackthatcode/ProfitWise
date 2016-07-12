@@ -8,25 +8,25 @@ using ProfitWise.Data.Model;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopIdRequired))]
-    public class ProfitWiseProductRepository : IShopIdFilter
+    public class PwProductRepository : IShopIdFilter
     {
         private readonly MySqlConnection _connection;
 
         public int? ShopId { get; set; }
 
-        public ProfitWiseProductRepository(MySqlConnection connection)
+        public PwProductRepository(MySqlConnection connection)
         {
             _connection = connection;
         }
 
-        public ProfitWiseProduct RetrieveAll()
+        public PwProduct RetrieveAll()
         {
             var query = @"SELECT * FROM profitwiseproduct WHERE ShopId = @ShopId";
             return _connection
-                    .Query<ProfitWiseProduct>(query, new { @ShopId = this.ShopId } ).FirstOrDefault();
+                    .Query<PwProduct>(query, new { @ShopId = this.ShopId } ).FirstOrDefault();
         }
 
-        public long Insert(ProfitWiseProduct product)
+        public long Insert(PwProduct product)
         {
             var query = @"INSERT INTO profitwiseproduct ( ShopId, ProductTitle, VariantTitle, Name, Sku ) 
                         VALUES ( @ShopId, @ProductTitle, @VariantTitle, @Name, @Sku );
@@ -34,7 +34,7 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<long>(query, product).FirstOrDefault();
         }
 
-        public void Update(ProfitWiseProduct product)
+        public void Update(PwProduct product)
         {
             var query = @"UPDATE profitwiseproduct 
                             SET ProductTitle = @ProductTitle,

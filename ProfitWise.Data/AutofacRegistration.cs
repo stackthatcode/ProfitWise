@@ -21,8 +21,9 @@ namespace ProfitWise.Data
             builder.RegisterType<ShopifyProductRepository>();
             builder.RegisterType<ShopifyVariantRepository>();            
             builder.RegisterType<ShopRepository>();
-            builder.RegisterType<ProfitWiseBatchStateRepository>();
-            builder.RegisterType<ProfitWiseProductRepository>();
+            builder.RegisterType<PwBatchStateRepository>();
+            builder.RegisterType<PwProductRepository>();
+            builder.RegisterType<PwPreferencesRepository>();
 
 
             var registry = new InceptorRegistry();
