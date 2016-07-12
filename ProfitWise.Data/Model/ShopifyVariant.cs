@@ -8,6 +8,7 @@
         public string Sku { get; set; }
         public string Title { get; set; }
         public decimal Price { get; set; }
+        public int Inventory { get; set; }
         public long? PwProductId { get; set; }
 
         public ShopifyProduct ParentProduct { get; set; }

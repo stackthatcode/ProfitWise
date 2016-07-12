@@ -38,6 +38,15 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, product);
         }
 
+        public virtual void Update(ShopifyProduct product)
+        {
+            product.ShopId = ShopId.Value;
+            var query =
+                @"UPDATE shopifyproduct SET Title = @Title WHERE ShopId = @ShopId AND ShopifyProductId =  @ShopifyProductId";
+            _connection.Execute(query, product);
+        }
+
+
         public virtual void Delete(long shopifyProductId)
         {
             var query = @"DELETE FROM shopifyproduct 

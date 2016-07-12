@@ -38,6 +38,7 @@ CREATE TABLE `shopifyvariant` (
   `Sku` varchar(100) DEFAULT NULL,
   `Title` varchar(200) DEFAULT NULL,
   `Price` decimal(15,2) DEFAULT NULL,
+  `Inventory` int(4) DEFAULT NULL,
   `PwProductId` BIGINT unsigned NULL, 
   PRIMARY KEY (`ShopId`,`ShopifyVariantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -85,7 +86,7 @@ CREATE TABLE `profitwiseproduct` (
   `Name` varchar(256) DEFAULT NULL,  
   
   `Sku` varchar(128) DEFAULT NULL, 
-  PRIMARY KEY  (`ShopId`, `PwProductId` )  
+  PRIMARY KEY  (`PwProductId` )  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

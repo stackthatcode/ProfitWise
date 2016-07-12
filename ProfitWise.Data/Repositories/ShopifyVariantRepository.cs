@@ -17,6 +17,15 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
+        public virtual IList<ShopifyVariant> RetrieveAll()
+        {
+            var query = @"SELECT * FROM shopifyvariant WHERE ShopId = @ShopId";
+            return
+                _connection
+                    .Query<ShopifyVariant>(query, new { ShopId })
+                    .ToList();
+        }
+
         public virtual IList<ShopifyVariant> Retrieve(long shopifyProductId)
         {
             var query = @"SELECT * FROM shopifyvariant WHERE ShopId = @ShopId AND ShopifyProductId = @ShopifyProductId";
@@ -31,10 +40,22 @@ namespace ProfitWise.Data.Repositories
             product.ShopId = ShopId.Value;
             var query =
                 @"INSERT INTO shopifyvariant( 
-                    ShopId, ShopifyVariantId, ShopifyProductId, Sku, Title, Price, PwProductId ) 
-                VALUES( @ShopId, @ShopifyVariantId, @ShopifyProductId, @Sku, @Title, @Price, @PwProductId )";
+                    ShopId, ShopifyVariantId, ShopifyProductId, Sku, Title, Price, Inventory, PwProductId ) 
+                VALUES( @ShopId, @ShopifyVariantId, @ShopifyProductId, @Sku, @Title, @Price, @Inventory, @PwProductId )";
             _connection.Execute(query, product);
         }
+
+        public virtual void Update(ShopifyVariant product)
+        {
+            product.ShopId = ShopId.Value;
+            var query =
+                @"UPDATE shopifyvariant SET Sku = @Sku, Title = @Title, Price = @Price, Inventory = @Inventory 
+                    WHERE ShopId = @ShopId 
+                    AND ShopifyVariantId = @ShopifyVariantId
+                    AND ShopifyProductId = @ShopifyProductId";
+            _connection.Execute(query, product);
+        }
+
 
         public virtual void DeleteByProduct(long shopifyProductId)
         {

@@ -19,9 +19,9 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
-        public ProfitWiseProduct Retrieve()
+        public ProfitWiseProduct RetrieveAll()
         {
-            var query = @"SELECT * profitwiseproduct WHERE ShopId = @ShopId";
+            var query = @"SELECT * FROM profitwiseproduct WHERE ShopId = @ShopId";
             return _connection
                     .Query<ProfitWiseProduct>(query, new { @ShopId = this.ShopId } ).FirstOrDefault();
         }
