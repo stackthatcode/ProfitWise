@@ -1,5 +1,6 @@
 ﻿using System;
 using ProfitWise.Data.RefreshServices;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Shopify.HttpClient;
@@ -35,9 +36,9 @@ namespace ProfitWise.Data.Processes
 
         public void Execute(string userId)
         {
-            _pushLogger.Info($"{this.ClassAndMethodName()} for UserId: {userId}");
+            _pushLogger.Info($"Refresh Process for UserId: {userId}");
 
-            _pushLogger.Info($"{this.ClassAndMethodName()} - retrieving Shopify Credentials Claims for {userId}");
+            _pushLogger.Info($"Retrieving Shopify Credentials Claims for {userId}");
             var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
 
             if (shopifyFromClaims.Success == false)

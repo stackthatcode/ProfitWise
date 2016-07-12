@@ -5,6 +5,7 @@ using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -106,7 +107,7 @@ namespace ProfitWise.Data.RefreshServices
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
             var count = orderApiRepository.RetrieveCount(filter);
-            _pushLogger.Info($"{this.ClassAndMethodName()} - {count} Orders to process");
+            _pushLogger.Info($"{count} Orders to process");
 
             var numberofpages =
                 PagingFunctions.NumberOfPages(
@@ -115,7 +116,7 @@ namespace ProfitWise.Data.RefreshServices
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 _pushLogger.Info(
-                    $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
+                    $"Page {pagenumber} of {numberofpages} pages");
 
                 var orders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
 
@@ -124,27 +125,63 @@ namespace ProfitWise.Data.RefreshServices
         }
 
 
-        protected virtual void WriteOrdersToPersistence(ShopifyShop shop, IList<Order> results)
+        protected virtual void WriteOrdersToPersistence(ShopifyShop shop, IList<Order> ordersFromShopify)
         {
             var orderRepository = _multitenantRepositoryFactory.MakeShopifyOrderRepository(shop);
 
-            _pushLogger.Info($"{this.ClassAndMethodName()} - {results.Count} Orders to process");
+            _pushLogger.Info($"{ordersFromShopify.Count} Orders to process");
 
             using (var trans = orderRepository.InitiateTransaction())
             {
-                var shopifyOrders = results.Select(x => x.ToShopifyOrder(shop.ShopId)).ToList();
+                var importedShopifyOrders = ordersFromShopify.Select(x => x.ToShopifyOrder(shop.ShopId)).ToList();
 
-                orderRepository.MassDelete(shopifyOrders);
+                var orderIdList = importedShopifyOrders.Select(x => x.ShopifyOrderId).ToList();
+                var existingShopifyOrders = orderRepository.RetrieveOrders(orderIdList);
+                var existingShopifyOrderLineItems = orderRepository.RetrieveOrderLineItems(orderIdList);
 
-                foreach (var order in shopifyOrders)
+                foreach (var importedOrder in importedShopifyOrders)
                 {
-                    _pushLogger.Debug($"Refresh Order: {order.OrderNumber} / {order.ShopifyOrderId} for {order.Email}");
+                    var existingOrder =
+                        existingShopifyOrders.FirstOrDefault(
+                            x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
 
-                    orderRepository.InsertOrder(order);
-
-                    foreach (var line_item in order.LineItems)
+                    if (existingOrder == null)
                     {
-                        orderRepository.InsertOrderLineItem(line_item);
+                        _pushLogger.Debug($"Inserting new Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+
+                        orderRepository.InsertOrder(importedOrder);
+                    }
+                    else
+                    {
+                        _pushLogger.Debug($"Updating existing Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+
+                        existingOrder.UpdatedAt = importedOrder.UpdatedAt;
+                        existingOrder.Email = importedOrder.Email;
+                        existingOrder.TotalPrice = importedOrder.TotalPrice;
+
+                        orderRepository.UpdateOrder(existingOrder);
+                    }
+
+                    foreach (var importedLineItem in importedOrder.LineItems)
+                    {
+                        var existingLineItem =
+                            existingShopifyOrderLineItems.FirstOrDefault(
+                                x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
+
+                        if (existingLineItem == null)
+                        {
+                            _pushLogger.Debug($"Inserting new Order Line Item: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} / {importedLineItem.ShopifyOrderLineId}");
+                            orderRepository.InsertOrderLineItem(importedLineItem);
+                        }
+                        else
+                        {
+                            _pushLogger.Debug($"Updating existing Order Line Item: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} / {importedLineItem.ShopifyOrderLineId}");
+                            existingLineItem.Quantity = importedLineItem.Quantity;
+                            existingLineItem.UnitPrice = importedLineItem.UnitPrice;
+                            existingLineItem.TotalDiscount = importedLineItem.TotalDiscount;
+
+                            orderRepository.UpdateOrderLineItem(existingLineItem);
+                        }
                     }
                 }
 

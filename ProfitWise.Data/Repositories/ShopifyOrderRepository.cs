@@ -44,10 +44,29 @@ namespace ProfitWise.Data.Repositories
                     .FirstOrDefault();
         }
 
+        public virtual IList<ShopifyOrder> RetrieveOrders(IList<long> orderIdList)
+        {
+            var query2 = @"SELECT * FROM shopifyorder WHERE ShopifyOrderId IN @orderIdList";
+            return _connection.Query<ShopifyOrder>(query2, new {orderIdList}).ToList();
+        }
+
         public virtual void InsertOrder(ShopifyOrder order)
         {
             order.ShopId = ShopId.Value;
             var query = @"INSERT INTO shopifyorder VALUES(@ShopId, @ShopifyOrderId, @TotalPrice, @Email, @OrderNumber, @CreatedAt, @UpdatedAt)";
+            _connection.Execute(query, order);
+        }
+
+        public virtual void UpdateOrder(ShopifyOrder order)
+        {
+            order.ShopId = ShopId.Value;
+            var query = @"UPDATE shopifyorder SET
+                                TotalPrice = @TotalPrice, 
+                                Email = @Email,
+                                OrderNumber = @OrderNumber, 
+                                CreatedAt = @CreatedAt,
+                                UpdatedAt = @UpdatedAt
+                            WHERE ShopId = @ShopId AND ShopifyOrderId = @ShopifyOrderId";
             _connection.Execute(query, order);
         }
 
@@ -71,12 +90,19 @@ namespace ProfitWise.Data.Repositories
         }
 
 
+
         public virtual IList<ShopifyOrderLineItem> RetrieveOrderLineItems(long shopifyOrderId)
         {
             var query = @"SELECT * FROM shopifyorderlineitem WHERE ShopId = @ShopId AND shopifyOrderId = @shopifyOrderId";
             return _connection
                     .Query<ShopifyOrderLineItem>(query, new { ShopId, shopifyOrderId })
                     .ToList();
+        }
+
+        public virtual IList<ShopifyOrderLineItem> RetrieveOrderLineItems(IList<long> orderIdList)
+        {
+            var query = @"SELECT * FROM shopifyorderlineitem WHERE ShopifyOrderId IN @orderIdList";
+            return _connection.Query<ShopifyOrderLineItem>(query, new {orderIdList}).ToList();
         }
 
         public virtual void InsertOrderLineItem(ShopifyOrderLineItem lineitem)
@@ -92,13 +118,25 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, lineitem);
         }
 
+        public virtual void UpdateOrderLineItem(ShopifyOrderLineItem lineitem)
+        {
+            lineitem.ShopId = ShopId.Value;
+            var query =
+                @"UPDATE shopifyorderlineitem SET
+                    Quantity = @Quantity, 
+                    UnitPrice = @UnitPrice,
+                    TotalDiscount = @TotalDiscount
+                WHERE ShopId = @ShopId
+                AND ShopifyOrderId = @ShopifyOrderId
+                AND ShopifyOrderLineId = @ShopifyOrderLineId";
+            _connection.Execute(query, lineitem);
+        }
 
         public virtual void DeleteOrderLineItems(long shopifyOrderId)
         {
             var query =
                 @"DELETE FROM shopifyorderlineitem WHERE ShopId = @ShopId AND ShopifyOrderId = @shopifyOrderId";
             _connection.Execute(query, new { ShopId, shopifyOrderId });
-
         }
     }
 }

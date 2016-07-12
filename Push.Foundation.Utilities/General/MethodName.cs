@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Push.Utilities.General
+namespace Push.Foundation.Utilities.General
 {
     public static class CurrentMethodName
     {

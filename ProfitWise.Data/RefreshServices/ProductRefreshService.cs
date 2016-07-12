@@ -5,6 +5,7 @@ using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -58,8 +59,6 @@ namespace ProfitWise.Data.RefreshServices
             batchStateRepository.Update(batchState);
         }
 
-
-
         public virtual IList<Product> RetrieveAll(ShopifyCredentials shopCredentials, PwBatchState batchState)
         {
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
@@ -70,7 +69,7 @@ namespace ProfitWise.Data.RefreshServices
             var count = productApiRepository.RetrieveCount(filter);
 
 
-            _pushLogger.Info($"{this.ClassAndMethodName()} - Executing");
+            _pushLogger.Info($"Executing Refresh for {count} Products");
 
             var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
             var results = new List<Product>();
@@ -78,7 +77,7 @@ namespace ProfitWise.Data.RefreshServices
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 _pushLogger.Info(
-                    $"{this.ClassAndMethodName()} - page {pagenumber} of {numberofpages} pages");
+                    $"Page {pagenumber} of {numberofpages} pages");
 
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
@@ -89,7 +88,7 @@ namespace ProfitWise.Data.RefreshServices
 
         public virtual void WriteAllProductsToDatabase(ShopifyShop shop, IList<Product> new_products)
         {     
-            _pushLogger.Info($"{this.ClassAndMethodName()} - {new_products.Count} Products to process");
+            _pushLogger.Info($"{new_products.Count} Products to process");
 
             var productDataRepository = this._multitenantRepositoryFactory.MakeShopifyProductRepository(shop);
             var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
@@ -130,14 +129,14 @@ namespace ProfitWise.Data.RefreshServices
                 };
 
                 _pushLogger.Debug(
-                    $"{this.ClassAndMethodName()} - Inserting Product: {importedProduct.Title} ({importedProduct.Id})");
+                    $"Inserting Product: {importedProduct.Title} ({importedProduct.Id})");
                 productDataRepository.Insert(productData);
             }
             else
             {
                 existingProduct.Title = importedProduct.Title;
                 _pushLogger.Debug(
-                    $"{this.ClassAndMethodName()} - Updating Product: {importedProduct.Title} ({importedProduct.Id})");
+                    $"Updating Product: {importedProduct.Title} ({importedProduct.Id})");
 
                 productDataRepository.Update(existingProduct);
             }
@@ -156,7 +155,7 @@ namespace ProfitWise.Data.RefreshServices
 
             if (existingVariant == null)
             {
-                _pushLogger.Debug($"{this.ClassAndMethodName()} - Inserting Variant: {importedVariant.Title} ({importedVariant.Id})");
+                _pushLogger.Debug($"Inserting Variant: {importedVariant.Title} ({importedVariant.Id})");
 
                 var profitWiseProduct = new PwProduct
                 {
@@ -190,7 +189,7 @@ namespace ProfitWise.Data.RefreshServices
                 existingVariant.Price = importedVariant.Price;
                 existingVariant.Inventory = importedVariant.Inventory;
 
-                _pushLogger.Debug($"{this.ClassAndMethodName()} - Updating Variant: {importedVariant.Title} ({importedVariant.Id})");
+                _pushLogger.Debug($"Updating Variant: {importedVariant.Title} ({importedVariant.Id})");
                 variantDataRepository.Update(existingVariant);
             }
         }

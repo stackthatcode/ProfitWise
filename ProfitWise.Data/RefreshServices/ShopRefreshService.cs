@@ -1,6 +1,7 @@
 ﻿using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Utilities.General;
 
@@ -24,7 +25,7 @@ namespace ProfitWise.Data.RefreshServices
 
         public int Execute(string userId)
         {
-            _pushLogger.Info($"{this.ClassAndMethodName()} - for UserId : {userId}");
+            _pushLogger.Info($"Shop Refresh Service for UserId : {userId}");
 
             var shop = _shopRepository.RetrieveByUserId(userId);
 
