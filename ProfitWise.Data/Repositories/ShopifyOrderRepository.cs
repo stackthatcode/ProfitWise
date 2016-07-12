@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
@@ -7,6 +8,7 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories
 {
+    [Intercept(typeof(ShopIdRequired))]
     public class ShopifyOrderRepository : IShopIdFilter
     {
         private readonly MySqlConnection _connection;

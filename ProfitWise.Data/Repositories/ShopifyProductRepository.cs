@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Repositories
 
         public virtual IList<ShopifyProduct> RetrieveAll()
         {
-            var query = @"SELECT * FROM shopifyproduct WHERE ShopId";
+            var query = @"SELECT * FROM shopifyproduct WHERE ShopId = @ShopId";
             return
                 _connection
                     .Query<ShopifyProduct>(query, new { ShopId })

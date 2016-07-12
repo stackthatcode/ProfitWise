@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS `shopifyorderlineitem`;
 DROP TABLE IF EXISTS `profitwisedatelookup`; 
 DROP TABLE IF EXISTS `profitwiseproduct`;
 
+DROP TABLE IF EXISTS `profitwisebatchstate`;
+
 
 
 /** TODO - rename these tables to shopifyproductdata ***/
@@ -86,6 +88,14 @@ CREATE TABLE `profitwiseproduct` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+
+CREATE TABLE `profitwisebatchstate` (
+  `ShopId` int(6) unsigned NOT NULL,
+  `ProductsLastUpdated` datetime NULL,
+  `OrderDatasetStart` datetime NULL,
+  `OrderDatasetEnd` datetime NULL  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
