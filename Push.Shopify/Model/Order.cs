@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Push.Shopify.Model
 {
@@ -12,6 +13,10 @@ namespace Push.Shopify.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+        public decimal TotalRefunds => Refunds.Sum(x => x.TransactionAmount);
+
+
         public IList<OrderLineItem> LineItems { get; set; }
+        public IList<Refund> Refunds { get; set; }
     }
 }

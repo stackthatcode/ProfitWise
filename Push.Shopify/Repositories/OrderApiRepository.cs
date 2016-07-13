@@ -68,22 +68,24 @@ namespace Push.Shopify.Repositories
                                     JsonConvert.SerializeObject(order));
                 }
 
-                _logger.Debug($"Deserializing Order {order.name} ({order.id})");
+                _logger.Debug($"Translating Order {order.name} ({order.id})");
 
-                var orderResult = new Order
-                {
-                    Id = order.id,
-                    Email = order.email,
-                    Name = order.name,
-                    TotalPrice = order.total_price,
-                    CreatedAt = order.created_at,
-                    UpdatedAt = order.updated_at,
-                    LineItems = new List<OrderLineItem>()
-                };
+                var orderResult 
+                    = new Order
+                        {
+                            Id = order.id,
+                            Email = order.email,
+                            Name = order.name,
+                            TotalPrice = order.total_price,
+                            CreatedAt = order.created_at,
+                            UpdatedAt = order.updated_at,
+                            LineItems = new List<OrderLineItem>(),
+                            Refunds = new List<Refund>(),
+                        };
 
                 foreach (var line_item in order.line_items)
                 {
-                    _logger.Debug($"Deserializing Order Line Item {line_item.id}");
+                    _logger.Debug($"Translating Order Line Item {line_item.id}");
 
                     var orderLineItemResult = new OrderLineItem();
 
@@ -99,9 +101,32 @@ namespace Push.Shopify.Repositories
                     orderLineItemResult.VariantTitle = line_item.variant_title;
                     orderLineItemResult.Name = line_item.name;
 
-                    // Taxes = line_item. TODO *** pull in all the tax_lines...?
-
                     orderResult.LineItems.Add(orderLineItemResult);
+                }
+
+                foreach (var refund in order.refunds)
+                {
+                    _logger.Debug($"Translating Refund {refund.id}");
+
+                    var refundResult = new Refund();
+                    refundResult.ParentOrder = orderResult;
+                    refundResult.Id = refund.id;                    
+                    refundResult.LineItems = new List<RefundLineItem>();
+
+                    foreach (var refundLineItems in refund.refund_line_items)
+                    {
+                        var resultRefundLineItem = new RefundLineItem();
+                        resultRefundLineItem.Id = refundLineItems.id;
+                        resultRefundLineItem.LineItemId = refundLineItems.line_item_id;
+                        resultRefundLineItem.RestockQuantity = refundLineItems.quantity;    // TEST THIS!!!
+                        resultRefundLineItem.ParentRefund = refundResult;
+                    }
+
+                    refundResult.TransactionAmount = 0m;
+                    foreach (var transaction in refund.transactions)
+                    {
+                        refundResult.TransactionAmount += transaction.amount;
+                    }
                 }
                 results.Add(orderResult); 
             }

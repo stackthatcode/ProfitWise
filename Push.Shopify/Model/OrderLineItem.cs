@@ -1,4 +1,6 @@
-﻿namespace Push.Shopify.Model
+﻿using System.Linq;
+
+namespace Push.Shopify.Model
 {
     public class OrderLineItem
     {
@@ -14,5 +16,20 @@
         public string ProductTitle { get; set; }
         public string VariantTitle { get; set; }
         public string Name { get; set; }
+
+        public Order ParentOrder { get; set; }
+
+        public int TotalRestockQuantity
+        {
+            get
+            {
+                return 
+                    ParentOrder.Refunds
+                        .SelectMany(x => x.LineItems)
+                        .ToList()
+                        .Where(x => x.LineItemId == this.Id)
+                        .Sum(x => x.RestockQuantity);
+            }
+        }
     }
 }
