@@ -17,16 +17,22 @@ SELECT * FROM shopifyorderlineitem WHERE ShopId = 955973;
 /****/
 
 
-SELECT ShopId, PwProductId /*, ProductTitle, VariantTitle, `Name` */ FROM profitwiseproduct;
+SELECT * FROM profitwiseproduct;
+
+SELECT * FROM shopifyvariant;
 
 
 
+SELECT * FROM shopifyproduct WHERE ShopifyProductId = 5366727621;
 
+SELECT * FROM shopifyvariant WHERE ShopifyProductId = 5366727621;
 
 
 
 
 /*SELECT ShopId, PwProductId, */
+
+SELECT * FROM shopifyorder WHERE OrderNumber = '#5236354';
 
 
 SELECT COUNT(*) FROM shopifyorderlineitem;
@@ -53,7 +59,14 @@ AND t2.ShopId = 955973;
 
 
 
+
+SELECT * FROM profitwisepreferences;
+
+UPDATE profitwisepreferences SET StartingDateForOrders = '2016-06-01';
+
 SELECT * FROM profitwisebatchstate;
+
+UPDATE profitwisebatchstate SET ProductsLastUpdated = '2016-07-12 12:06:29';
 
 
 
