@@ -18,13 +18,14 @@ namespace ProfitWise.Data.Model
         public string VariantTitle { get; set; }
         public string Name { get; set; }
         public long? PwProductId { get; set; }
-
+        
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal TotalDiscount { get; set; } // Store
 
         public decimal TotalAfterLineItemDiscount => Quantity * UnitPrice - TotalDiscount;
 
+        // Hey! Our computation is like Shopify's!
         public decimal OrderDiscountAppliedToLineItem
         {
             get
@@ -45,7 +46,9 @@ namespace ProfitWise.Data.Model
 
         public decimal NetUnitPrice => NetTotal / Quantity;
 
+        
         public int TotalRestockedQuantity { get; set; } // Store
+        
 
         public decimal TotalRestockedValue => TotalRestockedQuantity * NetUnitPrice;
 
@@ -57,7 +60,7 @@ namespace ProfitWise.Data.Model
         {
             get
             {
-                if (this.ParentOrder.TotalRefundAmount > this.ParentOrder.TotalRestockedValueForAllLineItems)
+                if (this.ParentOrder.TotalRefundAmountExcludingTax > this.ParentOrder.TotalRestockedValueForAllLineItems)
                 {
                     return TotalRestockedValue;
                 }
@@ -67,16 +70,16 @@ namespace ProfitWise.Data.Model
                     return 0m;
                 }
 
-                return this.ParentOrder.TotalRefundAmount * 
+                return this.ParentOrder.TotalRefundAmountExcludingTax * 
                         ( TotalRestockedValue / this.ParentOrder.TotalRestockedValueForAllLineItems );
             }
         }
 
-        public decimal RefundAdjustment
+        public decimal OrderLevelRefundAdjustment
         {
             get
             {
-                if (this.ParentOrder.TotalRefundAmount <= this.ParentOrder.TotalRestockedValueForAllLineItems)
+                if (this.ParentOrder.TotalRefundAmountExcludingTax <= this.ParentOrder.TotalRestockedValueForAllLineItems)
                 {
                     return 0.00m;
                 }
@@ -91,8 +94,43 @@ namespace ProfitWise.Data.Model
             }
         }
 
-        public decimal TotalRefund => RestockedItemsRefundAmount + RefundAdjustment;
+        public decimal TotalRefund => RestockedItemsRefundAmount + OrderLevelRefundAdjustment;
 
         public decimal GrossRevenue => NetTotal - TotalRefund;  // Store
+
+        
+
+        public override string ToString()
+        {
+            return
+                "ShopifyOrderLineItem" + Environment.NewLine +
+                $"ShopId = {ShopId}" + Environment.NewLine +
+                $"ShopifyOrderLineId = {ShopifyOrderLineId}" + Environment.NewLine +
+                $"ShopifyOrderId = {ShopifyOrderId}" + Environment.NewLine +
+                $"ShopifyProductId = {ShopifyProductId}" + Environment.NewLine +
+                $"ShopifyVariantId = {ShopifyVariantId}" + Environment.NewLine +
+                $"Sku = {Sku}" + Environment.NewLine +
+                $"ProductTitle = {ProductTitle}" + Environment.NewLine +
+                $"VariantTitle = {VariantTitle}" + Environment.NewLine +
+                $"Name = {Name}" + Environment.NewLine +
+                $"PwProductId = {PwProductId}" + Environment.NewLine +
+                $"Quantity = {Quantity}" + Environment.NewLine +
+                $"UnitPrice = {UnitPrice}" + Environment.NewLine +
+                $"TotalDiscount = {TotalDiscount}" + Environment.NewLine +
+                $"TotalAfterLineItemDiscount = {TotalAfterLineItemDiscount}" + Environment.NewLine +
+                $"OrderDiscountAppliedToLineItem = {OrderDiscountAppliedToLineItem}" + Environment.NewLine +
+                $"NetTotal = {NetTotal}" + Environment.NewLine +
+                $"NetUnitPrice = {NetUnitPrice}" + Environment.NewLine +
+
+                $"TotalRestockedQuantity = {TotalRestockedQuantity}" + Environment.NewLine +
+                $"TotalRestockedValue = {TotalRestockedValue}" + Environment.NewLine +
+                $"TotalRemainingValue = {TotalRemainingValue}" + Environment.NewLine +
+                $"RemainingQuantity = {RemainingQuantity}" + Environment.NewLine +
+                $"RestockedItemsRefundAmount = {RestockedItemsRefundAmount}" + Environment.NewLine +
+                $"RefundAdjustment = {OrderLevelRefundAdjustment}" + Environment.NewLine +
+                $"TotalRefund = {TotalRefund}" + Environment.NewLine +
+                $"GrossRevenue = {GrossRevenue}" + Environment.NewLine;
+        }
+
     }
 }

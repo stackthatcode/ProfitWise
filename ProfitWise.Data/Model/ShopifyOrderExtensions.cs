@@ -10,12 +10,16 @@ namespace ProfitWise.Data.Model
             var shopifyOrder = new ShopifyOrder()
             {
                 ShopId = shopId,
-                TotalPrice = order.TotalPrice,
                 Email = order.Email,
                 OrderNumber = order.Name,
                 ShopifyOrderId = order.Id,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
+                TotalTax = order.TotalTax,
+                SubTotal = order.SubTotal,
+                TotalRefund = order.TotalRefunds,
+                TaxRefundAmount = order.TotalTaxRefunds,
+                OrderLevelDiscount = order.OrderDiscount,
                 LineItems = new List<ShopifyOrderLineItem>()
             };
 
@@ -23,11 +27,11 @@ namespace ProfitWise.Data.Model
             {
                 var shopifyOrderLineItem = new ShopifyOrderLineItem();
                 shopifyOrderLineItem.ShopId = shopId;
+                shopifyOrderLineItem.ParentOrder = shopifyOrder;
                 shopifyOrderLineItem.ShopifyVariantId = line_item.VariantId;
                 shopifyOrderLineItem.ShopifyProductId = line_item.ProductId;
                 shopifyOrderLineItem.ShopifyOrderId = order.Id;
                 shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
-                shopifyOrderLineItem.Quantity = line_item.Quantity;
                 shopifyOrderLineItem.Sku = line_item.Sku;
 
                 shopifyOrderLineItem.ProductTitle = line_item.ProductTitle;
@@ -35,6 +39,9 @@ namespace ProfitWise.Data.Model
                 shopifyOrderLineItem.Name = line_item.Name;
 
                 shopifyOrderLineItem.UnitPrice = line_item.Price;
+                shopifyOrderLineItem.Quantity = line_item.Quantity;
+                shopifyOrderLineItem.TotalRestockedQuantity = line_item.TotalRestockQuantity;
+                shopifyOrderLineItem.TotalDiscount = line_item.Discount;
 
                 shopifyOrder.LineItems.Add(shopifyOrderLineItem);
             }

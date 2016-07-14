@@ -10,7 +10,6 @@ using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
-using Push.Utilities.General;
 using Push.Utilities.Helpers;
 
 namespace ProfitWise.Data.RefreshServices
@@ -119,7 +118,7 @@ namespace ProfitWise.Data.RefreshServices
                     $"Page {pagenumber} of {numberofpages} pages");
 
                 var orders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
-
+                //var testOrder = orders.FirstOrDefault(x => x.Id == 3347193029);
                 WriteOrdersToPersistence(shop, orders);
             }
         }
@@ -133,7 +132,15 @@ namespace ProfitWise.Data.RefreshServices
 
             using (var trans = orderRepository.InitiateTransaction())
             {
-                var importedShopifyOrders = ordersFromShopify.Select(x => x.ToShopifyOrder(shop.ShopId)).ToList();
+                var importedShopifyOrders = new List<ShopifyOrder>();
+                foreach (var order in ordersFromShopify)
+                {
+                    _pushLogger.Debug($"Translating Shopify Order {order.Name} ({order.Id}) to ProfitWise data model");
+                    importedShopifyOrders.Add(order.ToShopifyOrder(shop.ShopId));
+                }
+
+                var order2 = importedShopifyOrders.FirstOrDefault(x => x.ShopifyOrderId == 3426853701);
+                _pushLogger.Debug(order2.ToString());
 
                 var orderIdList = importedShopifyOrders.Select(x => x.ShopifyOrderId).ToList();
                 var existingShopifyOrders = orderRepository.RetrieveOrders(orderIdList);
@@ -157,7 +164,7 @@ namespace ProfitWise.Data.RefreshServices
 
                         existingOrder.UpdatedAt = importedOrder.UpdatedAt;
                         existingOrder.Email = importedOrder.Email;
-                        existingOrder.TotalPrice = importedOrder.TotalPrice;
+                        existingOrder.SubTotal = importedOrder.SubTotal;
 
                         orderRepository.UpdateOrder(existingOrder);
                     }

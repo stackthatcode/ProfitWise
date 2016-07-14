@@ -3,7 +3,7 @@ using System.Collections;
 using System.Reflection;
 using System.Text;
 
-namespace Push.Utilities.General
+namespace Push.Foundation.Utilities.General
 {
     public static class ObjectIntrospection
     {

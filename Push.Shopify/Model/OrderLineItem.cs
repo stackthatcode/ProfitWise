@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Push.Shopify.Model
 {
@@ -10,7 +11,6 @@ namespace Push.Shopify.Model
         public string Sku { get; set; }
         public int Quantity { get; set; }
         public decimal Discount { get; set; }
-        public decimal Taxes { get; set; }
         public decimal Price { get; set; }
 
         public string ProductTitle { get; set; }
@@ -31,5 +31,6 @@ namespace Push.Shopify.Model
                         .Sum(x => x.RestockQuantity);
             }
         }
+
     }
 }
