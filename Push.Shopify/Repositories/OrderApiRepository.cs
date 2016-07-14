@@ -85,6 +85,7 @@ namespace Push.Shopify.Repositories
                             LineItems = new List<OrderLineItem>(),
                             Refunds = new List<Refund>(),
                             OrderDiscount = 0.00m,
+                            CancelledAt = order.cancelled_at,
                         };
 
 
@@ -148,8 +149,11 @@ namespace Push.Shopify.Repositories
                     refundResult.TransactionAmount = 0m;
                     foreach (var transaction in refund.transactions)
                     {
-                        decimal amount = transaction.amount;
-                        refundResult.TransactionAmount += amount;
+                        if (transaction.status == "success")
+                        {
+                            decimal amount = transaction.amount;
+                            refundResult.TransactionAmount += amount;
+                        }
                     }
 
                     refundResult.ShippingAdjustment = 0m;

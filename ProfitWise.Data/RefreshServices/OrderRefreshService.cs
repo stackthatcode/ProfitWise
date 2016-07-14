@@ -171,6 +171,23 @@ namespace ProfitWise.Data.RefreshServices
                 existingShopifyOrders.FirstOrDefault(
                     x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
 
+            if (existingOrder != null && importedOrder.Cancelled == true)
+            {
+                _pushLogger.Debug(
+                        $"Deleting cancelled Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+
+                orderRepository.DeleteOrderLineItems(importedOrder.ShopifyOrderId);
+                orderRepository.DeleteOrder(importedOrder.ShopifyOrderId);
+                return;
+            }
+
+            if (existingOrder == null && importedOrder.Cancelled == true)
+            {
+                _pushLogger.Debug(
+                        $"Skipping cancelled Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+                return;
+            }
+
             if (existingOrder == null)
             {
                 _pushLogger.Debug(

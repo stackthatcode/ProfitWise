@@ -34,7 +34,8 @@ namespace ProfitWise.Data.Model
                 TaxRefundAmount = order.TotalTaxRefunds,
                 ShippingRefundAmount = order.TotalShippingRefund,
                 OrderLevelDiscount = order.OrderDiscount,
-                LineItems = new List<ShopifyOrderLineItem>()
+                LineItems = new List<ShopifyOrderLineItem>(),
+                Cancelled = order.CancelledAt.HasValue,
             };
 
             foreach (var line_item in order.LineItems)

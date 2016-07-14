@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -98,7 +99,10 @@ namespace ProfitWise.Batch
                             .GetAndTryParseAsLongNullable("ProfitWiseDiagonosticShop", -1);
             var orderList = ConfigurationManager.AppSettings
                             .GetAndTryParseAsString("ProfitWiseDiagonosticOrders", "");
-            var orderIds = orderList.Split(',').Select(x => long.Parse(x)).ToList();
+            var orderIds =
+                orderList.IsNullOrEmpty()
+                    ? new List<long>() : 
+                    orderList.Split(',').Select(x => long.Parse(x)).ToList();
 
             builder.Register(x => new ShopifyOrderDiagnosticShim
             {

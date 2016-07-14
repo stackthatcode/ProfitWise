@@ -33,7 +33,7 @@ namespace ProfitWise.Data.Model
                                                          LineItems.Sum(x => x.RestockedItemsRefundAmount);
 
         public decimal TotalGrossRevenue => this.LineItems.Sum(x => x.GrossRevenue);
-
+        public bool Cancelled { get; set; }
 
 
         public override string ToString()

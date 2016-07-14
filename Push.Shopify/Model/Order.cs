@@ -7,12 +7,14 @@ namespace Push.Shopify.Model
     public class Order
     {
         public long Id { get; set; }
+
         public string Name { get; set; }
         public string Email { get; set; }
         public decimal TotalTax { get; set; }
         public decimal SubTotal { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public DateTime? CancelledAt { get; set; }
 
         public decimal TotalRefunds => Refunds.Sum(x => x.TransactionAmount);
         public decimal TotalShippingRefund => Refunds.Sum(x => x.ShippingAdjustment);
