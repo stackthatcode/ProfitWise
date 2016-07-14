@@ -14,8 +14,8 @@ namespace Push.Shopify.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public decimal TotalRefunds => Refunds.Sum(x => x.RefundTotal);
-
+        public decimal TotalRefunds => Refunds.Sum(x => x.TransactionAmount);
+        public decimal TotalShippingRefund => Refunds.Sum(x => x.ShippingAdjustment);
         public decimal TotalTaxRefunds => Refunds.Sum(x => x.TaxRefundTotal);
 
         public decimal OrderDiscount { get; set; }

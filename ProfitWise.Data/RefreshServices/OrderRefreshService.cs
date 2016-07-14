@@ -5,7 +5,7 @@ using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
-using Push.Foundation.Utilities.General;
+using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -17,6 +17,7 @@ namespace ProfitWise.Data.RefreshServices
     public class OrderRefreshService
     {
         private readonly IPushLogger _pushLogger;
+        private readonly ShopifyOrderDiagnosticShim _diagnostic;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
@@ -28,10 +29,12 @@ namespace ProfitWise.Data.RefreshServices
                 MultitenantRepositoryFactory multitenantRepositoryFactory,
                 RefreshServiceConfiguration refreshServiceConfiguration,
                 ShopRepository shopRepository,
-                IPushLogger logger)
+                IPushLogger logger,
+                ShopifyOrderDiagnosticShim diagnostic)
 
         {
             _pushLogger = logger;
+            _diagnostic = diagnostic;
             _apiRepositoryFactory = apiRepositoryFactory;
             _multitenantRepositoryFactory = multitenantRepositoryFactory;
             _refreshServiceConfiguration = refreshServiceConfiguration;
@@ -92,7 +95,7 @@ namespace ProfitWise.Data.RefreshServices
 
             var updatefilter = new OrderFilter()
             {
-                UpdatedAtMin = batchState.ProductsLastUpdated
+                UpdatedAtMin = batchState.OrderDatasetEnd.Value.AddMinutes(-30)
             };
 
             RefreshOrders(updatefilter, shopCredentials, shop);
@@ -139,63 +142,79 @@ namespace ProfitWise.Data.RefreshServices
                     importedShopifyOrders.Add(order.ToShopifyOrder(shop.ShopId));
                 }
 
-                var order2 = importedShopifyOrders.FirstOrDefault(x => x.ShopifyOrderId == 3426853701);
-                _pushLogger.Debug(order2.ToString());
-
                 var orderIdList = importedShopifyOrders.Select(x => x.ShopifyOrderId).ToList();
                 var existingShopifyOrders = orderRepository.RetrieveOrders(orderIdList);
                 var existingShopifyOrderLineItems = orderRepository.RetrieveOrderLineItems(orderIdList);
+                existingShopifyOrders.LoadLineItems(existingShopifyOrderLineItems);
 
                 foreach (var importedOrder in importedShopifyOrders)
                 {
-                    var existingOrder =
-                        existingShopifyOrders.FirstOrDefault(
-                            x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
-
-                    if (existingOrder == null)
-                    {
-                        _pushLogger.Debug($"Inserting new Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
-
-                        orderRepository.InsertOrder(importedOrder);
-                    }
-                    else
-                    {
-                        _pushLogger.Debug($"Updating existing Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
-
-                        existingOrder.UpdatedAt = importedOrder.UpdatedAt;
-                        existingOrder.Email = importedOrder.Email;
-                        existingOrder.SubTotal = importedOrder.SubTotal;
-
-                        orderRepository.UpdateOrder(existingOrder);
-                    }
-
-                    foreach (var importedLineItem in importedOrder.LineItems)
-                    {
-                        var existingLineItem =
-                            existingShopifyOrderLineItems.FirstOrDefault(
-                                x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
-
-                        if (existingLineItem == null)
-                        {
-                            _pushLogger.Debug($"Inserting new Order Line Item: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} / {importedLineItem.ShopifyOrderLineId}");
-                            orderRepository.InsertOrderLineItem(importedLineItem);
-                        }
-                        else
-                        {
-                            _pushLogger.Debug($"Updating existing Order Line Item: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} / {importedLineItem.ShopifyOrderLineId}");
-                            existingLineItem.Quantity = importedLineItem.Quantity;
-                            existingLineItem.UnitPrice = importedLineItem.UnitPrice;
-                            existingLineItem.TotalDiscount = importedLineItem.TotalDiscount;
-
-                            orderRepository.UpdateOrderLineItem(existingLineItem);
-                        }
-                    }
+                    WriteOrderToPersistence(existingShopifyOrders, importedOrder, orderRepository, existingShopifyOrderLineItems);
                 }
 
                 trans.Commit();
             }
         }
 
+
+
+        private void WriteOrderToPersistence(IList<ShopifyOrder> existingShopifyOrders, ShopifyOrder importedOrder,
+            ShopifyOrderRepository orderRepository, IList<ShopifyOrderLineItem> existingShopifyOrderLineItems)
+        {
+            if (_diagnostic.ShopId == importedOrder.ShopId &&
+                _diagnostic.OrderIds.Contains(importedOrder.ShopifyOrderId))
+            {
+                _pushLogger.Debug(importedOrder.ToString());
+            }
+            
+            var existingOrder =
+                existingShopifyOrders.FirstOrDefault(
+                    x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
+
+            if (existingOrder == null)
+            {
+                _pushLogger.Debug(
+                    $"Inserting new Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+
+                orderRepository.InsertOrder(importedOrder);
+            }
+            else
+            {
+                _pushLogger.Debug(
+                    $"Updating existing Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+
+                existingOrder.UpdatedAt = importedOrder.UpdatedAt;
+                existingOrder.Email = importedOrder.Email;
+                existingOrder.TotalRefund = importedOrder.TotalRefund;
+                existingOrder.TaxRefundAmount = importedOrder.TaxRefundAmount;
+                existingOrder.ShippingRefundAmount = importedOrder.ShippingRefundAmount;
+                orderRepository.UpdateOrder(existingOrder);
+            }
+
+            foreach (var importedLineItem in importedOrder.LineItems)
+            {
+                var existingLineItem =
+                    existingShopifyOrderLineItems.FirstOrDefault(
+                        x => x.ShopifyOrderId == importedLineItem.ShopifyOrderId && 
+                            x.ShopifyOrderLineId == importedLineItem.ShopifyOrderLineId);
+
+                if (existingLineItem == null)
+                {
+                    _pushLogger.Debug(
+                        $"Inserting new Order Line Item: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} / {importedLineItem.ShopifyOrderLineId}");
+                    orderRepository.InsertOrderLineItem(importedLineItem);
+                }
+                else
+                {
+                    _pushLogger.Debug(
+                        $"Updating existing Order Line Item: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} / {importedLineItem.ShopifyOrderLineId}");
+
+                    existingLineItem.TotalRestockedQuantity = importedLineItem.TotalRestockedQuantity;
+                    existingLineItem.GrossRevenue = importedLineItem.GrossRevenue;
+                    orderRepository.UpdateOrderLineItem(existingLineItem);
+                }
+            }
+        }
     }
 }
 

@@ -17,21 +17,19 @@ namespace ProfitWise.Data.Model
 
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
 
-        public decimal TotalTax { get; set; }
-
         public decimal SubTotal { get; set; }
 
         public decimal TotalRefund { get; set; }
-
-        public decimal TotalRefundAmountExcludingTax => TotalRefund - TotalTax;
-
         public decimal TaxRefundAmount { get; set; }
+        public decimal ShippingRefundAmount { get; set; }
+
+        public decimal TotalRefundExcludingTaxAndShipping => TotalRefund - TaxRefundAmount + ShippingRefundAmount;
 
         public decimal TotalRestockedValueForAllLineItems => this.LineItems.Sum(x => x.TotalRestockedValue);
 
         public decimal TotalRemainingValueForAllLineItems => this.LineItems.Sum(x => x.TotalRemainingValue);
 
-        public decimal RefundBalanceAboveRestockValue => TotalRefundAmountExcludingTax -
+        public decimal RefundBalanceAboveRestockValue => TotalRefundExcludingTaxAndShipping -
                                                          LineItems.Sum(x => x.RestockedItemsRefundAmount);
 
         public decimal TotalGrossRevenue => this.LineItems.Sum(x => x.GrossRevenue);
@@ -51,7 +49,10 @@ namespace ProfitWise.Data.Model
                 $"CreatedAt = {CreatedAt}" + Environment.NewLine +
                 $"UpdatedAt = {UpdatedAt}" + Environment.NewLine +
                 $"TotalPrice = {SubTotal}" + Environment.NewLine +
-                $"TotalRefundAmount = {TotalRefundAmountExcludingTax}" + Environment.NewLine +
+                $"TotalRefund = {TotalRefund}" + Environment.NewLine +
+                $"TaxRefundAmount = {TaxRefundAmount}" + Environment.NewLine +
+                $"ShippingRefundAmount = {ShippingRefundAmount}" + Environment.NewLine +
+                $"TotalRefundExcludingTaxAndShipping = {TotalRefundExcludingTaxAndShipping}" + Environment.NewLine +
                 $"TotalRestockedValueForAllLineItems = {TotalRestockedValueForAllLineItems}" + Environment.NewLine +
                 $"TotalRemainingValueForAllLineItems = {TotalRemainingValueForAllLineItems}" + Environment.NewLine +
                 $"RefundBalanceAboveRestockValue = {RefundBalanceAboveRestockValue}" + Environment.NewLine +

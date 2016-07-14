@@ -8,7 +8,6 @@ namespace Push.Shopify.Model
         public long Id { get; set; }
         public decimal TransactionAmount { get; set; }
         public decimal ShippingAdjustment { get; set; }
-        public decimal RefundTotal => TransactionAmount + ShippingAdjustment;
         public decimal TaxRefundTotal => LineItems.Sum(x => x.TaxRefund);
 
         public IList<RefundLineItem> LineItems { get; set; }

@@ -47,9 +47,12 @@ CREATE TABLE `shopifyvariant` (
 CREATE TABLE `shopifyorder` (
   `ShopId` int(6) unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
-  `TotalPrice` decimal(15,2) DEFAULT NULL,
   `Email` varchar(128) DEFAULT NULL,
   `OrderNumber` varchar(128) DEFAULT NULL,  
+  `SubTotal` decimal(15,2) DEFAULT NULL,
+  `TotalRefund` decimal(15,2) DEFAULT NULL,
+  `TaxRefundAmount` decimal(15,2) DEFAULT NULL,
+  `ShippingRefundAmount` decimal(15,2) DEFAULT NULL,
   `CreatedAt` datetime NOT NULL,
   `UpdatedAt` datetime NOT NULL,
   PRIMARY KEY  (`ShopId`, `ShopifyOrderId`)
@@ -66,7 +69,8 @@ CREATE TABLE `shopifyorderlineitem` (
   `Quantity` int(6) unsigned NOT NULL,
   `UnitPrice` decimal(15,2) DEFAULT NULL,   
   `TotalDiscount` decimal(15,2) DEFAULT NULL,
-  
+  `TotalRestockedQuantity` int(6) unsigned NOT NULL,
+  `GrossRevenue` decimal(15,2) DEFAULT NULL,
   `ProductTitle` varchar(128) DEFAULT NULL,
   `VariantTitle` varchar(128) DEFAULT NULL,  
   `Name` varchar(256) DEFAULT NULL,  

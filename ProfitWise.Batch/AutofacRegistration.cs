@@ -2,10 +2,13 @@
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
 using Autofac;
 using MySql.Data.MySqlClient;
 using ProfitWise.Batch.RefreshServices;
+using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.CastleProxies;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.HttpClient;
 using Push.Utilities.CastleProxies;
@@ -88,7 +91,20 @@ namespace ProfitWise.Batch
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
             var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
             Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
-            
+
+
+            // ProfitWise.Data OrderDiagnostic
+            var shop = ConfigurationManager.AppSettings
+                            .GetAndTryParseAsLongNullable("ProfitWiseDiagonosticShop", -1);
+            var orderList = ConfigurationManager.AppSettings
+                            .GetAndTryParseAsString("ProfitWiseDiagonosticOrders", "");
+            var orderIds = orderList.Split(',').Select(x => long.Parse(x)).ToList();
+
+            builder.Register(x => new ShopifyOrderDiagnosticShim
+            {
+                ShopId = shop,
+                OrderIds = orderIds,
+            });
 
             // Fin!
             return builder.Build();

@@ -23,24 +23,17 @@ SELECT * FROM shopifyvariant;
 
 
 
-SELECT * FROM shopifyproduct WHERE ShopifyProductId = 5366727621;
-
-SELECT * FROM shopifyvariant WHERE ShopifyProductId = 5366727621;
-
-
 
 
 /*SELECT ShopId, PwProductId, */
 
-SELECT * FROM shopifyorder WHERE OrderNumber = '#5236354';
+SELECT * FROM shopifyorder WHERE ShopifyOrderId = 3431801605;
 
 
-SELECT COUNT(*) FROM shopifyorderlineitem;
 
-SELECT * FROM shopifyorderlineitem WHERE ShopId = 955973 AND ShopifyProductId IS NULL;
-
+/** Do something with this...!
 OPTIMIZE TABLE shopifyorderlineitem;
-
+**/
 
 
 /* This will create the Shops  
@@ -66,7 +59,7 @@ UPDATE profitwisepreferences SET StartingDateForOrders = '2016-06-01';
 
 SELECT * FROM profitwisebatchstate;
 
-UPDATE profitwisebatchstate SET ProductsLastUpdated = '2016-07-12 12:06:29';
+UPDATE profitwisebatchstate SET OrderDatasetStart = NULL, OrderDatasetEnd = NULL;
 
 
 

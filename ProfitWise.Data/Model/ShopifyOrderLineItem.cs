@@ -60,7 +60,7 @@ namespace ProfitWise.Data.Model
         {
             get
             {
-                if (this.ParentOrder.TotalRefundAmountExcludingTax > this.ParentOrder.TotalRestockedValueForAllLineItems)
+                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping > this.ParentOrder.TotalRestockedValueForAllLineItems)
                 {
                     return TotalRestockedValue;
                 }
@@ -70,7 +70,7 @@ namespace ProfitWise.Data.Model
                     return 0m;
                 }
 
-                return this.ParentOrder.TotalRefundAmountExcludingTax * 
+                return this.ParentOrder.TotalRefundExcludingTaxAndShipping * 
                         ( TotalRestockedValue / this.ParentOrder.TotalRestockedValueForAllLineItems );
             }
         }
@@ -79,7 +79,7 @@ namespace ProfitWise.Data.Model
         {
             get
             {
-                if (this.ParentOrder.TotalRefundAmountExcludingTax <= this.ParentOrder.TotalRestockedValueForAllLineItems)
+                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping <= this.ParentOrder.TotalRestockedValueForAllLineItems)
                 {
                     return 0.00m;
                 }
@@ -96,11 +96,15 @@ namespace ProfitWise.Data.Model
 
         public decimal TotalRefund => RestockedItemsRefundAmount + OrderLevelRefundAdjustment;
 
-        public decimal GrossRevenue => NetTotal - TotalRefund;  // Store
+        public decimal GrossRevenue
+        {
+            get { return NetTotal - TotalRefund; }
+            set {  }
+        }
 
-        
 
-        public override string ToString()
+
+            public override string ToString()
         {
             return
                 "ShopifyOrderLineItem" + Environment.NewLine +
