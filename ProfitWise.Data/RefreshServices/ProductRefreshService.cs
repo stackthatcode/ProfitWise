@@ -5,12 +5,10 @@ using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
-using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
-using Push.Utilities.General;
 using Push.Utilities.Helpers;
 
 namespace ProfitWise.Data.RefreshServices

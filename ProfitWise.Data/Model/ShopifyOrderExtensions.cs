@@ -68,5 +68,17 @@ namespace ProfitWise.Data.Model
 
             return shopifyOrder;
         }
+
+
+        public static void CopyIntoExistingOrderForUpdate(this ShopifyOrder importedOrder, ShopifyOrder existingOrder)
+        {
+            existingOrder.UpdatedAt = importedOrder.UpdatedAt;
+            existingOrder.Email = importedOrder.Email;
+            existingOrder.TotalRefund = importedOrder.TotalRefund;
+            existingOrder.TaxRefundAmount = importedOrder.TaxRefundAmount;
+            existingOrder.ShippingRefundAmount = importedOrder.ShippingRefundAmount;
+            existingOrder.Tags = importedOrder.Tags;
+            existingOrder.FinancialStatus = importedOrder.FinancialStatus;
+        }
     }
 }

@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Aspect\ShopIdRequired.cs" />
     <Compile Include="Factories\MultitenantRepositoryFactory.cs" />
+    <Compile Include="Model\ShopifyVariantExtensions.cs" />
     <Compile Include="Model\PwBatchState.cs" />
     <Compile Include="Model\PwPreferences.cs" />
     <Compile Include="Model\PwProduct.cs" />
