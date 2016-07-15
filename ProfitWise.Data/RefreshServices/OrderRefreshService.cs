@@ -299,6 +299,8 @@ namespace ProfitWise.Data.RefreshServices
 
                     existingLineItem.TotalRestockedQuantity = importedLineItem.TotalRestockedQuantity;
                     existingLineItem.GrossRevenue = importedLineItem.GrossRevenue;
+                    existingLineItem.ShopifyProductId = importedLineItem.ShopifyProductId;
+                    existingLineItem.ShopifyVariantId = importedLineItem.ShopifyVariantId;
                     orderRepository.UpdateOrderLineItem(existingLineItem);
                 }
             }            

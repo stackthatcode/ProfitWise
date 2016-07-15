@@ -53,6 +53,15 @@ namespace ProfitWise.Data.Repositories
                         WHERE ShopId = @ShopId AND ShopifyProductId = @ShopifyProductId";
             _connection.Execute(query, new { ShopId, shopifyProductId});
         }
+
+        public virtual void Delete(long shopifyProductId, long shopifyVariantId)
+        {
+            var query = @"DELETE FROM shopifyvariant 
+                        WHERE ShopId = @ShopId 
+                        AND ShopifyProductId = @ShopifyProductId
+                        AND ShopifyVariantId = @ShopifyVariantId";
+            _connection.Execute(query, new { ShopId, shopifyProductId });
+        }
     }
 }
 

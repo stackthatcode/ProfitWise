@@ -12,7 +12,9 @@ SELECT * FROM shopifyproduct;
 
 SELECT * FROM shopifyvariant WHERE ShopId = 955973;
 
-SELECT * FROM shopifyorderlineitem WHERE TotalRestockedQuantity = 1;
+SELECT * FROM shopifyorderlineitem;
+
+ WHERE TotalRestockedQuantity > 0;
 
 
 /****/
@@ -26,11 +28,11 @@ SELECT * FROM profitwiseproduct;
 
 /*SELECT ShopId, PwProductId, */
 
-SELECT * FROM shopifyorder;
+SELECT * FROM shopifyorder ORDER BY OrderNumber DESC;
 
 SELECT * FROM shopifyorder WHERE ShopifyOrderId = 3431801605;
 
-SELECT * FROM shopifyorderlineitem WHERE ShopifyOrderId = 3431801605;
+SELECT * FROM shopifyorderlineitem;
 
 
 

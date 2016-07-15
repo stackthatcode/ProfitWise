@@ -138,6 +138,8 @@ namespace ProfitWise.Data.Repositories
             lineitem.ShopId = ShopId.Value;
             var query =
                 @"UPDATE shopifyorderlineitem SET
+                    ShopifyProductId = @ShopifyProductId, 
+                    ShopifyVariantId = @ShopifyVariantId,
                     TotalRestockedQuantity = @TotalRestockedQuantity,
                     GrossRevenue = @GrossRevenue
                 WHERE ShopId = @ShopId

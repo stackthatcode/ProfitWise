@@ -5,6 +5,7 @@ using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -81,6 +82,17 @@ namespace ProfitWise.Data.RefreshServices
                 results.AddRange(products);
             }
 
+
+
+            // Remove Variants which aren't
+            //foreach (var oldvariant in existingVariants)
+            //{
+            //    if (!importedVariants.Any(
+            //            x => x.Id == oldvariant.ShopifyVariantId && x.ParentProduct.Id == oldvariant.ShopifyProductId))
+            //    {
+            //        variantDataRepository.Delete(oldvariant.ShopifyProductId, oldvariant.ShopifyVariantId);
+            //    }
+            //}
             return results;
         }
 
@@ -94,15 +106,13 @@ namespace ProfitWise.Data.RefreshServices
             var existingVariants = variantDataRepository.RetrieveAll();
             var profitWiseProducts = profitWiseProductRepository.RetrieveAll();
 
+            var importedVariants = new_products.SelectMany(x => x.Variants).ToList();
 
-            foreach (var product in new_products)
+            foreach (var variant in importedVariants)
             {
-                foreach (var variant in product.Variants)
-                {
-                    WriteVariantToDatabase(
-                            shop, variant, existingVariants, profitWiseProducts,
-                            variantDataRepository, profitWiseProductRepository);
-                }
+                WriteVariantToDatabase(
+                        shop, variant, existingVariants, profitWiseProducts,
+                        variantDataRepository, profitWiseProductRepository);
             }
         }
 
