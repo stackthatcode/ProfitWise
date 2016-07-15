@@ -12,10 +12,13 @@ SELECT * FROM shopifyproduct;
 
 SELECT * FROM shopifyvariant WHERE ShopId = 955973;
 
-SELECT * FROM shopifyorderlineitem WHERE ShopId = 955973;
+SELECT * FROM shopifyorderlineitem WHERE TotalRestockedQuantity = 1;
+
 
 /****/
 
+
+SELECT * FROM profitwiseproduct;
 
 
 
@@ -56,11 +59,13 @@ AND t2.ShopId = 955973;
 
 SELECT * FROM profitwisepreferences;
 
-UPDATE profitwisepreferences SET StartingDateForOrders = '2016-06-01';
+UPDATE profitwisepreferences SET StartingDateForOrders = '2016-01-01';
 
 SELECT * FROM profitwisebatchstate;
 
 UPDATE profitwisebatchstate SET OrderDatasetStart = NULL, OrderDatasetEnd = NULL;
+
+
 
 
 

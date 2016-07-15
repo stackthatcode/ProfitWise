@@ -8,7 +8,10 @@ namespace Push.Shopify.Model
         public OrderFilter()
         {
             Status = "any";
+            OrderByClause = "created_at asc";
         }
+
+        public string OrderByClause { get; set; }
 
         public string Status { get; set;  }
 
@@ -16,12 +19,33 @@ namespace Push.Shopify.Model
         public DateTime? CreatedAtMax { get; set; }
         public DateTime? UpdatedAtMin { get; set; }
 
+
+        public override string ToString()
+        {
+            return $"Order Filter dump: CreatedAtMin: {CreatedAtMin} - CreatedAtMax: {CreatedAtMax} - UpdatedAtMin: {UpdatedAtMin}";
+        }
+
+
+        public OrderFilter OrderByCreatedAtDescending()
+        {
+            OrderByClause = "created_at desc";
+            return this;
+        }
+
+        public OrderFilter OrderByUpdateAtAscending()
+        {
+            OrderByClause = "created_at asc";
+            return this;
+        }
+
+
+
         public QueryStringBuilder ToQueryStringBuilder()
         {
             var builder = 
                 new QueryStringBuilder()
                     .Add("status", this.Status)
-                    .Add("order", "created_at asc");
+                    .Add("order", this.OrderByClause);
 
             if (CreatedAtMin != null)
             {

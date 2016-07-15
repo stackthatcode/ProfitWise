@@ -55,61 +55,118 @@ namespace ProfitWise.Data.RefreshServices
             var preferencesRepository = _multitenantRepositoryFactory.MakePreferencesRepository(shop);
             var preferences = preferencesRepository.Retrieve();
 
-            // First Time Loading
+            // CASE #1 - first time loading - don't do any additional updates
             if (batchState.OrderDatasetStart == null)
             {
-                _pushLogger.Info($"Loading Orders first time for Shop {shop.ShopId}");
-                var filter = new OrderFilter()
-                {
-                    CreatedAtMin = preferences.StartingDateForOrders
-                };
-                RefreshOrders(filter, shopCredentials, shop);
-
-                batchState.OrderDatasetStart = preferences.StartingDateForOrders;
-                batchState.OrderDatasetEnd = DateTime.Now.AddMinutes(-15);  // Fudge factor for clock disparities
-
-                batchStateRepository.Update(batchState);
-                _pushLogger.Info(batchState.ToString());
+                LoadOrdersForFirstTime(shopCredentials, shop, preferences);
                 return;
             }
 
-            // Order Dataset Start Date has moved back in time
+            // CASE #2 - Order Dataset Start Date has moved back in time
             if (preferences.StartingDateForOrders < batchState.OrderDatasetStart )
             {
-                _pushLogger.Info($"Expanded Order date range for {shop.ShopId}");
-
-                var filter = new OrderFilter()
-                {
-                    CreatedAtMin = preferences.StartingDateForOrders,
-                    CreatedAtMax = batchState.OrderDatasetStart,
-                };
-                RefreshOrders(filter, shopCredentials, shop);
-
-                batchState.OrderDatasetStart = preferences.StartingDateForOrders;
-                batchStateRepository.Update(batchState);
-                _pushLogger.Info(batchState.ToString());
+                LoadOrdersForModifiedDataSetStart(shopCredentials, shop, preferences);
             }
 
-            // Update to get the latest Orders
+            // CASE #3 - update to get the latest Orders
+            RoutineOrderRefresh(shopCredentials, shop);
+        }
+
+        private void RoutineOrderRefresh(ShopifyCredentials shopCredentials, ShopifyShop shop)
+        {
             _pushLogger.Info($"Routine Order refresh for {shop.ShopId}");
 
+            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var batchState = batchStateRepository.Retrieve();
+
             var updatefilter = new OrderFilter()
+                {
+                    UpdatedAtMin = batchState.OrderDatasetEnd.Value.AddMinutes(-15)
+                }
+                .OrderByUpdateAtAscending();
+
+            Action<IList<Order>> batchStateUpdateFunc2 = orders =>
             {
-                UpdatedAtMin = batchState.OrderDatasetEnd.Value.AddMinutes(-30)
+                batchState.OrderDatasetEnd = orders.Max(x => x.UpdatedAt);
+                batchStateRepository.Update(batchState);
             };
 
-            RefreshOrders(updatefilter, shopCredentials, shop);
-            batchState.OrderDatasetEnd = DateTime.Now.AddMinutes(-15);  // Fudge factor for clock disparities
+            RefreshOrders(updatefilter, shopCredentials, shop, batchStateUpdateFunc2);
+
+            batchState.OrderDatasetEnd = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
             batchStateRepository.Update(batchState);
-            _pushLogger.Info(batchState.ToString());
+
+            _pushLogger.Info("Complete: " + batchState.ToString());
+        }
+
+        private void LoadOrdersForModifiedDataSetStart(ShopifyCredentials shopCredentials, ShopifyShop shop, PwPreferences preferences)
+        {
+            _pushLogger.Info($"Expanding Order date range for {shop.ShopId}");
+
+            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var batchState = batchStateRepository.Retrieve();
+
+            var filter = new OrderFilter()
+            {
+                CreatedAtMin = preferences.StartingDateForOrders,
+                CreatedAtMax = batchState.OrderDatasetStart,
+            }
+                .OrderByCreatedAtDescending();
+
+            Action<IList<Order>> batchStateUpdateFunc = orders =>
+            {
+                batchState.OrderDatasetStart = orders.Min(x => x.CreatedAt);
+                batchStateRepository.Update(batchState);
+            };
+
+            RefreshOrders(filter, shopCredentials, shop, batchStateUpdateFunc);
+
+            batchState.OrderDatasetStart = preferences.StartingDateForOrders;
+            batchStateRepository.Update(batchState);
+
+            _pushLogger.Info("Complete: " + batchState.ToString());
+        }
+
+        private void LoadOrdersForFirstTime(ShopifyCredentials shopCredentials, ShopifyShop shop, PwPreferences preferences)
+        {
+            _pushLogger.Info($"Loading Orders first time for Shop {shop.ShopId}");
+
+            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var batchState = batchStateRepository.Retrieve();
+
+            var filter = new OrderFilter()
+                {
+                    CreatedAtMin = preferences.StartingDateForOrders
+                }
+                .OrderByCreatedAtDescending();
+
+
+            var end = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
+
+            Action<IList<Order>> batchStateUpdateFunc = orders =>
+            {
+                batchState.OrderDatasetStart = orders.Min(x => x.CreatedAt);
+                batchState.OrderDatasetEnd = end;
+                batchStateRepository.Update(batchState);
+            };
+
+            
+            RefreshOrders(filter, shopCredentials, shop, batchStateUpdateFunc);
+
+            batchState.OrderDatasetStart = preferences.StartingDateForOrders;
+            batchStateRepository.Update(batchState);
+
+            _pushLogger.Info("Complete: " + batchState.ToString());
         }
 
 
-        private void RefreshOrders(OrderFilter filter, ShopifyCredentials shopCredentials, ShopifyShop shop)
+        private void RefreshOrders(
+                OrderFilter filter, ShopifyCredentials shopCredentials, ShopifyShop shop, Action<IList<Order>> pageCompleteCallback)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
+
             var count = orderApiRepository.RetrieveCount(filter);
-            _pushLogger.Info($"{count} Orders to process");
+            _pushLogger.Info($"{count} Orders to process ({filter})");
 
             var numberofpages =
                 PagingFunctions.NumberOfPages(
@@ -121,8 +178,11 @@ namespace ProfitWise.Data.RefreshServices
                     $"Page {pagenumber} of {numberofpages} pages");
 
                 var orders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+
                 //var testOrder = orders.FirstOrDefault(x => x.Id == 3347193029);
                 WriteOrdersToPersistence(shop, orders);
+
+                pageCompleteCallback(orders);
             }
         }
 

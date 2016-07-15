@@ -121,7 +121,7 @@ namespace ProfitWise.Data.RefreshServices
 
             if (existingVariant == null)
             {
-                _pushLogger.Debug($"Inserting Variant: {importedVariant.Title} ({importedVariant.Id})");
+                _pushLogger.Debug($"Inserting Variant: {importedVariant.Title} ({importedVariant.Id}) for Product {importedVariant.ParentProduct.Title} ({importedVariant.ParentProduct.Id})");
 
                 var profitWiseProduct = new PwProduct
                 {
@@ -149,7 +149,7 @@ namespace ProfitWise.Data.RefreshServices
             }
             else
             {
-                _pushLogger.Debug($"Updating Variant: {importedVariant.Title} ({importedVariant.Id})");
+                _pushLogger.Debug($"Updating Variant: {importedVariant.Title} ({importedVariant.Id}) for Product {importedVariant.ParentProduct.Title} ({importedVariant.ParentProduct.Id})");
 
                 var profitWiseProduct =
                     profitWiseProducts.FirstOrDefault(x => x.PwProductId == existingVariant.PwProductId);
