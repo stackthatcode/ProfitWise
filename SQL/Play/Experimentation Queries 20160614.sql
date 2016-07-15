@@ -17,17 +17,18 @@ SELECT * FROM shopifyorderlineitem WHERE ShopId = 955973;
 /****/
 
 
-SELECT * FROM profitwiseproduct;
-
-SELECT * FROM shopifyvariant;
-
 
 
 
 
 /*SELECT ShopId, PwProductId, */
 
+SELECT * FROM shopifyorder;
+
 SELECT * FROM shopifyorder WHERE ShopifyOrderId = 3431801605;
+
+SELECT * FROM shopifyorderlineitem WHERE ShopifyOrderId = 3431801605;
+
 
 
 

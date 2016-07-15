@@ -7,5 +7,6 @@ namespace Push.Shopify.Model
         public long Id { get; set; }
         public string Title { get; set; }
         public IList<Variant> Variants { get; set; }
+        public string Tags { get; set; }
     }
 }

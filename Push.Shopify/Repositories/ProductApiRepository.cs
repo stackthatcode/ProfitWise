@@ -63,6 +63,7 @@ namespace Push.Shopify.Repositories
                     {
                         Id = product.id,
                         Title = product.title,
+                        Tags = product.tags,
                     };
                 resultProduct.Variants = new List<Variant>();
 

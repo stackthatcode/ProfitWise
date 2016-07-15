@@ -24,5 +24,8 @@ namespace Push.Shopify.Model
 
         public IList<OrderLineItem> LineItems { get; set; }
         public IList<Refund> Refunds { get; set; }
+
+        public string FinancialStatus { get; set; }
+        public string Tags { get; set; }
     }
 }

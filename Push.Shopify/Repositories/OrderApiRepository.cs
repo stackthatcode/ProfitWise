@@ -86,7 +86,9 @@ namespace Push.Shopify.Repositories
                             Refunds = new List<Refund>(),
                             OrderDiscount = 0.00m,
                             CancelledAt = order.cancelled_at,
-                        };
+                            FinancialStatus = order.financial_status,
+                            Tags = order.tags,
+                    };
 
 
                 foreach (var discount_code in order.discount_codes)

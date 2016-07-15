@@ -58,10 +58,13 @@ namespace ProfitWise.Data.Repositories
                                 @ShopifyOrderId,
                                 @Email, 
                                 @OrderNumber, 
+                                @OrderLevelDiscount,
                                 @SubTotal, 
                                 @TotalRefund, 
                                 @TaxRefundAmount, 
                                 @ShippingRefundAmount, 
+                                @FinancialStatus,
+                                @Tags,
                                 @CreatedAt, 
                                 @UpdatedAt)";
             _connection.Execute(query, order);
@@ -75,6 +78,8 @@ namespace ProfitWise.Data.Repositories
                                 TotalRefund = @TotalRefund,
                                 TaxRefundAmount = @TaxRefundAmount,
                                 ShippingRefundAmount = @ShippingRefundAmount,
+                                FinancialStatus = @FinancialStatus,
+                                Tags = @Tags,
                                 UpdatedAt = @UpdatedAt
                             WHERE ShopId = @ShopId AND ShopifyOrderId = @ShopifyOrderId";
             _connection.Execute(query, order);

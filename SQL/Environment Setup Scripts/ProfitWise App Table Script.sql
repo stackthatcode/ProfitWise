@@ -35,13 +35,24 @@ CREATE TABLE `shopifyvariant` (
   `ShopId` varchar(128) NOT NULL,
   `ShopifyVariantId` BIGINT NOT NULL,
   `ShopifyProductId` BIGINT NOT NULL,
-  `Sku` varchar(100) DEFAULT NULL,
-  `Title` varchar(200) DEFAULT NULL,
-  `Price` decimal(15,2) DEFAULT NULL,
-  `Inventory` int(4) DEFAULT NULL,
   `PwProductId` BIGINT unsigned NULL, 
   PRIMARY KEY (`ShopId`,`ShopifyVariantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwiseproduct` (
+  `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,  
+  `ShopId` int(6) unsigned NOT NULL,  
+  `ProductTitle` varchar(128) DEFAULT NULL,
+  `VariantTitle` varchar(128) DEFAULT NULL,
+  `Name` varchar(256) DEFAULT NULL,    
+  `Sku` varchar(128) DEFAULT NULL, 
+  `Price` decimal(15,2) DEFAULT NULL,
+  `Inventory` int(4) DEFAULT NULL,  
+  `Tags` varchar(500) DEFAULT NULL,
+
+  PRIMARY KEY  (`PwProductId` )  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 CREATE TABLE `shopifyorder` (
@@ -49,10 +60,13 @@ CREATE TABLE `shopifyorder` (
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `Email` varchar(128) DEFAULT NULL,
   `OrderNumber` varchar(128) DEFAULT NULL,  
+  `OrderLevelDiscount` decimal(15,2) DEFAULT NULL,
   `SubTotal` decimal(15,2) DEFAULT NULL,
   `TotalRefund` decimal(15,2) DEFAULT NULL,
   `TaxRefundAmount` decimal(15,2) DEFAULT NULL,
   `ShippingRefundAmount` decimal(15,2) DEFAULT NULL,
+  `FinancialStatus` varchar(25) DEFAULT NULL,
+  `Tags` varchar(500) DEFAULT NULL,  
   `CreatedAt` datetime NOT NULL,
   `UpdatedAt` datetime NOT NULL,
   PRIMARY KEY  (`ShopId`, `ShopifyOrderId`)
@@ -79,19 +93,6 @@ CREATE TABLE `shopifyorderlineitem` (
   PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-CREATE TABLE `profitwiseproduct` (
-  `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
-  
-  `ShopId` int(6) unsigned NOT NULL,
-  
-  `ProductTitle` varchar(128) DEFAULT NULL,
-  `VariantTitle` varchar(128) DEFAULT NULL,
-  `Name` varchar(256) DEFAULT NULL,  
-  
-  `Sku` varchar(128) DEFAULT NULL, 
-  PRIMARY KEY  (`PwProductId` )  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 

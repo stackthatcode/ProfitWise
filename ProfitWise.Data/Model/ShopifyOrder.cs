@@ -10,18 +10,23 @@ namespace ProfitWise.Data.Model
         public long ShopifyOrderId { get; set; }
         public string Email { get; set; }
         public string OrderNumber { get; set; }
-        public decimal OrderLevelDiscount { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
+        
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
 
+        public decimal OrderLevelDiscount { get; set; }
         public decimal SubTotal { get; set; }
 
         public decimal TotalRefund { get; set; }
         public decimal TaxRefundAmount { get; set; }
         public decimal ShippingRefundAmount { get; set; }
+
+        public string FinancialStatus { get; set; }
+        public string Tags { get; set;  }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+
 
         public decimal TotalRefundExcludingTaxAndShipping => TotalRefund - TaxRefundAmount + ShippingRefundAmount;
 

@@ -3,7 +3,7 @@ USE ProfitWise;
 
 SELECT * FROM shopifyorderlineitem;
 
-
+SELECT * FROM shopifyvariant;
 
 
 

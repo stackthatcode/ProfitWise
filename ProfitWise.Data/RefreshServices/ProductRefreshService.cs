@@ -90,25 +90,80 @@ namespace ProfitWise.Data.RefreshServices
         {     
             _pushLogger.Info($"{new_products.Count} Products to process");
 
-            var productDataRepository = this._multitenantRepositoryFactory.MakeShopifyProductRepository(shop);
             var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
             var profitWiseProductRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
 
-            var existingProducts = productDataRepository.RetrieveAll();
             var existingVariants = variantDataRepository.RetrieveAll();
             var profitWiseProducts = profitWiseProductRepository.RetrieveAll();
 
 
             foreach (var product in new_products)
             {
-                WriteProductToDatabase(shop, product, existingProducts, productDataRepository);
-
                 foreach (var variant in product.Variants)
                 {
                     WriteVariantToDatabase(
                             shop, variant, existingVariants, profitWiseProducts,
                             variantDataRepository, profitWiseProductRepository);
                 }
+            }
+        }
+
+
+        private void WriteVariantToDatabase(
+                    ShopifyShop shop, Variant importedVariant, 
+                    IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts, 
+                    ShopifyVariantRepository variantDataRepository, PwProductRepository profitWiseProductRepository)
+        {
+            var existingVariant = 
+                existingVariants.FirstOrDefault(x => 
+                        x.ShopifyProductId == importedVariant.ParentProduct.Id && 
+                        x.ShopifyVariantId == importedVariant.Id);
+
+            if (existingVariant == null)
+            {
+                _pushLogger.Debug($"Inserting Variant: {importedVariant.Title} ({importedVariant.Id})");
+
+                var profitWiseProduct = new PwProduct
+                {
+                    ShopId = shop.ShopId,
+                    ProductTitle = importedVariant.ParentProduct.Title,
+                    VariantTitle = importedVariant.Title,
+                    Name = importedVariant.ParentProduct.Title + " - " + importedVariant.Title,
+                    Sku = importedVariant.Sku,
+                    Price = importedVariant.Price,
+                    Inventory = importedVariant.Inventory,
+                    Tags = importedVariant.ParentProduct.Tags,
+                };
+
+                var newPwProductId = profitWiseProductRepository.Insert(profitWiseProduct);
+
+                var variantData = new ShopifyVariant()
+                {
+                    ShopId = shop.ShopId,
+                    ShopifyVariantId = importedVariant.Id,
+                    ShopifyProductId = importedVariant.ParentProduct.Id,
+                    PwProductId = newPwProductId,
+                };
+
+                variantDataRepository.Insert(variantData);
+            }
+            else
+            {
+                _pushLogger.Debug($"Updating Variant: {importedVariant.Title} ({importedVariant.Id})");
+
+                var profitWiseProduct =
+                    profitWiseProducts.FirstOrDefault(x => x.PwProductId == existingVariant.PwProductId);
+
+                // NOTE: go ahead and throw an error if this doesn't exist - inconsistent state that needs to be resolved
+                profitWiseProduct.ProductTitle = importedVariant.ParentProduct.Title;
+                profitWiseProduct.VariantTitle = importedVariant.Title;
+                profitWiseProduct.Name = importedVariant.ParentProduct.Title + " - " + importedVariant.Title;
+                profitWiseProduct.Sku = importedVariant.Sku;
+                profitWiseProduct.Price = importedVariant.Price;
+                profitWiseProduct.Inventory = importedVariant.Inventory;
+                profitWiseProduct.Tags = importedVariant.ParentProduct.Tags;
+
+                profitWiseProductRepository.Update(profitWiseProduct);
             }
         }
 
@@ -143,56 +198,6 @@ namespace ProfitWise.Data.RefreshServices
         }
 
 
-        private void WriteVariantToDatabase(
-                    ShopifyShop shop, Variant importedVariant, 
-                    IList<ShopifyVariant> existingVariants, PwProduct profitWiseProducts, 
-                    ShopifyVariantRepository variantDataRepository, PwProductRepository profitWiseProductRepository)
-        {
-            var existingVariant = 
-                existingVariants.FirstOrDefault(x => 
-                        x.ShopifyProductId == importedVariant.ParentProduct.Id && 
-                        x.ShopifyVariantId == importedVariant.Id);
-
-            if (existingVariant == null)
-            {
-                _pushLogger.Debug($"Inserting Variant: {importedVariant.Title} ({importedVariant.Id})");
-
-                var profitWiseProduct = new PwProduct
-                {
-                    ShopId = shop.ShopId,
-                    ProductTitle = importedVariant.ParentProduct.Title,
-                    VariantTitle = importedVariant.Title,
-                    Sku = importedVariant.Sku,
-                    Name = importedVariant.ParentProduct.Title + " - " + importedVariant.Title,
-                };
-
-                var newPwProductId = profitWiseProductRepository.Insert(profitWiseProduct);
-
-                var variantData = new ShopifyVariant()
-                {
-                    ShopId = shop.ShopId,
-                    ShopifyVariantId = importedVariant.Id,
-                    ShopifyProductId = importedVariant.ParentProduct.Id,
-                    Price = importedVariant.Price,
-                    Sku = importedVariant.Sku,
-                    Title = importedVariant.Title,
-                    Inventory = importedVariant.Inventory,
-                    PwProductId = newPwProductId,
-                };
-
-                variantDataRepository.Insert(variantData);
-            }
-            else
-            {
-                existingVariant.Sku = importedVariant.Sku;
-                existingVariant.Title = importedVariant.Title;
-                existingVariant.Price = importedVariant.Price;
-                existingVariant.Inventory = importedVariant.Inventory;
-
-                _pushLogger.Debug($"Updating Variant: {importedVariant.Title} ({importedVariant.Id})");
-                variantDataRepository.Update(existingVariant);
-            }
-        }
     }
 }
 

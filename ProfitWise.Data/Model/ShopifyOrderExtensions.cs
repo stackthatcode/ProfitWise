@@ -24,18 +24,21 @@ namespace ProfitWise.Data.Model
             var shopifyOrder = new ShopifyOrder()
             {
                 ShopId = shopId,
+                ShopifyOrderId = order.Id,
                 Email = order.Email,
                 OrderNumber = order.Name,
-                ShopifyOrderId = order.Id,
-                CreatedAt = order.CreatedAt,
-                UpdatedAt = order.UpdatedAt,
+                OrderLevelDiscount = order.OrderDiscount,
                 SubTotal = order.SubTotal,
                 TotalRefund = order.TotalRefunds,
                 TaxRefundAmount = order.TotalTaxRefunds,
                 ShippingRefundAmount = order.TotalShippingRefund,
-                OrderLevelDiscount = order.OrderDiscount,
+                FinancialStatus = order.FinancialStatus,
+                Tags = order.Tags,
+                CreatedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
+
                 LineItems = new List<ShopifyOrderLineItem>(),
-                Cancelled = order.CancelledAt.HasValue,
+                Cancelled = order.CancelledAt.HasValue, // only used during Refresh to DELETE Cancelled Orders
             };
 
             foreach (var line_item in order.LineItems)
