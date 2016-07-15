@@ -26,7 +26,7 @@ namespace ProfitWise.Data.Model
                 ShopId = shopId,
                 ShopifyOrderId = order.Id,
                 Email = order.Email,
-                OrderNumber = order.Name,
+                OrderNumber = order.Name,                
                 OrderLevelDiscount = order.OrderDiscount,
                 SubTotal = order.SubTotal,
                 TotalRefund = order.TotalRefunds,
@@ -48,6 +48,8 @@ namespace ProfitWise.Data.Model
                 shopifyOrderLineItem.ParentOrder = shopifyOrder;
                 shopifyOrderLineItem.ShopifyVariantId = line_item.VariantId;
                 shopifyOrderLineItem.ShopifyProductId = line_item.ProductId;
+
+                shopifyOrderLineItem.OrderDate = line_item.ParentOrder.CreatedAt;
                 shopifyOrderLineItem.ShopifyOrderId = order.Id;
                 shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
                 shopifyOrderLineItem.Sku = line_item.Sku;

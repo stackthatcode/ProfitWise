@@ -77,6 +77,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `ShopId` int(6) unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
+  `OrderDate` date NOT NULL,
   `ShopifyProductId` BIGINT unsigned NULL,
   `ShopifyVariantId` BIGINT unsigned NULL,
   `Sku` varchar(128) DEFAULT NULL,
@@ -123,6 +124,6 @@ CREATE TABLE `profitwisepreferences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-INSERT INTO profitwisepreferences VALUE (955973, '2016-01-01');
+INSERT INTO profitwisepreferences VALUE (955973, '2016-04-01');
 
 

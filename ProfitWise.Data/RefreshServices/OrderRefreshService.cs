@@ -265,6 +265,8 @@ namespace ProfitWise.Data.RefreshServices
                 existingOrder.TotalRefund = importedOrder.TotalRefund;
                 existingOrder.TaxRefundAmount = importedOrder.TaxRefundAmount;
                 existingOrder.ShippingRefundAmount = importedOrder.ShippingRefundAmount;
+                existingOrder.Tags = importedOrder.Tags;
+                existingOrder.FinancialStatus = importedOrder.FinancialStatus;
                 orderRepository.UpdateOrder(existingOrder);
             }
 

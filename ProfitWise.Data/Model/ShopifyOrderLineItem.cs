@@ -11,6 +11,8 @@ namespace ProfitWise.Data.Model
 
         public ShopifyOrder ParentOrder { get; set; }
 
+        public DateTime OrderDate { get; set; }
+
         public long? ShopifyProductId { get; set; }
         public long? ShopifyVariantId { get; set; }
         public string Sku { get; set; }
@@ -54,7 +56,7 @@ namespace ProfitWise.Data.Model
 
         public decimal TotalRemainingValue => NetTotal - TotalRestockedValue;
 
-        public int RemainingQuantity => Quantity - TotalRestockedQuantity; // Store
+        public int RemainingQuantity => Quantity - TotalRestockedQuantity;
 
         public decimal RestockedItemsRefundAmount
         {
