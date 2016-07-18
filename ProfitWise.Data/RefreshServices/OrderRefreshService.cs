@@ -275,6 +275,7 @@ namespace ProfitWise.Data.RefreshServices
 
                 foreach (var importedLineItem in importedOrder.LineItems)
                 {
+                    // Important *** this is where the PW Product Id gets assigned to Order Line Item
                     importedLineItem.PwProductId = FindOrCreatePwProductId(context, importedLineItem);
 
                     _pushLogger.Debug(
@@ -333,7 +334,28 @@ namespace ProfitWise.Data.RefreshServices
 
             // Provision new PW Product => return the new PWProductId
             var repository = _multitenantRepositoryFactory.MakeProductRepository(context.ShopifyShop);
-            return 0;
+
+            var pwProduct = new PwProduct()
+            {
+                ShopId =  context.ShopifyShop.ShopId,
+                ProductTitle = importedLineItem.ProductTitle,
+                VariantTitle = importedLineItem.VariantTitle,
+                Name = importedLineItem.Name,
+                Sku = importedLineItem.Sku,
+                Tags = importedLineItem.ParentOrder.Tags,
+                Price = importedLineItem.UnitPrice,
+                Inventory = 0,
+            };
+
+            var newPwProductId = repository.Insert(pwProduct);
+            pwProduct.PwProductId = newPwProductId;
+            context.AddNewPwProduct(pwProduct);
+
+            _pushLogger.Debug(
+                $"Provisioned a new PwProduct {newPwProductId} from Order Line Item " +
+                $"{importedLineItem.ShopifyOrderId} {importedLineItem.ShopifyOrderLineId}");
+
+            return newPwProductId;
         }
     }
 }

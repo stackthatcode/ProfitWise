@@ -8,5 +8,10 @@ namespace ProfitWise.Data.RefreshServices
         public ShopifyShop ShopifyShop { get; set; }
         public IList<ShopifyVariant> ShopifyVariants { get; set; }
         public IList<PwProduct> PwProducts { get; set; }
+
+        public void AddNewPwProduct(PwProduct product)
+        {
+            PwProducts.Add(product);
+        }
     }
 }

@@ -12,9 +12,9 @@ SELECT * FROM shopifyproduct;
 
 SELECT * FROM shopifyvariant WHERE ShopId = 955973;
 
-SELECT * FROM shopifyorderlineitem;
+SELECT * FROM shopifyorderlineitem WHERE PwProductId IS NULL;
 
- WHERE TotalRestockedQuantity > 0;
+
 
 
 /****/
