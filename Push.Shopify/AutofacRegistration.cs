@@ -38,6 +38,10 @@ namespace Push.Shopify
                 .RegisterType<ProductApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
+            builder
+                .RegisterType<EventApiRepository>()
+                .EnableClassInterceptorsWithRegistry(registry);
+
             builder.RegisterType<ApiRepositoryFactory>();
         }        
     }

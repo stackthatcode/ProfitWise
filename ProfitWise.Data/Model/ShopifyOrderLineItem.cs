@@ -106,7 +106,7 @@ namespace ProfitWise.Data.Model
 
 
 
-            public override string ToString()
+        public override string ToString()
         {
             return
                 "ShopifyOrderLineItem" + Environment.NewLine +

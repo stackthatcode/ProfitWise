@@ -124,6 +124,6 @@ CREATE TABLE `profitwisepreferences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-INSERT INTO profitwisepreferences VALUE (955973, '2016-04-01');
+INSERT INTO profitwisepreferences VALUE (955973, '2016-07-01');
 
 

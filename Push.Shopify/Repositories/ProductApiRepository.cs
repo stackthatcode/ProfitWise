@@ -10,7 +10,6 @@ using Push.Shopify.Model;
 namespace Push.Shopify.Repositories
 {
     [Intercept(typeof(ShopifyCredentialRequired))]
-
     public class ProductApiRepository : IShopifyCredentialConsumer
     {
         private readonly IShopifyHttpClient _client;

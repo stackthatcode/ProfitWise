@@ -161,12 +161,19 @@ namespace ProfitWise.Data.RefreshServices
 
 
         private void RefreshOrders(
-                OrderFilter filter, ShopifyCredentials shopCredentials, ShopifyShop shop, Action<IList<Order>> pageCompleteCallback)
+                OrderFilter filter, ShopifyCredentials shopCredentials, ShopifyShop shop, 
+                Action<IList<Order>> pageCompleteCallback)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
-
             var variantRepository = _multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
-            var allVariants = variantRepository.RetrieveAll();
+            var pwProductsRepository = _multitenantRepositoryFactory.MakeProductRepository(shop);
+
+            var context = new OrderRefreshContext
+            {
+                ShopifyShop = shop,
+                PwProducts = pwProductsRepository.RetrieveAll(),
+                ShopifyVariants = variantRepository.RetrieveAll(),
+            };
 
             var count = orderApiRepository.RetrieveCount(filter);
             _pushLogger.Info($"{count} Orders to process ({filter})");
@@ -180,38 +187,43 @@ namespace ProfitWise.Data.RefreshServices
                 _pushLogger.Info(
                     $"Page {pagenumber} of {numberofpages} pages");
 
-                var orders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
-                WriteOrdersToPersistence(shop, orders, allVariants);
-
-                pageCompleteCallback(orders);
+                var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+                WriteOrdersToPersistence(importedOrders, context);
+                
+                pageCompleteCallback(importedOrders);
             }
         }
 
 
-        protected virtual void WriteOrdersToPersistence(
-                    ShopifyShop shop, IList<Order> ordersFromShopify, IList<ShopifyVariant> allShopifyVariants)
+        protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, OrderRefreshContext context)
         {
-            var orderRepository = _multitenantRepositoryFactory.MakeShopifyOrderRepository(shop);
+            var orderRepository = _multitenantRepositoryFactory.MakeShopifyOrderRepository(context.ShopifyShop);
 
-            _pushLogger.Info($"{ordersFromShopify.Count} Orders to process");
+            _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
             using (var trans = orderRepository.InitiateTransaction())
             {
                 var importedShopifyOrders = new List<ShopifyOrder>();
-                foreach (var order in ordersFromShopify)
+                foreach (var order in importedOrders)
                 {
                     _pushLogger.Debug($"Translating Shopify Order {order.Name} ({order.Id}) to ProfitWise data model");
-                    importedShopifyOrders.Add(order.ToShopifyOrder(shop.ShopId));
+                    importedShopifyOrders.Add(order.ToShopifyOrder(context.ShopifyShop.ShopId));
                 }
 
                 var orderIdList = importedShopifyOrders.Select(x => x.ShopifyOrderId).ToList();
+
+                // A filtered list of Existing Orders and Line Items for possible update
                 var existingShopifyOrders = orderRepository.RetrieveOrders(orderIdList);
                 var existingShopifyOrderLineItems = orderRepository.RetrieveOrderLineItems(orderIdList);
                 existingShopifyOrders.LoadLineItems(existingShopifyOrderLineItems);
 
                 foreach (var importedOrder in importedShopifyOrders)
                 {
-                    WriteOrderToPersistence(existingShopifyOrders, importedOrder, orderRepository, existingShopifyOrderLineItems, allShopifyVariants);
+                    WriteOrderToPersistence(
+                        importedOrder,
+                        existingShopifyOrders,
+                        existingShopifyOrderLineItems, 
+                        context);
                 }
 
                 trans.Commit();
@@ -219,13 +231,11 @@ namespace ProfitWise.Data.RefreshServices
         }
 
 
-
         private void WriteOrderToPersistence(
-                    IList<ShopifyOrder> existingShopifyOrders, 
-                    ShopifyOrder importedOrder, 
-                    ShopifyOrderRepository orderRepository, 
+                    ShopifyOrder importedOrder,
+                    IList<ShopifyOrder> existingShopifyOrders,
                     IList<ShopifyOrderLineItem> existingShopifyOrderLineItems, 
-                    IList<ShopifyVariant> allShopifyVariants)
+                    OrderRefreshContext context)
         {
             if (_diagnostic.ShopId == importedOrder.ShopId &&
                 _diagnostic.OrderIds.Contains(importedOrder.ShopifyOrderId))
@@ -237,13 +247,14 @@ namespace ProfitWise.Data.RefreshServices
                 existingShopifyOrders.FirstOrDefault(
                     x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
 
-
             if (existingOrder == null && importedOrder.Cancelled == true)
             {
                 _pushLogger.Debug(
                         $"Skipping cancelled Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
                 return;
             }
+
+            var orderRepository = _multitenantRepositoryFactory.MakeShopifyOrderRepository(context.ShopifyShop);
 
             if (existingOrder != null && importedOrder.Cancelled == true)
             {
@@ -264,12 +275,7 @@ namespace ProfitWise.Data.RefreshServices
 
                 foreach (var importedLineItem in importedOrder.LineItems)
                 {
-                    // STEP #1 of the attempt to assign a PW Product ID
-                    var shopifyVariant = allShopifyVariants.FirstOrDefault(x => x.ExactMatchToLineItem(importedLineItem));
-                    if (shopifyVariant != null)
-                    {
-                        importedLineItem.PwProductId = shopifyVariant.PwProductId;
-                    }
+                    importedLineItem.PwProductId = FindOrCreatePwProductId(context, importedLineItem);
 
                     _pushLogger.Debug(
                         $"Inserting new Order Line Item: {importedOrder.OrderNumber} / ShopifyOrderId: {importedOrder.ShopifyOrderId} / " +
@@ -306,6 +312,29 @@ namespace ProfitWise.Data.RefreshServices
             }            
         }
 
+        public long FindOrCreatePwProductId(OrderRefreshContext context, ShopifyOrderLineItem importedLineItem)
+        {
+            // *** IMPORTANT attempt to assign a PW Product with exact match on Shopify Product Id and Variant Id
+            var shopifyVariant = context.ShopifyVariants.FirstOrDefault(x => x.ExactMatchToLineItem(importedLineItem));
+
+            if (shopifyVariant != null)
+            {
+                return shopifyVariant.PwProductId.Value;
+            }
+
+            // Match by SKU / Title
+            var pwproduct =  context.PwProducts.FirstOrDefault(x => x.Sku == importedLineItem.Sku &&
+                                                           x.Name == importedLineItem.Name);
+
+            if (pwproduct != null)
+            {
+                return pwproduct.PwProductId;
+            }
+
+            // Provision new PW Product => return the new PWProductId
+            var repository = _multitenantRepositoryFactory.MakeProductRepository(context.ShopifyShop);
+            return 0;
+        }
     }
 }
 

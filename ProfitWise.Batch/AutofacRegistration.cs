@@ -52,7 +52,8 @@ namespace ProfitWise.Batch
                 })
                 .As<MySqlConnection>()
                 .As<DbConnection>()
-                .As<IDbConnection>();
+                .As<IDbConnection>()
+                .InstancePerLifetimeScope();
 
 
             builder.Register<SqlConnection>(ctx =>

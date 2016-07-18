@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Model;
 using Dapper;

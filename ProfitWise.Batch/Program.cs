@@ -30,11 +30,14 @@ namespace ProfitWise.Batch
             {
                 // This is for simulation purposes - in the future, we'll load a list of Users from database
                 var userId = "8c1f61cf-5446-4b06-bd5d-a55f51bb3e69";
+                logger.Info("Hello! - Executing InvokeRefreshServices" + Environment.NewLine);
 
-                logger.Info(Environment.NewLine + "Hello! - Executing InvokeRefreshServices");
+                using (var scope = container.BeginLifetimeScope())
+                {
+                    var refreshProcess = scope.Resolve<RefreshProcess>();
+                    refreshProcess.Execute(userId);
+                }
 
-                var refreshProcess = container.Resolve<RefreshProcess>();
-                refreshProcess.Execute(userId);
             }
             catch (Exception e)
             {

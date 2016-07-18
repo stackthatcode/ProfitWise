@@ -90,15 +90,11 @@ namespace Push.Shopify.Repositories
                             Tags = order.tags,
                     };
 
-
                 foreach (var discount_code in order.discount_codes)
                 {
                     decimal amount = discount_code.amount;
                     orderResult.OrderDiscount += amount;
                 }
-
-
-
 
                 foreach (var line_item in order.line_items)
                 {

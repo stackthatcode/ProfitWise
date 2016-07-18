@@ -65,6 +65,8 @@
     <Compile Include="HttpClient\ShopifyCredentials.cs" />
     <Compile Include="HttpClient\ShopifyHttpClientConfig.cs" />
     <Compile Include="HttpClient\ShopifyRequestFactory.cs" />
+    <Compile Include="Model\Event.cs" />
+    <Compile Include="Model\EventFilter.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderFilter.cs" />
     <Compile Include="Model\OrderLineItem.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="HttpClient\ShopifyHttpClient.cs" />
     <Compile Include="HttpClient\HttpClientResponse.cs" />
     <Compile Include="Aspect\IShopifyCredentialConsumer.cs" />
+    <Compile Include="Repositories\EventApiRepository.cs" />
     <Compile Include="Repositories\OrderApiRepository.cs" />
     <Compile Include="Repositories\ProductApiRepository.cs" />
   </ItemGroup>
