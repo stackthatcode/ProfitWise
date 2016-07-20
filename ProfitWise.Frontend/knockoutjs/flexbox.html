@@ -1,7 +1,5 @@
 
-<html>
-<head>
-	<script   src="https://code.jquery.com/jquery-2.2.4.js"   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="   crossorigin="anonymous"></script>
+<script   src="https://code.jquery.com/jquery-2.2.4.js"   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="   crossorigin="anonymous"></script>
 	
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -9,36 +7,34 @@
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	
-	<style>
-	
-	html,
-	body {
-	  height: 100%;
-	  margin: 0
-	}
+<style>
+html,
+body {
+  height: 100%;
+}
 
-	.box {
-	  display: flex;
-	  flex-flow: column;
-	  height: 100%;
-	}
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
 
-	.box .flexrow {
-	  border: 1px dotted grey;
-	}
+.box .row {
+  border: 1px dotted grey;
+}
 
-	.box .flexrow.header {
-	  flex: 0 1 auto;
-	}
+.box .row.header {
+  flex: 0 1 auto;
+}
 
-	.box .flexrow.content {
-	  flex: 1 1 auto;
-	}
+.box .row.content {
+  flex: 1 1 auto;
+}
 
-	.box .flexrow.footer {
-	  flex: 0 1 40px;
-	}
-	
+.box .row.footer {
+  flex: 0 1 40px;
+}
+
 	
 	table.table tbody {
 		display:block;
@@ -60,35 +56,18 @@
 	
 	input[type='text'] {
 	width:100%;
-	}
-	</style>
-	
-	<script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
-	
-	<script type="text/javascript">
-	
-	</script>
-</head>
+	}	
+</style>
 
-<body>
-	<div class="flexrow header">
-		<h1 style="font-weight:800;">CoGS Data Entry Component</h1>
-		<p><b>header</b>
-		<br />
-		<br />(sized to content)</p>
-	</div>
-	
-	 <div class="flexrow content">
-    <p>
-      <b>content</b>
-      (fills remaining space)
-    </p>
+
+
+<div class="box">
+  <div class="row header">
+    <p><b>header</b>
+      <br />
+      <br />(sized to content)</p>
   </div>
-  
-	<!--
-	<div class="flexrow content">
-		<table id="cogs" class="table table-striped" style="width:100%;">
-
+		<table id="cogs" class="row content table table-striped" style="width:100%; height:100%;">
 			<thead>
 				<tr>
 					<th>Vendor</th>
@@ -142,6 +121,17 @@
 					<td></td>			
 					<td><input type="checkbox" /></td>
 				</tr>
+				
+								<tr>
+					<td>3D Universe</td>
+					<td>3D Universe PLA 2.85 mm</td>
+					<td>14</td>
+					<td>$34</td>
+					<td><input type="text" value="$18" /></td>
+					<td>USD</td>
+					<td><input type="checkbox" /></td>
+				</tr>
+
 				<tr>
 					<td></td>
 					<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
@@ -184,7 +174,16 @@
 					<td><input type="checkbox" /></td>
 				</tr>
 				
-				
+								<tr>
+					<td>3D Universe</td>
+					<td>3D Universe PLA 2.85 mm</td>
+					<td>14</td>
+					<td>$34</td>
+					<td><input type="text" value="$18" /></td>
+					<td>USD</td>
+					<td><input type="checkbox" /></td>
+				</tr>
+
 				<tr>
 					<td></td>
 					<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
@@ -216,6 +215,16 @@
 					<td><input type="checkbox" /></td>
 				</tr>
 				
+				<tr>
+					<td>3D Universe</td>
+					<td>3D Universe PLA 2.85 mm</td>
+					<td>14</td>
+					<td>$34</td>
+					<td><input type="text" value="$18" /></td>
+					<td>USD</td>
+					<td><input type="checkbox" /></td>
+				</tr>
+
 				
 				<tr>
 					<td></td>
@@ -249,11 +258,8 @@
 				</tr>
 			</tbody>
 		</table>	
-	</div>
-	-->
-	<div class="flexrow footer">
+
+  <div class="row footer">
     <p><b>footer</b> (fixed height)</p>
   </div>
-</body>
-</html>
-
+</div>

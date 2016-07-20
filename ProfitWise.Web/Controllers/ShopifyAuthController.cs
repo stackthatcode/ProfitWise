@@ -39,6 +39,26 @@ namespace ProfitWise.Web.Controllers
             return View(new ShopifyAuthIndexModel {  ReturnUrl =  returnUrl});
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult Refresh(string returnUrl)
+        {
+            return View(new ShopifyAuthIndexModel { ReturnUrl = returnUrl });
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult EmbeddedAppLogin(string shop, string returnUrl)
+        {
+            var correctedShopName = shop.Replace(".myshopify.com", "");
+
+            // Request a redirect to the external login provider
+            return new ShopifyChallengeResult(
+                Url.Action("ExternalLoginCallback", "ShopifyAuth", new { ReturnUrl = returnUrl }), null, correctedShopName);
+        }
+
+
 
         // POST: /ShopifyAuth/ExternalLogin
         [HttpPost]
@@ -147,6 +167,7 @@ namespace ProfitWise.Web.Controllers
                 }
             }
 
+
             // Save the Shopify Domain and Access Token to Persistence
             await CopyIdentityClaimsToPersistence(externalLoginInfo);
 
@@ -178,7 +199,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult LogOff()
         {
             _authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "ShopifyAuth");
+            return RedirectToAction("Refresh", "ShopifyAuth");
         }
 
 

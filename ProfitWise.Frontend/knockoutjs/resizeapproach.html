@@ -1,0 +1,263 @@
+
+<script   src="https://code.jquery.com/jquery-2.2.4.js"   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="   crossorigin="anonymous"></script>
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	
+<style>
+	html,
+	body {
+	padding:0;
+	margin:0;
+	  height: 100%;
+	}
+	
+	/*
+	table.table tbody {
+		display:block;
+		overflow:auto; 
+		width:100%;
+	}
+	
+	thead, tbody tr {
+		display:table;
+		width:100%;
+		table-layout:fixed; 	
+	}
+	
+	table#cogs thead th:nth-child(1),
+	table#cogs tbody td:nth-child(1)
+	{
+		width:20% !important;
+	}
+	*/
+	input[type='text'] {
+		width:100%;
+	}
+</style>
+
+<div style="position:fixed; width:100%; height:50px; background-color:#666; z-index:200; color:#FFF;">
+	Test Navigation
+</div>
+
+
+<div style="position:fixed; width:100%; top:50; height:150px; background-color:#FFF; z-index:100; border-bottom:#F00 1px solid;">
+	<h1> Edit your CoGS</h1>
+	<table class="table" id="heading">
+		<thead>
+			<tr>
+				<th>Vendor</th>
+				<th>Product</th>
+				<th># in Stock</th>
+				<th>Selling Price</th>
+				<th>CoGS</th>
+				<th>Currency Type</th>
+				<th>Stocked Directly</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+
+
+<div class="container" style="margin:0; width:100%; padding:0;">
+	<div style="position:relative; margin-top:200px;">
+	
+	<table id="cogs" class="row content table table-striped" style="width:100%; height:100%; margin:0;">
+		<thead>
+			<tr>
+				<th>Vendor</th>
+				<th>Product</th>
+				<th># in Stock</th>
+				<th>Selling Price</th>
+				<th>CoGS</th>
+				<th>Currency Type</th>
+				<th>Stocked Directly</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>3D Universe</td>
+				<td>3D Universe PLA 2.85 mm</td>
+				<td>14</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td>USD</td>
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Red</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Blue</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Green</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			
+							<tr>
+				<td>3D Universe</td>
+				<td>3D Universe PLA 2.85 mm</td>
+				<td>14</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td>USD</td>
+				<td><input type="checkbox" /></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Yellow</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Red</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Blue</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Green</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			
+							<tr>
+				<td>3D Universe</td>
+				<td>3D Universe PLA 2.85 mm</td>
+				<td>14</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td>USD</td>
+				<td><input type="checkbox" /></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Red</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Blue</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Green</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			
+			<tr>
+				<td>3D Universe</td>
+				<td>3D Universe PLA 2.85 mm</td>
+				<td>14</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td>USD</td>
+				<td><input type="checkbox" /></td>
+			</tr>
+
+			
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Red</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Blue</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				Green</td>
+				<td>8</td>
+				<td>$34</td>
+				<td><input type="text" value="$18" /></td>
+				<td></td>			
+				<td><input type="checkbox" /></td>
+			</tr>
+		</tbody>
+	</table>	
+</div>
+</div>
+  <div class="row footer">
+    <p><b>footer</b> (fixed height)</p>
+  </div>
+</div>
+

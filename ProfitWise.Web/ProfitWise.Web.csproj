@@ -328,6 +328,7 @@
     <Content Include="Views\AdminHome\Users.cshtml" />
     <Content Include="Views\AdminAuth\_ViewStart.cshtml" />
     <Content Include="Views\AdminHome\_ViewStart.cshtml" />
+    <Content Include="Views\ShopifyAuth\Refresh.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
