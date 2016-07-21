@@ -24,6 +24,12 @@
                 title: '@Model.PageTitle',
                 buttons: {
                     secondary: [
+                        {
+                            label: "CoGS Sandbox",
+                            href: "/ProfitWise/Static/CoGS.html",
+                            target: "app",
+                        },
+
                         // Dropdown example
                         {
                             label: "Navigate to...",
@@ -46,7 +52,7 @@
                                  },
                                  {
                                      label: "Edit CoGS",
-                                     href: "@Url.Action("CoGS", "UserMain")",
+                                    href: "/ProfitWise/Static/CoGS.html",
                                      target: "app"
                                  },
                                  {
@@ -77,23 +83,6 @@
                                 }
                             ]
                         },
-                        {
-                            label: "Open Modal",
-                            callback: function () {
-                                ShopifyApp.Modal.open({
-                                    src: 'http://localhost:3000/modal_content',
-                                    title: 'A new modal',
-                                    width: 'small',
-                                    height: 300,
-                                    buttons: {
-                                        primary: { label: "OK" },
-                                        secondary: [
-                                          { label: "Cancel", callback: function (label) { ShopifyApp.Modal.close(); } }
-                                        ]
-                                    }
-                                });
-                            }
-                        }
                     ]
                 }
             });
