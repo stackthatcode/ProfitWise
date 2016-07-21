@@ -78,6 +78,7 @@ namespace ProfitWise.Web.Controllers
             var externalLoginInfo = await _authenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
+                // TODO => need to figure out how to deal with this...
                 return RedirectToAction("Index", "ShopifyAuth");
             }
 
@@ -220,7 +221,7 @@ namespace ProfitWise.Web.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "UserHome");
+            return RedirectToAction("Dashboard", "UserMain");
         }
         #endregion
     }

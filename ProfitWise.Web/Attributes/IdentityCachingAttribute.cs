@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using OAuthSandbox.Attributes;
 using ProfitWise.Web.Controllers;
+using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 
@@ -15,6 +17,7 @@ namespace ProfitWise.Web.Attributes
         {
             var roleManager = DependencyResolver.Current.GetService<ApplicationRoleManager>();
             var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
+            var credentialService = DependencyResolver.Current.GetService<ShopifyCredentialService>();
 
             // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
@@ -33,12 +36,20 @@ namespace ProfitWise.Web.Attributes
                             .Select(x => x.Name)
                             .ToList();
 
+                    var result = credentialService.Retrieve(userId);
+                    if (result.Success == false)
+                    {
+                        throw new Exception(result.Message);
+                    }
+
                     userBrief = new UserBrief()
                     {
                         Id = user.Id,
                         Email = user.Email,
                         UserName = user.UserName,
                         Roles = userRoles,
+                        Domain = result.ShopDomain,
+                        ShopName = result.ShopDomain.ShopName(),
                     };
 
                     filterContext.HttpContext.StoreUserBriefInContext(userBrief);

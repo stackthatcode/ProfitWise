@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Routing;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
@@ -11,12 +10,12 @@ using Push.Shopify.Model;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
-    public class UserHomeController : Controller
+    public class UserAuxiliaryController : Controller
     {
         private readonly ShopifyCredentialService _shopifyCredentialService;
         private readonly ApiRepositoryFactory _factory;
 
-        public UserHomeController(
+        public UserAuxiliaryController(
                 ShopifyCredentialService shopifyCredentialService, 
                 ApiRepositoryFactory factory)
         {
@@ -27,14 +26,6 @@ namespace ProfitWise.Web.Controllers
         public async Task<ActionResult> Index()
         {
             this.ViewBag.AccessToken = "User not authenticated - no access token";
-
-            var shopName = this.HttpContext.Request.QueryString["shop"];
-            if (shopName != null)
-            {
-                return RedirectToAction(
-                    "ExternalLogin", "ShopifyAuth", new { returnUrl = "/", shopName = shopName });
-            }
-
 
             // TODO - why does OWIN allow for this without forcing database validation...?
             var userId = HttpContext.User.ExtractUserId();

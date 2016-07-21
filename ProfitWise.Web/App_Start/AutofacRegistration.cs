@@ -62,20 +62,20 @@ namespace ProfitWise.Web
             //registry.Add(typeof(ErrorForensics));
 
             // Controller registration
-            builder.RegisterType<UserHomeController>()
-                .InstancePerRequest()
+            builder.RegisterType<UserAuxiliaryController>()
+                .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<UserMainController>()
-                .InstancePerRequest()
+                .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<AdminHomeController>()
-                .InstancePerRequest()
+                .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<AdminAuthController>()
-                .InstancePerRequest()
+                .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ShopifyAuthController>()
-                .InstancePerRequest()
+                .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
 
 

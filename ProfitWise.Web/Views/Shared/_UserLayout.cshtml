@@ -1,47 +1,122 @@
-﻿<!DOCTYPE html>
+﻿@model ProfitWise.Web.Models.UserModelBase
+
+@using OAuthSandbox.Attributes
+@using ProfitWise.Web.Attributes
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+
+
+    <script type="text/javascript">
+        ShopifyApp.init({
+            apiKey: '@Model.ShopifyApiKey',
+            shopOrigin: 'https://@Model.UserBrief.Domain'
+        });
+
+        ShopifyApp.ready(function() {
+            ShopifyApp.Bar.initialize({
+                title: '@Model.PageTitle',
+                buttons: {
+                    secondary: [
+                        // Dropdown example
+                        {
+                            label: "Navigate to...",
+                            type: "dropdown",
+                            links: [
+                                 {
+                                     label: "Dashboard",
+                                     href: "@Url.Action("Dashboard", "UserMain")",
+                                     target: "app"
+                                 },
+                                 {
+                                     label: "Reports",
+                                     href: "@Url.Action("Reports", "UserMain")",
+                                     target: "app"
+                                 },
+                                 {
+                                     label: "Edit Preferences",
+                                     href: "@Url.Action("Preferences", "UserMain")",
+                                     target: "app"
+                                 },
+                                 {
+                                     label: "Edit CoGS",
+                                     href: "@Url.Action("CoGS", "UserMain")",
+                                     target: "app"
+                                 },
+                                 {
+                                     label: "Edit Goals",
+                                     href: "@Url.Action("Goals", "UserMain")",
+                                     target: "app"
+                                 },
+                                 {
+                                     label: "Product Consolidation",
+                                     href: "@Url.Action("Products", "UserMain")",
+                                     target: "app"
+                                 },
+                            ]
+                        },
+                         {
+                             label: "Support",
+                             type: "dropdown",
+                             links: [
+                                 {
+                                     label: "About ProfitWise",
+                                     href: "@Url.Action("About", "UserAuxiliary")",
+                                     target: "app"
+                                },
+                                {
+                                    label: "Contact Us",
+                                    href: "@Url.Action("Contact", "UserAuxiliary")",
+                                    target: "app"
+                                }
+                            ]
+                        },
+                        {
+                            label: "Open Modal",
+                            callback: function () {
+                                ShopifyApp.Modal.open({
+                                    src: 'http://localhost:3000/modal_content',
+                                    title: 'A new modal',
+                                    width: 'small',
+                                    height: 300,
+                                    buttons: {
+                                        primary: { label: "OK" },
+                                        secondary: [
+                                          { label: "Cancel", callback: function (label) { ShopifyApp.Modal.close(); } }
+                                        ]
+                                    }
+                                });
+                            }
+                        }
+                    ]
+                }
+            });
+
+            ShopifyApp.Bar.loadingOff();
+        });
+
+
+    </script>
 
 </head>
+
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("ProfitWise - User Area", "Index", "UserHome", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "UserHome")</li>
-                    
-                    <!--
-                    <li>@Html.ActionLink("About", "About", "UserHome")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "UserHome")</li>
-                    -->
-                    
-                    <li>@Html.ActionLink("View Orders", "ShopifyOrders", "UserHome")</li>
-                    <li>@Html.ActionLink("Test Error", "Error", "UserHome")</li>
-                </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
-        </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
+<div class="container body-content">
+    <p>Hello, @HttpContext.Current.RetreiveUserBriefFromContext().Email</p>
+    <p>Shop Name = @HttpContext.Current.RetreiveUserBriefFromContext().ShopName</p>
+
+    @RenderBody()
+    <hr/>
+    <footer>
+        <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+    </footer>
+</div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

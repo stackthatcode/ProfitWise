@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Push.Foundation.Web.Identity;
 
-namespace OAuthSandbox.Attributes
+namespace ProfitWise.Web.Attributes
 {
     public class UserBrief
     {
@@ -13,5 +13,7 @@ namespace OAuthSandbox.Attributes
 
         public string RolesFlattened => String.Join(",", Roles);
         public bool IsAdmin => Roles != null ? Roles.Contains(SecurityConfig.AdminRole) : false;
+        public string ShopName { get; set; }
+        public string Domain { get; set; }
     }
 }
