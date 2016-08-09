@@ -88,49 +88,64 @@
 
         ShopifyApp.Bar.loadingOff();
     });
+</script>
+
+<!-- Pop-over scripting -->
+<script>
+    var initializePagingPopOver = function() {
+        var content = $("#pagination-popover-content").html();
+
+        $('#pagination-popover-launcher')
+            .popover({
+                html: true,
+                content: content,
+                placement: "bottom",
+                trigger: 'manual'
+            });
+    };
+
+    var initializeFilterPopOver = function () {
+        var content = $("#filter-popover-content").html();
+
+        $('#filter-popover-launcher')
+            .popover({
+                html: true,
+                content: content,
+                placement: "bottom",
+                trigger: 'manual'
+            });
+    };
+
 
     $(document).ready(function () {
+        initializePagingPopOver();
+        initializeFilterPopOver();
 
-        var content = ['<div class="input-group">',
-        '<input type="text" class="form-control" placeholder="Jump to page number...">',
-        '<span class="input-group-btn"><button class="btn btn-primary" type="button">Go!</button></span>',
-        '</div>',
-        ].join('');
-
-        var isVisible = false;
-
-        var hideAllPopovers = function () {
-            $('.popup-marker').each(function () {
-                $(this).popover('hide');
+        var hideAllPopovers = function (callersPopOver) {
+            $('.popover-marker').each(function () {
+                if (this != callersPopOver) {
+                    $(this).popover('hide');
+                }
             });
         };
 
-        $('.popup-marker').popover({
-            html: true,
-            content: content,
-            placement: "bottom",
-            trigger: 'manual'
-        }).on('click', function (e) {
-            // if any other popovers are visible, hide them
-            if (isVisible) {
-                hideAllPopovers();
-            }
+        $('.popover-marker')
+            .on('click', function (e) {
+                // if any other popovers are visible, hide them
+                hideAllPopovers(this);
 
-            $(this).popover('show');
+                $(this).popover('show');
 
-            // handle clicking on the popover itself
-            $('.popover').off('click').on('click', function (e) {
-                e.stopPropagation(); // prevent event for bubbling up => will not get caught with document.onclick
+                // handle clicking on the popover itself
+                $('.popover').off('click').on('click', function (e) {
+                    e.stopPropagation(); // prevent event for bubbling up => will not get caught with document.onclick
+                });
+
+                e.stopPropagation();
             });
-
-            isVisible = true;
-            e.stopPropagation();
-        });
-
 
         $(document).on('click', function (e) {
             hideAllPopovers();
-            isVisible = false;
         });
     });
 </script>
@@ -176,7 +191,7 @@
 
 <script>
     $(window).scroll(function () {
-        $('#top-banner').css('left', -($(this).scrollLeft()) + "px");
+        $('#top-header').css('left', -($(this).scrollLeft()) + "px");
     });
 
     var columnFixed = function () {
@@ -200,58 +215,111 @@
 
 <div id="fixed-positioning-container" style="position: fixed; width: 100%; top: 0; padding-left: 20px; padding-right: 20px; z-index: 100;">
     <div id="top-header-sleeve" style="position: relative; width: 100%; height: 210px;">
-        
-        <div id="top-header" style="position: absolute; min-width: 800px; width: 100%; background-color: #FFF; border-top: 20px rgb(235, 238, 240) solid; height: 100%;">
-            <!-- Paging Widget -->
-            <div style="position: absolute; padding-left: 25px; padding-right: 25px; top: 0px; width: 100%;">
-                <div class="pull-right" style="height: 91px; text-align: right; max-width: 300px;">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <li>
-                                <a href="#" aria-label="First">
-                                    <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" aria-label="Backward">
-                                    <span><i class="glyphicon glyphicon-step-backward"></i>&nbsp;</span>
-                                </a>
-                            </li>
-                            <li><a href="#" class="popup-marker" rel="popover">Page 3 of 20</a></li>
-                            <li>
-                                <a href="#" aria-label="Forward">
-                                    <span><i class="glyphicon glyphicon-step-forward"></i>&nbsp;</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" aria-label="Last">
-                                    <span><i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
 
-                    <div class="input-group pull-right" style="max-width: 160px;">
-                        <select class="form-control">
-                            <option value="volvo">25</option>
-                            <option value="saab">50</option>
-                            <option value="mercedes">100</option>
-                            <option value="audi">250</option>
-                        </select>
-                        <span class="input-group-addon" id="basic-addon2">per page</span>
+        <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+        <div id="top-header" style="position: absolute; min-width: 800px; width: 100%; background-color: #FFF; border-top: 20px rgb(235, 238, 240) solid; height: 100%;">
+
+            <div class="row" style="padding-left: 25px; padding-right: 25px;">
+
+                <!-- Filtering Widget -->
+                <div  class="col-xs-7" style="padding-top: 20px;">
+                    <div class="pull-left;">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <a id="filter-popover-launcher" type="button" rel="popover" class="popover-marker btn btn-default">
+                                        Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
+                                    </a>
+                                </div>
+
+                                <input type="text" class="form-control" placeholder="Enter product titles or SKU's"/>
+                            </div>
+                        </div>
+
+                        <div id="filter-popover-content" style="display: none;">
+                            <div style="width: 200px; padding-bottom: 15px; height: 100%;">
+                                <p>Show all products where:</p>
+
+                                <select class="form-control" style="float: none;">
+                                    <option value="volvo">Select a filter...</option>
+                                    <option value="volvo">Product type</option>
+                                    <option value="saab">Product vendor</option>
+                                    <option value="mercedes">Tagged with</option>
+                                </select>
+                                
+                                <div style="height: 10px;"></div>
+
+                                <input type="text" class="form-control" style="float: none;" placeholder="Enter value" />
+
+                                <div style="height: 10px;"></div>
+
+                                <input type="button" class="btn btn-small btn-default" value="Add filter" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paging Widget -->
+                <div class="col-xs-5">
+                    <div class="pull-right" style="height: 91px; text-align: right; max-width: 300px;">
+                        <div id="pagination-popover-content" style="display: none;">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Jump to page number...">
+                                <span class="input-group-btn"><button class="btn btn-primary" type="button">Go!</button></span>
+                            </div>
+                        </div>
+                        
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li>
+                                    <a href="#" aria-label="First">
+                                        <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" aria-label="Backward">
+                                        <span><i class="glyphicon glyphicon-step-backward"></i>&nbsp;</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" id="pagination-popover-launcher" class="popover-marker" rel="popover">Page 3 of 20</a>
+                                </li>
+                                <li>
+                                    <a href="#" aria-label="Forward">
+                                        <span><i class="glyphicon glyphicon-step-forward"></i>&nbsp;</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" aria-label="Last">
+                                        <span><i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <div class="input-group pull-right" style="max-width: 160px;">
+                            <select class="form-control">
+                                <option value="volvo">25</option>
+                                <option value="saab">50</option>
+                                <option value="mercedes">100</option>
+                                <option value="audi">250</option>
+                            </select>
+                            <span class="input-group-addon" id="basic-addon2">per page</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
 
             <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
             <div style="position: absolute; padding-left: 25px; padding-right: 25px; top: 129px;">
                 <table class="table" id="heading">
                     <thead>
                     <tr>
-                        <th>Vendor</th>
-                        <th>Product</th>
-                        <th>Inventory</th>
-                        <th>Price</th>
+                        <th>Vendor <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th>Product <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th>Inventory <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th>Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
                         <th>CoGS</th>
                         <th style="text-align: center;">Currency</th>
                         <th style="text-align: center;">Stocked Directly</th>
