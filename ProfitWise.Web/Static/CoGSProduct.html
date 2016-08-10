@@ -1,0 +1,434 @@
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<script   src="https://code.jquery.com/jquery-2.2.4.js"   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="   crossorigin="anonymous"></script>
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' rel='stylesheet' type='text/css'>
+
+
+<script type="text/javascript">
+    ShopifyApp.init({
+        apiKey: '50d69dbaf54ee35929a946790d5884e4',
+        shopOrigin: 'https://3duniverse.myshopify.com'
+    });
+
+    ShopifyApp.ready(function() {
+        ShopifyApp.Bar.initialize({
+            title: 'Edit Cost of Goods Sold / 3D Universe 2.85 mm PLA Filament',
+            buttons: {
+                secondary: [
+                    {
+                        label: "CoGS Sandbox",
+                        href: "/ProfitWise/Static/CoGS.html",
+                        target: "app",
+                    },
+
+                    // Dropdown example
+                    {
+                        label: "Navigate to...",
+                        type: "dropdown",
+                        links: [
+                            {
+                                label: "Dashboard",
+                                href: "/ProfitWise/",
+                                target: "app"
+                            },
+                            {
+                                label: "Reports",
+                                href: "/ProfitWise/UserMain/Reports",
+                                target: "app"
+                            },
+                            {
+                                label: "Edit Preferences",
+                                href: "/ProfitWise/UserMain/Preferences",
+                                target: "app"
+                            },
+                            {
+                                label: "CoGS Sandbox",
+                                href: "/ProfitWise/Static/CoGS.html",
+                                target: "app",
+                            },
+                            {
+                                label: "Edit Goals",
+                                href: "/ProfitWise/UserMain/Goals",
+                                target: "app"
+                            },
+                            {
+                                label: "Product Consolidation",
+                                href: "/ProfitWise/UserMain/Products",
+                                target: "app"
+                            },
+                        ]
+                    },
+                    {
+                        label: "Support",
+                        type: "dropdown",
+                        links: [
+                            {
+                                label: "About ProfitWise",
+                                href: "/ProfitWise/UserAuxiliary/About",
+                                target: "app"
+                            },
+                            {
+                                label: "Contact Us",
+                                href: "/ProfitWise/UserAuxiliary/Contact",
+                                target: "app"
+                            }
+                        ]
+                    },
+                ]
+            }
+        });
+
+        ShopifyApp.Bar.loadingOff();
+    });
+</script>
+
+
+<!-- Grid-level scripting -->
+<script>
+    $(document).ready(function () {
+        $("a.EditCogsPopUpLauncher")
+            .click(function() {
+                ShopifyApp.Modal.open({
+                    src: '/ProfitWise/Static/SimpleCogsEditor.html',
+                        title: 'Bulk Edit all Variant CoGS',
+                        width: 'small',
+                        height: 275,
+                        buttons: {
+                            primary:
+                                { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
+                            secondary: [
+                                { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
+                            ]
+                        }
+                    },
+                    function(result, data) {
+                        alert("result: " + result + "   data: " + data);
+                    });
+            });
+
+    });
+
+</script>
+
+<style>
+    html, body {
+        font-family: 'Open Sans', sans-serif;
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        background-color: rgb(235, 238, 240);
+        font-size: 15px;
+        color: #555;
+    }
+
+    table.table td {
+        height: 60px;
+        font-size: 14px;
+        vertical-align: middle !important;
+    }
+
+    table.table th {
+        font-size: 14px !important;
+        font-weight: 700;
+        color: #777;
+        height: 60px;
+    }
+
+
+    #cogs tr td:nth-child(1), #heading thead tr th:nth-child(1)  { width: 20%; }
+    #cogs tr td:nth-child(2), #heading thead tr th:nth-child(2)  { width: 15%; }
+    #cogs tr td:nth-child(3), #heading thead tr th:nth-child(3)  { width: 10%; min-width: 117px;  }
+
+    #cogs tr td:nth-child(4), #heading thead tr th:nth-child(4)  { width: 10%;  }
+    #cogs tr td:nth-child(5), #heading thead tr th:nth-child(5)  { width: 12%;min-width: 130px; text-align: center; }
+    #cogs tr td:nth-child(6), #heading thead tr th:nth-child(6)  { width: 10%;text-align: center;  }
+    #cogs tr td:nth-child(7), #heading thead tr th:nth-child(7)  { width: 8%;text-align: center;   }
+    #cogs tr td:nth-child(8), #heading thead tr th:nth-child(8)  { width: 8%;text-align: center;   }
+
+    
+    input[type='text'] {
+        width: 100px;
+    }
+</style>
+<style>
+    /** Jeremy's insane need for specific button colors is fulfilled here' */
+     .btn-sample { 
+         color: #FFFFFF; 
+         background-color: #329CDA; 
+         border-color: #329CDA; 
+     } 
+ 
+    .btn-sample:hover, 
+    .btn-sample:focus, 
+    .btn-sample:active, 
+    .btn-sample.active, 
+    .open .dropdown-toggle.btn-sample { 
+        color: #FFFFFF; 
+        background-color: #26729E; 
+        border-color: #329CDA; 
+    } 
+ 
+    .btn-sample:active, 
+    .btn-sample.active, 
+    .open .dropdown-toggle.btn-sample { 
+        background-image: none; 
+    } 
+ 
+    .btn-sample.disabled, 
+    .btn-sample[disabled], 
+    fieldset[disabled] .btn-sample, 
+    .btn-sample.disabled:hover, 
+    .btn-sample[disabled]:hover, 
+    fieldset[disabled] .btn-sample:hover, 
+    .btn-sample.disabled:focus, 
+    .btn-sample[disabled]:focus, 
+    fieldset[disabled] .btn-sample:focus, 
+    .btn-sample.disabled:active, 
+    .btn-sample[disabled]:active, 
+    fieldset[disabled] .btn-sample:active, 
+    .btn-sample.disabled.active, 
+    .btn-sample[disabled].active, 
+    fieldset[disabled] .btn-sample.active { 
+        background-color: #329CDA; 
+        border-color: #329CDA; 
+    } 
+ 
+    .btn-sample .badge { 
+        color: #329CDA; 
+        background-color: #FFFFFF; 
+    }
+</style>
+
+
+<script>
+    $(window).scroll(function () {
+        $('#top-header').css('left', -($(this).scrollLeft()) + "px");
+    });
+
+    var columnFixed = function () {
+        var bodyColumnCells = $("table#cogs tbody tr").first().find("td");
+        var headerColumnHeaders = $("table#heading thead tr th");
+
+        for (var i = 0; i < bodyColumnCells.length; i++) {
+            var widthCSS = $(bodyColumnCells[i]).css("width");
+            $(headerColumnHeaders[i]).css("width", widthCSS);
+        }
+    };
+
+    $(window)
+        .resize(function() {
+            columnFixed();
+        });
+    $(document).ready(function() {
+        columnFixed();
+    });
+</script>
+
+<div id="fixed-positioning-container" style="position: fixed; width: 100%; top: 0; padding-left: 20px; padding-right: 20px; z-index: 100;">
+    <div id="top-header-sleeve" style="position: relative; width: 100%; height: 210px;">
+
+        <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+        <div id="top-header" style="position: absolute; min-width: 800px; width: 100%; background-color: #FFF; border-top: 20px rgb(235, 238, 240) solid; height: 100%;">
+
+            <div class="row" style="position: absolute; margin: 0; padding-left: 25px; padding-right: 25px; width: 100%;">
+                <div class="col-xs-12" style="padding: 0;">
+                    <h3 style="font-weight: 700; margin-bottom: 3px;">3D Universe 2.85 mm PLA Filament</h3>
+                    <div style="font-size: 0.85em;">18 Variants</div>
+                    <div style="height: 20px;"></div>
+                </div>
+
+                <div class="col-xs-6" style="padding: 0;">
+                    <a style="width: 200px;" class="form-control btn btn-sample" href="CoGS.html"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Products</a>
+                </div>
+                <div class="col-xs-6" style="text-align: right; padding: 0;">
+                    <a style="width: 200px;" class="form-control btn btn-default" href="CoGS.html"><i class="glyphicon glyphicon-th-list"></i> &nbsp;&nbsp;Bulk Edit CoGS</a>
+                </div>
+            </div>
+
+            <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
+            <div style="position: absolute; padding-left: 25px; padding-right: 25px; top: 129px;">
+                <table class="table" id="heading">
+                    <thead>
+                    <tr>
+                        <th>Title <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th>SKU <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th>Inventory <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th>Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th>CoGS</th>
+                        <th>Detail</th>
+                        <th>Stocked Directly</th>
+                        <th>Exclude Variant</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container" style="margin:0; width:100%; padding-left: 20px; padding-right: 20px;">    
+    <div style="position:relative; min-width: 800px; margin-top:209px; background-color: #FFF;  padding-left: 25px; padding-right: 25px;">
+	
+	<table id="cogs" class="table" style="width:100%; height:100%; margin:0;">
+		<tbody>
+			<tr>
+				<td>White</td>
+			    <td>3DUABS285WHITE</td>
+			    <td>94</td>
+				<td>$34.00</td>
+			    <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+			    </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+				<td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+			</tr>
+
+            <tr>
+                <td>Silver</td>
+                <td>3DUABS285SILVER</td>
+                <td>34</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+            </tr>
+
+            <tr>
+                <td>Black</td>
+                <td>3DUABS285BLACK</td>
+                <td>76</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+            </tr>
+
+            <tr>
+                <td>Light Blue</td>
+                <td>3DUABS285LTBLUE</td>
+                <td>58</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+            </tr>
+
+            <tr>
+                <td>Dark Blue</td>
+                <td>3DUABS285DKBLUE</td>
+                <td>62</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+                </tr>
+
+            <tr>
+                <td>Grape</td>
+                <td>3DUABS285GRAPE</td>
+                <td>94</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+            </tr>
+
+            <tr>
+                <td>Black Raspberry</td>
+                <td>3DUABS285BLKRASP</td>
+                <td>94</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+            </tr>
+
+            <tr>
+                <td>Red Delicious</td>
+                <td>3DUABS285REDDELIC</td>
+                <td>94</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+            </tr>
+
+            <tr>
+                <td>Red</td>
+                <td>3DUABS285RED</td>
+                <td>94</td>
+                <td>$34.00</td>
+                <td>
+                    <div class="input-group">
+                        <div class="input-group-addon">$</div>
+                        <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
+                    </div>
+                </td>
+                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+            </tr>
+
+		</tbody>
+	</table>	
+</div>
+</div>
+  <div style="width: 100%; margin-top: 25px; margin-bottom: 25px; text-align: center;">
+    <p style="color: #999;"><b>ProfitWise</b> is a product of Push Automated Commerce</p>
+  </div>
+
