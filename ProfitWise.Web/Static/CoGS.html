@@ -90,6 +90,34 @@
     });
 </script>
 
+
+<!-- Grid-level scripting -->
+<script>
+    $(document).ready(function () {
+        $("a.EditCogsPopUpLauncher")
+            .click(function() {
+                ShopifyApp.Modal.open({
+                    src: '/ProfitWise/Static/SimpleCogsEditor.html',
+                        title: 'Bulk Edit all Variant CoGS',
+                        width: 'small',
+                        height: 275,
+                        buttons: {
+                            primary:
+                                { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
+                            secondary: [
+                                { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
+                            ]
+                        }
+                    },
+                    function(result, data) {
+                        alert("result: " + result + "   data: " + data);
+                    });
+            });
+
+    });
+
+</script>
+
 <!-- Pop-over scripting -->
 <script>
     var initializePagingPopOver = function() {
@@ -177,9 +205,9 @@
 
     #cogs tr td:nth-child(1) { width: 15%; }
     #cogs tr td:nth-child(2) { width: 25%; }
-    #cogs tr td:nth-child(3) { width: 20%; }
-    #cogs tr td:nth-child(4) { width: 10%; }
-    #cogs tr td:nth-child(5) { width: 10%; }
+    #cogs tr td:nth-child(3) { width: 14%; }
+    #cogs tr td:nth-child(4) { width: 13%;text-align: center; }
+    #cogs tr td:nth-child(5) { width: 13%;text-align: center; }
     #cogs tr td:nth-child(6) {width: 10%;text-align: center;  }
     #cogs tr td:nth-child(7) {width: 10%;text-align: center;   }
 
@@ -319,8 +347,8 @@
                         <th>Vendor <i class="glyphicon glyphicon-triangle-bottom"></i></th>
                         <th>Product <i class="glyphicon glyphicon-triangle-bottom"></i></th>
                         <th>Inventory <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                        <th>Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                        <th>CoGS</th>
+                        <th style="text-align: center;">Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                        <th style="text-align: center;">CoGS</th>
                         <th style="text-align: center;">Currency</th>
                         <th style="text-align: center;">Stocked Directly</th>
                     </tr>
@@ -333,26 +361,26 @@
 
 
 <div class="container" style="margin:0; width:100%; padding-left: 20px; padding-right: 20px;">    
-    <div style="position:relative; min-width: 800px; margin-top:200px; background-color: #FFF;  padding-left: 25px; padding-right: 25px;">
+    <div style="position:relative; min-width: 800px; margin-top:209px; background-color: #FFF;  padding-left: 25px; padding-right: 25px;">
 	
 	<table id="cogs" class="table" style="width:100%; height:100%; margin:0;">
 		<tbody>
 			<tr>
 				<td>3D Universe</td>
 			    <td><a href="#">3D Universe PLA 2.85 mm</a></td>
-				<td>175 in stock for 12 variants</td>
+			    <td>175 in stock<br/>(12 variants)</td>
 				<td>$34</td>
-				<td><input type="text" value="$18" /></td>
-				<td>USD</td>
+			    <td><a href="#">$18</a></td>
+                <td>USD</td>
 				<td><input type="checkbox" /></td>
 			</tr>
 
             <tr>
                 <td>3D Universe</td>
                 <td><a href="#">3D Universe ABS 2.85 mm</a></td>
-                <td>130 in stock for 12 variants</td>
-                <td>$34</td>
-                <td><input type="text" value="$18" /></td>
+                <td>175 in stock<br />(12 variants)</td>
+                <td>$3,400.00 to $3,799.99</td>
+                <td><a class="EditCogsPopUpLauncher" href="#"><strong>$1,800.00</strong> to <strong>$2,400.00</strong></a><br/><span style="font-size:0.8em">(Averages)</span></td>
                 <td>USD</td>
                 <td><input type="checkbox" /></td>
             </tr>
@@ -362,7 +390,7 @@
                 <td><a href="#">3D Universe PLA 1.75 mm</a></td>
                 <td>175 in stock for 12 variants</td>
                 <td>$34</td>
-                <td><input type="text" value="$18" /></td>
+                <td><a href="#">$18</a></td>
                 <td>USD</td>
                 <td><input type="checkbox" /></td>
             </tr>
@@ -372,7 +400,7 @@
 		        <td><a href="#">3D Universe ABS 1.75 mm</a></td>
                 <td>78 in stock for 12 variants</td>
                 <td>$34</td>
-		        <td><input type="text" value="$18"/></td>
+                <td><a href="#">$18</a></td>
 		        <td>USD</td>
 		        <td><input type="checkbox"/></td>
 		    </tr>
@@ -382,7 +410,7 @@
 		        <td><a href="#">ColorFabb PLA/PHA 2.85 mm</a></td>
                 <td>175 in stock for 12 variants</td>
 		        <td>$34</td>
-		        <td><input type="text" value="$18"/></td>
+                <td><a href="#">$18</a></td>
 		        <td>USD</td>
 		        <td><input type="checkbox"/></td>
 		    </tr>
@@ -392,7 +420,7 @@
                 <td><a href="#">ColorFabb PLA/PHA 1.75 mm</a></td>
                 <td>200 in stock for 16 variants</td>
                 <td>$34</td>
-                <td><input type="text" value="$18" /></td>
+                <td><a href="#">$18 to $22</a></td>
                 <td>USD</td>
                 <td><input type="checkbox" /></td>
             </tr>
@@ -402,7 +430,7 @@
                 <td><a href="#">ColorFabb XT 2.85 mm</a></td>
                 <td>88 in stock for 3 variants</td>
                 <td>$34</td>
-                <td><input type="text" value="$18" /></td>
+                <td><a href="#">$18 to $22</a></td>
                 <td>USD</td>
                 <td><input type="checkbox" /></td>
             </tr>
@@ -412,7 +440,7 @@
                 <td><a href="#">ColorFabb XT 1.75 mm</a></td>
                 <td>82 in stock for 3 variants</td>
                 <td>$34</td>
-                <td><input type="text" value="$18" /></td>
+                <td><a href="#">$15 to $20</a></td>
                 <td>USD</td>
                 <td><input type="checkbox" /></td>
             </tr>
