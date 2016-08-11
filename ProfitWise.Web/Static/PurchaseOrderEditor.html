@@ -1,0 +1,467 @@
+<html>
+<head>
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' rel='stylesheet' type='text/css'>
+
+    <script type="text/javascript" src="/ProfitWise/scripts/moment.min.js"></script>
+<script type="text/javascript" src="/ProfitWise/scripts/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="/ProfitWise/Content/bootstrap-datetimepicker.css" />
+
+<script type="text/javascript">
+    ShopifyApp.init({
+        apiKey: '50d69dbaf54ee35929a946790d5884e4',
+        shopOrigin: 'https://3duniverse.myshopify.com'
+    });
+
+    ShopifyApp.ready(function() {
+        ShopifyApp.Bar.initialize({
+            title: 'Purchase Order Editor',
+            buttons: {
+                secondary: [
+                    {
+                        label: "CoGS Sandbox",
+                        href: "/ProfitWise/Static/CoGS.html",
+                        target: "app",
+                    },
+
+                    // Dropdown example
+                    {
+                        label: "Navigate to...",
+                        type: "dropdown",
+                        links: [
+                            {
+                                label: "Dashboard",
+                                href: "/ProfitWise/",
+                                target: "app"
+                            },
+                            {
+                                label: "Reports",
+                                href: "/ProfitWise/UserMain/Reports",
+                                target: "app"
+                            },
+                            {
+                                label: "Edit Preferences",
+                                href: "/ProfitWise/UserMain/Preferences",
+                                target: "app"
+                            },
+                            {
+                                label: "Manage Purchase Orders",
+                                href: "/ProfitWise/Static/PurchaseOrderManager.html",
+                                target: "app"
+                            },
+                            {
+                                label: "Manage Purchase Orders",
+                                href: "/ProfitWise/Static/CoGS.html",
+                                target: "app"
+                            },
+                            {
+                                label: "Edit Goals",
+                                href: "/ProfitWise/UserMain/Goals",
+                                target: "app"
+                            },
+                            {
+                                label: "Product Consolidation",
+                                href: "/ProfitWise/UserMain/Products",
+                                target: "app"
+                            },
+                        ]
+                    },
+                    {
+                        label: "Support",
+                        type: "dropdown",
+                        links: [
+                            {
+                                label: "About ProfitWise",
+                                href: "/ProfitWise/UserAuxiliary/About",
+                                target: "app"
+                            },
+                            {
+                                label: "Contact Us",
+                                href: "/ProfitWise/UserAuxiliary/Contact",
+                                target: "app"
+                            }
+                        ]
+                    },
+                ]
+            }
+        });
+
+        ShopifyApp.Bar.loadingOff();
+    });
+</script>
+
+<!-- Grid-level scripting -->
+<script>
+    $(document)
+        .ready(function() {
+            $("a.EditCogsPopUpLauncher")
+                .click(function() {
+                    ShopifyApp.Modal.open({
+                            src: '/ProfitWise/Static/SimpleCogsEditor.html',
+                            title: 'Bulk Edit all Variant CoGS',
+                            width: 'small',
+                            height: 325,
+                            buttons: {
+                                primary:
+                                { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
+                                secondary: [
+                                    { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
+                                ]
+                            }
+                        },
+                        function(result, data) {
+                            alert("result: " + result + "   data: " + data);
+                        });
+                });
+
+        });
+</script>
+
+<!-- Pop-over scripting -->
+<script>
+    var initializePagingPopOver = function() {
+        var content = $("#pagination-popover-content").html();
+
+        $('#pagination-popover-launcher')
+            .popover({
+                html: true,
+                content: content,
+                placement: "bottom",
+                trigger: 'manual'
+            });
+    };
+
+    var initializeFilterPopOver = function() {
+        var content = $("#filter-popover-content").html();
+
+        $('#filter-popover-launcher')
+            .popover({
+                html: true,
+                content: content,
+                placement: "bottom",
+                trigger: 'manual'
+            });
+    };
+
+    $(document)
+        .ready(function() {
+            initializePagingPopOver();
+            initializeFilterPopOver();
+
+            var hideAllPopovers = function(callersPopOver) {
+                $('.popover-marker')
+                    .each(function() {
+                        if (this != callersPopOver) {
+                            $(this).popover('hide');
+                        }
+                    });
+            };
+
+            $('.popover-marker')
+                .on('click',
+                    function(e) {
+                        // if any other popovers are visible, hide them
+                        hideAllPopovers(this);
+
+                        $(this).popover('show');
+
+                        // handle clicking on the popover itself
+                        $('.popover')
+                            .off('click')
+                            .on('click',
+                                function(e) {
+                                    e
+                                        .stopPropagation();
+// prevent event for bubbling up => will not get caught with document.onclick
+                                });
+
+                        e.stopPropagation();
+                    });
+
+            $(document)
+                .on('click',
+                    function(e) {
+                        hideAllPopovers();
+                    });
+        });
+</script>
+
+<style>
+    html, body {
+        font-family: 'Open Sans', sans-serif;
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        background-color: rgb(235, 238, 240);
+        font-size: 15px;
+        color: #555;
+    }
+
+    table.table td {
+        height: 60px;
+        font-size: 14px;
+        vertical-align: middle !important;
+    }
+
+    table.table th {
+        font-size: 14px !important;
+        font-weight: 700;
+        color: #777;
+        height: 60px;
+    }
+
+
+    #cogs tr td:nth-child(1),  #heading thead tr th:nth-child(1) { width: 5%; }
+    #cogs tr td:nth-child(2),  #heading thead tr th:nth-child(2) { width: 15%; }
+    #cogs tr td:nth-child(3),  #heading thead tr th:nth-child(3) { width: 15%; }
+    #cogs tr td:nth-child(4),  #heading thead tr th:nth-child(4) { width: 15%; }
+    #cogs tr td:nth-child(5),  #heading thead tr th:nth-child(5) { width: 15%; }
+    #cogs tr td:nth-child(6),  #heading thead tr th:nth-child(6) { min-width: 90px;  width: 10%; text-align: left; }
+    #cogs tr td:nth-child(7),  #heading thead tr th:nth-child(7) { min-width: 140px; width: 15%; text-align: left; }
+    #cogs tr td:nth-child(8),  #heading thead tr th:nth-child(8) { width: 10%; text-align: right; }
+
+
+    input[type='text'] {
+        width: 100px;
+    }
+</style>
+
+<script>
+    $(window)
+        .scroll(function() {
+            $('#top-header').css('left', -($(this).scrollLeft()) + "px");
+        });
+
+    var columnFixed = function() {
+        var bodyColumnCells = $("table#cogs tbody tr").first().find("td");
+        var headerColumnHeaders = $("table#heading thead tr th");
+
+        for (var i = 0; i < bodyColumnCells.length; i++) {
+            var widthCSS = $(bodyColumnCells[i]).css("width");
+            $(headerColumnHeaders[i]).css("width", widthCSS);
+        }
+    };
+
+    $(window)
+        .resize(function() {
+            columnFixed();
+        });
+    $(document)
+        .ready(function() {
+            columnFixed();
+
+            $('#Date').datetimepicker({
+                format: 'MM/DD/YYYY'
+            });
+        });
+</script>
+
+</head>
+
+<body>
+    <div id="fixed-positioning-container" style="position: fixed; width: 100%; top: 0; padding-left: 20px; padding-right: 20px; z-index: 100;">
+        <div id="top-header-sleeve" style="position: relative; width: 100%; height: 255px;">
+
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div id="top-header" style="position: absolute; min-width: 800px; width: 100%; background-color: #FFF; border-top: 20px rgb(235, 238, 240) solid; height: 100%;">
+
+                <div class="row" style="padding-top: 20px; padding-left: 25px; padding-right: 25px;">
+
+                    <div class="col-xs-6">
+                        <form class="form-horizontal">
+                            <div class="form-group row">
+                                <label for="PONumber" class="col-xs-3 control-label" style="text-align: left;">PO Number</label>
+                                <div class="col-xs-9">
+                                    <input type="text" id="PONumber" style="width: 100%;" class="form-control" placeholder="PO Number">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Distributor" class="col-xs-3 control-label" style="text-align: left;">Distributor</label>
+                                <div class="col-xs-9">
+                                    <input type="text" id="Distributor" style="width: 100%;" class="form-control" placeholder="Distributor">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Date" class="col-xs-3 control-label" style="text-align: left;">Date</label>
+                                <div class="col-xs-9">
+                                    <div class="input-group">
+                                        <div class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>
+                                        </div>
+                                        <input type="text" id="Date" style="width: 150px;" class="form-control" placeholder="Date">
+                                    </div>
+                                    </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-xs-6" style="text-align: right;">
+                        <a style="width: 140px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-trash"></i> &nbsp;&nbsp;Delete P.O.</a>
+                        <a style="width: 140px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-duplicate"></i> &nbsp;&nbsp;Duplicate P.O.</a>
+                        <a style="width: 140px;" class="form-control btn btn-primary" href="#"><i class="glyphicon glyphicon-floppy-save"></i> &nbsp;&nbsp;Save P.O.</a>
+
+                        <div style="height: 25px;"></div>
+                        <div class="row">
+                            <div class="col-xs-5"></div>
+                            <div class="col-xs-4">Total Quantity</div>
+                            <div class="col-xs-3"><strong>888</strong></div>
+                        </div>
+                        <div style="height: 7px;"></div>
+                        <div class="row">
+                            <div class="col-xs-5"></div>
+                            <div class="col-xs-4">Total Price</div>
+                            <div class="col-xs-3"><strong>$234,457.88</strong>
+                            </div>
+                        </div>
+
+                        <div style="height: 25px;"></div>
+
+                        <a style="width: 140px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-plus"></i> &nbsp;&nbsp;Add Line Items</a>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Create Purchase Order Button -->
+                    <div class="col-xs-12" style="text-align: right;">
+                    </div>
+                </div>
+
+
+                <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
+                <div style="position: absolute; padding-left: 25px; padding-right: 25px; top: 174px;">
+                    <table class="table" id="heading">
+                        <thead>
+                            <tr>
+                                <th>Delete</th>
+                                <th>Vendor <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Product <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Variant <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>SKU <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Quantity <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Unit Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th >Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container" style="margin:0; width:100%; padding-left: 20px; padding-right: 20px;">
+        <div style="position:relative; min-width: 800px; margin-top:254px; background-color: #FFF;  padding-left: 25px; padding-right: 25px;">
+
+            <table id="cogs" class="table" style="width:100%; margin:0;">
+                <tbody>
+                <tr>
+                    <td><a href="#" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></a></td>
+                    <td>3D Universe</td>
+                    <td>3D Universe 2.85 mm PLA</td>
+                    <td>Red</td>
+                    <td>3DU285PLARED</td>
+                    <td><input type="text" class="form-control" value="100" /> </td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" style="" value="20" class="form-control" placeholder="Enter new amount"/>
+                        </div>
+                    </td>
+                    <td>$20,000.00</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></a></td>
+                    <td>3D Universe</td>
+                    <td>3D Universe 2.85 mm PLA</td>
+                    <td>Red</td>
+                    <td>3DU285PLARED</td>
+                    <td><input type="text" class="form-control" value="100"/> </td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" style="" value="20" class="form-control" placeholder="Enter new amount"/>
+                        </div>
+                    </td>
+                    <td>$20,000.00</td>
+                </tr>
+                    <tr>
+                        <td><a href="#" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></a></td>
+                        <td>3D Universe</td>
+                        <td>3D Universe 2.85 mm PLA</td>
+                        <td>Red</td>
+                        <td>3DU285PLARED</td>
+                        <td><input type="text" class="form-control" value="100" /> </td>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div>
+                                <input type="text" style="" value="20" class="form-control" placeholder="Enter new amount" />
+                            </div>
+                        </td>
+                        <td>$20,000.00</td>
+                    </tr>
+                <tr>
+                    <td><a href="#" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></a></td>
+                    <td>3D Universe</td>
+                    <td>3D Universe 2.85 mm PLA</td>
+                    <td>Red</td>
+                    <td>3DU285PLARED</td>
+                    <td><input type="text" class="form-control" value="100"/> </td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" style="" value="20" class="form-control" placeholder="Enter new amount"/>
+                        </div>
+                    </td>
+                    <td>$20,000.00</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></a></td>
+                    <td>3D Universe</td>
+                    <td>3D Universe 2.85 mm PLA</td>
+                    <td>Red</td>
+                    <td>3DU285PLARED</td>
+                    <td><input type="text" class="form-control" value="100"/> </td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" style="" value="20" class="form-control" placeholder="Enter new amount"/>
+                        </div>
+                    </td>
+                    <td>$20,000.00</td>
+                </tr>
+                    <tr>
+                        <td><a href="#" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i></a></td>
+                        <td>3D Universe</td>
+                        <td>3D Universe 2.85 mm PLA</td>
+                        <td>Red</td>
+                        <td>3DU285PLARED</td>
+                        <td><input type="text" class="form-control" value="100" /> </td>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div>
+                                <input type="text" style="" value="20" class="form-control" placeholder="Enter new amount" />
+                            </div>
+                        </td>
+                        <td>$20,000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div style="width: 100%; margin-top: 25px; margin-bottom: 25px; text-align: center;">
+        <p style="color: #999;"><b>ProfitWise</b> is a product of Push Automated Commerce</p>
+    </div>
+
+</body>
+</html>
+

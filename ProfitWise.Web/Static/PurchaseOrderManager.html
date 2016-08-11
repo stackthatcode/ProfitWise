@@ -1,0 +1,453 @@
+<html>
+<head>
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' rel='stylesheet' type='text/css'>
+
+
+    <script type="text/javascript">
+        ShopifyApp.init({
+            apiKey: '50d69dbaf54ee35929a946790d5884e4',
+            shopOrigin: 'https://3duniverse.myshopify.com'
+        });
+
+        ShopifyApp.ready(function () {
+            ShopifyApp.Bar.initialize({
+                title: 'Purchase Order Manager',
+                buttons: {
+                    secondary: [
+                        {
+                            label: "CoGS Sandbox",
+                            href: "/ProfitWise/Static/CoGS.html",
+                            target: "app",
+                        },
+
+                        // Dropdown example
+                        {
+                            label: "Navigate to...",
+                            type: "dropdown",
+                            links: [
+                                {
+                                    label: "Dashboard",
+                                    href: "/ProfitWise/",
+                                    target: "app"
+                                },
+                                {
+                                    label: "Reports",
+                                    href: "/ProfitWise/UserMain/Reports",
+                                    target: "app"
+                                },
+                                {
+                                    label: "Edit Preferences",
+                                    href: "/ProfitWise/UserMain/Preferences",
+                                    target: "app"
+                                },
+                                {
+                                    label: "Manage Purchase Orders",
+                                    href: "/ProfitWise/Static/PurchaseOrderManager.html",
+                                    target: "app"
+                                },
+                                {
+                                    label: "Manage Purchase Orders",
+                                    href: "/ProfitWise/Static/CoGS.html",
+                                    target: "app"
+                                },
+                                {
+                                    label: "Edit Goals",
+                                    href: "/ProfitWise/UserMain/Goals",
+                                    target: "app"
+                                },
+                                {
+                                    label: "Product Consolidation",
+                                    href: "/ProfitWise/UserMain/Products",
+                                    target: "app"
+                                },
+                            ]
+                        },
+                        {
+                            label: "Support",
+                            type: "dropdown",
+                            links: [
+                                {
+                                    label: "About ProfitWise",
+                                    href: "/ProfitWise/UserAuxiliary/About",
+                                    target: "app"
+                                },
+                                {
+                                    label: "Contact Us",
+                                    href: "/ProfitWise/UserAuxiliary/Contact",
+                                    target: "app"
+                                }
+                            ]
+                        },
+                    ]
+                }
+            });
+
+            ShopifyApp.Bar.loadingOff();
+        });
+    </script>
+
+    <!-- Grid-level scripting -->
+    <script>
+        $(document).ready(function () {
+            $("a.EditCogsPopUpLauncher")
+                .click(function () {
+                    ShopifyApp.Modal.open({
+                        src: '/ProfitWise/Static/SimpleCogsEditor.html',
+                        title: 'Bulk Edit all Variant CoGS',
+                        width: 'small',
+                        height: 325,
+                        buttons: {
+                            primary:
+                                { label: "OK", callback: function (label) { ShopifyApp.Modal.close("OK"); } },
+                            secondary: [
+                                { label: "Cancel", callback: function (label) { ShopifyApp.Modal.close("Cancel"); } }
+                            ]
+                        }
+                    },
+                        function (result, data) {
+                            alert("result: " + result + "   data: " + data);
+                        });
+                });
+
+        });
+    </script>
+
+    <!-- Pop-over scripting -->
+    <script>
+        var initializePagingPopOver = function () {
+            var content = $("#pagination-popover-content").html();
+
+            $('#pagination-popover-launcher')
+                .popover({
+                    html: true,
+                    content: content,
+                    placement: "bottom",
+                    trigger: 'manual'
+                });
+        };
+
+        var initializeFilterPopOver = function () {
+            var content = $("#filter-popover-content").html();
+
+            $('#filter-popover-launcher')
+                .popover({
+                    html: true,
+                    content: content,
+                    placement: "bottom",
+                    trigger: 'manual'
+                });
+        };
+
+        $(document).ready(function () {
+            initializePagingPopOver();
+            initializeFilterPopOver();
+
+            var hideAllPopovers = function (callersPopOver) {
+                $('.popover-marker').each(function () {
+                    if (this != callersPopOver) {
+                        $(this).popover('hide');
+                    }
+                });
+            };
+
+            $('.popover-marker')
+                .on('click', function (e) {
+                    // if any other popovers are visible, hide them
+                    hideAllPopovers(this);
+
+                    $(this).popover('show');
+
+                    // handle clicking on the popover itself
+                    $('.popover').off('click').on('click', function (e) {
+                        e.stopPropagation(); // prevent event for bubbling up => will not get caught with document.onclick
+                    });
+
+                    e.stopPropagation();
+                });
+
+            $(document).on('click', function (e) {
+                hideAllPopovers();
+            });
+        });
+    </script>
+
+    <style>
+        html, body {
+            font-family: 'Open Sans', sans-serif;
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            background-color: rgb(235, 238, 240);
+            font-size: 15px;
+            color: #555;
+        }
+
+        table.table td {
+            height: 60px;
+            font-size: 14px;
+            vertical-align: middle !important;
+        }
+
+        table.table th {
+            font-size: 14px !important;
+            font-weight: 700;
+            color: #777;
+            height: 60px;
+        }
+
+
+        #cogs tr td:nth-child(1) {
+            width: 25%;
+        }
+
+        #cogs tr td:nth-child(2) {
+            width: 30%;
+        }
+
+        #cogs tr td:nth-child(3) {
+            width: 15%;
+        }
+
+        #cogs tr td:nth-child(4) {
+            width: 15%;
+            text-align: center;
+        }
+
+        #cogs tr td:nth-child(5) {
+            width: 15%;
+            text-align: center;
+        }
+
+        input[type='text'] {
+            width: 100px;
+        }
+    </style>
+
+    <script>
+        $(window).scroll(function () {
+            $('#top-header').css('left', -($(this).scrollLeft()) + "px");
+        });
+
+        var columnFixed = function () {
+            var bodyColumnCells = $("table#cogs tbody tr").first().find("td");
+            var headerColumnHeaders = $("table#heading thead tr th");
+
+            for (var i = 0; i < bodyColumnCells.length; i++) {
+                var widthCSS = $(bodyColumnCells[i]).css("width");
+                $(headerColumnHeaders[i]).css("width", widthCSS);
+            }
+        };
+
+        $(window)
+            .resize(function () {
+                columnFixed();
+            });
+        $(document).ready(function () {
+            columnFixed();
+        });
+    </script>
+
+</head>
+<body>
+
+    <div id="fixed-positioning-container" style="position: fixed; width: 100%; top: 0; padding-left: 20px; padding-right: 20px; z-index: 100;">
+        <div id="top-header-sleeve" style="position: relative; width: 100%; height: 210px;">
+
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div id="top-header" style="position: absolute; min-width: 800px; width: 100%; background-color: #FFF; border-top: 20px rgb(235, 238, 240) solid; height: 100%;">
+
+                <div class="row" style="padding-left: 25px; padding-right: 25px;">
+
+                    <!-- Filtering Widget -->
+                    <div class="col-xs-6" style="padding-top: 20px;">
+                        <div class="pull-left;">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Enter PO Number or Distributor" />
+                                    <div class="input-group-btn">
+                                        <a id="filter-popover-launcher" type="button" rel="popover" class="popover-marker btn btn-default">
+                                            Search for PO's <i class="glyphicon glyphicon-triangle-bottom"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="filter-popover-content" style="display: none;">
+                                <div style="width: 200px; padding-bottom: 15px; height: 100%;">
+                                    <p>Show all products where:</p>
+
+                                    <select class="form-control" style="float: none;">
+                                        <option value="volvo">Select a filter...</option>
+                                        <option value="volvo">Product type</option>
+                                        <option value="saab">Product vendor</option>
+                                        <option value="mercedes">Tagged with</option>
+                                        <option value="mercedes">Products that are missing CoGS &nbsp;</option>
+                                    </select>
+
+                                    <div style="height: 10px;"></div>
+
+                                    <input type="text" class="form-control" style="float: none;" placeholder="Enter value" />
+
+                                    <div style="height: 10px;"></div>
+
+                                    <input type="button" class="btn btn-small btn-default" value="Add filter" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paging Widget -->
+                    <div class="col-xs-6">
+                        <div id="pagination-popover-content" style="display: none;">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Jump to page number...">
+                                <span class="input-group-btn"><button class="btn btn-primary" type="button">Go!</button></span>
+                            </div>
+                        </div>
+
+                        <div class="pull-right" style="margin-left: 15px;">
+                            <nav aria-label="Page navigation" class="pull-right">
+                                <ul class="pagination">
+                                    <li>
+                                        <a href="#" aria-label="First">
+                                            <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" aria-label="Backward">
+                                            <span><i class="glyphicon glyphicon-step-backward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="pagination-popover-launcher" class="popover-marker" rel="popover">Page 3 of 20</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" aria-label="Forward">
+                                            <span><i class="glyphicon glyphicon-step-forward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" aria-label="Last">
+                                            <span><i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                        <div style="float: right; padding-top: 20px;">
+                            <div class="input-group pull-right;" style="width: 175px;">
+
+                                <select class="form-control">
+                                    <option value="volvo">25</option>
+                                    <option value="saab">50</option>
+                                    <option value="mercedes">100</option>
+                                    <option value="audi">250</option>
+                                </select>
+                                <span class="input-group-addon" id="basic-addon2">per page</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Create Purchase Order Button -->
+                    <div class="col-xs-12" style="text-align: right;">
+                        <a style="width: 225px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-copy"></i> &nbsp;&nbsp;Create Purchase Order</a>
+                    </div>
+                </div>
+
+
+                <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
+                <div style="position: absolute; padding-left: 25px; padding-right: 25px; top: 129px;">
+                    <table class="table" id="heading">
+                        <thead>
+                            <tr>
+                                <th>PO Number <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Distributor <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Date <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th style="text-align: center;">Qty of Items <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th style="text-align: center;">Total Amount</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container" style="margin:0; width:100%; padding-left: 20px; padding-right: 20px;">
+        <div style="position:relative; min-width: 800px; margin-top:209px; background-color: #FFF;  padding-left: 25px; padding-right: 25px;">
+
+            <table id="cogs" class="table" style="width:100%; margin:0;">
+                <tbody>
+                    <tr>
+                        <td><a href="PurchaseOrderEditor.html">WYN-94432235-2</a></td>
+                        <td>Wynit Wonderful World of 3D Printing</td>
+                        <td>1/1/2015</td>
+                        <td>175</td>
+                        <td>$2040.33</td>
+                    </tr>
+
+                    <tr>
+                        <td><a href="PurchaseOrderEditor.html">WYN-94432235-2</a></td>
+                        <td>Wynit Wonderful World of 3D Printing</td>
+                        <td>1/1/2015</td>
+                        <td>175</td>
+                        <td>$2040.33</td>
+                    </tr>
+
+                    <tr>
+                        <td><a href="PurchaseOrderEditor.html">WYN-94432235-2</a></td>
+                        <td>Wynit Wonderful World of 3D Printing</td>
+                        <td>1/1/2015</td>
+                        <td>175</td>
+                        <td>$2040.33</td>
+                    </tr>
+
+                    <tr>
+                        <td><a href="PurchaseOrderEditor.html">WYN-94432235-2</a></td>
+                        <td>Wynit Wonderful World of 3D Printing</td>
+                        <td>1/1/2015</td>
+                        <td>175</td>
+                        <td>$2040.33</td>
+                    </tr>
+
+                    <tr>
+                        <td><a href="PurchaseOrderEditor.html">WYN-94432235-2</a></td>
+                        <td>Wynit Wonderful World of 3D Printing</td>
+                        <td>1/1/2015</td>
+                        <td>175</td>
+                        <td>$2040.33</td>
+                    </tr>
+
+                    <tr>
+                        <td><a href="PurchaseOrderEditor.html">WYN-94432235-2</a></td>
+                        <td>Wynit Wonderful World of 3D Printing</td>
+                        <td>1/1/2015</td>
+                        <td>175</td>
+                        <td>$2040.33</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div style="width: 100%; margin-top: 25px; margin-bottom: 25px; text-align: center;">
+        <p style="color: #999;"><b>ProfitWise</b> is a product of Push Automated Commerce</p>
+    </div>
+
+</body>
+</html>
+
