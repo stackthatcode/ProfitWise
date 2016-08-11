@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8"/>
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' rel='stylesheet' type='text/css'>
+
+    <style>        
+        table.table td {
+            height: 50px;
+            font-size: 14px;
+            vertical-align: middle !important;
+        }
+
+        /** Jeremy's insane need for specific button colors is fulfilled here' */
+        .btn-sample {
+            color: #FFFFFF;
+            background-color: #329CDA;
+            border-color: #329CDA;
+        }
+
+            .btn-sample:hover,
+            .btn-sample:focus,
+            .btn-sample:active,
+            .btn-sample.active,
+            .open .dropdown-toggle.btn-sample {
+                color: #FFFFFF;
+                background-color: #26729E;
+                border-color: #329CDA;
+            }
+
+            .btn-sample:active,
+            .btn-sample.active,
+            .open .dropdown-toggle.btn-sample {
+                background-image: none;
+            }
+
+            .btn-sample.disabled,
+            .btn-sample[disabled],
+            fieldset[disabled] .btn-sample,
+            .btn-sample.disabled:hover,
+            .btn-sample[disabled]:hover,
+            fieldset[disabled] .btn-sample:hover,
+            .btn-sample.disabled:focus,
+            .btn-sample[disabled]:focus,
+            fieldset[disabled] .btn-sample:focus,
+            .btn-sample.disabled:active,
+            .btn-sample[disabled]:active,
+            fieldset[disabled] .btn-sample:active,
+            .btn-sample.disabled.active,
+            .btn-sample[disabled].active,
+            fieldset[disabled] .btn-sample.active {
+                background-color: #329CDA;
+                border-color: #329CDA;
+            }
+
+            .btn-sample .badge {
+                color: #329CDA;
+                background-color: #FFFFFF;
+            }
+    </style>
+
+</head>
+
+<!-- NOTE: keep position:relative to fix Chrome dragging -->
+<body style="overflow-y: scroll;position: relative;">
+    <div id="fixed-positioning-container" style="position: fixed; width: 100%; top: 0; z-index: 100;">
+        <div id="top-header-sleeve" style="position: relative; width: 100%; height: 75px;">
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div id="top-header" style="position: absolute; width: 100%; background-color: #FFF; border-bottom: 1px rgb(235, 238, 240) solid; height: 100%;">
+                <div class="pull-left;" style="padding: 20px;">
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Product Titles, Vendors or SKU's" />
+                                <div class="input-group-btn">
+                                    <a id="search" class="popover-marker btn btn-default">Search</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6" style="font-size: 0.75em !important; min-width: 280px;">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination" style="margin: 0;">
+                                    <li>
+                                        <a href="#" aria-label="First">
+                                            <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" aria-label="Backward">
+                                            <span><i class="glyphicon glyphicon-step-backward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="pagination-popover-launcher" class="popover-marker" rel="popover">Page 3 of 20</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" aria-label="Forward">
+                                            <span><i class="glyphicon glyphicon-step-forward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" aria-label="Last">
+                                            <span><i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 74px; padding-left: 20px; padding-right: 20px;">
+
+        <table id="cogs" class="table" style="width:100%; height:100%; margin:0;">
+            <tbody>
+                <tr>
+                    <td>3D Universe</td>
+                    <td><a href="POAddLineItemAddVariants.html">3D Universe PLA 2.85 mm</a></td>
+                    <td><a href="POAddLineItemAddVariants.html">20 Variants</a></td>
+                </tr>
+
+                <tr>
+                    <td>3D Universe</td>
+                    <td><a href="POAddLineItemAddVariants.html">3D Universe ABS 2.85 mm</a></td>
+                    <td><a href="POAddLineItemAddVariants.html">23 Variants</a></td>
+                </tr>
+
+                <tr>
+                    <td>3D Universe</td>
+                    <td><a href="POAddLineItemAddVariants.html">3D Universe PLA 1.75 mm</a></td>
+                    <td><a href="POAddLineItemAddVariants.html">78 Variants</a></td>
+                </tr>
+
+                <tr>
+                    <td>3D Universe</td>
+                    <td><a href="POAddLineItemAddVariants.html">3D Universe ABS 1.75 mm</a></td>
+                    <td><a href="POAddLineItemAddVariants.html">15 Variants</a></td>
+                </tr>
+
+                <tr>
+                    <td>ColorFabb</td>
+                    <td><a href="#">ColorFabb PLA/PHA 2.85 mm</a></td>
+                    <td><a href="POAddLineItemAddVariants.html">20 Variants</a></td>
+                </tr>
+
+                <tr>
+                    <td>ColorFabb</td>
+                    <td><a href="#">ColorFabb PLA/PHA 1.75 mm</a></td>
+                    <td><a href="POAddLineItemAddVariants.html">20 Variants</a></td>
+                </tr>
+
+                <tr>
+                    <td>ColorFabb</td>
+                    <td><a href="#">ColorFabb XT 2.85 mm</a></td>
+                    <td>20 Variants</td>
+                </tr>
+
+                <tr>
+                    <td>ColorFabb</td>
+                    <td><a href="#">ColorFabb XT 1.75 mm</a></td>
+                    <td>20 Variants</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+</body>
+</html>
