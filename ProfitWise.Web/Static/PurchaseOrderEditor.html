@@ -60,7 +60,7 @@
                                 target: "app"
                             },
                             {
-                                label: "Manage Purchase Orders",
+                                label: "Edit CoGS",
                                 href: "/ProfitWise/Static/CoGS.html",
                                 target: "app"
                             },
@@ -266,6 +266,28 @@
         });
 </script>
 
+    <!-- Grid-level scripting -->
+    <script>
+    $(document).ready(function () {
+        $("a.AddLineItemPopUpLauncher")
+            .click(function() {
+                ShopifyApp.Modal.open({
+                    src: '/ProfitWise/Static/POAddLineItemProductSearch.html',
+                        title: 'Add Line Items to Purchase Order',
+                        width: 'small',
+                        height: 300,
+                        buttons: {
+                            primary:
+                                { label: "Done", callback: function(label) { ShopifyApp.Modal.close("Done"); } },
+                        }
+                    },
+                    function(result, data) {
+                        //alert("result: " + result + "   data: " + data);
+                    });
+            });
+
+    });
+    </script>
 </head>
 
 <body>
@@ -278,6 +300,11 @@
                 <div class="row" style="padding-top: 20px; padding-left: 25px; padding-right: 25px;">
 
                     <div class="col-xs-6">
+                        <div style="height: 36px;">
+
+                            <a style="width: 200px;" href="PurchaseOrderManager.html"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Purchase Orders</a>
+                        </div>
+
                         <form class="form-horizontal">
                             <div class="form-group row">
                                 <label for="PONumber" class="col-xs-3 control-label" style="text-align: left;">PO Number</label>
@@ -299,7 +326,7 @@
                                         </div>
                                         <input type="text" id="Date" style="width: 150px;" class="form-control" placeholder="Date">
                                     </div>
-                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -325,7 +352,7 @@
 
                         <div style="height: 25px;"></div>
 
-                        <a style="width: 140px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-plus"></i> &nbsp;&nbsp;Add Line Items</a>
+                        <a style="width: 140px;" class="AddLineItemPopUpLauncher form-control btn btn-default" href="#"><i class="glyphicon glyphicon-plus"></i> &nbsp;&nbsp;Add Line Items</a>
 
                     </div>
                 </div>

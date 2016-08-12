@@ -95,28 +95,7 @@
     });
 </script>
 
-<!-- Grid-level scripting -->
-<script>
-    $(document).ready(function () {
-        $("a.AddLineItemPopUpLauncher")
-            .click(function() {
-                ShopifyApp.Modal.open({
-                    src: '/ProfitWise/Static/POAddLineItemProductSearch.html',
-                        title: 'Add Line Items to Purchase Order',
-                        width: 'small',
-                        height: 300,
-                        buttons: {
-                            primary:
-                                { label: "Done", callback: function(label) { ShopifyApp.Modal.close("Done"); } },
-                        }
-                    },
-                    function(result, data) {
-                        //alert("result: " + result + "   data: " + data);
-                    });
-            });
 
-    });
-</script>
 
 
 <style>
@@ -233,32 +212,108 @@
     });
 </script>
 
+<!-- Grid-level scripting -->
+<script>
+    $(document)
+        .ready(function() {
+            $("a.EditVariantDetail")
+                .click(function() {
+                    ShopifyApp.Modal.open({
+                            src: '/ProfitWise/Static/EditVariantCogsDetail.html',
+                            title: 'Edit Variant CoGS Detail',
+                            width: 'large',
+                            height: 325,
+                            buttons: {
+                                primary:
+                                { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
+                                secondary: [
+                                    { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
+                                ]
+                            }
+                        },
+                        function(result, data) {
+                            alert("result: " + result + "   data: " + data);
+                        });
+                });
+        });
+
+    var initializeCurrencyPopOver = function () {
+        var content = $("#currency-popover-content").html();
+
+        $('.currency-popover-launcher')
+            .popover({
+                html: true,
+                content: content,
+                placement: "bottom",
+                trigger: 'manual',
+
+            });
+    };
+
+    $(document).ready(
+        function () {
+            initializeCurrencyPopOver();
+
+            var hideAllPopovers = function(callersPopOver) {
+                $('.popover-marker')
+                    .each(function() {
+                        if (this != callersPopOver) {
+                            $(this).popover('hide');
+                        }
+                    });
+            };
+
+            $('.popover-marker')
+                .on('click',
+                    function(e) {
+                        // if any other popovers are visible, hide them
+                        hideAllPopovers(this);
+
+                        $(this).popover('show');
+
+                        // handle clicking on the popover itself
+                        $('.popover')
+                            .off('click')
+                            .on('click',
+                                function(e) {
+                                    e.stopPropagation();
+                                    // prevent event for bubbling up => will not get caught with document.onclick
+                                });
+
+                        e.stopPropagation();
+                    });
+
+            $(document)
+                .on('click',
+                    function(e) {
+                        hideAllPopovers();
+                    });
+
+        });
+</script>
+
 <div id="fixed-positioning-container" style="position: fixed; width: 100%; top: 0; padding-left: 20px; padding-right: 20px; z-index: 100;">
     <div id="top-header-sleeve" style="position: relative; width: 100%; height: 224px;">
 
         <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
         <div id="top-header" style="position: absolute; min-width: 800px; width: 100%; background-color: #FFF; border-top: 20px rgb(235, 238, 240) solid; height: 100%;">
 
-            <div class="row" style="position: absolute; margin: 0; padding-left: 25px; padding-right: 25px; width: 100%;">
-                <div class="col-xs-12" style="padding: 0;">
+            <div class="row" style="position: absolute; margin: 0; padding-top: 20px; padding-left: 25px; padding-right: 25px; width: 100%;">
+                <div class="col-xs-6" style="padding: 0;">
+                    <a style="width: 200px;" href="CoGS.html"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Products</a>
                     <h3 style="font-weight: 700; margin-bottom: 3px;">3D Universe 2.85 mm PLA Filament</h3>
                     <div style="font-size: 0.85em;">18 Variants</div>
                     <div style="height: 20px;"></div>
                 </div>
 
-                <div class="col-xs-6" style="padding: 0;">
-                    <a style="width: 200px;" class="form-control btn btn-sample" href="CoGS.html"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Products</a>
-                </div>
                 <div class="col-xs-6" style="text-align: right; padding: 0;">
-                    <a style="width: 200px;" class="AddLineItemPopUpLauncher form-control btn btn-default" href="#"><i class="glyphicon glyphicon-plus"></i> &nbsp;&nbsp;Add Line Item</a>
-                    
-                    <a style="width: 200px;" class="form-control btn btn-default" href="CoGS.html"><i class="glyphicon glyphicon-th-list"></i> &nbsp;&nbsp;Bulk Edit CoGS</a>
+                    <a style="width: 200px;" class="form-control btn btn-default" href="CoGS.html"><i class="glyphicon glyphicon-th-list"></i> &nbsp;&nbsp;Bulk Edit CoGS</a>                    
                 </div>
             </div>
 
             <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
             <div style="position: absolute; padding-left: 25px; padding-right: 25px; top: 129px;">
-                <table class="table" id="heading">
+                <table class="table" id="heading" style="margin-bottom: 0px;">
                     <thead>
                     <tr>
                         <th>Title <i class="glyphicon glyphicon-triangle-bottom"></i></th>
@@ -280,8 +335,20 @@
 
 <div class="container" style="margin:0; width:100%; padding-left: 20px; padding-right: 20px;">    
     <div style="position:relative; min-width: 800px; margin-top:223px; background-color: #FFF;  padding-left: 25px; padding-right: 25px;">
-	
-	<table id="cogs" class="table" style="width:100%; height:100%; margin:0;">
+
+        <div id="currency-popover-content" style="display: none;">
+            <div class="input-group">
+                <select class="form-control" style="float: none; width: 200px;">
+                    <option value="volvo">USD - U.S. Dollars</option>
+                    <option value="volvo">CAD - Canadian Dollars</option>
+                    <option value="volvo">EUR - Euros</option>
+                    <option value="volvo">GBP - British Pounds</option>
+                    <option value="volvo">AUS - Australian Dollars</option>
+                </select>
+            </div>
+        </div>
+
+        <table id="cogs" class="table" style="width:100%; height:100%; margin:0;">
 		<tbody>
 			<tr>
 				<td>White</td>
@@ -289,12 +356,12 @@
 			    <td>94</td>
 				<td>$34.00</td>
 			    <td>
-                    <div class="input-group">
-                        <div class="input-group-addon">$</div>
+			        <div class="input-group">
+                        <div class="input-group-addon currency-popover-launcher popover-marker" rel="popover">$</div>
                         <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
                     </div>
 			    </td>
-                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><a href="#" class="EditVariantDetail">Edit</a> | <a href="#">Delete</a></td>
 				<td><input type="checkbox" /></td>
                 <td><input type="checkbox" /></td>
 			</tr>
@@ -310,7 +377,7 @@
                         <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
                     </div>
                 </td>
-                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><a href="#" class="EditVariantDetail">Edit</a> | <a href="#">Delete</a></td>
                 <td><input type="checkbox" /></td>
                 <td><input type="checkbox" /></td>
             </tr>
@@ -326,7 +393,7 @@
                         <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
                     </div>
                 </td>
-                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><a href="#" class="EditVariantDetail">Edit</a> | <a href="#">Delete</a></td>
                 <td><input type="checkbox" /></td>
                 <td><input type="checkbox" /></td>
             </tr>
@@ -342,7 +409,7 @@
                         <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
                     </div>
                 </td>
-                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><a href="#" class="EditVariantDetail">Edit</a> | <a href="#">Delete</a></td>
                 <td><input type="checkbox" /></td>
                 <td><input type="checkbox" /></td>
             </tr>
@@ -358,7 +425,7 @@
                         <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
                     </div>
                 </td>
-                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><a href="#" class="EditVariantDetail">Edit</a> | <a href="#">Delete</a></td>
                 <td><input type="checkbox" /></td>
                 <td><input type="checkbox" /></td>
                 </tr>
@@ -374,7 +441,7 @@
                         <input type="text" value="20.00" class="form-control" placeholder="Enter new amount" />
                     </div>
                 </td>
-                <td><a href="#">Edit</a> | <a href="#">Delete</a></td>
+                <td><a href="#" class="EditVariantDetail">Edit</a> | <a href="#">Delete</a></td>
                 <td><input type="checkbox" /></td>
                 <td><input type="checkbox" /></td>
             </tr>
