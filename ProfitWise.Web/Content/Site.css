@@ -1,24 +1,62 @@
-﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+﻿html, body {
+    font-family: 'Open Sans', sans-serif;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    background-color: rgb(235, 238, 240);
+    font-size: 15px;
+    color: #555;
 }
 
-/* Set padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+input[type='text'] {
+    width: 100px;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
-.dl-horizontal dt {
-    white-space: normal;
-}
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+
+/** Bootstrap customizations **/
+ .btn-sample { 
+         color: #FFFFFF; 
+         background-color: #329CDA; 
+         border-color: #329CDA; 
+     } 
+ 
+.btn-sample:hover, 
+.btn-sample:focus, 
+.btn-sample:active, 
+.btn-sample.active, 
+.open .dropdown-toggle.btn-sample { 
+    color: #FFFFFF; 
+    background-color: #26729E; 
+    border-color: #329CDA; 
+} 
+ 
+.btn-sample:active, 
+.btn-sample.active, 
+.open .dropdown-toggle.btn-sample { 
+    background-image: none; 
+} 
+ 
+.btn-sample.disabled, 
+.btn-sample[disabled], 
+fieldset[disabled] .btn-sample, 
+.btn-sample.disabled:hover, 
+.btn-sample[disabled]:hover, 
+fieldset[disabled] .btn-sample:hover, 
+.btn-sample.disabled:focus, 
+.btn-sample[disabled]:focus, 
+fieldset[disabled] .btn-sample:focus, 
+.btn-sample.disabled:active, 
+.btn-sample[disabled]:active, 
+fieldset[disabled] .btn-sample:active, 
+.btn-sample.disabled.active, 
+.btn-sample[disabled].active, 
+fieldset[disabled] .btn-sample.active { 
+    background-color: #329CDA; 
+    border-color: #329CDA; 
+} 
+ 
+.btn-sample .badge { 
+    color: #329CDA; 
+    background-color: #FFFFFF; 
 }

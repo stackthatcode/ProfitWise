@@ -7,7 +7,6 @@ namespace ProfitWise.Web.Controllers
     [Authorize(Roles = "ADMIN, USER")]
     public class UserMainController : Controller
     {
-        [FriendlyName(FriendlyName = "Dashboard")]
         public ActionResult Dashboard()
         {
             var model = this.UserModelFactory();
@@ -24,11 +23,16 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
-        [FriendlyName(FriendlyName = "Edit Cost of Goods Sold")]
+        public ActionResult EditProductCoGS()
+        {
+            return View();
+        }
+
         public ActionResult CoGS()
         {
             return View();
         }
+
 
         public ActionResult Goals()
         {

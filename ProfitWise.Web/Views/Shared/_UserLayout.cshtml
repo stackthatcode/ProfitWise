@@ -1,119 +1,40 @@
 ﻿@model ProfitWise.Web.Models.UserModelBase
 
 @using OAuthSandbox.Attributes
-@using ProfitWise.Web.Attributes
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    <title>@Model.FullyBrandedPageTitle</title>
+
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+
+    <!-- TODO - copy to our code repo -->
+    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
     <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' rel='stylesheet' type='text/css'>
 
+    @Scripts.Render("~/Scripts/ProfitWiseFunctions")
+    @Scripts.Render("~/Scripts/ProfitWiseShopify")
 
-    <script type="text/javascript">
-        ShopifyApp.init({
-            apiKey: '@Model.ShopifyApiKey',
-            shopOrigin: 'https://@Model.UserBrief.Domain'
-        });
-
-        ShopifyApp.ready(function() {
-            ShopifyApp.Bar.initialize({
-                title: '@Model.PageTitle',
-                buttons: {
-                    secondary: [
-                        {
-                            label: "CoGS Sandbox",
-                            href: "/ProfitWise/Static/CoGS.html",
-                            target: "app",
-                        },
-
-                        // Dropdown example
-                        {
-                            label: "Navigate to...",
-                            type: "dropdown",
-                            links: [
-                                 {
-                                     label: "Dashboard",
-                                     href: "@Url.Action("Dashboard", "UserMain")",
-                                     target: "app"
-                                 },
-                                 {
-                                     label: "Reports",
-                                     href: "@Url.Action("Reports", "UserMain")",
-                                     target: "app"
-                                 },
-                                 {
-                                     label: "Edit Preferences",
-                                     href: "@Url.Action("Preferences", "UserMain")",
-                                     target: "app"
-                                 },
-                                 {
-                                     label: "Edit Product CoGS",
-                                    href: "/ProfitWise/Static/CoGS.html",
-                                     target: "app"
-                                 },
-                                 {
-                                     label: "Manage Purchase Orders",
-                                     href: "/ProfitWise/Static/PurchaseOrderManager.html",
-                                     target: "app"
-                                 },
-                                 {
-                                     label: "Edit Goals",
-                                     href: "@Url.Action("Goals", "UserMain")",
-                                     target: "app"
-                                 },
-                                 {
-                                     label: "Product Consolidation",
-                                     href: "@Url.Action("Products", "UserMain")",
-                                     target: "app"
-                                 },
-                            ]
-                        },
-                         {
-                             label: "Support",
-                             type: "dropdown",
-                             links: [
-                                 {
-                                     label: "About ProfitWise",
-                                     href: "@Url.Action("About", "UserAuxiliary")",
-                                     target: "app"
-                                },
-                                {
-                                    label: "Contact Us",
-                                    href: "@Url.Action("Contact", "UserAuxiliary")",
-                                    target: "app"
-                                }
-                            ]
-                        },
-                    ]
-                }
-            });
-
-            ShopifyApp.Bar.loadingOff();
-        });
-
+    <script>
+        
 
     </script>
-
 </head>
 
 <body>
 <div class="container body-content">
-    <p>Hello, @HttpContext.Current.RetreiveUserBriefFromContext().Email</p>
-    <p>Shop Name = @HttpContext.Current.RetreiveUserBriefFromContext().ShopName</p>
+<!--<p>Hello, @HttpContext.Current.RetreiveUserBriefFromContext().Email</p>
+    <p>Shop Name = @HttpContext.Current.RetreiveUserBriefFromContext().ShopName</p>-->
 
     @RenderBody()
-    <hr/>
-    <footer>
-        <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-    </footer>
 </div>
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
 </body>
 </html>
