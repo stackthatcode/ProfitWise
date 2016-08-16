@@ -366,6 +366,8 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+    <Content Include="Views\UserMain\_PagingWidget.cshtml" />
+    <Content Include="Views\UserMain\_ProductFilterWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">

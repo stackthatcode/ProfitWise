@@ -1,0 +1,71 @@
+﻿<!-- Paging Widget - TODO: move to separate file -->
+<script type="text/html" id="Paging-Widget">
+    <div id="pagination-popover-content" style="display: none;">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Jump to page number...">
+            <span class="input-group-btn"><button class="btn btn-primary" type="button">Go!</button></span>
+        </div>
+    </div>
+
+    <div class="pull-right" style="margin-left: 15px;">
+        <nav aria-label="Page navigation" class="pull-right">
+            <ul class="pagination">
+                <li>
+                    <a href="#" aria-label="First">
+                        <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" aria-label="Backward">
+                        <span><i class="glyphicon glyphicon-step-backward"></i>&nbsp;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="pagination-popover-launcher" class="popover-marker" rel="popover">Page 3 of 20</a>
+                </li>
+                <li>
+                    <a href="#" aria-label="Forward">
+                        <span><i class="glyphicon glyphicon-step-forward"></i>&nbsp;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" aria-label="Last">
+                        <span><i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div style="float: right; padding-top: 20px;">
+        <div class="input-group pull-right;" style="width: 175px;">
+
+            <select class="form-control">
+                <option value="volvo">25</option>
+                <option value="saab">50</option>
+                <option value="mercedes">100</option>
+                <option value="audi">250</option>
+            </select>
+            <span class="input-group-addon" id="basic-addon2">per page</span>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    /** Must call this function on KO afterRender **/
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.pagingWidgetInitialize = function() {
+        ProfitWiseFunctions.popOverBehaviorInit(".popover-marker");
+
+        var content = $("#pagination-popover-content").html();
+
+        $('#pagination-popover-launcher')
+            .popover({
+                html: true,
+                content: content,
+                placement: "bottom",
+                trigger: 'manual'
+            });
+    }
+</script>
+

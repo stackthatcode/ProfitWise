@@ -6,16 +6,6 @@
 
 
 <style>
-    html, body {
-        font-family: 'Open Sans', sans-serif;
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        background-color: rgb(235, 238, 240);
-        font-size: 15px;
-        color: #555;
-    }
-
     table.table td {
         height: 70px !important;
         font-size: 14px;
@@ -66,240 +56,181 @@
     }
 </style>
 
+<!-- KnockoutJS Templates -->
+@Html.Partial("_PagingWidget")
+@Html.Partial("_ProductFilterWidget")
+@Html.Partial("_PageFooter")
 
+<script type="text/html" id="Page-Header">
+    <div id="fixed-positioning-container">
+        <div id="top-header-sleeve" style="height: 210px;">
 
-<div id="fixed-positioning-container" style="position: fixed; width: 100%; top: 0; padding-left: 20px; padding-right: 20px; z-index: 100;">
-    <div id="top-header-sleeve" style="position: relative; width: 100%; height: 210px;">
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div id="top-header">
 
-        <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-        <div id="top-header" style="position: absolute; min-width: 800px; width: 100%; background-color: #FFF; border-top: 20px rgb(235, 238, 240) solid; height: 100%;">
+                <div class="row" style="padding-left: 25px; padding-right: 25px;">
 
-            <div class="row" style="padding-left: 25px; padding-right: 25px;">
-
-                <!-- Filtering Widget -->
-                <div class="col-md-5" style="padding-top: 20px;">
-                    <div class="pull-left;">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-btn">
-                                    <a id="filter-popover-launcher" type="button" rel="popover" class="popover-marker btn btn-default">
-                                        Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
-                                    </a>
-                                </div>
-
-                                <input type="text" class="form-control" placeholder="Enter product titles or SKU's"/>
-                            </div>
+                    <!-- Filtering Widget -->
+                    <div class="col-md-5" style="padding-top: 20px;">
+                        <div class="pull-left;" 
+                             data-bind="template: { name: 'Product-Filter', afterRender: ProfitWiseWidgets.productFilterWidgetInitialize }">
                         </div>
+                    </div>
 
-                        <div id="filter-popover-content" style="display: none;">
-                            <div style="width: 200px; padding-bottom: 15px; height: 100%;">
-                                <p>Show all products where:</p>
-
-                                <select class="form-control" style="float: none;">
-                                    <option value="volvo">Select a filter...</option>
-                                    <option value="volvo">Product type</option>
-                                    <option value="saab">Product vendor</option>
-                                    <option value="mercedes">Tagged with</option>
-                                    <option value="mercedes">Products that are missing CoGS &nbsp;</option>
-                                </select>
-
-                                <div style="height: 10px;"></div>
-
-                                <input type="text" class="form-control" style="float: none;" placeholder="Enter value"/>
-
-                                <div style="height: 10px;"></div>
-
-                                <input type="button" class="btn btn-small btn-default" value="Add filter"/>
-                            </div>
+                    <!-- Paging Widget -->
+                    <div class="col-md-7">
+                        <div style="min-width: 500px;" 
+                             data-bind="template: { name: 'Paging-Widget', afterRender: ProfitWiseWidgets.pagingWidgetInitialize }">
                         </div>
                     </div>
                 </div>
 
-                <!-- Paging Widget -->
-                <div class="col-md-7">
-                    <div style="min-width: 500px;">
-                        <div id="pagination-popover-content" style="display: none;">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Jump to page number...">
-                                <span class="input-group-btn"><button class="btn btn-primary" type="button">Go!</button></span>
-                            </div>
-                        </div>
-
-                        <div class="pull-right" style="margin-left: 15px;">
-                            <nav aria-label="Page navigation" class="pull-right">
-                                <ul class="pagination">
-                                    <li>
-                                        <a href="#" aria-label="First">
-                                            <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" aria-label="Backward">
-                                            <span><i class="glyphicon glyphicon-step-backward"></i>&nbsp;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" id="pagination-popover-launcher" class="popover-marker" rel="popover">Page 3 of 20</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" aria-label="Forward">
-                                            <span><i class="glyphicon glyphicon-step-forward"></i>&nbsp;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" aria-label="Last">
-                                            <span><i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-
-                        <div style="float: right; padding-top: 20px;">
-                            <div class="input-group pull-right;" style="width: 175px;">
-
-                                <select class="form-control">
-                                    <option value="volvo">25</option>
-                                    <option value="saab">50</option>
-                                    <option value="mercedes">100</option>
-                                    <option value="audi">250</option>
-                                </select>
-                                <span class="input-group-addon" id="basic-addon2">per page</span>
-                            </div>
-                        </div>
+                <div class="visible-md visible-lg row header-horz-padding">
+                    <!-- Create Purchase Order Button -->
+                    <div class="col-xs-12" style="text-align: right;">
+                        <a style="width: 225px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-copy"></i> &nbsp;&nbsp;Create Purchase Order</a>
                     </div>
                 </div>
-            </div>
 
-            <div class="visible-md visible-lg row" style="padding-left: 25px; padding-right: 25px;">
-                <!-- Create Purchase Order Button -->
-                <div class="col-xs-12" style="text-align: right;">
-                    <a style="width: 225px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-copy"></i> &nbsp;&nbsp;Create Purchase Order</a>
+                <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
+                <div class="header-horz-padding" style="position: absolute; top: 129px;">
+                    <table class="table" id="heading">
+                        <thead>
+                            <tr>
+                                <th>Vendor <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Product <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th>Inventory <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th style="text-align: center;">Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
+                                <th style="text-align: center;">CoGS</th>
+                                <th style="text-align: center;">Stocked Directly</th>
+                                <th style="text-align: center;">Exclude</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
-            </div>
-
-
-            <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
-            <div style="position: absolute; padding-left: 25px; padding-right: 25px; top: 129px;">
-                <table class="table" id="heading">
-                    <thead>
-                        <tr>
-                            <th>Vendor <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                            <th>Product <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                            <th>Inventory <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                            <th style="text-align: center;">Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                            <th style="text-align: center;">CoGS</th>
-                            <th style="text-align: center;">Stocked Directly</th>
-                            <th style="text-align: center;">Exclude</th>
-                        </tr>
-                    </thead>
-                </table>
             </div>
         </div>
     </div>
-</div>
+</script>
 
-<div class="container" style="margin: 0; width: 100%; padding-left: 20px; padding-right: 20px;">
-    <div style="position: relative; min-width: 800px; margin-top: 209px; background-color: #FFF; padding-left: 25px; padding-right: 25px;">
+<script type="text/html" id="Main-Template">
+    <div data-bind="template: { name: 'Page-Header'}"></div>
 
-        <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
-            <tbody>
-            <tr>
-                <td>3D Universe</td>
-                <td><a href="CoGSProduct.html">3D Universe PLA 2.85 mm</a></td>
-                <td>175 in stock<br/>(12 variants)</td>
-                <td>$34</td>
-                <td><a href="#">$18</a></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
+    <div class="container" style="margin: 0; width: 100%; padding-left: 20px; padding-right: 20px;">
+        <div style="position: relative; min-width: 800px; margin-top: 209px; background-color: #FFF; padding-left: 25px; padding-right: 25px;">
+            <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
+                <tbody>
+                    <tr>
+                        <td>3D Universe</td>
+                        <td><a href="CoGSProduct.html">3D Universe PLA 2.85 mm</a></td>
+                        <td>175 in stock<br />(12 variants)</td>
+                        <td>$34</td>
+                        <td><a href="#" data-bind="click: LaunchBulkEditPopup">$18</a></td>
+                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" /></td>
+                    </tr>
 
-            <tr>
-                <td>3D Universe</td>
-                <td><a href="CoGSProduct.html">3D Universe ABS 2.85 mm</a></td>
-                <td>175 in stock<br/>(12 variants)</td>
-                <td>$3,400.00 to $3,799.99</td>
-                <td><a class="EditCogsPopUpLauncher" href="#"><strong>$1,800.00</strong> to <strong>$2,400.00</strong></a><br/><span style="font-size: 0.8em">(Averages)</span></td>
-                <td><a href="CoGSProduct.html">Some</a> </td>
-                <td><input type="checkbox"/></td>
-            </tr>
+                    <tr>
+                        <td>3D Universe</td>
+                        <td><a href="CoGSProduct.html">3D Universe ABS 2.85 mm</a></td>
+                        <td>175 in stock<br />(12 variants)</td>
+                        <td>$3,400.00 to $3,799.99</td>
+                        <td><a class="EditCogsPopUpLauncher" href="#"><strong>$1,800.00</strong> to <strong>$2,400.00</strong></a><br /><span style="font-size: 0.8em">(Averages)</span></td>
+                        <td><a href="CoGSProduct.html">Some</a> </td>
+                        <td><input type="checkbox" /></td>
+                    </tr>
 
-            <tr>
-                <td>3D Universe</td>
-                <td><a href="CoGSProduct.html">3D Universe PLA 1.75 mm</a></td>
-                <td>175 in stock for 12 variants</td>
-                <td>$34</td>
-                <td><a href="#">$18</a></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
+                    <tr>
+                        <td>3D Universe</td>
+                        <td><a href="CoGSProduct.html">3D Universe PLA 1.75 mm</a></td>
+                        <td>175 in stock for 12 variants</td>
+                        <td>$34</td>
+                        <td><a href="#">$18</a></td>
+                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" /></td>
+                    </tr>
 
-            <tr>
-                <td>3D Universe</td>
-                <td><a href="CoGSProduct.html">3D Universe ABS 1.75 mm</a></td>
-                <td>78 in stock for 12 variants</td>
-                <td>$34</td>
-                <td><a href="#">$18</a></td>
-                <td><input type="checkbox"/></td>
-                <td><a href="CoGSProduct.html">Some</a></td>
-            </tr>
+                    <tr>
+                        <td>3D Universe</td>
+                        <td><a href="CoGSProduct.html">3D Universe ABS 1.75 mm</a></td>
+                        <td>78 in stock for 12 variants</td>
+                        <td>$34</td>
+                        <td><a href="#">$18</a></td>
+                        <td><input type="checkbox" /></td>
+                        <td><a href="CoGSProduct.html">Some</a></td>
+                    </tr>
 
-            <tr>
-                <td>ColorFabb</td>
-                <td><a href="#">ColorFabb PLA/PHA 2.85 mm</a></td>
-                <td>175 in stock for 12 variants</td>
-                <td>$34</td>
-                <td><a href="#">$18</a></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
+                    <tr>
+                        <td>ColorFabb</td>
+                        <td><a href="#">ColorFabb PLA/PHA 2.85 mm</a></td>
+                        <td>175 in stock for 12 variants</td>
+                        <td>$34</td>
+                        <td><a href="#">$18</a></td>
+                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" /></td>
+                    </tr>
 
-            <tr>
-                <td>ColorFabb</td>
-                <td><a href="#">ColorFabb PLA/PHA 1.75 mm</a></td>
-                <td>200 in stock for 16 variants</td>
-                <td>$34</td>
-                <td><a href="#">$18 to $22</a></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
+                    <tr>
+                        <td>ColorFabb</td>
+                        <td><a href="#">ColorFabb PLA/PHA 1.75 mm</a></td>
+                        <td>200 in stock for 16 variants</td>
+                        <td>$34</td>
+                        <td><a href="#">$18 to $22</a></td>
+                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" /></td>
+                    </tr>
 
-            <tr>
-                <td>ColorFabb</td>
-                <td><a href="#">ColorFabb XT 2.85 mm</a></td>
-                <td>88 in stock for 3 variants</td>
-                <td>$34</td>
-                <td><a href="#">$18 to $22</a></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
+                    <tr>
+                        <td>ColorFabb</td>
+                        <td><a href="#">ColorFabb XT 2.85 mm</a></td>
+                        <td>88 in stock for 3 variants</td>
+                        <td>$34</td>
+                        <td><a href="#">$18 to $22</a></td>
+                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" /></td>
+                    </tr>
 
-            <tr>
-                <td>ColorFabb</td>
-                <td><a href="#">ColorFabb XT 1.75 mm</a></td>
-                <td>82 in stock for 3 variants</td>
-                <td>$34</td>
-                <td><a href="#">$15 to $20</a></td>
-                <td><input type="checkbox"/></td>
-                <td><input type="checkbox"/></td>
-            </tr>
-            </tbody>
-        </table>
+                    <tr>
+                        <td>ColorFabb</td>
+                        <td><a href="#">ColorFabb XT 1.75 mm</a></td>
+                        <td>82 in stock for 3 variants</td>
+                        <td>$34</td>
+                        <td><a href="#">$15 to $20</a></td>
+                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <div data-bind="template: { name: 'Page-Footer'}"></div>
+</script>
+
+<!-- KnockoutJS Root View --><!-- data: $root.EndlessGlider, -->
+<div data-bind="template: { name: 'Main-Template' }">
 </div>
 
-<div style="width: 100%; margin-top: 25px; margin-bottom: 25px; text-align: center;">
-    <p style="color: #999;"><b>ProfitWise</b> is a product of Push Automated Commerce</p>
-</div>
 
 <script>
-    $(document)
-        .ready(function() {
-            tableHeaderWidthInit("table#product-cogs tbody tr td", "table#heading thead tr th");
-            fixedHeaderScrollingInit("#top-header");
-            initializeBulkEditPopUp("a.EditCogsPopUpLauncher");
-        });
+    var ProfitWise = ProfitWise || {};
 
-    //    $(document).ready(function() { alert('document is now ready!'); });
+    ProfitWise.EditCogsModel = function () {
+        var self = this;
+        self.Test = ko.observable("123 Can You See?");
+        
+        self.LaunchBulkEditPopup = function() {
+            ProfitWiseFunctions.launchBulkEditPopUp();
+        };
+    };
+
+    $(document)
+        .ready(function () {
+            ProfitWiseFunctions.tableHeaderWidthInit("table#product-cogs tbody tr td", "table#heading thead tr th");
+            ProfitWiseFunctions.fixedHeaderScrollingInit("#top-header");
+
+            var model = new ProfitWise.EditCogsModel();
+            ko.applyBindings(model);
+        });
 </script>
 

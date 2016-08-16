@@ -1,7 +1,10 @@
 ﻿
+var ProfitWiseFunctions = ProfitWiseFunctions || {};
+
+
 // movingElementSelector == '#top-header'
 
-var fixedHeaderScrollingInit = function(movingElementSelector) {
+ProfitWiseFunctions.fixedHeaderScrollingInit = function (movingElementSelector) {
     $(window)
         .scroll(function() {
             $(movingElementSelector).css('left', -($(this).scrollLeft()) + "px");
@@ -12,7 +15,7 @@ var fixedHeaderScrollingInit = function(movingElementSelector) {
 // var bodyColumnCells = $("table#cogs tbody tr td");
 // var headerColumnHeaders = $("table#heading thead tr th");
 
-var tableHeaderWidthInit = function(bodyCellSelector, headerCellSelector) {
+ProfitWiseFunctions.tableHeaderWidthInit = function (bodyCellSelector, headerCellSelector) {
     var columnFixed = function () {
         var bodyColumnCells = $(bodyCellSelector);
         var headerColumnHeaders = $(headerCellSelector);
@@ -35,7 +38,9 @@ var tableHeaderWidthInit = function(bodyCellSelector, headerCellSelector) {
 
 // popOverSelector == .popover-marker
 
-var popOverBehaviorInit = function(popOverSelector) {
+/** Must call this function on KO afterRender **/
+
+ProfitWiseFunctions.popOverBehaviorInit = function (popOverSelector) {
     var hideAllPopovers = function (callersPopOver) {
         $(popOverSelector).each(function () {
             if (this != callersPopOver) {
@@ -66,26 +71,22 @@ var popOverBehaviorInit = function(popOverSelector) {
 
 
 
-// a.EditCogsPopUpLauncher
-var initializeBulkEditPopUp = function(selector) {
-    $(selector)
-        .click(function() {
-            ShopifyApp.Modal.open({
-                src: '/ProfitWise/Static/SimpleCogsEditor.html',
-                title: 'Bulk Edit all Variant CoGS',
-                width: 'small',
-                height: 390,
-                buttons: {
-                    primary:
-                        { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
-                    secondary: [
-                        { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
-                    ]
-                }
-            },
-            function(result, data) {
-                // alert("result: " + result + "   data: " + data);
-            });
-        });
+ProfitWiseFunctions.launchBulkEditPopUp = function () {
+    ShopifyApp.Modal.open({
+        src: '/ProfitWise/Static/SimpleCogsEditor.html',
+        title: 'Bulk Edit all Variant CoGS',
+        width: 'small',
+        height: 390,
+        buttons: {
+            primary:
+                { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
+            secondary: [
+                { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
+            ]
+        }
+    },
+    function(result, data) {
+        // alert("result: " + result + "   data: " + data);
+    });
     }
 
