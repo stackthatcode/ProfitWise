@@ -40,6 +40,11 @@ var shopifyInitialization = function (apiKey, shopOrigin, title) {
                                 target: "app"
                             },
                             {
+                                label: "Edit Product CoGS (legacy)",
+                                href: "/ProfitWise/Static/CoGS.html",
+                                target: "app"
+                            },
+                            {
                                 label: "Edit Product CoGS",
                                 href: "/ProfitWise/UserMain/EditProductCogs",
                                 target: "app"

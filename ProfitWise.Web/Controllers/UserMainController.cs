@@ -23,14 +23,16 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
-        public ActionResult EditProductCoGS()
+        public ActionResult EditProductCogs()
         {
-            return View();
+            var model = this.UserModelFactory();
+            return View(model);
         }
 
         public ActionResult CoGS()
         {
-            return View();
+            var model = this.UserModelFactory();
+            return View(model);
         }
 
 

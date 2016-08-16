@@ -20,21 +20,18 @@
     <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' rel='stylesheet' type='text/css'>
 
-    @Scripts.Render("~/Scripts/ProfitWiseFunctions")
-    @Scripts.Render("~/Scripts/ProfitWiseShopify")
+    @Scripts.Render("~/Scripts/ProfitWiseFunctions.js")
+    @Scripts.Render("~/Scripts/ProfitWiseShopify.js")
 
     <script>
-        
-
+        shopifyInitialization('@Model.ShopifyApiKey', 'https://@Model.UserBrief.Domain', '@Model.PageTitle');
     </script>
 </head>
 
 <body>
-<div class="container body-content">
-<!--<p>Hello, @HttpContext.Current.RetreiveUserBriefFromContext().Email</p>
+    <!--<p>Hello, @HttpContext.Current.RetreiveUserBriefFromContext().Email</p>
     <p>Shop Name = @HttpContext.Current.RetreiveUserBriefFromContext().ShopName</p>-->
 
     @RenderBody()
-</div>
 </body>
 </html>

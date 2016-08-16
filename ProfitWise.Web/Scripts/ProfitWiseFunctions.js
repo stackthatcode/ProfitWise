@@ -64,3 +64,28 @@ var popOverBehaviorInit = function(popOverSelector) {
     });
 };
 
+
+
+// a.EditCogsPopUpLauncher
+var initializeBulkEditPopUp = function(selector) {
+    $(selector)
+        .click(function() {
+            ShopifyApp.Modal.open({
+                src: '/ProfitWise/Static/SimpleCogsEditor.html',
+                title: 'Bulk Edit all Variant CoGS',
+                width: 'small',
+                height: 390,
+                buttons: {
+                    primary:
+                        { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
+                    secondary: [
+                        { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
+                    ]
+                }
+            },
+            function(result, data) {
+                // alert("result: " + result + "   data: " + data);
+            });
+        });
+    }
+

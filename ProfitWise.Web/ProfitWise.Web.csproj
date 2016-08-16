@@ -355,7 +355,7 @@
     <Content Include="Views\ShopifyAuth\Refresh.cshtml" />
     <Content Include="Views\UserMain\Reports.cshtml" />
     <Content Include="Views\UserMain\Preferences.cshtml" />
-    <Content Include="Views\UserMain\CoGS.cshtml" />
+    <Content Include="Views\UserMain\EditProductCogs.cshtml" />
     <Content Include="Views\UserMain\Goals.cshtml" />
     <Content Include="Views\UserMain\Products.cshtml" />
     <Content Include="Views\UserMain\ShopifyScript.cshtml" />
