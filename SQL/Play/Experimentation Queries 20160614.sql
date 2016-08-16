@@ -8,22 +8,24 @@ SELECT * FROM shop;
 
 /****/
 
-SELECT * FROM shopifyproduct;
+
+SELECT * FROM shopifyproduct LIMIT 5, 10;
 
 SELECT * FROM shopifyvariant WHERE ShopId = 955973;
 
-SELECT * FROM shopifyorderlineitem WHERE PwProductId IS NULL;
+
 
 
 
 
 /****/
+SELECT * FROM shopifyorderlineitem WHERE ShopifyVariantId IS NULL;
 
+SELECT * FROM profitwiseproduct WHERE PwProductId NOT IN ( SELECT PwProductId FROM shopifyVariant ) ORDER BY Name;
 
-SELECT * FROM profitwiseproduct;
+SELECT * FROM shopifyVariant WHERE PwProductId = 363;
 
-
-
+SELECT Sku, COUNT(*) FROM profitwiseproduct GROUP BY Sku ORDER BY Sku;
 
 
 /*SELECT ShopId, PwProductId, */
@@ -34,6 +36,13 @@ SELECT * FROM shopifyorder WHERE ShopifyOrderId = 3431801605;
 
 SELECT * FROM shopifyorderlineitem;
 
+
+
+SELECT * FROM shopifyvariant WHERE ShopifyProductId = 5937334597;
+	
+SELECT * FROM profitwiseproduct WHERE PwProductId = 319;
+
+SELECT * FROM profitwiseproduct;
 
 
 
@@ -58,15 +67,15 @@ AND t2.ShopId = 955973;
 
 
 
-
+/*
 SELECT * FROM profitwisepreferences;
 
-UPDATE profitwisepreferences SET StartingDateForOrders = '2016-01-01';
+UPDATE profitwisepreferences SET StartingDateForOrders = '2014-05-01';
 
 SELECT * FROM profitwisebatchstate;
 
 UPDATE profitwisebatchstate SET OrderDatasetStart = NULL, OrderDatasetEnd = NULL;
-
+*/
 
 
 

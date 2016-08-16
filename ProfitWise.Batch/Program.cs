@@ -29,7 +29,7 @@ namespace ProfitWise.Batch
             try
             {
                 // This is for simulation purposes - in the future, we'll load a list of Users from database
-                var userId = "8c1f61cf-5446-4b06-bd5d-a55f51bb3e69";
+                var userId = "c2e5bb33-0d4c-49c4-8204-09246b23352c";
                 logger.Info("Hello! - Executing InvokeRefreshServices" + Environment.NewLine);
 
                 using (var scope = container.BeginLifetimeScope())

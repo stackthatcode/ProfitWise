@@ -72,7 +72,7 @@
 
                     <!-- Filtering Widget -->
                     <div class="col-md-5" style="padding-top: 20px;">
-                        <div class="pull-left;" 
+                        <div class="pull-left;"
                              data-bind="template: { name: 'Product-Filter', afterRender: ProfitWiseWidgets.productFilterWidgetInitialize }">
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                     <!-- Paging Widget -->
                     <div class="col-md-7">
                         <div style="min-width: 500px;" 
-                             data-bind="template: { name: 'Paging-Widget', afterRender: ProfitWiseWidgets.pagingWidgetInitialize }">
+                             data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel, afterRender: ProfitWiseWidgets.pagingWidgetInitialize }">
                         </div>
                     </div>
                 </div>
@@ -119,86 +119,17 @@
     <div class="container" style="margin: 0; width: 100%; padding-left: 20px; padding-right: 20px;">
         <div style="position: relative; min-width: 800px; margin-top: 209px; background-color: #FFF; padding-left: 25px; padding-right: 25px;">
             <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
-                <tbody>
-                    <tr>
-                        <td>3D Universe</td>
-                        <td><a href="CoGSProduct.html">3D Universe PLA 2.85 mm</a></td>
-                        <td>175 in stock<br />(12 variants)</td>
-                        <td>$34</td>
-                        <td><a href="#" data-bind="click: LaunchBulkEditPopup">$18</a></td>
-                        <td><input type="checkbox" /></td>
-                        <td><input type="checkbox" /></td>
-                    </tr>
-
-                    <tr>
-                        <td>3D Universe</td>
-                        <td><a href="CoGSProduct.html">3D Universe ABS 2.85 mm</a></td>
-                        <td>175 in stock<br />(12 variants)</td>
-                        <td>$3,400.00 to $3,799.99</td>
-                        <td><a class="EditCogsPopUpLauncher" href="#"><strong>$1,800.00</strong> to <strong>$2,400.00</strong></a><br /><span style="font-size: 0.8em">(Averages)</span></td>
-                        <td><a href="CoGSProduct.html">Some</a> </td>
-                        <td><input type="checkbox" /></td>
-                    </tr>
-
-                    <tr>
-                        <td>3D Universe</td>
-                        <td><a href="CoGSProduct.html">3D Universe PLA 1.75 mm</a></td>
-                        <td>175 in stock for 12 variants</td>
-                        <td>$34</td>
-                        <td><a href="#">$18</a></td>
-                        <td><input type="checkbox" /></td>
-                        <td><input type="checkbox" /></td>
-                    </tr>
-
-                    <tr>
-                        <td>3D Universe</td>
-                        <td><a href="CoGSProduct.html">3D Universe ABS 1.75 mm</a></td>
-                        <td>78 in stock for 12 variants</td>
-                        <td>$34</td>
-                        <td><a href="#">$18</a></td>
-                        <td><input type="checkbox" /></td>
-                        <td><a href="CoGSProduct.html">Some</a></td>
-                    </tr>
-
-                    <tr>
-                        <td>ColorFabb</td>
-                        <td><a href="#">ColorFabb PLA/PHA 2.85 mm</a></td>
-                        <td>175 in stock for 12 variants</td>
-                        <td>$34</td>
-                        <td><a href="#">$18</a></td>
-                        <td><input type="checkbox" /></td>
-                        <td><input type="checkbox" /></td>
-                    </tr>
-
-                    <tr>
-                        <td>ColorFabb</td>
-                        <td><a href="#">ColorFabb PLA/PHA 1.75 mm</a></td>
-                        <td>200 in stock for 16 variants</td>
-                        <td>$34</td>
-                        <td><a href="#">$18 to $22</a></td>
-                        <td><input type="checkbox" /></td>
-                        <td><input type="checkbox" /></td>
-                    </tr>
-
-                    <tr>
-                        <td>ColorFabb</td>
-                        <td><a href="#">ColorFabb XT 2.85 mm</a></td>
-                        <td>88 in stock for 3 variants</td>
-                        <td>$34</td>
-                        <td><a href="#">$18 to $22</a></td>
-                        <td><input type="checkbox" /></td>
-                        <td><input type="checkbox" /></td>
-                    </tr>
-
-                    <tr>
-                        <td>ColorFabb</td>
-                        <td><a href="#">ColorFabb XT 1.75 mm</a></td>
-                        <td>82 in stock for 3 variants</td>
-                        <td>$34</td>
-                        <td><a href="#">$15 to $20</a></td>
-                        <td><input type="checkbox" /></td>
-                        <td><input type="checkbox" /></td>
-                    </tr>
+                <tbody data-bind="foreach: $root.CurrentGrid">
+                <tr>
+                    <td data-bind="text: Vendor"></td>
+                    <td><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
+                    <td><span data-bind="text: InventoryCount"></span> in stock<br/>
+                        (<span data-bind="text: VariantCount"></span> variants)</td>
+                    <td data-bind="text: PriceAmount"></td>
+                    <td><a href="#" data-bind="text: CogsAmount, click: $root.LaunchBulkEditPopup"></a></td>
+                    <td><input type="checkbox" /></td>
+                    <td><input type="checkbox" /></td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -217,11 +148,34 @@
 
     ProfitWise.EditCogsModel = function () {
         var self = this;
-        self.Test = ko.observable("123 Can You See?");
-        
+
+        self.CurrentGrid = ko.observableArray();
+        self.PagingModel = new ProfitWiseWidgets.PagingModel();
+
+        self.LoadDataForCurrentPage = function (pageNumber, pageSize) {
+            pageNumber = pageNumber || 1;
+            pageSize = pageSize || Number(self.PagingModel.PageSize());
+
+            // #1 - how many records match that criteria
+            // TODO => invoke external service
+            self.PagingModel.RecordCount(2000);
+
+            // #2 - load only that page of numbers
+            // TODO => invoke external service
+            var data = window.cogsDataService(pageNumber, pageSize);
+            console.log(data);
+
+            self.CurrentGrid.removeAll();
+            self.CurrentGrid(data);
+        };
+
+        self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
+
         self.LaunchBulkEditPopup = function() {
             ProfitWiseFunctions.launchBulkEditPopUp();
         };
+
+        return self;
     };
 
     $(document)
@@ -230,7 +184,45 @@
             ProfitWiseFunctions.fixedHeaderScrollingInit("#top-header");
 
             var model = new ProfitWise.EditCogsModel();
+            model.LoadDataForCurrentPage();
+
             ko.applyBindings(model);
+            window.modeltmp = model;
+
+            // $root
+            // model.CurrentGrid [ 1 to N ]
+            // model.LaunchBulkEditPopup
         });
+</script>
+
+<script>
+    window.cogsDataService = function (pageNumber, pageSize) {
+        console.log('Spill the beans! ' + pageNumber + ' ' + pageSize);
+
+        var output = [];
+        var startRecord = (pageNumber - 1) * pageSize + 1;
+
+        console.log('Pffft.. ' + startRecord + ' ' + pageSize);
+
+        var endRecord = startRecord + pageSize - 1;
+
+        console.log('EndRecord ' + endRecord);
+        
+        
+        for (var count = startRecord; count <= endRecord; count++) {
+            output.push({
+                Vendor: '3D Universe ' + count,
+                ProductTitle: '3D Universe PLA 2.85 mm ' + count,
+                InventoryCount: 175,
+                VariantCount: 12,
+                PriceAmount: 34.00,
+                PriceCurrency: 'USD',
+                CogsAmount: 18.00,
+                CogsCurrency: 'USD',
+            });
+        };
+
+        return output;
+    }
 </script>
 

@@ -11,25 +11,26 @@
         <nav aria-label="Page navigation" class="pull-right">
             <ul class="pagination">
                 <li>
-                    <a href="#" aria-label="First">
+                    <a href="#" aria-label="First" data-bind="click: First">
                         <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" aria-label="Backward">
+                    <a href="#" aria-label="Backward" data-bind="click: Backward">
                         <span><i class="glyphicon glyphicon-step-backward"></i>&nbsp;</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="pagination-popover-launcher" class="popover-marker" rel="popover">Page 3 of 20</a>
+                    <a href="#" id="pagination-popover-launcher" 
+                       class="popover-marker" rel="popover">Page <span data-bind="text: PageNumber"></span> of <span data-bind="text: PageCount"></span></a>
                 </li>
                 <li>
-                    <a href="#" aria-label="Forward">
+                    <a href="#" aria-label="Forward" data-bind="click: Forward">
                         <span><i class="glyphicon glyphicon-step-forward"></i>&nbsp;</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" aria-label="Last">
+                    <a href="#" aria-label="Last" data-bind="click: Last">
                         <span><i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
                     </a>
                 </li>
@@ -40,19 +41,79 @@
     <div style="float: right; padding-top: 20px;">
         <div class="input-group pull-right;" style="width: 175px;">
 
-            <select class="form-control">
-                <option value="volvo">25</option>
-                <option value="saab">50</option>
-                <option value="mercedes">100</option>
-                <option value="audi">250</option>
+            <select class="form-control" data-bind="value: PageSize, event:{ change: PageSizeChanged}">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="250">250</option>
             </select>
+
             <span class="input-group-addon" id="basic-addon2">per page</span>
         </div>
     </div>
 </script>
+
 <script type="text/javascript">
     /** Must call this function on KO afterRender **/
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.PagingModel = function() {
+        var self = this;
+
+        self.RecordCount = ko.observable(0);
+        self.PageNumber = ko.observable(1);
+        self.PageSize = ko.observable(25);
+
+        self.PageSizeChanged = function() {
+            if (self.PageNumber() > self.PageCount()) {
+                self.PageNumber(self.PageCount());
+            }
+            self.InvokeCallbackFunction();
+        }
+
+        // TODO - Add Round up
+        self.PageCount = ko.computed(function() {
+            return self.RecordCount() / self.PageSize();
+        });
+
+        self.Forward = function() {
+            if (self.PageNumber() < self.PageCount()) {
+                self.PageNumber(self.PageNumber() + 1);
+                self.InvokeCallbackFunction();
+            }
+        };
+
+        self.Backward = function() {
+            if (self.PageNumber() > 1) {
+                self.PageNumber(self.PageNumber() - 1);
+                self.InvokeCallbackFunction();
+            }
+        };
+
+        self.First = function() {
+            self.PageNumber(1);
+            self.InvokeCallbackFunction();
+
+        };
+
+        self.Last = function() {
+            self.PageNumber(self.PageCount());
+            self.InvokeCallbackFunction();
+        };
+
+        self.CallbackFunction = function() {
+        };
+
+        self.InvokeCallbackFunction = function() {
+            self.CallbackFunction(Number(self.PageNumber()), Number(self.PageSize()));
+        };
+
+        self.SubscribeCallbackFunction = function(callback) {
+            self.CallbackFunction = callback;
+        };
+
+        return self;
+    };
 
     ProfitWiseWidgets.pagingWidgetInitialize = function() {
         ProfitWiseFunctions.popOverBehaviorInit(".popover-marker");
