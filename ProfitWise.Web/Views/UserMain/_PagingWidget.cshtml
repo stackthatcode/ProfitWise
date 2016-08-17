@@ -1,14 +1,23 @@
-﻿<!-- Paging Widget - TODO: move to separate file -->
-<script type="text/html" id="Paging-Widget">
-    <div id="pagination-popover-content" style="display: none;">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Jump to page number...">
-            <span class="input-group-btn"><button class="btn btn-primary" type="button">Go!</button></span>
-        </div>
-    </div>
+﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
 
+<script type="text/html" id="Paging-Widget-Popover">
+    <!--<div id="pagination-popover-content"> <!-- style="display: none;"-->
+    <div id="pagination-popover" class="input-group">
+        <input type="text" class="form-control jump-to-page-class" placeholder="Jump to page number..." maxlength="5"
+               data-bind="
+                    value: JumpToPageNumericOnly, 
+                    valueUpdate: 'afterkeydown', 
+                    event: { focus: HighlightJumpToPage, keypress: JumpToPageOnEnter }" />
+
+        <span class="input-group-btn">
+            <button class="btn btn-primary" data-bind="click: JumpToPageFunction" type="button">Go!</button>
+        </span>
+    </div>
+</script>
+
+<script type="text/html" id="Paging-Widget">
     <div class="pull-right" style="margin-left: 15px;">
-        <nav aria-label="Page navigation" class="pull-right">
+        <nav aria-label="Page navigation" class="pull-right paging-widget-popover">
             <ul class="pagination">
                 <li>
                     <a href="#" aria-label="First" data-bind="click: First">
@@ -21,8 +30,10 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="pagination-popover-launcher" 
-                       class="popover-marker" rel="popover">Page <span data-bind="text: PageNumber"></span> of <span data-bind="text: PageCount"></span></a>
+                    <a href="#" id="pagination-popover-launcher" rel="popover"
+                       data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Paging-Widget-Popover', data: $data }">
+                        Page <span data-bind="text: PageNumber"></span> of <span data-bind="text: PageCount"></span></a>
+
                 </li>
                 <li>
                     <a href="#" aria-label="Forward" data-bind="click: Forward">
@@ -54,9 +65,18 @@
 </script>
 
 <script type="text/javascript">
-    /** Must call this function on KO afterRender **/
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
+    ProfitWiseWidgets.ClosePagingWidgetJumpToPage = function () {
+        $('div.popover:visible').prev().click();
+    }
+
+    $(document).on("click", function (event) {
+        if ($(event.target).closest(".paging-widget-popover").length == 0) {
+            ProfitWiseWidgets.ClosePagingWidgetJumpToPage();
+        }
+    });
+    
     ProfitWiseWidgets.PagingModel = function() {
         var self = this;
 
@@ -68,10 +88,65 @@
             if (self.PageNumber() > self.PageCount()) {
                 self.PageNumber(self.PageCount());
             }
+            if (self.JumpToPage() > self.PageCount()) {
+                self.JumpToPage(self.PageCount());
+            }
             self.InvokeCallbackFunction();
         }
 
-        // TODO - Add Round up
+        self.JumpToPage = ko.observable(1);
+
+        self.HighlightJumpToPage = function () {
+            $(".jump-to-page-class").select();
+        };
+
+
+        self.JumpToPageNumericOnly = 
+            ko.computed({
+                read: function () {
+                    var output = self.JumpToPage().toFixed(0);
+                    // console.log("Reading to JumpToPage: " + output);
+                    return output;
+                },
+                write: function (value) {
+                    // console.log("Writing to EditUnitPrice: " + value);
+
+                    // Strip out unwanted characters, parse as float, then write the raw data back to the underlying "price" observable
+                    var parsedValue = parseFloat(value.replace(/[^\.\d]/g, ""));
+                    var finalValue = isNaN(parsedValue) ? 1 : parsedValue;
+
+                    if (finalValue > self.PageCount()) {
+                        finalValue = self.PageCount();
+                    }
+
+                    if (finalValue < 1) {
+                        finalValue = 1;
+                    }
+                    console.log("Writing to EditUnitPrice (final): " + finalValue);
+
+                    
+                    self.JumpToPage(finalValue); // Write to underlying storage
+                    self.JumpToPage.notifySubscribers();
+                    self.JumpToPageNumericOnly.notifySubscribers();
+                },
+                owner: self
+            });
+
+        self.JumpToPageOnEnter = function(model, event) {
+            if (event.keyCode == 13) {
+                self.JumpToPageFunction();
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        self.JumpToPageFunction = function() {
+            self.PageNumber(self.JumpToPage());
+            ProfitWiseWidgets.ClosePagingWidgetJumpToPage();
+            self.InvokeCallbackFunction();
+        };
+
         self.PageCount = ko.computed(function() {
             return self.RecordCount() / self.PageSize();
         });
@@ -114,19 +189,5 @@
 
         return self;
     };
-
-    ProfitWiseWidgets.pagingWidgetInitialize = function() {
-        ProfitWiseFunctions.popOverBehaviorInit(".popover-marker");
-
-        var content = $("#pagination-popover-content").html();
-
-        $('#pagination-popover-launcher')
-            .popover({
-                html: true,
-                content: content,
-                placement: "bottom",
-                trigger: 'manual'
-            });
-    }
 </script>
 

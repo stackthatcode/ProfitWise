@@ -79,8 +79,7 @@
 
                     <!-- Paging Widget -->
                     <div class="col-md-7">
-                        <div style="min-width: 500px;" 
-                             data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel, afterRender: ProfitWiseWidgets.pagingWidgetInitialize }">
+                        <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                         </div>
                     </div>
                 </div>
@@ -163,7 +162,6 @@
             // #2 - load only that page of numbers
             // TODO => invoke external service
             var data = window.cogsDataService(pageNumber, pageSize);
-            console.log(data);
 
             self.CurrentGrid.removeAll();
             self.CurrentGrid(data);
@@ -197,17 +195,9 @@
 
 <script>
     window.cogsDataService = function (pageNumber, pageSize) {
-        console.log('Spill the beans! ' + pageNumber + ' ' + pageSize);
-
         var output = [];
         var startRecord = (pageNumber - 1) * pageSize + 1;
-
-        console.log('Pffft.. ' + startRecord + ' ' + pageSize);
-
         var endRecord = startRecord + pageSize - 1;
-
-        console.log('EndRecord ' + endRecord);
-        
         
         for (var count = startRecord; count <= endRecord; count++) {
             output.push({
