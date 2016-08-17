@@ -4,21 +4,40 @@
     <div style="width: 200px; padding-bottom: 15px; height: 100%;">
         <p>Show all products where:</p>
 
-        <select class="form-control" style="float: none;">
-            <option value="volvo">Select a filter...</option>
-            <option value="volvo">Product type</option>
-            <option value="saab">Product vendor</option>
-            <option value="mercedes">Tagged with</option>
-            <option value="mercedes">Products that are missing CoGS &nbsp;</option>
+        <select class="form-control" style="float: none;" data-bind="value: Filter">
+            <option value="">Select a filter...</option>
+            <option value="product-type">Product type</option>
+            <option value="product-vendor">Product vendor</option>
+            <option value="tagged-with">Tagged with</option>
+            <option value="missing-cogs">Missing CoGS</option>
         </select>
 
         <div style="height: 10px;"></div>
 
-        <input type="text" class="form-control" style="float: none;" placeholder="Enter value"/>
+        <div data-bind="if: TypeFilterSelected">
+            <select class="form-control" style="float: none;" data-bind="value: SelectedProductType, options: ProductTypes">
+            </select>
+        </div>
+
+        <div data-bind="if: VendorFilterSelected">
+            <select class="form-control" style="float: none;" data-bind="value: SelectedVendor, options: ProductVendors"></select>
+        </div>
+
+        <div data-bind="if: TaggedWithFilterSelected">
+            <div style="height:45px;">
+                <input type="text" class="form-control" data-bind="value: SelectedTags" placeholder="E.g.: Blue, Imported, Kids"/>
+            </div>
+
+            <div style="font-size: 0.9em;">Enter Product Tags separated by comma</div>
+        </div>
+
+        <div data-bind="if: MissingCogsFilterSelected" style="font-size: 0.9em;">
+            Hit the "Add Filter" button to include Products missing CoGS in your search
+        </div>
 
         <div style="height: 10px;"></div>
 
-        <input type="button" class="btn btn-small btn-default" value="Add filter"/>
+        <input type="button" class="btn btn-small btn-default" value="Add Filter" />
     </div>
 </script>
 
@@ -29,16 +48,30 @@
             <div class="input-group">
                 <div class="input-group-btn">
                     <a class="btn btn-default popover-launcher"
-                       type="button" 
+                       type="button"
                        rel="popover"
                        data-bind="
                             popover: { options: { placement: 'bottom', trigger: 'click',  },  
-                            template: 'Product-Filter-Widget-Popover' }">
+                            template: 'Product-Filter-Widget-Popover', 
+                            data: $data }">
                         Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
                     </a>
                 </div>
 
                 <input type="text" class="form-control" placeholder="Enter product titles or SKU's"/>
+            </div>
+
+            <div style="height: 10px;"></div>
+            <div class="input-group">
+                <div class="filter-tag-container">
+                    <div class="filter-description">Product Type is Gift Card</div>
+
+                    <a class="filter-remove" href="#">
+                        &nbsp;
+                        <i class="glyphicon glyphicon-remove"></i>
+                        &nbsp;
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -46,18 +79,46 @@
 
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
-    
-    /*
-    ProfitWiseWidgets.CloseProductFilterWidgetPopOver = function () {
-        console.log("Close me up!");
-        $('div.filter-widget-popover div.popover:visible').prev().trigger('click');
-    }
 
-    $(document).one("click", function (event) {
-        if ($(event.target).closest(".filter-widget-popover").length == 0) {
-            ProfitWiseWidgets.CloseProductFilterWidgetPopOver();
-        }
-    });
-    */
+    ProfitWiseWidgets.ProductFilterModel = function () {
+        var self = this;
+
+        self.Filter = ko.observable();
+
+        self.ProductTypes = ko.observableArray([
+            '3D Printers',
+            'Filament',
+            'Accessories',
+        ]);
+
+        self.ProductVendors = ko.observableArray([
+            'Ultimaker',
+            '3D Universe',
+            'ColorFabb',
+            'Zortrax',
+        ]);
+
+        self.SelectedProductType = ko.observable();
+        self.SelectedVendor = ko.observable();
+        self.SelectedTags = ko.observable();
+
+        self.TypeFilterSelected = ko.computed(function() {
+            return self.Filter() == "product-type";
+        });
+        
+        self.VendorFilterSelected = ko.computed(function () {
+            return self.Filter() == "product-vendor";
+        });
+
+        self.TaggedWithFilterSelected = ko.computed(function () {
+            return self.Filter() == "tagged-with";
+        });
+
+        self.MissingCogsFilterSelected = ko.computed(function () {
+            return self.Filter() == "missing-cogs";
+        });
+
+        return self;
+    };
 </script>
 

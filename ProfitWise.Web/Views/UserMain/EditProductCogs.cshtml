@@ -83,12 +83,12 @@
                     </div>
                 </div>
 
-                <div class="visible-md visible-lg row header-horz-padding">
                     <!-- Create Purchase Order Button -->
+                <!-- <div class="visible-md visible-lg row header-horz-padding">
                     <div class="col-xs-12" style="text-align: right;">
                         <a style="width: 225px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-copy"></i> &nbsp;&nbsp;Create Purchase Order</a>
                     </div>
-                </div>
+                </div>-->
 
                 <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
                 <div class="header-horz-padding" style="position: absolute; top: 129px;">
@@ -148,8 +148,9 @@
         var self = this;
 
         self.CurrentGrid = ko.observableArray();
+
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
-        self.FilterModel = {};
+        self.FilterModel = new ProfitWiseWidgets.ProductFilterModel();
 
         self.LoadDataForCurrentPage = function (pageNumber, pageSize) {
             pageNumber = pageNumber || 1;
@@ -183,6 +184,7 @@
             ProfitWiseFunctions.PopOverAutoClose();
 
             var model = new ProfitWise.EditCogsModel();
+
             model.LoadDataForCurrentPage();
 
             ko.applyBindings(model);
