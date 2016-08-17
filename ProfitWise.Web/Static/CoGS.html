@@ -126,14 +126,14 @@
         initializeFilterPopOver();
 
         var hideAllPopovers = function (callersPopOver) {
-            $('.popover-marker').each(function () {
+            $('.popover-container').each(function () {
                 if (this != callersPopOver) {
                     $(this).popover('hide');
                 }
             });
         };
 
-        $('.popover-marker')
+        $('.popover-container')
             .on('click', function (e) {
                 // if any other popovers are visible, hide them
                 hideAllPopovers(this);
@@ -230,7 +230,7 @@
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-btn">
-                                    <a id="filter-popover-launcher" type="button" rel="popover" class="popover-marker btn btn-default">
+                                    <a id="filter-popover-launcher" type="button" rel="popover" class="popover-container btn btn-default">
                                         Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
                                     </a>
                                 </div>
@@ -286,7 +286,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" id="pagination-popover-launcher" class="popover-marker" rel="popover">Page 3 of 20</a>
+                                    <a href="#" id="pagination-popover-launcher" class="popover-container" rel="popover">Page 3 of 20</a>
                                 </li>
                                 <li>
                                     <a href="#" aria-label="Forward">

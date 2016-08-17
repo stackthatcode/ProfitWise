@@ -4,7 +4,7 @@ var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
 // movingElementSelector == '#top-header'
 
-ProfitWiseFunctions.fixedHeaderScrollingInit = function (movingElementSelector) {
+ProfitWiseFunctions.FixedHeaderScrollingInit = function (movingElementSelector) {
     $(window)
         .scroll(function() {
             $(movingElementSelector).css('left', -($(this).scrollLeft()) + "px");
@@ -15,7 +15,7 @@ ProfitWiseFunctions.fixedHeaderScrollingInit = function (movingElementSelector) 
 // var bodyColumnCells = $("table#cogs tbody tr td");
 // var headerColumnHeaders = $("table#heading thead tr th");
 
-ProfitWiseFunctions.tableHeaderWidthInit = function (bodyCellSelector, headerCellSelector) {
+ProfitWiseFunctions.TableHeaderWidthInit = function (bodyCellSelector, headerCellSelector) {
     var columnFixed = function () {
         var bodyColumnCells = $(bodyCellSelector);
         var headerColumnHeaders = $(headerCellSelector);
@@ -26,12 +26,26 @@ ProfitWiseFunctions.tableHeaderWidthInit = function (bodyCellSelector, headerCel
         }
     };
 
-    $(window)
-        .resize(function () {
-            columnFixed();
-        });
+    $(window).resize(function () {
+        columnFixed();
+    });
     $(document).ready(function () {
         columnFixed();
     });
 }
+
+
+// Relies upon .popover-container for enclosing parent & .popover-launcher for the triggering element
+ProfitWiseFunctions.PopOverAutoClose = function() {
+    $(document).on("click", function (event) {
+        $('div.popover:visible')
+            .closest('.popover-container')
+            .not($(event.target).closest(".popover-container"))
+            .find(".popover-launcher")
+            .popover("hide")
+            .each(function (index, element) {
+                $(element).data()["bs.popover"]["inState"]["click"] = false;
+            });
+    });
+};
 

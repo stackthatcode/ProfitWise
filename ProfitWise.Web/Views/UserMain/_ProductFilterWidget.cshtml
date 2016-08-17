@@ -1,56 +1,63 @@
-﻿<!-- Product Filter Widget - TODO: move to separate file -->
-<script type="text/html" id="Product-Filter">
-    <div class="form-group">
-        <div class="input-group">
-            <div class="input-group-btn">
-                <a id="filter-popover-launcher" type="button" rel="popover" class="popover-marker btn btn-default">
-                    Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
-                </a>
+﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+
+<script type="text/html" id="Product-Filter-Widget-Popover">
+    <div style="width: 200px; padding-bottom: 15px; height: 100%;">
+        <p>Show all products where:</p>
+
+        <select class="form-control" style="float: none;">
+            <option value="volvo">Select a filter...</option>
+            <option value="volvo">Product type</option>
+            <option value="saab">Product vendor</option>
+            <option value="mercedes">Tagged with</option>
+            <option value="mercedes">Products that are missing CoGS &nbsp;</option>
+        </select>
+
+        <div style="height: 10px;"></div>
+
+        <input type="text" class="form-control" style="float: none;" placeholder="Enter value"/>
+
+        <div style="height: 10px;"></div>
+
+        <input type="button" class="btn btn-small btn-default" value="Add filter"/>
+    </div>
+</script>
+
+
+<script type="text/html" id="Product-Filter-Widget">
+    <div class="popover-container" name="product-filter-widget">
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <a class="btn btn-default popover-launcher"
+                       type="button" 
+                       rel="popover"
+                       data-bind="
+                            popover: { options: { placement: 'bottom', trigger: 'click',  },  
+                            template: 'Product-Filter-Widget-Popover' }">
+                        Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
+                    </a>
+                </div>
+
+                <input type="text" class="form-control" placeholder="Enter product titles or SKU's"/>
             </div>
-
-            <input type="text" class="form-control" placeholder="Enter product titles or SKU's" />
-        </div>
-    </div>
-
-    <div id="filter-popover-content" style="display: none;">
-        <div style="width: 200px; padding-bottom: 15px; height: 100%;">
-            <p>Show all products where:</p>
-
-            <select class="form-control" style="float: none;">
-                <option value="volvo">Select a filter...</option>
-                <option value="volvo">Product type</option>
-                <option value="saab">Product vendor</option>
-                <option value="mercedes">Tagged with</option>
-                <option value="mercedes">Products that are missing CoGS &nbsp;</option>
-            </select>
-
-            <div style="height: 10px;"></div>
-
-            <input type="text" class="form-control" style="float: none;" placeholder="Enter value" />
-
-            <div style="height: 10px;"></div>
-
-            <input type="button" class="btn btn-small btn-default" value="Add filter" />
         </div>
     </div>
 </script>
+
 <script type="text/javascript">
-    /** Must call this function on KO afterRender 
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
+    
+    /*
+    ProfitWiseWidgets.CloseProductFilterWidgetPopOver = function () {
+        console.log("Close me up!");
+        $('div.filter-widget-popover div.popover:visible').prev().trigger('click');
+    }
 
-    ProfitWiseWidgets.productFilterWidgetInitialize = function() {
-        ProfitWiseFunctions.popOverBehaviorInit(".popover-marker");
-        
-        var content = $("#filter-popover-content").html();
-        $('#filter-popover-launcher')
-            .popover({
-                html: true,
-                content: content,
-                placement: "bottom",
-                trigger: 'manual'
-            });
-    }**/
+    $(document).one("click", function (event) {
+        if ($(event.target).closest(".filter-widget-popover").length == 0) {
+            ProfitWiseWidgets.CloseProductFilterWidgetPopOver();
+        }
+    });
+    */
 </script>
-
-
 

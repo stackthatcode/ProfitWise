@@ -16,8 +16,8 @@
 </script>
 
 <script type="text/html" id="Paging-Widget">
-    <div class="pull-right" style="margin-left: 15px;">
-        <nav aria-label="Page navigation" class="pull-right paging-widget-popover">
+    <div class="pull-right popover-container" name="paging-widget" style="margin-left: 15px;">
+        <nav aria-label="Page navigation" class="pull-right">
             <ul class="pagination">
                 <li>
                     <a href="#" aria-label="First" data-bind="click: First">
@@ -30,7 +30,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="pagination-popover-launcher" rel="popover"
+                    <a href="#" rel="popover" class="popover-launcher"
                        data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Paging-Widget-Popover', data: $data }">
                         Page <span data-bind="text: PageNumber"></span> of <span data-bind="text: PageCount"></span></a>
 
@@ -67,16 +67,6 @@
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.ClosePagingWidgetJumpToPage = function () {
-        $('div.popover:visible').prev().click();
-    }
-
-    $(document).on("click", function (event) {
-        if ($(event.target).closest(".paging-widget-popover").length == 0) {
-            ProfitWiseWidgets.ClosePagingWidgetJumpToPage();
-        }
-    });
-    
     ProfitWiseWidgets.PagingModel = function() {
         var self = this;
 

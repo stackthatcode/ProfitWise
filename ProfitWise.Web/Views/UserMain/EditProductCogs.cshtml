@@ -69,11 +69,10 @@
             <div id="top-header">
 
                 <div class="row" style="padding-left: 25px; padding-right: 25px;">
-
                     <!-- Filtering Widget -->
                     <div class="col-md-5" style="padding-top: 20px;">
                         <div class="pull-left;"
-                             data-bind="template: { name: 'Product-Filter', afterRender: ProfitWiseWidgets.productFilterWidgetInitialize }">
+                             data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
                         </div>
                     </div>
 
@@ -150,6 +149,7 @@
 
         self.CurrentGrid = ko.observableArray();
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
+        self.FilterModel = {};
 
         self.LoadDataForCurrentPage = function (pageNumber, pageSize) {
             pageNumber = pageNumber || 1;
@@ -178,8 +178,9 @@
 
     $(document)
         .ready(function () {
-            ProfitWiseFunctions.tableHeaderWidthInit("table#product-cogs tbody tr td", "table#heading thead tr th");
-            ProfitWiseFunctions.fixedHeaderScrollingInit("#top-header");
+            ProfitWiseFunctions.TableHeaderWidthInit("table#product-cogs tbody tr td", "table#heading thead tr th");
+            ProfitWiseFunctions.FixedHeaderScrollingInit("#top-header");
+            ProfitWiseFunctions.PopOverAutoClose();
 
             var model = new ProfitWise.EditCogsModel();
             model.LoadDataForCurrentPage();
