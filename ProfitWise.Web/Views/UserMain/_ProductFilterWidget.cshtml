@@ -4,27 +4,27 @@
     <div style="width: 200px; padding-bottom: 15px; height: 100%;">
         <p>Show all products where:</p>
 
-        <select class="form-control" style="float: none;" data-bind="value: Filter">
-            <option value="">Select a filter...</option>
-            <option value="product-type">Product type</option>
-            <option value="product-vendor">Product vendor</option>
-            <option value="tagged-with">Tagged with</option>
-            <option value="missing-cogs">Missing CoGS</option>
+        <select class="form-control" style="float: none;"
+                data-bind="options: FilterTypes,
+                        value: SelectedFilter,
+                        optionsText: function(item) { return item.Name }, 
+                        optionsValue: function(item) { return item.Type },
+                        optionsCaption: 'Select a filter...'">
         </select>
 
         <div style="height: 10px;"></div>
 
-        <div data-bind="if: TypeFilterSelected">
+        <div data-bind="if: ProductTypeFilterSelected">
             <select class="form-control" style="float: none;" data-bind="value: SelectedProductType, options: ProductTypes">
             </select>
         </div>
 
-        <div data-bind="if: VendorFilterSelected">
+        <div data-bind="if: ProductVendorFilterSelected">
             <select class="form-control" style="float: none;" data-bind="value: SelectedVendor, options: ProductVendors"></select>
         </div>
 
         <div data-bind="if: TaggedWithFilterSelected">
-            <div style="height:45px;">
+            <div style="height: 45px;">
                 <input type="text" class="form-control" data-bind="value: SelectedTags" placeholder="E.g.: Blue, Imported, Kids"/>
             </div>
 
@@ -37,14 +37,17 @@
 
         <div style="height: 10px;"></div>
 
-        <input type="button" class="btn btn-small btn-default" value="Add Filter" />
+        <div data-bind="visible: SelectedFilter">
+            <input type="button" class="btn btn-small btn-default" 
+                   value="Add Filter" data-bind="click: AddFilter" />
+        </div>
     </div>
 </script>
 
 
 <script type="text/html" id="Product-Filter-Widget">
     <div class="popover-container" name="product-filter-widget">
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 5px;">
             <div class="input-group">
                 <div class="input-group-btn">
                     <a class="btn btn-default popover-launcher"
@@ -62,14 +65,16 @@
             </div>
 
             <div style="height: 10px;"></div>
-            <div class="input-group">
-                <div class="filter-tag-container">
-                    <div class="filter-description">Product Type is Gift Card</div>
+            <div class="input-group" data-bind="foreach: SelectedFiltersForSearch">
 
-                    <a class="filter-remove" href="#">
+                <div class="filter-tag-container" style="float: left; display: inline-block; margin-right: 5px; margin-bottom: 2px;">
+                    <div class="filter-description" data-bind="text: TagDescription">
+                    </div>
+
+                    <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilterFromSearch">
+                        &nbsp;
                         &nbsp;
                         <i class="glyphicon glyphicon-remove"></i>
-                        &nbsp;
                     </a>
                 </div>
             </div>
@@ -80,17 +85,53 @@
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
+
+    ProfitWiseWidgets.ProductFilterTags = function(type, typefriendlyname, value) {
+        var self = this;
+
+        self.Type = ko.observable(type);
+        self.TypeFriendlyName = ko.observable(typefriendlyname);
+        self.Value = ko.observable(value);
+
+        self.TagDescription = ko.computed(
+            function () {
+                var isword = self.Type() == ProfitWiseWidgets.FilterType.TaggedWith ? " " : " is ";
+                
+                return (self.Type() == ProfitWiseWidgets.FilterType.MissingCogs)
+                    ? "Missing Cogs"
+                    : self.TypeFriendlyName() + isword + self.Value();
+        });
+    };
+
+
+
+    ProfitWiseWidgets.FilterType = ProfitWiseWidgets.FilterType || {};
+    ProfitWiseWidgets.FilterType.ProductType = "product-type";
+    ProfitWiseWidgets.FilterType.ProductVendor = "product-vendor";
+    ProfitWiseWidgets.FilterType.TaggedWith = "tagged-with";
+    ProfitWiseWidgets.FilterType.MissingCogs = "missing-cogs";
+
+
+
     ProfitWiseWidgets.ProductFilterModel = function () {
         var self = this;
 
-        self.Filter = ko.observable();
+        self.FilterTypes =
+            ko.observableArray([
+                { Name:'Product type', Type: ProfitWiseWidgets.FilterType.ProductType },
+                { Name:'Product vendor', Type: ProfitWiseWidgets.FilterType.ProductVendor },
+                { Name:'Tagged with', Type: ProfitWiseWidgets.FilterType.TaggedWith },
+                { Name:'Missing CoGS', Type: ProfitWiseWidgets.FilterType.MissingCogs },
+        ]);        
 
+        // NOTE: test data - move to external service
         self.ProductTypes = ko.observableArray([
             '3D Printers',
             'Filament',
             'Accessories',
         ]);
 
+        // NOTE: test data - move to external service
         self.ProductVendors = ko.observableArray([
             'Ultimaker',
             '3D Universe',
@@ -98,25 +139,71 @@
             'Zortrax',
         ]);
 
+
+        self.SelectedFilter = ko.observable();
         self.SelectedProductType = ko.observable();
         self.SelectedVendor = ko.observable();
         self.SelectedTags = ko.observable();
 
-        self.TypeFilterSelected = ko.computed(function() {
-            return self.Filter() == "product-type";
+        self.ProductTypeFilterSelected = ko.computed(function() {
+            return self.SelectedFilter() == ProfitWiseWidgets.FilterType.ProductType;
         });
         
-        self.VendorFilterSelected = ko.computed(function () {
-            return self.Filter() == "product-vendor";
+        self.ProductVendorFilterSelected = ko.computed(function () {
+            return self.SelectedFilter() == ProfitWiseWidgets.FilterType.ProductVendor;
         });
 
         self.TaggedWithFilterSelected = ko.computed(function () {
-            return self.Filter() == "tagged-with";
+            return self.SelectedFilter() == ProfitWiseWidgets.FilterType.TaggedWith;
         });
 
         self.MissingCogsFilterSelected = ko.computed(function () {
-            return self.Filter() == "missing-cogs";
+            return self.SelectedFilter() == ProfitWiseWidgets.FilterType.MissingCogs;
         });
+
+
+        self.SelectedFiltersForSearch = ko.observableArray();
+        
+        self.AddFilter = function () {
+
+            var selectedFilterType = self.SelectedFilter();
+            var filterType = ko.utils.arrayFirst(self.FilterTypes(), function(item) {
+                return item.Type == selectedFilterType;
+            });
+            var selectedFilterName = filterType.Name;
+            var selectedFilterValue = null;
+
+            if (self.ProductTypeFilterSelected()) {
+                selectedFilterValue = self.SelectedProductType();
+            }
+            if (self.ProductVendorFilterSelected()) {
+                selectedFilterValue = self.SelectedVendor();
+            }
+            if (self.TaggedWithFilterSelected()) {
+                if (!self.SelectedTags() || self.SelectedTags().trim() == "") {
+                    self.SelectedFilter(null);
+                    ProfitWiseFunctions.PopOverCloseAll();
+                    return;
+                }
+                selectedFilterValue = self.SelectedTags();
+                self.SelectedTags("");
+            }
+
+            self.SelectedFiltersForSearch.remove(function(item) {
+                return item.Type() == selectedFilterType;
+            });
+
+            self.SelectedFiltersForSearch.push(
+                new ProfitWiseWidgets
+                    .ProductFilterTags(selectedFilterType, selectedFilterName, selectedFilterValue));
+
+            self.SelectedFilter(null);
+            ProfitWiseFunctions.PopOverCloseAll();
+        };
+
+        self.RemoveFilterFromSearch = function (data, event) {
+            self.SelectedFiltersForSearch.remove(data);
+        };
 
         return self;
     };

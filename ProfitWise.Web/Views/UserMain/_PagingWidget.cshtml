@@ -18,7 +18,7 @@
 <script type="text/html" id="Paging-Widget">
     <div class="pull-right popover-container" name="paging-widget" style="margin-left: 15px;">
         <nav aria-label="Page navigation" class="pull-right">
-            <ul class="pagination">
+            <ul class="pagination" style="margin-top: 0">
                 <li>
                     <a href="#" aria-label="First" data-bind="click: First">
                         <span><i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
@@ -49,8 +49,8 @@
         </nav>
     </div>
 
-    <div style="float: right; padding-top: 20px;">
-        <div class="input-group pull-right;" style="width: 175px;">
+    <div style="float: right;">
+        <div class="input-group pull-right;" style="width: 160px;">
 
             <select class="form-control" data-bind="value: PageSize, event:{ change: PageSizeChanged}">
                 <option value="25">25</option>
@@ -133,7 +133,7 @@
 
         self.JumpToPageFunction = function() {
             self.PageNumber(self.JumpToPage());
-            ProfitWiseWidgets.ClosePagingWidgetJumpToPage();
+            ProfitWiseFunctions.PopOverCloseAll();
             self.InvokeCallbackFunction();
         };
 

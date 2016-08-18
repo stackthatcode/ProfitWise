@@ -70,20 +70,21 @@
 
                 <div class="row" style="padding-left: 25px; padding-right: 25px;">
                     <!-- Filtering Widget -->
-                    <div class="col-md-5" style="padding-top: 20px;">
+                    <div class="col-lg-6" style="padding-top: 20px;">
                         <div class="pull-left;"
                              data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
                         </div>
                     </div>
 
                     <!-- Paging Widget -->
-                    <div class="col-md-7">
+                    <div class="col-lg-6">
+                        <div style="height:20px;" class="visible-lg"></div>
                         <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                         </div>
                     </div>
                 </div>
 
-                    <!-- Create Purchase Order Button -->
+                  <!-- Create Purchase Order Button -->
                 <!-- <div class="visible-md visible-lg row header-horz-padding">
                     <div class="col-xs-12" style="text-align: right;">
                         <a style="width: 225px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-copy"></i> &nbsp;&nbsp;Create Purchase Order</a>
@@ -115,7 +116,7 @@
     <div data-bind="template: { name: 'Page-Header'}"></div>
 
     <div class="container" style="margin: 0; width: 100%; padding-left: 20px; padding-right: 20px;">
-        <div style="position: relative; min-width: 800px; margin-top: 209px; background-color: #FFF; padding-left: 25px; padding-right: 25px;">
+        <div style="position: relative; min-width: 900px; margin-top: 209px; background-color: #FFF; padding-left: 25px; padding-right: 25px;">
             <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
                 <tbody data-bind="foreach: $root.CurrentGrid">
                 <tr>

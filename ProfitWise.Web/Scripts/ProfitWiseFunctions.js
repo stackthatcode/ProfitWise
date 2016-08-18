@@ -49,3 +49,12 @@ ProfitWiseFunctions.PopOverAutoClose = function() {
     });
 };
 
+ProfitWiseFunctions.PopOverCloseAll = function() {
+    $('div.popover:visible')
+        .closest('.popover-container')
+        .find(".popover-launcher")
+        .popover("hide")
+        .each(function (index, element) {
+            $(element).data()["bs.popover"]["inState"]["click"] = false;
+        });
+};

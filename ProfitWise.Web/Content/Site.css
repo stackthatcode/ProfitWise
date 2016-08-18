@@ -31,7 +31,7 @@ input[type='text'] {
 
 #top-header {
     position: absolute; 
-    min-width: 800px; 
+    min-width: 900px; 
     width: 100%; 
     background-color: #FFF; 
     border-top: 20px rgb(235, 238, 240) solid; 
@@ -108,6 +108,10 @@ fieldset[disabled] .btn-sample.active {
     vertical-align: top; 
     display: inline-block; 
     padding-top: 0px;    
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+    max-width: 150px;
 }
 
 a.filter-remove i {
@@ -123,3 +127,8 @@ a.filter-remove:hover {
     color: #AAA;
     text-decoration: none;
 }
+
+a.filter-remove:active, a.filter-remove:visited {
+    text-decoration: none;    
+}
+
