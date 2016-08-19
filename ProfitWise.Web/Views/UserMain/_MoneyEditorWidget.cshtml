@@ -16,7 +16,7 @@
 </style>
 
 <script type="text/html" id="Money-Editor-Widget-Popover">
-    <div class="currency-popover" data-bind="foreach: ProfitWiseWidgets.CurrencyCache">
+    <div class="currency-popover" data-bind="foreach: ProfitWiseFunctions.CurrencyCache">
         <a href="#" data-bind="click: $parent.ChangeSelectedCurrency"><span data-bind="text: Abbr" style="display:inline-block; width:32px;"></span> (<span data-bind="text: Symbol"></span>) </a>
     </div>
 </script>
@@ -39,23 +39,13 @@
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    // TODO - load this from the database
-    ProfitWiseWidgets.CurrencyCache = [
-        { Id: 1, Abbr : "USD", Symbol: "$" },
-        { Id: 2, Abbr : "EUR", Symbol: "€" },
-        { Id: 3, Abbr : "JPY", Symbol: "¥" },
-        { Id: 4, Abbr : "GBP", Symbol: "£" },
-        { Id: 5, Abbr : "AUD", Symbol: "$" },
-        { Id: 6, Abbr : "CHF", Symbol: "Fr" },
-        { Id: 7, Abbr : "CAD", Symbol: "$" },
-    ];
-
     ProfitWiseWidgets.MoneyEditorWidgetModel = function() {
         var self = this;
         var defaultCurrencyId = 1;
         var defaultAmount = 0.00;
 
-        self.CurrencyCache = ProfitWiseWidgets.CurrencyCache;
+        // TODO: load this from the database...
+        self.CurrencyCache = ProfitWiseFunctions.CurrencyCache;
         self.CurrencyId = ko.observable(defaultCurrencyId);   // Default to Currency Id = 1;
 
         ko.bindingHandlers.formatMoney = {
@@ -90,7 +80,7 @@
         self.Amount = ko.observable(numeral(defaultAmount).format('0,0.00'));
 
         self.SelectedCurrency = ko.computed(function() {
-            return AQ(ProfitWiseWidgets.CurrencyCache)
+            return AQ(ProfitWiseFunctions.CurrencyCache)
                 .first(function (item) {
                     return item.Id == self.CurrencyId();
                 });

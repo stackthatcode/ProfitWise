@@ -122,10 +122,9 @@
                     <td><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
                     <td><span data-bind="text: InventoryCount"></span> in stock<br/>
                         (<span data-bind="text: VariantCount"></span> variants)</td>
-                    <td data-bind="text: PriceAmount"></td>
+                    <td data-bind="text: ProfitWiseFunctions.CurrencyFormatter(PriceAmount, PriceCurrency)"></td>
                     <td>
-                        <!--data-bind="template: { name: 'Money-Editor-Widget', model: $data }">-->
-                        <a href="#" data-bind="text: CogsAmount, click: $root.LaunchBulkEditPopup"></a>
+                        <a href="#" data-bind="text: ProfitWiseFunctions.CurrencyFormatter(CogsAmount, PriceCurrency), click: $root.LaunchBulkEditPopup"></a>
                     </td>
                     <td><input type="checkbox" data-bind="click: $parent.StockedDirectlyClick"/></td>
                     <td><input type="checkbox" data-bind="click: $parent.ExcludedClick"/></td>
@@ -149,6 +148,7 @@
 
     ProfitWise.EditCogsModel = function () {
         var self = this;
+
         self.CurrentGrid = ko.observableArray();        
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
         self.FilterModel = new ProfitWiseWidgets.ProductFilterModel();
@@ -160,7 +160,6 @@
             // #1 - load only that page of numbers
             // TODO => invoke external service
             var data = window.cogsDataService(pageNumber, pageSize);
-
 
             // #2 - how many records match that criteria
             // TODO => invoke external service
@@ -182,7 +181,15 @@
                         self.LoadSingleProductRecord(shopifyProductId);                        
                     });
         }
-        
+
+        self.StockedDirectlyClick = function(model) {
+            alert("Stocked Directly Click");
+        };
+
+        self.ExcludedClick = function (model) {
+            alert("Stocked Directly Click");
+        };
+
         return self;
     };
 
@@ -193,9 +200,8 @@
             ProfitWiseFunctions.PopOverAutoClose();
 
             var model = new ProfitWise.EditCogsModel();
-
             model.LoadDataForCurrentPage();
-
+            
             ko.applyBindings(model);
             window.modeltmp = model;
 
