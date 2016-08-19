@@ -124,14 +124,15 @@
                         (<span data-bind="text: VariantCount"></span> variants)</td>
                     <td data-bind="text: PriceAmount"></td>
                     <td>
-                        <!--data-bind="template: { name: 'Currency-Widget', model: $data }">-->
+                        <!--data-bind="template: { name: 'Money-Editor-Widget', model: $data }">-->
                         <a href="#" data-bind="text: CogsAmount, click: $root.LaunchBulkEditPopup"></a>
                     </td>
-                    <td><input type="checkbox" data-bind="click: $parent.StockedDirectlyClick" /></td>
-                    <td><input type="checkbox" data-bind="click: $parent.ExcludedClick" /></td>
+                    <td><input type="checkbox" data-bind="click: $parent.StockedDirectlyClick"/></td>
+                    <td><input type="checkbox" data-bind="click: $parent.ExcludedClick"/></td>
                 </tr>
                 </tbody>
             </table>
+
         </div>
     </div>
 
@@ -169,13 +170,19 @@
             self.CurrentGrid(data);
         };
 
+        self.LoadSingleProductRecord = function (shopifyProductId) {
+            alert("Reloading product for " + shopifyProductId);
+        }
+
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
 
         self.LaunchBulkEditPopup = function (model) {
-            console.log(model);
-            ProfitWiseShopify.LaunchBulkEditPopUp(model.Id);
-        };
-
+            ProfitWiseShopify.LaunchBulkEditPopUp(model.Id,
+                    function(shopifyProductId) {
+                        self.LoadSingleProductRecord(shopifyProductId);                        
+                    });
+        }
+        
         return self;
     };
 

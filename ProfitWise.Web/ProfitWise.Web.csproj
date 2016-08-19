@@ -375,7 +375,7 @@
     <Content Include="Views\UserMain\_PagingWidget.cshtml" />
     <Content Include="Views\UserMain\_ProductFilterWidget.cshtml" />
     <Content Include="Views\UserMain\_PageFooter.cshtml" />
-    <Content Include="Views\UserMain\_CurrencyWidget.cshtml" />
+    <Content Include="Views\UserMain\_MoneyEditorWidget.cshtml" />
     <Content Include="Views\Shared\_UserLayoutDialogBox.cshtml" />
     <Content Include="Views\Shared\_UserScripts.cshtml" />
     <Content Include="Views\UserMain\BulkEditProductVariantCogs.cshtml" />

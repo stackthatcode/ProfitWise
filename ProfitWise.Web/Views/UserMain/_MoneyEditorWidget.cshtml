@@ -15,25 +15,24 @@
     }
 </style>
 
-<script type="text/html" id="Currency-Widget-Popover">
+<script type="text/html" id="Money-Editor-Widget-Popover">
     <div class="currency-popover" data-bind="foreach: ProfitWiseWidgets.CurrencyCache">
         <a href="#" data-bind="click: $parent.ChangeSelectedCurrency"><span data-bind="text: Abbr" style="display:inline-block; width:32px;"></span> (<span data-bind="text: Symbol"></span>) </a>
     </div>
 </script>
 
-<script type="text/html" id="Currency-Widget">
+<script type="text/html" id="Money-Editor-Widget">
     <div class="input-group popover-container currency-widget">
         <div style="width: 82px;"
              class="input-group-addon popover-launcher"
              data-bind="text: SelectedCurrencyFriendly, 
-                    popover: { options: { placement: 'bottom' , trigger: 'click' , }, template: 'Currency-Widget-Popover', data: $data }">
+                    popover: { options: { placement: 'bottom' , trigger: 'click' , }, template: 'Money-Editor-Widget-Popover', data: $data }">
         </div>
         <input type="text" value="20.00"
                data-bind="
                     formatMoney: Amount,
-                    event: { focus: function() { event.target.select(); } , }"
+                    event: { focus: function() { event.target.select(); } , keypress: InvokeKeyCallback }"
                class="form-control" placeholder="Enter CoGS">
-        <!-- keypress: InvokeKeyCallback -->
     </div>
 </script>
 
@@ -51,12 +50,13 @@
         { Id: 7, Abbr : "CAD", Symbol: "$" },
     ];
 
-    ProfitWiseWidgets.CurrencyModel = function(currencyId, amount) {
+    ProfitWiseWidgets.MoneyEditorWidgetModel = function() {
         var self = this;
+        var defaultCurrencyId = 1;
+        var defaultAmount = 0.00;
 
         self.CurrencyCache = ProfitWiseWidgets.CurrencyCache;
-
-        self.CurrencyId = ko.observable(currencyId);        
+        self.CurrencyId = ko.observable(defaultCurrencyId);   // Default to Currency Id = 1;
 
         ko.bindingHandlers.formatMoney = {
             init: function (element, valueAccessor) {
@@ -87,8 +87,7 @@
             }
         }
 
-        self.Amount = ko.observable(numeral(amount).format('0,0.00'));
-
+        self.Amount = ko.observable(numeral(defaultAmount).format('0,0.00'));
 
         self.SelectedCurrency = ko.computed(function() {
             return AQ(ProfitWiseWidgets.CurrencyCache)
@@ -106,26 +105,24 @@
             ProfitWiseFunctions.PopOverCloseAll();
         };
 
-
+        
         // Enter-key Stuff
         self.RegisterEnterKeyCallback = function(callback) {
             self.EnterKeyCallback = callback;
         };
 
         self.EnterKeyCallback = function () {
-            alert("Please register something to this Enter Key!!!");
         };
 
-        self.InvokeKeyCallback = function (event) {
-            /*if (event.keyCode == 13) {
+        self.InvokeKeyCallback = function (model, event) {
+            if (event.keyCode == 13) {
                 self.EnterKeyCallback();
                 return false;
             } else {
                 return true;
-            }*/
+            }
         };
 
         return self;
     };
 </script>
-

@@ -93,23 +93,19 @@ ProfitWiseShopify.BarInitialize = function (title) {
     });
 };
 
-ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId) {
+ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId, callbackFunction) {
     var url = '/ProfitWise/UserMain/BulkEditProductVariantCogs?shopifyProductId=' + shopifyProductId;
 
     ShopifyApp.Modal.open({
-        src: url,
-        title: 'Bulk Edit all Variant CoGS',
-        width: 'small',
-        height: 390,
-        buttons: {
-            primary:
-            { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
-            secondary: [
-                { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
-            ]
-        }
-    },
-    function(result, data) {
-        // alert("result: " + result + "   data: " + data);
-    });
+            src: url,
+            title: 'Bulk Edit all Variant CoGS',
+            width: 'small',
+            height: 390,
+        },
+        function (result) {
+            if (result) {
+                callbackFunction(shopifyProductId);
+            }
+        });
 };
+
