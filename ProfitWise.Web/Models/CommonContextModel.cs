@@ -5,7 +5,7 @@ using Push.Utilities.Helpers;
 
 namespace ProfitWise.Web.Models
 {
-    public class UserModelBase
+    public class CommonContext
     {
         public string ShopifyApiKey { get; set; }
         public UserBrief UserBrief { get; set; }
@@ -15,14 +15,16 @@ namespace ProfitWise.Web.Models
 
         public string FullyBrandedPageTitle => 
             "ProfitWise - " + (PageTitle.IsNullOrEmpty() ? "Know Your Profitability" : PageTitle);
+
+        public string ShopUrl => "https://" + UserBrief.Domain;
     }
 
-    public static class UserModelExtensions
+
+    public static class CommonContextExtensions
     {
-        // TODO - use Generics for subclasses of the type
-        public static UserModelBase UserModelFactory(this Controller controller)
+        public static void LoadCommonContextIntoViewBag(this Controller controller)
         {
-            return new UserModelBase()
+            controller.ViewBag.CommonContext = new CommonContext
             {
                 ShopifyApiKey = ShopifyApiKey.Get(),
                 UserBrief = controller.HttpContext.RetreiveUserBriefFromContext(),

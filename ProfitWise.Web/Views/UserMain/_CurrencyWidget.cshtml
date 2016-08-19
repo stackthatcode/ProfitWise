@@ -1,0 +1,131 @@
+﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+
+<style>
+    .currency-popover a {
+        text-decoration: none;
+        color: #666;
+        font-size: 0.9em;
+        font-weight: 600;
+        height: 22px;
+        display: block;
+    }
+    .currency-popover a:hover {
+        color: #999;
+        text-decoration: none;
+    }
+</style>
+
+<script type="text/html" id="Currency-Widget-Popover">
+    <div class="currency-popover" data-bind="foreach: ProfitWiseWidgets.CurrencyCache">
+        <a href="#" data-bind="click: $parent.ChangeSelectedCurrency"><span data-bind="text: Abbr" style="display:inline-block; width:32px;"></span> (<span data-bind="text: Symbol"></span>) </a>
+    </div>
+</script>
+
+<script type="text/html" id="Currency-Widget">
+    <div class="input-group popover-container currency-widget">
+        <div style="width: 82px;"
+             class="input-group-addon popover-launcher"
+             data-bind="text: SelectedCurrencyFriendly, 
+                    popover: { options: { placement: 'bottom' , trigger: 'click' , }, template: 'Currency-Widget-Popover', data: $data }">
+        </div>
+        <input type="text" value="20.00"
+               data-bind="
+                    formatMoney: Amount,
+                    event: { focus: function() { event.target.select(); } , }"
+               class="form-control" placeholder="Enter CoGS">
+        <!-- keypress: InvokeKeyCallback -->
+    </div>
+</script>
+
+<script type="text/javascript">
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    // TODO - load this from the database
+    ProfitWiseWidgets.CurrencyCache = [
+        { Id: 1, Abbr : "USD", Symbol: "$" },
+        { Id: 2, Abbr : "EUR", Symbol: "€" },
+        { Id: 3, Abbr : "JPY", Symbol: "¥" },
+        { Id: 4, Abbr : "GBP", Symbol: "£" },
+        { Id: 5, Abbr : "AUD", Symbol: "$" },
+        { Id: 6, Abbr : "CHF", Symbol: "Fr" },
+        { Id: 7, Abbr : "CAD", Symbol: "$" },
+    ];
+
+    ProfitWiseWidgets.CurrencyModel = function(currencyId, amount) {
+        var self = this;
+
+        self.CurrencyCache = ProfitWiseWidgets.CurrencyCache;
+
+        self.CurrencyId = ko.observable(currencyId);        
+
+        ko.bindingHandlers.formatMoney = {
+            init: function (element, valueAccessor) {
+                var value = valueAccessor();
+                var interceptor = ko.computed({
+                    read: function () {
+                        // Here's the formatting injection point
+                        return numeral(ko.unwrap(value)).format('0,0.00');
+                    },
+                    write: function (newValue) {
+                        if ($.trim(newValue) == '')
+                            value("0");
+                        else
+                            value(numeral().unformat(newValue));
+                        value.valueHasMutated();
+                    }
+                }).extend({ notify: 'always' });
+
+                // Only apply bindings to node...?
+                if (element.tagName.toLowerCase() == 'input')
+                    ko.applyBindingsToNode(element, {
+                        value: interceptor
+                    });
+                else
+                    ko.applyBindingsToNode(element, {
+                        text: interceptor
+                    });
+            }
+        }
+
+        self.Amount = ko.observable(numeral(amount).format('0,0.00'));
+
+
+        self.SelectedCurrency = ko.computed(function() {
+            return AQ(ProfitWiseWidgets.CurrencyCache)
+                .first(function (item) {
+                    return item.Id == self.CurrencyId();
+                });
+        });
+        
+        self.SelectedCurrencyFriendly = ko.computed(function () {
+            return self.SelectedCurrency().Abbr + " (" + self.SelectedCurrency().Symbol + ")";
+        });
+
+        self.ChangeSelectedCurrency = function (model) {
+            self.CurrencyId(model.Id);
+            ProfitWiseFunctions.PopOverCloseAll();
+        };
+
+
+        // Enter-key Stuff
+        self.RegisterEnterKeyCallback = function(callback) {
+            self.EnterKeyCallback = callback;
+        };
+
+        self.EnterKeyCallback = function () {
+            alert("Please register something to this Enter Key!!!");
+        };
+
+        self.InvokeKeyCallback = function (event) {
+            /*if (event.keyCode == 13) {
+                self.EnterKeyCallback();
+                return false;
+            } else {
+                return true;
+            }*/
+        };
+
+        return self;
+    };
+</script>
+

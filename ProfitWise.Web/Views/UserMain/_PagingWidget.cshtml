@@ -84,12 +84,11 @@
             self.InvokeCallbackFunction();
         }
 
-        self.JumpToPage = ko.observable(1);
-
         self.HighlightJumpToPage = function () {
             $(".jump-to-page-class").select();
         };
 
+        self.JumpToPage = ko.observable(1);
 
         self.JumpToPageNumericOnly = 
             ko.computed({

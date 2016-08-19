@@ -58,3 +58,5 @@ ProfitWiseFunctions.PopOverCloseAll = function() {
             $(element).data()["bs.popover"]["inState"]["click"] = false;
         });
 };
+
+

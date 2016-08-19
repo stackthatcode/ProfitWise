@@ -1,13 +1,16 @@
 ﻿
+var ProfitWiseShopify = ProfitWiseShopify || {};
 // apiKey: '50d69dbaf54ee35929a946790d5884e4',
 // shopOrigin: 'https://3duniverse.myshopify.com'
 
-var shopifyInitialization = function (apiKey, shopOrigin, title) {
-
+ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
     ShopifyApp.init({
         apiKey: apiKey,
         shopOrigin: shopOrigin,
     });
+};
+
+ProfitWiseShopify.BarInitialize = function (title) {
 
     ShopifyApp.ready(function () {
         ShopifyApp.Bar.initialize({
@@ -90,3 +93,23 @@ var shopifyInitialization = function (apiKey, shopOrigin, title) {
     });
 };
 
+ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId) {
+    var url = '/ProfitWise/UserMain/BulkEditProductVariantCogs?shopifyProductId=' + shopifyProductId;
+
+    ShopifyApp.Modal.open({
+        src: url,
+        title: 'Bulk Edit all Variant CoGS',
+        width: 'small',
+        height: 390,
+        buttons: {
+            primary:
+            { label: "OK", callback: function(label) { ShopifyApp.Modal.close("OK"); } },
+            secondary: [
+                { label: "Cancel", callback: function(label) { ShopifyApp.Modal.close("Cancel"); } }
+            ]
+        }
+    },
+    function(result, data) {
+        // alert("result: " + result + "   data: " + data);
+    });
+};

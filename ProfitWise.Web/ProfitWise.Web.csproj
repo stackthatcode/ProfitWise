@@ -240,7 +240,8 @@
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\IdentityCachingAttribute.cs" />
-    <Compile Include="Models\UserModelBase.cs" />
+    <Compile Include="Models\BulkEditProductVariantModel.cs" />
+    <Compile Include="Models\CommonContextModel.cs" />
     <Compile Include="Plumbing\ShopifyApiKey.cs" />
     <Compile Include="Attributes\TokenRequiredAttribute.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />
@@ -278,6 +279,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\aQuery-1.0-min.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -373,6 +375,10 @@
     <Content Include="Views\UserMain\_PagingWidget.cshtml" />
     <Content Include="Views\UserMain\_ProductFilterWidget.cshtml" />
     <Content Include="Views\UserMain\_PageFooter.cshtml" />
+    <Content Include="Views\UserMain\_CurrencyWidget.cshtml" />
+    <Content Include="Views\Shared\_UserLayoutDialogBox.cshtml" />
+    <Content Include="Views\Shared\_UserScripts.cshtml" />
+    <Content Include="Views\UserMain\BulkEditProductVariantCogs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">

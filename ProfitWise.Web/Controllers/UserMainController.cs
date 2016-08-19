@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 
 namespace ProfitWise.Web.Controllers
@@ -9,8 +8,8 @@ namespace ProfitWise.Web.Controllers
     {
         public ActionResult Dashboard()
         {
-            var model = this.UserModelFactory();
-            return View(model);
+            this.LoadCommonContextIntoViewBag();
+            return View();
         }
 
         public ActionResult Reports()
@@ -25,13 +24,18 @@ namespace ProfitWise.Web.Controllers
 
         public ActionResult EditProductCogs()
         {
-            var model = this.UserModelFactory();
-            return View(model);
+            this.LoadCommonContextIntoViewBag();
+            return View();
         }
 
-        public ActionResult CoGS()
+        public ActionResult BulkEditProductVariantCogs(int shopifyProductId)
         {
-            var model = this.UserModelFactory();
+            this.LoadCommonContextIntoViewBag();
+
+            var model = new BulkEditProductVariantModel()
+            {
+                ShopifyProductId = shopifyProductId
+            };
             return View(model);
         }
 

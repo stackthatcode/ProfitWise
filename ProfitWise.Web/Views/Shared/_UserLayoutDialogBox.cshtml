@@ -1,8 +1,7 @@
 ﻿@using OAuthSandbox.Attributes
 @using ProfitWise.Web.Models
-
 @{
-    var commonContext = (CommonContext) ViewBag.CommonContext;
+    var commonContext = (CommonContext)ViewBag.CommonContext;
 }
 
 <!DOCTYPE html>
@@ -12,16 +11,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
     <title>@commonContext.FullyBrandedPageTitle</title>
-
+    
     @Html.Partial("_UserScripts")
 
     <script>
         ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');
-        ProfitWiseShopify.BarInitialize('@commonContext.PageTitle');
     </script>
 </head>
 
-<body>
+<body style="background-color: #FFF !important; overflow: hidden; padding: 30px;">
     <!--<p>Hello, @HttpContext.Current.RetreiveUserBriefFromContext().Email</p>
     <p>Shop Name = @HttpContext.Current.RetreiveUserBriefFromContext().ShopName</p>-->
 
