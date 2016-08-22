@@ -124,12 +124,12 @@
                     <td><span data-bind="text: InventoryCount"></span> in stock<br/>
                         (<span data-bind="text: VariantCount"></span> variants)</td>
 
-                    <td data-bind="template: { name: 'Money-Range-Widget-Horizontal', data: Price }">
+                    <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }">
                     </td>
 
                     <td>
                         <a href="#" data-bind="click: $root.LaunchBulkEditPopup">
-                            <span data-bind="template: { name: 'Money-Range-Widget', data: { model: $data.Cogs, includeLineBreak: true } }">
+                            <span data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Cogs }">
                             </span>
                         </a>
                     </td>
@@ -245,14 +245,15 @@
                 Price: {
                     CurrencyId: 1,
                     AmountLow: 34.00,
-                    AmountHigh: 42.00
+                    AmountHigh: 42.00,
+                    IncludesAverages: 0,
                 },
                 Cogs: {
                     CurrencyId: 2,
                     AmountLow: 10000.00,
                     AmountHigh: 23000.00,
+                    IncludesAverages: 1,
                 },
-                CogsDetailUsed: 1,
                 NumberStockedDirectly: 12,
                 NumberExcludeVariants: 0,
             });

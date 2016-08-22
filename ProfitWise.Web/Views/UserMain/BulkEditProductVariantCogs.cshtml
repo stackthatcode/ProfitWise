@@ -69,7 +69,7 @@
     </form>
 </script>
 
-<div data-bind="template: { name: 'Main-Template' }">
+<div data-bind="template: { name: 'Main-Template', afterRender: function() { $('input.money-editor-text').focus(); } }">
 </div>
 
 <script>

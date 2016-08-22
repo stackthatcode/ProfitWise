@@ -25,10 +25,10 @@
 
         <div data-bind="if: TaggedWithFilterSelected">
             <div style="height: 45px;">
-                <input type="text" class="form-control" data-bind="value: SelectedTags" placeholder="E.g.: Blue, Imported, Kids"/>
+                <input type="text" maxlength="50" class="form-control" data-bind="value: SelectedTags, hasFocus: true,  valueUpdate: 'afterkeydown',  event: { keypress: TagsFilterKeyPress }" placeholder="E.g.: Blue, Imported, Kids"/>
             </div>
 
-            <div style="font-size: 0.9em;">Enter Product Tags separated by comma</div>
+            <div style="font-size: 0.8em;">Enter Product Tags separated by comma</div>
         </div>
 
         <div data-bind="if: MissingCogsFilterSelected" style="font-size: 0.9em;">
@@ -53,19 +53,24 @@
                     <a class="btn btn-default popover-launcher"
                        type="button"
                        rel="popover"
+                       style="line-height: 20px !important;"
                        data-bind="
-                            popover: { options: { placement: 'bottom', trigger: 'click',  },  
-                            template: 'Product-Filter-Widget-Popover', 
-                            data: $data }">
+                                popover: { options: { placement: 'bottom', trigger: 'click',  },  
+                                template: 'Product-Filter-Widget-Popover', 
+                                data: $data }">
                         Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
                     </a>
                 </div>
 
                 <input type="text" class="form-control" placeholder="Enter product titles or SKU's"/>
+
+                <div class="input-group-addon btn btn-primary">
+                    Search &nbsp;<i class="glyphicon glyphicon-search"></i>
+                </div>
             </div>
 
             <div style="height: 10px;"></div>
-            <div class="input-group" data-bind="foreach: SelectedFiltersForSearch">
+            <div class="input-group" data-bind="foreach: SelectedFiltersForSearch" style="min-height:30px;">
 
                 <div class="filter-tag-container" style="float: left; display: inline-block; margin-right: 5px; margin-bottom: 2px;">
                     <div class="filter-description" data-bind="text: TagDescription">
@@ -164,6 +169,15 @@
 
         self.SelectedFiltersForSearch = ko.observableArray();
         
+        self.TagsFilterKeyPress = function (model, event) {
+            if (event.keyCode == 13) {
+                self.AddFilter();
+                return false;
+            } else {
+                return true;
+            }
+        };
+
         self.AddFilter = function () {
 
             var selectedFilterType = self.SelectedFilter();

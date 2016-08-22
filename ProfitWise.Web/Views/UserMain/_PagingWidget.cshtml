@@ -5,9 +5,10 @@
     <div id="pagination-popover" class="input-group">
         <input type="text" class="form-control jump-to-page-class" placeholder="Jump to page number..." maxlength="5"
                data-bind="
-                    value: JumpToPageNumericOnly, 
+                    value: JumpToPage, 
                     valueUpdate: 'afterkeydown', 
-                    event: { focus: HighlightJumpToPage, keypress: JumpToPageOnEnter }" />
+                    hasFocus: true,
+                    event: { keyup: JumpToPageOnEnter }" />
 
         <span class="input-group-btn">
             <button class="btn btn-primary" data-bind="click: JumpToPageFunction" type="button">Go!</button>
@@ -78,6 +79,7 @@
             if (self.PageNumber() > self.PageCount()) {
                 self.PageNumber(self.PageCount());
             }
+
             if (self.JumpToPage() > self.PageCount()) {
                 self.JumpToPage(self.PageCount());
             }
@@ -85,41 +87,10 @@
         }
 
         self.HighlightJumpToPage = function () {
-            $(".jump-to-page-class").select();
+            
         };
 
-        self.JumpToPage = ko.observable(1);
-
-        self.JumpToPageNumericOnly = 
-            ko.computed({
-                read: function () {
-                    var output = self.JumpToPage().toFixed(0);
-                    // console.log("Reading to JumpToPage: " + output);
-                    return output;
-                },
-                write: function (value) {
-                    // console.log("Writing to EditUnitPrice: " + value);
-
-                    // Strip out unwanted characters, parse as float, then write the raw data back to the underlying "price" observable
-                    var parsedValue = parseFloat(value.replace(/[^\.\d]/g, ""));
-                    var finalValue = isNaN(parsedValue) ? 1 : parsedValue;
-
-                    if (finalValue > self.PageCount()) {
-                        finalValue = self.PageCount();
-                    }
-
-                    if (finalValue < 1) {
-                        finalValue = 1;
-                    }
-                    console.log("Writing to EditUnitPrice (final): " + finalValue);
-
-                    
-                    self.JumpToPage(finalValue); // Write to underlying storage
-                    self.JumpToPage.notifySubscribers();
-                    self.JumpToPageNumericOnly.notifySubscribers();
-                },
-                owner: self
-            });
+        self.JumpToPage = ko.observable();
 
         self.JumpToPageOnEnter = function(model, event) {
             if (event.keyCode == 13) {
@@ -130,12 +101,25 @@
             }
         };
 
-        self.JumpToPageFunction = function() {
-            self.PageNumber(self.JumpToPage());
-            ProfitWiseFunctions.PopOverCloseAll();
+        self.JumpToPageFunction = function () {
+            //console.log("JumpToPage " + self.JumpToPage());
+            var newPage = parseInt(self.JumpToPage());
+            if (newPage > self.PageCount()) {
+                newPage = self.PageCount();
+            }
+                
+            //console.log("newPage " + newPage);
+            self.PageNumber(newPage);
+            self.PageNumber.valueHasMutated();
+            
+            //console.log("current PageNumber " + self.PageNumber());
             self.InvokeCallbackFunction();
-        };
+            ProfitWiseFunctions.PopOverCloseAll();
 
+            self.JumpToPage("");
+            self.JumpToPage.valueHasMutated();
+        };
+        
         self.PageCount = ko.computed(function() {
             return self.RecordCount() / self.PageSize();
         });
@@ -168,8 +152,14 @@
         self.CallbackFunction = function() {
         };
 
-        self.InvokeCallbackFunction = function() {
+        self.InvokeCallbackFunction = function () {
+            console.log("InvokeCallbackFunction " + self.PageNumber());
+            
+            self.PageNumber.valueHasMutated();
             self.CallbackFunction(Number(self.PageNumber()), Number(self.PageSize()));
+
+            self.JumpToPage("");
+            self.JumpToPage.valueHasMutated();
         };
 
         self.SubscribeCallbackFunction = function(callback) {
