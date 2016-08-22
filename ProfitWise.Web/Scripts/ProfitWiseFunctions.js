@@ -70,11 +70,19 @@ ProfitWiseFunctions.CurrencyCache = [
 ];
 
 
-ProfitWiseFunctions.CurrencyFormatter = function (amount, currencyId) {
+ProfitWiseFunctions.FormatCurrencyWithAbbr = function (amount, currencyId) {
     var item =
         AQ(ProfitWiseFunctions.CurrencyCache)
             .first(function (item) { return item.Id == currencyId; });
 
     return item.Symbol + numeral(amount).format("0,0.00") + " " + item.Abbr;
+};
+
+ProfitWiseFunctions.FormatCurrency = function (amount, currencyId) {
+    var item =
+        AQ(ProfitWiseFunctions.CurrencyCache)
+            .first(function (item) { return item.Id == currencyId; });
+
+    return item.Symbol + numeral(amount).format("0,0.00");
 };
 

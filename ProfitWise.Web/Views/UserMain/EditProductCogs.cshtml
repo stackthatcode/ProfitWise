@@ -57,6 +57,7 @@
 <!-- KnockoutJS Templates -->
 @Html.Partial("_PagingWidget")
 @Html.Partial("_ProductFilterWidget")
+@Html.Partial("_MoneyRangeWidget")
 @Html.Partial("_PageFooter")
 
 <script type="text/html" id="Page-Header">
@@ -82,7 +83,7 @@
                     </div>
                 </div>
 
-                  <!-- Create Purchase Order Button -->
+                <!-- Create Purchase Order Button -->
                 <!-- <div class="visible-md visible-lg row header-horz-padding">
                     <div class="col-xs-12" style="text-align: right;">
                         <a style="width: 225px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-copy"></i> &nbsp;&nbsp;Create Purchase Order</a>
@@ -122,15 +123,32 @@
                     <td><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
                     <td><span data-bind="text: InventoryCount"></span> in stock<br/>
                         (<span data-bind="text: VariantCount"></span> variants)</td>
-                    <td data-bind="text: ProfitWiseFunctions.CurrencyFormatter(PriceAmount, PriceCurrency)"></td>
+
+                    <td data-bind="template: { name: 'Money-Range-Widget-Horizontal', data: Price }">
+                    </td>
+
                     <td>
-                        <a href="#" data-bind="text: ProfitWiseFunctions.CurrencyFormatter(CogsAmount, PriceCurrency), click: $root.LaunchBulkEditPopup"></a>
+                        <a href="#" data-bind="click: $root.LaunchBulkEditPopup">
+                            <span data-bind="template: { name: 'Money-Range-Widget', data: { model: $data.Cogs, includeLineBreak: true } }">
+                            </span>
+                        </a>
                     </td>
                     <td><input type="checkbox" data-bind="click: $parent.StockedDirectlyClick"/></td>
                     <td><input type="checkbox" data-bind="click: $parent.ExcludedClick"/></td>
                 </tr>
                 </tbody>
             </table>
+
+            <!--
+               <div style="font-size:0.70em" data-bind="if: CogsDetailUsed == 1">(averages)</div>
+
+               CogsData: {
+               /*** 1 = Simple, 2 = Range of Simple, 3 = Range of Averages **/
+               CogsDataType: 1,
+               CogsAmount: 18.00,
+               CogsCurrency: 1,
+               },
+                   -->
 
         </div>
     </div>
@@ -185,7 +203,7 @@
         self.StockedDirectlyClick = function(model) {
             alert("Stocked Directly Click");
         };
-
+            
         self.ExcludedClick = function (model) {
             alert("Stocked Directly Click");
         };
@@ -224,10 +242,17 @@
                 ProductTitle: '3D Universe PLA 2.85 mm ' + count,
                 InventoryCount: 175,
                 VariantCount: 12,
-                PriceAmount: 34.00,
-                PriceCurrency: 1,
-                CogsAmount: 18.00,
-                CogsCurrency: 1,
+                Price: {
+                    CurrencyId: 1,
+                    AmountLow: 34.00,
+                    AmountHigh: 42.00
+                },
+                Cogs: {
+                    CurrencyId: 2,
+                    AmountLow: 10000.00,
+                    AmountHigh: 23000.00,
+                },
+                CogsDetailUsed: 1,
                 NumberStockedDirectly: 12,
                 NumberExcludeVariants: 0,
             });

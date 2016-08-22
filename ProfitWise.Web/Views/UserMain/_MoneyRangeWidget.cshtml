@@ -1,0 +1,42 @@
+﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+
+<script type="text/html" id="Money-Range-Widget-Horizontal">
+    <span data-bind="if: AmountLow == AmountHigh">
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(AmountLow, CurrencyId)"></span>
+    </span>
+    <span data-bind="ifnot: AmountLow == AmountHigh">
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrency(AmountLow, CurrencyId)"></span>
+        to 
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(AmountHigh, CurrencyId)"></span>
+    </span>
+    <span style="font-size:0.70em" data-bind="if: IncludesAverages">(averages)</span>
+</script>
+
+
+<script type="text/html" id="Money-Range-Widget-Vertical">
+    <span data-bind="if: AmountLow == AmountHigh">
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(AmountLow, CurrencyId)"></span>
+    </span>
+    <span data-bind="ifnot: AmountLow == AmountHigh">
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrency(AmountLow, CurrencyId)"></span>
+        to <br />
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(AmountHigh, CurrencyId)"></span>
+    </span>
+    <br />
+    <span style="font-size:0.70em" data-bind="if: CogsDetailUsed">(averages)</span>
+</script>
+
+<script type="text/javascript">
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.MoneyRangeWidgetModel = function() {
+        var self = this;
+        
+        self.AmountLow = ko.observable(0.00);
+        self.AmountHigh = ko.observable(0.00);
+        self.CurrencyId = ko.observable(1);
+        self.IncludesAverages = ko.observable(false);
+    };
+</script>
+
+

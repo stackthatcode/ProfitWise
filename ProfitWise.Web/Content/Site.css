@@ -6,6 +6,11 @@
     background-color: rgb(235, 238, 240) !important;
     font-size: 15px;
     color: #555;
+    line-height: 1.58 !important;
+}
+
+/** Adjustment for Bootstrap Input Groups heights */
+.input-group {
 }
 
 input[type='text'] {

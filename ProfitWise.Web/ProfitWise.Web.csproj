@@ -379,6 +379,7 @@
     <Content Include="Views\Shared\_UserLayoutDialogBox.cshtml" />
     <Content Include="Views\Shared\_UserScripts.cshtml" />
     <Content Include="Views\UserMain\BulkEditProductVariantCogs.cshtml" />
+    <Content Include="Views\UserMain\_MoneyRangeWidget .cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">

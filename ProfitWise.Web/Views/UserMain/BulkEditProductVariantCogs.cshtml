@@ -6,6 +6,7 @@
 }
 
 @Html.Partial("_MoneyEditorWidget")
+@Html.Partial("_MoneyRangeWidget")
 
 <script type="text/html" id="Main-Template">
     <form class="form-horizontal">
@@ -23,7 +24,9 @@
             <label class="col-xs-3 control-label" style="color: #777;">Current CoGS</label>
 
             <div class="col-xs-7">
-                <span data-bind="text: CurrentCogsSummary"></span>
+                <span data-bind="template: { name: 'Money-Range-Widget-Horizontal', data: CurrentCogs }">
+                </span>
+
             </div>
             <div class="col-xs-2">
             </div>
@@ -80,8 +83,8 @@
             ProfitWise.BulkEditProductVariantCogsModel = function() {
                 var self = this;
 
-                self.CurrentCogsSummary = ko.observable();
                 self.ProductTitle = ko.observable();
+                self.CurrentCogs = ko.observable();
 
                 self.ValidationState = ko.computed(function() {
                 });
@@ -98,13 +101,21 @@
                 cogsWidgetModel.RegisterEnterKeyCallback(function() {
                     self.OkButtonClick();
                 });
+
                 self.CogsAmountEditorModel = cogsWidgetModel;
             };
 
             var model = new ProfitWise.BulkEditProductVariantCogsModel();
-            model.CurrentCogsSummary("$18.00 for 20 Variants");
+
             model.ProductTitle("3D Universe 2.85 mm PLA");
 
+            model.CurrentCogs({
+                CurrencyId : 1,
+                AmountLow : 200,
+                AmountHigh : 266,
+                IncludesAverages : true,
+            });
+            
             ko.applyBindings(model);
             window.ModelHandle = model;
             ProfitWiseFunctions.PopOverAutoClose();
