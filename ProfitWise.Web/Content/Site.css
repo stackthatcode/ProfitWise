@@ -16,6 +16,20 @@ input[type='text'] {
     width: 100px;
 }
 
+.not-allowed:hover {
+    cursor: not-allowed;
+}
+
+.overflow-gracefully {
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
+
+td.overflow-gracefully {
+    max-width:0;    
+}
+
 
 /** Page Header common styling **/
 #fixed-positioning-container {
@@ -97,6 +111,11 @@ fieldset[disabled] .btn-sample.active {
 }
 
 
+/** Product Filter styling **/
+.order-by-column:hover {
+    cursor: hand;
+    cursor: pointer;
+}
 
 .filter-tag-container {
     border-radius: 4px; 
@@ -132,7 +151,7 @@ a.filter-remove:hover {
     text-decoration: none;
 }
 
-a.filter-remove:active, a.filter-remove:visited {
+a.filter-remove:active, a.filter-remove:focus, a.filter-remove:visited {
     text-decoration: none;    
 }
 

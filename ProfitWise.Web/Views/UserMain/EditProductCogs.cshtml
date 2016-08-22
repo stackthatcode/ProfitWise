@@ -77,7 +77,7 @@
 
                     <!-- Paging Widget -->
                     <div class="col-lg-6">
-                        <div style="height:20px;" class="visible-lg"></div>
+                        <div style="height: 20px;" class="visible-lg"></div>
                         <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                         </div>
                     </div>
@@ -94,21 +94,84 @@
                 <div class="header-horz-padding" style="position: absolute; top: 129px;">
                     <table class="table" id="heading">
                         <thead>
-                            <tr>
-                                <th>Vendor <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                                <th>Product <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                                <th>Inventory <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                                <th style="text-align: center;">Price <i class="glyphicon glyphicon-triangle-bottom"></i></th>
-                                <th style="text-align: center;">CoGS</th>
-                                <th style="text-align: center;">Stocked Directly</th>
-                                <th style="text-align: center;">Exclude</th>
-                            </tr>
+                        <tr>
+                            <th class="order-by-column"
+                                data-bind="click: function() { SortByClick(0) }">
+                                Vendor
+
+                                <span data-bind="visible: SortByColumnIndex() == 0">
+                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
+                                </span>
+                                <span data-bind="visible: SortByColumnIndex() != 0">                                    
+                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
+                                </span>
+                            </th>
+
+                            <th class="order-by-column" data-bind="click: function() { SortByClick(1); }">
+                                Product
+
+                                <span data-bind="visible: SortByColumnIndex() == 1">
+                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
+                                </span>
+                                <span data-bind="visible: SortByColumnIndex() != 1">
+                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
+                                </span>
+                            </th>
+
+                            <th class="order-by-column" data-bind="click: function() { SortByClick(2); }">
+                                Inventory
+
+                                <span data-bind="visible: SortByColumnIndex() == 2">
+                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
+                                </span>
+                                <span data-bind="visible: SortByColumnIndex() != 2">
+                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
+                                </span>
+                            </th>
+                            
+                            <th class="order-by-column" data-bind="click: function() { SortByClick(3); }" style="text-align: center;">
+                                Price
+
+                                <span data-bind="visible: SortByColumnIndex() == 3">
+                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
+                                </span>
+                                <span data-bind="visible: SortByColumnIndex() != 3">
+                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
+                                </span>                            
+                            </th>
+                            
+                            <th class="order-by-column" data-bind="click: function() { SortByClick(4); }" style="text-align: center;">
+                                CoGS
+
+                                <span data-bind="visible: SortByColumnIndex() == 4">
+                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
+                                </span>
+                                <span data-bind="visible: SortByColumnIndex() != 4">
+                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
+                                </span>
+                            </th>
+                            <th class="not-allowed" style="text-align: center; color:#AAA;">Stocked Directly</th>
+                            <th class="not-allowed" style="text-align: center; color:#AAA;">Exclude</th>
+                        </tr>
                         </thead>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+</script>
+
+<script type="text/html" id="Sorting-Arrows-Active">
+    <span data-bind="if: $root.SortByDirectionDown">
+        <i class="glyphicon glyphicon-triangle-bottom"></i>
+    </span>
+    <span data-bind="ifnot: $root.SortByDirectionDown">
+        <i class="glyphicon glyphicon-triangle-top"></i>
+    </span>
+</script>
+
+<script type="text/html" id="Sorting-Arrows-Inactive">
+    <!--&nbsp;<i style="font-size:0.8em;" class="glyphicon glyphicon-sort"></i>-->
 </script>
 
 <script type="text/html" id="Main-Template">
@@ -119,8 +182,8 @@
             <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
                 <tbody data-bind="foreach: $root.CurrentGrid">
                 <tr>
-                    <td data-bind="text: Vendor"></td>
-                    <td><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
+                    <td class="overflow-gracefully" data-bind="text: Vendor"></td>
+                    <td class="overflow-gracefully"><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
                     <td><span data-bind="text: InventoryCount"></span> in stock<br/>
                         (<span data-bind="text: VariantCount"></span> variants)</td>
 
@@ -133,7 +196,7 @@
                             </span>
                         </a>
                     </td>
-                    <td><input type="checkbox" data-bind="click: $parent.StockedDirectlyClick"/></td>
+                    <td>12 of 100</td>
                     <td><input type="checkbox" data-bind="click: $parent.ExcludedClick"/></td>
                 </tr>
                 </tbody>
@@ -164,12 +227,33 @@
 <script>
     var ProfitWise = ProfitWise || {};
 
+
+
     ProfitWise.EditCogsModel = function () {
         var self = this;
 
         self.CurrentGrid = ko.observableArray();        
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
         self.FilterModel = new ProfitWiseWidgets.ProductFilterModel();
+        self.FilterModel.RegisterCallbackFunction(function() { alert('Search! OMG!!'); });
+
+
+        self.SortByColumns = [
+            'Vendor', 'Product', 'Inventory', 'Price', 'CoGS'
+        ];
+
+        self.SortByColumnIndex = ko.observable(0);
+        self.SortByDirectionDown = ko.observable(true);
+        
+        self.SortByClick = function(index) {
+            if (index == self.SortByColumnIndex()) {
+                self.SortByDirectionDown(!self.SortByDirectionDown());
+            } else {
+                self.SortByDirectionDown(true);
+            }
+            self.SortByColumnIndex(index);
+        }
+
 
         self.LoadDataForCurrentPage = function (pageNumber, pageSize) {            
             pageNumber = pageNumber || 1;
@@ -188,7 +272,34 @@
         };
 
         self.LoadSingleProductRecord = function (shopifyProductId) {
-            alert("Reloading product for " + shopifyProductId);
+            var item =
+                AQ(self.CurrentGrid())
+                .firstOrDefault(function (item) {
+                        return item.Id == shopifyProductId;
+                    });
+
+            self.CurrentGrid.replace(item,
+                {
+                    Id: shopifyProductId,
+                    Vendor: item.Vendor,
+                    ProductTitle: item.ProductTitle,
+                    InventoryCount: 175,
+                    VariantCount: 12,
+                    Price: {
+                        CurrencyId: 1,
+                        AmountLow: 34.00,
+                        AmountHigh: 42.00,
+                        IncludesAverages: 0,
+                    },
+                    Cogs: {
+                        CurrencyId: 3,
+                        AmountLow: 8000.00,
+                        AmountHigh: 9300.00,
+                        IncludesAverages: 1,
+                    },
+                    NumberStockedDirectly: 12,
+                    NumberExcludeVariants: 0,
+                });
         }
 
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
@@ -238,8 +349,8 @@
         for (var count = startRecord; count <= endRecord; count++) {
             output.push({
                 Id: count,
-                Vendor: '3D Universe ' + count,
-                ProductTitle: '3D Universe PLA 2.85 mm ' + count,
+                Vendor: '3D Universe 1234567890 1234567890 ' + count,
+                ProductTitle: '3D Universe PLA ' + count + '2.85 mm 12345678890',
                 InventoryCount: 175,
                 VariantCount: 12,
                 Price: {
@@ -250,8 +361,8 @@
                 },
                 Cogs: {
                     CurrencyId: 2,
-                    AmountLow: 10000.00,
-                    AmountHigh: 23000.00,
+                    AmountLow: 1000000.00,
+                    AmountHigh: 2300000.00,
                     IncludesAverages: 1,
                 },
                 NumberStockedDirectly: 12,

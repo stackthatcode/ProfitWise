@@ -62,9 +62,13 @@
                     </a>
                 </div>
 
-                <input type="text" class="form-control" placeholder="Enter product titles or SKU's"/>
+                <input type="text" class="form-control" placeholder="Enter product titles or SKU's"
+                       data-bind="
+                            valueUpdate: 'afterkeydown', 
+                            hasFocus: true,
+                            event: { keyup: KeyPressCallback }" />
 
-                <div class="input-group-addon btn btn-primary">
+                <div class="input-group-addon btn btn-primary" data-bind="click: CallbackFunction">
                     Search &nbsp;<i class="glyphicon glyphicon-search"></i>
                 </div>
             </div>
@@ -217,6 +221,23 @@
 
         self.RemoveFilterFromSearch = function (data, event) {
             self.SelectedFiltersForSearch.remove(data);
+        };
+
+        self.RegisterCallbackFunction = function(callback) {
+            self.CallbackFunction = callback;
+        };
+
+        self.CallbackFunction = function() {
+
+        };
+
+        self.KeyPressCallback = function() {
+            if (event.keyCode == 13) {
+                self.CallbackFunction();
+                return false;
+            } else {
+                return true;
+            }
         };
 
         return self;
