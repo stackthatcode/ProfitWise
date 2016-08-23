@@ -39,6 +39,28 @@ namespace ProfitWise.Web.Controllers
             return View(model);
         }
 
+        public ActionResult StockedDirectlyProduct(int shopifyProductId)
+        {
+            this.LoadCommonContextIntoViewBag();
+
+            var model = new BulkEditProductVariantModel()
+            {
+                ShopifyProductId = shopifyProductId
+            };
+            return View(model);
+        }
+
+        public ActionResult ExcludedProduct(int shopifyProductId)
+        {
+            this.LoadCommonContextIntoViewBag();
+
+            var model = new BulkEditProductVariantModel()
+            {
+                ShopifyProductId = shopifyProductId
+            };
+            return View(model);
+        }
+
 
         public ActionResult Goals()
         {

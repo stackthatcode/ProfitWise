@@ -92,7 +92,7 @@
 
                 <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
                 <div class="header-horz-padding" style="position: absolute; top: 129px;">
-                    <table class="table" id="heading">
+                    <table class="table" id="heading" style="margin-bottom:0px;">
                         <thead>
                         <tr>
                             <th class="order-by-column"
@@ -150,8 +150,8 @@
                                     <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
                                 </span>
                             </th>
-                            <th class="not-allowed" style="text-align: center; color:#AAA;">Stocked Directly</th>
-                            <th class="not-allowed" style="text-align: center; color:#AAA;">Exclude</th>
+                            <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyForAllClick">Stocked Directly</a></th>
+                            <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludeForAllClick">Exclude</a></th>
                         </tr>
                         </thead>
                     </table>
@@ -173,6 +173,7 @@
 <script type="text/html" id="Sorting-Arrows-Inactive">
     <!--&nbsp;<i style="font-size:0.8em;" class="glyphicon glyphicon-sort"></i>-->
 </script>
+
 
 <script type="text/html" id="Main-Template">
     <div data-bind="template: { name: 'Page-Header'}"></div>
@@ -196,23 +197,36 @@
                             </span>
                         </a>
                     </td>
-                    <td>12 of 100</td>
-                    <td><input type="checkbox" data-bind="click: $parent.ExcludedClick"/></td>
+                    <td>
+                        <div data-bind="if: StockedDirectlyCount == VariantCount || StockedDirectlyCount == 0">
+                            <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyChecked($data)"/>
+                        </div>
+
+                        <div data-bind="if: StockedDirectlyCount > 0 && StockedDirectlyCount < VariantCount">
+                            <a href="#"
+                               data-bind="click: $root.StockedDirectlyLinkClick">
+                                <span data-bind="text: StockedDirectlyCount"></span> of
+                                <span data-bind="text: VariantCount"></span>
+                            </a>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div data-bind="if: ExcludedCount == VariantCount || ExcludedCount == 0">
+                            <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedChecked($data)"/>
+                        </div>
+
+                        <div data-bind="if: ExcludedCount > 0 && ExcludedCount < VariantCount">
+                            <a href="#"
+                               data-bind="click: $root.ExcludedLinkClick">
+                                <span data-bind="text: ExcludedCount"></span> of
+                                <span data-bind="text: VariantCount"></span>
+                            </a>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>
-
-            <!--
-               <div style="font-size:0.70em" data-bind="if: CogsDetailUsed == 1">(averages)</div>
-
-               CogsData: {
-               /*** 1 = Simple, 2 = Range of Simple, 3 = Range of Averages **/
-               CogsDataType: 1,
-               CogsAmount: 18.00,
-               CogsCurrency: 1,
-               },
-                   -->
-
         </div>
     </div>
 
@@ -253,6 +267,47 @@
             }
             self.SortByColumnIndex(index);
         }
+
+
+        self.StockedDirectlyCheckboxClick = function (model) {
+            // TODO => update server
+            self.LoadSingleProductRecord(model.Id);
+        };
+        
+        self.StockedDirectlyLinkClick = function(model) {
+            ProfitWiseShopify.LaunchStockedDirectlyProduct(model.Id, function() {
+                alert("ok, let's do something!!!");
+            });
+        };
+        
+        self.StockedDirectlyForAllClick = function() {
+            alert("StockedDirectlyForAllClick");
+        };
+
+        self.ExcludeForAllClick = function() {
+            alert("ExcludeForAllClick");
+        };
+
+
+        self.StockedDirectlyChecked = function (data) {
+            return data.StockedDirectlyCount == data.VariantCount;
+        };        
+
+        self.ExcludedCheckboxClick = function (model) {
+            // TODO => update server
+            self.LoadSingleProductRecord(model.Id);
+        };
+
+        self.ExcludedChecked = function(data) {
+            return data.ExcludedCount == data.VariantCount;
+        };
+        
+        self.ExcludedLinkClick = function(model) {
+            ProfitWiseShopify.LaunchExcludedProduct(model.Id, function () {
+                alert("ok, let's do something for excluded!!!");
+            });
+        };
+
 
 
         self.LoadDataForCurrentPage = function (pageNumber, pageSize) {            
@@ -297,8 +352,8 @@
                         AmountHigh: 9300.00,
                         IncludesAverages: 1,
                     },
-                    NumberStockedDirectly: 12,
-                    NumberExcludeVariants: 0,
+                    StockedDirectlyCount: 12,
+                    ExcludedCount: 12,
                 });
         }
 
@@ -314,7 +369,15 @@
         self.StockedDirectlyClick = function(model) {
             alert("Stocked Directly Click");
         };
-            
+
+        self.SetProductAllStockedDirectly = function(model) {
+            alert("All " + model.Id);
+        };
+
+        self.SetProductNoneStockedDirectly = function (model) {
+            alert("None " + model.Id);
+        };
+
         self.ExcludedClick = function (model) {
             alert("Stocked Directly Click");
         };
@@ -326,7 +389,7 @@
         .ready(function () {
             ProfitWiseFunctions.TableHeaderWidthInit("table#product-cogs tbody tr td", "table#heading thead tr th");
             ProfitWiseFunctions.FixedHeaderScrollingInit("#top-header");
-            ProfitWiseFunctions.PopOverAutoClose();
+            ProfitWiseFunctions.PopOverAutoCloseInit();
 
             var model = new ProfitWise.EditCogsModel();
             model.LoadDataForCurrentPage();
@@ -365,8 +428,8 @@
                     AmountHigh: 2300000.00,
                     IncludesAverages: 1,
                 },
-                NumberStockedDirectly: 12,
-                NumberExcludeVariants: 0,
+                StockedDirectlyCount: 12,
+                ExcludedCount: 0,
             });
         };
 

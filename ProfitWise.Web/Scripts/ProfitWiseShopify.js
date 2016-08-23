@@ -93,6 +93,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
     });
 };
 
+
 ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId, callbackFunction) {
     var url = '/ProfitWise/UserMain/BulkEditProductVariantCogs?shopifyProductId=' + shopifyProductId;
 
@@ -107,5 +108,39 @@ ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId, callbackFunct
                 callbackFunction(shopifyProductId);
             }
         });
+};
+
+
+ProfitWiseShopify.LaunchStockedDirectlyProduct = function (shopifyProductId, callbackFunction) {
+    var url = '/ProfitWise/UserMain/StockedDirectlyProduct?shopifyProductId=' + shopifyProductId;
+
+    ShopifyApp.Modal.open({
+        src: url,
+        title: 'Set Stocked Directly for all Product Variants',
+        width: 'small',
+        height: 200,
+    },
+        function (result) {
+            if (result) {
+                callbackFunction(shopifyProductId);
+            }
+        });
+};
+
+ProfitWiseShopify.LaunchExcludedProduct = function(shopifyProductId, callbackFunction) {
+    var url = '/ProfitWise/UserMain/ExcludedProduct?shopifyProductId=' + shopifyProductId;
+
+    ShopifyApp.Modal.open({
+        src: url,
+        title: 'Set Exclude/Include for all Product Variants',
+        width: 'small',
+        height: 200,
+    },
+        function (result) {
+            if (result) {
+                callbackFunction(shopifyProductId);
+            }
+        });
+
 };
 

@@ -36,7 +36,17 @@ ProfitWiseFunctions.TableHeaderWidthInit = function (bodyCellSelector, headerCel
 
 
 // Relies upon .popover-container for enclosing parent & .popover-launcher for the triggering element
-ProfitWiseFunctions.PopOverAutoClose = function() {
+ProfitWiseFunctions.PopOverCloseAll = function() {
+    $('div.popover:visible')
+        .closest('.popover-container')
+        .find(".popover-launcher")
+        .popover("hide")
+        .each(function (index, element) {
+            $(element).data()["bs.popover"]["inState"]["click"] = false;
+        });
+};
+
+ProfitWiseFunctions.PopOverAutoCloseInit = function () {
     $(document).on("click", function (event) {
         $('div.popover:visible')
             .closest('.popover-container')
@@ -47,17 +57,14 @@ ProfitWiseFunctions.PopOverAutoClose = function() {
                 $(element).data()["bs.popover"]["inState"]["click"] = false;
             });
     });
+
+/*    $(document)
+        .on("scroll",
+            function() {
+                ProfitWiseFunctions.PopOverCloseAll();
+            });*/
 };
 
-ProfitWiseFunctions.PopOverCloseAll = function() {
-    $('div.popover:visible')
-        .closest('.popover-container')
-        .find(".popover-launcher")
-        .popover("hide")
-        .each(function (index, element) {
-            $(element).data()["bs.popover"]["inState"]["click"] = false;
-        });
-};
 
 ProfitWiseFunctions.CurrencyCache = [
     { Id: 1, Abbr: "USD", Symbol: "$" },
