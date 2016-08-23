@@ -1,4 +1,4 @@
-﻿@model ProfitWise.Web.Models.BulkEditProductVariantModel
+﻿@model ProfitWise.Web.Models.SimpleShopifyProductId
 
 @{
     ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
@@ -33,7 +33,7 @@
         .ready(function () {
             var ProfitWise = ProfitWise || {};
             
-            ProfitWise.StockedDirectlyModel = function() {
+            ProfitWise.ExcludedModel = function() {
                 var self = this;
 
                 self.ShopifyProductId = ko.observable();
@@ -52,7 +52,7 @@
                 };
             };
 
-            var model = new ProfitWise.StockedDirectlyModel();
+            var model = new ProfitWise.ExcludedModel();
             model.ProductTitle("3D Universe 2.85 mm PLA");
             model.VariantCount(84);
             

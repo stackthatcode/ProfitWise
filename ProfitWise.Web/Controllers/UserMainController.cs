@@ -32,33 +32,47 @@ namespace ProfitWise.Web.Controllers
         {
             this.LoadCommonContextIntoViewBag();
 
-            var model = new BulkEditProductVariantModel()
+            var model = new SimpleShopifyProductId()
             {
                 ShopifyProductId = shopifyProductId
             };
             return View(model);
         }
 
-        public ActionResult StockedDirectlyProduct(int shopifyProductId)
+        public ActionResult StockedDirectlyVariantsPopup(int shopifyProductId)
         {
             this.LoadCommonContextIntoViewBag();
 
-            var model = new BulkEditProductVariantModel()
+            var model = new SimpleShopifyProductId()
             {
                 ShopifyProductId = shopifyProductId
             };
             return View(model);
         }
 
-        public ActionResult ExcludedProduct(int shopifyProductId)
+        public ActionResult StockedDirectlyProductsPopup()
+        {
+            this.LoadCommonContextIntoViewBag();
+            return View();
+        }
+
+
+
+        public ActionResult ExcludedVariantsPopup(int shopifyProductId)
         {
             this.LoadCommonContextIntoViewBag();
 
-            var model = new BulkEditProductVariantModel()
+            var model = new SimpleShopifyProductId()
             {
                 ShopifyProductId = shopifyProductId
             };
             return View(model);
+        }
+
+        public ActionResult ExcludedProductsPopup()
+        {
+            this.LoadCommonContextIntoViewBag();
+            return View();
         }
 
 

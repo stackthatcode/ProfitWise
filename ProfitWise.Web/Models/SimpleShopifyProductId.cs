@@ -1,6 +1,6 @@
 ﻿namespace ProfitWise.Web.Models
 {
-    public class BulkEditProductVariantModel
+    public class SimpleShopifyProductId
     {
         public int ShopifyProductId { get; set; }
     }

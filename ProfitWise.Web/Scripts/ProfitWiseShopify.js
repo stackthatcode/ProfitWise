@@ -111,8 +111,8 @@ ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId, callbackFunct
 };
 
 
-ProfitWiseShopify.LaunchStockedDirectlyProduct = function (shopifyProductId, callbackFunction) {
-    var url = '/ProfitWise/UserMain/StockedDirectlyProduct?shopifyProductId=' + shopifyProductId;
+ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup = function (shopifyProductId, callbackFunction) {
+    var url = '/ProfitWise/UserMain/StockedDirectlyVariantsPopup?shopifyProductId=' + shopifyProductId;
 
     ShopifyApp.Modal.open({
         src: url,
@@ -127,8 +127,25 @@ ProfitWiseShopify.LaunchStockedDirectlyProduct = function (shopifyProductId, cal
         });
 };
 
-ProfitWiseShopify.LaunchExcludedProduct = function(shopifyProductId, callbackFunction) {
-    var url = '/ProfitWise/UserMain/ExcludedProduct?shopifyProductId=' + shopifyProductId;
+ProfitWiseShopify.LaunchStockedDirectlyProductsPopup = function (callbackFunction) {
+    var url = '/ProfitWise/UserMain/StockedDirectlyProductsPopup';
+    
+    ShopifyApp.Modal.open({
+        src: url,
+        title: 'Set Stocked Directly for all Products in Search',
+        width: 'small',
+        height: 240,
+    },
+        function (result) {
+            if (result) {
+                callbackFunction();
+            }
+        });
+};
+
+
+ProfitWiseShopify.LaunchExcludedProductVariantPopup = function(shopifyProductId, callbackFunction) {
+    var url = '/ProfitWise/UserMain/ExcludedVariantsPopup?shopifyProductId=' + shopifyProductId;
 
     ShopifyApp.Modal.open({
         src: url,
@@ -139,6 +156,23 @@ ProfitWiseShopify.LaunchExcludedProduct = function(shopifyProductId, callbackFun
         function (result) {
             if (result) {
                 callbackFunction(shopifyProductId);
+            }
+        });
+
+};
+
+ProfitWiseShopify.LaunchExcludedProductsPopup = function (callbackFunction) {
+    var url = '/ProfitWise/UserMain/ExcludedProductsPopup';
+    
+    ShopifyApp.Modal.open({
+        src: url,
+        title: 'Set Exclude/Include for all Products in Search',
+        width: 'small',
+        height: 270,
+    },
+        function (result) {
+            if (result) {
+                callbackFunction();
             }
         });
 

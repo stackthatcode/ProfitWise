@@ -1,0 +1,60 @@
+﻿@model ProfitWise.Web.Models.SimpleShopifyProductId
+
+@{
+    ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
+    Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
+}
+
+
+<script id="Main-Template" type="text/html">
+    <h4 style="font-weight: 600;" data-bind="text: $data.ProductTitle"></h4>
+    <p>
+        Would you like to Include/Exclude all Products in the current search results from ProfitWise reporting?
+    </p>
+
+    <div style="height: 24px;"></div>
+
+    <div class="alert alert-warning" role="alert">
+        <strong>WARNING!</strong> Clicking either button will affect all Variants of all Products in your search
+    </div>
+    <div style="height: 24px;"></div>
+
+    <form class="form-inline">
+        <div class="form-group">
+            <a href="#" data-bind="click: $root.IncludeAllProducts" class="form-control btn btn-default" style="width: 48%;"><i class="glyphicon glyphicon-eye-open"></i> &nbsp; Include ALL Products</a>
+            <a href="#" data-bind="click: $root.ExcludeAllProducts" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-eye-close"></i> &nbsp; Exclude ALL Products</a>
+        </div>
+    </form>
+</script>
+
+<div data-bind="template: { name: 'Main-Template' }">
+</div>
+
+
+<script>
+    $(document)
+        .ready(function () {
+            var ProfitWise = ProfitWise || {};
+            
+            ProfitWise.ExcludedModel = function() {
+                var self = this;
+
+                self.IncludeAllProducts = function() {
+                    alert("Include All for Product");
+
+                    ShopifyApp.Modal.close(true);
+                };
+
+                self.ExcludeAllProducts = function() {
+                    alert("Exclude All for Product");
+
+                    ShopifyApp.Modal.close(true);
+                };
+            };
+
+            var model = new ProfitWise.ExcludedModel();            
+            ko.applyBindings(model);
+            window.ModelHandle = model;
+        });
+</script>
+   

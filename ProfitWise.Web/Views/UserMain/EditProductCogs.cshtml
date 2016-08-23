@@ -150,8 +150,8 @@
                                     <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
                                 </span>
                             </th>
-                            <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyForAllClick">Stocked Directly</a></th>
-                            <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludeForAllClick">Exclude</a></th>
+                            <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyHeaderClick">Stocked Directly</a></th>
+                            <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludeHeaderLinkClick">Exclude</a></th>
                         </tr>
                         </thead>
                     </table>
@@ -204,7 +204,7 @@
 
                         <div data-bind="if: StockedDirectlyCount > 0 && StockedDirectlyCount < VariantCount">
                             <a href="#"
-                               data-bind="click: $root.StockedDirectlyLinkClick">
+                               data-bind="click: $root.StockedDirectlyGridLinkClick">
                                 <span data-bind="text: StockedDirectlyCount"></span> of
                                 <span data-bind="text: VariantCount"></span>
                             </a>
@@ -218,7 +218,7 @@
 
                         <div data-bind="if: ExcludedCount > 0 && ExcludedCount < VariantCount">
                             <a href="#"
-                               data-bind="click: $root.ExcludedLinkClick">
+                               data-bind="click: $root.ExcludedGridLinkClick">
                                 <span data-bind="text: ExcludedCount"></span> of
                                 <span data-bind="text: VariantCount"></span>
                             </a>
@@ -269,46 +269,49 @@
         }
 
 
+        self.StockedDirectlyChecked = function (data) {
+            return data.StockedDirectlyCount == data.VariantCount;
+        };
+
         self.StockedDirectlyCheckboxClick = function (model) {
             // TODO => update server
             self.LoadSingleProductRecord(model.Id);
         };
         
-        self.StockedDirectlyLinkClick = function(model) {
-            ProfitWiseShopify.LaunchStockedDirectlyProduct(model.Id, function() {
+        self.StockedDirectlyGridLinkClick = function(model) {
+            ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup(model.Id, function() {
                 alert("ok, let's do something!!!");
             });
         };
         
-        self.StockedDirectlyForAllClick = function() {
-            alert("StockedDirectlyForAllClick");
+        self.StockedDirectlyHeaderClick = function() {
+            ProfitWiseShopify.LaunchStockedDirectlyProductsPopup(function () {
+                alert("ok, I'm changing a lot of Stocked Directly!!!");
+            });
         };
+      
 
-        self.ExcludeForAllClick = function() {
-            alert("ExcludeForAllClick");
-        };
-
-
-        self.StockedDirectlyChecked = function (data) {
-            return data.StockedDirectlyCount == data.VariantCount;
-        };        
-
-        self.ExcludedCheckboxClick = function (model) {
-            // TODO => update server
-            self.LoadSingleProductRecord(model.Id);
-        };
 
         self.ExcludedChecked = function(data) {
             return data.ExcludedCount == data.VariantCount;
         };
         
-        self.ExcludedLinkClick = function(model) {
-            ProfitWiseShopify.LaunchExcludedProduct(model.Id, function () {
+        self.ExcludedCheckboxClick = function (model) {
+            // TODO => update server
+            self.LoadSingleProductRecord(model.Id);
+        };
+
+        self.ExcludedGridLinkClick = function (model) {
+            ProfitWiseShopify.LaunchExcludedProductVariantPopup(model.Id, function () {
                 alert("ok, let's do something for excluded!!!");
             });
         };
 
-
+        self.ExcludeHeaderLinkClick = function () {
+            ProfitWiseShopify.LaunchExcludedProductsPopup(function () {
+                alert("ok, I'm doing a lot of excluding!!!");
+            });
+        };
 
         self.LoadDataForCurrentPage = function (pageNumber, pageSize) {            
             pageNumber = pageNumber || 1;
@@ -428,8 +431,8 @@
                     AmountHigh: 2300000.00,
                     IncludesAverages: 1,
                 },
-                StockedDirectlyCount: 12,
-                ExcludedCount: 0,
+                StockedDirectlyCount: 8,
+                ExcludedCount: 8,
             });
         };
 

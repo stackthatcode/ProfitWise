@@ -1,0 +1,60 @@
+﻿@model ProfitWise.Web.Models.SimpleShopifyProductId
+
+@{
+    ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
+    Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
+}
+
+
+<script id="Main-Template" type="text/html">
+    <p>
+        How would you like to set Stocked Directly for all Products in your current search results?
+    </p>
+
+    <div style="height: 24px;"></div>
+
+    <div class="alert alert-warning" role="alert">
+        <strong>WARNING!</strong> Clicking either button will affect all Variants of all Products in your search
+    </div>
+    <div style="height: 24px;"></div>
+
+    <form class="form-inline">
+        <div class="form-group">
+            <a href="#" data-bind="click: $root.SetProductAllStockedDirectly" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-ok"></i> &nbsp; Mark ALL as Stocked Directly</a>
+            <a href="#" data-bind="click: $root.SetProductNoneStockedDirectly" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-remove"></i> &nbsp; Mark NONE as Stocked Directly</a>
+        </div>
+    </form>
+</script>
+
+<div data-bind="template: { name: 'Main-Template' }">
+</div>
+
+
+<script>
+    $(document)
+        .ready(function () {
+            var ProfitWise = ProfitWise || {};
+            
+            ProfitWise.StockedDirectlyModel = function() {
+                var self = this;
+
+                self.SetProductAllStockedDirectly = function() {
+                    alert("Set All for Product");
+
+                    ShopifyApp.Modal.close(true);
+                };
+
+                self.SetProductNoneStockedDirectly = function() {
+                    alert("Set None for Product");
+
+                    ShopifyApp.Modal.close(true);
+                };
+            };
+
+            var model = new ProfitWise.StockedDirectlyModel();
+            
+            ko.applyBindings(model);
+            window.ModelHandle = model;
+        });
+</script>
+   

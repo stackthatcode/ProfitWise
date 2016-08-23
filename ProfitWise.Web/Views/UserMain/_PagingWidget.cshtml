@@ -101,12 +101,19 @@
         };
 
         self.JumpToPageFunction = function () {
-            //console.log("JumpToPage " + self.JumpToPage());
             var newPage = parseInt(self.JumpToPage());
+            if (isNaN(newPage)) {
+                self.JumpToPage("");
+                return;
+            }
+
+            if (newPage < 1) {
+                newPage = 1;
+            }
             if (newPage > self.PageCount()) {
                 newPage = self.PageCount();
             }
-                
+            
             //console.log("newPage " + newPage);
             self.PageNumber(newPage);
             self.PageNumber.valueHasMutated();
@@ -152,13 +159,7 @@
         };
 
         self.InvokeCallbackFunction = function () {
-            console.log("InvokeCallbackFunction " + self.PageNumber());
-            
-            self.PageNumber.valueHasMutated();
             self.CallbackFunction(Number(self.PageNumber()), Number(self.PageSize()));
-
-            self.JumpToPage("");
-            self.JumpToPage.valueHasMutated();
         };
 
         self.SubscribeCallbackFunction = function(callback) {
