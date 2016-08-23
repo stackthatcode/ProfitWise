@@ -64,6 +64,7 @@
 
                 <input type="text" class="form-control" placeholder="Enter product titles or SKU's"
                        data-bind="
+                            value: SearchText,
                             valueUpdate: 'afterkeydown', 
                             hasFocus: true,
                             event: { keyup: KeyPressCallback }" />
@@ -148,6 +149,8 @@
             'Zortrax',
         ]);
 
+
+        self.SearchText = ko.observable();
 
         self.SelectedFilter = ko.observable();
         self.SelectedProductType = ko.observable();

@@ -17,34 +17,34 @@
         height: 60px;
     }
 
-    #product-cogs tr td:nth-child(1) {
+    #product-cogs tr td:nth-child(1), #heading tr th:nth-child(1) {
         width: 15%;
     }
 
-    #product-cogs tr td:nth-child(2) {
+    #product-cogs tr td:nth-child(2), #heading tr th:nth-child(2) {
         width: 25%;
     }
 
-    #product-cogs tr td:nth-child(3) {
+    #product-cogs tr td:nth-child(3), #heading tr th:nth-child(3) {
         width: 14%;
     }
 
-    #product-cogs tr td:nth-child(4) {
+    #product-cogs tr td:nth-child(4), #heading tr th:nth-child(4) {
         width: 13%;
         text-align: center;
     }
 
-    #product-cogs tr td:nth-child(5) {
+    #product-cogs tr td:nth-child(5), #heading tr th:nth-child(5) {
         width: 13%;
         text-align: center;
     }
 
-    #product-cogs tr td:nth-child(6) {
+    #product-cogs tr td:nth-child(6), #heading tr th:nth-child(6) {
         width: 10%;
         text-align: center;
     }
 
-    #product-cogs tr td:nth-child(7) {
+    #product-cogs tr td:nth-child(7), #heading tr th:nth-child(7) {
         width: 10%;
         text-align: center;
     }
@@ -62,24 +62,26 @@
 
 <script type="text/html" id="Page-Header">
     <div id="fixed-positioning-container">
-        <div id="top-header-sleeve" style="height: 210px;">
+    <div id="top-header-sleeve" style="height: 210px;">
 
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div id="top-header">
+        <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+        <div id="top-header">
 
-                <div class="row" style="padding-left: 25px; padding-right: 25px;">
-                    <!-- Filtering Widget -->
-                    <div class="col-lg-6" style="padding-top: 20px;">
-                        <div class="pull-left;"
-                             data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
-                        </div>
+            <div class="row" style="padding-left: 25px; padding-right: 25px;">
+                <!-- Filtering Widget -->
+                <div class="col-lg-6" style="padding-top: 20px;">
+                    <div class="pull-left;"
+                         data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
                     </div>
+                </div>
 
-                    <!-- Paging Widget -->
-                    <div class="col-lg-6">
-                        <div style="height: 20px;" class="visible-lg"></div>
+                <!-- Paging Widget -->
+                <div class="col-lg-6">
+                    <div style="height: 20px;" class="visible-lg"></div>
+                    <div data-bind="visible: $root.CurrentGrid().length > 0">
                         <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                         </div>
+                    </div>
                     </div>
                 </div>
 
@@ -91,7 +93,8 @@
                 </div>-->
 
                 <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
-                <div class="header-horz-padding" style="position: absolute; top: 129px;">
+                <div class="header-horz-padding" style="position: absolute; top: 129px;"
+                     data-bind="visible: $root.CurrentGrid().length > 0">
                     <table class="table" id="heading" style="margin-bottom:0px;">
                         <thead>
                         <tr>
@@ -176,10 +179,22 @@
 
 
 <script type="text/html" id="Main-Template">
-    <div data-bind="template: { name: 'Page-Header'}"></div>
+    <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
     <div class="container" style="margin: 0; width: 100%; padding-left: 20px; padding-right: 20px;">
         <div style="position: relative; min-width: 900px; margin-top: 209px; background-color: #FFF; padding-left: 25px; padding-right: 25px;">
+
+            <!-- No Products Found matching XYZ -->
+            <div id="no-products-found" style="width: 100%;"
+                 data-bind="visible: $root.NoProductsFoundEnabled() && $root.CurrentGrid().length == 0">
+                <div style="text-align: center; padding-top: 20px; padding-bottom: 100px;">
+                    <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
+                    <h3 style="color: #555; font-weight: 300;">Could not find any products</h3>
+                    <span style="color: #AAA;">Try changing the filters or search term</span>
+                </div>
+            </div>
+
+            <!-- Actual Product Cogs -->
             <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
                 <tbody data-bind="foreach: $root.CurrentGrid">
                 <tr>
@@ -241,12 +256,11 @@
 <script>
     var ProfitWise = ProfitWise || {};
 
-
-
     ProfitWise.EditCogsModel = function () {
         var self = this;
 
-        self.CurrentGrid = ko.observableArray();        
+        self.CurrentGrid = ko.observableArray();
+        self.NoProductsFoundEnabled = ko.observable(false);
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
         self.FilterModel = new ProfitWiseWidgets.ProductFilterModel();
         self.FilterModel.RegisterCallbackFunction(function() { alert('Search! OMG!!'); });
@@ -289,7 +303,6 @@
                 alert("ok, I'm changing a lot of Stocked Directly!!!");
             });
         };
-      
 
 
         self.ExcludedChecked = function(data) {
@@ -312,6 +325,9 @@
                 alert("ok, I'm doing a lot of excluding!!!");
             });
         };
+        
+
+        // TODO => Search Button
 
         self.LoadDataForCurrentPage = function (pageNumber, pageSize) {            
             pageNumber = pageNumber || 1;
@@ -319,17 +335,22 @@
 
             // #1 - load only that page of numbers
             // TODO => invoke external service
-            var data = window.cogsDataService(pageNumber, pageSize);
+            var data = window.cogsDataService(pageNumber, pageSize,
+                function(data) {
+                    self.PagingModel.RecordCount(2000);
+                    self.CurrentGrid.removeAll();
+                    self.CurrentGrid(data);
 
+                    self.NoProductsFoundEnabled(true);
+
+                });
             // #2 - how many records match that criteria
             // TODO => invoke external service
-            self.PagingModel.RecordCount(2000);
-
-            self.CurrentGrid.removeAll();
-            self.CurrentGrid(data);
         };
 
         self.LoadSingleProductRecord = function (shopifyProductId) {
+            ProfitWiseShopify.ErrorPopup();
+            /*
             var item =
                 AQ(self.CurrentGrid())
                 .firstOrDefault(function (item) {
@@ -357,7 +378,7 @@
                     },
                     StockedDirectlyCount: 12,
                     ExcludedCount: 12,
-                });
+                });*/
         }
 
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
@@ -385,8 +406,12 @@
             alert("Stocked Directly Click");
         };
 
+        //self.AjaxService = new ProfitWiseFunctions.Ajax(ProfitWiseFunctions.AjaxSettings);
+
         return self;
     };
+
+    var modeltmp = "XYZ";
 
     $(document)
         .ready(function () {
@@ -396,10 +421,10 @@
 
             var model = new ProfitWise.EditCogsModel();
             model.LoadDataForCurrentPage();
-            
-            ko.applyBindings(model);
-            window.modeltmp = model;
+            modeltmp = model;
 
+            ko.applyBindings(model);
+            
             // $root
             // model.CurrentGrid [ 1 to N ]
             // model.LaunchBulkEditPopup
@@ -407,36 +432,53 @@
 </script>
 
 <script>
-    window.cogsDataService = function (pageNumber, pageSize) {
-        var output = [];
-        var startRecord = (pageNumber - 1) * pageSize + 1;
-        var endRecord = startRecord + pageSize - 1;
-        
-        for (var count = startRecord; count <= endRecord; count++) {
-            output.push({
-                Id: count,
-                Vendor: '3D Universe 1234567890 1234567890 ' + count,
-                ProductTitle: '3D Universe PLA ' + count + '2.85 mm 12345678890',
-                InventoryCount: 175,
-                VariantCount: 12,
-                Price: {
-                    CurrencyId: 1,
-                    AmountLow: 34.00,
-                    AmountHigh: 42.00,
-                    IncludesAverages: 0,
-                },
-                Cogs: {
-                    CurrencyId: 2,
-                    AmountLow: 1000000.00,
-                    AmountHigh: 2300000.00,
-                    IncludesAverages: 1,
-                },
-                StockedDirectlyCount: 8,
-                ExcludedCount: 8,
-            });
+    window.cogsDataService = function (pageNumber, pageSize, callback) {
+
+        var fakeDataFunction = function () {
+            if (pageNumber > 10) {
+                return [];
+            }
+
+            var output = [];
+            var startRecord = (pageNumber - 1) * pageSize + 1;
+            var endRecord = startRecord + pageSize - 1;
+
+            for (var count = startRecord; count <= endRecord; count++) {
+                output.push({
+                    Id: count,
+                    Vendor: '3D Universe 1234567890 1234567890 ' + count,
+                    ProductTitle: '3D Universe PLA ' + count + '2.85 mm 12345678890',
+                    InventoryCount: 175,
+                    VariantCount: 12,
+                    Price: {
+                        CurrencyId: 1,
+                        AmountLow: 34.00,
+                        AmountHigh: 42.00,
+                        IncludesAverages: 0,
+                    },
+                    Cogs: {
+                        CurrencyId: 2,
+                        AmountLow: 1000000.00,
+                        AmountHigh: 2300000.00,
+                        IncludesAverages: 1,
+                    },
+                    StockedDirectlyCount: 8,
+                    ExcludedCount: 8,
+                });
+            };
+
+            return output;
         };
 
-        return output;
+        flow.exec(
+            function () {
+                $("#spinner-layer").show();
+                setTimeout(this, 1500);
+            }, 
+            function() {
+                $("#spinner-layer").hide();
+                callback(fakeDataFunction());
+            });
     }
 </script>
 

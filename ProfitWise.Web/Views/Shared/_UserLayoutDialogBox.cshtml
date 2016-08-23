@@ -24,5 +24,11 @@
     <p>Shop Name = @HttpContext.Current.RetreiveUserBriefFromContext().ShopName</p>-->
 
     @RenderBody()
+
+    <div id="spinner-layer" class="spinner-layer" style="display:none;">
+        <div id="spinner" class="spinner">
+            <img id="img-spinner" style="width: 80px; height: 80px;" src="@Url.Content("~/Content/images/spinner.gif")" />
+        </div>
+    </div>
 </body>
 </html>

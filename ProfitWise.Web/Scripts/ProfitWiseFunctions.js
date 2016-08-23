@@ -93,3 +93,81 @@ ProfitWiseFunctions.FormatCurrency = function (amount, currencyId) {
     return item.Symbol + numeral(amount).format("0,0.00");
 };
 
+
+
+// Temporary hard-coding of reference to ProfitWiseShopify.js
+
+ProfitWiseFunctions.AjaxSettings = {
+    // Override these settings in the PushLibrary Shim
+    BaseUrl: "/ProfitWise",
+    Timeout: 60000,
+    WaitingLayerSelector: "#spinner-layer",
+    ErrorCallbackFunction: ProfitWiseShopify.ErrorPopup,
+};
+
+
+ProfitWiseFunctions.Ajax = function (settings) {
+    var self = this;
+
+    self.Settings = settings;
+
+    self.ErrorCallback = function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status != 0 || textStatus == "timeout") {
+            self.HideLoading();
+            self.Settings.ErrorCallbackFunction();
+        }
+    };
+
+    self.HttpGet = function (url, successFunc) {
+        flow.exec(
+            function () {
+                self.ShowLoading();
+                $.ajax({
+                    type: 'GET',
+                    url: self.Settings.BaseUrl + url,
+                    timeout: self.Settings.Timeout,
+                    error: self.ErrorCallback,
+                    success: this
+                });
+            },
+            function (data, textStatus, jqXHR) {
+                self.HideLoading();
+                if (successFunc) {
+                    successFunc(data, textStatus, jqXHR);
+                }
+            }
+        );
+    };
+
+    self.HttpPost = function (url, data, successFunc) {
+        flow.exec(
+            function () {
+                self.ShowLoading();
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    url: self.Settings.BaseUrl + url,
+                    data: JSON.stringify(data),
+                    timeout: self.Settings.Timeout,
+                    error: self.ErrorCallback,
+                    success: this
+                });
+            },
+            function (data, textStatus, jqXHR) {
+                self.HideLoading();
+                if (successFunc) {
+                    successFunc(data, textStatus, jqXHR);
+                }
+            }
+        );
+    };
+
+    self.ShowLoading = function () {
+        $(self.Settings.WaitingLayerSelector).show();
+    };
+
+    self.HideLoading = function () {
+        $(self.Settings.WaitingLayerSelector).hide();
+    };
+};

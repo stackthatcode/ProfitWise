@@ -155,3 +155,34 @@ a.filter-remove:active, a.filter-remove:focus, a.filter-remove:visited {
     text-decoration: none;    
 }
 
+
+
+
+.spinner-layer {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    z-index: 2000;
+	width: 100%; 
+	height: 100%;
+	background:rgba(255, 255, 255, 0.5);
+    /* filter: alpha(opacity=50); */
+}
+
+.spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -40px; /* half width of the spinner gif */
+    margin-top: -40px; /* half height of the spinner gif */
+    text-align: center;
+    z-index: 900;
+    overflow: auto;
+    width: 80px; /* width of the spinner gif */
+    height: 80px; /*hight of the spinner gif +2px to fix IE8 issue */
+}
+
+.spinner .img-spinner {
+    width: 80px;
+    height: 80px;
+}
