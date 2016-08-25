@@ -306,6 +306,8 @@ namespace ProfitWise.Data.RefreshServices
 
                     existingLineItem.TotalRestockedQuantity = importedLineItem.TotalRestockedQuantity;
                     existingLineItem.GrossRevenue = importedLineItem.GrossRevenue;
+
+                    // IF Shopify Product or Variant was deleted, we'll see it here from Shopify
                     existingLineItem.ShopifyProductId = importedLineItem.ShopifyProductId;
                     existingLineItem.ShopifyVariantId = importedLineItem.ShopifyVariantId;
                     orderRepository.UpdateOrderLineItem(existingLineItem);

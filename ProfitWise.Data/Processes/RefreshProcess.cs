@@ -58,7 +58,7 @@ namespace ProfitWise.Data.Processes
 
             _productRefreshService.Execute(shopifyClientCredentials);
 
-            _orderRefreshService.Execute(shopifyClientCredentials);
+            //_orderRefreshService.Execute(shopifyClientCredentials);
         }
     }
 }

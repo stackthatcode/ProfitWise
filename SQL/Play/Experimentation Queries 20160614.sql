@@ -4,45 +4,26 @@ USE ProfitWise;
 SET SQL_SAFE_UPDATES = 0;
 
 
+SELECT * FROM aspnetusers;
+
+SELECT * FROM aspnetuserclaims;
+
+
+
 SELECT * FROM shop;
 
-/****/
+SELECT * FROM profitwisebatchstate;	/** What we currently have for each Shop **/
+SELECT * FROM profitwisepreferences; /** What each Shop wants **/
 
 
-SELECT * FROM shopifyproduct LIMIT 5, 10;
+SELECT * FROM shopifyproduct;
+SELECT * FROM shopifyvariant;
 
-SELECT * FROM shopifyvariant WHERE ShopId = 955973;
-
-
-
-
-
-
-/****/
 SELECT * FROM shopifyorderlineitem WHERE ShopifyVariantId IS NULL;
 
 SELECT * FROM profitwiseproduct WHERE PwProductId NOT IN ( SELECT PwProductId FROM shopifyVariant ) ORDER BY Name;
 
-SELECT * FROM shopifyVariant WHERE PwProductId = 363;
-
-SELECT Sku, COUNT(*) FROM profitwiseproduct GROUP BY Sku ORDER BY Sku;
-
-
-/*SELECT ShopId, PwProductId, */
-
-SELECT * FROM shopifyorder ORDER BY OrderNumber DESC;
-
-SELECT * FROM shopifyorder WHERE ShopifyOrderId = 3431801605;
-
-SELECT * FROM shopifyorderlineitem;
-
-
-
-SELECT * FROM shopifyvariant WHERE ShopifyProductId = 5937334597;
-	
-SELECT * FROM profitwiseproduct WHERE PwProductId = 319;
-
-SELECT * FROM profitwiseproduct;
+S
 
 
 
@@ -65,9 +46,9 @@ WHERE t1.ShopId NOT IN ( SELECT DISTINCT ShopId FROM shopifyorderlineitem )
 AND t2.ShopId = 955973;
 */
 
+/** Does preference overlap Batch State...? **/
 
-
-/*
+/* Preferences for 
 SELECT * FROM profitwisepreferences;
 
 UPDATE profitwisepreferences SET StartingDateForOrders = '2014-05-01';

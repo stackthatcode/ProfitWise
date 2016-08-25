@@ -66,8 +66,11 @@ namespace ProfitWise.Data.RefreshServices
             var fromDate = batchState.ProductsLastUpdated ?? productRefreshStartTime.AddMinutes(-15);
             var events = RetrieveAllProductDestroyEvents(shopCredentials, fromDate);
 
-            // Delete all Products flagged for destruction
-            DeleteProducts(shop, events, importedProducts, existingVariants, profitWiseProducts);
+            // Delete all ShopifyVariant mappings ...???
+            DeleteVariantsThatNoLongerLiveInShopify(shop, importedProducts, existingVariants, profitWiseProducts);
+
+            // Delete all Products flagged for destruction by Shopify Events
+            DeleteProductsFlaggedByShopifyForDeletion(events);
 
             // Update Batch State
             batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
@@ -202,8 +205,8 @@ namespace ProfitWise.Data.RefreshServices
         }
 
 
-        private void DeleteProducts(
-                    ShopifyShop shop, IList<Event> events, IList<Product> importedProducts,
+        private void DeleteVariantsThatNoLongerLiveInShopify(
+                    ShopifyShop shop, IList<Product> importedProducts,
                     IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
         {
             var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
@@ -212,7 +215,10 @@ namespace ProfitWise.Data.RefreshServices
             var importedProductIds = importedProducts.Select(x => x.Id).ToList();
             var importedVariants = importedProducts.SelectMany(x => x.Variants).ToList();
 
-            foreach (var existingVariant in existingVariants.Where(variant => importedProductIds.Contains(variant.ShopifyProductId)))
+            var variantsWithProductIdsInImportList =
+                existingVariants.Where(variant => importedProductIds.Contains(variant.ShopifyProductId));
+
+            foreach (var existingVariant in variantsWithProductIdsInImportList)
             {
                 if (importedVariants.All(x => x.Id != existingVariant.ShopifyVariantId))
                 {
@@ -224,6 +230,11 @@ namespace ProfitWise.Data.RefreshServices
                     variantDataRepository.Delete(existingVariant.ShopifyProductId, existingVariant.ShopifyVariantId);
                 }
             }
+        }
+
+        private void DeleteProductsFlaggedByShopifyForDeletion(IList<Event> events)
+        {
+            var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
 
             // Step #2 - Delete Products which trigger a "destroy" Event
             foreach (var @event in events)
@@ -235,6 +246,7 @@ namespace ProfitWise.Data.RefreshServices
                     variantDataRepository.DeleteByProduct(@event.SubjectId);
                 }
             }
+
         }
 
 
