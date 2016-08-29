@@ -4,7 +4,7 @@ namespace ProfitWise.Data.Model
 {
     public class PwProduct
     {
-        public long ShopId { get; set; }
+        public long PwShopId { get; set; }
         public long PwProductId { get; set; }
         public long PwMasterProductId { get; set; }
         public long? ShopifyProductId { get; set; }

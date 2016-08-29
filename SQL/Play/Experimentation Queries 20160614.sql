@@ -8,22 +8,30 @@ SELECT * FROM aspnetusers;
 
 SELECT * FROM aspnetuserclaims;
 
+SELECT * FROM profitwisedatelookup;
 
 
 SELECT * FROM shop;
 
+SELECT * FROM shopifyproduct;
+
+SELECT * FROM shopifyvariant;
+
 SELECT * FROM profitwisebatchstate;	/** What we currently have for each Shop **/
+
 SELECT * FROM profitwisepreferences; /** What each Shop wants **/
 
 
-SELECT * FROM shopifyproduct;
-SELECT * FROM shopifyvariant;
+SELECT * FROM shopifyorderlineitem;
 
 SELECT * FROM shopifyorderlineitem WHERE ShopifyVariantId IS NULL;
 
 SELECT * FROM profitwiseproduct WHERE PwProductId NOT IN ( SELECT PwProductId FROM shopifyVariant ) ORDER BY Name;
 
-S
+SELECT * FROM profitwiseproduct;
+
+SELECT * FROM profitwise
+
 
 
 

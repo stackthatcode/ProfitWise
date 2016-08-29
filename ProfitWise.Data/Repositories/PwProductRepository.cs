@@ -26,9 +26,20 @@ namespace ProfitWise.Data.Repositories
         //
         public IList<PwMasterProduct> RetrieveAllMasterProducts()
         {
-            var query = @"SELECT * FROM profitwisemasterproduct WHERE PwShopId = @PwShopId";
-            return _connection
-                    .Query<PwMasterProduct>(query, new { @PwShopId = this.PwShopId }).ToList();
+            var products = RetrieveAllProducts();
+
+            var masterProducts = 
+                products
+                    .Select(x => x.PwMasterProductId)
+                    .Distinct()    
+                    .Select(masterProductId => new PwMasterProduct
+                    {
+                        PwShopId = this.PwShopId.Value,
+                        PwMasterProductId = masterProductId,
+                        Products = products.Where(product => masterProductId == product.PwMasterProductId).ToList()
+                    }).ToList();
+
+            return masterProducts;
         }
 
         public long InsertMasterProduct(PwMasterProduct masterProduct)

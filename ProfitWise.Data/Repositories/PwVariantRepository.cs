@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
@@ -21,24 +22,58 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
+
+        public IList<PwMasterVariant> RetrieveAllMasterVariants()
+        {
+            return RetrieveAllMasterVariants(new List<long>() {});
+        }
+
+
         public IList<PwMasterVariant> RetrieveAllMasterVariants(long pwProductId)
         {
             return RetrieveAllMasterVariants(new List<long> {pwProductId});
         }
+
 
         //
         // TODO => add paging and filtering
         //
         public IList<PwMasterVariant> RetrieveAllMasterVariants(IList<long> pwProductIdList)
         {
-            var query = @"SELECT * FROM profitwisemastervariant 
-                        WHERE PwShopId = @PwShopId
-                        AND PwProductId IN ( @PwProductIdList )";
-            return _connection
-                    .Query<PwMasterVariant>(
-                            query, 
-                            new { @PwShopId = this.PwShopId,
-                                @PwProductIdList = pwProductIdList.ToCommaSeparatedList() }).ToList();
+            var query =
+                @"SELECT t1.*, t2.* FROM profitwisemastervariant t1
+                    INNER JOIN profitwisevariant t2 
+                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
+                WHERE t1.PwShopId = @PwShopId AND t1.PwProductId IN ( @PwProductIdList )";
+
+            var masterVariantOutputList = new List<PwMasterVariant>();
+
+            Func<PwMasterVariant, PwVariant, PwMasterVariant>
+                buildFunc
+                    = (mv, v) =>
+                    {
+                        if (masterVariantOutputList.All(x => x.PwMasterVariantId != mv.PwMasterVariantId))
+                        {
+                            masterVariantOutputList.Add(mv);
+                        }
+                        mv.Variants.Add(v);
+                        return mv;
+                    };
+
+            if (pwProductIdList.Count > 0)
+            {
+                _connection.Query(
+                    query, buildFunc, 
+                    new { @PwShopId = this.PwShopId, @pwProductIdList = pwProductIdList }).AsQueryable();
+            }
+            else
+            {
+                _connection.Query(
+                    query, buildFunc, 
+                    new { @PwShopId = this.PwShopId, }).AsQueryable();
+            }
+
+            return masterVariantOutputList;
         }
 
         public long InsertMasterVariant(PwMasterVariant masterVariant)

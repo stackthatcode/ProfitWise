@@ -46,8 +46,8 @@ namespace ProfitWise.Data.RefreshServices
 
             // Create an instance of multi-tenant-aware repositories
             var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
-            var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
-            var profitWiseProductRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
+            var productRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
+            var variantDataRepository = this._multitenantRepositoryFactory.MakeVariantRepository(shop);
 
             // Load Batch State
             var batchState = batchStateRepository.Retrieve();
@@ -57,7 +57,7 @@ namespace ProfitWise.Data.RefreshServices
 
             // Get all existing Variant and ProfitWise Products
             var existingVariants = variantDataRepository.RetrieveAll();
-            var profitWiseProducts = profitWiseProductRepository.RetrieveAllProducts();
+            var profitWiseProducts = productRepository.RetrieveAllProducts();
 
             // Write Products to our database
             WriteAllProductsToDatabase(shop, importedProducts, existingVariants, profitWiseProducts);

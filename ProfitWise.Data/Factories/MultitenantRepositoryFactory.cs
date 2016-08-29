@@ -6,44 +6,28 @@ namespace ProfitWise.Data.Factories
 {
     public class MultitenantRepositoryFactory
     {
-        private readonly Func<ShopifyProductRepository> _productRepositoryFactory;
-        private readonly Func<ShopifyVariantRepository> _variantRepositoryFactory;
         private readonly Func<ShopifyOrderRepository> _orderRepositoryFactory;
         private readonly Func<PwBatchStateRepository> _profitWiseBatchStateRepositoryFactory;
-        private readonly Func<PwProductRepository> _profitWiseProductRepositoryFactory;
+        private readonly Func<PwProductRepository> _productRepositoryFactory;
+        private readonly Func<PwVariantRepository> _variantRepositoryFactory;
         private readonly Func<PwPreferencesRepository> _preferencesRepositoryFactory;
 
 
         public MultitenantRepositoryFactory(
-            Func<ShopifyProductRepository> productRepositoryFactory,
-            Func<ShopifyVariantRepository> variantRepositoryFactory, 
             Func<ShopifyOrderRepository> orderRepositoryFactory,
             Func<PwBatchStateRepository> profitWiseBatchStateRepositoryFactory,
-            Func<PwProductRepository> profitWiseProductRepositoryFactory,
+            Func<PwProductRepository> productRepositoryFactory,
+            Func<PwVariantRepository> variantRepositoryFactory,
             Func<PwPreferencesRepository> preferencesRepositoryFactory 
             )
         {
-            _productRepositoryFactory = productRepositoryFactory;
-            _variantRepositoryFactory = variantRepositoryFactory;
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
-            _profitWiseProductRepositoryFactory = profitWiseProductRepositoryFactory;
+            _productRepositoryFactory = productRepositoryFactory;
+            _variantRepositoryFactory = variantRepositoryFactory;
             _preferencesRepositoryFactory = preferencesRepositoryFactory;
         }
 
-        public virtual ShopifyProductRepository MakeShopifyProductRepository(PwShop shop)
-        {
-            var repository = _productRepositoryFactory();
-            repository.PwShopId = shop.ShopId;
-            return repository;
-        }
-
-        public virtual ShopifyVariantRepository MakeShopifyVariantRepository(PwShop shop)
-        {
-            var repository = _variantRepositoryFactory();
-            repository.PwShopId = shop.ShopId;
-            return repository;
-        }
 
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
         {
@@ -61,7 +45,13 @@ namespace ProfitWise.Data.Factories
 
         public virtual PwProductRepository MakeProductRepository(PwShop shop)
         {
-            var repository = _profitWiseProductRepositoryFactory();
+            var repository = _productRepositoryFactory();
+            repository.PwShopId = shop.ShopId;
+            return repository;
+        }
+        public virtual PwVariantRepository MakeVariantRepository(PwShop shop)
+        {
+            var repository = _variantRepositoryFactory();
             repository.PwShopId = shop.ShopId;
             return repository;
         }
