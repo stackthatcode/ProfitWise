@@ -11,7 +11,7 @@ namespace ProfitWise.Data.Repositories
     public class PwBatchStateRepository : IShopIdFilter
     {
         private readonly MySqlConnection _connection;
-        public int? ShopId { get; set; }
+        public int? PwShopId { get; set; }
 
         public PwBatchStateRepository(MySqlConnection connection)
         {
@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM profitwisebatchstate WHERE ShopId = @ShopId";
             return
                 _connection
-                    .Query<PwBatchState>(query, new {ShopId})
+                    .Query<PwBatchState>(query, new {ShopId = PwShopId})
                     .FirstOrDefault();
         }
 

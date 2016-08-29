@@ -14,7 +14,7 @@ namespace ProfitWise.Data.Aspect
                     $"{invocation.InvocationTarget.GetType()} does not implement IShopIdFilter." +
                     "Please assign and implement that interface or remove the interceptor attribute.");
             }
-            if (shopIdFilter.ShopId == null)
+            if (shopIdFilter.PwShopId == null)
             {
                 throw new Exception("{invocation.InvocationTarget.GetType()} requires a non-null ShopId before invoking any methods.");
             }

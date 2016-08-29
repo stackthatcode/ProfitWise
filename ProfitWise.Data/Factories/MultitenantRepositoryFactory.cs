@@ -31,45 +31,45 @@ namespace ProfitWise.Data.Factories
             _preferencesRepositoryFactory = preferencesRepositoryFactory;
         }
 
-        public virtual ShopifyProductRepository MakeShopifyProductRepository(ShopifyShop shop)
+        public virtual ShopifyProductRepository MakeShopifyProductRepository(PwShop shop)
         {
             var repository = _productRepositoryFactory();
-            repository.ShopId = shop.ShopId;
+            repository.PwShopId = shop.ShopId;
             return repository;
         }
 
-        public virtual ShopifyVariantRepository MakeShopifyVariantRepository(ShopifyShop shop)
+        public virtual ShopifyVariantRepository MakeShopifyVariantRepository(PwShop shop)
         {
             var repository = _variantRepositoryFactory();
-            repository.ShopId = shop.ShopId;
+            repository.PwShopId = shop.ShopId;
             return repository;
         }
 
-        public virtual ShopifyOrderRepository MakeShopifyOrderRepository(ShopifyShop shop)
+        public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
         {
             var repository = _orderRepositoryFactory();
-            repository.ShopId = shop.ShopId;
+            repository.PwShopId = shop.ShopId;
             return repository;
         }
         
-        public virtual PwBatchStateRepository MakeBatchStateRepository(ShopifyShop shop)
+        public virtual PwBatchStateRepository MakeBatchStateRepository(PwShop shop)
         {
             var repository = _profitWiseBatchStateRepositoryFactory();
-            repository.ShopId = shop.ShopId;
+            repository.PwShopId = shop.ShopId;
             return repository;
         }
 
-        public virtual PwProductRepository MakeProductRepository(ShopifyShop shop)
+        public virtual PwProductRepository MakeProductRepository(PwShop shop)
         {
             var repository = _profitWiseProductRepositoryFactory();
-            repository.ShopId = shop.ShopId;
+            repository.PwShopId = shop.ShopId;
             return repository;
         }
 
-        public virtual PwPreferencesRepository MakePreferencesRepository(ShopifyShop shop)
+        public virtual PwPreferencesRepository MakePreferencesRepository(PwShop shop)
         {
             var repository = _preferencesRepositoryFactory();
-            repository.ShopId = shop.ShopId;
+            repository.PwShopId = shop.ShopId;
             return repository;
         }
 

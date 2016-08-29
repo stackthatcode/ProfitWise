@@ -18,7 +18,7 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
-        public int? ShopId { get; set; }
+        public int? PwShopId { get; set; }
 
 
         public MySqlTransaction InitiateTransaction()
@@ -32,7 +32,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM shopifyorder WHERE ShopId";
             return
                 _connection
-                    .Query<ShopifyOrder>(query, new { ShopId.Value })
+                    .Query<ShopifyOrder>(query, new { PwShopId.Value })
                     .FirstOrDefault();
         }
 
@@ -40,7 +40,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"SELECT * FROM shopifyorder WHERE ShopId = @ShopId AND ShopifyOrderId = @shopifyOrderId";
             return _connection
-                    .Query<ShopifyOrder>(query, new { ShopId, shopifyOrderId })
+                    .Query<ShopifyOrder>(query, new { ShopId = PwShopId, shopifyOrderId })
                     .FirstOrDefault();
         }
 
@@ -52,7 +52,7 @@ namespace ProfitWise.Data.Repositories
 
         public virtual void InsertOrder(ShopifyOrder order)
         {
-            order.ShopId = ShopId.Value;
+            order.ShopId = PwShopId.Value;
             var query = @"INSERT INTO shopifyorder 
                         VALUES( @ShopId, 
                                 @ShopifyOrderId,
@@ -72,7 +72,7 @@ namespace ProfitWise.Data.Repositories
 
         public virtual void UpdateOrder(ShopifyOrder order)
         {
-            order.ShopId = ShopId.Value;
+            order.ShopId = PwShopId.Value;
             var query = @"UPDATE shopifyorder SET
                                 Email = @Email,
                                 TotalRefund = @TotalRefund,
@@ -89,7 +89,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"DELETE FROM shopifyorder 
                         WHERE ShopId = @ShopId AND ShopifyOrderId = @shopifyOrderId";
-            _connection.Execute(query, new { ShopId, shopifyOrderId });
+            _connection.Execute(query, new { ShopId = PwShopId, shopifyOrderId });
         }
 
 
@@ -110,7 +110,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"SELECT * FROM shopifyorderlineitem WHERE ShopId = @ShopId AND shopifyOrderId = @shopifyOrderId";
             return _connection
-                    .Query<ShopifyOrderLineItem>(query, new { ShopId, shopifyOrderId })
+                    .Query<ShopifyOrderLineItem>(query, new { ShopId = PwShopId, shopifyOrderId })
                     .ToList();
         }
 
@@ -122,7 +122,7 @@ namespace ProfitWise.Data.Repositories
 
         public virtual void InsertOrderLineItem(ShopifyOrderLineItem lineitem)
         {
-            lineitem.ShopId = ShopId.Value;
+            lineitem.ShopId = PwShopId.Value;
             var query =
                 @"INSERT INTO shopifyorderlineitem ( 
                     ShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, ShopifyProductId, ShopifyVariantId, Sku, Quantity, UnitPrice, 
@@ -135,7 +135,7 @@ namespace ProfitWise.Data.Repositories
 
         public virtual void UpdateOrderLineItem(ShopifyOrderLineItem lineitem)
         {
-            lineitem.ShopId = ShopId.Value;
+            lineitem.ShopId = PwShopId.Value;
             var query =
                 @"UPDATE shopifyorderlineitem SET
                     ShopifyProductId = @ShopifyProductId, 
@@ -152,7 +152,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"DELETE FROM shopifyorderlineitem WHERE ShopId = @ShopId AND ShopifyOrderId = @shopifyOrderId";
-            _connection.Execute(query, new { ShopId, shopifyOrderId });
+            _connection.Execute(query, new { ShopId = PwShopId, shopifyOrderId });
         }
     }
 }

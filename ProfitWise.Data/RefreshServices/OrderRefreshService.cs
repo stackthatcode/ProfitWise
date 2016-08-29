@@ -21,14 +21,14 @@ namespace ProfitWise.Data.RefreshServices
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
-        private readonly ShopRepository _shopRepository;
+        private readonly PwShopRepository _shopRepository;
 
 
         public OrderRefreshService(
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantRepositoryFactory multitenantRepositoryFactory,
                 RefreshServiceConfiguration refreshServiceConfiguration,
-                ShopRepository shopRepository,
+                PwShopRepository shopRepository,
                 IPushLogger logger,
                 ShopifyOrderDiagnosticShim diagnostic)
 
@@ -72,7 +72,7 @@ namespace ProfitWise.Data.RefreshServices
             RoutineOrderRefresh(shopCredentials, shop);
         }
 
-        private void RoutineOrderRefresh(ShopifyCredentials shopCredentials, ShopifyShop shop)
+        private void RoutineOrderRefresh(ShopifyCredentials shopCredentials, PwShop shop)
         {
             _pushLogger.Info($"Routine Order refresh for {shop.ShopId}");
 
@@ -99,7 +99,7 @@ namespace ProfitWise.Data.RefreshServices
             _pushLogger.Info("Complete: " + batchState.ToString());
         }
 
-        private void LoadOrdersForModifiedDataSetStart(ShopifyCredentials shopCredentials, ShopifyShop shop, PwPreferences preferences)
+        private void LoadOrdersForModifiedDataSetStart(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
         {
             _pushLogger.Info($"Expanding Order date range for {shop.ShopId}");
 
@@ -127,7 +127,7 @@ namespace ProfitWise.Data.RefreshServices
             _pushLogger.Info("Complete: " + batchState.ToString());
         }
 
-        private void LoadOrdersForFirstTime(ShopifyCredentials shopCredentials, ShopifyShop shop, PwPreferences preferences)
+        private void LoadOrdersForFirstTime(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
         {
             _pushLogger.Info($"Loading Orders first time for Shop {shop.ShopId}");
 
@@ -161,7 +161,7 @@ namespace ProfitWise.Data.RefreshServices
 
 
         private void RefreshOrders(
-                OrderFilter filter, ShopifyCredentials shopCredentials, ShopifyShop shop, 
+                OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop, 
                 Action<IList<Order>> pageCompleteCallback)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
@@ -171,7 +171,7 @@ namespace ProfitWise.Data.RefreshServices
             var context = new OrderRefreshContext
             {
                 ShopifyShop = shop,
-                PwProducts = pwProductsRepository.RetrieveAll(),
+                PwProducts = pwProductsRepository.RetrieveAllProducts(),
                 ShopifyVariants = variantRepository.RetrieveAll(),
             };
 
@@ -349,7 +349,7 @@ namespace ProfitWise.Data.RefreshServices
                 Inventory = 0,
             };
 
-            var newPwProductId = repository.Insert(pwProduct);
+            var newPwProductId = repository.InsertProduct(pwProduct);
             pwProduct.PwProductId = newPwProductId;
             context.AddNewPwProduct(pwProduct);
 

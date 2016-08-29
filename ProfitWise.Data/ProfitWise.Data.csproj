@@ -60,16 +60,16 @@
   <ItemGroup>
     <Compile Include="Aspect\ShopIdRequired.cs" />
     <Compile Include="Factories\MultitenantRepositoryFactory.cs" />
-    <Compile Include="Model\ShopifyVariantExtensions.cs" />
+    <Compile Include="Model\PwMasterVariant.cs" />
+    <Compile Include="Model\PwMasterProduct.cs" />
+    <Compile Include="Model\PwVariant.cs" />
     <Compile Include="Model\PwBatchState.cs" />
     <Compile Include="Model\PwPreferences.cs" />
     <Compile Include="Model\PwProduct.cs" />
     <Compile Include="Model\ShopifyOrder.cs" />
     <Compile Include="Model\ShopifyOrderExtensions.cs" />
     <Compile Include="Model\ShopifyOrderLineItem.cs" />
-    <Compile Include="Model\ShopifyProduct.cs" />
-    <Compile Include="Model\ShopifyShop.cs" />
-    <Compile Include="Model\ShopifyVariant.cs" />
+    <Compile Include="Model\PwShop.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Aspect\IShopIdFilter.cs" />
     <Compile Include="Processes\RefreshProcess.cs" />
@@ -80,11 +80,10 @@
     <Compile Include="RefreshServices\ShopRefreshService.cs" />
     <Compile Include="Repositories\PwBatchStateRepository.cs" />
     <Compile Include="Repositories\PwPreferencesRepository.cs" />
+    <Compile Include="Repositories\PwVariantRepository.cs" />
     <Compile Include="Repositories\PwProductRepository.cs" />
     <Compile Include="Repositories\ShopifyOrderRepository.cs" />
-    <Compile Include="Repositories\ShopRepository.cs" />
-    <Compile Include="Repositories\ShopifyVariantRepository.cs" />
-    <Compile Include="Repositories\ShopifyProductRepository.cs" />
+    <Compile Include="Repositories\PwShopRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\ShopifyOrderDiagnosticShim.cs" />
   </ItemGroup>

@@ -10,12 +10,12 @@ namespace ProfitWise.Data.RefreshServices
     public class ShopRefreshService
     {
         private readonly IPushLogger _pushLogger;
-        private readonly ShopRepository _shopRepository;
+        private readonly PwShopRepository _shopRepository;
         private readonly MultitenantRepositoryFactory _factory;
 
         public ShopRefreshService(
                     IPushLogger pushLogger, 
-                    ShopRepository shopRepository,
+                    PwShopRepository shopRepository,
                     MultitenantRepositoryFactory factory)
         {
             _pushLogger = pushLogger;
@@ -31,7 +31,7 @@ namespace ProfitWise.Data.RefreshServices
 
             if (shop == null)
             {
-                var newShopId = _shopRepository.Insert(new ShopifyShop {UserId = userId});
+                var newShopId = _shopRepository.Insert(new PwShop {UserId = userId});
 
                 var state = new PwBatchState
                 {

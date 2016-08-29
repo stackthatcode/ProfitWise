@@ -18,11 +18,10 @@ namespace ProfitWise.Data
 
             builder.RegisterType<MultitenantRepositoryFactory>();
             builder.RegisterType<ShopifyOrderRepository>();
-            builder.RegisterType<ShopifyProductRepository>();
-            builder.RegisterType<ShopifyVariantRepository>();            
-            builder.RegisterType<ShopRepository>();
+            builder.RegisterType<PwShopRepository>();
             builder.RegisterType<PwBatchStateRepository>();
             builder.RegisterType<PwProductRepository>();
+            builder.RegisterType<PwVariantRepository>();
             builder.RegisterType<PwPreferencesRepository>();
 
 

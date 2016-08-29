@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Push.Utilities.General
+namespace Push.Foundation.Utilities.General
 {
     public class DirectoryHelpers
     {

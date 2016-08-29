@@ -42,6 +42,7 @@ CREATE TABLE `profitwisemasterproduct` (
   PRIMARY KEY (`PwShopId`,`PwMasterProductId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE `profitwiseproduct` (
   `PwShopId` BIGINT unsigned NOT NULL,
   `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
@@ -54,8 +55,10 @@ CREATE TABLE `profitwiseproduct` (
   
   `Active` TINYINT unsigned NOT NULL,
   `Primary` TINYINT unsigned NOT NULL,
+  `Tags` TEXT DEFAULT NULL
   PRIMARY KEY (`PwShopId`,`PwProductId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 CREATE TABLE `profitwisemastervariant` (
@@ -82,21 +85,6 @@ CREATE TABLE `profitwisevariant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
-
-CREATE TABLE `profitwiseproduct` (
-  `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,  
-  `PwShopId` int(6) unsigned NOT NULL,  
-  `ProductTitle` varchar(128) DEFAULT NULL,
-  `VariantTitle` varchar(128) DEFAULT NULL,
-  `Name` varchar(256) DEFAULT NULL,    
-  `Sku` varchar(128) DEFAULT NULL, 
-  `Price` decimal(15,2) DEFAULT NULL,
-  `Inventory` int(4) DEFAULT NULL,  
-  `Tags` varchar(500) DEFAULT NULL,
-
-  PRIMARY KEY  (`PwProductId` )  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 

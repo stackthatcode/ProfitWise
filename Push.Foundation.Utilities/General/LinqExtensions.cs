@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Push.Utilities.General
+namespace Push.Foundation.Utilities.General
 {
     public static class LinqExtensions
     {
@@ -11,6 +12,11 @@ namespace Push.Utilities.General
             {
                 action(member);
             }
+        }
+
+        public static string ToCommaSeparatedList(this IEnumerable<long> input)
+        {
+            return string.Join(",", input.Select(n => n.ToString()).ToArray());
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ProfitWise.Data.RefreshServices
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
         private readonly RefreshServiceConfiguration _configuration;
-        private readonly ShopRepository _shopRepository;
+        private readonly PwShopRepository _shopRepository;
 
 
         public ProductRefreshService(
@@ -27,7 +27,7 @@ namespace ProfitWise.Data.RefreshServices
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantRepositoryFactory multitenantRepositoryFactory,
                 RefreshServiceConfiguration configuration,
-                ShopRepository shopRepository)
+                PwShopRepository shopRepository)
         {
             _pushLogger = logger;
             _apiRepositoryFactory = apiRepositoryFactory;
@@ -57,7 +57,7 @@ namespace ProfitWise.Data.RefreshServices
 
             // Get all existing Variant and ProfitWise Products
             var existingVariants = variantDataRepository.RetrieveAll();
-            var profitWiseProducts = profitWiseProductRepository.RetrieveAll();
+            var profitWiseProducts = profitWiseProductRepository.RetrieveAllProducts();
 
             // Write Products to our database
             WriteAllProductsToDatabase(shop, importedProducts, existingVariants, profitWiseProducts);
@@ -77,7 +77,7 @@ namespace ProfitWise.Data.RefreshServices
             batchStateRepository.Update(batchState);
         }
 
-        private void WriteAllProductsToDatabase(ShopifyShop shop, IList<Product> importedProducts, IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
+        private void WriteAllProductsToDatabase(PwShop shop, IList<Product> importedProducts, IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
         {
             _pushLogger.Info($"{importedProducts.Count} Products to process");
             var importedVariants = importedProducts.SelectMany(x => x.Variants).ToList();
@@ -88,7 +88,7 @@ namespace ProfitWise.Data.RefreshServices
         }
 
         private void WriteVariantToDatabase(
-                    ShopifyShop shop, Variant importedVariant,
+                    PwShop shop, Variant importedVariant,
                     IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
         {
             var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
@@ -115,7 +115,7 @@ namespace ProfitWise.Data.RefreshServices
                     Tags = importedVariant.ParentProduct.Tags,
                 };
 
-                var newPwProductId = profitWiseProductRepository.Insert(profitWiseProduct);
+                var newPwProductId = profitWiseProductRepository.InsertProduct(profitWiseProduct);
 
                 var variantData = new ShopifyVariant()
                 {
@@ -143,7 +143,7 @@ namespace ProfitWise.Data.RefreshServices
                 profitWiseProduct.Inventory = importedVariant.Inventory;
                 profitWiseProduct.Tags = importedVariant.ParentProduct.Tags;
 
-                profitWiseProductRepository.Update(profitWiseProduct);
+                profitWiseProductRepository.UpdateProduct(profitWiseProduct);
             }
         }
 
@@ -206,7 +206,7 @@ namespace ProfitWise.Data.RefreshServices
 
 
         private void DeleteVariantsThatNoLongerLiveInShopify(
-                    ShopifyShop shop, IList<Product> importedProducts,
+                    PwShop shop, IList<Product> importedProducts,
                     IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
         {
             var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
@@ -254,7 +254,7 @@ namespace ProfitWise.Data.RefreshServices
 
 
         private void WriteProductToDatabase(
-                ShopifyShop shop, Product importedProduct, IList<ShopifyProduct> existingProducts,
+                PwShop shop, Product importedProduct, IList<ShopifyProduct> existingProducts,
                 ShopifyProductRepository productDataRepository)
         {
             var existingProduct = existingProducts.FirstOrDefault(x => x.ShopifyProductId == importedProduct.Id);

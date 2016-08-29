@@ -12,7 +12,7 @@ namespace ProfitWise.Data.Repositories
     public class PwPreferencesRepository : IShopIdFilter
     {
         private readonly MySqlConnection _connection;
-        public int? ShopId { get; set; }
+        public int? PwShopId { get; set; }
 
         public PwPreferencesRepository(MySqlConnection connection)
         {
@@ -22,7 +22,7 @@ namespace ProfitWise.Data.Repositories
         public PwPreferences Retrieve()
         {
             var query = @"SELECT * FROM profitwisepreferences WHERE ShopId = @ShopId";
-            return _connection.Query<PwPreferences>(query, new {ShopId}).FirstOrDefault();
+            return _connection.Query<PwPreferences>(query, new {ShopId = PwShopId}).FirstOrDefault();
         }
     }
 }

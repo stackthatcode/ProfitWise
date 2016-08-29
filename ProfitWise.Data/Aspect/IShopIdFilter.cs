@@ -2,6 +2,6 @@
 {
     public interface IShopIdFilter
     {
-        int? ShopId { get; set; }
+        int? PwShopId { get; set; }
     }
 }
