@@ -76,6 +76,8 @@ CREATE TABLE `profitwisevariant` (
   `PwMasterVariantId` BIGINT unsigned NOT NULL,		/** Can change i.e. can be assigned to another Master record **/
   
   `ShopifyVariantId` BIGINT unsigned NOT NULL,
+  `SKU` VARCHAR(100) NULL,
+  `Title` VARCHAR(200) NOT NULL,
   `Active` TINYINT NOT NULL,
   `Primary` TINYINT NOT NULL,
 

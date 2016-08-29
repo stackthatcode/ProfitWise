@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Aspect\ShopIdRequired.cs" />
     <Compile Include="Factories\MultitenantRepositoryFactory.cs" />
+    <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />
     <Compile Include="Model\PwVariant.cs" />

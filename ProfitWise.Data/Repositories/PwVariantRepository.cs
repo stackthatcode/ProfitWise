@@ -51,14 +51,15 @@ namespace ProfitWise.Data.Repositories
             Func<PwMasterVariant, PwVariant, PwMasterVariant>
                 buildFunc
                     = (mv, v) =>
-                    {
-                        if (masterVariantOutputList.All(x => x.PwMasterVariantId != mv.PwMasterVariantId))
                         {
-                            masterVariantOutputList.Add(mv);
-                        }
-                        mv.Variants.Add(v);
-                        return mv;
-                    };
+                            if (masterVariantOutputList.All(x => x.PwMasterVariantId != mv.PwMasterVariantId))
+                            {
+                                masterVariantOutputList.Add(mv);
+                            }
+                            v.ParentMasterVariant = mv;
+                            mv.Variants.Add(v);
+                            return mv;
+                        };
 
             if (pwProductIdList.Count > 0)
             {

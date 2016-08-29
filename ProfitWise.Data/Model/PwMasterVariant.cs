@@ -11,6 +11,7 @@ namespace ProfitWise.Data.Model
         public bool StockedDirectly { get; set; }
 
         public IList<PwVariant> Variants { get; set; }
+        public PwProduct ParentProduct { get; set; }
     }
 
 }

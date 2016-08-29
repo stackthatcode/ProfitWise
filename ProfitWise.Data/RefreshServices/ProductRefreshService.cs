@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using ProfitWise.Batch.RefreshServices;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -53,102 +54,247 @@ namespace ProfitWise.Data.RefreshServices
             var batchState = batchStateRepository.Retrieve();
 
             // Import Products from Shopify
-            var importedProducts = RetrieveAllProducts(shopCredentials, batchState);
+            var importedProducts = RetrieveAllProductsFromShopify(shopCredentials, batchState);
+
 
             // Get all existing Variant and ProfitWise Products
-            var existingVariants = variantDataRepository.RetrieveAll();
-            var profitWiseProducts = productRepository.RetrieveAllProducts();
+            var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
+            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
+            masterProductCatalog.LoadMasterVariants(masterVariants);
 
             // Write Products to our database
-            WriteAllProductsToDatabase(shop, importedProducts, existingVariants, profitWiseProducts);
+            WriteAllProductsToDatabase(shop, importedProducts, masterProductCatalog);
+            
 
             // Import all Product "destroy" Events
             var fromDate = batchState.ProductsLastUpdated ?? productRefreshStartTime.AddMinutes(-15);
             var events = RetrieveAllProductDestroyEvents(shopCredentials, fromDate);
 
             // Delete all ShopifyVariant mappings ...???
-            DeleteVariantsThatNoLongerLiveInShopify(shop, importedProducts, existingVariants, profitWiseProducts);
+            //DeleteVariantsThatNoLongerLiveInShopify(shop, importedProducts, existingVariants, profitWiseProducts);
 
-            // Delete all Products flagged for destruction by Shopify Events
-            DeleteProductsFlaggedByShopifyForDeletion(events);
+            //// Delete all Products flagged for destruction by Shopify Events
+            //DeleteProductsFlaggedByShopifyForDeletion(events);
 
             // Update Batch State
             batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
             batchStateRepository.Update(batchState);
         }
 
-        private void WriteAllProductsToDatabase(PwShop shop, IList<Product> importedProducts, IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
+        private void WriteAllProductsToDatabase(
+                    PwShop shop, IList<Product> importedProducts, IList<PwMasterProduct> masterProducts)
         {
             _pushLogger.Info($"{importedProducts.Count} Products to process");
-            var importedVariants = importedProducts.SelectMany(x => x.Variants).ToList();
-            foreach (var variant in importedVariants)
+
+            foreach (var importedProduct in importedProducts)
             {
-                WriteVariantToDatabase(shop, variant, existingVariants, profitWiseProducts);
+                // ProfitWise Master Product and Product
+                var masterProduct = FindMasterProductOrCreateNewIfNecessary(shop, masterProducts, importedProduct);
+                var product = FindProductMatchOrCreateNewIfNecessary(shop, masterProduct, importedProduct);
+
+                foreach (var importedVariant in importedProduct.Variants)
+                {
+                    var masterVariant = FindMasterVariantOrCreateNewIfNecessary(shop, product, importedVariant);
+                }
             }
         }
 
-        private void WriteVariantToDatabase(
-                    PwShop shop, Variant importedVariant,
-                    IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
+
+        private PwMasterProduct FindMasterProductOrCreateNewIfNecessary
+                            (PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
         {
-            var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
-            var profitWiseProductRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
+            var productRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
 
-            var existingVariant =
-                existingVariants.FirstOrDefault(x =>
-                        x.ShopifyProductId == importedVariant.ParentProduct.Id &&
-                        x.ShopifyVariantId == importedVariant.Id);
+            PwProduct productMatchByTitle =
+                masterProducts
+                    .SelectMany(x => x.Products)
+                    .FirstOrDefault(x => x.Title == importedProduct.Title);
 
-            if (existingVariant == null)
+            // Unable to find a single Product with Product Title, then create a new one
+            if (productMatchByTitle == null)
             {
-                _pushLogger.Debug($"Inserting Variant: {importedVariant.Title} ({importedVariant.Id}) for Product {importedVariant.ParentProduct.Title} ({importedVariant.ParentProduct.Id})");
-
-                var profitWiseProduct = new PwProduct
+                var masterProduct = new PwMasterProduct()
                 {
-                    ShopId = shop.ShopId,
-                    ProductTitle = importedVariant.ParentProduct.Title,
-                    VariantTitle = importedVariant.Title,
-                    Name = importedVariant.ParentProduct.Title + " - " + importedVariant.Title,
-                    Sku = importedVariant.Sku,
-                    Price = importedVariant.Price,
-                    Inventory = importedVariant.Inventory,
-                    Tags = importedVariant.ParentProduct.Tags,
+                    PwShopId = shop.ShopId,
+                    Products = new List<PwProduct>(),
                 };
-
-                var newPwProductId = profitWiseProductRepository.InsertProduct(profitWiseProduct);
-
-                var variantData = new ShopifyVariant()
-                {
-                    ShopId = shop.ShopId,
-                    ShopifyVariantId = importedVariant.Id,
-                    ShopifyProductId = importedVariant.ParentProduct.Id,
-                    PwProductId = newPwProductId,
-                };
-
-                variantDataRepository.Insert(variantData);
+                var masterProductId = productRepository.InsertMasterProduct(masterProduct);
+                masterProduct.PwMasterProductId = masterProductId;
+                return masterProduct;
             }
             else
             {
-                _pushLogger.Debug($"Updating Variant: {importedVariant.Title} ({importedVariant.Id}) for Product {importedVariant.ParentProduct.Title} ({importedVariant.ParentProduct.Id})");
+                return productMatchByTitle.ParentMasterProduct;
+            }
+        }
 
-                var profitWiseProduct =
-                    profitWiseProducts.FirstOrDefault(x => x.PwProductId == existingVariant.PwProductId);
+        private PwProduct FindProductMatchOrCreateNewIfNecessary(
+                PwShop shop, PwMasterProduct masterProduct, Product importedProduct)
+        {
+            var productRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
 
-                // NOTE: go ahead and throw an error if this doesn't exist - inconsistent state that needs to be resolved
-                profitWiseProduct.ProductTitle = importedVariant.ParentProduct.Title;
-                profitWiseProduct.VariantTitle = importedVariant.Title;
-                profitWiseProduct.Name = importedVariant.ParentProduct.Title + " - " + importedVariant.Title;
-                profitWiseProduct.Sku = importedVariant.Sku;
-                profitWiseProduct.Price = importedVariant.Price;
-                profitWiseProduct.Inventory = importedVariant.Inventory;
-                profitWiseProduct.Tags = importedVariant.ParentProduct.Tags;
+            if (masterProduct.Products.All(x => x.Title != importedProduct.Title))
+            {
+                throw new ArgumentException(
+                    "None of the Master Product's child Product Titles match your imported Product");
+            }
 
-                profitWiseProductRepository.UpdateProduct(profitWiseProduct);
+            PwProduct productMatchByVendor =
+                masterProduct
+                    .Products
+                    .FirstOrDefault(x => x.Vendor == importedProduct.Vendor);
+
+            if (productMatchByVendor != null)
+            {
+                return productMatchByVendor;
+            }
+            else
+            {
+                // Step #1 - set all other Products to inactive
+                foreach (var product in masterProduct.Products)
+                {
+                    product.Active = false;
+                    productRepository.UpdateProduct(product);
+                }
+
+                // Step #2 - create the new Product
+                PwProduct finalProduct = new PwProduct()
+                {
+                    PwShopId = shop.ShopId,
+                    PwMasterProductId = masterProduct.PwMasterProductId,
+                    ShopifyProductId = importedProduct.Id,
+                    Title = importedProduct.Title,
+                    Vendor = importedProduct.Vendor,
+                    ProductType = importedProduct.ProductType,
+                    Active = true,
+                    Primary = true,
+                    Tags = importedProduct.Tags,
+                    ParentMasterProduct = masterProduct,
+                };
+
+                var productId = productRepository.InsertProduct(finalProduct);
+                finalProduct.PwProductId = productId;
+                finalProduct.ParentMasterProduct = masterProduct;
+                masterProduct.Products.Add(finalProduct);
+                return finalProduct;
+            }
+        }
+
+        // TODO => migrate to Preferences
+        private const bool StockedDirectlyDefault = true;
+
+        private PwMasterVariant FindMasterVariantOrCreateNewIfNecessary(
+                    PwShop shop, PwProduct product, Variant importedVariant)
+        {
+            var matchingVariantBySkuAndTitle =
+                product.MasterVariants
+                    .SelectMany(x => x.Variants)
+                    .FirstOrDefault(x => x.Sku == importedVariant.Sku && x.Title == importedVariant.Title);
+
+            if (matchingVariantBySkuAndTitle != null)
+            {
+                return matchingVariantBySkuAndTitle.ParentMasterVariant;
+            }
+            else
+            {
+                var variantRepository = this._multitenantRepositoryFactory.MakeVariantRepository(shop);
+
+                var masterVariant = new PwMasterVariant()
+                {
+                    PwShopId = shop.ShopId,
+                    ParentProduct = product,
+                    Exclude = false,
+                    StockedDirectly = StockedDirectlyDefault,
+                    PwProductId = product.PwProductId,
+                    Variants = new List<PwVariant>(),
+                };
+
+                masterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(masterVariant);
+
+                var newVariant = new PwVariant()
+                {
+                    PwShopId = shop.ShopId,
+                    ShopifyVariantId = importedVariant.Id,
+                    Title = importedVariant.Title,
+                    Sku = importedVariant.Sku,
+                    PwMasterVariantId = masterVariant.PwMasterVariantId,
+                    Primary = true,
+                    Active = true, // Because it's in the live catalog!
+                    ParentMasterVariant = masterVariant,
+                };
+
+                variantRepository.InsertVariant(newVariant);
+                masterVariant.Variants.Add(newVariant);
+
+                return masterVariant;
             }
         }
 
 
-        public virtual IList<Product> RetrieveAllProducts(ShopifyCredentials shopCredentials, PwBatchState batchState)
+
+        //private void WriteVariantToDatabase(
+        //            PwShop shop, Variant importedVariant,
+        //            IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
+        //{
+        //    var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
+        //    var profitWiseProductRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
+
+        //    var existingVariant =
+        //        existingVariants.FirstOrDefault(x =>
+        //                x.ShopifyProductId == importedVariant.ParentProduct.Id &&
+        //                x.ShopifyVariantId == importedVariant.Id);
+
+        //    if (existingVariant == null)
+        //    {
+        //        _pushLogger.Debug($"Inserting Variant: {importedVariant.Title} ({importedVariant.Id}) for Product {importedVariant.ParentProduct.Title} ({importedVariant.ParentProduct.Id})");
+
+        //        var profitWiseProduct = new PwProduct
+        //        {
+        //            ShopId = shop.ShopId,
+        //            ProductTitle = importedVariant.ParentProduct.Title,
+        //            VariantTitle = importedVariant.Title,
+        //            Name = importedVariant.ParentProduct.Title + " - " + importedVariant.Title,
+        //            Sku = importedVariant.Sku,
+        //            Price = importedVariant.Price,
+        //            Inventory = importedVariant.Inventory,
+        //            Tags = importedVariant.ParentProduct.Tags,
+        //        };
+
+        //        var newPwProductId = profitWiseProductRepository.InsertProduct(profitWiseProduct);
+
+        //        var variantData = new ShopifyVariant()
+        //        {
+        //            ShopId = shop.ShopId,
+        //            ShopifyVariantId = importedVariant.Id,
+        //            ShopifyProductId = importedVariant.ParentProduct.Id,
+        //            PwProductId = newPwProductId,
+        //        };
+
+        //        variantDataRepository.Insert(variantData);
+        //    }
+        //    else
+        //    {
+        //        _pushLogger.Debug($"Updating Variant: {importedVariant.Title} ({importedVariant.Id}) for Product {importedVariant.ParentProduct.Title} ({importedVariant.ParentProduct.Id})");
+
+        //        var profitWiseProduct =
+        //            profitWiseProducts.FirstOrDefault(x => x.PwProductId == existingVariant.PwProductId);
+
+        //        // NOTE: go ahead and throw an error if this doesn't exist - inconsistent state that needs to be resolved
+        //        profitWiseProduct.ProductTitle = importedVariant.ParentProduct.Title;
+        //        profitWiseProduct.VariantTitle = importedVariant.Title;
+        //        profitWiseProduct.Name = importedVariant.ParentProduct.Title + " - " + importedVariant.Title;
+        //        profitWiseProduct.Sku = importedVariant.Sku;
+        //        profitWiseProduct.Price = importedVariant.Price;
+        //        profitWiseProduct.Inventory = importedVariant.Inventory;
+        //        profitWiseProduct.Tags = importedVariant.ParentProduct.Tags;
+
+        //        profitWiseProductRepository.UpdateProduct(profitWiseProduct);
+        //    }
+        //}
+
+
+        public virtual IList<Product> RetrieveAllProductsFromShopify(
+                    ShopifyCredentials shopCredentials, PwBatchState batchState)
         {
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
             var filter = new ProductFilter()
@@ -173,7 +319,6 @@ namespace ProfitWise.Data.RefreshServices
 
             return results;
         }
-
 
         public virtual IList<Event> RetrieveAllProductDestroyEvents(ShopifyCredentials shopCredentials, DateTime fromDate)
         {
@@ -204,83 +349,78 @@ namespace ProfitWise.Data.RefreshServices
             return results;
         }
 
-
-        private void DeleteVariantsThatNoLongerLiveInShopify(
-                    PwShop shop, IList<Product> importedProducts,
-                    IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
-        {
-            var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
+        //private void DeleteVariantsThatNoLongerLiveInShopify(
+        //            PwShop shop, IList<Product> importedProducts,
+        //            IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
+        //{
+        //    var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
             
-            // Step #1 - Delete Variants that are missing from the latest batch of imported Products
-            var importedProductIds = importedProducts.Select(x => x.Id).ToList();
-            var importedVariants = importedProducts.SelectMany(x => x.Variants).ToList();
+        //    // Step #1 - Delete Variants that are missing from the latest batch of imported Products
+        //    var importedProductIds = importedProducts.Select(x => x.Id).ToList();
+        //    var importedVariants = importedProducts.SelectMany(x => x.Variants).ToList();
 
-            var variantsWithProductIdsInImportList =
-                existingVariants.Where(variant => importedProductIds.Contains(variant.ShopifyProductId));
+        //    var variantsWithProductIdsInImportList =
+        //        existingVariants.Where(variant => importedProductIds.Contains(variant.ShopifyProductId));
 
-            foreach (var existingVariant in variantsWithProductIdsInImportList)
-            {
-                if (importedVariants.All(x => x.Id != existingVariant.ShopifyVariantId))
-                {
-                    var pwProduct = profitWiseProducts.FirstOrDefault(x => x.PwProductId == existingVariant.PwProductId);
+        //    foreach (var existingVariant in variantsWithProductIdsInImportList)
+        //    {
+        //        if (importedVariants.All(x => x.Id != existingVariant.ShopifyVariantId))
+        //        {
+        //            var pwProduct = profitWiseProducts.FirstOrDefault(x => x.PwProductId == existingVariant.PwProductId);
 
-                    _pushLogger.Debug(
-                        $"Deleting Variant: {existingVariant.ShopifyProductId} ({existingVariant.ShopifyVariantId}) for PW Product {pwProduct.Name}");
+        //            _pushLogger.Debug(
+        //                $"Deleting Variant: {existingVariant.ShopifyProductId} ({existingVariant.ShopifyVariantId}) for PW Product {pwProduct.Name}");
 
-                    variantDataRepository.Delete(existingVariant.ShopifyProductId, existingVariant.ShopifyVariantId);
-                }
-            }
-        }
+        //            variantDataRepository.Delete(existingVariant.ShopifyProductId, existingVariant.ShopifyVariantId);
+        //        }
+        //    }
+        //}
 
-        private void DeleteProductsFlaggedByShopifyForDeletion(IList<Event> events)
-        {
-            var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
+        //private void DeleteProductsFlaggedByShopifyForDeletion(IList<Event> events)
+        //{
+        //    var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
 
-            // Step #2 - Delete Products which trigger a "destroy" Event
-            foreach (var @event in events)
-            {
-                if (@event.Verb == EventVerbs.Destroy && @event.SubjectType == EventTypes.Product)
-                {
-                    _pushLogger.Debug(
-                       $"Deleting all Variants for Product with Id {@event.SubjectId} (via 'destroy' event)");
-                    variantDataRepository.DeleteByProduct(@event.SubjectId);
-                }
-            }
+        //    // Step #2 - Delete Products which trigger a "destroy" Event
+        //    foreach (var @event in events)
+        //    {
+        //        if (@event.Verb == EventVerbs.Destroy && @event.SubjectType == EventTypes.Product)
+        //        {
+        //            _pushLogger.Debug(
+        //               $"Deleting all Variants for Product with Id {@event.SubjectId} (via 'destroy' event)");
+        //            variantDataRepository.DeleteByProduct(@event.SubjectId);
+        //        }
+        //    }
 
-        }
+        //}
 
+        //private void WriteProductToDatabase(
+        //        PwShop shop, Product importedProduct, IList<ShopifyProduct> existingProducts,
+        //        ShopifyProductRepository productDataRepository)
+        //{
+        //    var existingProduct = existingProducts.FirstOrDefault(x => x.ShopifyProductId == importedProduct.Id);
 
+        //    if (existingProduct == null)
+        //    {
+        //        var productData = new ShopifyProduct()
+        //        {
+        //            ShopId = shop.ShopId,
+        //            ShopifyProductId = importedProduct.Id,
+        //            Title = importedProduct.Title,
+        //        };
 
+        //        _pushLogger.Debug(
+        //            $"Inserting Product: {importedProduct.Title} ({importedProduct.Id})");
+        //        productDataRepository.Insert(productData);
+        //    }
+        //    else
+        //    {
+        //        existingProduct.Title = importedProduct.Title;
+        //        _pushLogger.Debug(
+        //            $"Updating Product: {importedProduct.Title} ({importedProduct.Id})");
 
-
-        private void WriteProductToDatabase(
-                PwShop shop, Product importedProduct, IList<ShopifyProduct> existingProducts,
-                ShopifyProductRepository productDataRepository)
-        {
-            var existingProduct = existingProducts.FirstOrDefault(x => x.ShopifyProductId == importedProduct.Id);
-
-            if (existingProduct == null)
-            {
-                var productData = new ShopifyProduct()
-                {
-                    ShopId = shop.ShopId,
-                    ShopifyProductId = importedProduct.Id,
-                    Title = importedProduct.Title,
-                };
-
-                _pushLogger.Debug(
-                    $"Inserting Product: {importedProduct.Title} ({importedProduct.Id})");
-                productDataRepository.Insert(productData);
-            }
-            else
-            {
-                existingProduct.Title = importedProduct.Title;
-                _pushLogger.Debug(
-                    $"Updating Product: {importedProduct.Title} ({importedProduct.Id})");
-
-                productDataRepository.Update(existingProduct);
-            }
-        }
+        //        productDataRepository.Update(existingProduct);
+        //    }
+        //}
 
 
     }
