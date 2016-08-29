@@ -91,7 +91,10 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"UPDATE profitwiseproduct
                             SET Active = @Active,
-                                Primary = @Primary
+                                Primary = @Primary,
+                                ShopifyProductId = @ShopifyProductId,
+                                Tags = @Tags,
+                                ProductType = @ProductType
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
             _connection.Execute(query, product);
         }

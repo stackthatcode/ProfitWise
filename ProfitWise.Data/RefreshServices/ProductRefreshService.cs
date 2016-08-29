@@ -146,6 +146,11 @@ namespace ProfitWise.Data.RefreshServices
 
             if (productMatchByVendor != null)
             {
+                productMatchByVendor.ShopifyProductId = importedProduct.Id;
+                productMatchByVendor.Tags = importedProduct.Tags;
+                productMatchByVendor.ProductType = importedProduct.ProductType;
+
+                productRepository.UpdateProduct(productMatchByVendor);
                 return productMatchByVendor;
             }
             else
@@ -154,6 +159,7 @@ namespace ProfitWise.Data.RefreshServices
                 foreach (var product in masterProduct.Products)
                 {
                     product.Active = false;
+                    product.Primary = false;
                     productRepository.UpdateProduct(product);
                 }
 
