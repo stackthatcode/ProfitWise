@@ -1,96 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac.Extras.DynamicProxy2;
+using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Steps;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Utilities.Helpers;
 
-namespace ProfitWise.Data.Steps
+namespace ProfitWise.Data.Services
 {
-    public class ProductRefreshStep
+    [Intercept(typeof(ShopRequired))]
+    public class ProductVariantService : IShopFilter
     {
         private readonly IPushLogger _pushLogger;
-        private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
-        private readonly RefreshServiceConfiguration _configuration;
-        private readonly PwShopRepository _shopRepository;
+        public PwShop PwShop { get; set; }
+
+        // TODO => migrate to Preferences
+        private const bool StockedDirectlyDefault = true;
 
 
-        public ProductRefreshStep(
-                IPushLogger logger,
-                ApiRepositoryFactory apiRepositoryFactory,
-                MultitenantFactory multitenantFactory,
-                RefreshServiceConfiguration configuration,
-                PwShopRepository shopRepository)
+        public ProductVariantService(
+                    IPushLogger logger,
+                    MultitenantFactory multitenantFactory)
         {
             _pushLogger = logger;
-            _apiRepositoryFactory = apiRepositoryFactory;
             _multitenantFactory = multitenantFactory;
-            _configuration = configuration;
-            _shopRepository = shopRepository;
         }
+        
 
-
-        public virtual void Execute(ShopifyCredentials shopCredentials)
+        public PwMasterProduct FindOrCreateNewMasterProduct
+                            (IList<PwMasterProduct> masterProducts, Product importedProduct)
         {
-            // Get Shopify Shop
-            var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
-
-            // Create an instance of multi-tenant-aware repositories
-            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-            var productRepository = this._multitenantFactory.MakeProductRepository(shop);
-            var variantDataRepository = this._multitenantFactory.MakeVariantRepository(shop);
-
-            // Load Batch State
-            var batchState = batchStateRepository.Retrieve();
-
-            // Import Products from Shopify
-            var importedProducts = RetrieveAllProductsFromShopify(shopCredentials, batchState);
-
-
-            // Get all existing Variant and ProfitWise Products
-            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
-            var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
-            masterProductCatalog.LoadMasterVariants(masterVariants);
-
-
-            // Write Products to our database
-            WriteAllProductsToDatabase(shop, importedProducts, masterProductCatalog);
-            
-
-            // Update Batch State
-            batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
-            batchStateRepository.Update(batchState);
-        }
-
-        private void WriteAllProductsToDatabase(
-                    PwShop shop, IList<Product> importedProducts, IList<PwMasterProduct> masterProducts)
-        {
-            _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
-
-            foreach (var importedProduct in importedProducts)
-            {
-                // ProfitWise Master Product and Product
-                var masterProduct = FindOrCreateNewMasterProduct(shop, masterProducts, importedProduct);
-                var product = FindOrCreateNewProduct(shop, masterProduct, importedProduct);
-
-                foreach (var importedVariant in importedProduct.Variants)
-                {
-                    var masterVariant = FindOrCreateNewMasterVariant(shop, product, importedVariant);
-                }
-            }
-        }
-
-
-        private PwMasterProduct FindOrCreateNewMasterProduct
-                            (PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
-        {
-            var productRepository = this._multitenantFactory.MakeProductRepository(shop);
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
             PwProduct productMatchByTitle =
                 masterProducts
@@ -105,7 +53,7 @@ namespace ProfitWise.Data.Steps
 
                 var masterProduct = new PwMasterProduct()
                 {
-                    PwShopId = shop.PwShopId,
+                    PwShopId = this.PwShop.PwShopId,
                     Products = new List<PwProduct>(),
                 };
                 var masterProductId = productRepository.InsertMasterProduct(masterProduct);
@@ -122,10 +70,10 @@ namespace ProfitWise.Data.Steps
             }
         }
 
-        private PwProduct FindOrCreateNewProduct(
-                PwShop shop, PwMasterProduct masterProduct, Product importedProduct)
+        public PwProduct FindOrCreateNewProduct(
+                    PwMasterProduct masterProduct, Product importedProduct)
         {
-            var productRepository = this._multitenantFactory.MakeProductRepository(shop);
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
             if (masterProduct.Products.All(x => x.Title != importedProduct.Title))
             {
@@ -167,7 +115,7 @@ namespace ProfitWise.Data.Steps
                 // Step #2 - create the new Product
                 PwProduct finalProduct = new PwProduct()
                 {
-                    PwShopId = shop.PwShopId,
+                    PwShopId = PwShop.PwShopId,
                     PwMasterProductId = masterProduct.PwMasterProductId,
                     ShopifyProductId = importedProduct.Id,
                     Title = importedProduct.Title,
@@ -187,10 +135,8 @@ namespace ProfitWise.Data.Steps
             }
         }
 
-        // TODO => migrate to Preferences
-        private const bool StockedDirectlyDefault = true;
 
-        private PwMasterVariant FindOrCreateNewMasterVariant(
+        public PwMasterVariant FindOrCreateNewMasterVariant(
                     PwShop shop, PwProduct product, Variant importedVariant)
         {
             var matchingVariantBySkuAndTitle =
@@ -244,34 +190,6 @@ namespace ProfitWise.Data.Steps
 
                 return masterVariant;
             }
-        }
-
-
-        public virtual IList<Product> RetrieveAllProductsFromShopify(
-                    ShopifyCredentials shopCredentials, PwBatchState batchState)
-        {
-            var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
-            var filter = new ProductFilter()
-            {
-                UpdatedAtMin = batchState.ProductsLastUpdated,
-            };
-            var count = productApiRepository.RetrieveCount(filter);
-
-            _pushLogger.Info($"Executing Refresh for {count} Products");
-
-            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
-            var results = new List<Product>();
-
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
-            {
-                _pushLogger.Info(
-                    $"Page {pagenumber} of {numberofpages} pages");
-
-                var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
-                results.AddRange(products);
-            }
-
-            return results;
         }
 
     }

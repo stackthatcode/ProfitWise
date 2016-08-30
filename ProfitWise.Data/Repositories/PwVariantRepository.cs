@@ -6,16 +6,16 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
-using Push.Foundation.Utilities.General;
+
 
 namespace ProfitWise.Data.Repositories
 {
-    [Intercept(typeof(ShopIdRequired))]
-    public class PwVariantRepository : IShopIdFilter
+    [Intercept(typeof(ShopRequired))]
+    public class PwVariantRepository : IShopFilter
     {
         private readonly MySqlConnection _connection;
+        public PwShop PwShop { get; set; }
 
-        public int? PwShopId { get; set; }
 
         public PwVariantRepository(MySqlConnection connection)
         {
@@ -65,13 +65,13 @@ namespace ProfitWise.Data.Repositories
             {
                 _connection.Query(
                     query, buildFunc, 
-                    new { @PwShopId = this.PwShopId, @pwProductIdList = pwProductIdList }).AsQueryable();
+                    new { @PwShopId = this.PwShop.PwShopId, @pwProductIdList = pwProductIdList }).AsQueryable();
             }
             else
             {
                 _connection.Query(
                     query, buildFunc, 
-                    new { @PwShopId = this.PwShopId, }).AsQueryable();
+                    new { @PwShopId = this.PwShop.PwShopId, }).AsQueryable();
             }
 
             return masterVariantOutputList;
@@ -112,7 +112,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM profitwisevariant 
                         WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId;";
             return _connection
-                    .Query<PwVariant>(query, new { @PwShopId = this.PwShopId, @PwMasterVariantId = pwMasterVariantId } ).ToList();
+                    .Query<PwVariant>(query, new { @PwShopId = this.PwShop.PwShopId, @PwMasterVariantId = pwMasterVariantId } ).ToList();
         }
 
         public long InsertVariant(PwVariant variant)
@@ -128,14 +128,14 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"DELETE FROM profitwisevariant
                         WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId;";
-            _connection.Execute(query, new {@PwShopId = this.PwShopId, @PwMasterVariantId = pwMasterVariantId});
+            _connection.Execute(query, new {@PwShopId = this.PwShop.PwShopId, @PwMasterVariantId = pwMasterVariantId});
         }
 
         public void DeleteVariantByVariantId(long pwVariantId)
         {
             var query = @"DELETE FROM profitwisevariant
                         WHERE PwShopId = @PwShopId AND PwVariantId = @pwVariantId;";
-            _connection.Execute(query, new { @PwShopId = this.PwShopId, @PwMasterVariantId = pwVariantId });
+            _connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, @PwMasterVariantId = pwVariantId });
         }
     }
 }

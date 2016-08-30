@@ -2,7 +2,7 @@
 {
     public class PwShop
     {
-        public int ShopId { get; set; }
+        public int PwShopId { get; set; }
         public string UserId { get; set; }
     }
 }

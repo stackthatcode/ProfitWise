@@ -17,7 +17,7 @@ namespace ProfitWise.Data.Steps
     {
         private readonly IPushLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
-        private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
+        private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _configuration;
         private readonly PwShopRepository _shopRepository;
 
@@ -25,13 +25,13 @@ namespace ProfitWise.Data.Steps
         public ProductCleanupService(
                 IPushLogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
-                MultitenantRepositoryFactory multitenantRepositoryFactory,
+                MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration configuration,
                 PwShopRepository shopRepository)
         {
             _pushLogger = logger;
             _apiRepositoryFactory = apiRepositoryFactory;
-            _multitenantRepositoryFactory = multitenantRepositoryFactory;
+            _multitenantFactory = multitenantFactory;
             _configuration = configuration;
             _shopRepository = shopRepository;
         }
@@ -45,9 +45,9 @@ namespace ProfitWise.Data.Steps
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
 
             // Create an instance of multi-tenant-aware repositories
-            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
-            var productRepository = this._multitenantRepositoryFactory.MakeProductRepository(shop);
-            var variantDataRepository = this._multitenantRepositoryFactory.MakeVariantRepository(shop);
+            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+            var productRepository = this._multitenantFactory.MakeProductRepository(shop);
+            var variantDataRepository = this._multitenantFactory.MakeVariantRepository(shop);
 
             // Load Batch State
             var batchState = batchStateRepository.Retrieve();
@@ -109,7 +109,7 @@ namespace ProfitWise.Data.Steps
         //            PwShop shop, IList<Product> importedProducts,
         //            IList<ShopifyVariant> existingVariants, IList<PwProduct> profitWiseProducts)
         //{
-        //    var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
+        //    var variantDataRepository = this._multitenantFactory.MakeShopifyVariantRepository(shop);
             
         //    // Step #1 - Delete Variants that are missing from the latest batch of imported Products
         //    var importedProductIds = importedProducts.Select(x => x.Id).ToList();
@@ -134,7 +134,7 @@ namespace ProfitWise.Data.Steps
 
         //private void DeleteProductsFlaggedByShopifyForDeletion(IList<Event> events)
         //{
-        //    var variantDataRepository = this._multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
+        //    var variantDataRepository = this._multitenantFactory.MakeShopifyVariantRepository(shop);
 
         //    // Step #2 - Delete Products which trigger a "destroy" Event
         //    foreach (var @event in events)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Steps;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
@@ -14,21 +13,21 @@ using Push.Utilities.Helpers;
 
 namespace ProfitWise.Data.Steps
 {
-    public class OrderRefreshService
+    public class OrderRefreshStep
     {
         private readonly IPushLogger _pushLogger;
         private readonly ShopifyOrderDiagnosticShim _diagnostic;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
-        private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
+        private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
         private readonly PwShopRepository _shopRepository;
 
 
 
 
-        public OrderRefreshService(
+        public OrderRefreshStep(
                 ApiRepositoryFactory apiRepositoryFactory,
-                MultitenantRepositoryFactory multitenantRepositoryFactory,
+                MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration refreshServiceConfiguration,
                 PwShopRepository shopRepository,
                 IPushLogger logger,
@@ -38,7 +37,7 @@ namespace ProfitWise.Data.Steps
             _pushLogger = logger;
             _diagnostic = diagnostic;
             _apiRepositoryFactory = apiRepositoryFactory;
-            _multitenantRepositoryFactory = multitenantRepositoryFactory;
+            _multitenantFactory = multitenantFactory;
             _refreshServiceConfiguration = refreshServiceConfiguration;
             _shopRepository = shopRepository;
         }
@@ -50,11 +49,11 @@ namespace ProfitWise.Data.Steps
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
 
             // Load Batch State
-            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var batchState = batchStateRepository.Retrieve();
 
             // Get User Preferences
-            var preferencesRepository = _multitenantRepositoryFactory.MakePreferencesRepository(shop);
+            var preferencesRepository = _multitenantFactory.MakePreferencesRepository(shop);
             var preferences = preferencesRepository.Retrieve();
 
             // CASE #1 - first time loading - don't do any additional updates
@@ -76,9 +75,9 @@ namespace ProfitWise.Data.Steps
 
         private void RoutineRefreshWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
-            _pushLogger.Info($"Routine Order refresh for {shop.ShopId}");
+            _pushLogger.Info($"Routine Order refresh for {shop.PwShopId}");
 
-            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
             var updatefilter = 
@@ -100,9 +99,9 @@ namespace ProfitWise.Data.Steps
 
         private void EarlierStartDateWorker(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
         {
-            _pushLogger.Info($"Expanding Order date range for {shop.ShopId}");
+            _pushLogger.Info($"Expanding Order date range for {shop.PwShopId}");
 
-            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
             var filter = new OrderFilter()
@@ -125,9 +124,9 @@ namespace ProfitWise.Data.Steps
 
         private void FirstTimeLoadWorker(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
         {
-            _pushLogger.Info($"Loading Orders first time for Shop {shop.ShopId}");
+            _pushLogger.Info($"Loading Orders first time for Shop {shop.PwShopId}");
 
-            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
             var filter = new OrderFilter()
@@ -151,14 +150,14 @@ namespace ProfitWise.Data.Steps
 
 
 
-        // All the "worker" functions call Refresh Orders
+        // All the "worker" functions call Refresh Orders main function
         private void RefreshOrders(
                 OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
-            var productRepository = _multitenantRepositoryFactory.MakeProductRepository(shop);
-            var variantRepository = _multitenantRepositoryFactory.MakeVariantRepository(shop);
-            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+            var productRepository = _multitenantFactory.MakeProductRepository(shop);
+            var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
+            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
 
             var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
             var masterVariants = variantRepository.RetrieveAllMasterVariants();
@@ -201,7 +200,7 @@ namespace ProfitWise.Data.Steps
 
         protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, OrderRefreshContext context)
         {
-            var orderRepository = _multitenantRepositoryFactory.MakeShopifyOrderRepository(context.ShopifyShop);
+            var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.ShopifyShop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
@@ -228,7 +227,7 @@ namespace ProfitWise.Data.Steps
 
         private void WriteOrderToPersistence(Order importedOrder, OrderRefreshContext context)
         {
-            if (_diagnostic.ShopId == context.ShopifyShop.ShopId &&
+            if (_diagnostic.ShopId == context.ShopifyShop.PwShopId &&
                 _diagnostic.OrderIds.Contains(importedOrder.Id))
             {
                 _pushLogger.Debug(importedOrder.ToString());
@@ -245,7 +244,7 @@ namespace ProfitWise.Data.Steps
                 return;
             }
 
-            var orderRepository = _multitenantRepositoryFactory.MakeShopifyOrderRepository(context.ShopifyShop);
+            var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.ShopifyShop);
 
             if (existingOrder != null && importedOrder.Cancelled == true)
             {
@@ -262,12 +261,13 @@ namespace ProfitWise.Data.Steps
                 _pushLogger.Debug(
                     $"Inserting new Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
 
-                var translatedOrder = importedOrder.ToShopifyOrder(context.ShopifyShop.ShopId);
+                var translatedOrder = importedOrder.ToShopifyOrder(context.ShopifyShop.PwShopId);
                 _pushLogger.Debug($"Translating Shopify Order {importedOrder.Name} ({importedOrder.Id}) to ProfitWise data model");
                 orderRepository.InsertOrder(translatedOrder);
 
                 foreach (var translatedLineItem in translatedOrder.LineItems)
                 {
+
                     // Important *** this is where the PW Product Id gets assigned to Order Line Item
                     translatedLineItem.PwProductId = FindOrCreatePwProductId(context, translatedLineItem);
 
@@ -328,11 +328,11 @@ namespace ProfitWise.Data.Steps
             }
 
             // Provision new PW Product => return the new PWProductId
-            var repository = _multitenantRepositoryFactory.MakeProductRepository(context.ShopifyShop);
+            var repository = _multitenantFactory.MakeProductRepository(context.ShopifyShop);
 
             var pwProduct = new PwProduct()
             {
-                ShopId =  context.ShopifyShop.ShopId,
+                ShopId =  context.ShopifyShop.PwShopId,
                 ProductTitle = importedLineItem.ProductTitle,
                 VariantTitle = importedLineItem.VariantTitle,
                 Name = importedLineItem.Name,

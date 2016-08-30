@@ -16,7 +16,7 @@ namespace ProfitWise.Data
             builder.RegisterType<ErrorForensics>();
             builder.RegisterType<ExecutionTime>();
 
-            builder.RegisterType<MultitenantRepositoryFactory>();
+            builder.RegisterType<MultitenantFactory>();
             builder.RegisterType<ShopifyOrderRepository>();
             builder.RegisterType<PwShopRepository>();
             builder.RegisterType<PwBatchStateRepository>();
@@ -29,12 +29,12 @@ namespace ProfitWise.Data
             registry.Add(typeof(ExecutionTime));
 
             builder.RegisterType<ShopRefreshService>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<OrderRefreshService>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<OrderRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductCleanupService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
 
-            builder.RegisterType<ShopIdRequired>();
+            builder.RegisterType<ShopRequired>();
         }
     }
 }

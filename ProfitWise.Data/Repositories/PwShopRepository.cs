@@ -14,11 +14,11 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
-        public PwShop RetrieveByShopId(int shopId)
+        public PwShop RetrieveByShopId(int pwShopId)
         {
-            var query = @"SELECT * FROM profitwiseshop WHERE ShopId = @ShopId";
+            var query = @"SELECT * FROM profitwiseshop WHERE PwShopId = @PwShopId";
             return _connection
-                .Query<PwShop>(query, new {@ShopId = shopId})
+                .Query<PwShop>(query, new {@PwShopId = pwShopId })
                 .FirstOrDefault();
         }
 

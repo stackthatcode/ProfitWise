@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Threading.Tasks;
 using Autofac;
 using Hangfire;
 using ProfitWise.Data.Processes;

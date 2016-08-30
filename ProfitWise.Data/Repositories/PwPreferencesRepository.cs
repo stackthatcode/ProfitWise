@@ -8,11 +8,11 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories
 {
-    [Intercept(typeof(ShopIdRequired))]
-    public class PwPreferencesRepository : IShopIdFilter
+    [Intercept(typeof(ShopRequired))]
+    public class PwPreferencesRepository : IShopFilter
     {
         private readonly MySqlConnection _connection;
-        public int? PwShopId { get; set; }
+        public PwShop PwShop { get; set; }
 
         public PwPreferencesRepository(MySqlConnection connection)
         {
@@ -22,7 +22,7 @@ namespace ProfitWise.Data.Repositories
         public PwPreferences Retrieve()
         {
             var query = @"SELECT * FROM profitwisepreferences WHERE ShopId = @ShopId";
-            return _connection.Query<PwPreferences>(query, new {ShopId = PwShopId}).FirstOrDefault();
+            return _connection.Query<PwPreferences>(query, new {ShopId = PwShop.PwShopId}).FirstOrDefault();
         }
     }
 }

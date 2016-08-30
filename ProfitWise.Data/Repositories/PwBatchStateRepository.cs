@@ -7,11 +7,11 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories
 {
-    [Intercept(typeof(ShopIdRequired))]
-    public class PwBatchStateRepository : IShopIdFilter
+    [Intercept(typeof(ShopRequired))]
+    public class PwBatchStateRepository : IShopFilter
     {
         private readonly MySqlConnection _connection;
-        public int? PwShopId { get; set; }
+        public PwShop PwShop { get; set; }
 
         public PwBatchStateRepository(MySqlConnection connection)
         {
@@ -20,16 +20,16 @@ namespace ProfitWise.Data.Repositories
 
         public PwBatchState Retrieve()
         {
-            var query = @"SELECT * FROM profitwisebatchstate WHERE ShopId = @ShopId";
+            var query = @"SELECT * FROM profitwisebatchstate WHERE PwShopId = @PwShopId";
             return
                 _connection
-                    .Query<PwBatchState>(query, new {ShopId = PwShopId})
+                    .Query<PwBatchState>(query, new {PwShopId = PwShop})
                     .FirstOrDefault();
         }
 
         public void Insert(PwBatchState state)
         {
-            var query = @"INSERT INTO profitwisebatchstate VALUES (@ShopId, @ProductsLastUpdated, @OrderDatasetStart, @OrderDatasetEnd)";
+            var query = @"INSERT INTO profitwisebatchstate VALUES (@PwShopId, @ProductsLastUpdated, @OrderDatasetStart, @OrderDatasetEnd)";
             _connection.Execute(query, state);
         }
 
@@ -39,7 +39,7 @@ namespace ProfitWise.Data.Repositories
                             ProductsLastUpdated = @ProductsLastUpdated, 
                             OrderDatasetStart = @OrderDatasetStart, 
                             OrderDatasetEnd = @OrderDatasetEnd
-                            WHERE ShopId = @ShopId";
+                            WHERE PwShopId = @PwShopId";
             _connection.Execute(query, state);
         }
     }

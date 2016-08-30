@@ -10,12 +10,12 @@ namespace ProfitWise.Data.Steps
     {
         private readonly IPushLogger _pushLogger;
         private readonly PwShopRepository _shopRepository;
-        private readonly MultitenantRepositoryFactory _factory;
+        private readonly MultitenantFactory _factory;
 
         public ShopRefreshService(
                     IPushLogger pushLogger, 
                     PwShopRepository shopRepository,
-                    MultitenantRepositoryFactory factory)
+                    MultitenantFactory factory)
         {
             _pushLogger = pushLogger;
             _shopRepository = shopRepository;
@@ -44,7 +44,7 @@ namespace ProfitWise.Data.Steps
             }
             else
             {
-                return shop.ShopId;
+                return shop.PwShopId;
             }
         }
     }

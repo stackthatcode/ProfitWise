@@ -3,18 +3,18 @@ using Castle.DynamicProxy;
 
 namespace ProfitWise.Data.Aspect
 {
-    public class ShopIdRequired : IInterceptor
+    public class ShopRequired : IInterceptor
     {
         public void Intercept(IInvocation invocation)
         {
-            var shopIdFilter = invocation.InvocationTarget as IShopIdFilter;
+            var shopIdFilter = invocation.InvocationTarget as IShopFilter;
             if (shopIdFilter == null)
             {
                 throw new Exception(
                     $"{invocation.InvocationTarget.GetType()} does not implement IShopIdFilter." +
                     "Please assign and implement that interface or remove the interceptor attribute.");
             }
-            if (shopIdFilter.PwShopId == null)
+            if (shopIdFilter.PwShop == null)
             {
                 throw new Exception("{invocation.InvocationTarget.GetType()} requires a non-null ShopId before invoking any methods.");
             }

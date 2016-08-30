@@ -1,18 +1,15 @@
 ﻿using System;
 using ProfitWise.Data.Steps;
-using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Shopify.HttpClient;
-using Push.Shopify.Model;
-using Push.Utilities.General;
 
 namespace ProfitWise.Data.Processes
 {
     public class RefreshProcess
     {
         private readonly ShopifyCredentialService _shopifyCredentialService;
-        private readonly OrderRefreshService _orderRefreshStep;
+        private readonly OrderRefreshStep _orderRefreshStep;
         private readonly ProductRefreshStep _productRefreshStep;
         private readonly ShopRefreshService _shopRefreshStep;
         private readonly IPushLogger _pushLogger;
@@ -20,7 +17,7 @@ namespace ProfitWise.Data.Processes
 
         public RefreshProcess(
                 ShopifyCredentialService shopifyCredentialService,
-                OrderRefreshService orderRefreshStep,
+                OrderRefreshStep orderRefreshStep,
                 ProductRefreshStep productRefreshStep,
                 ShopRefreshService shopRefreshStep,
                 IPushLogger logger)

@@ -8,12 +8,11 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Data.Repositories
 {
-    [Intercept(typeof(ShopIdRequired))]
-    public class PwProductRepository : IShopIdFilter
+    [Intercept(typeof(ShopRequired))]
+    public class PwProductRepository : IShopFilter
     {
         private readonly MySqlConnection _connection;
-
-        public int? PwShopId { get; set; }
+        public PwShop PwShop { get; set; }
 
         public PwProductRepository(MySqlConnection connection)
         {
@@ -34,7 +33,7 @@ namespace ProfitWise.Data.Repositories
                     .Distinct()    
                     .Select(masterProductId => new PwMasterProduct
                     {
-                        PwShopId = this.PwShopId.Value,
+                        PwShopId = this.PwShop.PwShopId,
                         PwMasterProductId = masterProductId,
                         Products = products.Where(product => masterProductId == product.PwMasterProductId).ToList()
                     }).ToList();
@@ -67,14 +66,14 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId";
             return _connection
-                    .Query<PwProduct>(query, new { @ShopId = this.PwShopId } ).ToList();
+                    .Query<PwProduct>(query, new { @PwShopId = this.PwShop.PwShopId } ).ToList();
         }
 
         public PwProduct RetrieveProduct(long pwProductId)
         {
             var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
             return _connection
-                    .Query<PwProduct>(query, new { @PwShopId = this.PwShopId, @PwProductId = pwProductId })
+                    .Query<PwProduct>(query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId })
                     .FirstOrDefault();
         }
 

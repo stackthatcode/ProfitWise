@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Model
         {
             var shopifyOrder = new ShopifyOrder()
             {
-                ShopId = shopId,
+                PwShopId = shopId,
                 ShopifyOrderId = order.Id,
                 Email = order.Email,
                 OrderNumber = order.Name,                

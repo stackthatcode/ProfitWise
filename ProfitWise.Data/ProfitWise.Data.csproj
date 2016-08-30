@@ -58,8 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aspect\ShopIdRequired.cs" />
-    <Compile Include="Factories\MultitenantRepositoryFactory.cs" />
+    <Compile Include="Aspect\ShopRequired.cs" />
+    <Compile Include="Factories\MultitenantFactory.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />
@@ -72,11 +72,12 @@
     <Compile Include="Model\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\PwShop.cs" />
     <Compile Include="AutofacRegistration.cs" />
-    <Compile Include="Aspect\IShopIdFilter.cs" />
+    <Compile Include="Aspect\IShopFilter.cs" />
     <Compile Include="Processes\RefreshProcess.cs" />
     <Compile Include="Steps\OrderRefreshContext.cs" />
     <Compile Include="Steps\OrderRefreshStep.cs" />
     <Compile Include="Steps\ProductCleanupService.cs" />
+    <Compile Include="Services\ProductVariantService.cs" />
     <Compile Include="Steps\ProductRefreshStep.cs" />
     <Compile Include="Steps\RefreshServiceConfiguration.cs" />
     <Compile Include="Steps\ShopRefreshStep.cs" />

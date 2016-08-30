@@ -6,7 +6,7 @@ namespace ProfitWise.Data.Model
 {
     public class ShopifyOrder
     {
-        public int ShopId { get; set; }
+        public int PwShopId { get; set; }
         public long ShopifyOrderId { get; set; }
         public string Email { get; set; }
         public string OrderNumber { get; set; }
@@ -46,7 +46,7 @@ namespace ProfitWise.Data.Model
             // I can't hear you, Jeremy.
             var output =
                 "ShopifyOrder" + Environment.NewLine +
-                $"ShopId = {ShopId}" + Environment.NewLine +
+                $"ShopId = {PwShopId}" + Environment.NewLine +
                 $"ShopifyOrderId = {ShopifyOrderId}" + Environment.NewLine +
                 $"Email = {Email}" + Environment.NewLine +
                 $"OrderNumber = {OrderNumber}" + Environment.NewLine +
