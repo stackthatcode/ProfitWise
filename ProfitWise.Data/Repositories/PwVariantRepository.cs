@@ -81,8 +81,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                     @"INSERT INTO profitwisemastervariant 
-                        ( PwShopId, PwMasterVariantId, PwProductId, Exclude, StockedDirectly ) 
-                    VALUES ( @PwShopId, @PwMasterVariantId, @PwProductId, @Exclude, @StockedDirectly );
+                        ( PwMasterVariantId, PwShopId, PwProductId, Exclude, StockedDirectly ) 
+                    VALUES ( @PwMasterVariantId, @PwShopId, @PwProductId, @Exclude, @StockedDirectly );
                     SELECT LAST_INSERT_ID();";
 
             return _connection.Query<long>(query, masterVariant).FirstOrDefault();
@@ -118,8 +118,8 @@ namespace ProfitWise.Data.Repositories
         public long InsertVariant(PwVariant variant)
         {
             var query = @"INSERT INTO profitwisevariant 
-                            ( PwShopId, PwVariantId, PwMasterVariantId, ShopifyVariantId, Active, Primary ) 
-                        VALUES ( @PwShopId, @PwProductId, @PwMasterVariantId, @ShopifyVariantId, @Active, @Primary );
+                            ( PwVariantId, PwShopId, PwMasterVariantId, ShopifyVariantId, Active, Primary ) 
+                        VALUES ( @PwProductId, @PwShopId, @PwMasterVariantId, @ShopifyVariantId, @Active, @Primary );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, variant).FirstOrDefault();
         }
@@ -139,5 +139,4 @@ namespace ProfitWise.Data.Repositories
         }
     }
 }
-
 

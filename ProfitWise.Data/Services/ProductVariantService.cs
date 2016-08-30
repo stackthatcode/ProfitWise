@@ -187,6 +187,5 @@ namespace ProfitWise.Data.Services
                 return masterVariant;
             }
         }
-
     }
 }

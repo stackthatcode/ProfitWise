@@ -54,7 +54,7 @@ namespace ProfitWise.Data.Repositories
         {
             order.PwShopId = PwShop.PwShopId;
             var query = @"INSERT INTO shopifyorder 
-                        VALUES( @ShopId, 
+                        VALUES( @PwShopId, 
                                 @ShopifyOrderId,
                                 @Email, 
                                 @OrderNumber, 
@@ -88,7 +88,7 @@ namespace ProfitWise.Data.Repositories
         public virtual void DeleteOrder(long shopifyOrderId)
         {
             var query = @"DELETE FROM shopifyorder 
-                        WHERE ShopId = @ShopId AND ShopifyOrderId = @shopifyOrderId";
+                        WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
             _connection.Execute(query, new { ShopId = PwShop.PwShopId, shopifyOrderId });
         }
 
@@ -125,11 +125,11 @@ namespace ProfitWise.Data.Repositories
             lineitem.ShopId = PwShop.PwShopId;
             var query =
                 @"INSERT INTO shopifyorderlineitem ( 
-                    PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, ShopifyProductId, ShopifyVariantId, Sku, Quantity, UnitPrice, 
-                    TotalDiscount, TotalRestockedQuantity, GrossRevenue, ProductTitle, VariantTitle, Name, PwProductId)
+                    PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, PwProductId, PwVariantId, 
+                    Quantity, UnitPrice, TotalDiscount, TotalRestockedQuantity, GrossRevenue )
                 VALUES ( 
-                    @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @ShopifyProductId, @ShopifyVariantId, @Sku, @Quantity, @UnitPrice, 
-                    @TotalDiscount, @TotalRestockedQuantity, @GrossRevenue, @ProductTitle, @VariantTitle, @Name, @PwProductId)";
+                    @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @PwProductId, @PwVariantId,
+                    @Quantity, @UnitPrice, @TotalDiscount, @TotalRestockedQuantity, @GrossRevenue )";
             _connection.Execute(query, lineitem);
         }
 

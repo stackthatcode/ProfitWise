@@ -1,17 +1,6 @@
 USE profitwise;
 
 
-DROP TABLE IF EXISTS `shopifyproduct`; 
-DROP TABLE IF EXISTS `shopifyvariant`; 
-DROP TABLE IF EXISTS `shop`; 
-DROP TABLE IF EXISTS `shopifyorder`; 
-DROP TABLE IF EXISTS `shopifyorderlineitem`; 
-DROP TABLE IF EXISTS `profitwisedatelookup`; 
-DROP TABLE IF EXISTS `profitwiseproduct`;
-DROP TABLE IF EXISTS `profitwisebatchstate`;
-DROP TABLE IF EXISTS `profitwisepreferences`;
-
-
 /** Start of new structures **/
 DROP TABLE IF EXISTS `profitwiseshop`; 
 
@@ -34,15 +23,11 @@ CREATE TABLE `profitwiseshop` (
   PRIMARY KEY  (`PwShopId`, `UserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=955973 DEFAULT CHARSET=utf8;
 
-
-
 CREATE TABLE `profitwisemasterproduct` (
   `PwMasterProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
   `PwShopId` BIGINT unsigned NOT NULL,
   PRIMARY KEY (`PwMasterProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 
 CREATE TABLE `profitwiseproduct` (
   `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
@@ -117,6 +102,8 @@ CREATE TABLE `shopifyorderlineitem` (
   `GrossRevenue` decimal(15,2) DEFAULT NULL,
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 
 

@@ -80,8 +80,8 @@ namespace ProfitWise.Data.Repositories
         public long InsertProduct(PwProduct product)
         {
             var query = @"INSERT INTO profitwiseproduct 
-                            ( PwShopId, PwProductId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, Active, Primary, Tags ) 
-                        VALUES ( @PwShopId, @PwProductId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @Active, @Primary, @Tags );
+                            ( PwProductId, PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, Active, Primary, Tags ) 
+                        VALUES ( @PwProductId, @PwShopId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @Active, @Primary, @Tags );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, product).FirstOrDefault();
         }
