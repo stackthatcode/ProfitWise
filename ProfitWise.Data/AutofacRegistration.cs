@@ -31,6 +31,7 @@ namespace ProfitWise.Data
             builder.RegisterType<ShopRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<OrderRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductRefreshService>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ProductCleanupService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ShopIdRequired>();

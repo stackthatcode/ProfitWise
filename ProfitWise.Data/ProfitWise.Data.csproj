@@ -76,6 +76,7 @@
     <Compile Include="Processes\RefreshProcess.cs" />
     <Compile Include="RefreshServices\OrderRefreshContext.cs" />
     <Compile Include="RefreshServices\OrderRefreshService.cs" />
+    <Compile Include="RefreshServices\ProductCleanupService.cs" />
     <Compile Include="RefreshServices\ProductRefreshService.cs" />
     <Compile Include="RefreshServices\RefreshServiceConfiguration.cs" />
     <Compile Include="RefreshServices\ShopRefreshService.cs" />

@@ -37,7 +37,6 @@ namespace ProfitWise.Batch
                     var refreshProcess = scope.Resolve<RefreshProcess>();
                     refreshProcess.Execute(userId);
                 }
-
             }
             catch (Exception e)
             {
