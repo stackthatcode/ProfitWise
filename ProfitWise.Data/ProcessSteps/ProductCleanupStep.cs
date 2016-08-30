@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using ProfitWise.Data.Steps;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
@@ -11,9 +9,9 @@ using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Utilities.Helpers;
 
-namespace ProfitWise.Data.Steps
+namespace ProfitWise.Data.ProcessSteps
 {
-    public class ProductCleanupService
+    public class ProductCleanupStep
     {
         private readonly IPushLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
@@ -22,7 +20,7 @@ namespace ProfitWise.Data.Steps
         private readonly PwShopRepository _shopRepository;
 
 
-        public ProductCleanupService(
+        public ProductCleanupStep(
                 IPushLogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,

@@ -1,5 +1,5 @@
 ﻿using System;
-using ProfitWise.Data.Steps;
+using ProfitWise.Data.ProcessSteps;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Shopify.HttpClient;

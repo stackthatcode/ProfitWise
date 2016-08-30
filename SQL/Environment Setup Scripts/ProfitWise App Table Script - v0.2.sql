@@ -37,14 +37,16 @@ CREATE TABLE `profitwiseshop` (
 
 
 CREATE TABLE `profitwisemasterproduct` (
+  `PwMasterProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
   `PwShopId` BIGINT unsigned NOT NULL,
-  `PwMasterProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT, 
-  PRIMARY KEY (`PwShopId`,`PwMasterProductId`)
+  PRIMARY KEY (`PwMasterProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
 CREATE TABLE `profitwiseproduct` (
-  `PwShopId` BIGINT unsigned NOT NULL,
   `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT unsigned NOT NULL,
   `PwMasterProductId` BIGINT unsigned NOT NULL,
   `ShopifyProductId` BIGINT unsigned NOT NULL,
   
@@ -54,25 +56,22 @@ CREATE TABLE `profitwiseproduct` (
   
   `Active` TINYINT unsigned NOT NULL,
   `Primary` TINYINT unsigned NOT NULL,
-  `Tags` TEXT DEFAULT NULL
-  PRIMARY KEY (`PwShopId`,`PwProductId`)
+  `Tags` TEXT DEFAULT NULL,
+  PRIMARY KEY (`PwProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
 CREATE TABLE `profitwisemastervariant` (
-  `PwShopId` BIGINT unsigned NOT NULL,
   `PwMasterVariantId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT unsigned NOT NULL,
   `PwProductId` BIGINT unsigned NOT NULL,	/** Immutable **/  
   `Exclude` TINYINT NOT NULL,
   `StockedDirectly` TINYINT NOT NULL,
-  PRIMARY KEY (`PwShopId`,`PwMasterVariantId`)
+  PRIMARY KEY (`PwMasterVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/**  **/
 CREATE TABLE `profitwisevariant` (
-  `PwShopId` BIGINT unsigned NOT NULL,		/** PK **/
   `PwVariantId` BIGINT unsigned NOT NULL AUTO_INCREMENT,	/** PK **/  
+  `PwShopId` BIGINT unsigned NOT NULL,		/** PK **/
   `PwMasterVariantId` BIGINT unsigned NOT NULL,		/** Can change i.e. can be assigned to another Master record **/
   
   `ShopifyVariantId` BIGINT unsigned NOT NULL,
@@ -81,7 +80,7 @@ CREATE TABLE `profitwisevariant` (
   `Active` TINYINT NOT NULL,
   `Primary` TINYINT NOT NULL,
 
-  PRIMARY KEY (`PwShopId`,`PwVariantId`)
+  PRIMARY KEY (`PwVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -108,37 +107,16 @@ CREATE TABLE `shopifyorderlineitem` (
   `PwShopId` int(6) unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
-  `OrderDate` date NOT NULL,
-  
-    /*
-  `ShopifyProductId` BIGINT unsigned NULL,
-  `ShopifyVariantId` BIGINT unsigned NULL,
-  `Sku` varchar(128) DEFAULT NULL,
-  */
-  
+  `OrderDate` date NOT NULL,  
+  `PwProductId` BIGINT unsigned NOT NULL, 
+  `PwVariantId` BIGINT unsigned NOT NULL,      
   `Quantity` int(6) unsigned NOT NULL,
   `UnitPrice` decimal(15,2) DEFAULT NULL,   
   `TotalDiscount` decimal(15,2) DEFAULT NULL,
   `TotalRestockedQuantity` int(6) unsigned NOT NULL,
   `GrossRevenue` decimal(15,2) DEFAULT NULL,
-  
-  /*
-  `ProductTitle` varchar(128) DEFAULT NULL,
-  `VariantTitle` varchar(128) DEFAULT NULL,  
-  `Name` varchar(256) DEFAULT NULL,  
-  `Vendor` varchar(128) DEFAULT NULL,
-  */
-  
-  `PwProductId` BIGINT unsigned NOT NULL, 
-  `PwVariantId` BIGINT unsigned NOT NULL, 
-  
-  `PwMasterProductId` BIGINT unsigned NOT NULL, /** Performance Optimization **/
-  `PwMasterVariantId` BIGINT unsigned NOT NULL,  /** Performance Optimization **/
-  
-  
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 
 
@@ -151,7 +129,11 @@ CREATE TABLE `profitwisebatchstate` (
    PRIMARY KEY (`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+CREATE TABLE `profitwisepreferences` (
+  `PwShopId` int(6) unsigned NOT NULL,
+  `StartingDateForOrders` datetime NULL,
+  PRIMARY KEY (`PwShopId`)    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -159,14 +141,6 @@ CREATE TABLE `profitwisedatelookup` (
 	`StartDate` DATE NOT NULL,
     `EndDate` DATE NOT NULL,
     PRIMARY KEY (`StartDate`, `EndDate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-CREATE TABLE `profitwisepreferences` (
-  `PwShopId` int(6) unsigned NOT NULL,
-  `StartingDateForOrders` datetime NULL,
-  PRIMARY KEY (`PwShopId`)    
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

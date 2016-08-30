@@ -11,7 +11,7 @@ using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Utilities.Helpers;
 
-namespace ProfitWise.Data.Steps
+namespace ProfitWise.Data.ProcessSteps
 {
     public class OrderRefreshStep
     {
@@ -224,7 +224,6 @@ namespace ProfitWise.Data.Steps
         }
 
 
-
         private void WriteOrderToPersistence(Order importedOrder, OrderRefreshContext context)
         {
             if (_diagnostic.ShopId == context.ShopifyShop.PwShopId &&
@@ -256,24 +255,29 @@ namespace ProfitWise.Data.Steps
                 return;
             }
 
-            if (existingOrder == null)
-            {
-                _pushLogger.Debug(
-                    $"Inserting new Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
+            _pushLogger.Debug($"Translating Shopify Order {importedOrder.Name} ({importedOrder.Id}) to ProfitWise data model");
+            var translatedOrder = importedOrder.ToShopifyOrder(context.ShopifyShop.PwShopId);
 
-                var translatedOrder = importedOrder.ToShopifyOrder(context.ShopifyShop.PwShopId);
-                _pushLogger.Debug($"Translating Shopify Order {importedOrder.Name} ({importedOrder.Id}) to ProfitWise data model");
+            if (existingOrder == null)
+            {                
+                _pushLogger.Debug(
+                   $"Inserting new Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
                 orderRepository.InsertOrder(translatedOrder);
 
-                foreach (var translatedLineItem in translatedOrder.LineItems)
+                foreach (var importedLineItem in importedOrder.LineItems)
                 {
+                    var translatedLineItem = 
+                        importedLineItem.ToShopifyOrderLineItem(importedOrder.Id, context.ShopifyShop.PwShopId);
+                    translatedOrder.AddLineItem(translatedLineItem);
 
-                    // Important *** this is where the PW Product Id gets assigned to Order Line Item
-                    translatedLineItem.PwProductId = FindOrCreatePwProductId(context, translatedLineItem);
+                    var pwVariant = FindOrCreatePwVariant(context, importedLineItem);
+                    translatedLineItem.PwVariantId = pwVariant.PwVariantId;
+                    translatedLineItem.PwProductId = pwVariant.ParentMasterVariant.PwProductId;
 
                     _pushLogger.Debug(
                         $"Inserting new Order Line Item: {translatedOrder.OrderNumber} / ShopifyOrderId: {translatedOrder.ShopifyOrderId} / " +
-                        $"ShopifyOrderLineId: {translatedLineItem.ShopifyOrderLineId} / PwProductId {translatedLineItem.PwProductId}");
+                        $"ShopifyOrderLineId: {translatedLineItem.ShopifyOrderLineId} / PwProductId {translatedLineItem.PwProductId} / " + 
+                        $"PwVariantId: {translatedLineItem.PwVariantId}");
 
                     orderRepository.InsertOrderLineItem(translatedLineItem);
                 }
@@ -281,77 +285,60 @@ namespace ProfitWise.Data.Steps
             else
             {
                 _pushLogger.Debug(
-                    $"Updating existing Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+                    $"Updating existing Order: {translatedOrder.OrderNumber} / {translatedOrder.ShopifyOrderId} for {translatedOrder.Email}");
 
-                importedOrder.CopyIntoExistingOrderForUpdate(existingOrder);
+                translatedOrder.CopyIntoExistingOrderForUpdate(existingOrder);
                 orderRepository.UpdateOrder(existingOrder);
 
                 foreach (var importedLineItem in importedOrder.LineItems)
                 {
-                    var existingLineItem =
-                        existingShopifyOrderLineItems.FirstOrDefault(
-                            x => x.ShopifyOrderId == importedLineItem.ShopifyOrderId &&
-                                x.ShopifyOrderLineId == importedLineItem.ShopifyOrderLineId);
+                    var translatedLineItem =
+                        importedLineItem.ToShopifyOrderLineItem(importedOrder.Id, context.ShopifyShop.PwShopId);
+
+                    existingOrder.LineItems.FirstOrDefault(
+                            x => x.ShopifyOrderId == translatedLineItem.ShopifyOrderId &&
+                                x.ShopifyOrderLineId == translatedLineItem.ShopifyOrderLineId);
 
                     _pushLogger.Debug(
-                            $"Updating existing Order Line Item: {importedOrder.OrderNumber} / " +
-                            $"{importedOrder.ShopifyOrderId} / {importedLineItem.ShopifyOrderLineId}");
+                            $"Updating existing Order Line Item: {translatedOrder.OrderNumber} / " +
+                            $"{translatedLineItem.ShopifyOrderId} / {translatedLineItem.ShopifyOrderLineId}");
 
-                    existingLineItem.TotalRestockedQuantity = importedLineItem.TotalRestockedQuantity;
-                    existingLineItem.GrossRevenue = importedLineItem.GrossRevenue;
-
-                    // IF Shopify Product or Variant was deleted, we'll see it here from Shopify
-                    existingLineItem.ShopifyProductId = importedLineItem.ShopifyProductId;
-                    existingLineItem.ShopifyVariantId = importedLineItem.ShopifyVariantId;
-                    orderRepository.UpdateOrderLineItem(existingLineItem);
+                    translatedLineItem.TotalRestockedQuantity = translatedLineItem.TotalRestockedQuantity;
+                    translatedLineItem.GrossRevenue = translatedLineItem.GrossRevenue;
+                    
+                    orderRepository.UpdateOrderLineItem(translatedLineItem);
                 }
             }            
         }
 
-        public long FindOrCreatePwProductId(OrderRefreshContext context, ShopifyOrderLineItem importedLineItem)
+        public PwVariant FindOrCreatePwVariant(OrderRefreshContext context, OrderLineItem importedLineItem)
         {
-            // *** IMPORTANT attempt to assign a PW Product with exact match on Shopify Product Id and Variant Id
-            var shopifyVariant = context.ShopifyVariants.FirstOrDefault(x => x.ExactMatchToLineItem(importedLineItem));
+            var service = _multitenantFactory.MakeProductVariantService(context.ShopifyShop);
 
-            if (shopifyVariant != null)
-            {
-                return shopifyVariant.PwProductId.Value;
-            }
+            // Process for creating ProfitWise Master Product, Product, Master Variant & Variant 
+            // ... from Shopify Product catalog item
+            var masterProduct =
+                service.FindOrCreateNewMasterProduct(
+                    context.Products, importedLineItem.ProductTitle, importedLineItem.ParentOrder.Id);
 
-            // Match by SKU / Title
-            var pwproduct =  context.PwProducts.FirstOrDefault(x => x.Sku == importedLineItem.Sku &&
-                                                           x.Name == importedLineItem.Name);
+            var product =
+                service.FindOrCreateNewProduct(
+                    masterProduct, importedLineItem.ProductTitle, importedLineItem.ParentOrder.Id, "", "", "");
 
-            if (pwproduct != null)
-            {
-                return pwproduct.PwProductId;
-            }
+            var masterVariant =
+                service.FindOrCreateNewMasterVariant(
+                    product, importedLineItem.VariantTitle, importedLineItem.Id, importedLineItem.Sku);
 
-            // Provision new PW Product => return the new PWProductId
-            var repository = _multitenantFactory.MakeProductRepository(context.ShopifyShop);
-
-            var pwProduct = new PwProduct()
-            {
-                ShopId =  context.ShopifyShop.PwShopId,
-                ProductTitle = importedLineItem.ProductTitle,
-                VariantTitle = importedLineItem.VariantTitle,
-                Name = importedLineItem.Name,
-                Sku = importedLineItem.Sku,
-                Tags = importedLineItem.ParentOrder.Tags,
-                Price = importedLineItem.UnitPrice,
-                Inventory = 0,
-            };
-
-            var newPwProductId = repository.InsertProduct(pwProduct);
-            pwProduct.PwProductId = newPwProductId;
-            context.AddNewPwProduct(pwProduct);
-
-            _pushLogger.Debug(
-                $"Provisioned a new PwProduct {newPwProductId} from Order Line Item " +
-                $"{importedLineItem.ShopifyOrderId} {importedLineItem.ShopifyOrderLineId}");
-
-            return newPwProductId;
+            var variant =
+                masterVariant.Variants.First(x => x.Title == importedLineItem.VariantTitle &&
+                                                  x.Sku == importedLineItem.Sku);
+            return variant;
         }
+
+        //_pushLogger.Debug(
+        //    $"Provisioned a new PwProduct {newPwProductId} from Order Line Item " +
+        //    $"{importedLineItem.ShopifyOrderId} {importedLineItem.ShopifyOrderLineId}");
+
     }
 }
 

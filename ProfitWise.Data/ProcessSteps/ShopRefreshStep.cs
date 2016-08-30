@@ -4,7 +4,7 @@ using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.Logging;
 
 
-namespace ProfitWise.Data.Steps
+namespace ProfitWise.Data.ProcessSteps
 {
     public class ShopRefreshService
     {

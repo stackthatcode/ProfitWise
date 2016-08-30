@@ -18,7 +18,6 @@ namespace ProfitWise.Data.Model
             }
         }
 
-
         public static ShopifyOrder ToShopifyOrder(this Order order, int shopId)
         {
             var shopifyOrder = new ShopifyOrder()
@@ -26,7 +25,7 @@ namespace ProfitWise.Data.Model
                 PwShopId = shopId,
                 ShopifyOrderId = order.Id,
                 Email = order.Email,
-                OrderNumber = order.Name,                
+                OrderNumber = order.Name,
                 OrderLevelDiscount = order.OrderDiscount,
                 SubTotal = order.SubTotal,
                 TotalRefund = order.TotalRefunds,
@@ -40,36 +39,26 @@ namespace ProfitWise.Data.Model
                 LineItems = new List<ShopifyOrderLineItem>(),
                 Cancelled = order.CancelledAt.HasValue, // only used during Refresh to DELETE Cancelled Orders
             };
-
-            foreach (var line_item in order.LineItems)
-            {
-                var shopifyOrderLineItem = new ShopifyOrderLineItem();
-                shopifyOrderLineItem.ShopId = shopId;
-                shopifyOrderLineItem.ParentOrder = shopifyOrder;
-                shopifyOrderLineItem.ShopifyVariantId = line_item.VariantId;
-                shopifyOrderLineItem.ShopifyProductId = line_item.ProductId;
-
-                shopifyOrderLineItem.OrderDate = line_item.ParentOrder.CreatedAt;
-                shopifyOrderLineItem.ShopifyOrderId = order.Id;
-                shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
-
-                shopifyOrderLineItem.Sku = line_item.Sku;
-                shopifyOrderLineItem.ProductTitle = line_item.ProductTitle;
-                shopifyOrderLineItem.VariantTitle = line_item.VariantTitle;
-                shopifyOrderLineItem.Name = line_item.Name;
-
-
-                shopifyOrderLineItem.UnitPrice = line_item.Price;
-                shopifyOrderLineItem.Quantity = line_item.Quantity;
-                shopifyOrderLineItem.TotalRestockedQuantity = line_item.TotalRestockQuantity;
-                shopifyOrderLineItem.TotalDiscount = line_item.Discount;
-
-                shopifyOrder.LineItems.Add(shopifyOrderLineItem);
-            }
-
             return shopifyOrder;
         }
 
+        public static ShopifyOrderLineItem ToShopifyOrderLineItem(
+                this OrderLineItem line_item, long parentShopifyOrderId, int shopId)
+        {
+            var shopifyOrderLineItem = new ShopifyOrderLineItem();
+            shopifyOrderLineItem.ShopId = shopId;
+
+            shopifyOrderLineItem.OrderDate = line_item.ParentOrder.CreatedAt;
+            shopifyOrderLineItem.ShopifyOrderId = parentShopifyOrderId;
+            shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
+
+            shopifyOrderLineItem.UnitPrice = line_item.Price;
+            shopifyOrderLineItem.Quantity = line_item.Quantity;
+            shopifyOrderLineItem.TotalRestockedQuantity = line_item.TotalRestockQuantity;
+            shopifyOrderLineItem.TotalDiscount = line_item.Discount;
+
+            return shopifyOrderLineItem;
+        }
 
         public static void CopyIntoExistingOrderForUpdate(this ShopifyOrder importedOrder, ShopifyOrder existingOrder)
         {

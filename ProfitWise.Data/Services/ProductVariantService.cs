@@ -5,13 +5,8 @@ using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
-using ProfitWise.Data.Repositories;
-using ProfitWise.Data.Steps;
 using Push.Foundation.Utilities.Logging;
-using Push.Shopify.Factories;
-using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
-using Push.Utilities.Helpers;
 
 namespace ProfitWise.Data.Services
 {
@@ -20,6 +15,7 @@ namespace ProfitWise.Data.Services
     {
         private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
+
         public PwShop PwShop { get; set; }
 
         // TODO => migrate to Preferences
@@ -27,8 +23,7 @@ namespace ProfitWise.Data.Services
 
 
         public ProductVariantService(
-                    IPushLogger logger,
-                    MultitenantFactory multitenantFactory)
+                    IPushLogger logger, MultitenantFactory multitenantFactory)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
@@ -36,20 +31,21 @@ namespace ProfitWise.Data.Services
         
 
         public PwMasterProduct FindOrCreateNewMasterProduct
-                            (IList<PwMasterProduct> masterProducts, Product importedProduct)
+                            (IList<PwMasterProduct> masterProducts, 
+                            string title, long shopifyProductId)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
             PwProduct productMatchByTitle =
                 masterProducts
                     .SelectMany(x => x.Products)
-                    .FirstOrDefault(x => x.Title == importedProduct.Title);
+                    .FirstOrDefault(x => x.Title == title);
 
             // Unable to find a single Product with Product Title, then create a new one
             if (productMatchByTitle == null)
             {
                 _pushLogger.Debug(
-                    $"Creating new Master Product: {importedProduct.Title} (Id = {importedProduct.Id})");
+                    $"Creating new Master Product: {title} (Id = {shopifyProductId})");
 
                 var masterProduct = new PwMasterProduct()
                 {
@@ -63,7 +59,7 @@ namespace ProfitWise.Data.Services
             else
             {
                 _pushLogger.Debug(
-                        $"Found existing Master Product: {importedProduct.Title} (Id = {importedProduct.Id}, " +
+                        $"Found existing Master Product: {title} (Id = {shopifyProductId}, " +
                         $"PwMasterProductId = {productMatchByTitle.ParentMasterProduct.PwMasterProductId})");
 
                 return productMatchByTitle.ParentMasterProduct;
@@ -71,11 +67,12 @@ namespace ProfitWise.Data.Services
         }
 
         public PwProduct FindOrCreateNewProduct(
-                    PwMasterProduct masterProduct, Product importedProduct)
+                    PwMasterProduct masterProduct, 
+                    string title, long shopifyProductId, string vendor, string tags, string productType)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
-            if (masterProduct.Products.All(x => x.Title != importedProduct.Title))
+            if (masterProduct.Products.All(x => x.Title != title))
             {
                 throw new ArgumentException(
                     "None of the Master Product's child Product Titles match your imported Product");
@@ -84,17 +81,17 @@ namespace ProfitWise.Data.Services
             PwProduct productMatchByVendor =
                 masterProduct
                     .Products
-                    .FirstOrDefault(x => x.Vendor == importedProduct.Vendor);
+                    .FirstOrDefault(x => x.Vendor == vendor);
 
             if (productMatchByVendor != null)
             {
                 _pushLogger.Debug(
-                    $"Found existing Product: {importedProduct.Title} (Id = {importedProduct.Id}, " +
+                    $"Found existing Product: {title} (Id = {shopifyProductId}, " +
                     $"PwProductId = {productMatchByVendor.PwProductId})");
 
-                productMatchByVendor.ShopifyProductId = importedProduct.Id;
-                productMatchByVendor.Tags = importedProduct.Tags;
-                productMatchByVendor.ProductType = importedProduct.ProductType;
+                productMatchByVendor.ShopifyProductId = shopifyProductId;
+                productMatchByVendor.Tags = tags;
+                productMatchByVendor.ProductType = productType;
 
                 productRepository.UpdateProduct(productMatchByVendor);
                 return productMatchByVendor;
@@ -102,7 +99,7 @@ namespace ProfitWise.Data.Services
             else
             {
                 _pushLogger.Debug(
-                    $"Create new Product: {importedProduct.Title} (Id = {importedProduct.Id})");
+                    $"Create new Product: {title} (Id = {shopifyProductId})");
 
                 // Step #1 - set all other Products to inactive
                 foreach (var product in masterProduct.Products)
@@ -117,13 +114,13 @@ namespace ProfitWise.Data.Services
                 {
                     PwShopId = PwShop.PwShopId,
                     PwMasterProductId = masterProduct.PwMasterProductId,
-                    ShopifyProductId = importedProduct.Id,
-                    Title = importedProduct.Title,
-                    Vendor = importedProduct.Vendor,
-                    ProductType = importedProduct.ProductType,
+                    ShopifyProductId = shopifyProductId,
+                    Title = title,
+                    Vendor = vendor,
+                    ProductType = productType,
                     Active = true,
                     Primary = true,
-                    Tags = importedProduct.Tags,
+                    Tags = tags,
                     ParentMasterProduct = masterProduct,
                 };
 
@@ -135,20 +132,19 @@ namespace ProfitWise.Data.Services
             }
         }
 
-
         public PwMasterVariant FindOrCreateNewMasterVariant(
-                    PwShop shop, PwProduct product, Variant importedVariant)
+                    PwProduct product, string title, long shopifyVariantId, string sku)
         {
             var matchingVariantBySkuAndTitle =
                 product.MasterVariants
                     .SelectMany(x => x.Variants)
-                    .FirstOrDefault(x => x.Sku == importedVariant.Sku && x.Title == importedVariant.Title);
+                    .FirstOrDefault(x => x.Sku == sku && x.Title == title);
 
             if (matchingVariantBySkuAndTitle != null)
             {
                 _pushLogger.Debug(
-                    $"Found existing Master Variant & Variant: {importedVariant.Title}, {importedVariant.Sku} " +
-                    $"(Id = {importedVariant.Id}), PwMasterVariantId = {matchingVariantBySkuAndTitle.PwMasterVariantId}, " + 
+                    $"Found existing Master Variant & Variant: {title}, {sku} " +
+                    $"(Id = {shopifyVariantId}), PwMasterVariantId = {matchingVariantBySkuAndTitle.PwMasterVariantId}, " + 
                     $"PwVariantId = {matchingVariantBySkuAndTitle.PwVariantId})");
 
                 return matchingVariantBySkuAndTitle.ParentMasterVariant;
@@ -156,14 +152,14 @@ namespace ProfitWise.Data.Services
             else
             {
                 _pushLogger.Debug(
-                    $"Creating new Master Variant & Variant: {importedVariant.Title}, {importedVariant.Sku} " +
-                    $"(Id = {importedVariant.Id})");
+                    $"Creating new Master Variant & Variant: {title}, {sku} " +
+                    $"(Id = {shopifyVariantId})");
                 
-                var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
+                var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
 
                 var masterVariant = new PwMasterVariant()
                 {
-                    PwShopId = shop.PwShopId,
+                    PwShopId = this.PwShop.PwShopId,
                     ParentProduct = product,
                     Exclude = false,
                     StockedDirectly = StockedDirectlyDefault,
@@ -175,10 +171,10 @@ namespace ProfitWise.Data.Services
 
                 var newVariant = new PwVariant()
                 {
-                    PwShopId = shop.PwShopId,
-                    ShopifyVariantId = importedVariant.Id,
-                    Title = importedVariant.Title,
-                    Sku = importedVariant.Sku,
+                    PwShopId = this.PwShop.PwShopId,
+                    ShopifyVariantId = shopifyVariantId,
+                    Title = title,
+                    Sku = sku,
                     PwMasterVariantId = masterVariant.PwMasterVariantId,
                     Primary = true,
                     Active = true, // Because it's in the live catalog!
@@ -194,4 +190,3 @@ namespace ProfitWise.Data.Services
 
     }
 }
-

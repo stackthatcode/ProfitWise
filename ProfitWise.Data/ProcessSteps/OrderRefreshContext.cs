@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ProfitWise.Data.Model;
 
-namespace ProfitWise.Data.Steps
+namespace ProfitWise.Data.ProcessSteps
 {
     public class OrderRefreshContext
     {

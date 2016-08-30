@@ -10,24 +10,14 @@ namespace ProfitWise.Data.Model
         public long ShopifyOrderId { get; set; }
 
         public ShopifyOrder ParentOrder { get; set; }
-
         public DateTime OrderDate { get; set; }
 
-        public long? ShopifyProductId { get; set; }
-        public long? ShopifyVariantId { get; set; }
-        public string Sku { get; set; }
-        public string ProductTitle { get; set; }
-        public string VariantTitle { get; set; }
-        public string Name { get; set; }
-        public string Vendor { get; set; }
-
-
         public long? PwProductId { get; set; }
-        
+        public long? PwVariantId { get; set; }
+
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal TotalDiscount { get; set; } // Store
-
         public decimal TotalAfterLineItemDiscount => Quantity * UnitPrice - TotalDiscount;
 
         // Hey! Our computation is like Shopify's!

@@ -63,7 +63,10 @@ namespace Push.Shopify.Repositories
                         Id = product.id,
                         Title = product.title,
                         Tags = product.tags,
+                        Vendor = product.vendor,
+                        ProductType = product.product_type,
                     };
+
                 resultProduct.Variants = new List<Variant>();
 
                 foreach (var variant in product.variants)

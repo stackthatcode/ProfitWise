@@ -13,6 +13,12 @@ namespace ProfitWise.Data.Model
         
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
 
+        public void AddLineItem(ShopifyOrderLineItem lineItem)
+        {
+            LineItems.Add(lineItem);
+            lineItem.ParentOrder = this;
+        }
+
         public decimal OrderLevelDiscount { get; set; }
         public decimal SubTotal { get; set; }
 

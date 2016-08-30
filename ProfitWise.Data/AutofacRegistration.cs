@@ -2,7 +2,7 @@
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
-using ProfitWise.Data.Steps;
+using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Utilities.CastleProxies;
@@ -31,7 +31,7 @@ namespace ProfitWise.Data
             builder.RegisterType<ShopRefreshService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<OrderRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ProductCleanupService>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ProductCleanupStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ShopRequired>();
