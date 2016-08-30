@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Batch.RefreshServices;
+using ProfitWise.Data.Steps;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
@@ -11,7 +11,7 @@ using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Utilities.Helpers;
 
-namespace ProfitWise.Data.RefreshServices
+namespace ProfitWise.Data.Steps
 {
     public class ProductCleanupService
     {

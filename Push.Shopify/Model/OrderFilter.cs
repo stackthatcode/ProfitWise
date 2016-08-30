@@ -3,6 +3,13 @@ using Push.Foundation.Web.Helpers;
 
 namespace Push.Shopify.Model
 {
+    public enum ShopifySortOrder
+    {
+        Ascending = 1,
+        Descending = 2,
+    };
+
+
     public class OrderFilter
     {
         public OrderFilter()
@@ -11,7 +18,21 @@ namespace Push.Shopify.Model
             OrderByClause = "created_at asc";
         }
 
-        public string OrderByClause { get; set; }
+        private ShopifySortOrder _shopifySortOrder;
+        private string _orderByClause;
+
+
+        public ShopifySortOrder ShopifySortOrder
+        {
+            get { return _shopifySortOrder; }
+            private set { _shopifySortOrder = value; }
+        }
+
+        public string OrderByClause
+        {
+            get { return _orderByClause;  }
+            private set { _orderByClause = value; }
+        }
 
         public string Status { get; set;  }
 
@@ -28,13 +49,15 @@ namespace Push.Shopify.Model
 
         public OrderFilter OrderByCreatedAtDescending()
         {
-            OrderByClause = "created_at desc";
+            _orderByClause = "created_at desc";
+            _shopifySortOrder = ShopifySortOrder.Descending;
             return this;
         }
 
         public OrderFilter OrderByUpdateAtAscending()
         {
-            OrderByClause = "created_at asc";
+            _orderByClause = "updated_at asc";
+            _shopifySortOrder = ShopifySortOrder.Ascending;
             return this;
         }
 

@@ -109,18 +109,25 @@ CREATE TABLE `shopifyorderlineitem` (
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
   `OrderDate` date NOT NULL,
+  
+    /*
   `ShopifyProductId` BIGINT unsigned NULL,
   `ShopifyVariantId` BIGINT unsigned NULL,
   `Sku` varchar(128) DEFAULT NULL,
+  */
+  
   `Quantity` int(6) unsigned NOT NULL,
   `UnitPrice` decimal(15,2) DEFAULT NULL,   
   `TotalDiscount` decimal(15,2) DEFAULT NULL,
   `TotalRestockedQuantity` int(6) unsigned NOT NULL,
   `GrossRevenue` decimal(15,2) DEFAULT NULL,
+  
+  /*
   `ProductTitle` varchar(128) DEFAULT NULL,
   `VariantTitle` varchar(128) DEFAULT NULL,  
   `Name` varchar(256) DEFAULT NULL,  
   `Vendor` varchar(128) DEFAULT NULL,
+  */
   
   `PwProductId` BIGINT unsigned NOT NULL, 
   `PwVariantId` BIGINT unsigned NOT NULL, 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Batch.RefreshServices;
+using ProfitWise.Data.Steps;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
@@ -12,7 +12,7 @@ using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 using Push.Utilities.Helpers;
 
-namespace ProfitWise.Data.RefreshServices
+namespace ProfitWise.Data.Steps
 {
     public class OrderRefreshService
     {
@@ -22,6 +22,8 @@ namespace ProfitWise.Data.RefreshServices
         private readonly MultitenantRepositoryFactory _multitenantRepositoryFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
         private readonly PwShopRepository _shopRepository;
+
+
 
 
         public OrderRefreshService(
@@ -58,81 +60,75 @@ namespace ProfitWise.Data.RefreshServices
             // CASE #1 - first time loading - don't do any additional updates
             if (batchState.OrderDatasetStart == null)
             {
-                LoadOrdersForFirstTime(shopCredentials, shop, preferences);
+                FirstTimeLoadWorker(shopCredentials, shop, preferences);
                 return;
             }
 
             // CASE #2 - Order Dataset Start Date has moved back in time
             if (preferences.StartingDateForOrders < batchState.OrderDatasetStart )
             {
-                LoadOrdersForModifiedDataSetStart(shopCredentials, shop, preferences);
+                EarlierStartDateWorker(shopCredentials, shop, preferences);
             }
 
-            // CASE #3 - update to get the latest Orders
-            RoutineOrderRefresh(shopCredentials, shop);
+            // CASE #3 - update to get the latest Orders since last update
+            RoutineRefreshWorker(shopCredentials, shop);
         }
 
-        private void RoutineOrderRefresh(ShopifyCredentials shopCredentials, PwShop shop)
+        private void RoutineRefreshWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
             _pushLogger.Info($"Routine Order refresh for {shop.ShopId}");
 
             var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
-            var batchState = batchStateRepository.Retrieve();
+            var preBatchState = batchStateRepository.Retrieve();
 
-            var updatefilter = new OrderFilter()
+            var updatefilter = 
+                new OrderFilter()
                 {
-                    UpdatedAtMin = batchState.OrderDatasetEnd.Value.AddMinutes(-15)
+                    UpdatedAtMin = preBatchState.OrderDatasetEnd.Value.AddMinutes(-15)
                 }
                 .OrderByUpdateAtAscending();
 
-            Action<IList<Order>> batchStateUpdateFunc2 = orders =>
-            {
-                batchState.OrderDatasetEnd = orders.Max(x => x.UpdatedAt);
-                batchStateRepository.Update(batchState);
-            };
+            RefreshOrders(updatefilter, shopCredentials, shop);
 
-            RefreshOrders(updatefilter, shopCredentials, shop, batchStateUpdateFunc2);
+            // Update Batch State End to now-ish
+            var postBatchState = batchStateRepository.Retrieve();
+            postBatchState.OrderDatasetEnd = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
+            batchStateRepository.Update(postBatchState);
 
-            batchState.OrderDatasetEnd = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
-            batchStateRepository.Update(batchState);
-
-            _pushLogger.Info("Complete: " + batchState.ToString());
+            _pushLogger.Info("Complete: " + preBatchState.ToString());
         }
 
-        private void LoadOrdersForModifiedDataSetStart(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
+        private void EarlierStartDateWorker(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
         {
             _pushLogger.Info($"Expanding Order date range for {shop.ShopId}");
 
             var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
-            var batchState = batchStateRepository.Retrieve();
+            var preBatchState = batchStateRepository.Retrieve();
 
             var filter = new OrderFilter()
-            {
-                CreatedAtMin = preferences.StartingDateForOrders,
-                CreatedAtMax = batchState.OrderDatasetStart,
-            }
+                {
+                    CreatedAtMin = preferences.StartingDateForOrders,
+                    CreatedAtMax = preBatchState.OrderDatasetStart,
+                }
                 .OrderByCreatedAtDescending();
 
-            Action<IList<Order>> batchStateUpdateFunc = orders =>
-            {
-                batchState.OrderDatasetStart = orders.Min(x => x.CreatedAt);
-                batchStateRepository.Update(batchState);
-            };
 
-            RefreshOrders(filter, shopCredentials, shop, batchStateUpdateFunc);
+            RefreshOrders(filter, shopCredentials, shop);
 
-            batchState.OrderDatasetStart = preferences.StartingDateForOrders;
-            batchStateRepository.Update(batchState);
 
-            _pushLogger.Info("Complete: " + batchState.ToString());
+            // When updating Batch State, simply move Start to Preferences' new Start
+            var postBatchState = batchStateRepository.Retrieve();
+            postBatchState.OrderDatasetStart = preferences.StartingDateForOrders;
+            batchStateRepository.Update(postBatchState);
+            _pushLogger.Info("Complete: " + postBatchState);
         }
 
-        private void LoadOrdersForFirstTime(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
+        private void FirstTimeLoadWorker(ShopifyCredentials shopCredentials, PwShop shop, PwPreferences preferences)
         {
             _pushLogger.Info($"Loading Orders first time for Shop {shop.ShopId}");
 
             var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
-            var batchState = batchStateRepository.Retrieve();
+            var preBatchState = batchStateRepository.Retrieve();
 
             var filter = new OrderFilter()
                 {
@@ -140,39 +136,38 @@ namespace ProfitWise.Data.RefreshServices
                 }
                 .OrderByCreatedAtDescending();
 
-
             var end = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
-
-            Action<IList<Order>> batchStateUpdateFunc = orders =>
-            {
-                batchState.OrderDatasetStart = orders.Min(x => x.CreatedAt);
-                batchState.OrderDatasetEnd = end;
-                batchStateRepository.Update(batchState);
-            };
-
+            preBatchState.OrderDatasetEnd = end;
             
-            RefreshOrders(filter, shopCredentials, shop, batchStateUpdateFunc);
 
-            batchState.OrderDatasetStart = preferences.StartingDateForOrders;
-            batchStateRepository.Update(batchState);
+            RefreshOrders(filter, shopCredentials, shop);
 
-            _pushLogger.Info("Complete: " + batchState.ToString());
+            // Update Post Batch State so Start Date equals that which is in Preferences
+            var postBatchState = batchStateRepository.Retrieve();
+            postBatchState.OrderDatasetStart = preferences.StartingDateForOrders;
+            batchStateRepository.Update(postBatchState);
+            _pushLogger.Info("Complete: " + postBatchState);
         }
 
 
+
+        // All the "worker" functions call Refresh Orders
         private void RefreshOrders(
-                OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop, 
-                Action<IList<Order>> pageCompleteCallback)
+                OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
-            var variantRepository = _multitenantRepositoryFactory.MakeShopifyVariantRepository(shop);
-            var pwProductsRepository = _multitenantRepositoryFactory.MakeProductRepository(shop);
+            var productRepository = _multitenantRepositoryFactory.MakeProductRepository(shop);
+            var variantRepository = _multitenantRepositoryFactory.MakeVariantRepository(shop);
+            var batchStateRepository = _multitenantRepositoryFactory.MakeBatchStateRepository(shop);
+
+            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
+            var masterVariants = variantRepository.RetrieveAllMasterVariants();
+            masterProductCatalog.LoadMasterVariants(masterVariants);
 
             var context = new OrderRefreshContext
             {
                 ShopifyShop = shop,
-                PwProducts = pwProductsRepository.RetrieveAllProducts(),
-                ShopifyVariants = variantRepository.RetrieveAll(),
+                Products = masterProductCatalog
             };
 
             var count = orderApiRepository.RetrieveCount(filter);
@@ -189,11 +184,20 @@ namespace ProfitWise.Data.RefreshServices
 
                 var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
                 WriteOrdersToPersistence(importedOrders, context);
-                
-                pageCompleteCallback(importedOrders);
+
+                // Update the Batch State based on Order Filter's Sort
+                var batchState = batchStateRepository.Retrieve();
+                if (filter.ShopifySortOrder == ShopifySortOrder.Ascending)
+                {
+                    batchState.OrderDatasetEnd = importedOrders.Max(x => x.UpdatedAt);
+                }
+                else
+                {
+                    batchState.OrderDatasetStart = importedOrders.Min(x => x.CreatedAt);
+                }
+                batchStateRepository.Update(batchState);
             }
         }
-
 
         protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, OrderRefreshContext context)
         {
@@ -203,27 +207,17 @@ namespace ProfitWise.Data.RefreshServices
 
             using (var trans = orderRepository.InitiateTransaction())
             {
-                var importedShopifyOrders = new List<ShopifyOrder>();
-                foreach (var order in importedOrders)
-                {
-                    _pushLogger.Debug($"Translating Shopify Order {order.Name} ({order.Id}) to ProfitWise data model");
-                    importedShopifyOrders.Add(order.ToShopifyOrder(context.ShopifyShop.ShopId));
-                }
-
-                var orderIdList = importedShopifyOrders.Select(x => x.ShopifyOrderId).ToList();
+                var orderIdList = importedOrders.Select(x => x.Id).ToList();
 
                 // A filtered list of Existing Orders and Line Items for possible update
                 var existingShopifyOrders = orderRepository.RetrieveOrders(orderIdList);
                 var existingShopifyOrderLineItems = orderRepository.RetrieveOrderLineItems(orderIdList);
-                existingShopifyOrders.LoadLineItems(existingShopifyOrderLineItems);
+                existingShopifyOrders.AppendLineItems(existingShopifyOrderLineItems);
+                context.CurrentExistingOrders = existingShopifyOrders;
 
-                foreach (var importedOrder in importedShopifyOrders)
+                foreach (var importedOrder in importedOrders)
                 {
-                    WriteOrderToPersistence(
-                        importedOrder,
-                        existingShopifyOrders,
-                        existingShopifyOrderLineItems, 
-                        context);
+                    WriteOrderToPersistence(importedOrder, context);
                 }
 
                 trans.Commit();
@@ -231,26 +225,23 @@ namespace ProfitWise.Data.RefreshServices
         }
 
 
-        private void WriteOrderToPersistence(
-                    ShopifyOrder importedOrder,
-                    IList<ShopifyOrder> existingShopifyOrders,
-                    IList<ShopifyOrderLineItem> existingShopifyOrderLineItems, 
-                    OrderRefreshContext context)
+
+        private void WriteOrderToPersistence(Order importedOrder, OrderRefreshContext context)
         {
-            if (_diagnostic.ShopId == importedOrder.ShopId &&
-                _diagnostic.OrderIds.Contains(importedOrder.ShopifyOrderId))
+            if (_diagnostic.ShopId == context.ShopifyShop.ShopId &&
+                _diagnostic.OrderIds.Contains(importedOrder.Id))
             {
                 _pushLogger.Debug(importedOrder.ToString());
             }
             
-            var existingOrder =
-                existingShopifyOrders.FirstOrDefault(
-                    x => x.ShopifyOrderId == importedOrder.ShopifyOrderId);
+            var existingOrder = 
+                context.CurrentExistingOrders
+                    .FirstOrDefault(x => x.ShopifyOrderId == importedOrder.Id);
 
             if (existingOrder == null && importedOrder.Cancelled == true)
             {
                 _pushLogger.Debug(
-                        $"Skipping cancelled Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+                        $"Skipping cancelled Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
                 return;
             }
 
@@ -259,30 +250,32 @@ namespace ProfitWise.Data.RefreshServices
             if (existingOrder != null && importedOrder.Cancelled == true)
             {
                 _pushLogger.Debug(
-                        $"Deleting cancelled Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+                        $"Deleting cancelled Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
 
-                orderRepository.DeleteOrderLineItems(importedOrder.ShopifyOrderId);
-                orderRepository.DeleteOrder(importedOrder.ShopifyOrderId);
+                orderRepository.DeleteOrderLineItems(importedOrder.Id);
+                orderRepository.DeleteOrder(importedOrder.Id);
                 return;
             }
 
             if (existingOrder == null)
             {
                 _pushLogger.Debug(
-                    $"Inserting new Order: {importedOrder.OrderNumber} / {importedOrder.ShopifyOrderId} for {importedOrder.Email}");
+                    $"Inserting new Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
 
-                orderRepository.InsertOrder(importedOrder);
+                var translatedOrder = importedOrder.ToShopifyOrder(context.ShopifyShop.ShopId);
+                _pushLogger.Debug($"Translating Shopify Order {importedOrder.Name} ({importedOrder.Id}) to ProfitWise data model");
+                orderRepository.InsertOrder(translatedOrder);
 
-                foreach (var importedLineItem in importedOrder.LineItems)
+                foreach (var translatedLineItem in translatedOrder.LineItems)
                 {
                     // Important *** this is where the PW Product Id gets assigned to Order Line Item
-                    importedLineItem.PwProductId = FindOrCreatePwProductId(context, importedLineItem);
+                    translatedLineItem.PwProductId = FindOrCreatePwProductId(context, translatedLineItem);
 
                     _pushLogger.Debug(
-                        $"Inserting new Order Line Item: {importedOrder.OrderNumber} / ShopifyOrderId: {importedOrder.ShopifyOrderId} / " +
-                        $"ShopifyOrderLineId: {importedLineItem.ShopifyOrderLineId} / PwProductId {importedLineItem.PwProductId}");
+                        $"Inserting new Order Line Item: {translatedOrder.OrderNumber} / ShopifyOrderId: {translatedOrder.ShopifyOrderId} / " +
+                        $"ShopifyOrderLineId: {translatedLineItem.ShopifyOrderLineId} / PwProductId {translatedLineItem.PwProductId}");
 
-                    orderRepository.InsertOrderLineItem(importedLineItem);
+                    orderRepository.InsertOrderLineItem(translatedLineItem);
                 }
             }
             else

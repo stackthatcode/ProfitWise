@@ -1,4 +1,4 @@
-﻿namespace ProfitWise.Batch.RefreshServices
+﻿namespace ProfitWise.Data.Steps
 {
     public class RefreshServiceConfiguration
     {

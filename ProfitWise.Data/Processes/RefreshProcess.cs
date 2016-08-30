@@ -1,5 +1,5 @@
 ﻿using System;
-using ProfitWise.Data.RefreshServices;
+using ProfitWise.Data.Steps;
 using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
@@ -12,26 +12,26 @@ namespace ProfitWise.Data.Processes
     public class RefreshProcess
     {
         private readonly ShopifyCredentialService _shopifyCredentialService;
-        private readonly OrderRefreshService _orderRefreshService;
-        private readonly ProductRefreshService _productRefreshService;
-        private readonly ShopRefreshService _shopRefreshService;
+        private readonly OrderRefreshService _orderRefreshStep;
+        private readonly ProductRefreshStep _productRefreshStep;
+        private readonly ShopRefreshService _shopRefreshStep;
         private readonly IPushLogger _pushLogger;
 
 
         public RefreshProcess(
                 ShopifyCredentialService shopifyCredentialService,
-                OrderRefreshService orderRefreshService,
-                ProductRefreshService productRefreshService,
-                ShopRefreshService shopRefreshService,
+                OrderRefreshService orderRefreshStep,
+                ProductRefreshStep productRefreshStep,
+                ShopRefreshService shopRefreshStep,
                 IPushLogger logger)
         {
             // TODO: move into Autofac configuration
            
             _shopifyCredentialService = shopifyCredentialService;
-            _orderRefreshService = orderRefreshService;
-            _productRefreshService = productRefreshService;
+            _orderRefreshStep = orderRefreshStep;
+            _productRefreshStep = productRefreshStep;
             _pushLogger = logger;
-            _shopRefreshService = shopRefreshService;
+            _shopRefreshStep = shopRefreshStep;
         }
 
         public void Execute(string userId)
@@ -54,11 +54,9 @@ namespace ProfitWise.Data.Processes
                 AccessToken = shopifyFromClaims.AccessToken,
             };
 
-            _shopRefreshService.Execute(userId);
-
-            _productRefreshService.Execute(shopifyClientCredentials);
-
-            //_orderRefreshService.Execute(shopifyClientCredentials);
+            _shopRefreshStep.Execute(userId);
+            _productRefreshStep.Execute(shopifyClientCredentials);
+            _orderRefreshStep.Execute(shopifyClientCredentials);
         }
     }
 }

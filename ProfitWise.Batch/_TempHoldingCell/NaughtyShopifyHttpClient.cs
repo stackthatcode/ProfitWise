@@ -4,7 +4,6 @@ using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Batch._TempHoldingCell
 {
-
     public class HttpClientThatThrowsUnauthorized : IHttpClient
     {
         private IHttpClient _httpClient;

@@ -6,7 +6,7 @@ namespace ProfitWise.Data.Model
 {
     public static class ShopifyOrderExtensions
     {
-        public static void LoadLineItems(this IList<ShopifyOrder> orders, IList<ShopifyOrderLineItem> lineItems)
+        public static void AppendLineItems(this IList<ShopifyOrder> orders, IList<ShopifyOrderLineItem> lineItems)
         {
             foreach (var order in orders)
             {
@@ -52,11 +52,12 @@ namespace ProfitWise.Data.Model
                 shopifyOrderLineItem.OrderDate = line_item.ParentOrder.CreatedAt;
                 shopifyOrderLineItem.ShopifyOrderId = order.Id;
                 shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
-                shopifyOrderLineItem.Sku = line_item.Sku;
 
+                shopifyOrderLineItem.Sku = line_item.Sku;
                 shopifyOrderLineItem.ProductTitle = line_item.ProductTitle;
                 shopifyOrderLineItem.VariantTitle = line_item.VariantTitle;
                 shopifyOrderLineItem.Name = line_item.Name;
+
 
                 shopifyOrderLineItem.UnitPrice = line_item.Price;
                 shopifyOrderLineItem.Quantity = line_item.Quantity;
