@@ -5,7 +5,7 @@ namespace ProfitWise.Data.Model
 {
     public class ShopifyOrderLineItem
     {
-        public int ShopId { get; set; }
+        public int PwShopId { get; set; }
         public long ShopifyOrderLineId { get; set; }
         public long ShopifyOrderId { get; set; }
 
@@ -103,15 +103,9 @@ namespace ProfitWise.Data.Model
         {
             return
                 "ShopifyOrderLineItem" + Environment.NewLine +
-                $"ShopId = {ShopId}" + Environment.NewLine +
+                $"PwShopId = {PwShopId}" + Environment.NewLine +
                 $"ShopifyOrderLineId = {ShopifyOrderLineId}" + Environment.NewLine +
                 $"ShopifyOrderId = {ShopifyOrderId}" + Environment.NewLine +
-                $"ShopifyProductId = {ShopifyProductId}" + Environment.NewLine +
-                $"ShopifyVariantId = {ShopifyVariantId}" + Environment.NewLine +
-                $"Sku = {Sku}" + Environment.NewLine +
-                $"ProductTitle = {ProductTitle}" + Environment.NewLine +
-                $"VariantTitle = {VariantTitle}" + Environment.NewLine +
-                $"Name = {Name}" + Environment.NewLine +
                 $"PwProductId = {PwProductId}" + Environment.NewLine +
                 $"Quantity = {Quantity}" + Environment.NewLine +
                 $"UnitPrice = {UnitPrice}" + Environment.NewLine +

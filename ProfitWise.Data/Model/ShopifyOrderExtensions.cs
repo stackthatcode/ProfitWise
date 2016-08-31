@@ -18,11 +18,11 @@ namespace ProfitWise.Data.Model
             }
         }
 
-        public static ShopifyOrder ToShopifyOrder(this Order order, int shopId)
+        public static ShopifyOrder ToShopifyOrder(this Order order, int pwShopId)
         {
             var shopifyOrder = new ShopifyOrder()
             {
-                PwShopId = shopId,
+                PwShopId = pwShopId,
                 ShopifyOrderId = order.Id,
                 Email = order.Email,
                 OrderNumber = order.Name,
@@ -43,10 +43,10 @@ namespace ProfitWise.Data.Model
         }
 
         public static ShopifyOrderLineItem ToShopifyOrderLineItem(
-                this OrderLineItem line_item, long parentShopifyOrderId, int shopId)
+                this OrderLineItem line_item, long parentShopifyOrderId, int pwShopId)
         {
             var shopifyOrderLineItem = new ShopifyOrderLineItem();
-            shopifyOrderLineItem.ShopId = shopId;
+            shopifyOrderLineItem.PwShopId = pwShopId;
 
             shopifyOrderLineItem.OrderDate = line_item.ParentOrder.CreatedAt;
             shopifyOrderLineItem.ShopifyOrderId = parentShopifyOrderId;

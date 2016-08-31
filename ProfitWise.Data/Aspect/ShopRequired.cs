@@ -16,7 +16,7 @@ namespace ProfitWise.Data.Aspect
             }
             if (shopIdFilter.PwShop == null)
             {
-                throw new Exception("{invocation.InvocationTarget.GetType()} requires a non-null ShopId before invoking any methods.");
+                throw new Exception("{invocation.InvocationTarget.GetType()} requires a non-null PwShopId before invoking any methods.");
             }
 
             invocation.Proceed();

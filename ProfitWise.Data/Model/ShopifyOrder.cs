@@ -52,7 +52,7 @@ namespace ProfitWise.Data.Model
             // I can't hear you, Jeremy.
             var output =
                 "ShopifyOrder" + Environment.NewLine +
-                $"ShopId = {PwShopId}" + Environment.NewLine +
+                $"PwShopId = {PwShopId}" + Environment.NewLine +
                 $"ShopifyOrderId = {ShopifyOrderId}" + Environment.NewLine +
                 $"Email = {Email}" + Environment.NewLine +
                 $"OrderNumber = {OrderNumber}" + Environment.NewLine +

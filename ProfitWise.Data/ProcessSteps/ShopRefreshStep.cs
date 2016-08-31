@@ -34,7 +34,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                 var state = new PwBatchState
                 {
-                    ShopId = newShopId,                    
+                    PwShopId = newShopId,                    
                 };
 
                 var newShop = _shopRepository.RetrieveByShopId(newShopId);

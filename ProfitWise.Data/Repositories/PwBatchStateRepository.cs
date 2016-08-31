@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM profitwisebatchstate WHERE PwShopId = @PwShopId";
             return
                 _connection
-                    .Query<PwBatchState>(query, new {PwShopId = PwShop})
+                    .Query<PwBatchState>(query, new {PwShopId = PwShop.PwShopId})
                     .FirstOrDefault();
         }
 

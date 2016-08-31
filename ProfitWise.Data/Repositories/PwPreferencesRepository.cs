@@ -21,8 +21,8 @@ namespace ProfitWise.Data.Repositories
 
         public PwPreferences Retrieve()
         {
-            var query = @"SELECT * FROM profitwisepreferences WHERE ShopId = @ShopId";
-            return _connection.Query<PwPreferences>(query, new {ShopId = PwShop.PwShopId}).FirstOrDefault();
+            var query = @"SELECT * FROM profitwisepreferences WHERE PwShopId = @PwShopId";
+            return _connection.Query<PwPreferences>(query, new { PwShopId = PwShop.PwShopId }).FirstOrDefault();
         }
     }
 }

@@ -72,11 +72,11 @@ namespace ProfitWise.Data.Services
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
-            if (masterProduct.Products.All(x => x.Title != title))
-            {
-                throw new ArgumentException(
-                    "None of the Master Product's child Product Titles match your imported Product");
-            }
+            //if (masterProduct.Products.All(x => x.Title != title))
+            //{
+            //    throw new ArgumentException(
+            //        "None of the Master Product's child Product Titles match your imported Product");
+            //}
 
             PwProduct productMatchByVendor =
                 masterProduct
@@ -104,8 +104,8 @@ namespace ProfitWise.Data.Services
                 // Step #1 - set all other Products to inactive
                 foreach (var product in masterProduct.Products)
                 {
-                    product.Active = false;
-                    product.Primary = false;
+                    product.IsActive = false;
+                    product.IsPrimary = false;
                     productRepository.UpdateProduct(product);
                 }
 
@@ -118,8 +118,8 @@ namespace ProfitWise.Data.Services
                     Title = title,
                     Vendor = vendor,
                     ProductType = productType,
-                    Active = true,
-                    Primary = true,
+                    IsActive = true,
+                    IsPrimary = true,
                     Tags = tags,
                     ParentMasterProduct = masterProduct,
                 };
@@ -171,13 +171,13 @@ namespace ProfitWise.Data.Services
 
                 var newVariant = new PwVariant()
                 {
-                    PwShopId = this.PwShop.PwShopId,
                     ShopifyVariantId = shopifyVariantId,
+                    PwShopId = this.PwShop.PwShopId,
                     Title = title,
                     Sku = sku,
                     PwMasterVariantId = masterVariant.PwMasterVariantId,
-                    Primary = true,
-                    Active = true, // Because it's in the live catalog!
+                    IsPrimary = true,
+                    IsActive = true, // Because it's in the live catalog!
                     ParentMasterVariant = masterVariant,
                 };
 

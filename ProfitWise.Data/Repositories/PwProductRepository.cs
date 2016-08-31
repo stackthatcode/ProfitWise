@@ -29,14 +29,21 @@ namespace ProfitWise.Data.Repositories
 
             var masterProducts = 
                 products
-                    .Select(x => x.PwMasterProductId)
                     .Distinct()    
-                    .Select(masterProductId => new PwMasterProduct
+                    .Select(masterProduct => new PwMasterProduct
                     {
                         PwShopId = this.PwShop.PwShopId,
-                        PwMasterProductId = masterProductId,
-                        Products = products.Where(product => masterProductId == product.PwMasterProductId).ToList()
+                        PwMasterProductId = masterProduct.PwMasterProductId,
+                        Products = products.Where(product => masterProduct.PwMasterProductId == product.PwMasterProductId).ToList()
                     }).ToList();
+
+            foreach (var masterProduct in masterProducts)
+            {
+                foreach (var product in masterProduct.Products)
+                {
+                    product.ParentMasterProduct = masterProduct;
+                }
+            }
 
             return masterProducts;
         }
@@ -80,8 +87,8 @@ namespace ProfitWise.Data.Repositories
         public long InsertProduct(PwProduct product)
         {
             var query = @"INSERT INTO profitwiseproduct 
-                            ( PwProductId, PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, Active, Primary, Tags ) 
-                        VALUES ( @PwProductId, @PwShopId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @Active, @Primary, @Tags );
+                            ( PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, IsActive, IsPrimary, Tags ) 
+                        VALUES ( @PwShopId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @IsActive, @IsPrimary, @Tags );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, product).FirstOrDefault();
         }
@@ -89,8 +96,8 @@ namespace ProfitWise.Data.Repositories
         public void UpdateProduct(PwProduct product)
         {
             var query = @"UPDATE profitwiseproduct
-                            SET Active = @Active,
-                                Primary = @Primary,
+                            SET IsActive = @IsActive,
+                                IsPrimary = @IsPrimary,
                                 ShopifyProductId = @ShopifyProductId,
                                 Tags = @Tags,
                                 ProductType = @ProductType

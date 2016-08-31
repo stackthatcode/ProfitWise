@@ -226,7 +226,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void WriteOrderToPersistence(Order importedOrder, OrderRefreshContext context)
         {
-            if (_diagnostic.ShopId == context.ShopifyShop.PwShopId &&
+            if (_diagnostic.PwShopId == context.ShopifyShop.PwShopId &&
                 _diagnostic.OrderIds.Contains(importedOrder.Id))
             {
                 _pushLogger.Debug(importedOrder.ToString());

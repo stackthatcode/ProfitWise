@@ -11,7 +11,7 @@
 
         public string Sku { get; set; }
         public string Title { get; set; }
-        public bool Active { get; set; }
-        public bool Primary { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsPrimary { get; set; }
     }
 }

@@ -66,7 +66,7 @@ CREATE TABLE `profitwiseproduct` (
 
 
 CREATE TABLE `shopifyorder` (
-  `ShopId` int(6) unsigned NOT NULL,
+  `PwShopId` int(6) unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `Email` varchar(128) DEFAULT NULL,
   `OrderNumber` varchar(128) DEFAULT NULL,  
@@ -79,12 +79,12 @@ CREATE TABLE `shopifyorder` (
   `Tags` varchar(500) DEFAULT NULL,  
   `CreatedAt` datetime NOT NULL,
   `UpdatedAt` datetime NOT NULL,
-  PRIMARY KEY  (`ShopId`, `ShopifyOrderId`)
+  PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `shopifyorderlineitem` (
-  `ShopId` int(6) unsigned NOT NULL,
+  `PwShopId` int(6) unsigned NOT NULL,
   `ShopifyOrderId` BIGINT unsigned NOT NULL,
   `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
   `OrderDate` date NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `Name` varchar(256) DEFAULT NULL,  
   
   `PwProductId` BIGINT unsigned NULL, 
-  PRIMARY KEY  (`ShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
+  PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -109,11 +109,11 @@ CREATE TABLE `shopifyorderlineitem` (
 
 
 CREATE TABLE `profitwisebatchstate` (
-  `ShopId` int(6) unsigned NOT NULL,
+  `PwShopId` int(6) unsigned NOT NULL,
   `ProductsLastUpdated` datetime NULL,
   `OrderDatasetStart` datetime NULL,
   `OrderDatasetEnd` datetime NULL,
-   PRIMARY KEY (`ShopId`)
+   PRIMARY KEY (`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -129,9 +129,9 @@ CREATE TABLE `profitwisedatelookup` (
 
 
 CREATE TABLE `profitwisepreferences` (
-  `ShopId` int(6) unsigned NOT NULL,
+  `PwShopId` int(6) unsigned NOT NULL,
   `StartingDateForOrders` datetime NULL,
-  PRIMARY KEY (`ShopId`)    
+  PRIMARY KEY (`PwShopId`)    
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

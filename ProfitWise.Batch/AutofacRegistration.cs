@@ -107,7 +107,7 @@ namespace ProfitWise.Batch
 
             builder.Register(x => new ShopifyOrderDiagnosticShim
             {
-                ShopId = shop,
+                PwShopId = shop,
                 OrderIds = orderIds,
             });
 
