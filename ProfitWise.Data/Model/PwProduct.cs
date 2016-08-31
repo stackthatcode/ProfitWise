@@ -4,13 +4,8 @@ namespace ProfitWise.Data.Model
 {
     public class PwProduct
     {
-        public PwProduct()
-        {
-            MasterVariants = new List<PwMasterVariant>();
-        }
-
-        public long PwShopId { get; set; }
         public long PwProductId { get; set; }
+        public long PwShopId { get; set; }
         public long PwMasterProductId { get; set; }
         public PwMasterProduct ParentMasterProduct { get; set; }
 
@@ -21,7 +16,5 @@ namespace ProfitWise.Data.Model
         public bool IsActive { get; set; }
         public bool IsPrimary { get; set; }
         public string Tags { get; set; }
-
-        public IList<PwMasterVariant> MasterVariants { get; set; }
     }
 }

@@ -23,22 +23,11 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        public IList<PwMasterVariant> RetrieveAllMasterVariants()
-        {
-            return RetrieveAllMasterVariants(new List<long>() {});
-        }
-
-
-        public IList<PwMasterVariant> RetrieveAllMasterVariants(long pwProductId)
-        {
-            return RetrieveAllMasterVariants(new List<long> {pwProductId});
-        }
-
 
         //
         // TODO => add paging and filtering
         //
-        public IList<PwMasterVariant> RetrieveAllMasterVariants(IList<long> pwProductIdList)
+        public IList<PwMasterVariant> RetrieveAllMasterVariants(long? pwMasterProductId = null)
         {
             var query =
                 @"SELECT t1.*, t2.* FROM profitwisemastervariant t1
@@ -46,9 +35,9 @@ namespace ProfitWise.Data.Repositories
                 ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
                 WHERE t1.PwShopId = @PwShopId";
 
-            if (pwProductIdList.Any())
+            if (pwMasterProductId.HasValue)
             {
-                query = query + " AND t1.PwProductId IN ( @PwProductIdList )";
+                query = query + " AND t1.PwMasterProductId = ( @PwMasterProductId )";
             }
 
             var masterVariantOutputList = new List<PwMasterVariant>();
@@ -66,11 +55,11 @@ namespace ProfitWise.Data.Repositories
                             return mv;
                         };
 
-            if (pwProductIdList.Count > 0)
+            if (pwMasterProductId.HasValue)
             {
                 _connection.Query(
                         query, buildFunc, 
-                        new { @PwShopId = this.PwShop.PwShopId, @pwProductIdList = pwProductIdList },
+                        new { @PwShopId = this.PwShop.PwShopId, @PwMasterProductId = pwMasterProductId },
                         splitOn: "PwMasterVariantId"
                     ).AsQueryable();
             }
@@ -90,8 +79,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                     @"INSERT INTO profitwisemastervariant 
-                        ( PwShopId, PwProductId, Exclude, StockedDirectly ) 
-                    VALUES ( @PwShopId, @PwProductId, @Exclude, @StockedDirectly );
+                        ( PwShopId, PwMasterProductId, Exclude, StockedDirectly ) 
+                    VALUES ( @PwShopId, @PwMasterProductId, @Exclude, @StockedDirectly );
                     SELECT LAST_INSERT_ID();";
 
             return _connection.Query<long>(query, masterVariant).FirstOrDefault();
@@ -105,11 +94,11 @@ namespace ProfitWise.Data.Repositories
 
             _connection.Execute(query, new { @PwMasterVariantId = pwMasterVariantId });
         }
-        public void DeleteMasterVariantByProductId(long pwProductId)
+        public void DeleteMasterVariantByProductId(long pwMasterProductId)
         {
             var query =
                 @"DELETE FROM profitwisemastervariant
-                WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
+                WHERE PwShopId = @PwShopId AND PwMasterProductId = @pwMasterProductId;";
 
             _connection.Execute(query);
         }
@@ -127,8 +116,8 @@ namespace ProfitWise.Data.Repositories
         public long InsertVariant(PwVariant variant)
         {
             var query = @"INSERT INTO profitwisevariant 
-                            ( PwShopId, PwMasterVariantId, ShopifyVariantId, SKU, Title, IsActive, IsPrimary ) 
-                        VALUES ( @PwShopId, @PwMasterVariantId, @ShopifyVariantId, @SKU, @Title, @IsActive, @IsPrimary );
+                            ( PwShopId, PwProductId, PwMasterVariantId, ShopifyVariantId, SKU, Title, IsActive, IsPrimary ) 
+                        VALUES ( @PwShopId, @PwProductId, @PwMasterVariantId, @ShopifyVariantId, @SKU, @Title, @IsActive, @IsPrimary );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, variant).FirstOrDefault();
         }

@@ -98,9 +98,9 @@ namespace ProfitWise.Data.ProcessSteps
                         service.FindOrCreateNewMasterVariant(
                             product, importedVariant.Title, importedVariant.Id, importedVariant.Sku);
 
-                    if (!product.MasterVariants.Contains(masterVariant))
+                    if (!masterProduct.MasterVariants.Contains(masterVariant))
                     {
-                        product.MasterVariants.Add(masterVariant);
+                        masterProduct.MasterVariants.Add(masterVariant);
                     }
                 }
             }

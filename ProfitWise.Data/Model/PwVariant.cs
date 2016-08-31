@@ -2,8 +2,9 @@
 {
     public class PwVariant
     {
-        public long PwShopId { get; set;  }
         public long PwVariantId { get; set; }
+        public long PwShopId { get; set;  }
+        public long PwProductId { get; set; }
         public long PwMasterVariantId { get; set; }
         public PwMasterVariant ParentMasterVariant { get; set; }
 

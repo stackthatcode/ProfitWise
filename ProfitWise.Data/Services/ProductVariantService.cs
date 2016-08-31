@@ -137,9 +137,10 @@ namespace ProfitWise.Data.Services
                     PwProduct product, string title, long shopifyVariantId, string sku)
         {
             var titleSearch = VariantTitleCorrection(title);
+            var masterProduct = product.ParentMasterProduct;
 
             var matchingVariantBySkuAndTitle =
-                product.MasterVariants
+                masterProduct.MasterVariants
                     .SelectMany(x => x.Variants)
                     .FirstOrDefault(x => x.Sku == sku && 
                             VariantTitleCorrection(x.Title) == titleSearch);
@@ -164,10 +165,10 @@ namespace ProfitWise.Data.Services
                 var masterVariant = new PwMasterVariant()
                 {
                     PwShopId = this.PwShop.PwShopId,
-                    ParentProduct = product,
+                    PwMasterProductId = masterProduct.PwMasterProductId,
+                    ParentMasterProduct = masterProduct,
                     Exclude = false,
                     StockedDirectly = StockedDirectlyDefault,
-                    PwProductId = product.PwProductId,
                     Variants = new List<PwVariant>(),
                 };
 
@@ -175,14 +176,15 @@ namespace ProfitWise.Data.Services
 
                 var newVariant = new PwVariant()
                 {
-                    ShopifyVariantId = shopifyVariantId,
                     PwShopId = this.PwShop.PwShopId,
-                    Title = VariantTitleCorrection(title),
-                    Sku = sku,
+                    PwProductId = product.PwProductId,  // This is a permanent association :-)
                     PwMasterVariantId = masterVariant.PwMasterVariantId,
+                    ParentMasterVariant = masterVariant,
+                    ShopifyVariantId = shopifyVariantId,
+                    Sku = sku,
+                    Title = VariantTitleCorrection(title),
                     IsPrimary = true,
                     IsActive = true, // Because it's in the live catalog!
-                    ParentMasterVariant = masterVariant,
                 };
 
                 variantRepository.InsertVariant(newVariant);

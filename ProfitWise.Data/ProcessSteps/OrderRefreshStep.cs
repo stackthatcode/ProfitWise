@@ -270,7 +270,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                     var pwVariant = FindOrCreatePwVariant(context, importedLineItem);
                     translatedLineItem.PwVariantId = pwVariant.PwVariantId;
-                    translatedLineItem.PwProductId = pwVariant.ParentMasterVariant.PwProductId;
+                    translatedLineItem.PwProductId = pwVariant.PwProductId;
 
                     _pushLogger.Debug(
                         $"Inserting new Order Line Item: {translatedOrder.OrderNumber} / ShopifyOrderId: {translatedOrder.ShopifyOrderId} / " +
@@ -333,9 +333,9 @@ namespace ProfitWise.Data.ProcessSteps
                 service.FindOrCreateNewMasterVariant(
                     product, importedLineItem.VariantTitle, importedLineItem.Id, importedLineItem.Sku);
 
-            if (!product.MasterVariants.Contains(masterVariant))
+            if (!masterProduct.MasterVariants.Contains(masterVariant))
             {
-                product.MasterVariants.Add(masterVariant);
+                masterProduct.MasterVariants.Add(masterVariant);
             }
 
             var variant =
