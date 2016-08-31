@@ -43,13 +43,14 @@ namespace ProfitWise.Data.Model
         }
 
         public static ShopifyOrderLineItem ToShopifyOrderLineItem(
-                this OrderLineItem line_item, long parentShopifyOrderId, int pwShopId)
+                this OrderLineItem line_item, ShopifyOrder parentOrder, int pwShopId)
         {
             var shopifyOrderLineItem = new ShopifyOrderLineItem();
             shopifyOrderLineItem.PwShopId = pwShopId;
 
-            shopifyOrderLineItem.OrderDate = line_item.ParentOrder.CreatedAt;
-            shopifyOrderLineItem.ShopifyOrderId = parentShopifyOrderId;
+            shopifyOrderLineItem.ParentOrder = parentOrder;
+            shopifyOrderLineItem.OrderDate = parentOrder.CreatedAt;
+            shopifyOrderLineItem.ShopifyOrderId = parentOrder.ShopifyOrderId;
             shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
 
             shopifyOrderLineItem.UnitPrice = line_item.Price;

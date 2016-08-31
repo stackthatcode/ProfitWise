@@ -16,6 +16,7 @@ namespace Push.Shopify.Model
         public string ProductTitle { get; set; }
         public string VariantTitle { get; set; }
         public string Name { get; set; }
+        public string Vendor { get; set; }
 
         public Order ParentOrder { get; set; }
 

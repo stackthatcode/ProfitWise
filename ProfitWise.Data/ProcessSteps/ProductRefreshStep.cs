@@ -87,14 +87,22 @@ namespace ProfitWise.Data.ProcessSteps
                     service.FindOrCreateNewProduct(
                         masterProduct, importedProduct.Title, importedProduct.Id, importedProduct.Vendor, importedProduct.Tags, importedProduct.ProductType);
 
+                if (!masterProducts.Contains(masterProduct))
+                {
+                    masterProducts.Add(masterProduct);
+                }
+
                 foreach (var importedVariant in importedProduct.Variants)
                 {
                     var masterVariant = 
                         service.FindOrCreateNewMasterVariant(
                             product, importedVariant.Title, importedVariant.Id, importedVariant.Sku);
-                }
 
-                masterProducts.Add(masterProduct);
+                    if (!product.MasterVariants.Contains(masterVariant))
+                    {
+                        product.MasterVariants.Add(masterVariant);
+                    }
+                }
             }
         }
 

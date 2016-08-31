@@ -23,8 +23,6 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly PwShopRepository _shopRepository;
 
 
-
-
         public OrderRefreshStep(
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,
@@ -137,7 +135,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             var end = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
             preBatchState.OrderDatasetEnd = end;
-            
+            batchStateRepository.Update(preBatchState);
 
             RefreshOrders(filter, shopCredentials, shop);
 
@@ -267,7 +265,7 @@ namespace ProfitWise.Data.ProcessSteps
                 foreach (var importedLineItem in importedOrder.LineItems)
                 {
                     var translatedLineItem = 
-                        importedLineItem.ToShopifyOrderLineItem(importedOrder.Id, context.ShopifyShop.PwShopId);
+                        importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
                     translatedOrder.AddLineItem(translatedLineItem);
 
                     var pwVariant = FindOrCreatePwVariant(context, importedLineItem);
@@ -293,7 +291,7 @@ namespace ProfitWise.Data.ProcessSteps
                 foreach (var importedLineItem in importedOrder.LineItems)
                 {
                     var translatedLineItem =
-                        importedLineItem.ToShopifyOrderLineItem(importedOrder.Id, context.ShopifyShop.PwShopId);
+                        importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
 
                     existingOrder.LineItems.FirstOrDefault(
                             x => x.ShopifyOrderId == translatedLineItem.ShopifyOrderId &&
@@ -321,17 +319,27 @@ namespace ProfitWise.Data.ProcessSteps
                 service.FindOrCreateNewMasterProduct(
                     context.Products, importedLineItem.ProductTitle, importedLineItem.ParentOrder.Id);
 
+            if (!context.Products.Contains(masterProduct))
+            {
+                context.Products.Add(masterProduct);
+            }
+
             var product =
                 service.FindOrCreateNewProduct(
-                    masterProduct, importedLineItem.ProductTitle, importedLineItem.ParentOrder.Id, "", "", "");
+                    masterProduct, importedLineItem.ProductTitle, 
+                    importedLineItem.ParentOrder.Id, importedLineItem.Vendor, "", "");
 
             var masterVariant =
                 service.FindOrCreateNewMasterVariant(
                     product, importedLineItem.VariantTitle, importedLineItem.Id, importedLineItem.Sku);
 
+            if (!product.MasterVariants.Contains(masterVariant))
+            {
+                product.MasterVariants.Add(masterVariant);
+            }
+
             var variant =
-                masterVariant.Variants.First(x => x.Title == importedLineItem.VariantTitle &&
-                                                  x.Sku == importedLineItem.Sku);
+                service.FindVariant(masterVariant, importedLineItem.VariantTitle, importedLineItem.Sku);
             return variant;
         }
 

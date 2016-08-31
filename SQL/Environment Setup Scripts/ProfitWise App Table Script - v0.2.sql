@@ -61,7 +61,7 @@ CREATE TABLE `profitwisevariant` (
   
   `ShopifyVariantId` BIGINT unsigned NOT NULL,
   `SKU` VARCHAR(100) NULL,
-  `Title` VARCHAR(200) NOT NULL,
+  `Title` VARCHAR(200) NULL,
   `IsActive` TINYINT NOT NULL,
   `IsPrimary` TINYINT NOT NULL,
 
@@ -102,8 +102,6 @@ CREATE TABLE `shopifyorderlineitem` (
   `GrossRevenue` decimal(15,2) DEFAULT NULL,
   Primary KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 
 
 

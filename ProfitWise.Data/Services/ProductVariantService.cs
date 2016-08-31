@@ -7,6 +7,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Model;
+using Push.Utilities.Helpers;
 
 namespace ProfitWise.Data.Services
 {
@@ -20,7 +21,7 @@ namespace ProfitWise.Data.Services
 
         // TODO => migrate to Preferences
         private const bool StockedDirectlyDefault = true;
-
+        private const string VariantDefaultTitle = "Default Title";
 
         public ProductVariantService(
                     IPushLogger logger, MultitenantFactory multitenantFactory)
@@ -135,10 +136,13 @@ namespace ProfitWise.Data.Services
         public PwMasterVariant FindOrCreateNewMasterVariant(
                     PwProduct product, string title, long shopifyVariantId, string sku)
         {
+            var titleSearch = VariantTitleCorrection(title);
+
             var matchingVariantBySkuAndTitle =
                 product.MasterVariants
                     .SelectMany(x => x.Variants)
-                    .FirstOrDefault(x => x.Sku == sku && x.Title == title);
+                    .FirstOrDefault(x => x.Sku == sku && 
+                            VariantTitleCorrection(x.Title) == titleSearch);
 
             if (matchingVariantBySkuAndTitle != null)
             {
@@ -173,7 +177,7 @@ namespace ProfitWise.Data.Services
                 {
                     ShopifyVariantId = shopifyVariantId,
                     PwShopId = this.PwShop.PwShopId,
-                    Title = title,
+                    Title = VariantTitleCorrection(title),
                     Sku = sku,
                     PwMasterVariantId = masterVariant.PwMasterVariantId,
                     IsPrimary = true,
@@ -186,6 +190,23 @@ namespace ProfitWise.Data.Services
 
                 return masterVariant;
             }
+        }
+
+        private static string VariantTitleCorrection(string title)
+        {
+            return
+                (title.IsNullOrEmpty() || title.ToUpper() == "DEFAULT TITLE" || title.ToUpper() == "DEFAULT")
+                    ? VariantDefaultTitle
+                    : title;
+        }
+
+
+        public PwVariant FindVariant(PwMasterVariant masterVariant, string title, string sku)
+        {
+            var titleSearch = VariantTitleCorrection(title);
+
+            return masterVariant.Variants.FirstOrDefault(
+                    x => x.Sku == sku && VariantTitleCorrection(x.Title) == titleSearch);
         }
     }
 }

@@ -113,6 +113,7 @@ namespace Push.Shopify.Repositories
                     orderLineItemResult.ProductTitle = line_item.title;
                     orderLineItemResult.VariantTitle = line_item.variant_title;
                     orderLineItemResult.Name = line_item.name;
+                    orderLineItemResult.Vendor = line_item.vendor;
                     orderLineItemResult.ParentOrder = orderResult;
 
                     orderResult.LineItems.Add(orderLineItemResult);
