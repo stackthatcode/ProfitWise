@@ -45,10 +45,11 @@ CREATE TABLE `profitwiseproduct` (
   Primary KEY (`PwProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE `profitwisemastervariant` (
   `PwMasterVariantId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
   `PwShopId` BIGINT unsigned NOT NULL,
-  `PwProductId` BIGINT unsigned NOT NULL,	/** Immutable **/  
+  `PwMasterProductId` BIGINT unsigned NOT NULL,
   `Exclude` TINYINT NOT NULL,
   `StockedDirectly` TINYINT NOT NULL,
   Primary KEY (`PwMasterVariantId`,`PwShopId`)
@@ -57,10 +58,11 @@ CREATE TABLE `profitwisemastervariant` (
 CREATE TABLE `profitwisevariant` (
   `PwVariantId` BIGINT unsigned NOT NULL AUTO_INCREMENT,	/** PK **/  
   `PwShopId` BIGINT unsigned NOT NULL,		/** PK **/
+  `PwProductId` BIGINT unsigned NOT NULL,	/** Immutable **/  
   `PwMasterVariantId` BIGINT unsigned NOT NULL,		/** Can change i.e. can be assigned to another Master record **/
   
   `ShopifyVariantId` BIGINT unsigned NOT NULL,
-  `SKU` VARCHAR(100) NULL,
+  `Sku` VARCHAR(100) NULL,
   `Title` VARCHAR(200) NULL,
   `IsActive` TINYINT NOT NULL,
   `IsPrimary` TINYINT NOT NULL,

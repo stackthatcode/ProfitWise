@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using Push.Foundation.Utilities.Logging;
-using Push.Shopify.Model;
 using Push.Utilities.Helpers;
+
 
 namespace ProfitWise.Data.Services
 {

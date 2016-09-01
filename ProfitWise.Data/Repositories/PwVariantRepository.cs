@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
@@ -6,6 +7,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
+using Slapper;
 
 
 namespace ProfitWise.Data.Repositories
@@ -30,49 +32,67 @@ namespace ProfitWise.Data.Repositories
         public IList<PwMasterVariant> RetrieveAllMasterVariants(long? pwMasterProductId = null)
         {
             var query =
-                @"SELECT t1.*, t2.* FROM profitwisemastervariant t1
-                    INNER JOIN profitwisevariant t2 
-                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
+                @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
+                        t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyVariantId, t2.SKU, t2.Title, 
+                        t2.IsActive, t2.IsPrimary
+                FROM profitwisemastervariant t1
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId 
+		                AND t1.PwMasterVariantId = t2.PwMasterVariantId
                 WHERE t1.PwShopId = @PwShopId";
 
+            dynamic rawoutput;
             if (pwMasterProductId.HasValue)
             {
                 query = query + " AND t1.PwMasterProductId = ( @PwMasterProductId )";
-            }
-
-            var masterVariantOutputList = new List<PwMasterVariant>();
-
-            Func<PwMasterVariant, PwVariant, PwMasterVariant>
-                buildFunc
-                    = (mv, v) =>
-                        {
-                            if (masterVariantOutputList.All(x => x.PwMasterVariantId != mv.PwMasterVariantId))
-                            {
-                                masterVariantOutputList.Add(mv);
-                            }
-                            v.ParentMasterVariant = mv;
-                            mv.Variants.Add(v);
-                            return mv;
-                        };
-
-            if (pwMasterProductId.HasValue)
-            {
-                _connection.Query(
-                        query, buildFunc, 
-                        new { @PwShopId = this.PwShop.PwShopId, @PwMasterProductId = pwMasterProductId },
-                        splitOn: "PwMasterVariantId"
-                    ).AsQueryable();
+                rawoutput = _connection.Query<dynamic>(
+                    query, new { @PwShopId = this.PwShop.PwShopId, @PwMasterProductId = pwMasterProductId });
             }
             else
             {
-                _connection.Query(
-                        query, buildFunc, 
-                        new { @PwShopId = this.PwShop.PwShopId, },
-                        splitOn: "PwMasterVariantId"
-                    ).AsQueryable();
+                rawoutput = _connection.Query<dynamic>(
+                    query, new { @PwShopId = this.PwShop.PwShopId, });
             }
 
-            return masterVariantOutputList;
+            var output = new List<PwMasterVariant>();
+
+            foreach (var row in rawoutput)
+            {
+                var masterVariant = 
+                    output.FirstOrDefault(x => x.PwMasterVariantId == row.PwMasterVariantId);
+
+                if (masterVariant == null)
+                {
+                    masterVariant = new PwMasterVariant()
+                    {
+                        PwMasterVariantId = row.PwMasterVariantId,
+                        PwShopId = row.PwShopId,
+                        PwMasterProductId = row.PwMasterProductId,
+                        Variants = new List<PwVariant>(),
+                        Exclude = row.Exclude,
+                        StockedDirectly = row.StockedDirectly,
+                    };
+                    output.Add(masterVariant);
+                }
+
+                if (masterVariant.Variants.All(x => x.PwVariantId != row.PwVariantId))
+                {
+                    var variant = new PwVariant();
+                    variant.PwVariantId = row.PwVariantId;
+                    variant.PwShopId = row.PwShopId;
+                    variant.PwProductId = row.PwProductId;
+                    variant.PwMasterVariantId = row.PwMasterVariantId;
+                    variant.ShopifyVariantId = row.ShopifyVariantId;
+                    variant.Sku = row.Sku;
+                    variant.Title = row.Title;
+                    variant.IsActive = row.IsActive;
+                    variant.IsPrimary = row.IsPrimary;
+                    variant.ParentMasterVariant = masterVariant;
+                    masterVariant.Variants.Add(variant);
+                }
+            }
+
+            return output.ToList();
         }
 
         public long InsertMasterVariant(PwMasterVariant masterVariant)
