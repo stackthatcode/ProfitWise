@@ -18,22 +18,22 @@ DROP TABLE IF EXISTS `profitwisepreferences`;
 
 
 CREATE TABLE `profitwiseshop` (
-  `PwShopId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT NOT NULL AUTO_INCREMENT,
   `UserId` varchar(128) NOT NULL,
   Primary KEY  (`PwShopId`, `UserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=955973 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwisemasterproduct` (
-  `PwMasterProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
-  `PwShopId` BIGINT unsigned NOT NULL,
+  `PwMasterProductId` BIGINT NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT NOT NULL,
   Primary KEY (`PwMasterProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwiseproduct` (
-  `PwProductId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
-  `PwShopId` BIGINT unsigned NOT NULL,
-  `PwMasterProductId` BIGINT unsigned NOT NULL,
-  `ShopifyProductId` BIGINT unsigned NOT NULL,
+  `PwProductId` BIGINT NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT NOT NULL,
+  `PwMasterProductId` BIGINT NOT NULL,
+  `ShopifyProductId` BIGINT NOT NULL,
   
   `Title` VARCHAR(200) DEFAULT NULL,
   `Vendor` VARCHAR(100) DEFAULT NULL,
@@ -47,21 +47,21 @@ CREATE TABLE `profitwiseproduct` (
 
 
 CREATE TABLE `profitwisemastervariant` (
-  `PwMasterVariantId` BIGINT unsigned NOT NULL AUTO_INCREMENT,
-  `PwShopId` BIGINT unsigned NOT NULL,
-  `PwMasterProductId` BIGINT unsigned NOT NULL,
+  `PwMasterVariantId` BIGINT NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT NOT NULL,
+  `PwMasterProductId` BIGINT NOT NULL,
   `Exclude` TINYINT NOT NULL,
   `StockedDirectly` TINYINT NOT NULL,
   Primary KEY (`PwMasterVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwisevariant` (
-  `PwVariantId` BIGINT unsigned NOT NULL AUTO_INCREMENT,	/** PK **/  
-  `PwShopId` BIGINT unsigned NOT NULL,		/** PK **/
-  `PwProductId` BIGINT unsigned NOT NULL,	/** Immutable **/  
-  `PwMasterVariantId` BIGINT unsigned NOT NULL,		/** Can change i.e. can be assigned to another Master record **/
+  `PwVariantId` BIGINT NOT NULL AUTO_INCREMENT,	/** PK **/  
+  `PwShopId` BIGINT NOT NULL,		/** PK **/
+  `PwProductId` BIGINT NOT NULL,	/** Immutable **/  
+  `PwMasterVariantId` BIGINT NOT NULL,		/** Can change i.e. can be assigned to another Master record **/
   
-  `ShopifyVariantId` BIGINT unsigned NOT NULL,
+  `ShopifyVariantId` BIGINT NOT NULL,
   `Sku` VARCHAR(100) NULL,
   `Title` VARCHAR(200) NULL,
   `IsActive` TINYINT NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE `profitwisevariant` (
 
 CREATE TABLE `shopifyorder` (
   `PwShopId` int(6) unsigned NOT NULL,
-  `ShopifyOrderId` BIGINT unsigned NOT NULL,
+  `ShopifyOrderId` BIGINT NOT NULL,
   `Email` varchar(128) DEFAULT NULL,
   `OrderNumber` varchar(128) DEFAULT NULL,  
   `OrderLevelDiscount` decimal(15,2) DEFAULT NULL,
@@ -92,11 +92,11 @@ CREATE TABLE `shopifyorder` (
 
 CREATE TABLE `shopifyorderlineitem` (
   `PwShopId` int(6) unsigned NOT NULL,
-  `ShopifyOrderId` BIGINT unsigned NOT NULL,
-  `ShopifyOrderLineId` BIGINT unsigned NOT NULL,
+  `ShopifyOrderId` BIGINT NOT NULL,
+  `ShopifyOrderLineId` BIGINT NOT NULL,
   `OrderDate` date NOT NULL,  
-  `PwProductId` BIGINT unsigned NOT NULL, 
-  `PwVariantId` BIGINT unsigned NOT NULL,      
+  `PwProductId` BIGINT NOT NULL, 
+  `PwVariantId` BIGINT NOT NULL,      
   `Quantity` int(6) unsigned NOT NULL,
   `UnitPrice` decimal(15,2) DEFAULT NULL,   
   `TotalDiscount` decimal(15,2) DEFAULT NULL,

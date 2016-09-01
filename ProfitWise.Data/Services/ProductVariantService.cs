@@ -186,7 +186,7 @@ namespace ProfitWise.Data.Services
                     IsActive = true, // Because it's in the live catalog!
                 };
 
-                variantRepository.InsertVariant(newVariant);
+                newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
                 masterVariant.Variants.Add(newVariant);
 
                 return masterVariant;

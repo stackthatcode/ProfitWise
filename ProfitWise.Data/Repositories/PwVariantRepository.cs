@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
-using Slapper;
 
 
 namespace ProfitWise.Data.Repositories
@@ -17,7 +14,6 @@ namespace ProfitWise.Data.Repositories
     {
         private readonly MySqlConnection _connection;
         public PwShop PwShop { get; set; }
-
 
         public PwVariantRepository(MySqlConnection connection)
         {
@@ -33,7 +29,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
-                        t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyVariantId, t2.SKU, t2.Title, 
+                        t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyVariantId, t2.Sku, t2.Title, 
                         t2.IsActive, t2.IsPrimary
                 FROM profitwisemastervariant t1
 	                INNER JOIN profitwisevariant t2
@@ -63,15 +59,13 @@ namespace ProfitWise.Data.Repositories
 
                 if (masterVariant == null)
                 {
-                    masterVariant = new PwMasterVariant()
-                    {
-                        PwMasterVariantId = row.PwMasterVariantId,
-                        PwShopId = row.PwShopId,
-                        PwMasterProductId = row.PwMasterProductId,
-                        Variants = new List<PwVariant>(),
-                        Exclude = row.Exclude,
-                        StockedDirectly = row.StockedDirectly,
-                    };
+                    masterVariant = new PwMasterVariant();
+                    masterVariant.PwMasterVariantId = row.PwMasterVariantId;
+                    masterVariant.PwShopId = row.PwShopId;
+                    masterVariant.PwMasterProductId = row.PwMasterProductId;
+                    masterVariant.Variants = new List<PwVariant>();
+                    masterVariant.Exclude = row.Exclude == (sbyte)1;
+                    masterVariant.StockedDirectly = row.StockedDirectly == (sbyte)1;
                     output.Add(masterVariant);
                 }
 
@@ -85,8 +79,8 @@ namespace ProfitWise.Data.Repositories
                     variant.ShopifyVariantId = row.ShopifyVariantId;
                     variant.Sku = row.Sku;
                     variant.Title = row.Title;
-                    variant.IsActive = row.IsActive;
-                    variant.IsPrimary = row.IsPrimary;
+                    variant.IsActive = row.IsActive == (sbyte)1;
+                    variant.IsPrimary = row.IsPrimary == (sbyte)1;
                     variant.ParentMasterVariant = masterVariant;
                     masterVariant.Variants.Add(variant);
                 }
