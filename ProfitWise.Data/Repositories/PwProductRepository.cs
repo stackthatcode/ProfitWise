@@ -118,6 +118,15 @@ namespace ProfitWise.Data.Repositories
                         IsActive = isActive,
                     });
         }
+
+        public PwProduct DeleteProduct(long pwProductId)
+        {
+            var query = @"DELETE FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
+            return _connection
+                    .Query<PwProduct>(
+                        query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId })
+                    .FirstOrDefault();
+        }
     }
 }
 

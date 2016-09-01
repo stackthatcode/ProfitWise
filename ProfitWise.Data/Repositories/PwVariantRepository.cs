@@ -148,7 +148,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"DELETE FROM profitwisevariant
                         WHERE PwShopId = @PwShopId AND PwVariantId = @pwVariantId;";
-            _connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, @PwMasterVariantId = pwVariantId });
+            _connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, PwVariantId = pwVariantId });
         }
 
         public void UpdateVariantIsActiveByShopifyId(long shopifyProductId, long shopifyVariantId, bool isActive)

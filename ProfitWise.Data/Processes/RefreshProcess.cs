@@ -9,23 +9,26 @@ namespace ProfitWise.Data.Processes
     public class RefreshProcess
     {
         private readonly ShopifyCredentialService _shopifyCredentialService;
-        private readonly OrderRefreshStep _orderRefreshStep;
-        private readonly ProductRefreshStep _productRefreshStep;
         private readonly ShopRefreshService _shopRefreshStep;
+        private readonly ProductRefreshStep _productRefreshStep;
+        private readonly OrderRefreshStep _orderRefreshStep;
+        private readonly ProductCleanupStep _productCleanupStep;
         private readonly IPushLogger _pushLogger;
 
 
         public RefreshProcess(
                 ShopifyCredentialService shopifyCredentialService,
-                OrderRefreshStep orderRefreshStep,
-                ProductRefreshStep productRefreshStep,
                 ShopRefreshService shopRefreshStep,
+                ProductRefreshStep productRefreshStep,
+                OrderRefreshStep orderRefreshStep,
+                ProductCleanupStep productCleanupStep,
                 IPushLogger logger)
         {
             // TODO: move into Autofac configuration
            
             _shopifyCredentialService = shopifyCredentialService;
             _orderRefreshStep = orderRefreshStep;
+            _productCleanupStep = productCleanupStep;
             _productRefreshStep = productRefreshStep;
             _pushLogger = logger;
             _shopRefreshStep = shopRefreshStep;
@@ -54,6 +57,7 @@ namespace ProfitWise.Data.Processes
             _shopRefreshStep.Execute(userId);
             _productRefreshStep.Execute(shopifyClientCredentials);
             //_orderRefreshStep.Execute(shopifyClientCredentials);
+            _productCleanupStep.Execute(shopifyClientCredentials);
         }
     }
 }
