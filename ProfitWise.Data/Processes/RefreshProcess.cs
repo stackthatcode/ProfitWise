@@ -36,8 +36,7 @@ namespace ProfitWise.Data.Processes
 
         public void Execute(string userId)
         {
-            _pushLogger.Info($"Refresh Process for UserId: {userId}");
-
+            _pushLogger.Info($"Starting Refresh Process for UserId: {userId}");
             _pushLogger.Info($"Retrieving Shopify Credentials Claims for {userId}");
             var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
 
@@ -56,8 +55,10 @@ namespace ProfitWise.Data.Processes
 
             _shopRefreshStep.Execute(userId);
             _productRefreshStep.Execute(shopifyClientCredentials);
-            //_orderRefreshStep.Execute(shopifyClientCredentials);
+            _orderRefreshStep.Execute(shopifyClientCredentials);
             _productCleanupStep.Execute(shopifyClientCredentials);
+
+            _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");
         }
     }
 }

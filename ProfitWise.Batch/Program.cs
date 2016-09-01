@@ -3,6 +3,7 @@ using System.Configuration;
 using Autofac;
 using Hangfire;
 using ProfitWise.Data.Processes;
+using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 
 
@@ -15,7 +16,9 @@ namespace ProfitWise.Batch
             Bootstrap.ConfigureApp();
             using (var container = AutofacRegistration.Build())
             {
-                InvokeRefreshServices(container);
+                var service = container.Resolve<CurrencyConversionService>();
+
+                //InvokeRefreshServices(container);
 
                 Console.ReadLine();
             }

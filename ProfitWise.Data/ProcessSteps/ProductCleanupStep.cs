@@ -77,6 +77,10 @@ namespace ProfitWise.Data.ProcessSteps
                     variantRepository.DeleteVariantByVariantId(variant.PwVariantId);
                 }
             }
+
+            _pushLogger.Debug($"Deleting Orphaned Master Products and Master Variants");
+            productRepository.DeleteOrphanedMasterProducts();
+            variantRepository.DeleteOrphanedMasterVariants();
         }
     }
 }

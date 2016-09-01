@@ -168,6 +168,13 @@ namespace ProfitWise.Data.Repositories
                     });
         }
 
+        public void DeleteOrphanedMasterVariants()
+        {
+            var query = @"DELETE FROM profitwisemastervariant 
+                        WHERE PwShopId = @PwShopId AND PwMasterVariantId NOT IN 
+                            ( SELECT PwMasterVariantId FROM profitwisevariant );";
+            _connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, });
+        }
     }
 }
 

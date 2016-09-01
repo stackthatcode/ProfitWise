@@ -44,16 +44,17 @@ SELECT Title, COUNT(Title) FROM profitwiseproduct GROUP BY Title ORDER BY COUNT(
 
 SELECT SKU, COUNT(SKU) FROM profitwisevariant GROUP BY SKU ORDER BY COUNT(SKU) DESC;
 
-SELECT * FROM profitwisevariant;
-
-SELECT * FROM profitwisevariant WHERE SKU = 'UMPLA285-WHITE';
-
-SELECT * FROM profitwisevariant WHERE Title = 'Light Green';
-
-SELECT * FROM profitwiseproduct WHERE Title LIKE '%3D Universe PLA%';
+SELECT * FROM profitwisevariant WHERE ShopifyVariantID = 24948131849;
 
 
-SELECT * FROM profitwiseproduct WHERE IsActive = 0;
+
+
+DELETE FROM profitwisemasterproduct
+WHERE PwShopId =  AND PwMasterProductId NOT IN ( SELECT PwMasterProductId FROM profitwiseproduct );
+
+DELETE FROM profitwisemastervariant 
+WHERE PwShopId =  AND PwMasterVariantId NOT IN ( SELECT PwMasterVariantId FROM profitwisevariant );
+
 
 
 

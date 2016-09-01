@@ -24,6 +24,7 @@ namespace ProfitWise.Data
             builder.RegisterType<PwProductRepository>();
             builder.RegisterType<PwVariantRepository>();
             builder.RegisterType<PwPreferencesRepository>();
+            builder.RegisterType<CurrencyRepository>();
 
 
             var registry = new InceptorRegistry();
@@ -33,8 +34,10 @@ namespace ProfitWise.Data
             builder.RegisterType<OrderRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductCleanupStep>().EnableClassInterceptorsWithRegistry(registry);
+
             builder.RegisterType<ProductVariantService>().EnableClassInterceptorsWithRegistry(registry);
-            
+            builder.RegisterType<CurrencyConversionService>().EnableClassInterceptorsWithRegistry(registry);
+
 
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ShopRequired>();

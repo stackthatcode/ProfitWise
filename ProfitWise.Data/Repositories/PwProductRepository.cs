@@ -127,6 +127,14 @@ namespace ProfitWise.Data.Repositories
                         query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId })
                     .FirstOrDefault();
         }
+
+        public void DeleteOrphanedMasterProducts()
+        {
+            var query = @"DELETE FROM profitwisemasterproduct
+                        WHERE PwShopId = @PwShopId AND PwMasterProductId NOT IN 
+                            (SELECT PwMasterProductId FROM profitwiseproduct);";
+            _connection.Execute(query, new {@PwShopId = this.PwShop.PwShopId,});
+        }
     }
 }
 

@@ -68,6 +68,8 @@
   <ItemGroup>
     <Compile Include="Aspect\ShopRequired.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="Model\CurrencyConversion.cs" />
+    <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\OrderLineItemToProfitWiseMapping.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
@@ -86,6 +88,8 @@
     <Compile Include="ProcessSteps\OrderRefreshContext.cs" />
     <Compile Include="ProcessSteps\OrderRefreshStep.cs" />
     <Compile Include="ProcessSteps\ProductCleanupStep.cs" />
+    <Compile Include="Repositories\CurrencyRepository.cs" />
+    <Compile Include="Services\CurrencyConversionService.cs" />
     <Compile Include="Services\ProductVariantService.cs" />
     <Compile Include="ProcessSteps\ProductRefreshStep.cs" />
     <Compile Include="ProcessSteps\RefreshServiceConfiguration.cs" />
