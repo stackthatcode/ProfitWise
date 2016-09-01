@@ -29,8 +29,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
-                        t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyVariantId, t2.Sku, t2.Title, 
-                        t2.IsActive, t2.IsPrimary
+                        t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyProductId, t2.ShopifyVariantId, 
+                        t2.Sku, t2.Title, t2.IsActive, t2.IsPrimary
                 FROM profitwisemastervariant t1
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId 
@@ -76,6 +76,7 @@ namespace ProfitWise.Data.Repositories
                     variant.PwShopId = row.PwShopId;
                     variant.PwProductId = row.PwProductId;
                     variant.PwMasterVariantId = row.PwMasterVariantId;
+                    variant.ShopifyProductId = row.ShopifyProductId;
                     variant.ShopifyVariantId = row.ShopifyVariantId;
                     variant.Sku = row.Sku;
                     variant.Title = row.Title;
@@ -130,8 +131,8 @@ namespace ProfitWise.Data.Repositories
         public long InsertVariant(PwVariant variant)
         {
             var query = @"INSERT INTO profitwisevariant 
-                            ( PwShopId, PwProductId, PwMasterVariantId, ShopifyVariantId, SKU, Title, IsActive, IsPrimary ) 
-                        VALUES ( @PwShopId, @PwProductId, @PwMasterVariantId, @ShopifyVariantId, @SKU, @Title, @IsActive, @IsPrimary );
+                            ( PwShopId, PwProductId, PwMasterVariantId, ShopifyProductId, ShopifyVariantId, SKU, Title, IsActive, IsPrimary ) 
+                        VALUES ( @PwShopId, @PwProductId, @PwMasterVariantId, @ShopifyProductId, @ShopifyVariantId, @SKU, @Title, @IsActive, @IsPrimary );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, variant).FirstOrDefault();
         }
@@ -149,6 +150,24 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId AND PwVariantId = @pwVariantId;";
             _connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, @PwMasterVariantId = pwVariantId });
         }
+
+        public void UpdateVariantIsActiveByShopifyId(long shopifyProductId, long shopifyVariantId, bool isActive)
+        {
+            var query = @"UPDATE profitwisevariant SET IsActive = @IsActive
+                            WHERE PwShopId = @PwShopId 
+                            AND ShopifyProductId = @shopifyProductId
+                            AND ShopifyVariantId = @shopifyVariantId";
+
+            _connection.Execute(query,
+                    new
+                    {
+                        @PwShopId = this.PwShop.PwShopId,
+                        ShopifyProductId = shopifyProductId,
+                        ShopifyVariantId = shopifyVariantId,
+                        IsActive = isActive,
+                    });
+        }
+
     }
 }
 

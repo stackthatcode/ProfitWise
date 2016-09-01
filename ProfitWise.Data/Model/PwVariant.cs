@@ -8,6 +8,7 @@
         public long PwMasterVariantId { get; set; }
         public PwMasterVariant ParentMasterVariant { get; set; }
 
+        public long? ShopifyProductId { get; set; }
         public long? ShopifyVariantId { get; set; }
 
         public string Sku { get; set; }

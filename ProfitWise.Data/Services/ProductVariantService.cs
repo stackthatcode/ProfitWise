@@ -72,12 +72,6 @@ namespace ProfitWise.Data.Services
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
-            //if (masterProduct.Products.All(x => x.Title != title))
-            //{
-            //    throw new ArgumentException(
-            //        "None of the Master Product's child Product Titles match your imported Product");
-            //}
-
             PwProduct productMatchByVendor =
                 masterProduct
                     .Products
@@ -133,7 +127,7 @@ namespace ProfitWise.Data.Services
         }
 
         public PwMasterVariant FindOrCreateNewMasterVariant(
-                    PwProduct product, string title, long shopifyVariantId, string sku)
+                    PwProduct product, string title, long? shopifyProductId, long? shopifyVariantId, string sku)
         {
             var titleSearch = VariantTitleCorrection(title);
             var masterProduct = product.ParentMasterProduct;
@@ -179,6 +173,7 @@ namespace ProfitWise.Data.Services
                     PwProductId = product.PwProductId,  // This is a permanent association :-)
                     PwMasterVariantId = masterVariant.PwMasterVariantId,
                     ParentMasterVariant = masterVariant,
+                    ShopifyProductId = shopifyProductId,
                     ShopifyVariantId = shopifyVariantId,
                     Sku = sku,
                     Title = VariantTitleCorrection(title),

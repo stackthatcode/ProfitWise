@@ -104,6 +104,20 @@ namespace ProfitWise.Data.Repositories
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
             _connection.Execute(query, product);
         }
+
+        public void UpdateProductIsActiveByShopifyId(long shopifyProductId, bool isActive)
+        {
+            var query = @"UPDATE profitwiseproduct SET IsActive = @IsActive
+                            WHERE PwShopId = @PwShopId 
+                            AND ShopifyProductId = @shopifyProductId";
+            _connection.Execute(query, 
+                    new
+                    {
+                        @PwShopId = this.PwShop.PwShopId,
+                        ShopifyProductId = shopifyProductId,
+                        IsActive = isActive,
+                    });
+        }
     }
 }
 

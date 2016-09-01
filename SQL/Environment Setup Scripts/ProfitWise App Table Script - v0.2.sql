@@ -33,7 +33,7 @@ CREATE TABLE `profitwiseproduct` (
   `PwProductId` BIGINT NOT NULL AUTO_INCREMENT,
   `PwShopId` BIGINT NOT NULL,
   `PwMasterProductId` BIGINT NOT NULL,
-  `ShopifyProductId` BIGINT NOT NULL,
+  `ShopifyProductId` BIGINT NULL,
   
   `Title` VARCHAR(200) DEFAULT NULL,
   `Vendor` VARCHAR(100) DEFAULT NULL,
@@ -61,7 +61,8 @@ CREATE TABLE `profitwisevariant` (
   `PwProductId` BIGINT NOT NULL,	/** Immutable **/  
   `PwMasterVariantId` BIGINT NOT NULL,		/** Can change i.e. can be assigned to another Master record **/
   
-  `ShopifyVariantId` BIGINT NOT NULL,
+  `ShopifyProductId` BIGINT NULL,
+  `ShopifyVariantId` BIGINT NULL,
   `Sku` VARCHAR(100) NULL,
   `Title` VARCHAR(200) NULL,
   `IsActive` TINYINT NOT NULL,

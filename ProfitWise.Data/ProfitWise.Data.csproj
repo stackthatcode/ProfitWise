@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Aspect\ShopRequired.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="Model\OrderLineItemToProfitWiseMapping.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />

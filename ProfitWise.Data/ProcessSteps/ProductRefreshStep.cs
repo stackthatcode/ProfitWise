@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
@@ -38,6 +39,8 @@ namespace ProfitWise.Data.ProcessSteps
 
         public virtual void Execute(ShopifyCredentials shopCredentials)
         {
+            DateTime processStepStartTime = DateTime.Now;
+
             // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
 
@@ -58,10 +61,20 @@ namespace ProfitWise.Data.ProcessSteps
             var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
             masterProductCatalog.LoadMasterVariants(masterVariants);
 
-
             // Write Products to our database
             WriteAllProductsToDatabase(shop, importedProducts, masterProductCatalog);
-            
+
+            foreach (var importedProduct in importedProducts)
+            {
+                FlagMissingVariantsAsInactive(shop, masterProductCatalog, importedProduct);
+            }
+
+            // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
+            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
+
+            // Delete all Products with "destroy" Events
+            DeleteProductsFlaggedByShopifyForDeletion(shop, shopCredentials, fromDateForDestroy);
+
 
             // Update Batch State
             batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
@@ -96,7 +109,7 @@ namespace ProfitWise.Data.ProcessSteps
                 {
                     var masterVariant = 
                         service.FindOrCreateNewMasterVariant(
-                            product, importedVariant.Title, importedVariant.Id, importedVariant.Sku);
+                            product, importedVariant.Title, importedProduct.Id, importedVariant.Id, importedVariant.Sku);
 
                     if (!masterProduct.MasterVariants.Contains(masterVariant))
                     {
@@ -106,7 +119,33 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        
+        private void FlagMissingVariantsAsInactive(PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
+        {
+            // Mark all Variants as InActive that aren't in the import
+            var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
+
+            var shopifyProductId = importedProduct.Id;
+            var activeShopifyVariantIds = importedProduct.Variants.Select(x => x.Id);
+
+            var allExistingVariants =
+                masterProducts
+                    .SelectMany(x => x.MasterVariants)
+                    .SelectMany(x => x.Variants)
+                    .Where(x => x.ShopifyProductId == shopifyProductId);
+
+            var missingFromActive =
+                allExistingVariants
+                    .Where(x => x.ShopifyVariantId != null)
+                    .Where(x => !activeShopifyVariantIds.Any(activeId => activeId == x.ShopifyVariantId))
+                    .Select(x => x.ShopifyVariantId.Value);
+
+            missingFromActive.ForEach(shopifyVariantId =>
+            {
+                _pushLogger.Debug($"Flagging ShopifyVariantId {shopifyVariantId} as Inactive");
+                variantRepository.UpdateVariantIsActiveByShopifyId(shopifyProductId, shopifyVariantId, false);
+            });
+        }
+
         public virtual IList<Product> RetrieveAllProductsFromShopify(
                     ShopifyCredentials shopCredentials, PwBatchState batchState)
         {
@@ -134,6 +173,52 @@ namespace ProfitWise.Data.ProcessSteps
             return results;
         }
 
+        public virtual IList<Event> RetrieveAllProductDestroyEvents(ShopifyCredentials shopCredentials, DateTime fromDate)
+        {
+            var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
+            var filter = new EventFilter()
+            {
+                CreatedAtMin = fromDate,
+                Verb = EventVerbs.Destroy,
+                Filter = EventTypes.Product
+            };
+
+            var count = eventApiRepository.RetrieveCount(filter);
+
+            _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
+
+            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
+            var results = new List<Event>();
+
+            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
+            {
+                _pushLogger.Info(
+                    $"Page {pagenumber} of {numberofpages} pages");
+
+                var events = eventApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
+                results.AddRange(events);
+            }
+
+            return results;
+        }
+
+        private void DeleteProductsFlaggedByShopifyForDeletion(
+                    PwShop shop, ShopifyCredentials shopCredentials, DateTime fromDateForDestroy)
+        {
+            var productRepository = this._multitenantFactory.MakeProductRepository(shop);
+            var events = RetrieveAllProductDestroyEvents(shopCredentials, fromDateForDestroy);
+
+            foreach (var @event in events)
+            {
+                if (@event.Verb == EventVerbs.Destroy && @event.SubjectType == EventTypes.Product)
+                {
+                    _pushLogger.Debug(
+                        $"Marking all Products with Shopify Id {@event.SubjectId} (via 'destroy' event)");
+
+                    productRepository.UpdateProductIsActiveByShopifyId(@event.SubjectId, false);
+                }
+            }
+        }
     }
 }
 

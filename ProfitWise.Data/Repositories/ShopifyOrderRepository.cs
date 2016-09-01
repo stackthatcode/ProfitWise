@@ -92,7 +92,6 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId = PwShop.PwShopId, shopifyOrderId });
         }
 
-
         public virtual void MassDelete(IList<ShopifyOrder> orders)
         {
             var orderIdList = orders.Select(x => x.ShopifyOrderId).ToList();
@@ -151,6 +150,17 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"DELETE FROM shopifyorderlineitem WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
             _connection.Execute(query, new { PwShopId = PwShop.PwShopId, shopifyOrderId });
+        }
+
+        public virtual IList<OrderLineItemToProfitWiseMapping> RetrieveLineItemProfitWiseMapping()
+        {
+            var query = @"SELECT ShopifyOrderId, ShopifyOrderLineId, PwProductId, PwVariantId
+                        FROM shopifyorderlineitem  WHERE PwShopId = @PwShopId 
+                        ORDER BY ShopifyOrderId ASC, ShopifyOrderLineId ASC";
+            return _connection
+                    .Query<OrderLineItemToProfitWiseMapping>(
+                            query, new {PwShopId = PwShop.PwShopId})
+                    .ToList();
         }
     }
 }

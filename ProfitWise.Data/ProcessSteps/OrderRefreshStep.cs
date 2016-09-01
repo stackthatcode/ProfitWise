@@ -153,19 +153,7 @@ namespace ProfitWise.Data.ProcessSteps
                 OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
-            var productRepository = _multitenantFactory.MakeProductRepository(shop);
-            var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-
-            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
-            var masterVariants = variantRepository.RetrieveAllMasterVariants();
-            masterProductCatalog.LoadMasterVariants(masterVariants);
-
-            var context = new OrderRefreshContext
-            {
-                ShopifyShop = shop,
-                Products = masterProductCatalog
-            };
 
             var count = orderApiRepository.RetrieveCount(filter);
             _pushLogger.Info($"{count} Orders to process ({filter})");
@@ -180,7 +168,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Page {pagenumber} of {numberofpages} pages");
 
                 var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
-                WriteOrdersToPersistence(importedOrders, context);
+                WriteOrdersToPersistence(importedOrders, shop);
 
                 // Update the Batch State based on Order Filter's Sort
                 var batchState = batchStateRepository.Retrieve();
@@ -196,22 +184,35 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, OrderRefreshContext context)
+        protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, PwShop shop)
         {
-            var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.ShopifyShop);
+            var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
+            var productRepository = _multitenantFactory.MakeProductRepository(shop);
+            var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
             using (var trans = orderRepository.InitiateTransaction())
             {
+               
+                var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
+                var masterVariants = variantRepository.RetrieveAllMasterVariants();
+                masterProductCatalog.LoadMasterVariants(masterVariants);
+
                 var orderIdList = importedOrders.Select(x => x.Id).ToList();
 
                 // A filtered list of Existing Orders and Line Items for possible update
                 var existingShopifyOrders = orderRepository.RetrieveOrders(orderIdList);
                 var existingShopifyOrderLineItems = orderRepository.RetrieveOrderLineItems(orderIdList);
                 existingShopifyOrders.AppendLineItems(existingShopifyOrderLineItems);
-                context.CurrentExistingOrders = existingShopifyOrders;
 
+                var context = new OrderRefreshContext
+                {
+                    ShopifyShop = shop,
+                    Products = masterProductCatalog,
+                    CurrentExistingOrders = existingShopifyOrders,
+                };
+                
                 foreach (var importedOrder in importedOrders)
                 {
                     WriteOrderToPersistence(importedOrder, context);
@@ -331,7 +332,8 @@ namespace ProfitWise.Data.ProcessSteps
 
             var masterVariant =
                 service.FindOrCreateNewMasterVariant(
-                    product, importedLineItem.VariantTitle, importedLineItem.Id, importedLineItem.Sku);
+                    product, importedLineItem.VariantTitle, 
+                    importedLineItem.ProductId, importedLineItem.VariantId, importedLineItem.Sku);
 
             if (!masterProduct.MasterVariants.Contains(masterVariant))
             {
