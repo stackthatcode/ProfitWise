@@ -5,30 +5,34 @@ using System.Net;
 using Push.Foundation.Utilities.Logging;
 
 
-namespace Push.Shopify.HttpClient
+namespace Push.Foundation.Web.Http
 {
-    public class ShopifyHttpClient : IShopifyHttpClient
+    public class HttpClientFacade : IHttpClientFacade
     {
         private readonly IHttpClient _httpClient;
-        private readonly ShopifyHttpClientConfig _configuration;
         private readonly IPushLogger _pushLogger;
-
+        private HttpClientFacadeConfig _configuration;
 
         private static readonly 
-            IDictionary<string, DateTime> _shopLastExecutionTime 
-                    = new ConcurrentDictionary<string, DateTime>();
+            IDictionary<string, DateTime> _hostLastExecutionTime = new ConcurrentDictionary<string, DateTime>();
 
         
-        public ShopifyHttpClient(IHttpClient httpClient, ShopifyHttpClientConfig configuration, IPushLogger logger)
+        public HttpClientFacade(IHttpClient httpClient, HttpClientFacadeConfig configuration, IPushLogger logger)
         {
             _configuration = configuration;
             _httpClient = httpClient;
             _pushLogger = logger;
         }
 
+        public HttpClientFacadeConfig Configuration
+        {
+            get { return _configuration; }
+            set { _configuration = value; }
+        }
+
         public virtual HttpClientResponse ExecuteRequest(HttpWebRequest request)
         {
-            if (_configuration.ShopifyRetriesEnabled)
+            if (_configuration.RetriesEnabled)
             {
                 return HttpInvocationWithRetries(request);
             }
@@ -45,23 +49,23 @@ namespace Push.Shopify.HttpClient
         {
             var hostname = request.RequestUri.Host;
 
-            if (_shopLastExecutionTime.ContainsKey(hostname))
+            if (_hostLastExecutionTime.ContainsKey(hostname))
             {
-                var lastExecutionTime = _shopLastExecutionTime[hostname];
+                var lastExecutionTime = _hostLastExecutionTime[hostname];
                 var timeSinceLastExecutionTimeSpan = DateTime.Now - lastExecutionTime;
 
-                var shopifyThrottlingDelayTimeSpan = new TimeSpan(0, 0, 0, 0, _configuration.ShopifyThrottlingDelay);
+                var throttlingDelayTimeSpan = new TimeSpan(0, 0, 0, 0, _configuration.ThrottlingDelay);
                 
-                if (timeSinceLastExecutionTimeSpan < shopifyThrottlingDelayTimeSpan)
+                if (timeSinceLastExecutionTimeSpan < throttlingDelayTimeSpan)
                 {
-                    var remainingTimeToDelay = shopifyThrottlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
+                    var remainingTimeToDelay = throttlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
                     _pushLogger.Info($"Intentional delay before next call: {remainingTimeToDelay} ms");
                     System.Threading.Thread.Sleep(remainingTimeToDelay);
                 }
             }
 
             _pushLogger.Info($"Invoking HTTP GET on {request.RequestUri.AbsoluteUri}");
-            _shopLastExecutionTime[hostname] = DateTime.Now;
+            _hostLastExecutionTime[hostname] = DateTime.Now;
 
             var response = _httpClient.ProcessRequest(request);
 
@@ -69,10 +73,10 @@ namespace Push.Shopify.HttpClient
 
             if (response.StatusCode != HttpStatusCode.OK && _configuration.ThrowExceptionOnBadHttpStatusCode)
             {
-                throw new BadShopifyHttpStatusCodeException(response.StatusCode);
+                throw new BadHttpStatusCodeException(response.StatusCode);
             }
 
-            var executionTime = DateTime.Now - _shopLastExecutionTime[hostname];
+            var executionTime = DateTime.Now - _hostLastExecutionTime[hostname];
             _pushLogger.Debug(string.Format("Call performance - {0} ms", executionTime));
 
             return response;
@@ -89,7 +93,7 @@ namespace Push.Shopify.HttpClient
                     var response = HttpInvocationWithThrottling(request);
                     return response;
                 }
-                catch (BadShopifyHttpStatusCodeException e)
+                catch (BadHttpStatusCodeException e)
                 {
                     throw;
                 }
@@ -98,7 +102,7 @@ namespace Push.Shopify.HttpClient
                     _pushLogger.Error(ex);
                     counter++;
 
-                    if (counter > _configuration.ShopifyRetryLimit)
+                    if (counter > _configuration.RetryLimit)
                     {
                         _pushLogger.Fatal("Retry Limit has been exceeded... throwing exception");
                         throw;

@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
 using Push.Foundation.Utilities.CastleProxies;
+using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Security;
 using Push.Utilities.CastleProxies;
@@ -71,6 +72,12 @@ namespace Push.Foundation.Web
             builder
                 .RegisterType<ShopifyCredentialService>()
                 .EnableClassInterceptorsWithRegistry(registry);
+
+
+            // Http Client
+            builder.RegisterType<HttpClientFacadeConfig>();
+            builder.RegisterType<Http.HttpClient>().As<IHttpClient>();
+            builder.RegisterType<HttpClientFacade>().As<IHttpClientFacade>();
         }
     }
 }

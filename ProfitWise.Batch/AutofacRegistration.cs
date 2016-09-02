@@ -6,11 +6,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using Autofac;
 using MySql.Data.MySqlClient;
+using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Web.Http;
 using Push.Shopify.HttpClient;
 using Push.Utilities.CastleProxies;
 using Push.Utilities.Helpers;
@@ -75,17 +77,30 @@ namespace ProfitWise.Batch
             // Push.Shopify registration
             Push.Shopify.AutofacRegistration.Build(builder);
 
-            // ... override the default ShopifyHttpClientConfig registration to inject our settings
-            builder.Register<ShopifyHttpClientConfig>(x => new ShopifyHttpClientConfig()
+            // Inject our own HttpClientFacadeConfig for Shopify
+            builder.Register(x => new ShopifyClientConfig()
             {
-                ShopifyRetryLimit =
+                RetryLimit =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyRetryLimit", 3),
-                ShopifyHttpTimeout =
+                Timeout =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyHttpTimeout", 60000),
-                ShopifyThrottlingDelay =
+                ThrottlingDelay =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyThrottlingDelay", 500),
-                ShopifyRetriesEnabled = 
+                RetriesEnabled = 
                     ConfigurationManager.AppSettings.GetAndTryParseAsBool("ShopifyRetriesEnabled", true)
+            });
+
+            // Inject our own HttpClientFacadeConfig for Shopify
+            builder.Register(x => new FixerApiConfig()
+            {
+                RetryLimit =
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("FixerApiRetryLimit", 3),
+                Timeout =
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("FixerApiHttpTimeout", 60000),
+                ThrottlingDelay =
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("FixerApiThrottlingDelay", 500),
+                RetriesEnabled =
+                    ConfigurationManager.AppSettings.GetAndTryParseAsBool("FixerApiRetriesEnabled", true)
             });
 
 

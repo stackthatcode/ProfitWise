@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac.Extras.DynamicProxy2;
-using Castle.Core.Logging;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
+using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -14,18 +14,21 @@ namespace Push.Shopify.Repositories
     [Intercept(typeof(ShopifyCredentialRequired))]
     public class OrderApiRepository : IShopifyCredentialConsumer
     {
-        private readonly IShopifyHttpClient _client;
+        private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;
         private readonly IPushLogger _logger;
 
         public ShopifyCredentials ShopifyCredentials { get; set; }
 
+
         public OrderApiRepository(
-                IShopifyHttpClient client, 
+                IHttpClientFacade client,
+                ShopifyClientConfig configuration,
                 ShopifyRequestFactory requestFactory,
                 IPushLogger logger)
         {
             _client = client;
+            _client.Configuration = configuration;
             _requestFactory = requestFactory;
             _logger = logger;
         }

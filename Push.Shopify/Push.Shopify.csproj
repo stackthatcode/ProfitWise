@@ -57,13 +57,8 @@
     <Compile Include="Aspect\ShopifyCredentialsRequired.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Factories\ApiRepositoryFactory.cs" />
-    <Compile Include="HttpClient\BadShopifyHttpStatusCodeException.cs" />
-    <Compile Include="HttpClient\HttpClient.cs" />
-    <Compile Include="HttpClient\HttpWebResponseExtensions.cs" />
-    <Compile Include="HttpClient\IHttpClient.cs" />
-    <Compile Include="HttpClient\IShopifyHttpClient.cs" />
+    <Compile Include="HttpClient\ShopifyClientConfig.cs" />
     <Compile Include="HttpClient\ShopifyCredentials.cs" />
-    <Compile Include="HttpClient\ShopifyHttpClientConfig.cs" />
     <Compile Include="HttpClient\ShopifyRequestFactory.cs" />
     <Compile Include="Model\Event.cs" />
     <Compile Include="Model\EventFilter.cs" />
@@ -76,8 +71,6 @@
     <Compile Include="Model\RefundLineItem.cs" />
     <Compile Include="Model\Variant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HttpClient\ShopifyHttpClient.cs" />
-    <Compile Include="HttpClient\HttpClientResponse.cs" />
     <Compile Include="Aspect\IShopifyCredentialConsumer.cs" />
     <Compile Include="Repositories\EventApiRepository.cs" />
     <Compile Include="Repositories\OrderApiRepository.cs" />

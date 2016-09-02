@@ -15,13 +15,13 @@ UPDATE profitwisebatchstate SET OrderDatasetEnd = '2016-08-31 00:00:00';
 SELECT * FROM profitwisebatchstate;
 
 
+
 SELECT t1.*, t2.* 
 FROM profitwisemasterproduct t1
 	INNER JOIN profitwiseproduct t2
 		ON t1.PwMasterProductId = t2.PwMasterProductId
 ORDER BY t1.PwMasterProductId, t2.PwProductId;
         
-
 SELECT * FROM profitwiseproduct;
 
 

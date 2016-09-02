@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Push.Foundation.Utilities.CastleProxies;
+using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -14,17 +15,8 @@ namespace Push.Shopify
         public static void Build(ContainerBuilder builder)
         {
             builder.RegisterType<ShopifyCredentialRequired>();
-            builder.RegisterType<ShopifyHttpClientConfig>();
 
-            builder.RegisterType<HttpClient.HttpClient>()
-                .As<IHttpClient>();
-
-            builder
-                .RegisterType<ShopifyHttpClient>()
-                .As<IShopifyHttpClient>();
-
-            builder
-                .RegisterType<ShopifyRequestFactory>();
+            builder.RegisterType<ShopifyRequestFactory>();
 
             builder.RegisterType<ErrorForensics>();
             var registry = new InceptorRegistry();

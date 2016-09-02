@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Push.Shopify.HttpClient
+namespace Push.Foundation.Web.Http
 {
     public class HttpClientResponse
     {

@@ -134,6 +134,14 @@
     <Compile Include="Helpers\ControllerHelpers.cs" />
     <Compile Include="Helpers\QueryStringBuilder.cs" />
     <Compile Include="Helpers\RouteValueDictionaryExtensions.cs" />
+    <Compile Include="Http\BadHttpStatusCodeException.cs" />
+    <Compile Include="Http\HttpClient.cs" />
+    <Compile Include="Http\HttpClientFacade.cs" />
+    <Compile Include="Http\HttpClientFacadeConfig.cs" />
+    <Compile Include="Http\HttpClientResponse.cs" />
+    <Compile Include="Http\HttpWebResponseExtensions.cs" />
+    <Compile Include="Http\IHttpClient.cs" />
+    <Compile Include="Http\IHttpClientFacade.cs" />
     <Compile Include="Identity\ApplicationDbContext.cs" />
     <Compile Include="Identity\ApplicationRoleManager.cs" />
     <Compile Include="Identity\ApplicationSignInManager.cs" />

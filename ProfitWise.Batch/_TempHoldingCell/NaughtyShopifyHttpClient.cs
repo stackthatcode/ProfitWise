@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Push.Foundation.Web.Http;
 using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Batch._TempHoldingCell

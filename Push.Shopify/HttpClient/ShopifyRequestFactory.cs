@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Net;
+using Push.Foundation.Web.Http;
 using Push.Utilities.Helpers;
 
 namespace Push.Shopify.HttpClient
 {
     public class ShopifyRequestFactory
     {
-        private readonly ShopifyHttpClientConfig _configuration;
+        private readonly HttpClientFacadeConfig _configuration;
 
-        public ShopifyRequestFactory(ShopifyHttpClientConfig configuration)
+        public ShopifyRequestFactory(HttpClientFacadeConfig configuration)
         {
             _configuration = configuration;
         }
@@ -28,7 +29,7 @@ namespace Push.Shopify.HttpClient
 
             var url = credentials.ShopBaseUrl + path;
             var req = (HttpWebRequest)WebRequest.Create(url);
-            req.Timeout = _configuration.ShopifyHttpTimeout;
+            req.Timeout = _configuration.Timeout;
 
             if (credentials.AccessToken.IsNullOrEmpty())
             {

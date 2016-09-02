@@ -8,6 +8,7 @@ using ProfitWise.Web.Controllers;
 using ProfitWise.Web.Plumbing;
 using Push.Shopify.HttpClient;
 using Push.Foundation.Web.Helpers;
+using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web.Attributes
@@ -22,7 +23,7 @@ namespace ProfitWise.Web.Attributes
             var container = DependencyResolver.Current;
             var applicationUserManager = container.GetService<ApplicationUserManager>();
             var shopifyCredentialService = container.GetService<ShopifyCredentialService>();
-            var shopifyHttpClient = container.GetService<ShopifyHttpClient>();
+            var shopifyHttpClient = container.GetService<HttpClientFacade>();
             var requestFactory = container.GetService<ShopifyRequestFactory>();
 
 

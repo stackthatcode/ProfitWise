@@ -2,6 +2,7 @@
 using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
 using Push.Foundation.Web.Helpers;
+using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -11,15 +12,17 @@ namespace Push.Shopify.Repositories
     [Intercept(typeof(ShopifyCredentialRequired))]
     public class EventApiRepository : IShopifyCredentialConsumer
     {
-        private readonly IShopifyHttpClient _client;
+        private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;
         public ShopifyCredentials ShopifyCredentials { get; set; }
 
         public EventApiRepository(
-                IShopifyHttpClient client,
+                IHttpClientFacade client,
+                ShopifyClientConfig configuration,
                 ShopifyRequestFactory requestFactory)
         {
             _client = client;
+            _client.Configuration = configuration;
             _requestFactory = requestFactory;
         }
         

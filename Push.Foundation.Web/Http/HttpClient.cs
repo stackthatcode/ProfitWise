@@ -2,7 +2,7 @@ using System.IO;
 using System.Net;
 using Push.Foundation.Utilities.Logging;
 
-namespace Push.Shopify.HttpClient
+namespace Push.Foundation.Web.Http
 {
     public class HttpClient : IHttpClient
     {

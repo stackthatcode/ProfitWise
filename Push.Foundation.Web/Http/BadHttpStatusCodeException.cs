@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Net;
 
-namespace Push.Shopify.HttpClient
+namespace Push.Foundation.Web.Http
 {
-    public class BadShopifyHttpStatusCodeException : Exception
+    public class BadHttpStatusCodeException : Exception
     {
         public HttpStatusCode StatusCode { get; set; }
 
-        public BadShopifyHttpStatusCodeException(HttpStatusCode statusCode) 
+        public BadHttpStatusCodeException(HttpStatusCode statusCode) 
                     : base("Shopify returned bad Http Status Code: " + statusCode)
         {
             StatusCode = statusCode;

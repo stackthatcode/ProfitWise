@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.ProcessSteps;
@@ -36,11 +37,16 @@ namespace ProfitWise.Data
             builder.RegisterType<ProductCleanupStep>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ProductVariantService>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<CurrencyConversionService>().EnableClassInterceptorsWithRegistry(registry);
-
+            builder.RegisterType<CurrencyService>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<CurrencyProcess>().EnableClassInterceptorsWithRegistry(registry);
+
             builder.RegisterType<ShopRequired>();
+
+            builder.RegisterType<FixerApiConfig>();
+            builder.RegisterType<FixerApiRepository>();
+            builder.RegisterType<FixerApiRequestFactory>();
         }
     }
 }

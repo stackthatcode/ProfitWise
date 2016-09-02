@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -21,10 +22,27 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<Currency>(query).ToList();
         }
 
-        public IList<CurrencyConversion> RetrieveCurrencyConversions()
+        public IList<ExchangeRate> RetrieveExchangeRates()
         {
-            var query = @"SELECT * FROM currencyconversion ORDER BY Date, SourceCurrencyId ASC;";
-            return _connection.Query<CurrencyConversion>(query).ToList();
+            var query = @"SELECT * FROM exchangerate 
+                        ORDER BY Date, SourceCurrencyId ASC;";
+            return _connection.Query<ExchangeRate>(query).ToList();
+        }
+
+
+        public IList<ExchangeRate> RetrieveExchangeRates(DateTime minimumDate)
+        {
+            var query = @"SELECT * FROM exchangerate 
+                        WHERE Date >= {minimumDate}
+                        ORDER BY Date, SourceCurrencyId ASC;";
+            return _connection.Query<ExchangeRate>(query, new { minimumDate }).ToList();
+        }
+
+        public void InsertExchangeRate(ExchangeRate rate)
+        {
+            var query = @"INSERT INTO exchangerate
+                        VALUES ( @SourceCurrencyId, @DestinationCurrencyId, @Date, @Multipler )";
+            _connection.Execute(query, rate);
         }
 
     }
