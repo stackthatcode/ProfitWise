@@ -43,36 +43,30 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
-
-            // Create an instance of multi-tenant-aware repositories
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-            var productRepository = this._multitenantFactory.MakeProductRepository(shop);
-            var variantDataRepository = this._multitenantFactory.MakeVariantRepository(shop);
+            var service = this._multitenantFactory.MakeProductVariantService(shop);
 
             // Load Batch State
             var batchState = batchStateRepository.Retrieve();
 
-            // Import Products from Shopify
+            // Import Products from Shopify and existing catalog from ProfitWise
             var importedProducts = RetrieveAllProductsFromShopify(shopCredentials, batchState);
+            var masterProductCatalog = service.RetrieveFullCatalog();
 
-
-            // Get all existing Variant and ProfitWise Products
-            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
-            var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
-            masterProductCatalog.LoadMasterVariants(masterVariants);
 
             // Write Products to our database
             WriteAllProductsToDatabase(shop, importedProducts, masterProductCatalog);
 
+            // Flag Missing Variants
             foreach (var importedProduct in importedProducts)
             {
                 FlagMissingVariantsAsInactive(shop, masterProductCatalog, importedProduct);
             }
 
-            // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
-            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
 
             // Delete all Products with "destroy" Events
+            // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
+            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
             DeleteProductsFlaggedByShopifyForDeletion(shop, shopCredentials, fromDateForDestroy);
 
 
@@ -109,7 +103,8 @@ namespace ProfitWise.Data.ProcessSteps
                 {
                     var masterVariant = 
                         service.FindOrCreateNewMasterVariant(
-                            product, importedVariant.Title, importedProduct.Id, importedVariant.Id, importedVariant.Sku);
+                            product, true, importedVariant.Title, importedProduct.Id, importedVariant.Id, 
+                            importedVariant.Sku, price: importedVariant.Price);
 
                     if (!masterProduct.MasterVariants.Contains(masterVariant))
                     {
@@ -137,12 +132,12 @@ namespace ProfitWise.Data.ProcessSteps
                 allExistingVariants
                     .Where(x => x.ShopifyVariantId != null)
                     .Where(x => !activeShopifyVariantIds.Any(activeId => activeId == x.ShopifyVariantId))
-                    .Select(x => x.ShopifyVariantId.Value);
+                    .Select(x => x.PwVariantId);
 
-            missingFromActive.ForEach(shopifyVariantId =>
+            missingFromActive.ForEach(pwVariantId =>
             {
-                _pushLogger.Debug($"Flagging ShopifyVariantId {shopifyVariantId} as Inactive");
-                variantRepository.UpdateVariantIsActiveByShopifyId(shopifyProductId, shopifyVariantId, false);
+                _pushLogger.Debug($"Flagging PwVariantId {pwVariantId} as Inactive");
+                variantRepository.UpdateVariantIsActive(pwVariantId, false);
             });
         }
 

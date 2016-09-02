@@ -328,11 +328,11 @@ namespace ProfitWise.Data.ProcessSteps
             var product =
                 service.FindOrCreateNewProduct(
                     masterProduct, importedLineItem.ProductTitle, 
-                    importedLineItem.ParentOrder.Id, importedLineItem.Vendor, "", "");
+                    importedLineItem.ProductId, importedLineItem.Vendor, "", "");
 
             var masterVariant =
                 service.FindOrCreateNewMasterVariant(
-                    product, importedLineItem.VariantTitle, 
+                    product, false, importedLineItem.VariantTitle, 
                     importedLineItem.ProductId, importedLineItem.VariantId, importedLineItem.Sku);
 
             if (!masterProduct.MasterVariants.Contains(masterVariant))

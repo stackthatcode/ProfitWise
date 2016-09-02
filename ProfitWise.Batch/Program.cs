@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using Autofac;
 using Hangfire;
-using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.Processes;
-using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 
 
@@ -35,8 +32,8 @@ namespace ProfitWise.Batch
 
                 using (var scope = container.BeginLifetimeScope())
                 {
-                    var refreshProcess = scope.Resolve<CurrencyProcess>();
-                    refreshProcess.Execute();
+                    var refreshProcess = scope.Resolve<RefreshProcess>();
+                    refreshProcess.Execute(userId);
                 }
             }
             catch (Exception e)

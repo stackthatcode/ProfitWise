@@ -41,6 +41,12 @@ namespace ProfitWise.Data.Processes
             var endDate = DateTime.Today;
             var date = startDate;
 
+            if (startDate > endDate)
+            {
+                _pushLogger.Info("Aborting Exchange Rate update - all data is current");
+                return;
+            }
+
             var baseCurrency = _currencyService.CurrencyIdToAbbreviation(ProfitWiseBaseCurrency);
             _pushLogger.Info($"Importing Exchange Rates from FixerApi from {startDate} to {endDate}");
 

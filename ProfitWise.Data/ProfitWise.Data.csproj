@@ -76,7 +76,7 @@
     <Compile Include="Factories\MultitenantFactory.cs" />
     <Compile Include="Model\ExchangeRate.cs" />
     <Compile Include="Model\Currency.cs" />
-    <Compile Include="Model\OrderLineItemToProfitWiseMapping.cs" />
+    <Compile Include="Model\OrderLineItemSubset.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />

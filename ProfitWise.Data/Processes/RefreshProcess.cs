@@ -54,8 +54,8 @@ namespace ProfitWise.Data.Processes
             };
 
             _shopRefreshStep.Execute(userId);
-            _productRefreshStep.Execute(shopifyClientCredentials);
-            _orderRefreshStep.Execute(shopifyClientCredentials);
+            //_productRefreshStep.Execute(shopifyClientCredentials);
+            //_orderRefreshStep.Execute(shopifyClientCredentials);
             _productCleanupStep.Execute(shopifyClientCredentials);
 
             _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");

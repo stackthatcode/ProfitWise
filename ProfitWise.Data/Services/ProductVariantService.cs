@@ -68,7 +68,7 @@ namespace ProfitWise.Data.Services
 
         public PwProduct FindOrCreateNewProduct(
                     PwMasterProduct masterProduct, 
-                    string title, long shopifyProductId, string vendor, string tags, string productType)
+                    string title, long? shopifyProductId, string vendor, string tags, string productType)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
@@ -127,7 +127,8 @@ namespace ProfitWise.Data.Services
         }
 
         public PwMasterVariant FindOrCreateNewMasterVariant(
-                    PwProduct product, string title, long? shopifyProductId, long? shopifyVariantId, string sku)
+                    PwProduct product, bool isActive, string title, long? shopifyProductId, long? shopifyVariantId, 
+                    string sku, decimal? price = null)
         {
             var titleSearch = VariantTitleCorrection(title);
             var masterProduct = product.ParentMasterProduct;
@@ -138,13 +139,26 @@ namespace ProfitWise.Data.Services
                     .FirstOrDefault(x => x.Sku == sku && 
                             VariantTitleCorrection(x.Title) == titleSearch);
 
+            var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+
+
             if (matchingVariantBySkuAndTitle != null)
             {
                 _pushLogger.Debug(
-                    $"Found existing Master Variant & Variant: {title}, {sku} " +
+                    $"Found existing Master Variant: {title}, {sku} " +
                     $"(Id = {shopifyVariantId}), PwMasterVariantId = {matchingVariantBySkuAndTitle.PwMasterVariantId}, " + 
                     $"PwVariantId = {matchingVariantBySkuAndTitle.PwVariantId})");
 
+                if (price != null)
+                {
+                    _pushLogger.Debug(
+                        $"Updating Variant price for Variant: {matchingVariantBySkuAndTitle.PwVariantId} " +
+                        $"to {price}");
+
+                    matchingVariantBySkuAndTitle.LowPrice = price.Value;
+                    matchingVariantBySkuAndTitle.HighPrice = price.Value;
+                    variantRepository.UpdateVariantPrice(matchingVariantBySkuAndTitle.PwVariantId, price.Value, price.Value);
+                }
                 return matchingVariantBySkuAndTitle.ParentMasterVariant;
             }
             else
@@ -153,8 +167,6 @@ namespace ProfitWise.Data.Services
                     $"Creating new Master Variant & Variant: {title}, {sku} " +
                     $"(Id = {shopifyVariantId})");
                 
-                var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
-
                 var masterVariant = new PwMasterVariant()
                 {
                     PwShopId = this.PwShop.PwShopId,
@@ -177,8 +189,10 @@ namespace ProfitWise.Data.Services
                     ShopifyVariantId = shopifyVariantId,
                     Sku = sku,
                     Title = VariantTitleCorrection(title),
+                    LowPrice = price ?? 0m,
+                    HighPrice = price ?? 0m,
                     IsPrimary = true,
-                    IsActive = true, // Because it's in the live catalog!
+                    IsActive = isActive, 
                 };
 
                 newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
@@ -186,6 +200,19 @@ namespace ProfitWise.Data.Services
 
                 return masterVariant;
             }
+        }
+
+
+        public IList<PwMasterProduct> RetrieveFullCatalog()
+        {
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
+            var variantDataRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+
+            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
+            var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
+            masterProductCatalog.LoadMasterVariants(masterVariants);
+
+            return masterProductCatalog;
         }
 
         private static string VariantTitleCorrection(string title)

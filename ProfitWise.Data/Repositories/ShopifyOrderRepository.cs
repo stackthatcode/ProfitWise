@@ -152,13 +152,13 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId = PwShop.PwShopId, shopifyOrderId });
         }
 
-        public virtual IList<OrderLineItemToProfitWiseMapping> RetrieveLineItemProfitWiseMapping()
+        public virtual IList<OrderLineItemSubset> RetrieveLineItemSubset()
         {
-            var query = @"SELECT ShopifyOrderId, ShopifyOrderLineId, PwProductId, PwVariantId
+            var query = @"SELECT ShopifyOrderId, ShopifyOrderLineId, PwProductId, PwVariantId, Quantity, UnitPrice
                         FROM shopifyorderlineitem  WHERE PwShopId = @PwShopId 
                         ORDER BY ShopifyOrderId ASC, ShopifyOrderLineId ASC";
             return _connection
-                    .Query<OrderLineItemToProfitWiseMapping>(
+                    .Query<OrderLineItemSubset>(
                             query, new {PwShopId = PwShop.PwShopId})
                     .ToList();
         }

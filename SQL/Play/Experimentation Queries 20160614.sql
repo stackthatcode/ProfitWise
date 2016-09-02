@@ -30,7 +30,7 @@ SELECT * FROM profitwiseproduct WHERE PwProductId NOT IN ( SELECT PwProductId FR
 
 SELECT * FROM profitwiseproduct;
 
-SELECT * FROM profitwise
+SELECT * FROM profitwisemasterproduct;
 
 
 

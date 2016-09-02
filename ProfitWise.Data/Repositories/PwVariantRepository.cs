@@ -30,7 +30,7 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
                         t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyProductId, t2.ShopifyVariantId, 
-                        t2.Sku, t2.Title, t2.IsActive, t2.IsPrimary
+                        t2.Sku, t2.Title, t2.LowPrice, t2.HighPrice, t2.IsActive, t2.IsPrimary
                 FROM profitwisemastervariant t1
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId 
@@ -80,6 +80,8 @@ namespace ProfitWise.Data.Repositories
                     variant.ShopifyVariantId = row.ShopifyVariantId;
                     variant.Sku = row.Sku;
                     variant.Title = row.Title;
+                    variant.LowPrice = row.LowPrice;
+                    variant.HighPrice = row.HighPrice;
                     variant.IsActive = row.IsActive == (sbyte)1;
                     variant.IsPrimary = row.IsPrimary == (sbyte)1;
                     variant.ParentMasterVariant = masterVariant;
@@ -131,8 +133,10 @@ namespace ProfitWise.Data.Repositories
         public long InsertVariant(PwVariant variant)
         {
             var query = @"INSERT INTO profitwisevariant 
-                            ( PwShopId, PwProductId, PwMasterVariantId, ShopifyProductId, ShopifyVariantId, SKU, Title, IsActive, IsPrimary ) 
-                        VALUES ( @PwShopId, @PwProductId, @PwMasterVariantId, @ShopifyProductId, @ShopifyVariantId, @SKU, @Title, @IsActive, @IsPrimary );
+                            ( PwShopId, PwProductId, PwMasterVariantId, ShopifyProductId, ShopifyVariantId, 
+                                SKU, Title, LowPrice, HighPrice, IsActive, IsPrimary ) 
+                        VALUES ( @PwShopId, @PwProductId, @PwMasterVariantId, @ShopifyProductId, @ShopifyVariantId, 
+                                @SKU, @Title, @LowPrice, @HighPrice, @IsActive, @IsPrimary );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, variant).FirstOrDefault();
         }
@@ -151,20 +155,36 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, PwVariantId = pwVariantId });
         }
 
-        public void UpdateVariantIsActiveByShopifyId(long shopifyProductId, long shopifyVariantId, bool isActive)
+        public void UpdateVariantIsActive(long pwVariantId, bool isActive)
         {
             var query = @"UPDATE profitwisevariant SET IsActive = @IsActive
                             WHERE PwShopId = @PwShopId 
-                            AND ShopifyProductId = @shopifyProductId
-                            AND ShopifyVariantId = @shopifyVariantId";
+                            AND PwVariantId = @pwVariantId;";
 
             _connection.Execute(query,
                     new
                     {
                         @PwShopId = this.PwShop.PwShopId,
-                        ShopifyProductId = shopifyProductId,
-                        ShopifyVariantId = shopifyVariantId,
+                        PwVariantId = pwVariantId,
                         IsActive = isActive,
+                    });
+        }
+
+
+        public void UpdateVariantPrice(
+                    long pwVariantId, decimal lowPrice, decimal highPrice)
+        {
+            var query = @"UPDATE profitwisevariant SET LowPrice = @lowPrice, HighPrice = @highPrice
+                            WHERE PwShopId = @PwShopId 
+                            AND PwVariantId = @pwVariantId;";
+
+            _connection.Execute(query,
+                    new
+                    {
+                        @PwShopId = this.PwShop.PwShopId,
+                        PwVariantId = pwVariantId,
+                        LowPrice = lowPrice,
+                        HighPrice = highPrice,
                     });
         }
 
