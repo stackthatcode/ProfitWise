@@ -9,7 +9,7 @@ namespace ProfitWise.Data.ExchangeRateApis
         {
             RetryLimit = 3;
             Timeout = 60000;
-            ThrottlingDelay = 500;
+            ThrottlingDelay = 0;
 
             // These will be more often than not be set at an instance-level
             ThrowExceptionOnBadHttpStatusCode = false;

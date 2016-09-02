@@ -18,9 +18,7 @@ namespace ProfitWise.Batch
             Bootstrap.ConfigureApp();
             using (var container = AutofacRegistration.Build())
             {
-                var fixerApi = container.Resolve<FixerApiRepository>();
                 InvokeRefreshServices(container);
-
                 Console.ReadLine();
             }
         }
@@ -94,7 +92,5 @@ namespace ProfitWise.Batch
             }
         }
     }
-
-
 
 }

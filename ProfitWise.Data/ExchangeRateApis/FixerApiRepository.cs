@@ -15,10 +15,11 @@ namespace ProfitWise.Data.ExchangeRateApis
         private readonly CurrencyService _service;
 
         public FixerApiRepository(
-                FixerApiRequestFactory factory, IHttpClientFacade httpClient, CurrencyService service)
+                FixerApiRequestFactory factory, FixerApiConfig config, IHttpClientFacade httpClient, CurrencyService service)
         {
             _factory = factory;
             _httpClient = httpClient;
+            _httpClient.Configuration = config;
             _service = service;
         }
 

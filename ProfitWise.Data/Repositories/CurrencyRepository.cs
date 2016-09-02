@@ -16,6 +16,12 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
+        public MySqlTransaction InitiateTransaction()
+        {
+            return _connection.BeginTransaction();
+        }
+
+
         public IList<Currency> RetrieveCurrency()
         {
             var query = @"SELECT * FROM currency ORDER BY CurrencyId ASC;";
@@ -33,7 +39,7 @@ namespace ProfitWise.Data.Repositories
         public IList<ExchangeRate> RetrieveExchangeRates(DateTime minimumDate)
         {
             var query = @"SELECT * FROM exchangerate 
-                        WHERE Date >= {minimumDate}
+                        WHERE Date >= @minimumDate
                         ORDER BY Date, SourceCurrencyId ASC;";
             return _connection.Query<ExchangeRate>(query, new { minimumDate }).ToList();
         }
@@ -41,7 +47,7 @@ namespace ProfitWise.Data.Repositories
         public void InsertExchangeRate(ExchangeRate rate)
         {
             var query = @"INSERT INTO exchangerate
-                        VALUES ( @SourceCurrencyId, @DestinationCurrencyId, @Date, @Multipler )";
+                        VALUES ( @SourceCurrencyId, @DestinationCurrencyId, @Date, @Rate )";
             _connection.Execute(query, rate);
         }
 

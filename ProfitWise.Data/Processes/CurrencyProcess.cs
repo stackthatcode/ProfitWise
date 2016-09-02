@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProfitWise.Data.ExchangeRateApis;
+using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
@@ -48,7 +49,24 @@ namespace ProfitWise.Data.Processes
                 _pushLogger.Debug($"Importing Exchange Rates for {date}");
 
                 var rates = _fixerApiRepository.RetrieveConversion(date, baseCurrency);
-                date = date.AddDays(1);
+
+                using (var trans = _currencyRepository.InitiateTransaction())
+                {
+                    foreach (var rate in rates)
+                    {
+                        _currencyRepository.InsertExchangeRate(
+                            new ExchangeRate()
+                            {
+                                Date = date,
+                                SourceCurrencyId = rate.SourceCurrencyId,
+                                DestinationCurrencyId = rate.DestinationCurrencyId,
+                                Rate = rate.Rate,
+                            });
+                    }
+
+                    date = date.AddDays(1);
+                    trans.Commit();
+                }
             }
         }
     }

@@ -14,6 +14,9 @@ namespace ProfitWise.Data.Services
         private static List<Currency> _currencycache;
         private static Dictionary<DateTime, List<ExchangeRate>> _ratecache;
         
+        private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(0, 0, 15, 0);
+        private static DateTime CacheRefreshAllowed = DateTime.Now.Add(-CacheRefreshLockInterval);
+
 
         public CurrencyService(CurrencyRepository repository, IPushLogger logger)
         {
@@ -53,7 +56,14 @@ namespace ProfitWise.Data.Services
         
         public void LoadExchangeRateCache(DateTime? minimumDate = null)
         {
-            _logger.Info($"Loading Exchange Rates cache from {minimumDate}");
+            if (DateTime.Now < CacheRefreshAllowed)
+            {
+                _logger.Trace($"LoadExchangeRateCache not allowed until {CacheRefreshAllowed}");
+                return;
+            }
+
+            var loggableMinimumDate = minimumDate == null ? "" : "from " + minimumDate;
+            _logger.Info($"Loading Exchange Rates cache {loggableMinimumDate}");
 
             var rates =
                 minimumDate.HasValue
@@ -78,24 +88,27 @@ namespace ProfitWise.Data.Services
                 _logger.Info(
                     $"Exchange Rates cached from {_ratecache.Keys.Min()} through {_ratecache.Keys.Max()}");
             }
+
+            CacheRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
+            _logger.Info($"CacheRefreshAllowed set to {CacheRefreshAllowed}");
         }
 
         public DateTime? LatestExchangeRateDate => 
             RateCache.Keys.Count == 0 ? (DateTime?)null : RateCache.Keys.Max();
 
-        //private void VerifyAndRefreshRateCache(DateTime date)
-        //{
-        //    if (!RateCache.ContainsKey(date))
-        //    {
-        //        _logger.Info($"Exchange Rates refresh triggered for {date}");
-        //        var minimumDate = _ratecache.Keys.Max().AddDays(1);
-        //        LoadExchangeRates(minimumDate);
-        //    }
-        //}
+        private void VerifyAndRefreshRateCache(DateTime date)
+        {
+            if (!RateCache.ContainsKey(date))
+            {
+                _logger.Trace($"Exchange Rates refresh triggered for {date}");
+                var minimumDate = _ratecache.Keys.Max().AddDays(1);
+                LoadExchangeRateCache(minimumDate);
+            }
+        }
 
         public decimal Convert(decimal amount, int sourceCurrencyId, int destinationCurrencyId, DateTime date)
         {
-            //VerifyAndRefreshRateCache(date);
+            VerifyAndRefreshRateCache(date);
 
             var rateEntry = 
                 !RateCache.ContainsKey(date)
