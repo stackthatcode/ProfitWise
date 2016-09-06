@@ -83,6 +83,7 @@ namespace ProfitWise.Data.ProcessSteps
             foreach (var importedProduct in importedProducts)
             {
                 var service = _multitenantFactory.MakeProductVariantService(shop);
+                var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
 
                 // Process for creating ProfitWise Master Product, Product, Master Variant & Variant 
                 // ... from Shopify Product catalog item
@@ -101,14 +102,25 @@ namespace ProfitWise.Data.ProcessSteps
 
                 foreach (var importedVariant in importedProduct.Variants)
                 {
-                    var masterVariant = 
+                    var masterVariant =
                         service.FindOrCreateNewMasterVariant(
-                            product, true, importedVariant.Title, importedProduct.Id, importedVariant.Id, 
-                            importedVariant.Sku, price: importedVariant.Price);
+                            product, true, importedVariant.Title, importedProduct.Id, importedVariant.Id,
+                            importedVariant.Sku);
 
                     if (!masterProduct.MasterVariants.Contains(masterVariant))
                     {
                         masterProduct.MasterVariants.Add(masterVariant);
+
+                        var variant = service.FindVariant(masterVariant, importedVariant.Title, importedVariant.Sku);
+                        var inventory = importedVariant.InventoryTracked ? importedVariant.Inventory : (int?)null;
+
+                        _pushLogger.Debug($"Updating Variant {variant.PwVariantId} price range: " +
+                            $"{importedVariant.Price} to {importedVariant.Price} and setting inventory to {inventory}");
+
+                        variantRepository
+                            .UpdateVariantPriceAndInventory(
+                                variant.PwVariantId, importedVariant.Price, importedVariant.Price,
+                                inventory);
                     }
                 }
             }

@@ -83,7 +83,8 @@ namespace Push.Shopify.Repositories
                             Sku = variant.sku,
                             ParentProduct = resultProduct,
                             UpdatedAt = variant.updated_at,
-                            Inventory = variant.inventory_quantity
+                            Inventory = variant.inventory_quantity,
+                            InventoryManagement = variant.inventory_management,
                         });
                 }
 

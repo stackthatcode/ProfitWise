@@ -313,7 +313,7 @@ namespace ProfitWise.Data.ProcessSteps
         public PwVariant FindOrCreatePwVariant(OrderRefreshContext context, OrderLineItem importedLineItem)
         {
             var service = _multitenantFactory.MakeProductVariantService(context.ShopifyShop);
-
+            
             // Process for creating ProfitWise Master Product, Product, Master Variant & Variant 
             // ... from Shopify Product catalog item
             var masterProduct =
@@ -342,6 +342,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             var variant =
                 service.FindVariant(masterVariant, importedLineItem.VariantTitle, importedLineItem.Sku);
+
             return variant;
         }
 

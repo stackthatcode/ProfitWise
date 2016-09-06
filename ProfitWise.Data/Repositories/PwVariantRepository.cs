@@ -134,9 +134,9 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"INSERT INTO profitwisevariant 
                             ( PwShopId, PwProductId, PwMasterVariantId, ShopifyProductId, ShopifyVariantId, 
-                                SKU, Title, LowPrice, HighPrice, IsActive, IsPrimary ) 
+                                SKU, Title, LowPrice, HighPrice, Inventory, IsActive, IsPrimary ) 
                         VALUES ( @PwShopId, @PwProductId, @PwMasterVariantId, @ShopifyProductId, @ShopifyVariantId, 
-                                @SKU, @Title, @LowPrice, @HighPrice, @IsActive, @IsPrimary );
+                                @SKU, @Title, @LowPrice, @HighPrice, @Inventory, @IsActive, @IsPrimary );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, variant).FirstOrDefault();
         }
@@ -171,12 +171,13 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        public void UpdateVariantPrice(
-                    long pwVariantId, decimal lowPrice, decimal highPrice)
+        public void UpdateVariantPriceAndInventory(
+                    long pwVariantId, decimal lowPrice, decimal highPrice, int? inventory)
         {
-            var query = @"UPDATE profitwisevariant SET LowPrice = @lowPrice, HighPrice = @highPrice
-                            WHERE PwShopId = @PwShopId 
-                            AND PwVariantId = @pwVariantId;";
+            var query = @"UPDATE profitwisevariant 
+                        SET LowPrice = @lowPrice, HighPrice = @highPrice, Inventory = @inventory
+                        WHERE PwShopId = @PwShopId
+                        AND PwVariantId = @pwVariantId;";
 
             _connection.Execute(query,
                     new
@@ -185,6 +186,7 @@ namespace ProfitWise.Data.Repositories
                         PwVariantId = pwVariantId,
                         LowPrice = lowPrice,
                         HighPrice = highPrice,
+                        Inventory = inventory,
                     });
         }
 

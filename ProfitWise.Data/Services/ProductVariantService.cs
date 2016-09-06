@@ -127,8 +127,8 @@ namespace ProfitWise.Data.Services
         }
 
         public PwMasterVariant FindOrCreateNewMasterVariant(
-                    PwProduct product, bool isActive, string title, long? shopifyProductId, long? shopifyVariantId, 
-                    string sku, decimal? price = null)
+                PwProduct product, bool isActive, string title, long? shopifyProductId, long? shopifyVariantId, 
+                string sku)
         {
             var titleSearch = VariantTitleCorrection(title);
             var masterProduct = product.ParentMasterProduct;
@@ -149,16 +149,6 @@ namespace ProfitWise.Data.Services
                     $"(Id = {shopifyVariantId}), PwMasterVariantId = {matchingVariantBySkuAndTitle.PwMasterVariantId}, " + 
                     $"PwVariantId = {matchingVariantBySkuAndTitle.PwVariantId})");
 
-                if (price != null)
-                {
-                    _pushLogger.Debug(
-                        $"Updating Variant price for Variant: {matchingVariantBySkuAndTitle.PwVariantId} " +
-                        $"to {price}");
-
-                    matchingVariantBySkuAndTitle.LowPrice = price.Value;
-                    matchingVariantBySkuAndTitle.HighPrice = price.Value;
-                    variantRepository.UpdateVariantPrice(matchingVariantBySkuAndTitle.PwVariantId, price.Value, price.Value);
-                }
                 return matchingVariantBySkuAndTitle.ParentMasterVariant;
             }
             else
@@ -189,8 +179,9 @@ namespace ProfitWise.Data.Services
                     ShopifyVariantId = shopifyVariantId,
                     Sku = sku,
                     Title = VariantTitleCorrection(title),
-                    LowPrice = price ?? 0m,
-                    HighPrice = price ?? 0m,
+                    LowPrice = 0m,      // defaults to "0", updated by 
+                    HighPrice = 0m,
+                    Inventory = null,
                     IsPrimary = true,
                     IsActive = isActive, 
                 };

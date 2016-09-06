@@ -119,8 +119,8 @@ namespace ProfitWise.Data.ProcessSteps
                     var lowPrice = relatedLineItems.Min(x => x.UnitPrice);
                     var highPrice = relatedLineItems.Max(x => x.UnitPrice);
 
-                    _pushLogger.Debug($"Updating Variant {variant.PwVariantId} price range: {lowPrice} to {highPrice}");
-                    variantRepository.UpdateVariantPrice(variant.PwVariantId, lowPrice, highPrice);
+                    _pushLogger.Debug($"Updating (inactive) Variant {variant.PwVariantId} price range: {lowPrice} to {highPrice} and setting inventory to NULL");
+                    variantRepository.UpdateVariantPriceAndInventory(variant.PwVariantId, lowPrice, highPrice, null);
                 }
             }
         }

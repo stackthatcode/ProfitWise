@@ -10,6 +10,9 @@ namespace Push.Shopify.Model
         public string Title { get; set; }
         public decimal Price { get; set; }
         public int Inventory { get; set; }
+        public string InventoryManagement { get; set; }
+
+        public bool InventoryTracked => InventoryManagement != null;
         public DateTime UpdatedAt { get; set; }
     }
 }

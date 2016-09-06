@@ -67,8 +67,9 @@ CREATE TABLE `profitwisevariant` (
   `ShopifyVariantId` BIGINT NULL,
   `Sku` VARCHAR(100) NULL,
   `Title` VARCHAR(200) NULL,
-  `LowPrice` DECIMAL(15, 2) NULL,
-  `HighPrice` DECIMAL(15, 2) NULL,
+  `LowPrice` DECIMAL(15, 2) NOT NULL,
+  `HighPrice` DECIMAL(15, 2) NOT NULL,
+  `Inventory` INT NULL,
   `IsActive` TINYINT NOT NULL,
   `IsPrimary` TINYINT NOT NULL,
 

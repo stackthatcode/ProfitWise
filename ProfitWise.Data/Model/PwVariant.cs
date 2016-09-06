@@ -15,6 +15,7 @@
         public string Title { get; set; }
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
+        public int? Inventory { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsPrimary { get; set; }
