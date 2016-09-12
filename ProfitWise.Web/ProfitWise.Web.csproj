@@ -240,6 +240,7 @@
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\IdentityCachingAttribute.cs" />
+    <Compile Include="Controllers\CogsController.cs" />
     <Compile Include="Models\SimpleShopifyProductId.cs" />
     <Compile Include="Models\CommonContextModel.cs" />
     <Compile Include="Plumbing\ShopifyApiKey.cs" />

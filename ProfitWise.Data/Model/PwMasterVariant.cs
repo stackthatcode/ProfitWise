@@ -17,6 +17,10 @@ namespace ProfitWise.Data.Model
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
 
+        public int? CogsCurrencyId { get; set; }
+        public decimal? CogsAmount { get; set; }
+        public bool? CogsDetail { get; set; }
+
         public IList<PwVariant> Variants { get; set; }
     }
 

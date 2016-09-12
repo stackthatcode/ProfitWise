@@ -7,6 +7,7 @@ using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Controllers
 {

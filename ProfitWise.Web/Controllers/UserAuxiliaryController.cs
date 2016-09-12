@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Shopify;
 using Push.Shopify.Factories;
 using Push.Shopify.Model;
 

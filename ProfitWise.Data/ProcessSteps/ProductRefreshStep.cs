@@ -42,7 +42,7 @@ namespace ProfitWise.Data.ProcessSteps
             DateTime processStepStartTime = DateTime.Now;
 
             // Get Shopify Shop
-            var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
+            var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var service = this._multitenantFactory.MakeProductVariantService(shop);
 
@@ -62,12 +62,12 @@ namespace ProfitWise.Data.ProcessSteps
             {
                 FlagMissingVariantsAsInactive(shop, masterProductCatalog, importedProduct);
             }
-
+           
 
             // Delete all Products with "destroy" Events
             // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
             var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
-            DeleteProductsFlaggedByShopifyForDeletion(shop, shopCredentials, fromDateForDestroy);
+            SetProductsDeletedByShopifyToInactive(shop, shopCredentials, fromDateForDestroy);
 
 
             // Update Batch State
@@ -88,12 +88,13 @@ namespace ProfitWise.Data.ProcessSteps
                 // Process for creating ProfitWise Master Product, Product, Master Variant & Variant 
                 // ... from Shopify Product catalog item
                 var masterProduct = 
-                    service.FindOrCreateNewMasterProduct(
+                    service.FindOrCreateMasterProduct(
                         masterProducts, importedProduct.Title, importedProduct.Id);
                 
                 var product = 
-                    service.FindOrCreateNewProduct(
-                        masterProduct, importedProduct.Title, importedProduct.Id, importedProduct.Vendor, importedProduct.Tags, importedProduct.ProductType);
+                    service.FindOrCreateProduct(
+                        masterProduct, importedProduct.Title, importedProduct.Id, importedProduct.Vendor, 
+                        importedProduct.Tags, importedProduct.ProductType);
 
                 if (!masterProducts.Contains(masterProduct))
                 {
@@ -103,7 +104,7 @@ namespace ProfitWise.Data.ProcessSteps
                 foreach (var importedVariant in importedProduct.Variants)
                 {
                     var masterVariant =
-                        service.FindOrCreateNewMasterVariant(
+                        service.FindOrCreateMasterVariant(
                             product, true, importedVariant.Title, importedProduct.Id, importedVariant.Id,
                             importedVariant.Sku);
 
@@ -134,6 +135,7 @@ namespace ProfitWise.Data.ProcessSteps
             var shopifyProductId = importedProduct.Id;
             var activeShopifyVariantIds = importedProduct.Variants.Select(x => x.Id);
 
+            // Extract
             var allExistingVariants =
                 masterProducts
                     .SelectMany(x => x.MasterVariants)
@@ -209,7 +211,7 @@ namespace ProfitWise.Data.ProcessSteps
             return results;
         }
 
-        private void DeleteProductsFlaggedByShopifyForDeletion(
+        private void SetProductsDeletedByShopifyToInactive(
                     PwShop shop, ShopifyCredentials shopCredentials, DateTime fromDateForDestroy)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);

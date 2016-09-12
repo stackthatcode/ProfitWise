@@ -10,6 +10,7 @@ using Push.Shopify.HttpClient;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Attributes
 {

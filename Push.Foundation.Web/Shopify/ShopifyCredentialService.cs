@@ -2,9 +2,10 @@
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
+using Push.Foundation.Web.Identity;
 using IEncryptionService = Push.Foundation.Web.Security.IEncryptionService;
 
-namespace Push.Foundation.Web.Identity
+namespace Push.Foundation.Web.Shopify
 {
     public class ShopifyCredentialService
     {
@@ -45,7 +46,7 @@ namespace Push.Foundation.Web.Identity
                     return new RetrieveResult
                     {
                         Success = false,
-                        Message = "Admin User is does not currently have a User selected for impersonation."
+                        Message = "Admin User does not currently have a User selected for impersonation."
                     };
                 }
             }

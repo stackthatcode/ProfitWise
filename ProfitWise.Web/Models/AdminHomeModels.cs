@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Models
 {

@@ -2,6 +2,7 @@
 using ProfitWise.Data.ProcessSteps;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Shopify;
 using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Data.Processes
@@ -48,12 +49,12 @@ namespace ProfitWise.Data.Processes
 
             var shopifyClientCredentials = new ShopifyCredentials()
             {
-                ShopOwnerId = shopifyFromClaims.ShopOwnerUserId,
+                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
                 ShopDomain = shopifyFromClaims.ShopDomain,
                 AccessToken = shopifyFromClaims.AccessToken,
             };
 
-            _shopRefreshStep.Execute(userId);
+            _shopRefreshStep.Execute(shopifyClientCredentials);
             _productRefreshStep.Execute(shopifyClientCredentials);
             _orderRefreshStep.Execute(shopifyClientCredentials);
             _productCleanupStep.Execute(shopifyClientCredentials);

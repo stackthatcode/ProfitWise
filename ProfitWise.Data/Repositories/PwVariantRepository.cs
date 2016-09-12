@@ -21,7 +21,6 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-
         //
         // TODO => add paging and filtering
         //
@@ -96,8 +95,10 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                     @"INSERT INTO profitwisemastervariant 
-                        ( PwShopId, PwMasterProductId, Exclude, StockedDirectly ) 
-                    VALUES ( @PwShopId, @PwMasterProductId, @Exclude, @StockedDirectly );
+                        ( PwShopId, PwMasterProductId, Exclude, StockedDirectly, 
+                        CogsCurrencyId, CogsAmount, CogsDetail) 
+                    VALUES ( @PwShopId, @PwMasterProductId, @Exclude, @StockedDirectly,
+                           @CogsCurrencyId, @CogsAmount, @CogsDetail );
                     SELECT LAST_INSERT_ID();";
 
             return _connection.Query<long>(query, masterVariant).FirstOrDefault();

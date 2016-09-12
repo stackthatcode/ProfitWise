@@ -98,12 +98,11 @@
     <Compile Include="Repositories\CurrencyRepository.cs" />
     <Compile Include="Services\CurrencyService.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRepository.cs" />
-    <Compile Include="Services\ProductVariantService.cs" />
+    <Compile Include="Services\ProductVariantBuilderService.cs" />
     <Compile Include="ProcessSteps\ProductRefreshStep.cs" />
     <Compile Include="ProcessSteps\RefreshServiceConfiguration.cs" />
     <Compile Include="ProcessSteps\ShopRefreshStep.cs" />
     <Compile Include="Repositories\PwBatchStateRepository.cs" />
-    <Compile Include="Repositories\PwPreferencesRepository.cs" />
     <Compile Include="Repositories\PwVariantRepository.cs" />
     <Compile Include="Repositories\PwProductRepository.cs" />
     <Compile Include="Repositories\ShopifyOrderRepository.cs" />

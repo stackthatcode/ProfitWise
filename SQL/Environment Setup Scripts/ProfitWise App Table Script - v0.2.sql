@@ -14,7 +14,6 @@ DROP TABLE IF EXISTS `shopifyorder`;
 DROP TABLE IF EXISTS `shopifyorderlineitem`; 
 
 DROP TABLE IF EXISTS `profitwisebatchstate`;
-DROP TABLE IF EXISTS `profitwisepreferences`;
 
 
 
@@ -22,13 +21,16 @@ DROP TABLE IF EXISTS `profitwisepreferences`;
 CREATE TABLE `profitwiseshop` (
   `PwShopId` BIGINT NOT NULL AUTO_INCREMENT,
   `UserId` varchar(128) NOT NULL,
-  Primary KEY  (`PwShopId`, `UserId`)
-) ENGINE=InnoDB AUTO_INCREMENT=955973 DEFAULT CHARSET=utf8;
+  `ShopifyShopId` BIGINT NULL,
+  `CurrencyId` INT NULL,
+  `StartingDateForOrders` DATETIME NULL,
+  PRIMARY KEY  (`PwShopId`, `UserId`)
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwisemasterproduct` (
   `PwMasterProductId` BIGINT NOT NULL AUTO_INCREMENT,
   `PwShopId` BIGINT NOT NULL,
-  Primary KEY (`PwMasterProductId`, `PwShopId`)
+  PRIMARY KEY (`PwMasterProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwiseproduct` (
@@ -44,7 +46,7 @@ CREATE TABLE `profitwiseproduct` (
   `IsActive` TINYINT unsigned NOT NULL,
   `IsPrimary` TINYINT unsigned NOT NULL,
   `Tags` TEXT DEFAULT NULL,
-  Primary KEY (`PwProductId`, `PwShopId`)
+  PRIMARY KEY (`PwProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -54,7 +56,10 @@ CREATE TABLE `profitwisemastervariant` (
   `PwMasterProductId` BIGINT NOT NULL,
   `Exclude` TINYINT NOT NULL,
   `StockedDirectly` TINYINT NOT NULL,
-  Primary KEY (`PwMasterVariantId`,`PwShopId`)
+  `CogsCurrencyId` INT NULL,
+  `CogsAmount` DECIMAL(15, 2) NULL,
+  `CogsDetail` TINYINT NULL,
+  PRIMARY KEY (`PwMasterVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwisevariant` (
@@ -73,7 +78,7 @@ CREATE TABLE `profitwisevariant` (
   `IsActive` TINYINT NOT NULL,
   `IsPrimary` TINYINT NOT NULL,
 
-  Primary KEY (`PwVariantId`,`PwShopId`)
+  PRIMARY KEY (`PwVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -93,7 +98,7 @@ CREATE TABLE `shopifyorder` (
   `Tags` varchar(500) DEFAULT NULL,  
   `CreatedAt` datetime NOT NULL,
   `UpdatedAt` datetime NOT NULL,
-  Primary KEY  (`PwShopId`, `ShopifyOrderId`)
+  PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `shopifyorderlineitem` (
@@ -108,9 +113,8 @@ CREATE TABLE `shopifyorderlineitem` (
   `TotalDiscount` decimal(15,2) DEFAULT NULL,
   `TotalRestockedQuantity` int(6) unsigned NOT NULL,
   `GrossRevenue` decimal(15,2) DEFAULT NULL,
-  Primary KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
+  PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 
 
@@ -119,24 +123,12 @@ CREATE TABLE `profitwisebatchstate` (
   `ProductsLastUpdated` datetime NULL,
   `OrderDatasetStart` datetime NULL,
   `OrderDatasetEnd` datetime NULL,
-   Primary KEY (`PwShopId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `profitwisepreferences` (
-  `PwShopId` int(6) unsigned NOT NULL,
-  `StartingDateForOrders` datetime NULL,
-  Primary KEY (`PwShopId`)    
+   PRIMARY KEY (`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*
-CREATE TABLE `profitwisedatelookup` (
-	`StartDate` DATE NOT NULL,
-    `EndDate` DATE NOT NULL,
-    Primary KEY (`StartDate`, `EndDate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-*/
 
-INSERT INTO profitwisepreferences VALUE (955973, '2016-07-01');
+
+UPDATE profitwiseshop SET StartingDateForOrders = '2016-07-01'
 
 

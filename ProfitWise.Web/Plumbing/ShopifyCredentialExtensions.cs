@@ -1,4 +1,4 @@
-﻿using Push.Foundation.Web.Identity;
+﻿using Push.Foundation.Web.Shopify;
 using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Web.Plumbing
@@ -9,7 +9,7 @@ namespace ProfitWise.Web.Plumbing
         {
             return new ShopifyCredentials()
             {
-                ShopOwnerId = input.ShopOwnerUserId,
+                ShopOwnerUserId = input.ShopOwnerUserId,
                 ShopDomain = input.ShopDomain,
                 AccessToken = input.AccessToken,
             };

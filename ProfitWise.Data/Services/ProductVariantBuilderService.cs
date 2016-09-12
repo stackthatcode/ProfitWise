@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
+using Castle.Core.Internal;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -11,7 +13,7 @@ using Push.Utilities.Helpers;
 namespace ProfitWise.Data.Services
 {
     [Intercept(typeof(ShopRequired))]
-    public class ProductVariantService : IShopFilter
+    public class ProductVariantBuilderService : IShopFilter
     {
         private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
@@ -22,7 +24,7 @@ namespace ProfitWise.Data.Services
         private const bool StockedDirectlyDefault = true;
         private const string VariantDefaultTitle = "Default Title";
 
-        public ProductVariantService(
+        public ProductVariantBuilderService(
                     IPushLogger logger, MultitenantFactory multitenantFactory)
         {
             _pushLogger = logger;
@@ -30,9 +32,8 @@ namespace ProfitWise.Data.Services
         }
         
 
-        public PwMasterProduct FindOrCreateNewMasterProduct
-                            (IList<PwMasterProduct> masterProducts, 
-                            string title, long shopifyProductId)
+        public PwMasterProduct FindOrCreateMasterProduct(
+                    IList<PwMasterProduct> masterProducts, string title, long shopifyProductId)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
@@ -66,44 +67,39 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public PwProduct FindOrCreateNewProduct(
+
+        public PwProduct FindOrCreateProduct(
                     PwMasterProduct masterProduct, 
                     string title, long? shopifyProductId, string vendor, string tags, string productType)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
-            PwProduct productMatchByVendor =
+            PwProduct productMatch =
                 masterProduct
                     .Products
-                    .FirstOrDefault(x => x.Vendor == vendor);
+                    .FirstOrDefault(x => x.Title == title && 
+                                    x.Vendor == vendor &&
+                                    x.ShopifyProductId == shopifyProductId);
 
-            if (productMatchByVendor != null)
+            if (productMatch != null)
             {
                 _pushLogger.Debug(
-                    $"Found existing Product: {title} (Id = {shopifyProductId}, " +
-                    $"PwProductId = {productMatchByVendor.PwProductId})");
+                    $"Found existing Product: {title} by {vendor} (Id = {shopifyProductId}, " +
+                    $"PwProductId = {productMatch.PwProductId})");
 
-                productMatchByVendor.ShopifyProductId = shopifyProductId;
-                productMatchByVendor.Tags = tags;
-                productMatchByVendor.ProductType = productType;
+                productMatch.Tags = tags;
+                productMatch.ProductType = productType;
+                productMatch.LastUpdated = DateTime.Now;
 
-                productRepository.UpdateProduct(productMatchByVendor);
-                return productMatchByVendor;
+                productRepository.UpdateProduct(productMatch); // TODO UPDATE ME!!!
+                return productMatch;
             }
             else
             {
                 _pushLogger.Debug(
                     $"Create new Product: {title} (Id = {shopifyProductId})");
 
-                // Step #1 - set all other Products to inactive
-                foreach (var product in masterProduct.Products)
-                {
-                    product.IsActive = false;
-                    product.IsPrimary = false;
-                    productRepository.UpdateProduct(product);
-                }
-
-                // Step #2 - create the new Product
+                // Create the new Product
                 PwProduct finalProduct = new PwProduct()
                 {
                     PwShopId = PwShop.PwShopId,
@@ -112,8 +108,10 @@ namespace ProfitWise.Data.Services
                     Title = title,
                     Vendor = vendor,
                     ProductType = productType,
-                    IsActive = true,
-                    IsPrimary = true,
+                    IsActive = null,
+                    IsPrimary = null,
+                    IsManuallySelected = false,
+                    LastUpdated = DateTime.Now,
                     Tags = tags,
                     ParentMasterProduct = masterProduct,
                 };
@@ -122,11 +120,33 @@ namespace ProfitWise.Data.Services
                 finalProduct.PwProductId = productId;
                 finalProduct.ParentMasterProduct = masterProduct;
                 masterProduct.Products.Add(finalProduct);
+
                 return finalProduct;
             }
         }
 
-        public PwMasterVariant FindOrCreateNewMasterVariant(
+        public void SetActiveProductByShopifyProductId(IList<PwMasterProduct> allMasterProducts, int shopifyProductId)
+        {
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
+            var products =
+                allMasterProducts
+                    .SelectMany(x => x.Products)
+                    .Where(x => x.ShopifyProductId == shopifyProductId)
+                    .ToList();
+
+            var activeProduct = products.OrderByDescending(x => x.LastUpdated).First();
+            activeProduct.IsActive = true;
+            products.Where(x => x != activeProduct).ForEach(x => x.IsActive = false);
+
+            foreach (var product in products)
+            {
+                productRepository.UpdateProduct(product);
+            }
+
+        }
+
+
+        public PwMasterVariant FindOrCreateMasterVariant(
                 PwProduct product, bool isActive, string title, long? shopifyProductId, long? shopifyVariantId, 
                 string sku)
         {
@@ -213,7 +233,6 @@ namespace ProfitWise.Data.Services
                     ? VariantDefaultTitle
                     : title;
         }
-
 
         public PwVariant FindVariant(PwMasterVariant masterVariant, string title, string sku)
         {

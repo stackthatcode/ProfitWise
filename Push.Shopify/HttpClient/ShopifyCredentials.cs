@@ -2,7 +2,7 @@
 {
     public class ShopifyCredentials
     {
-        public string ShopOwnerId { get; set; }
+        public string ShopOwnerUserId { get; set; }
         public string ShopDomain { get; set; }
         public string AccessToken { get; set; }
         public string Key { get; set; }

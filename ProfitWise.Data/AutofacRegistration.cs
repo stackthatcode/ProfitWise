@@ -24,7 +24,6 @@ namespace ProfitWise.Data
             builder.RegisterType<PwBatchStateRepository>();
             builder.RegisterType<PwProductRepository>();
             builder.RegisterType<PwVariantRepository>();
-            builder.RegisterType<PwPreferencesRepository>();
             builder.RegisterType<CurrencyRepository>();
 
 
@@ -36,7 +35,7 @@ namespace ProfitWise.Data
             builder.RegisterType<ProductRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductCleanupStep>().EnableClassInterceptorsWithRegistry(registry);
 
-            builder.RegisterType<ProductVariantService>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ProductVariantBuilderService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<CurrencyService>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);

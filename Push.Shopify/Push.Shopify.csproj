@@ -69,11 +69,13 @@
     <Compile Include="Model\ProductFilter.cs" />
     <Compile Include="Model\Refund.cs" />
     <Compile Include="Model\RefundLineItem.cs" />
+    <Compile Include="Model\Shop.cs" />
     <Compile Include="Model\Variant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Aspect\IShopifyCredentialConsumer.cs" />
     <Compile Include="Repositories\EventApiRepository.cs" />
     <Compile Include="Repositories\OrderApiRepository.cs" />
+    <Compile Include="Repositories\ShopApiRepository.cs" />
     <Compile Include="Repositories\ProductApiRepository.cs" />
   </ItemGroup>
   <ItemGroup>

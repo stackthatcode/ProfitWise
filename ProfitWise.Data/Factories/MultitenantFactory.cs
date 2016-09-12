@@ -11,8 +11,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwBatchStateRepository> _profitWiseBatchStateRepositoryFactory;
         private readonly Func<PwProductRepository> _productRepositoryFactory;
         private readonly Func<PwVariantRepository> _variantRepositoryFactory;
-        private readonly Func<PwPreferencesRepository> _preferencesRepositoryFactory;
-        private readonly Func<ProductVariantService> _productVariantServiceFactory;
+        private readonly Func<ProductVariantBuilderService> _productVariantServiceFactory;
 
 
         public MultitenantFactory(
@@ -20,14 +19,12 @@ namespace ProfitWise.Data.Factories
             Func<PwBatchStateRepository> profitWiseBatchStateRepositoryFactory,
             Func<PwProductRepository> productRepositoryFactory,
             Func<PwVariantRepository> variantRepositoryFactory,
-            Func<PwPreferencesRepository> preferencesRepositoryFactory ,
-            Func<ProductVariantService> productVariantServiceFactory)
+            Func<ProductVariantBuilderService> productVariantServiceFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
             _productRepositoryFactory = productRepositoryFactory;
             _variantRepositoryFactory = variantRepositoryFactory;
-            _preferencesRepositoryFactory = preferencesRepositoryFactory;
             _productVariantServiceFactory = productVariantServiceFactory;
         }
 
@@ -59,14 +56,7 @@ namespace ProfitWise.Data.Factories
             return repository;
         }
 
-        public virtual PwPreferencesRepository MakePreferencesRepository(PwShop shop)
-        {
-            var repository = _preferencesRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
-
-        public virtual ProductVariantService MakeProductVariantService(PwShop shop)
+        public virtual ProductVariantBuilderService MakeProductVariantService(PwShop shop)
         {
             var service = _productVariantServiceFactory();
             service.PwShop = shop;

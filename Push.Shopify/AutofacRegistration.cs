@@ -22,16 +22,16 @@ namespace Push.Shopify
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));
 
-            builder
-                .RegisterType<OrderApiRepository>()
+            builder.RegisterType<OrderApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
-            builder
-                .RegisterType<ProductApiRepository>()
+            builder.RegisterType<ProductApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
-            builder
-                .RegisterType<EventApiRepository>()
+            builder.RegisterType<EventApiRepository>()
+                .EnableClassInterceptorsWithRegistry(registry);
+
+            builder.RegisterType<ShopApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ApiRepositoryFactory>();

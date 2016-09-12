@@ -32,7 +32,7 @@ namespace ProfitWise.Data.ProcessSteps
         public virtual void Execute(ShopifyCredentials shopCredentials)
         {
             // Get Shopify Shop
-            var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerId);
+            var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
 
             // Create an instance of multi-tenant-aware repositories
             var service = this._multitenantFactory.MakeProductVariantService(shop);
@@ -50,7 +50,7 @@ namespace ProfitWise.Data.ProcessSteps
             // Update Inactive Variant prices using Order Line Items
             UpdateInactiveVariantPrice(shop, masterProductCatalog, orderLineItems);
 
-            // Delete Orphaned Master Products/Variants
+            // Deletes any orphaned Master Products or Master Variants
             _pushLogger.Debug($"Deleting Orphaned Master Products and Master Variants");
             productRepository.DeleteOrphanedMasterProducts();
             variantRepository.DeleteOrphanedMasterVariants();

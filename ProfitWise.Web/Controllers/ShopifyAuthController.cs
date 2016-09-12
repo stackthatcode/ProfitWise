@@ -8,6 +8,7 @@ using OAuthSandbox.Controllers;
 using OAuthSandbox.Models;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Controllers
 {

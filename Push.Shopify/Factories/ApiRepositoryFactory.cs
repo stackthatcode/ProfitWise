@@ -9,16 +9,19 @@ namespace Push.Shopify.Factories
         private readonly Func<OrderApiRepository> _orderApiRepositoryFactory;
         private readonly Func<ProductApiRepository> _productApiRepositoryFactory;
         private readonly Func<EventApiRepository> _eventApiRepositoryFactory;
+        private readonly Func<ShopApiRepository> _shopApiRepositoryFactory;
 
 
         public ApiRepositoryFactory(
             Func<OrderApiRepository> orderApiRepositoryFactory,
             Func<ProductApiRepository> productApiRepositoryFactory,
-            Func<EventApiRepository> eventApiRepositoryFactory)
+            Func<EventApiRepository> eventApiRepositoryFactory,
+            Func<ShopApiRepository> shopApiRepositoryFactory)
         {
             _orderApiRepositoryFactory = orderApiRepositoryFactory;
             _productApiRepositoryFactory = productApiRepositoryFactory;
             _eventApiRepositoryFactory = eventApiRepositoryFactory;
+            _shopApiRepositoryFactory = shopApiRepositoryFactory;
         }
 
         public virtual OrderApiRepository MakeOrderApiRepository(ShopifyCredentials credentials)
@@ -39,6 +42,13 @@ namespace Push.Shopify.Factories
         {
             var repository = _eventApiRepositoryFactory();
             repository.ShopifyCredentials = credentials;
+            return repository;
+        }
+
+        public virtual ShopApiRepository MakeShopApiRepository(ShopifyCredentials shopifyCredentials)
+        {
+            var repository = _shopApiRepositoryFactory();
+            repository.ShopifyCredentials = shopifyCredentials;
             return repository;
         }
     }
