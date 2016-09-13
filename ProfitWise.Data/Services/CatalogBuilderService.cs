@@ -7,13 +7,12 @@ using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using Push.Foundation.Utilities.Logging;
-using Push.Utilities.Helpers;
 
 
 namespace ProfitWise.Data.Services
 {
     [Intercept(typeof(ShopRequired))]
-    public class ProductBuilderService : IShopFilter
+    public class CatalogBuilderService : IShopFilter
     {
         private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
@@ -23,7 +22,7 @@ namespace ProfitWise.Data.Services
         // TODO => migrate to Preferences
         private const bool StockedDirectlyDefault = true;
 
-        public ProductBuilderService(
+        public CatalogBuilderService(
                     IPushLogger logger, MultitenantFactory multitenantFactory)
         {
             _pushLogger = logger;
@@ -47,7 +46,7 @@ namespace ProfitWise.Data.Services
         }
 
         public PwProduct BuildAndSaveProduct(PwMasterProduct masterProduct,
-                    string title, long? shopifyProductId, string vendor, string tags, string productType)
+                    bool isActive, string title, long? shopifyProductId, string vendor, string tags, string productType)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
 
@@ -63,8 +62,8 @@ namespace ProfitWise.Data.Services
                 Title = title,
                 Vendor = vendor,
                 ProductType = productType,
-                IsActive = null,
-                IsPrimary = null,
+                IsActive = isActive,
+                IsPrimary = false,
                 IsManuallySelected = false,
                 LastUpdated = DateTime.Now,
                 Tags = tags,
@@ -148,25 +147,52 @@ namespace ProfitWise.Data.Services
         }
 
 
-        public void SetActiveProductByShopifyProductId(IList<PwMasterProduct> allMasterProducts, int shopifyProductId)
+        public void UpdateActiveShopifyProduct(IList<PwMasterProduct> allMasterProducts, long? shopifyProductId)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-            var products =
-                allMasterProducts
-                    .SelectMany(x => x.Products)
-                    .Where(x => x.ShopifyProductId == shopifyProductId)
-                    .ToList();
+            var products = allMasterProducts.FindProductByShopifyId(shopifyProductId);
+            if (products.Count == 1)
+            {
+                return;
+            }
 
             var activeProduct = products.OrderByDescending(x => x.LastUpdated).First();
+            _pushLogger.Debug($"Updating Active Shopify Product to {activeProduct.PwProductId}");
+
             activeProduct.IsActive = true;
             products.Where(x => x != activeProduct).ForEach(x => x.IsActive = false);
 
             foreach (var product in products)
             {
-                productRepository.UpdateProduct(product);
+                productRepository.UpdateProductIsActive(product);
+            }
+        }
+
+        public void UpdateActiveShopifyVariant(IList<PwMasterProduct> allMasterProducts, long? shopifyVariantId)
+        {
+            var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+            var variants =
+                allMasterProducts
+                    .SelectMany(x => x.MasterVariants)
+                    .FindVariantsByShopifyId(shopifyVariantId);
+            if (variants.Count == 1)
+            {
+                return;
             }
 
+            var activeVariant = variants.OrderByDescending(x => x.LastUpdated).First();
+
+            _pushLogger.Debug($"Updating Active Shopify Variant to {activeVariant.PwVariantId}");
+
+            activeVariant.IsActive = true;
+            variants.Where(x => x != activeVariant).ForEach(x => x.IsActive = false);
+
+            foreach (var variant in variants)
+            {
+                variantRepository.UpdateVariantIsActive(variant);
+            }
         }
+
 
         public IList<PwMasterProduct> RetrieveFullCatalog()
         {

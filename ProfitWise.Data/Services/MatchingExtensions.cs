@@ -21,7 +21,7 @@ namespace ProfitWise.Data.Services
         }
 
         public static PwProduct FindProduct(
-                this PwMasterProduct masterProduct, string title, string vendor, long shopifyProductId)
+                this PwMasterProduct masterProduct, string title, string vendor, long? shopifyProductId)
         {
             return
                 masterProduct
@@ -29,6 +29,26 @@ namespace ProfitWise.Data.Services
                     .FirstOrDefault(x => x.Title == title &&
                                     x.Vendor == vendor &&
                                     x.ShopifyProductId == shopifyProductId);
+        }
+
+        public static IList<PwProduct> FindProductByShopifyId(
+                this IList<PwMasterProduct> masterProducts, long? shopifyProductId)
+        {
+            return
+                masterProducts
+                    .SelectMany(x => x.Products)
+                    .Where(x => x.ShopifyProductId == shopifyProductId)
+                    .ToList();
+        }
+
+        public static IList<PwVariant> FindVariantsByShopifyId(
+                this IEnumerable<PwMasterVariant> masterVariants, long? shopifyVariantId)
+        {
+            return
+                masterVariants
+                    .SelectMany(x => x.Variants)
+                    .Where(x => x.ShopifyVariantId == shopifyVariantId)
+                    .ToList();
         }
 
         public static PwMasterVariant FindMasterVariant(
@@ -44,7 +64,7 @@ namespace ProfitWise.Data.Services
         }
 
         public static PwVariant FindVariant(
-                    this PwMasterVariant masterVariant, string sku, string title, long shopifyVariantId)
+                    this PwMasterVariant masterVariant, string sku, string title, long? shopifyVariantId)
         {
             return
                 masterVariant.Variants.FirstOrDefault(
@@ -52,13 +72,7 @@ namespace ProfitWise.Data.Services
                         x.Title.VariantTitleCorrection() == title.VariantTitleCorrection() && 
                         x.ShopifyVariantId == shopifyVariantId);
         }
-
-
-
-        //public static bool Same(
-        //            this PwVariant variant1, PwVariant variant2)
-        //{
-        //}
+        
 
         private const string VariantDefaultTitle = "Default Title";
 

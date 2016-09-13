@@ -35,7 +35,7 @@ namespace ProfitWise.Data
             builder.RegisterType<ProductRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ProductCleanupStep>().EnableClassInterceptorsWithRegistry(registry);
 
-            builder.RegisterType<ProductVariantBuilderService>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<CatalogBuilderService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<CurrencyService>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);

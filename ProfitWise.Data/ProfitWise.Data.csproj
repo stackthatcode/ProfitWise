@@ -99,7 +99,7 @@
     <Compile Include="Services\CurrencyService.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRepository.cs" />
     <Compile Include="Services\MatchingExtensions.cs" />
-    <Compile Include="Services\ProductVariantBuilderService.cs" />
+    <Compile Include="Services\CatalogBuilderService.cs" />
     <Compile Include="ProcessSteps\ProductRefreshStep.cs" />
     <Compile Include="ProcessSteps\RefreshServiceConfiguration.cs" />
     <Compile Include="ProcessSteps\ShopRefreshStep.cs" />

@@ -6,7 +6,7 @@ namespace ProfitWise.Data.ProcessSteps
     public class OrderRefreshContext
     {
         public PwShop ShopifyShop { get; set; }
-        public IList<PwMasterProduct> Products { get; set; }
+        public IList<PwMasterProduct> MasterProducts { get; set; }
         public IList<ShopifyOrder> CurrentExistingOrders { get; set; }
 
 

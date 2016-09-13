@@ -1,4 +1,6 @@
-﻿namespace ProfitWise.Data.Model
+﻿using System;
+
+namespace ProfitWise.Data.Model
 {
     public class PwVariant
     {
@@ -19,5 +21,8 @@
 
         public bool IsActive { get; set; }
         public bool IsPrimary { get; set; }
+        public bool IsManuallySelected { get; set; }
+        public DateTime LastUpdated { get; set; }
+
     }
 }

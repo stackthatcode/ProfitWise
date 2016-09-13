@@ -4,6 +4,7 @@ using System.Linq;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
@@ -183,7 +184,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, PwShop shop)
         {
-            var productVariantBuilderService = _multitenantFactory.MakeProductVariantService(shop);
+            var productVariantBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
@@ -201,7 +202,7 @@ namespace ProfitWise.Data.ProcessSteps
                 var context = new OrderRefreshContext
                 {
                     ShopifyShop = shop,
-                    Products = masterProductCatalog,
+                    MasterProducts = masterProductCatalog,
                     CurrentExistingOrders = existingShopifyOrders,
                 };
                 
@@ -305,39 +306,68 @@ namespace ProfitWise.Data.ProcessSteps
 
         public PwVariant FindOrCreatePwVariant(OrderRefreshContext context, OrderLineItem importedLineItem)
         {
-            var service = _multitenantFactory.MakeProductVariantService(context.ShopifyShop);
-            
-            // Process for creating ProfitWise Master Product, Product, Master Variant & Variant 
-            // ... from Shopify Product catalog item
-            var masterProduct =
-                service.BuildAndSaveMasterProduct(
-                    context.Products, importedLineItem.ProductTitle, importedLineItem.ParentOrder.Id);
+            var service = _multitenantFactory.MakeCatalogBuilderService(context.ShopifyShop);
 
-            if (!context.Products.Contains(masterProduct))
+            var masterProduct =
+                context.MasterProducts.FindMasterProduct(
+                    importedLineItem.ProductTitle, importedLineItem.Vendor);
+
+            if (masterProduct == null)
             {
-                context.Products.Add(masterProduct);
+                _pushLogger.Debug(
+                    $"Unable to find Master Product for Title: {importedLineItem.ProductTitle} " +
+                    $"and Vendor: {importedLineItem.Vendor}");
+                masterProduct = service.BuildAndSaveMasterProduct();
+            }
+            var product = masterProduct.FindProduct(
+                importedLineItem.ProductTitle, importedLineItem.Vendor, importedLineItem.ProductId);
+
+            if (product == null)
+            {
+                _pushLogger.Debug(
+                    $"Unable to find Product for Title: {importedLineItem.ProductTitle} " +
+                    $"and Vendor: {importedLineItem.Vendor} and " +
+                    $"Shopify Id: {importedLineItem.ProductId}");
+
+                product =
+                    service.BuildAndSaveProduct(
+                        masterProduct, false, importedLineItem.ProductTitle, importedLineItem.ProductId,
+                        importedLineItem.Vendor, "", "");
+
+                masterProduct.Products.Add(product);
             }
 
-            var product =
-                service.FindOrCreateProduct(
-                    masterProduct, importedLineItem.ProductTitle, 
-                    importedLineItem.ProductId, importedLineItem.Vendor, "", "");
-
             var masterVariant =
-                service.FindOrCreateMasterVariant(
-                    product, false, importedLineItem.VariantTitle, 
-                    importedLineItem.ProductId, importedLineItem.VariantId, importedLineItem.Sku);
+                masterProduct.FindMasterVariant(importedLineItem.Sku, importedLineItem.VariantTitle);
 
-            if (!masterProduct.MasterVariants.Contains(masterVariant))
+            if (masterVariant == null)
             {
+                _pushLogger.Debug(
+                    $"Unable to find Master Variant for Title: {importedLineItem.VariantTitle} " +
+                    $"and Sku: {importedLineItem.Sku}");
+
+                masterVariant =
+                    service.BuildAndSaveMasterVariant(
+                        product, importedLineItem.VariantTitle, importedLineItem.ProductId,
+                        importedLineItem.VariantId, importedLineItem.Sku);
                 masterProduct.MasterVariants.Add(masterVariant);
             }
 
-            var variant =
-                service.FindVariant(masterVariant, importedLineItem.VariantTitle, importedLineItem.Sku);
+            var variant = masterVariant.FindVariant(importedLineItem.Sku, importedLineItem.VariantTitle, importedLineItem.VariantId);
+
+            if (variant == null)
+            {
+                _pushLogger.Debug(
+                    $"Unable to find Variant for Title: {importedLineItem.VariantTitle} " +
+                    $"and Sku: {importedLineItem.Sku} and Shopify Variant Id: {importedLineItem.VariantId}");
+                variant =
+                    service.BuildAndSaveVariant(
+                        masterVariant, product, importedLineItem.VariantTitle, importedLineItem.VariantId, importedLineItem.Sku);
+            }
 
             return variant;
         }
+        
     }
 }
 

@@ -35,7 +35,7 @@ namespace ProfitWise.Data.ProcessSteps
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
 
             // Create an instance of multi-tenant-aware repositories
-            var service = this._multitenantFactory.MakeProductVariantService(shop);
+            var service = this._multitenantFactory.MakeCatalogBuilderService(shop);
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
             var orderRepository = this._multitenantFactory.MakeShopifyOrderRepository(shop);

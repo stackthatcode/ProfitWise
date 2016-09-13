@@ -156,7 +156,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, PwVariantId = pwVariantId });
         }
 
-        public void UpdateVariantIsActive(long pwVariantId, bool isActive)
+        public void UpdateVariantIsActive(PwVariant variant)
         {
             var query = @"UPDATE profitwisevariant SET IsActive = @IsActive
                             WHERE PwShopId = @PwShopId 
@@ -166,8 +166,8 @@ namespace ProfitWise.Data.Repositories
                     new
                     {
                         @PwShopId = this.PwShop.PwShopId,
-                        PwVariantId = pwVariantId,
-                        IsActive = isActive,
+                        PwVariantId = variant.PwVariantId,
+                        IsActive = variant.IsActive,
                     });
         }
 

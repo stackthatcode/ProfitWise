@@ -14,10 +14,10 @@ namespace ProfitWise.Data.Model
         public string Title { get; set; }
         public string Vendor { get; set; }
         public string ProductType { get; set; }
-        public bool? IsActive { get; set; }
-        public bool? IsPrimary { get; set; }
-        public bool? IsManuallySelected { get; set; }
-        public DateTime LastUpdated { get; set; }
         public string Tags { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsPrimary { get; set; }
+        public bool IsManuallySelected { get; set; }
+        public DateTime LastUpdated { get; set; }
     }
 }
