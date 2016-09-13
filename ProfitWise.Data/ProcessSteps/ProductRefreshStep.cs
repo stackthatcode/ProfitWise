@@ -5,6 +5,7 @@ using Castle.Core.Internal;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -61,8 +62,7 @@ namespace ProfitWise.Data.ProcessSteps
             foreach (var importedProduct in importedProducts)
             {
                 FlagMissingVariantsAsInactive(shop, masterProductCatalog, importedProduct);
-            }
-           
+            }           
 
             // Delete all Products with "destroy" Events
             // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
@@ -82,49 +82,97 @@ namespace ProfitWise.Data.ProcessSteps
 
             foreach (var importedProduct in importedProducts)
             {
-                var service = _multitenantFactory.MakeProductVariantService(shop);
-                var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
-
-                // Process for creating ProfitWise Master Product, Product, Master Variant & Variant 
-                // ... from Shopify Product catalog item
-                var masterProduct = 
-                    service.FindOrCreateMasterProduct(
-                        masterProducts, importedProduct.Title, importedProduct.Id);
-                
-                var product = 
-                    service.FindOrCreateProduct(
-                        masterProduct, importedProduct.Title, importedProduct.Id, importedProduct.Vendor, 
-                        importedProduct.Tags, importedProduct.ProductType);
-
-                if (!masterProducts.Contains(masterProduct))
-                {
-                    masterProducts.Add(masterProduct);
-                }
+                var product = WriteProductToDatabase(shop, masterProducts, importedProduct);
+                var masterProduct = product.ParentMasterProduct;
 
                 foreach (var importedVariant in importedProduct.Variants)
                 {
-                    var masterVariant =
-                        service.FindOrCreateMasterVariant(
-                            product, true, importedVariant.Title, importedProduct.Id, importedVariant.Id,
-                            importedVariant.Sku);
-
-                    if (!masterProduct.MasterVariants.Contains(masterVariant))
-                    {
-                        masterProduct.MasterVariants.Add(masterVariant);
-
-                        var variant = service.FindVariant(masterVariant, importedVariant.Title, importedVariant.Sku);
-                        var inventory = importedVariant.InventoryTracked ? importedVariant.Inventory : (int?)null;
-
-                        _pushLogger.Debug($"Updating Variant {variant.PwVariantId} price range: " +
-                            $"{importedVariant.Price} to {importedVariant.Price} and setting inventory to {inventory}");
-
-                        variantRepository
-                            .UpdateVariantPriceAndInventory(
-                                variant.PwVariantId, importedVariant.Price, importedVariant.Price,
-                                inventory);
-                    }
+                    WriteVariantToDatabase(shop, masterProduct, importedVariant, product, importedProduct);
                 }
             }
+        }
+
+        private void WriteVariantToDatabase(
+                PwShop shop, PwMasterProduct masterProduct, Variant importedVariant, PwProduct product, Product importedProduct)
+        {
+            var service = _multitenantFactory.MakeProductVariantService(shop);
+            var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
+
+            var masterVariant =
+                masterProduct.FindMasterVariant(importedVariant.Sku, importedVariant.Title);
+
+            if (masterVariant == null)
+            {
+                _pushLogger.Debug(
+                    $"Unable to find Master Variant for Title: {importedVariant.Title} " +
+                    $"and Sku: {importedVariant.Sku}");
+
+                masterVariant =
+                    service.BuildAndSaveMasterVariant(
+                        product, importedVariant.Title, importedProduct.Id, importedVariant.Id,
+                        importedVariant.Sku);
+                masterProduct.MasterVariants.Add(masterVariant);
+            }
+
+            var variant = masterVariant.FindVariant(importedVariant.Sku, importedVariant.Title, importedVariant.Id);
+
+            if (variant == null)
+            {
+                _pushLogger.Debug(
+                    $"Unable to find Variant for Title: {importedVariant.Title} " +
+                    $"and Sku: {importedVariant.Sku} and Shopify Variant Id: {importedVariant.Id}");
+                variant =
+                    service.BuildAndSaveVariant(masterVariant, product, importedVariant.Title,
+                        importedVariant.Id, importedVariant.Sku);
+            }
+
+            var inventory = importedVariant.InventoryTracked ? importedVariant.Inventory : (int?) null;
+
+            _pushLogger.Debug($"Updating Variant {variant.PwVariantId} price range: " +
+                              $"{importedVariant.Price} to {importedVariant.Price} and setting inventory to {inventory}");
+
+            variantRepository
+                .UpdateVariantPriceAndInventory(
+                    variant.PwVariantId, importedVariant.Price, importedVariant.Price, inventory);
+        }
+
+        private PwProduct WriteProductToDatabase(
+                PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
+        {
+            var service = _multitenantFactory.MakeProductVariantService(shop);
+
+            var masterProduct =
+                masterProducts.FindMasterProduct(importedProduct.Title, importedProduct.Vendor);
+
+            if (masterProduct == null)
+            {
+                _pushLogger.Debug(
+                    $"Unable to find Master Product for Title: {importedProduct.Title} " +
+                    $"and Vendor: {importedProduct.Vendor}");
+
+                masterProduct = service.BuildAndSaveMasterProduct();
+                masterProducts.Add(masterProduct);
+            }
+
+            var product = masterProduct.FindProduct(
+                importedProduct.Title, importedProduct.Vendor, importedProduct.Id);
+
+            if (product == null)
+            {
+                _pushLogger.Debug(
+                    $"Unable to find Product for Title: {importedProduct.Title} " +
+                    $"and Vendor: {importedProduct.Vendor} and Shopify Id: {importedProduct.Id}");
+
+                product =
+                    service.BuildAndSaveProduct(
+                        masterProduct, importedProduct.Title, importedProduct.Id, importedProduct.Vendor,
+                        importedProduct.Tags, importedProduct.ProductType);
+            }
+            else
+            {
+                service.UpdateExistingProduct(product, importedProduct.Tags, importedProduct.ProductType);
+            }
+            return product;
         }
 
         private void FlagMissingVariantsAsInactive(PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)

@@ -7,10 +7,6 @@ SET SQL_SAFE_UPDATES = 0;
 
 UPDATE profitwisepreferences SET StartingDateForOrders = '2016-04-01';
 
-SELECT * FROM profitwisepreferences;
-
-
-
 UPDATE profitwisebatchstate SET OrderDatasetEnd = '2016-08-31 00:00:00';
 
 SELECT * FROM profitwisebatchstate;
@@ -66,7 +62,8 @@ FROM profitwisemastervariant t1
 
 SELECT * FROM profitwisemasterproduct;
 
-SELECT * FROM profitwiseproduct;
+SELECT * FROM profitwiseproduct WHERE ShopifyProductId = 7741974217;
+
 
 SELECT * FROM profitwisemastervariant;
 

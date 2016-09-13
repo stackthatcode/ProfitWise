@@ -310,7 +310,7 @@ namespace ProfitWise.Data.ProcessSteps
             // Process for creating ProfitWise Master Product, Product, Master Variant & Variant 
             // ... from Shopify Product catalog item
             var masterProduct =
-                service.FindOrCreateMasterProduct(
+                service.BuildAndSaveMasterProduct(
                     context.Products, importedLineItem.ProductTitle, importedLineItem.ParentOrder.Id);
 
             if (!context.Products.Contains(masterProduct))
