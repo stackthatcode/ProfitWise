@@ -26,6 +26,7 @@ namespace Push.Shopify
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ProductApiRepository>()
+                //.As<IProductApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<EventApiRepository>()

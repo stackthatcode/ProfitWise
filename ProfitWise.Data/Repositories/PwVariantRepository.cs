@@ -171,6 +171,13 @@ namespace ProfitWise.Data.Repositories
                     });
         }
 
+        public void UpdateVariantIsPrimary(PwVariant variant)
+        {
+            var query = @"UPDATE profitwisevariant
+                            SET IsPrimary = @IsPrimary
+                            WHERE PwShopId = @PwShopId AND PwVariantId = @PwVariantId";
+            _connection.Execute(query, variant);
+        }
 
         public void UpdateVariantPriceAndInventory(
                     long pwVariantId, decimal lowPrice, decimal highPrice, int? inventory)

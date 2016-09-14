@@ -112,6 +112,7 @@ namespace ProfitWise.Data.Repositories
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
             _connection.Execute(query, product);
         }
+
         public void UpdateProductIsPrimary(PwProduct product)
         {
             var query = @"UPDATE profitwiseproduct

@@ -61,6 +61,8 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
+            var catalogService = this._multitenantFactory.MakeCatalogBuilderService(shop);
+
             var masterVariants = masterProductCatalog.SelectMany(x => x.MasterVariants).ToList();
 
             foreach (var product in 
@@ -76,6 +78,8 @@ namespace ProfitWise.Data.ProcessSteps
                     product.ParentMasterProduct.Products.Remove(product);
 
                     productRepository.DeleteProduct(product.PwProductId);
+
+                    catalogService.UpdatePrimaryProduct(product.ParentMasterProduct);
                 }
             }
 
@@ -92,6 +96,7 @@ namespace ProfitWise.Data.ProcessSteps
                     variant.ParentMasterVariant.Variants.Remove(variant);
 
                     variantRepository.DeleteVariantByVariantId(variant.PwVariantId);
+                    catalogService.UpdatePrimaryVariant(variant.ParentMasterVariant);
                 }
             }
         }

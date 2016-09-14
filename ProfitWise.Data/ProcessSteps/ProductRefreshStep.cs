@@ -67,7 +67,7 @@ namespace ProfitWise.Data.ProcessSteps
             // Delete all Products with "destroy" Events
             // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
             var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
-            SetProductsDeletedByShopifyToInactive(shop, shopCredentials, fromDateForDestroy);
+            SetProductsDeletedByShopifyToInactive(shop, masterProductCatalog, shopCredentials, fromDateForDestroy);
 
 
             // Update Batch State
@@ -239,19 +239,30 @@ namespace ProfitWise.Data.ProcessSteps
         }
 
         private void SetProductsDeletedByShopifyToInactive(
-                    PwShop shop, ShopifyCredentials shopCredentials, DateTime fromDateForDestroy)
+                    PwShop shop, IList<PwMasterProduct> masterProducts, ShopifyCredentials shopCredentials, DateTime fromDateForDestroy)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
+            var catalogService = this._multitenantFactory.MakeCatalogBuilderService(shop);
+
             var events = RetrieveAllProductDestroyEvents(shopCredentials, fromDateForDestroy);
 
             foreach (var @event in events)
             {
                 if (@event.Verb == EventVerbs.Destroy && @event.SubjectType == EventTypes.Product)
                 {
+                    var shopifyProductId = @event.SubjectId;
                     _pushLogger.Debug(
-                        $"Marking all Products with Shopify Id {@event.SubjectId} (via 'destroy' event)");
+                        $"Marking all Products with Shopify Id {shopifyProductId} (via 'destroy' event)");
 
-                    productRepository.UpdateProductIsActiveByShopifyId(@event.SubjectId, false);
+                    productRepository.UpdateProductIsActiveByShopifyId(shopifyProductId, false);
+
+                    foreach (
+                        var masterProduct in
+                            masterProducts.Where(
+                                x => x.Products.Any(product => product.ShopifyProductId == shopifyProductId)))
+                    {
+                        catalogService.UpdatePrimaryProduct(masterProduct);
+                    }
                 }
             }
         }
@@ -261,6 +272,7 @@ namespace ProfitWise.Data.ProcessSteps
         {
             // Mark all Variants as InActive that aren't in the import
             var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
+            var catalogService = _multitenantFactory.MakeCatalogBuilderService(shop);
 
             var shopifyProductId = importedProduct.Id;
             var activeShopifyVariantIds = importedProduct.Variants.Select(x => x.Id);
@@ -283,6 +295,7 @@ namespace ProfitWise.Data.ProcessSteps
                 variant.IsActive = false;
                 _pushLogger.Debug($"Flagging PwVariantId {variant.PwVariantId} as Inactive");
                 variantRepository.UpdateVariantIsActive(variant);
+                catalogService.UpdatePrimaryVariant(variant.ParentMasterVariant);
             });
         }
     }

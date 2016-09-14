@@ -27,8 +27,7 @@ namespace ProfitWise.Data.Services
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
-        }
-        
+        }        
 
         public PwMasterProduct BuildAndSaveMasterProduct()
         {
@@ -74,6 +73,8 @@ namespace ProfitWise.Data.Services
             finalProduct.PwProductId = productId;
             finalProduct.ParentMasterProduct = masterProduct;
             masterProduct.Products.Add(finalProduct);
+
+            this.UpdatePrimaryProduct(masterProduct);
             return finalProduct;
         }
 
@@ -89,9 +90,8 @@ namespace ProfitWise.Data.Services
             productRepository.UpdateProduct(product); // TODO UPDATE ME!!!
         }
 
-        public PwMasterVariant BuildAndSaveMasterVariant(
-            PwProduct product, string title, long? shopifyProductId, long? shopifyVariantId,
-            string sku)
+        public PwMasterVariant BuildAndSaveMasterVariant(PwProduct product, 
+                    string title, long? shopifyProductId, long? shopifyVariantId, string sku)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var masterProduct = product.ParentMasterProduct;
@@ -114,8 +114,8 @@ namespace ProfitWise.Data.Services
             return masterVariant;
         }
 
-        public PwVariant BuildAndSaveVariant(
-                PwMasterVariant masterVariant, bool isActive, PwProduct product, string title, long? shopifyVariantId, string sku)
+        public PwVariant BuildAndSaveVariant(PwMasterVariant masterVariant, 
+                bool isActive, PwProduct product, string title, long? shopifyVariantId, string sku)
         {
             _pushLogger.Debug(
                 $"Creating new Variant: {title}, {sku} (Id = {shopifyVariantId})");
@@ -143,9 +143,10 @@ namespace ProfitWise.Data.Services
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
             masterVariant.Variants.Add(newVariant);
+
+            this.UpdatePrimaryVariant(masterVariant);
             return newVariant;
         }
-
 
         public void UpdatePrimaryProduct(PwMasterProduct masterProduct)
         {
@@ -164,6 +165,27 @@ namespace ProfitWise.Data.Services
             foreach (var product in masterProduct.Products)
             {
                 repository.UpdateProductIsPrimary(product);
+            }
+        }
+
+        public void UpdatePrimaryVariant(PwMasterVariant masterVariant)
+        {
+            var repository = _multitenantFactory.MakeVariantRepository(this.PwShop);
+
+            if (masterVariant.Variants.Count == 0)
+            {
+                return;
+            }
+            var primaryVariant = masterVariant.DeterminePrimaryVariant();
+
+            primaryVariant.IsPrimary = true;
+            masterVariant.Variants
+                .Where(x => x != primaryVariant)
+                .ForEach(x => x.IsPrimary = false);
+
+            foreach (var variant in masterVariant.Variants)
+            {
+                repository.UpdateVariantIsPrimary(variant);
             }
         }
 
@@ -212,7 +234,6 @@ namespace ProfitWise.Data.Services
                 variantRepository.UpdateVariantIsActive(variant);
             }
         }
-
 
         public IList<PwMasterProduct> RetrieveFullCatalog()
         {
