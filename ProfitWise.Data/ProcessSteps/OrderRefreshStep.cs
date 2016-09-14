@@ -362,7 +362,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Sku: {importedLineItem.Sku} and Shopify Variant Id: {importedLineItem.VariantId}");
                 variant =
                     service.BuildAndSaveVariant(
-                        masterVariant, product, importedLineItem.VariantTitle, importedLineItem.VariantId, importedLineItem.Sku);
+                        masterVariant, false, product, importedLineItem.VariantTitle, importedLineItem.VariantId, importedLineItem.Sku);
             }
 
             return variant;

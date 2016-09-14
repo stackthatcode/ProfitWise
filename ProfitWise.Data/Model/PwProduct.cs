@@ -17,7 +17,7 @@ namespace ProfitWise.Data.Model
         public string Tags { get; set; }
         public bool IsActive { get; set; }
         public bool IsPrimary { get; set; }
-        public bool IsManuallySelected { get; set; }
+        public bool IsPrimaryManual { get; set; }
         public DateTime LastUpdated { get; set; }
     }
 }

@@ -87,8 +87,10 @@ namespace ProfitWise.Data.Repositories
         public long InsertProduct(PwProduct product)
         {
             var query = @"INSERT INTO profitwiseproduct 
-                            ( PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, IsActive, IsPrimary, Tags ) 
-                        VALUES ( @PwShopId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @IsActive, @IsPrimary, @Tags );
+                            ( PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, Tags,
+                            IsActive, IsPrimary, IsPrimaryManual, LastUpdated ) 
+                        VALUES ( @PwShopId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @Tags,
+                            @IsActive, @IsPrimary, @IsPrimaryManual, @LastUpdated );
                         SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, product).FirstOrDefault();
         }
@@ -97,7 +99,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"UPDATE profitwiseproduct
                             SET Tags = @Tags,
-                                ProductType = @ProductType
+                                ProductType = @ProductType,
+                                LastUpdated = @LastUpdated
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
             _connection.Execute(query, product);
         }
@@ -106,6 +109,13 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"UPDATE profitwiseproduct
                             SET IsActive = @IsActive
+                            WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
+            _connection.Execute(query, product);
+        }
+        public void UpdateProductIsPrimary(PwProduct product)
+        {
+            var query = @"UPDATE profitwiseproduct
+                            SET IsPrimary = @IsPrimary
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
             _connection.Execute(query, product);
         }

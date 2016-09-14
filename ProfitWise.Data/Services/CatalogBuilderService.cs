@@ -62,11 +62,11 @@ namespace ProfitWise.Data.Services
                 Title = title,
                 Vendor = vendor,
                 ProductType = productType,
+                Tags = tags,
                 IsActive = isActive,
                 IsPrimary = false,
-                IsManuallySelected = false,
+                IsPrimaryManual = false,
                 LastUpdated = DateTime.Now,
-                Tags = tags,
                 ParentMasterProduct = masterProduct,
             };
 
@@ -115,9 +115,7 @@ namespace ProfitWise.Data.Services
         }
 
         public PwVariant BuildAndSaveVariant(
-                PwMasterVariant masterVariant,
-                PwProduct product, string title, long? shopifyVariantId,
-                string sku)
+                PwMasterVariant masterVariant, bool isActive, PwProduct product, string title, long? shopifyVariantId, string sku)
         {
             _pushLogger.Debug(
                 $"Creating new Variant: {title}, {sku} (Id = {shopifyVariantId})");
@@ -137,8 +135,10 @@ namespace ProfitWise.Data.Services
                 LowPrice = 0m,      // defaults to "0", updated by 
                 HighPrice = 0m,
                 Inventory = null,
-                IsPrimary = true,
-                IsActive = true, 
+                IsActive = isActive,
+                IsPrimary = false,
+                IsPrimaryManual = false,
+                LastUpdated = DateTime.Now,
             };
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
@@ -146,6 +146,26 @@ namespace ProfitWise.Data.Services
             return newVariant;
         }
 
+
+        public void UpdatePrimaryProduct(PwMasterProduct masterProduct)
+        {
+            var repository = _multitenantFactory.MakeProductRepository(this.PwShop);
+
+            if (masterProduct.Products.Count == 0)
+            {
+                return;
+            }
+            var primaryProduct = masterProduct.DeterminePrimaryProduct();
+            primaryProduct.IsPrimary = true;
+            masterProduct.Products
+                .Where(x => x != primaryProduct)
+                .ForEach(x => x.IsPrimary = false);
+
+            foreach (var product in masterProduct.Products)
+            {
+                repository.UpdateProductIsPrimary(product);
+            }
+        }
 
         public void UpdateActiveShopifyProduct(IList<PwMasterProduct> allMasterProducts, long? shopifyProductId)
         {

@@ -42,10 +42,12 @@ CREATE TABLE `profitwiseproduct` (
   `Title` VARCHAR(200) DEFAULT NULL,
   `Vendor` VARCHAR(100) DEFAULT NULL,
   `ProductType` VARCHAR(100) DEFAULT NULL,
+  `Tags` TEXT DEFAULT NULL,
   
   `IsActive` TINYINT unsigned NOT NULL,
   `IsPrimary` TINYINT unsigned NOT NULL,
-  `Tags` TEXT DEFAULT NULL,
+  `IsPrimaryManual` TINYINT unsigned NOT NULL,
+  `LastUpdated` DATETIME NOT NULL,
   PRIMARY KEY (`PwProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -75,8 +77,11 @@ CREATE TABLE `profitwisevariant` (
   `LowPrice` DECIMAL(15, 2) NOT NULL,
   `HighPrice` DECIMAL(15, 2) NOT NULL,
   `Inventory` INT NULL,
+  
   `IsActive` TINYINT NOT NULL,
   `IsPrimary` TINYINT NOT NULL,
+  `IsPrimaryManual` TINYINT unsigned NOT NULL,
+  `LastUpdated` DATETIME NOT NULL,
 
   PRIMARY KEY (`PwVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -129,6 +134,6 @@ CREATE TABLE `profitwisebatchstate` (
 
 
 
-UPDATE profitwiseshop SET StartingDateForOrders = '2016-07-01'
+UPDATE profitwiseshop SET StartingDateForOrders = '2016-08-01'
 
 

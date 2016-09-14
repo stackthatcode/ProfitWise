@@ -168,7 +168,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Variant for Title: {importedVariant.Title} " +
                     $"and Sku: {importedVariant.Sku} and Shopify Variant Id: {importedVariant.Id}");
                 variant =
-                    service.BuildAndSaveVariant(masterVariant, product, importedVariant.Title,
+                    service.BuildAndSaveVariant(masterVariant, true, product, importedVariant.Title,
                         importedVariant.Id, importedVariant.Sku);
             }
 
@@ -256,7 +256,8 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        private void FlagMissingVariantsAsInactive(PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
+        private void FlagMissingVariantsAsInactive(
+                PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
         {
             // Mark all Variants as InActive that aren't in the import
             var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
@@ -274,16 +275,16 @@ namespace ProfitWise.Data.ProcessSteps
             var missingFromActive =
                 allExistingVariants
                     .Where(x => x.ShopifyVariantId != null)
-                    .Where(x => !activeShopifyVariantIds.Any(activeId => activeId == x.ShopifyVariantId))
-                    .Select(x => x.PwVariantId);
+                    .Where(x => activeShopifyVariantIds.All(activeId => activeId != x.ShopifyVariantId))
+                    .ToList();
 
-            missingFromActive.ForEach(pwVariantId =>
+            missingFromActive.ForEach(variant =>
             {
-                _pushLogger.Debug($"Flagging PwVariantId {pwVariantId} as Inactive");
-                variantRepository.UpdateVariantIsActive(pwVariantId, false);
+                variant.IsActive = false;
+                _pushLogger.Debug($"Flagging PwVariantId {variant.PwVariantId} as Inactive");
+                variantRepository.UpdateVariantIsActive(variant);
             });
         }
-
     }
 }
 
