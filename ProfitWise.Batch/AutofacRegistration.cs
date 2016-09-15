@@ -12,7 +12,6 @@ using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
-using Push.Foundation.Web.Http;
 using Push.Shopify.HttpClient;
 using Push.Utilities.CastleProxies;
 using Push.Utilities.Helpers;
@@ -125,6 +124,10 @@ namespace ProfitWise.Batch
                 PwShopId = shop,
                 OrderIds = orderIds,
             });
+
+
+            // TODO => find an appropriate hook to prevent from running in production(!!!)
+            // ProfitWise.DataMocks.AutofacRegistration.Build(builder);
 
             // Fin!
             return builder.Build();

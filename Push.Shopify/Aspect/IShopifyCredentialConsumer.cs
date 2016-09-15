@@ -2,7 +2,7 @@
 
 namespace Push.Shopify.Aspect
 {
-    interface IShopifyCredentialConsumer
+    public interface IShopifyCredentialConsumer
     {
         ShopifyCredentials ShopifyCredentials { get; set; }
     }

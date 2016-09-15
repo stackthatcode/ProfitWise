@@ -20,12 +20,13 @@ DROP TABLE IF EXISTS `profitwisebatchstate`;
 
 CREATE TABLE `profitwiseshop` (
   `PwShopId` BIGINT NOT NULL AUTO_INCREMENT,
-  `UserId` varchar(128) NOT NULL,
+  `ShopOwnerUserId` varchar(128) NOT NULL,
   `ShopifyShopId` BIGINT NULL,
   `CurrencyId` INT NULL,
   `StartingDateForOrders` DATETIME NULL,
-  PRIMARY KEY  (`PwShopId`, `UserId`)
+  PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `profitwisemasterproduct` (
   `PwMasterProductId` BIGINT NOT NULL AUTO_INCREMENT,
@@ -134,6 +135,6 @@ CREATE TABLE `profitwisebatchstate` (
 
 
 
-UPDATE profitwiseshop SET StartingDateForOrders = '2016-08-01'
+UPDATE profitwiseshop SET StartingDateForOrders = '2016-01-01'
 
 

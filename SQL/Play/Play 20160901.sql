@@ -3,6 +3,10 @@ USE ProfitWise;
 SET SQL_SAFE_UPDATES = 0;
 
 
+SELECT * FROM aspnetuserclaims;
+
+
+SELECT COUNT(*) FROM profitwiseshop;
 
 
 UPDATE profitwisepreferences SET StartingDateForOrders = '2016-04-01';
@@ -13,23 +17,27 @@ SELECT * FROM profitwisebatchstate;
 
 SELECT * FROM profitwiseshop;
 
+SELECT * FROM shopifyorder;
+
+SELECT * FROM shopifyorderlineitem;
 
 
 
-SELECT t1.*, t2.* 
-FROM profitwisemastervariant t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwMasterVariantId = t2.PwMasterVariantId
-ORDER BY t2.SKU;
-
+SELECT * FROM profitwisemasterproduct;
 
 SELECT * FROM profitwiseproduct;
+        
+
+SELECT * FROM profitwisemastervariant;
+
+SELECT * FROM profitwisevariant;
+
+
         
 SELECT * FROM profitwisevariant WHERE PwMasterVariantId IN ( 
 	SELECT PwMasterVariantId FROM profitwisemastervariant WHERE PwMasterProductId = 51 );
 
 
-SELECT * FROM profitwisemastervariant;
 
 SELECT Title, COUNT(Title) FROM profitwiseproduct GROUP BY Title ORDER BY COUNT(Title) DESC;
 
@@ -58,26 +66,28 @@ FROM profitwisemastervariant t1
 		AND t1.PwMasterVariantId = t2.PwMasterVariantId;
                 
                 
+                
 
 
 SELECT * FROM profitwisemasterproduct;
 
-SELECT * FROM profitwiseproduct WHERE ShopifyProductId = 7741974217;
+SELECT ShopifyProductId, COUNT(*) FROM profitwiseproduct GROUP BY ShopifyProductId;
+
+SELECT * FROM profitwiseproduct WHERE ShopifyProductId = 348907633;
+
+SELECT * FROM profitwiseproduct WHERE IsPrimary = 0;
+
 
 
 SELECT * FROM profitwisemastervariant;
 
-SELECT * FROM profitwisevariant;
+SELECT ShopifyVariantId, COUNT(*) FROM profitwisevariant GROUP BY ShopifyVariantId;
 
+SELECT * FROM profitwisevariant WHERE IsPrimary = 0;
 
-Master Product Id, Title, Vendor, Product Type, Tags => Product (Primary)
-Exclude, StockedDirectly, CoGS => Master Variant
-Inventory, Pricer => Variant (Primary)
+SELECT * FROM profitwisevariant WHERE ShopifyVariantId = 805343293;
 
-
-
-SELECT p.PwMasterProductId, p.PwProductId, p.Title, p.Vendor, p.ProductType, p.Tags
-FROM profitwiseproduct p;
+SELECT * FROM profitwiseproduct WHERE PwProductId IN ( 58, 105 );
 
 
 

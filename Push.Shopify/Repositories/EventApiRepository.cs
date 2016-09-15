@@ -5,12 +5,15 @@ using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
+using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Repositories
 {
+
+
     [Intercept(typeof(ShopifyCredentialRequired))]
-    public class EventApiRepository : IShopifyCredentialConsumer
+    public class EventApiRepository : IShopifyCredentialConsumer, IEventApiRepository
     {
         private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;

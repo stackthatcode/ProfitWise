@@ -143,6 +143,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ProfitWise.DataMocks\ProfitWise.DataMocks.csproj">
+      <Project>{5451ad2d-aacd-4050-9a53-cfed81f062dc}</Project>
+      <Name>ProfitWise.DataMocks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">
       <Project>{CE56511C-1D8F-4537-96B9-EF03DA326F90}</Project>
       <Name>ProfitWise.Data</Name>

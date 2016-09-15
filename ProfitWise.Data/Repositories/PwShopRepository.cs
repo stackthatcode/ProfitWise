@@ -22,19 +22,19 @@ namespace ProfitWise.Data.Repositories
                 .FirstOrDefault();
         }
 
-        public PwShop RetrieveByUserId(string userId)
+        public PwShop RetrieveByUserId(string shopOwnerUserId)
         {
-            var query = @"SELECT * FROM profitwiseshop WHERE UserId = @UserId";
+            var query = @"SELECT * FROM profitwiseshop WHERE ShopOwnerUserId = @ShopOwnerUserId";
             return _connection
-                .Query<PwShop>(query, new { @UserId = userId })
+                .Query<PwShop>(query, new { ShopOwnerUserId = shopOwnerUserId })
                 .FirstOrDefault();
         }
 
         public int Insert(PwShop shop)
         {
             var query =
-                @"INSERT INTO profitwiseshop (UserId, ShopifyShopId, CurrencyId, StartingDateForOrders) 
-                VALUES (@UserId, @ShopifyShopId, @CurrencyId, @StartingDateForOrders);
+                @"INSERT INTO profitwiseshop (ShopOwnerUserId, ShopifyShopId, CurrencyId, StartingDateForOrders) 
+                VALUES (@ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @StartingDateForOrders);
                 SELECT LAST_INSERT_ID();";
             return _connection
                 .Query<int>(query, shop)

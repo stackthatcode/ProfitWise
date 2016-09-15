@@ -89,11 +89,6 @@ namespace ProfitWise.Data.ProcessSteps
                 {
                     WriteVariantToDatabase(shop, masterProduct, importedVariant, product, importedProduct);
                 }
-
-                if (!masterProducts.Contains(masterProduct))
-                {
-                    masterProducts.Add(masterProduct);
-                }
             }
         }
 
@@ -112,6 +107,11 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Vendor: {importedProduct.Vendor}");
 
                 masterProduct = service.BuildAndSaveMasterProduct();
+
+                if (!masterProducts.Contains(masterProduct))
+                {
+                    masterProducts.Add(masterProduct);
+                }
             }
 
             var product = masterProduct.FindProduct(
@@ -188,7 +188,7 @@ namespace ProfitWise.Data.ProcessSteps
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
             var filter = new ProductFilter()
             {
-                UpdatedAtMin = batchState.ProductsLastUpdated,
+                UpdatedAtMin = batchState.ProductsLastUpdated.Value.AddHours(-1),
             };
             var count = productApiRepository.RetrieveCount(filter);
 

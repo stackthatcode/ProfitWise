@@ -57,8 +57,8 @@ namespace ProfitWise.Data.Services
             var firstOrDefault = masterProduct
                 .MasterVariants
                 .SelectMany(x => x.Variants)
-                .FirstOrDefault(x =>    x.Sku == sku && 
-                                        VariantTitleCorrection(x.Title) == title);
+                .FirstOrDefault(x => x.Sku == sku && 
+                                    x.Title.VariantTitleCorrection() == title.VariantTitleCorrection());
 
             return firstOrDefault?.ParentMasterVariant;
         }

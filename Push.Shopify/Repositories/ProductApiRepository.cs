@@ -6,15 +6,11 @@ using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
+using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Repositories
 {
-    public interface IProductApiRepository
-    {
-        int RetrieveCount(ProductFilter filter);
-        IList<Product> Retrieve(ProductFilter filter, int page = 1, int limit = 250);
-    }
 
     [Intercept(typeof(ShopifyCredentialRequired))]
     public class ProductApiRepository : IShopifyCredentialConsumer, IProductApiRepository

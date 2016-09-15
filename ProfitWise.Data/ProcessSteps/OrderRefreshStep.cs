@@ -319,6 +319,9 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Vendor: {importedLineItem.Vendor}");
                 masterProduct = service.BuildAndSaveMasterProduct();
             }
+
+            context.MasterProducts.Add(masterProduct);
+
             var product = masterProduct.FindProduct(
                 importedLineItem.ProductTitle, importedLineItem.Vendor, importedLineItem.ProductId);
 

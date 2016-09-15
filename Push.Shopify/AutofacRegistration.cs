@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using Push.Foundation.Utilities.CastleProxies;
-using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
+using Push.Shopify.Interfaces;
 using Push.Shopify.Repositories;
 using Push.Utilities.CastleProxies;
 
@@ -23,16 +23,19 @@ namespace Push.Shopify
             registry.Add(typeof(ExecutionTime));
 
             builder.RegisterType<OrderApiRepository>()
+                .As<IOrderApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ProductApiRepository>()
-                //.As<IProductApiRepository>()
+                .As<IProductApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<EventApiRepository>()
+                .As<IEventApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ShopApiRepository>()
+                .As<IShopApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ApiRepositoryFactory>();

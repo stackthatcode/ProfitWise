@@ -13,24 +13,29 @@ namespace ProfitWise.Data.ProcessSteps
     public class ShopRefreshService
     {
         private readonly IPushLogger _pushLogger;
-        private readonly PwShopRepository _shopRepository;
+        private readonly PwShopRepository _shopDataRepository;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
 
         public ShopRefreshService(
                     IPushLogger pushLogger, 
-                    PwShopRepository shopRepository,
+                    PwShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
                     MultitenantFactory factory,
                     CurrencyService currencyService)
         {
             _pushLogger = pushLogger;
-            _shopRepository = shopRepository;
+            _shopDataRepository = shopDataRepository;
             _apiRepositoryFactory = apiRepositoryFactory;
             _factory = factory;
             _currencyService = currencyService;
         }
+
+
+        // TODO => update before going to Production
+        public readonly DateTime DefaultStartDateForOrders = new DateTime(2016, 9, 1);
+
 
         public int Execute(ShopifyCredentials shopifyCredentials)
         {
@@ -41,21 +46,21 @@ namespace ProfitWise.Data.ProcessSteps
             var shopCurrencyId = _currencyService.AbbreviationToCurrencyId(shopFromShopify.Currency);
 
             _pushLogger.Info($"Shop Refresh Service for UserId : {shopifyCredentials.ShopOwnerUserId}");
-            var shop = _shopRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
-
+            var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
+            
             if (shop == null)
             {
                 // Create new Shop
                 var newShop = new PwShop
                 {
-                    UserId = shopifyCredentials.ShopOwnerUserId,
+                    ShopOwnerUserId = shopifyCredentials.ShopOwnerUserId,
                     CurrencyId = shopCurrencyId,
                     ShopifyShopId = shopFromShopify.Id,
-                    StartingDateForOrders = new DateTime(2016, 9, 1),
+                    StartingDateForOrders = DefaultStartDateForOrders, // 
                 };
-                newShop.PwShopId = _shopRepository.Insert(newShop);
+                newShop.PwShopId = _shopDataRepository.Insert(newShop);
 
-                _pushLogger.Info($"Created new Shop - UserId: {newShop.UserId}, CurrencyId: {newShop.CurrencyId}, " +
+                _pushLogger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}, CurrencyId: {newShop.CurrencyId}, " +
                             $"ShopifyShopId: {newShop.ShopifyShopId}, StartingDateForOrders: {newShop.StartingDateForOrders}");
                 
                 // Add the Batch State
@@ -71,8 +76,8 @@ namespace ProfitWise.Data.ProcessSteps
             else
             {
                 shop.CurrencyId = shopCurrencyId;
-                _pushLogger.Info($"Updating Shop Currency - UserId: {shop.UserId}, CurrencyId: {shop.CurrencyId}");                
-                _shopRepository.UpdateShopCurrency(shop);
+                _pushLogger.Info($"Updating Shop Currency - UserId: {shop.ShopOwnerUserId}, CurrencyId: {shop.CurrencyId}");                
+                _shopDataRepository.UpdateShopCurrency(shop);
                 return shop.PwShopId;
             }
         }

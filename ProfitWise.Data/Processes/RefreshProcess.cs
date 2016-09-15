@@ -2,6 +2,7 @@
 using ProfitWise.Data.ProcessSteps;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Shopify;
 using Push.Shopify.HttpClient;
 
@@ -9,7 +10,7 @@ namespace ProfitWise.Data.Processes
 {
     public class RefreshProcess
     {
-        private readonly ShopifyCredentialService _shopifyCredentialService;
+        private readonly IShopifyCredentialService _shopifyCredentialService;
         private readonly ShopRefreshService _shopRefreshStep;
         private readonly ProductRefreshStep _productRefreshStep;
         private readonly OrderRefreshStep _orderRefreshStep;
@@ -18,15 +19,13 @@ namespace ProfitWise.Data.Processes
 
 
         public RefreshProcess(
-                ShopifyCredentialService shopifyCredentialService,
+                IShopifyCredentialService shopifyCredentialService,
                 ShopRefreshService shopRefreshStep,
                 ProductRefreshStep productRefreshStep,
                 OrderRefreshStep orderRefreshStep,
                 ProductCleanupStep productCleanupStep,
                 IPushLogger logger)
         {
-            // TODO: move into Autofac configuration
-           
             _shopifyCredentialService = shopifyCredentialService;
             _orderRefreshStep = orderRefreshStep;
             _productCleanupStep = productCleanupStep;
@@ -59,6 +58,7 @@ namespace ProfitWise.Data.Processes
             _orderRefreshStep.Execute(shopifyClientCredentials);
             _productCleanupStep.Execute(shopifyClientCredentials);
 
+            //Console.WriteLine($"Wassup {shopifyFromClaims.ShopOwnerUserId}");
             _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");
         }
     }

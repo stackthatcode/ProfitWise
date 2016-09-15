@@ -16,6 +16,7 @@ namespace ProfitWise.Batch
             using (var container = AutofacRegistration.Build())
             {
                 InvokeRefreshServices(container);
+                Console.Write("Please hit enter...");
                 Console.ReadLine();
             }
         }
@@ -26,15 +27,8 @@ namespace ProfitWise.Batch
             var logger = container.Resolve<IPushLogger>();
             try
             {
-                // This is for simulation purposes - in the future, we'll load a list of Users from database
-                var userId = "c2e5bb33-0d4c-49c4-8204-09246b23352c";
                 logger.Info("Hello! - Executing InvokeRefreshServices" + Environment.NewLine);
-
-                using (var scope = container.BeginLifetimeScope())
-                {
-                    var refreshProcess = scope.Resolve<RefreshProcess>();
-                    refreshProcess.Execute(userId);
-                }
+                RefreshServiceForSingleUser(container);
             }
             catch (Exception e)
             {
@@ -42,6 +36,31 @@ namespace ProfitWise.Batch
 
                 // Add notification service call here
                 logger.Fatal(e.Message);
+            }
+        }
+
+        static private void RefreshServiceForSingleUser(IContainer container)
+        {
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var userId = "c2e5bb33-0d4c-49c4-8204-09246b23352c";
+
+                var refreshProcess = scope.Resolve<RefreshProcess>();
+                refreshProcess.Execute(userId);
+            }
+        }
+
+        static private void SimulateRefreshServiceFor1000Users(IContainer container)
+        {
+            int artificialUserId = 1000;
+            while (artificialUserId < 2000)
+            {
+                using (var scope = container.BeginLifetimeScope())
+                {
+                    var refreshProcess = scope.Resolve<RefreshProcess>();
+                    refreshProcess.Execute(artificialUserId.ToString());
+                }
+                artificialUserId++;
             }
         }
 

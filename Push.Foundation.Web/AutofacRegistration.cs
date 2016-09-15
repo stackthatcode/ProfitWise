@@ -9,6 +9,7 @@ using Microsoft.Owin.Security.DataProtection;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Security;
 using Push.Foundation.Web.Shopify;
 using Push.Utilities.CastleProxies;
@@ -72,6 +73,7 @@ namespace Push.Foundation.Web
 
             builder
                 .RegisterType<ShopifyCredentialService>()
+                .As<IShopifyCredentialService>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
 

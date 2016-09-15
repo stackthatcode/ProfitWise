@@ -1,11 +1,12 @@
-﻿using Push.Foundation.Web.Shopify;
+﻿using Push.Foundation.Web.Interfaces;
+using Push.Foundation.Web.Shopify;
 using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Web.Plumbing
 {
     public static class ShopifyCredentialExtensions
     {
-        public static ShopifyCredentials ToShopifyCredentials(this ShopifyCredentialService.RetrieveResult input)
+        public static ShopifyCredentials ToShopifyCredentials(this CredentialServiceResult input)
         {
             return new ShopifyCredentials()
             {
