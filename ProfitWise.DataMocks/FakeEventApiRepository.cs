@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Autofac.Extras.DynamicProxy2;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
@@ -14,12 +13,12 @@ namespace ProfitWise.DataMocks
         public ShopifyCredentials ShopifyCredentials { get; set; }
         public int RetrieveCount(EventFilter filter)
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public IList<Event> Retrieve(EventFilter filter, int page = 1, int limit = 250)
         {
-            throw new NotImplementedException();
+            return new List<Event>();
         }
     }
 }

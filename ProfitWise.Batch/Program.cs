@@ -28,7 +28,7 @@ namespace ProfitWise.Batch
             try
             {
                 logger.Info("Hello! - Executing InvokeRefreshServices" + Environment.NewLine);
-                RefreshServiceForSingleUser(container);
+                SimulateRefreshServiceFor1000Users(container);
             }
             catch (Exception e)
             {

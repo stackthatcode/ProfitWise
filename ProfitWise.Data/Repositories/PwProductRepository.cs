@@ -19,6 +19,10 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
+        public MySqlTransaction InitiateTransaction()
+        {
+            return _connection.BeginTransaction();
+        }
 
         //
         // TODO => add paging and filtering

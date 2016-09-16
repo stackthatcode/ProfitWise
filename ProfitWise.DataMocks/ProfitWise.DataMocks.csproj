@@ -58,6 +58,7 @@
     <Compile Include="FakeProductApiRepository.cs" />
     <Compile Include="FakeShopApiRepository.cs" />
     <Compile Include="FakeCredentialService.cs" />
+    <Compile Include="HelperExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

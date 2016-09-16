@@ -57,7 +57,6 @@ namespace Push.Shopify.Repositories
             var clientResponse = _client.ExecuteRequest(request);
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
-
             var results = new List<Product>();
 
             foreach (var product in parent.products)

@@ -50,45 +50,76 @@ namespace ProfitWise.Data.ProcessSteps
             // Load Batch State
             var batchState = batchStateRepository.Retrieve();
 
-            // Import Products from Shopify and existing catalog from ProfitWise
-            var importedProducts = RetrieveAllProductsFromShopify(shopCredentials, batchState);
-            var masterProductCatalog = service.RetrieveFullCatalog();
-
+            // Retrieve existing catalog from ProfitWise
+            var masterProducts = service.RetrieveFullCatalog();
 
             // Write Products to our database
-            WriteAllProductsToDatabase(shop, importedProducts, masterProductCatalog);
-
-            // Flag Missing Variants
-            foreach (var importedProduct in importedProducts)
-            {
-                FlagMissingVariantsAsInactive(shop, masterProductCatalog, importedProduct);
-            }           
+            WriteAllProductsFromShopify(shop, masterProducts, shopCredentials, batchState);
 
             // Delete all Products with "destroy" Events
             // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
             var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
-            SetProductsDeletedByShopifyToInactive(shop, masterProductCatalog, shopCredentials, fromDateForDestroy);
-
+            SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
 
             // Update Batch State
             batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
             batchStateRepository.Update(batchState);
         }
 
-        private void WriteAllProductsToDatabase(
+        public virtual IList<Product> WriteAllProductsFromShopify(
+                PwShop shop, IList<PwMasterProduct> masterProducts, 
+                ShopifyCredentials shopCredentials, PwBatchState batchState)
+        {
+            var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
+            var filter = new ProductFilter()
+            {
+                UpdatedAtMin = batchState.ProductsLastUpdated
+            };
+            var count = productApiRepository.RetrieveCount(filter);
+
+            _pushLogger.Info($"Executing Refresh for {count} Products");
+
+            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
+            var results = new List<Product>();
+
+            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
+            {
+                _pushLogger.Info(
+                    $"Page {pagenumber} of {numberofpages} pages");
+
+                var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
+                results.AddRange(products);
+
+                WriteProductsToDatabase(shop, products, masterProducts);
+            }
+
+            return results;
+        }
+
+        private void WriteProductsToDatabase(
                     PwShop shop, IList<Product> importedProducts, IList<PwMasterProduct> masterProducts)
         {
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
-            foreach (var importedProduct in importedProducts)
-            {
-                var product = WriteProductToDatabase(shop, masterProducts, importedProduct);
-                var masterProduct = product.ParentMasterProduct;
+            var repository = _multitenantFactory.MakeProductRepository(shop);
 
-                foreach (var importedVariant in importedProduct.Variants)
+            using (var transaction = repository.InitiateTransaction())
+            {
+                foreach (var importedProduct in importedProducts)
                 {
-                    WriteVariantToDatabase(shop, masterProducts, masterProduct, importedVariant, product, importedProduct);
+                    var product = WriteProductToDatabase(shop, masterProducts, importedProduct);
+                    var masterProduct = product.ParentMasterProduct;
+
+                    foreach (var importedVariant in importedProduct.Variants)
+                    {
+                        WriteVariantToDatabase(shop, masterProducts, masterProduct, importedVariant, product,
+                            importedProduct);
+                    }
+
+                    FlagMissingVariantsAsInactive(shop, masterProducts, importedProduct);
                 }
+
+                transaction.Commit();
             }
         }
 
@@ -183,33 +214,6 @@ namespace ProfitWise.Data.ProcessSteps
             variantRepository
                 .UpdateVariantPriceAndInventory(
                     variant.PwVariantId, importedVariant.Price, importedVariant.Price, inventory);
-        }
-
-        public virtual IList<Product> RetrieveAllProductsFromShopify(
-                    ShopifyCredentials shopCredentials, PwBatchState batchState)
-        {
-            var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
-            var filter = new ProductFilter()
-            {
-                UpdatedAtMin = batchState.ProductsLastUpdated.Value.AddHours(-1),
-            };
-            var count = productApiRepository.RetrieveCount(filter);
-
-            _pushLogger.Info($"Executing Refresh for {count} Products");
-
-            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
-            var results = new List<Product>();
-
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
-            {
-                _pushLogger.Info(
-                    $"Page {pagenumber} of {numberofpages} pages");
-
-                var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
-                results.AddRange(products);
-            }
-
-            return results;
         }
 
         public virtual IList<Event> RetrieveAllProductDestroyEvents(ShopifyCredentials shopCredentials, DateTime fromDate)

@@ -55,8 +55,8 @@ namespace ProfitWise.Data.Processes
 
             _shopRefreshStep.Execute(shopifyClientCredentials);
             _productRefreshStep.Execute(shopifyClientCredentials);
-            _orderRefreshStep.Execute(shopifyClientCredentials);
-            _productCleanupStep.Execute(shopifyClientCredentials);
+            //_orderRefreshStep.Execute(shopifyClientCredentials);
+            //_productCleanupStep.Execute(shopifyClientCredentials);
 
             //Console.WriteLine($"Wassup {shopifyFromClaims.ShopOwnerUserId}");
             _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");

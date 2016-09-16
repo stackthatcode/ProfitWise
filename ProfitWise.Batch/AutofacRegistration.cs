@@ -127,7 +127,7 @@ namespace ProfitWise.Batch
 
 
             // TODO => find an appropriate hook to prevent from running in production(!!!)
-            // ProfitWise.DataMocks.AutofacRegistration.Build(builder);
+            ProfitWise.DataMocks.AutofacRegistration.Build(builder);
 
             // Fin!
             return builder.Build();
