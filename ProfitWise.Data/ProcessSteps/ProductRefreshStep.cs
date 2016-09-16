@@ -87,7 +87,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                 foreach (var importedVariant in importedProduct.Variants)
                 {
-                    WriteVariantToDatabase(shop, masterProduct, importedVariant, product, importedProduct);
+                    WriteVariantToDatabase(shop, masterProducts, masterProduct, importedVariant, product, importedProduct);
                 }
             }
         }
@@ -139,7 +139,8 @@ namespace ProfitWise.Data.ProcessSteps
         }
 
         private void WriteVariantToDatabase(
-                PwShop shop, PwMasterProduct masterProduct, Variant importedVariant, PwProduct product, Product importedProduct)
+                PwShop shop, IList<PwMasterProduct> masterProducts, PwMasterProduct masterProduct, 
+                Variant importedVariant, PwProduct product, Product importedProduct)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
             var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
@@ -170,6 +171,8 @@ namespace ProfitWise.Data.ProcessSteps
                 variant =
                     service.BuildAndSaveVariant(masterVariant, true, product, importedVariant.Title,
                         importedVariant.Id, importedVariant.Sku);
+
+                service.UpdateActiveShopifyVariant(masterProducts, variant.ShopifyVariantId);
             }
 
             var inventory = importedVariant.InventoryTracked ? importedVariant.Inventory : (int?) null;

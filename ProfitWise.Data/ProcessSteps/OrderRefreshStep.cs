@@ -180,8 +180,6 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-
-
         protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, PwShop shop)
         {
             var productVariantBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
@@ -261,7 +259,7 @@ namespace ProfitWise.Data.ProcessSteps
                         importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
                     translatedOrder.AddLineItem(translatedLineItem);
 
-                    var pwVariant = FindOrCreatePwVariant(context, importedLineItem);
+                    var pwVariant = FindCreateProductVariant(context, importedLineItem);
                     translatedLineItem.PwVariantId = pwVariant.PwVariantId;
                     translatedLineItem.PwProductId = pwVariant.PwProductId;
 
@@ -302,9 +300,7 @@ namespace ProfitWise.Data.ProcessSteps
             }            
         }
 
-
-
-        public PwVariant FindOrCreatePwVariant(OrderRefreshContext context, OrderLineItem importedLineItem)
+        public PwVariant FindCreateProductVariant(OrderRefreshContext context, OrderLineItem importedLineItem)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(context.ShopifyShop);
 
@@ -369,8 +365,7 @@ namespace ProfitWise.Data.ProcessSteps
             }
 
             return variant;
-        }
-        
+        }        
     }
 }
 
