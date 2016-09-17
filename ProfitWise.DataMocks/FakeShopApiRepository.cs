@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using Autofac.Extras.DynamicProxy2;
-using Castle.Core.Internal;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Interfaces;

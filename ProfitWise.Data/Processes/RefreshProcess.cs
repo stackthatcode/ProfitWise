@@ -1,9 +1,7 @@
 ﻿using System;
 using ProfitWise.Data.ProcessSteps;
 using Push.Foundation.Utilities.Logging;
-using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
-using Push.Foundation.Web.Shopify;
 using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Data.Processes
@@ -55,8 +53,8 @@ namespace ProfitWise.Data.Processes
 
             _shopRefreshStep.Execute(shopifyClientCredentials);
             _productRefreshStep.Execute(shopifyClientCredentials);
-            //_orderRefreshStep.Execute(shopifyClientCredentials);
-            //_productCleanupStep.Execute(shopifyClientCredentials);
+            _orderRefreshStep.Execute(shopifyClientCredentials);
+            _productCleanupStep.Execute(shopifyClientCredentials);
 
             //Console.WriteLine($"Wassup {shopifyFromClaims.ShopOwnerUserId}");
             _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");
