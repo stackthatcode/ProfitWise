@@ -4,10 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProfitWise.Test
+namespace Push.Foundation.Utilities.Helpers
 {
-    public class Class1
-    {
-    }
 }
-

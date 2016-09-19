@@ -13,6 +13,7 @@ using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.HttpClient;
+using Push.Shopify.TimeZone;
 using Push.Utilities.CastleProxies;
 using Push.Utilities.Helpers;
 
@@ -102,6 +103,9 @@ namespace ProfitWise.Batch
                     ConfigurationManager.AppSettings.GetAndTryParseAsBool("FixerApiRetriesEnabled", true)
             });
 
+            var machineTimeZone = ConfigurationManager.AppSettings["Machine_TimeZone"];
+            builder.Register(x => new TimeZoneTranslator(machineTimeZone));
+            
 
             // Push.Foundation.Web Identity Stuff
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
@@ -127,7 +131,7 @@ namespace ProfitWise.Batch
 
 
             // TODO => find an appropriate hook to prevent from running in production(!!!)
-            ProfitWise.DataMocks.AutofacRegistration.Build(builder);
+            //ProfitWise.DataMocks.AutofacRegistration.Build(builder);
 
             // Fin!
             return builder.Build();

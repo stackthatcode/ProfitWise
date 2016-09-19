@@ -81,6 +81,8 @@
     <Compile Include="Repositories\OrderApiRepository.cs" />
     <Compile Include="Repositories\ShopApiRepository.cs" />
     <Compile Include="Repositories\ProductApiRepository.cs" />
+    <Compile Include="TimeZone\TimeZoneExtensions.cs" />
+    <Compile Include="TimeZone\TimeZoneTranslator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

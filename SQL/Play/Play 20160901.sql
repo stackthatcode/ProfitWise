@@ -6,7 +6,18 @@ SET SQL_SAFE_UPDATES = 0;
 SELECT * FROM aspnetuserclaims;
 
 
+
 SELECT COUNT(*) FROM profitwiseshop;
+
+SELECT @@system_time_zone;
+
+SET @@system_time_zone = 'Eastern Daylight Time';
+
+
+SELECT * FROM shopifyorder;
+
+SELECT * FROM shopifyorderlineitem;
+
 
 
 UPDATE profitwisepreferences SET StartingDateForOrders = '2016-04-01';
@@ -17,35 +28,14 @@ SELECT * FROM profitwisebatchstate;
 
 SELECT * FROM profitwiseshop;
 
-SELECT * FROM shopifyorder;
-
-SELECT * FROM shopifyorderlineitem;
-
-
-
 SELECT * FROM profitwisemasterproduct;
 
 SELECT * FROM profitwiseproduct;
         
-
 SELECT * FROM profitwisemastervariant;
 
 SELECT * FROM profitwisevariant;
 
-
-        
-SELECT * FROM profitwisevariant WHERE PwMasterVariantId IN ( 
-	SELECT PwMasterVariantId FROM profitwisemastervariant WHERE PwMasterProductId = 51 );
-
-
-
-SELECT Title, COUNT(Title) FROM profitwiseproduct GROUP BY Title ORDER BY COUNT(Title) DESC;
-
-SELECT SKU, COUNT(SKU) FROM profitwisevariant GROUP BY SKU ORDER BY COUNT(SKU) DESC;
-
-
-
-SELECT * FROM profitwisemastervariant;
 
 SELECT * FROM profitwisevariant WHERE LowPrice = 0 AND HighPrice = 0;
 SELECT * FROM profitwisevariant  WHERE IsActive = false;
@@ -87,8 +77,14 @@ SELECT * FROM profitwisevariant WHERE IsPrimary = 0;
 
 SELECT * FROM profitwisevariant WHERE ShopifyVariantId = 805343293;
 
-SELECT * FROM profitwiseproduct WHERE PwProductId IN ( 58, 105 );
 
 
+SELECT COUNT(*) FROM profitwiseproduct;
+
+SELECT COUNT(*) FROM profitwisevariant;
+
+SELECT * FROM profitwiseproduct;
+
+SELECT * FROM profitwisevariant;
 
 

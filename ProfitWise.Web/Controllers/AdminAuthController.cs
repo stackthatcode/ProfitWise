@@ -32,6 +32,9 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            // NOTE - as of 9/19/2016 this is the whitelisted URL
+            returnUrl = "https://gracie2/ProfitWise/ShopifyAuth/EmbeddedAppLogin";
+
             ViewBag.ReturnUrl = returnUrl;            
             return View();
         }

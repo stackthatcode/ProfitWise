@@ -3,7 +3,9 @@ using System.Configuration;
 using Autofac;
 using Hangfire;
 using ProfitWise.Data.Processes;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
+using Push.Shopify.TimeZone;
 
 
 namespace ProfitWise.Batch
@@ -12,13 +14,27 @@ namespace ProfitWise.Batch
     {
         static void Main(string[] args)
         {
+
             Bootstrap.ConfigureApp();
             using (var container = AutofacRegistration.Build())
             {
-                InvokeRefreshServices(container);
+                RefreshServiceForSingleUser(container);
                 Console.Write("Please hit enter...");
                 Console.ReadLine();
             }
+        }
+
+        private static void TestTimeZoneTranslation(IContainer container)
+        {
+            var translator = container.Resolve<TimeZoneTranslator>();
+            var result =
+                translator.TranslateToShopifyTimeZone(
+                    new DateTime(2016, 9, 9, 6, 30, 0),
+                    "(GMT-06:00) Central Time (US & Canada)");
+            var result2 =
+                translator.TranslateToShopifyTimeZone(
+                    new DateTime(2016, 9, 9, 6, 30, 0),
+                    "(GMT-05:00) America/New_York");
         }
 
 
@@ -39,18 +55,18 @@ namespace ProfitWise.Batch
             }
         }
 
-        static private void RefreshServiceForSingleUser(IContainer container)
+        private static void RefreshServiceForSingleUser(IContainer container)
         {
             using (var scope = container.BeginLifetimeScope())
             {
-                var userId = "c2e5bb33-0d4c-49c4-8204-09246b23352c";
-
+                //var userId = "c2e5bb33-0d4c-49c4-8204-09246b23352c";
+                var userId = "32c72971-c975-41dc-8487-12f372a2da53";
                 var refreshProcess = scope.Resolve<RefreshProcess>();
                 refreshProcess.Execute(userId);
             }
         }
 
-        static private void SimulateRefreshServiceFor1000Users(IContainer container)
+        private static void SimulateRefreshServiceFor1000Users(IContainer container)
         {
             int artificialUserId = 1000;
             while (artificialUserId < 2000)
@@ -63,9 +79,7 @@ namespace ProfitWise.Batch
                 artificialUserId++;
             }
         }
-
-
-
+        
         // *** SAVE FOR NOW *** //
         private static void HangFireStuff()
         {

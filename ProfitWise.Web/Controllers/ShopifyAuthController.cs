@@ -8,6 +8,7 @@ using OAuthSandbox.Controllers;
 using OAuthSandbox.Models;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Controllers
@@ -17,13 +18,13 @@ namespace ProfitWise.Web.Controllers
         private readonly IAuthenticationManager _authenticationManager;
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
-        private readonly ShopifyCredentialService _credentialService;
+        private readonly IShopifyCredentialService _credentialService;
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
                 ApplicationUserManager userManager,
-                ApplicationSignInManager signInManager, 
-                ShopifyCredentialService credentialService)
+                ApplicationSignInManager signInManager,
+                IShopifyCredentialService credentialService)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;

@@ -5,6 +5,7 @@ using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Interfaces;
 using Push.Shopify.Repositories;
+using Push.Shopify.TimeZone;
 using Push.Utilities.CastleProxies;
 
 
@@ -39,6 +40,9 @@ namespace Push.Shopify
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ApiRepositoryFactory>();
+
+            // Chicago, by default!
+            builder.Register(x => new TimeZoneTranslator(6, 0));
         }        
     }
 }

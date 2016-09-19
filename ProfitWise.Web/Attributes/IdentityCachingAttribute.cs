@@ -7,6 +7,7 @@ using ProfitWise.Web.Controllers;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Attributes
@@ -18,7 +19,7 @@ namespace ProfitWise.Web.Attributes
         {
             var roleManager = DependencyResolver.Current.GetService<ApplicationRoleManager>();
             var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
-            var credentialService = DependencyResolver.Current.GetService<ShopifyCredentialService>();
+            var credentialService = DependencyResolver.Current.GetService<IShopifyCredentialService>();
 
             // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
