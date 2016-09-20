@@ -5,7 +5,6 @@ using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Interfaces;
 using Push.Shopify.Repositories;
-using Push.Shopify.TimeZone;
 using Push.Utilities.CastleProxies;
 
 

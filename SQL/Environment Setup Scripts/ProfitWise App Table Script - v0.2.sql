@@ -24,7 +24,7 @@ CREATE TABLE `profitwiseshop` (
   `ShopifyShopId` BIGINT NULL,
   `CurrencyId` INT NULL,
   `StartingDateForOrders` TIMESTAMP NULL,
-  `ShopTimeZone` varchar(50) NULL,
+  `TimeZone` varchar(50) NULL,
   PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
@@ -96,15 +96,6 @@ CREATE TABLE `profitwisebatchstate` (
   `OrderDatasetEnd` TIMESTAMP NULL,
    PRIMARY KEY (`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-
-UPDATE profitwiseshop SET StartingDateForOrders = '2016-01-01';
-
-
-
-
 
 
 

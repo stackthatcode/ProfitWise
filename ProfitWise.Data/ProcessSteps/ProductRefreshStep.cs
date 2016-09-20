@@ -21,6 +21,11 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _configuration;
         private readonly PwShopRepository _shopRepository;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
+
+
+        // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
+        public const int MinutesFudgeFactor = 75;
 
 
         public ProductRefreshStep(
@@ -28,13 +33,15 @@ namespace ProfitWise.Data.ProcessSteps
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration configuration,
-                PwShopRepository shopRepository)
+                PwShopRepository shopRepository,
+                TimeZoneTranslator timeZoneTranslator)
         {
             _pushLogger = logger;
             _apiRepositoryFactory = apiRepositoryFactory;
             _multitenantFactory = multitenantFactory;
             _configuration = configuration;
             _shopRepository = shopRepository;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
 
@@ -71,10 +78,17 @@ namespace ProfitWise.Data.ProcessSteps
                 ShopifyCredentials shopCredentials, PwBatchState batchState)
         {
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
-            var filter = new ProductFilter()
+            var filter = new ProductFilter();
+
+            if (batchState.ProductsLastUpdated != null)
             {
-                UpdatedAtMin = batchState.ProductsLastUpdated
+                var lastUpdatedInShopifyTime =
+                    _timeZoneTranslator.TranslateToTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
+                        .AddMinutes(-MinutesFudgeFactor);
+
+                filter.UpdatedAtMin = lastUpdatedInShopifyTime;
             };
+
             var count = productApiRepository.RetrieveCount(filter);
 
             _pushLogger.Info($"Executing Refresh for {count} Products");
@@ -216,12 +230,18 @@ namespace ProfitWise.Data.ProcessSteps
                     variant.PwVariantId, importedVariant.Price, importedVariant.Price, inventory);
         }
 
-        public virtual IList<Event> RetrieveAllProductDestroyEvents(ShopifyCredentials shopCredentials, DateTime fromDate)
+        public virtual IList<Event> RetrieveAllProductDestroyEvents(
+                                ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDate)
         {
             var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
+
+            var fromDateInShopify = 
+                _timeZoneTranslator.TranslateToTimeZone(fromDate, shop.TimeZone)
+                                .AddMinutes(-MinutesFudgeFactor);
+
             var filter = new EventFilter()
             {
-                CreatedAtMin = fromDate,
+                CreatedAtMin = fromDateInShopify,
                 Verb = EventVerbs.Destroy,
                 Filter = EventTypes.Product
             };
@@ -251,7 +271,7 @@ namespace ProfitWise.Data.ProcessSteps
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var catalogService = this._multitenantFactory.MakeCatalogBuilderService(shop);
 
-            var events = RetrieveAllProductDestroyEvents(shopCredentials, fromDateForDestroy);
+            var events = RetrieveAllProductDestroyEvents(shopCredentials, shop, fromDateForDestroy);
 
             foreach (var @event in events)
             {

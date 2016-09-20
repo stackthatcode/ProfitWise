@@ -3,6 +3,15 @@ USE ProfitWise;
 SET SQL_SAFE_UPDATES = 0;
 
 
+/** For Testing Purposes.. ***/
+UPDATE profitwiseshop SET StartingDateForOrders = '2016-01-01';
+
+
+
+
+
+
+
 SELECT * FROM aspnetuserclaims;
 
 

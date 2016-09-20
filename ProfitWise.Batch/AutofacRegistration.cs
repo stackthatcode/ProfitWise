@@ -14,7 +14,6 @@ using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.HttpClient;
-using Push.Shopify.TimeZone;
 using Push.Utilities.CastleProxies;
 using Push.Utilities.Helpers;
 
