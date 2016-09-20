@@ -109,6 +109,8 @@
     <Compile Include="Repositories\ShopifyOrderRepository.cs" />
     <Compile Include="Repositories\PwShopRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\TimeZoneExtensions.cs" />
+    <Compile Include="Services\TimeZoneTranslator.cs" />
     <Compile Include="Utility\ShopifyOrderDiagnosticShim.cs" />
   </ItemGroup>
   <ItemGroup>

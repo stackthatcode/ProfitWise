@@ -18,6 +18,7 @@ namespace ProfitWise.Data.ProcessSteps
     {
         private readonly IPushLogger _pushLogger;
         private readonly ShopifyOrderDiagnosticShim _diagnostic;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
@@ -30,11 +31,14 @@ namespace ProfitWise.Data.ProcessSteps
                 RefreshServiceConfiguration refreshServiceConfiguration,
                 PwShopRepository shopRepository,
                 IPushLogger logger,
-                ShopifyOrderDiagnosticShim diagnostic)
+                ShopifyOrderDiagnosticShim diagnostic,
+                TimeZoneTranslator timeZoneTranslator
+            )
 
         {
             _pushLogger = logger;
             _diagnostic = diagnostic;
+            _timeZoneTranslator = timeZoneTranslator;
             _apiRepositoryFactory = apiRepositoryFactory;
             _multitenantFactory = multitenantFactory;
             _refreshServiceConfiguration = refreshServiceConfiguration;
@@ -68,6 +72,9 @@ namespace ProfitWise.Data.ProcessSteps
             RoutineRefreshWorker(shopCredentials, shop);
         }
 
+        // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
+        public const int MinutesFudgeFactor = 75; 
+
         private void RoutineRefreshWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
             _pushLogger.Info($"Routine Order refresh for {shop.PwShopId}");
@@ -75,10 +82,17 @@ namespace ProfitWise.Data.ProcessSteps
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
+            var updatedAtMinMachineTime = preBatchState.OrderDatasetEnd.Value;
+            
+            var updatedAtMinShopifyTime = 
+                    _timeZoneTranslator.TranslateToTimeZone(updatedAtMinMachineTime, shop.TimeZone)
+                            .AddMinutes(-MinutesFudgeFactor);
+
+
             var updatefilter = 
                 new OrderFilter()
                 {
-                    UpdatedAtMin = preBatchState.OrderDatasetEnd.Value.AddMinutes(-15)
+                    UpdatedAtMin = updatedAtMinShopifyTime
                 }
                 .OrderByUpdateAtAscending();
 
@@ -99,10 +113,21 @@ namespace ProfitWise.Data.ProcessSteps
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
+            var newStartingDateMachineTime = shop.StartingDateForOrders.Value;
+            var oldStartDateMachineTime = preBatchState.OrderDatasetStart.Value;
+
+            var newStartingDateShopifyTime =
+                _timeZoneTranslator.TranslateToTimeZone(newStartingDateMachineTime, shop.TimeZone)
+                    .AddMinutes(-MinutesFudgeFactor);
+
+            var oldStartDateShopifyTime =
+                    _timeZoneTranslator.TranslateToTimeZone(oldStartDateMachineTime, shop.TimeZone)
+                    .AddMinutes(MinutesFudgeFactor);
+
             var filter = new OrderFilter()
                 {
-                    CreatedAtMin = shop.StartingDateForOrders,
-                    CreatedAtMax = preBatchState.OrderDatasetStart,
+                    CreatedAtMin = newStartingDateShopifyTime,
+                    CreatedAtMax = oldStartDateShopifyTime,
                 }
                 .OrderByCreatedAtDescending();
 
@@ -112,7 +137,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             // When updating Batch State, simply move Start to Preferences' new Start
             var postBatchState = batchStateRepository.Retrieve();
-            postBatchState.OrderDatasetStart = shop.StartingDateForOrders;
+            postBatchState.OrderDatasetStart = newStartingDateMachineTime;
             batchStateRepository.Update(postBatchState);
             _pushLogger.Info("Complete: " + postBatchState);
         }
@@ -124,10 +149,19 @@ namespace ProfitWise.Data.ProcessSteps
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
+
+            var createdAtMinMachineTime = shop.StartingDateForOrders.Value;
+
+            var createdAtMinShopifyTime =
+                    _timeZoneTranslator.TranslateToTimeZone(createdAtMinMachineTime, shop.TimeZone)
+                            .AddMinutes(-MinutesFudgeFactor);
+
+
+
             var filter = new OrderFilter()
                 {
-                    CreatedAtMin = shop.StartingDateForOrders
-                }
+                    CreatedAtMin = createdAtMinShopifyTime
+            }
                 .OrderByCreatedAtDescending();
 
             var end = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities

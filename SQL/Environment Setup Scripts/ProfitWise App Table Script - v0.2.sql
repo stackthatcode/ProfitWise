@@ -24,6 +24,7 @@ CREATE TABLE `profitwiseshop` (
   `ShopifyShopId` BIGINT NULL,
   `CurrencyId` INT NULL,
   `StartingDateForOrders` TIMESTAMP NULL,
+  `ShopTimeZone` varchar(50) NULL,
   PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 

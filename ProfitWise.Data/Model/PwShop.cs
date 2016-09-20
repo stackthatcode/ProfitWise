@@ -10,5 +10,6 @@ namespace ProfitWise.Data.Model
         public long ShopifyShopId { get; set; }
         public int CurrencyId { get; set; }
         public DateTime? StartingDateForOrders { get; set; }
+        public string TimeZone { get; set; }
     }
 }

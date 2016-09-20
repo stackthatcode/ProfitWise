@@ -41,8 +41,6 @@ namespace Push.Shopify
 
             builder.RegisterType<ApiRepositoryFactory>();
 
-            // Chicago, by default!
-            builder.Register(x => new TimeZoneTranslator(6, 0));
         }        
     }
 }

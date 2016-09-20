@@ -37,6 +37,7 @@ namespace Push.Shopify.Repositories
             var output = new Shop();
             output.Id = parent.shop.id;
             output.Currency = parent.shop.currency;
+            output.TimeZone = parent.shop.timezone;
             return output;
         }
         

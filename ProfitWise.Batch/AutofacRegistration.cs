@@ -8,6 +8,7 @@ using Autofac;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.ProcessSteps;
+using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Utilities.Helpers;

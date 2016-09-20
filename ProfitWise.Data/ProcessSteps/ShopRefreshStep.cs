@@ -56,7 +56,8 @@ namespace ProfitWise.Data.ProcessSteps
                     ShopOwnerUserId = shopifyCredentials.ShopOwnerUserId,
                     CurrencyId = shopCurrencyId,
                     ShopifyShopId = shopFromShopify.Id,
-                    StartingDateForOrders = DefaultStartDateForOrders, // 
+                    StartingDateForOrders = DefaultStartDateForOrders, 
+                    TimeZone = shopFromShopify.TimeZone,
                 };
                 newShop.PwShopId = _shopDataRepository.Insert(newShop);
 
@@ -76,8 +77,10 @@ namespace ProfitWise.Data.ProcessSteps
             else
             {
                 shop.CurrencyId = shopCurrencyId;
-                _pushLogger.Info($"Updating Shop Currency - UserId: {shop.ShopOwnerUserId}, CurrencyId: {shop.CurrencyId}");                
-                _shopDataRepository.UpdateShopCurrency(shop);
+                shop.TimeZone = shopFromShopify.TimeZone;
+                _pushLogger.Info($"Updating Shop - UserId: " +
+                        $"{shop.ShopOwnerUserId}, CurrencyId: {shop.CurrencyId}, TimeZone: {shop.TimeZone}");
+                _shopDataRepository.Update(shop);
                 return shop.PwShopId;
             }
         }

@@ -7,6 +7,7 @@ using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.CastleProxies;
+using Push.Shopify.TimeZone;
 using Push.Utilities.CastleProxies;
 
 namespace ProfitWise.Data
@@ -46,6 +47,9 @@ namespace ProfitWise.Data
             builder.RegisterType<FixerApiConfig>();
             builder.RegisterType<FixerApiRepository>();
             builder.RegisterType<FixerApiRequestFactory>();
+
+            // Chicago, by default!
+            builder.Register(x => new TimeZoneTranslator(6, 0));
         }
     }
 }

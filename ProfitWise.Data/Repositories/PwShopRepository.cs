@@ -33,17 +33,20 @@ namespace ProfitWise.Data.Repositories
         public int Insert(PwShop shop)
         {
             var query =
-                @"INSERT INTO profitwiseshop (ShopOwnerUserId, ShopifyShopId, CurrencyId, StartingDateForOrders) 
-                VALUES (@ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @StartingDateForOrders);
+                @"INSERT INTO profitwiseshop (ShopOwnerUserId, ShopifyShopId, CurrencyId, StartingDateForOrders, TimeZone) 
+                VALUES (@ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @StartingDateForOrders, @TimeZone);
                 SELECT LAST_INSERT_ID();";
             return _connection
                 .Query<int>(query, shop)
                 .First();
         }
 
-        public void UpdateShopCurrency(PwShop shop)
+        public void Update(PwShop shop)
         {
-            var query = @"UPDATE profitwiseshop SET CurrencyId = @CurrencyId WHERE PwShopId = @PwShopId";
+            var query = @"UPDATE profitwiseshop 
+                        SET CurrencyId = @CurrencyId,
+                            TimeZone = @TimeZone
+                        WHERE PwShopId = @PwShopId";
             _connection.Execute(query, shop);
         }
     }

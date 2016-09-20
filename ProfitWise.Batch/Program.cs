@@ -3,6 +3,7 @@ using System.Configuration;
 using Autofac;
 using Hangfire;
 using ProfitWise.Data.Processes;
+using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.TimeZone;
@@ -28,11 +29,11 @@ namespace ProfitWise.Batch
         {
             var translator = container.Resolve<TimeZoneTranslator>();
             var result =
-                translator.TranslateToShopifyTimeZone(
+                translator.TranslateToTimeZone(
                     new DateTime(2016, 9, 9, 6, 30, 0),
                     "(GMT-06:00) Central Time (US & Canada)");
             var result2 =
-                translator.TranslateToShopifyTimeZone(
+                translator.TranslateToTimeZone(
                     new DateTime(2016, 9, 9, 6, 30, 0),
                     "(GMT-05:00) America/New_York");
         }
