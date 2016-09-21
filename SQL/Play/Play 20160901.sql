@@ -3,16 +3,13 @@ USE ProfitWise;
 SET SQL_SAFE_UPDATES = 0;
 
 
-/** For Testing Purposes.. ***/
-UPDATE profitwiseshop SET StartingDateForOrders = '2016-01-01';
-
-
-
-
-
-
+SELECT * FROM aspnetusers;
 
 SELECT * FROM aspnetuserclaims;
+
+SELECT * FROM aspnetuserlogins;
+
+
 
 
 
@@ -20,12 +17,11 @@ SELECT COUNT(*) FROM profitwiseshop;
 
 SELECT @@system_time_zone;
 
-SET @@system_time_zone = 'Eastern Daylight Time';
-
-
 SELECT * FROM shopifyorder;
 
 SELECT * FROM shopifyorderlineitem;
+
+SELECT @@time_zone;
 
 
 

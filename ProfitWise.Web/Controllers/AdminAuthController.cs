@@ -1,12 +1,9 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
 using OAuthSandbox.Models;
-using ProfitWise.Web.Plumbing;
 using Push.Utilities.Helpers;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
@@ -33,7 +30,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Login(string returnUrl)
         {
             // NOTE - as of 9/19/2016 this is the whitelisted URL
-            returnUrl = "https://gracie2/ProfitWise/ShopifyAuth/EmbeddedAppLogin";
+            // returnUrl = "https://gracie2/ProfitWise/ShopifyAuth/EmbeddedAppLogin";
 
             ViewBag.ReturnUrl = returnUrl;            
             return View();
@@ -94,6 +91,7 @@ namespace ProfitWise.Web.Controllers
         {
             return View();
         }
+
 
         // POST: /AdminAuth/ForgotPassword
         [HttpPost]

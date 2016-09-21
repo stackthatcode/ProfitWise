@@ -33,7 +33,7 @@ namespace ProfitWise.DataMocks
             throw new NotImplementedException();
         }
 
-        public void SetAdminImpersonation(string userId, string shopOwnerId)
+        public void SetAdminImpersonation(string adminUserId, string shopOwnerId)
         {
             throw new NotImplementedException();
         }

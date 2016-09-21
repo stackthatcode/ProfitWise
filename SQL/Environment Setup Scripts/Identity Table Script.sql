@@ -1,6 +1,14 @@
 USE profitwise;
 
 
+DROP TABLE IF EXISTS `aspnetuserclaims`; 
+DROP TABLE IF EXISTS `aspnetuserlogins`; 
+DROP TABLE IF EXISTS `aspnetusers`; 
+DROP TABLE IF EXISTS `aspnetuserroles`; 
+DROP TABLE IF EXISTS `aspnetroles`; 
+
+
+
 
 --
 -- Table structure for table `aspnetroles`

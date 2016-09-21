@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
@@ -6,6 +7,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OAuthSandbox.Controllers;
 using OAuthSandbox.Models;
+using Push.Foundation.Utilities.Helpers;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
@@ -19,33 +22,32 @@ namespace ProfitWise.Web.Controllers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IShopifyCredentialService _credentialService;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IPushLogger _logger;
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
                 ApplicationUserManager userManager,
                 ApplicationSignInManager signInManager,
-                IShopifyCredentialService credentialService)
+                IShopifyCredentialService credentialService,
+                ApplicationDbContext dbContext,
+                IPushLogger logger)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _credentialService = credentialService;
+            _dbContext = dbContext;
+            _logger = logger;
         }
 
 
         // GET: /ShopifyAuth/Index
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult Index(string returnUrl)
+        public ActionResult UnauthorizedAccess(string returnUrl)
         {
             return View(new ShopifyAuthIndexModel {  ReturnUrl =  returnUrl});
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult Refresh(string returnUrl)
-        {
-            return View(new ShopifyAuthIndexModel { ReturnUrl = returnUrl });
         }
 
 
@@ -60,13 +62,12 @@ namespace ProfitWise.Web.Controllers
                 Url.Action("ExternalLoginCallback", "ShopifyAuth", new { ReturnUrl = returnUrl }), null, correctedShopName);
         }
 
-
-
         // POST: /ShopifyAuth/ExternalLogin
+        // TODO => Remove this method
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string shopname, string returnUrl)
+        public ActionResult ExternalLogin(string shopname, string returnUrl)
         {
             // Request a redirect to the external login provider
             return new ShopifyChallengeResult(
@@ -77,123 +78,99 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
+            // External Login Info is contained in the OWIN-issued cookie, and has information from the 
+            // external call to the Shop's OAuth service.
             var externalLoginInfo = await _authenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
-                // TODO => need to figure out how to deal with this...
-                return RedirectToAction("Index", "ShopifyAuth");
+                _logger.Warn("Unable to retrieve ExternalLoginInfo from Authentication Manager");
+                // Looks like the first cookie died, was corrupted, etc. We'll ask the User to refresh their browser.
+                return View("ExternalLoginFailure");
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
-            switch (result)
+            var externalLoginCookieResult =
+                await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
+            if (externalLoginCookieResult == SignInStatus.Success)
             {
-                case SignInStatus.Success:
-                    await CopyIdentityClaimsToPersistence(externalLoginInfo);
-
-                    return RedirectToLocal(returnUrl);
-
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-
-                // For 2-factor enabled authentication - disabled for now
-                //case SignInStatus.RequiresVerification: 
-                //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-
-                // SignInManager returns SignInStatus.Failure if an Account does not exist for ExternalLoginInfo
-                case SignInStatus.Failure:
-                default:
-                    // If the user does not have an account, then prompt the user to create an account
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = externalLoginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = externalLoginInfo.Email });
+                _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
+                // The User exists already - good! Even so, copy the latest set of Claims to Persistence
+                await RefreshIdentityClaimsToPersistence(externalLoginInfo);
+                return RedirectToLocal(returnUrl);
             }
+
+            return await CreateNewUserAndSignIn(returnUrl, externalLoginInfo);
         }
 
-        // POST: /ShopifyAuth/ExternalLoginConfirmation
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        private async Task<ActionResult> CreateNewUserAndSignIn(string returnUrl, ExternalLoginInfo externalLoginInfo)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Manage");
-            }
+            // It appears that the User does not exist yet
+            var email = externalLoginInfo.Email;
+            var userName = externalLoginInfo.DefaultUserName;
 
-            ViewBag.ReturnUrl = returnUrl;
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            ApplicationUser user = null;
 
-            // Get the information about the user from the external login provider
-            var externalLoginInfo = await _authenticationManager.GetExternalLoginInfoAsync();
-            if (externalLoginInfo == null)
+            using (var transaction = _dbContext.Database.Connection.BeginTransaction())
             {
-                return View("ExternalLoginFailure");
-            }
-            
-            // User does not exist in our System? 
-            ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
+                user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
 
-            // If not, create a new Application User
-            if (user == null)
-            {
-                user = new ApplicationUser
+                // If User doesn't exist, create a new one
+                if (user == null)
                 {
-                    UserName = externalLoginInfo.DefaultUserName,
-                    Email = model.Email
-                };
-                
-                var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded)
-                {
-                    this.AddErrors(result);
-                    return View(model);
+                    user = new ApplicationUser {UserName = userName, Email = email,};
+
+                    var createUserResult = await _userManager.CreateAsync(user);
+                    if (!createUserResult.Succeeded)
+                    {
+                        _logger.Error(
+                            $"Unable to create new User for {email} / {userName} - " +
+                            $"{createUserResult.Errors.StringJoin(";")}");
+                        return View("ExternalLoginFailure");
+                    }
+                    _logger.Info($"Created new User for {email} / {userName}");
+
+                    var addToRoleResult = await _userManager.AddToRoleAsync(user.Id, SecurityConfig.UserRole);
+                    if (!addToRoleResult.Succeeded)
+                    {
+                        _logger.Error(
+                            $"Unable to add User {email} / {userName} to {SecurityConfig.UserRole} - " +
+                            $"{createUserResult.Errors.StringJoin(";")}");
+                        return View("ExternalLoginFailure");
+                    }
+                    _logger.Info($"Added User {email} / {userName} to {SecurityConfig.UserRole}");
+
+                    var addLoginResult = await _userManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
+                    if (!addLoginResult.Succeeded)
+                    {
+                        _logger.Error(
+                            $"Unable to add Login for User {email} / {userName} - " +
+                            $"{addLoginResult.Errors.StringJoin(";")}");
+                        return View("ExternalLoginFailure");
+                    }
+                    _logger.Info($"Added Login for User {email} / {userName}");
                 }
 
-                _userManager.AddToRole(user.Id, SecurityConfig.UserRole);
+                // Save the Shopify Domain and Access Token to Persistence
+                await RefreshIdentityClaimsToPersistence(externalLoginInfo);
+
+                transaction.Commit();
             }
-
-            // Do we have this Login already?
-            if (user.Logins
-                    .FirstOrDefault(x =>    
-                            x.LoginProvider == externalLoginInfo.Login.LoginProvider &&
-                            x.ProviderKey == externalLoginInfo.Login.ProviderKey) == null)
-            {
-                var result = await _userManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
-                if (!result.Succeeded)
-                {
-                    this.AddErrors(result);
-                    return View(model);
-                }
-            }
-
-
-            // Save the Shopify Domain and Access Token to Persistence
-            await CopyIdentityClaimsToPersistence(externalLoginInfo);
 
             // Finally Sign-in Manager
             await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
             return RedirectToLocal(returnUrl);
         }
 
-        private async Task CopyIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
+
+        private async Task RefreshIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
-            var new_domain_claim =
-                externalLoginInfo
-                    .ExternalIdentity.Claims.FirstOrDefault(x => x.Type == SecurityConfig.ShopifyDomainClaimExternal);
+            var newDomainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
+            var newAccessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
 
-            var new_access_token_claim =
-                externalLoginInfo.ExternalIdentity.Claims.FirstOrDefault(
-                    x => x.Type == SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
-
-            _credentialService.SetUserCredentials(user.Id, new_domain_claim.Value, new_access_token_claim.Value);
+            _credentialService.SetUserCredentials(user.Id, newDomainClaim.Value, newAccessTokenClaim.Value);
+            _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
-
 
 
         // POST: /ShopifyAuth/LogOff
@@ -202,7 +179,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult LogOff()
         {
             _authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Refresh", "ShopifyAuth");
+            return RedirectToAction("UnauthorizedAccess", "ShopifyAuth");
         }
 
 

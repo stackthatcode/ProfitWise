@@ -337,7 +337,6 @@
     <Content Include="Views\UserAuxiliary\Contact.cshtml" />
     <Content Include="Views\AdminAuth\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\AdminAuth\ConfirmEmail.cshtml" />
-    <Content Include="Views\ShopifyAuth\ExternalLoginConfirmation.cshtml" />
     <Content Include="Views\ShopifyAuth\ExternalLoginFailure.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPassword.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPasswordConfirmation.cshtml" />
@@ -363,7 +362,7 @@
     <Content Include="Views\AdminHome\Users.cshtml" />
     <Content Include="Views\AdminAuth\_ViewStart.cshtml" />
     <Content Include="Views\AdminHome\_ViewStart.cshtml" />
-    <Content Include="Views\ShopifyAuth\Refresh.cshtml" />
+    <Content Include="Views\ShopifyAuth\UnauthorizedAccess.cshtml" />
     <Content Include="Views\UserMain\Reports.cshtml" />
     <Content Include="Views\UserMain\Preferences.cshtml" />
     <Content Include="Views\UserMain\EditProductCogs.cshtml" />

@@ -146,7 +146,9 @@
     <Compile Include="Identity\ApplicationRoleManager.cs" />
     <Compile Include="Identity\ApplicationSignInManager.cs" />
     <Compile Include="Identity\ApplicationUserManager.cs" />
+    <Compile Include="Identity\ClaimsRepository.cs" />
     <Compile Include="Identity\EmailService.cs" />
+    <Compile Include="Identity\IdentityExtensions.cs" />
     <Compile Include="Identity\MachineKeyProtectionProvider.cs" />
     <Compile Include="Identity\SmsService.cs" />
     <Compile Include="Identity\ApplicationUser.cs" />

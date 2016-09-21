@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 using IEncryptionService = Push.Foundation.Web.Security.IEncryptionService;
@@ -13,11 +14,19 @@ namespace Push.Foundation.Web.Shopify
     {
         private readonly ApplicationUserManager _userManager;
         private readonly IEncryptionService _encryptionService;
-        
-        public ShopifyCredentialService(ApplicationUserManager userManager, IEncryptionService encryptionService)
+        private readonly IPushLogger _pushLogger;
+        private readonly ClaimsRepository _claimsRepository;
+
+        public ShopifyCredentialService(
+                ApplicationUserManager userManager, 
+                IEncryptionService encryptionService,
+                IPushLogger pushLogger,
+                ClaimsRepository claimsRepository)
         {
             _userManager = userManager;
             _encryptionService = encryptionService;
+            _pushLogger = pushLogger;
+            _claimsRepository = claimsRepository;
         }
 
 
@@ -29,7 +38,7 @@ namespace Push.Foundation.Web.Shopify
 
             if (isCurrentUserIsAdmin)
             {
-                shopUserId = RetrieveClaimValue(currentUserId, SecurityConfig.UserImpersonationClaim);
+                shopUserId = _claimsRepository.RetrieveClaimValue(currentUserId, SecurityConfig.UserImpersonationClaim);
 
                 if (shopUserId == null)
                 {
@@ -45,10 +54,9 @@ namespace Push.Foundation.Web.Shopify
                 shopUserId = currentUserId;
             }
 
-            var shop_name =
-                    RetrieveClaimValue(shopUserId, SecurityConfig.ShopifyDomainClaim);
+            var shopName = _claimsRepository.RetrieveClaimValue(shopUserId, SecurityConfig.ShopifyDomainClaim);
 
-            if (shop_name == null)
+            if (shopName == null)
             {
                 return new CredentialServiceResult()
                 {
@@ -57,10 +65,10 @@ namespace Push.Foundation.Web.Shopify
                 };
             }
 
-            var access_token_encrypted =
-                    RetrieveClaimValue(shopUserId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
+            var accessTokenEncrypted =
+                    _claimsRepository.RetrieveClaimValue(shopUserId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
 
-            if (access_token_encrypted == null)
+            if (accessTokenEncrypted == null)
             {
                 return new CredentialServiceResult
                 {
@@ -69,11 +77,11 @@ namespace Push.Foundation.Web.Shopify
                 };
             }
 
-            var access_token = "";
+            var accessToken = "";
 
             try
             {
-                access_token = _encryptionService.Decrypt(access_token_encrypted);
+                accessToken = _encryptionService.Decrypt(accessTokenEncrypted);
             }
             catch(Exception e)
             {
@@ -85,81 +93,41 @@ namespace Push.Foundation.Web.Shopify
                 };
             }
 
-
             return new CredentialServiceResult
             {
                 ShopOwnerUserId = shopUserId,
                 Success = true,
-                AccessToken = access_token,
-                ShopDomain = shop_name,
+                AccessToken = accessToken,
+                ShopDomain = shopName,
                 Impersonated = shopUserId != currentUserId,
             };
         }
 
         public void ClearUserCredentials(string userId)
         {
-            RemoveClaim(userId, SecurityConfig.ShopifyDomainClaim);
-            RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
+            _claimsRepository.RemoveClaim(userId, SecurityConfig.ShopifyDomainClaim);
+            _claimsRepository.RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
         }
 
         public void ClearAdminImpersonation(string userId)
         {
-            RemoveClaim(userId, SecurityConfig.UserImpersonationClaim);
+            _claimsRepository.RemoveClaim(userId, SecurityConfig.UserImpersonationClaim);
         }
 
         public void SetUserCredentials(string userId, string shopName, string unencryptedAccessToken)
         {
-            RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
-            RemoveClaim(userId, SecurityConfig.ShopifyDomainClaim);
+            _claimsRepository.RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
+            _claimsRepository.RemoveClaim(userId, SecurityConfig.ShopifyDomainClaim);
 
-            AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, _encryptionService.Encrypt(unencryptedAccessToken));
-            AddClaim(userId, SecurityConfig.ShopifyDomainClaim, shopName);
+            _claimsRepository.AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, _encryptionService.Encrypt(unencryptedAccessToken));
+            _claimsRepository.AddClaim(userId, SecurityConfig.ShopifyDomainClaim, shopName);
         }
 
-        public void SetAdminImpersonation(string userId, string shopOwnerId)
+        public void SetAdminImpersonation(string adminUserId, string shopOwnerId)
         {
-            RemoveClaim(userId, SecurityConfig.UserImpersonationClaim);
-            AddClaim(userId, SecurityConfig.UserImpersonationClaim, shopOwnerId);
+            _claimsRepository.RemoveClaim(adminUserId, SecurityConfig.UserImpersonationClaim);
+            _claimsRepository.AddClaim(adminUserId, SecurityConfig.UserImpersonationClaim, shopOwnerId);
         }
-
-        // Claim Helper Functions
-
-        public string RetrieveClaimValue(string userId, string claimId)
-        {
-            var claims = _userManager.GetClaims(userId);
-            var claim = claims.FirstOrDefault(x => x.Type == claimId);
-            return claim == null ? null : claim.Value;
-        }
-
-        public void RemoveClaim(string userId, string claimId)
-        {
-            var claims = _userManager.GetClaims(userId);
-            var claim = claims.FirstOrDefault(x => x.Type == claimId);
-            if (claim != null)
-            {
-                var result = _userManager.RemoveClaim(userId, claim);
-                if (result.Succeeded == false)
-                {
-                    var errors = String.Join(Environment.NewLine, result.Errors);
-                    var message = "UserManager.RemoveClaim failure: " + Environment.NewLine + errors;
-                    throw new InvalidOperationException(message);
-                }
-            }
-        }
-
-        public void AddClaim(string userId, string claimId, string claimValue)
-        {
-            var result = _userManager.AddClaim(userId, new Claim(claimId, claimValue));
-
-            if (result.Succeeded == false)
-            {
-                var errors = String.Join(Environment.NewLine, result.Errors);
-                var message = "UserManager.AddClaim failure: " + Environment.NewLine + errors;
-                throw new InvalidOperationException(message);
-            }
-        }
-
-
     }
 }
 

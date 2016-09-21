@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using Microsoft.Owin.Security;
 
-namespace OAuthSandbox.Controllers
+namespace ProfitWise.Web.Controllers
 {
     internal class ShopifyChallengeResult : HttpUnauthorizedResult
     {
@@ -14,10 +11,15 @@ namespace OAuthSandbox.Controllers
         private const string ShopNameKey = "ShopName";
         private const string ShopifyOwinProviderName = "Shopify";
 
-        public ShopifyChallengeResult(string redirectUri)
-            : this(redirectUri, null, null)
+        public string RedirectUri { get; set; }
+        public string UserId { get; set; }
+        public string ShopName { get; set; }
+
+
+        public ShopifyChallengeResult(string redirectUri) : this(redirectUri, null, null)
         {
         }
+
         public ShopifyChallengeResult(string redirectUri, string userId, string shopName)
         {
             RedirectUri = redirectUri;
@@ -25,14 +27,10 @@ namespace OAuthSandbox.Controllers
             ShopName = shopName;
         }
 
-        public string RedirectUri { get; set; }
-        public string UserId { get; set; }
-        public string ShopName { get; set; }
-
-
         public override void ExecuteResult(ControllerContext context)
         {
             var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
+
             if (UserId != null)
             {
                 properties.Dictionary[XsrfKey] = UserId;
@@ -42,7 +40,12 @@ namespace OAuthSandbox.Controllers
                 properties.Dictionary[ShopNameKey] = this.ShopName;
             }
 
-            context.HttpContext.GetOwinContext().Authentication.Challenge(properties, ShopifyOwinProviderName);
+            var authenticationManager = context.HttpContext
+                .GetOwinContext()
+                .Authentication;
+            if (authenticationManager != null)
+                authenticationManager
+                    .Challenge(properties, ShopifyOwinProviderName);
         }
     }
 }
