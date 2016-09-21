@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -14,6 +15,7 @@ using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Attributes
 {
+    [Obsolete("Not sure if this guy is still necessary, esp. since we're caching credentials")]
     public class TokenRequiredAttribute : AuthorizeAttribute
     {
         public string CurrentUserId => HttpContext.Current.ExtractUserId();
@@ -37,7 +39,7 @@ namespace ProfitWise.Web.Attributes
             {
                 authenticationManager.SignOut();
 
-                var route = RouteValueDictionaryExtensions.FromController<ShopifyAuthController>(x => x.Index(null));
+                var route = RouteValueDictionaryExtensions.FromController<ShopifyAuthController>(x => x.UnauthorizedAccess(null));
                 filterContext.Result = new RedirectToRouteResult(route);
                 return;
             }
@@ -92,7 +94,8 @@ namespace ProfitWise.Web.Attributes
                 shopifyCredentialService.ClearUserCredentials(CurrentUserId);
 
                 // Send them over to the Shopify Authentication Screen for Users
-                var route = RouteValueDictionaryExtensions.FromController<ShopifyAuthController>(x => x.Index(null));
+                var route = RouteValueDictionaryExtensions
+                                .FromController<ShopifyAuthController>(x => x.UnauthorizedAccess(null));
                 filterContext.Result = new RedirectToRouteResult(route);
             }
         }        

@@ -5,10 +5,10 @@ using System.Web.Mvc;
 using OAuthSandbox.Attributes;
 using ProfitWise.Web.Controllers;
 using ProfitWise.Web.Plumbing;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
-using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Attributes
 {
@@ -20,6 +20,8 @@ namespace ProfitWise.Web.Attributes
             var roleManager = DependencyResolver.Current.GetService<ApplicationRoleManager>();
             var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
             var credentialService = DependencyResolver.Current.GetService<IShopifyCredentialService>();
+            var logger = DependencyResolver.Current.GetService<IPushLogger>();
+
 
             // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
@@ -58,10 +60,12 @@ namespace ProfitWise.Web.Attributes
                 }
                 else
                 {
+
                     var authenticationManager = filterContext.HttpContext.GetOwinContext().Authentication;
                     authenticationManager.SignOut();
 
-                    var route = RouteValueDictionaryExtensions.FromController<ShopifyAuthController>(x => x.Index(null));
+                    var route = RouteValueDictionaryExtensions
+                        .FromController<ShopifyAuthController>(x => x.UnauthorizedAccess(null));
                     filterContext.Result = new RedirectToRouteResult(route);
                     return;
                 }

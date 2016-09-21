@@ -25,12 +25,14 @@ namespace Push.Foundation.Web
             builder
                 .RegisterType<ApplicationDbContext>()
                 .As<DbContext>()
-                .As<ApplicationDbContext>();
+                .As<ApplicationDbContext>()
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<ApplicationRoleManager>();
             builder.RegisterType<ApplicationUserManager>();
             builder.RegisterType<ApplicationSignInManager>();
-            
+            builder.RegisterType<ClaimsRepository>();
+
             builder
                 .RegisterType<UserStore<ApplicationUser>>()
                 .As<IUserStore<ApplicationUser>>()

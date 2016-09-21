@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -47,13 +48,18 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult UnauthorizedAccess(string returnUrl)
         {
-            return View(new ShopifyAuthIndexModel {  ReturnUrl =  returnUrl});
+            return View(new UnauthorizedAccessModel {  ReturnUrl =  returnUrl});
         }
 
-
-        [HttpGet]
+        [HttpPost]
         [AllowAnonymous]
-        public ActionResult EmbeddedAppLogin(string shop, string returnUrl)
+        public ActionResult UnauthorizedAccess(string returnUrl, string shopname)
+        {
+            return RedirectToAction("Login", new { @returnUrl = returnUrl, shop = shopname });
+        }
+
+        [AllowAnonymous]
+        public ActionResult Login(string shop, string returnUrl)
         {
             var correctedShopName = shop.Replace(".myshopify.com", "");
 
@@ -61,19 +67,7 @@ namespace ProfitWise.Web.Controllers
             return new ShopifyChallengeResult(
                 Url.Action("ExternalLoginCallback", "ShopifyAuth", new { ReturnUrl = returnUrl }), null, correctedShopName);
         }
-
-        // POST: /ShopifyAuth/ExternalLogin
-        // TODO => Remove this method
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string shopname, string returnUrl)
-        {
-            // Request a redirect to the external login provider
-            return new ShopifyChallengeResult(
-                Url.Action("ExternalLoginCallback", "ShopifyAuth", new { ReturnUrl = returnUrl }), null, shopname);
-        }
-
+        
         // GET: /ShopifyAuth/ExternalLoginCallback
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
@@ -107,10 +101,9 @@ namespace ProfitWise.Web.Controllers
             // It appears that the User does not exist yet
             var email = externalLoginInfo.Email;
             var userName = externalLoginInfo.DefaultUserName;
-
             ApplicationUser user = null;
 
-            using (var transaction = _dbContext.Database.Connection.BeginTransaction())
+            using (var transaction = new TransactionScope())
             {
                 user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
 
@@ -127,7 +120,6 @@ namespace ProfitWise.Web.Controllers
                             $"{createUserResult.Errors.StringJoin(";")}");
                         return View("ExternalLoginFailure");
                     }
-                    _logger.Info($"Created new User for {email} / {userName}");
 
                     var addToRoleResult = await _userManager.AddToRoleAsync(user.Id, SecurityConfig.UserRole);
                     if (!addToRoleResult.Succeeded)
@@ -137,7 +129,6 @@ namespace ProfitWise.Web.Controllers
                             $"{createUserResult.Errors.StringJoin(";")}");
                         return View("ExternalLoginFailure");
                     }
-                    _logger.Info($"Added User {email} / {userName} to {SecurityConfig.UserRole}");
 
                     var addLoginResult = await _userManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
                     if (!addLoginResult.Succeeded)
@@ -147,20 +138,23 @@ namespace ProfitWise.Web.Controllers
                             $"{addLoginResult.Errors.StringJoin(";")}");
                         return View("ExternalLoginFailure");
                     }
-                    _logger.Info($"Added Login for User {email} / {userName}");
                 }
 
-                // Save the Shopify Domain and Access Token to Persistence
-                await RefreshIdentityClaimsToPersistence(externalLoginInfo);
+                transaction.Complete();
 
-                transaction.Commit();
+                _logger.Info($"Created new User for {email} / {userName}");
+                _logger.Info($"Added User {email} / {userName} to {SecurityConfig.UserRole}");
+                _logger.Info($"Added Login for User {email} / {userName}");
             }
+
+            // Save the Shopify Domain and Access Token to Persistence
+            await RefreshIdentityClaimsToPersistence(externalLoginInfo);
 
             // Finally Sign-in Manager
             await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
             return RedirectToLocal(returnUrl);
         }
-
 
         private async Task RefreshIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
@@ -172,7 +166,6 @@ namespace ProfitWise.Web.Controllers
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
 
-
         // POST: /ShopifyAuth/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -182,8 +175,6 @@ namespace ProfitWise.Web.Controllers
             return RedirectToAction("UnauthorizedAccess", "ShopifyAuth");
         }
 
-
-
         // GET: /ShopifyAuth/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
@@ -191,9 +182,6 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
-
-
-        #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -202,7 +190,6 @@ namespace ProfitWise.Web.Controllers
             }
             return RedirectToAction("Dashboard", "UserMain");
         }
-        #endregion
     }
 }
 

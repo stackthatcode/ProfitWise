@@ -1,6 +1,6 @@
 ﻿namespace OAuthSandbox.Models
 {
-    public class ShopifyAuthIndexModel
+    public class UnauthorizedAccessModel
     {
         public string ReturnUrl { get; set; }
     }

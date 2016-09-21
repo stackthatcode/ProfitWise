@@ -27,7 +27,7 @@ namespace ProfitWise.Web
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/ShopifyAuth/Refresh"),
+                LoginPath = new PathString("/ShopifyAuth/UnauthorizedAccess"),
                 Provider = new CookieAuthenticationProvider
                 {
                     // Enables the application to validate the security stamp when the user logs in.
