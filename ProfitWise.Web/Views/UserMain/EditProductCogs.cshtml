@@ -261,14 +261,27 @@
 
         self.CurrentGrid = ko.observableArray();
         self.NoProductsFoundEnabled = ko.observable(false);
+
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
+
         self.FilterModel = new ProfitWiseWidgets.ProductFilterModel();
-        self.FilterModel.RegisterCallbackFunction(function() { alert('Search! OMG!!'); });
+        self.FilterModel.RegisterCallbackFunction(function() { self.SearchForProducts(); });
 
 
-        self.SortByColumns = [
-            'Vendor', 'Product', 'Inventory', 'Price', 'CoGS'
-        ];
+        self.SearchForProducts = function () {
+            var search = {
+                Text: self.FilterModel.SearchText(),
+                PageNumber: self.PagingModel.PageNumber(),
+                PageSize: self.PagingModel.PageSize(),
+            };
+
+            var ajax = new ProfitWiseFunctions.Ajax();
+
+            ajax.HttpPost("/Cogs/Search", search, function(data) { alert(data.Message); });
+        }; 
+
+
+        self.SortByColumns = ['Vendor', 'Product'];
 
         self.SortByColumnIndex = ko.observable(0);
         self.SortByDirectionDown = ko.observable(true);
@@ -349,36 +362,7 @@
         };
 
         self.LoadSingleProductRecord = function (shopifyProductId) {
-            ProfitWiseShopify.ErrorPopup();
-            /*
-            var item =
-                AQ(self.CurrentGrid())
-                .firstOrDefault(function (item) {
-                        return item.Id == shopifyProductId;
-                    });
-
-            self.CurrentGrid.replace(item,
-                {
-                    Id: shopifyProductId,
-                    Vendor: item.Vendor,
-                    ProductTitle: item.ProductTitle,
-                    InventoryCount: 175,
-                    VariantCount: 12,
-                    Price: {
-                        CurrencyId: 1,
-                        AmountLow: 34.00,
-                        AmountHigh: 42.00,
-                        IncludesAverages: 0,
-                    },
-                    Cogs: {
-                        CurrencyId: 3,
-                        AmountLow: 8000.00,
-                        AmountHigh: 9300.00,
-                        IncludesAverages: 1,
-                    },
-                    StockedDirectlyCount: 12,
-                    ExcludedCount: 12,
-                });*/
+            ProfitWiseShopify.ErrorPopup();            
         }
 
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
@@ -411,7 +395,6 @@
         return self;
     };
 
-    var modeltmp = "XYZ";
 
     $(document)
         .ready(function () {

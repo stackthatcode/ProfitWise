@@ -77,6 +77,9 @@ namespace ProfitWise.Web
             builder.RegisterType<ShopifyAuthController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<CogsController>()
+                .InstancePerDependency()
+                .EnableClassInterceptorsWithRegistry(registry);
 
 
             // *** Filter Registration

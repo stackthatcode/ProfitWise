@@ -163,6 +163,7 @@
     <Compile Include="Identity\SecurityConfig.cs" />
     <Compile Include="Interfaces\CredentialServiceResult.cs" />
     <Compile Include="Interfaces\IShopifyCredentialService.cs" />
+    <Compile Include="Json\JsonNetResult.cs" />
     <Compile Include="Shopify\ShopifyCredentialService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\EncryptionService.cs" />

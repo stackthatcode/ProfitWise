@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS `shopifyorderlineitem`;
 DROP TABLE IF EXISTS `profitwisebatchstate`;
 
 DROP TABLE IF EXISTS `profitwisequery`;
-
+DROP TABLE IF EXISTS `profitwisequerymasterproduct`;
 
 
 CREATE TABLE `profitwiseshop` (
@@ -106,6 +106,7 @@ CREATE TABLE `profitwisequery` (
 
 CREATE TABLE `profitwisequerymasterproduct` (
 	`PwQueryId` BIGINT NOT NULL,
+    `PwShopId` int(6) unsigned NOT NULL,
 	`PwMasterProductId` int(6) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

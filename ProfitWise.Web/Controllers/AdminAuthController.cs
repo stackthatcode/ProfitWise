@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using OAuthSandbox.Models;
+using ProfitWise.Web.Models;
 using Push.Utilities.Helpers;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;

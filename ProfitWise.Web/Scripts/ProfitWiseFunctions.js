@@ -109,7 +109,12 @@ ProfitWiseFunctions.AjaxSettings = {
 ProfitWiseFunctions.Ajax = function (settings) {
     var self = this;
 
-    self.Settings = settings;
+    if (settings) {
+        self.Settings = settings;
+    } else {
+        self.Settings = ProfitWiseFunctions.AjaxSettings;
+    }
+
 
     self.ErrorCallback = function (jqXHR, textStatus, errorThrown) {
         if (jqXHR.status != 0 || textStatus == "timeout") {
