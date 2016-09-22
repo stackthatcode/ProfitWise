@@ -72,7 +72,7 @@ namespace ProfitWise.Data.Services
             var productId = productRepository.InsertProduct(finalProduct);
             finalProduct.PwProductId = productId;
             finalProduct.ParentMasterProduct = masterProduct;
-            //masterProduct.Products.Add(finalProduct);
+            masterProduct.Products.Add(finalProduct);
 
             this.UpdatePrimaryProduct(masterProduct);
             return finalProduct;

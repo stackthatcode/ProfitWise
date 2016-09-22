@@ -365,8 +365,6 @@ namespace ProfitWise.Data.ProcessSteps
                     service.BuildAndSaveProduct(
                         masterProduct, false, importedLineItem.ProductTitle, importedLineItem.ProductId,
                         importedLineItem.Vendor, "", "");
-
-                masterProduct.Products.Add(product);
             }
 
             var masterVariant =

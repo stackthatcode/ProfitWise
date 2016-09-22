@@ -98,8 +98,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info(
-                    $"Page {pagenumber} of {numberofpages} pages");
+                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
 
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
@@ -172,8 +171,7 @@ namespace ProfitWise.Data.ProcessSteps
                     service.BuildAndSaveProduct(
                         masterProduct, true, importedProduct.Title, importedProduct.Id, importedProduct.Vendor,
                         importedProduct.Tags, importedProduct.ProductType);
-                masterProduct.Products.Add(product);
-
+                
                 service.UpdateActiveShopifyProduct(masterProducts, product.ShopifyProductId);
             }
             else
