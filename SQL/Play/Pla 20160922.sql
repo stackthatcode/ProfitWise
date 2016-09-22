@@ -17,6 +17,15 @@ SELECT LAST_INSERT_ID();
 /*** TEMPORARY ***/
 DELETE FROM profitwisequerymasterproduct;
 
+SELECT * FROM profitwiseproduct ORDER BY Title;
+
+UPDATE profitwisemastervariant 
+SET CogsAmount = 20
+WHERE PwMasterProductId IN ( 6, 8, 9 );
+
+
+
+
 /** STEP #2 - INSERT MPId's from Variant Search **/
 
 INSERT INTO profitwisequerymasterproduct (PwQueryId, PwShopId, PwMasterProductId)
@@ -26,47 +35,51 @@ FROM profitwisevariant t1
 	INNER JOIN profitwiseproduct t3 ON t2.PwMasterProductId = t3.PwMasterProductId
         
 WHERE (t1.PwShopId = 1 AND t2.PwShopId = 1 AND t3.PwShopId)
-AND ( (t1.Title LIKE '%RED%') OR (t1.Sku LIKE '%RED%') OR ( t3.Title LIKE '%RED%' ) OR ( t3.Vendor LIKE '%RED%' ) )
-AND ( (t1.Title LIKE '%Universe%') OR (t1.Sku LIKE '%Universe%') OR ( t3.Title LIKE '%Universe%' ) OR ( t3.Vendor LIKE '%Universe%' ) );
+AND ( (t1.Title LIKE '%RED%') OR (t1.Sku LIKE '%RED%') OR ( t3.Title LIKE '%RED%' ) OR ( t3.Vendor LIKE '%RED%' ) );
+
+/**AND ( (t1.Title LIKE '%Universe%') OR (t1.Sku LIKE '%Universe%') OR ( t3.Title LIKE '%Universe%' ) OR ( t3.Vendor LIKE '%Universe%' ) );**/
 
 
 /*** TEMPORARY - what did we just select ??? ***/
 SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( SELECT PwMasterProductId FROM profitwisequerymasterproduct );
 
 
-/** STEP #3 - Apply Filter **/
+/** STEP #3 - Apply the non-CoGS Filter **/
 DELETE FROM profitwisequerymasterproduct
-WHERE PwShopId = 1 AND PwQueryId = 900000
+WHERE PwShopId = 1 
+AND PwQueryId = 900000
 AND PwMasterProductId NOT IN (
 	SELECT PwMasterProductId
     FROM profitwiseproduct
     WHERE PwShopId = 1
-		AND PwMasterProductId IN 
-			( SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 1 AND PwQueryId = 900000 )
 		AND Vendor = 'Ultimaker' 
+        
 		AND ProductType = 'Filament'
+        
 		AND Tags LIKE '%2.85%' 
 		AND Tags LIKE '%PLA%' 
 );
 
 
-/** STEP #5 - Apply Filter **/
-SELECT DISTINCT(PwMasterProductId)
-FROM profitwisemastervariant 
-WHERE PwShopId = 1
-AND PwMasterProductId IN 
-			( SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 1 AND PwQueryId = 900000 )
-AND CogsAmount IS NULL;
+/** STEP #4 - Apply the CoGS Filter **/
+DELETE FROM profitwisequerymasterproduct
+WHERE PwShopId = 1 
+AND PwQueryId = 900000
+AND PwMasterProductId NOT IN (
+	SELECT DISTINCT(PwMasterProductId)
+	FROM profitwisemastervariant 
+	WHERE PwShopId = 1
+	AND CogsAmount IS NULL
+);
+
+/*** TEMPORARY - what did we just select ??? ***/
+SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( SELECT PwMasterProductId FROM profitwisequerymasterproduct );
+
+
+
 
 SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 1 AND PwQueryId = 900000;
 
 
-    
-
-SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 1 AND PwQueryId = 900000;
-
-SELECT * FROM profitwisemasterproduct
-
-SELECT * FROM profitwisevariant WHERE PwProductId = 8;
 
 
