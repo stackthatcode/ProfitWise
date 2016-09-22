@@ -28,6 +28,8 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
+
+
         public ActionResult BulkEditProductVariantCogs(int shopifyProductId)
         {
             this.LoadCommonContextIntoViewBag();

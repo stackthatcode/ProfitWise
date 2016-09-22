@@ -77,6 +77,8 @@
     <Compile Include="Model\ExchangeRate.cs" />
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\OrderLineItemSubset.cs" />
+    <Compile Include="Model\PwCogsVariantSearchResult.cs" />
+    <Compile Include="Model\PwCogsProductSearchResult.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="ProcessSteps\OrderRefreshStep.cs" />
     <Compile Include="ProcessSteps\ProductCleanupStep.cs" />
     <Compile Include="Repositories\CurrencyRepository.cs" />
+    <Compile Include="Repositories\PwCogsRepository.cs" />
     <Compile Include="Services\CurrencyService.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRepository.cs" />
     <Compile Include="Services\MatchingExtensions.cs" />
