@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS `shopifyorderlineitem`;
 
 DROP TABLE IF EXISTS `profitwisebatchstate`;
 
+DROP TABLE IF EXISTS `profitwisequery`;
 
 
 
@@ -52,7 +53,6 @@ CREATE TABLE `profitwiseproduct` (
   `LastUpdated` TIMESTAMP NOT NULL,
   PRIMARY KEY (`PwProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE `profitwisemastervariant` (
   `PwMasterVariantId` BIGINT NOT NULL AUTO_INCREMENT,
@@ -96,6 +96,19 @@ CREATE TABLE `profitwisebatchstate` (
   `OrderDatasetEnd` TIMESTAMP NULL,
    PRIMARY KEY (`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `profitwisequery` (
+	`PwQueryId` BIGINT NOT NULL AUTO_INCREMENT,
+    `PwShopId` int(6) unsigned NOT NULL,
+    PRIMARY KEY (`PwQueryId`, `PwShopId`)
+) ENGINE=InnoDB AUTO_INCREMENT=900000 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwisequerymasterproduct` (
+	`PwQueryId` BIGINT NOT NULL,
+	`PwMasterProductId` int(6) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 

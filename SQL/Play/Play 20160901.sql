@@ -9,6 +9,18 @@ SELECT * FROM aspnetuserclaims;
 
 SELECT * FROM aspnetuserlogins;
 
+SELECT * FROM aspnetroles;
+
+
+
+SELECT * FROM profitwisemasterproduct;
+
+SELECT * FROM profitwiseproduct;
+        
+SELECT * FROM profitwisemastervariant;
+
+SELECT * FROM profitwisevariant;
+
 
 
 
