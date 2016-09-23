@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace ProfitWise.Data.Model
 {
@@ -10,8 +11,13 @@ namespace ProfitWise.Data.Model
         public string Title { get; set; }
         public string Vendor { get; set; }
 
+
+        [JsonIgnore]
         public IList<PwCogsVariantSearchResult> Variants { get; set; }
 
+        public int NumberOfVariants => Variants.Count();
+
+        
         public decimal? HighNormalizedCogs
         {
             get
@@ -66,8 +72,7 @@ namespace ProfitWise.Data.Model
         {
             get { return Variants.Any(x => x.NormalizedCogsAmount != null); }
         }
-
-
+        
         public bool HasInventory
         {
             get { return Variants.Any(x => x.Inventory != null); }
@@ -83,7 +88,6 @@ namespace ProfitWise.Data.Model
             }
         }
 
-
         public decimal? HighPrice
         {
             get
@@ -98,7 +102,6 @@ namespace ProfitWise.Data.Model
         }
 
         public bool IsPriceRange => HighPrice != LowPrice;
-
 
         public int StockedDirectly
         {
@@ -117,7 +120,6 @@ namespace ProfitWise.Data.Model
         }
 
 
-
         public PwCogsProductSearchResult()
         {
             Variants = new List<PwCogsVariantSearchResult>();
@@ -127,11 +129,11 @@ namespace ProfitWise.Data.Model
     public static class PwCogsProductSearchResultExtensions
     {
         public static void PopulateVariants(
-            this IList<PwCogsProductSearchResult> input, IList<PwCogsVariantSearchResult> variants)
+            this IList<PwCogsProductSearchResult> products, IList<PwCogsVariantSearchResult> variants)
         {
             foreach (var variant in variants)
             {
-                var product = input.First();
+                var product = products.First(x => x.PwMasterProductId == variant.PwMasterProductId);
                 product.Variants.Add(variant);
                 variant.Parent = product;
             }

@@ -1,4 +1,6 @@
-﻿namespace ProfitWise.Data.Model
+﻿using Newtonsoft.Json;
+
+namespace ProfitWise.Data.Model
 {
     public class PwCogsVariantSearchResult
     {
@@ -17,6 +19,8 @@
         // This needs to be manually populated, thus leveraging the Currency Service
         public decimal? NormalizedCogsAmount { get; set; }
 
+        	
+        [JsonIgnore]
         public PwCogsProductSearchResult Parent { get; set; }
     }
 }

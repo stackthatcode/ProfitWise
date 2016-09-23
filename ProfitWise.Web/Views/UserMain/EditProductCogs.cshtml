@@ -277,7 +277,12 @@
 
             var ajax = new ProfitWiseFunctions.Ajax();
 
-            ajax.HttpPost("/Cogs/Search", search, function(data) { console.log(data); });
+            ajax.HttpPost("/Cogs/Search", search,
+                function (data) {
+                    console.log(data); 
+                    self.CurrentGrid.removeAll();
+                    self.CurrentGrid(data);
+                });
         }; 
 
 

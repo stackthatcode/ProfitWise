@@ -59,7 +59,9 @@ namespace ProfitWise.Web.Controllers
 
             products.PopulateVariants(variants);
 
-            return new JsonNetResult(new { Shop = userBrief.Shop, Products = products });
+            var model = products.ToCogsGridModel(userBrief.Shop.CurrencyId);
+
+            return new JsonNetResult(model);
         }
 
     }
