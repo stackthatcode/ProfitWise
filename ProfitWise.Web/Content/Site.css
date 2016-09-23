@@ -112,6 +112,9 @@ fieldset[disabled] .btn-sample.active {
 
 
 /** Product Filter styling **/
+.order-by-column {
+        color: #337ab7 !important;
+}
 .order-by-column:hover {
     cursor: hand;
     cursor: pointer;

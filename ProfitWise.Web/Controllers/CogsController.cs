@@ -28,42 +28,46 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullUserBriefFromContext();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
-            var queryId = cogsRepository.InsertQuery();
+            var queryId = cogsRepository.DeletePickList();
 
-            var terms =
-                parameters.Text
-                    .Split(' ')
-                    .Select(x => x.Trim())
-                    .Where(x => x != "")
-                    .ToList();
-
-            cogsRepository.InsertMasterProductPickList(queryId, terms);
-
-            var products = cogsRepository.RetrieveMasterProducts(queryId, 1, 50);
-            var variants = 
-                cogsRepository
-                    .RetrieveMasterVariants(products.Select(x => x.PwMasterProductId).ToList());
-
-            foreach (var variant in variants)
+            using (var transaction = cogsRepository.InitiateTransaction())
             {
-                if (variant.CogsAmount != null && variant.CogsCurrencyId != null)
+                var terms =
+                    (parameters.Text ?? "")
+                        .Split(' ')
+                        .Select(x => x.Trim())
+                        .Where(x => x != "")
+                        .ToList();
+                var recordCount = cogsRepository.InsertPickList(terms);
+
+                var products =
+                    cogsRepository.RetrieveMasterProducts(
+                        parameters.PageNumber, parameters.PageSize, parameters.SortByColumn, parameters.SortByDirectionDown);
+
+                var variants =
+                    cogsRepository
+                        .RetrieveMasterVariants(products.Select(x => x.PwMasterProductId).ToList());
+
+                foreach (var variant in variants)
                 {
-                    variant.NormalizedCogsAmount = 
-                        _currencyService.Convert(
-                            variant.CogsAmount.Value, 
-                            variant.CogsCurrencyId.Value, 
-                            userBrief.Shop.CurrencyId, 
-                            DateTime.Now);
+                    if (variant.CogsAmount != null && variant.CogsCurrencyId != null)
+                    {
+                        variant.NormalizedCogsAmount =
+                            _currencyService.Convert(
+                                variant.CogsAmount.Value,
+                                variant.CogsCurrencyId.Value,
+                                userBrief.Shop.CurrencyId,
+                                DateTime.Now);
+                    }
                 }
+
+                products.PopulateVariants(variants);
+
+                var model = products.ToCogsGridModel(userBrief.Shop.CurrencyId);
+
+                return new JsonNetResult(new {products = model, totalRecords = recordCount});
             }
-
-            products.PopulateVariants(variants);
-
-            var model = products.ToCogsGridModel(userBrief.Shop.CurrencyId);
-
-            return new JsonNetResult(model);
         }
-
     }
 }
 

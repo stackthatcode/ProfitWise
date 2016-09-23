@@ -53,10 +53,11 @@
         <div class="input-group pull-right;" style="width: 160px;">
 
             <select class="form-control" data-bind="value: PageSize, event:{ change: PageSizeChanged}">
+                <option value="5">5</option>
+                <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
-                <option value="250">250</option>
             </select>
 
             <span class="input-group-addon" id="basic-addon2">per page</span>
@@ -126,8 +127,11 @@
             self.JumpToPage.valueHasMutated();
         };
         
-        self.PageCount = ko.computed(function() {
-            return self.RecordCount() / self.PageSize();
+        self.PageCount = ko.computed(function () {
+            var computedPageCount =
+                Math.floor((Math.floor(self.RecordCount()) + Math.floor(self.PageSize()) - 1) / self.PageSize());
+
+            return (computedPageCount);
         });
 
         self.Forward = function() {

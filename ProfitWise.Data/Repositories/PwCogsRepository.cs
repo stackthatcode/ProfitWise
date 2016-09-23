@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
@@ -21,22 +22,26 @@ namespace ProfitWise.Data.Repositories
 
         public PwShop PwShop { get; set; }
 
-        public long InsertQuery()
+
+        public MySqlTransaction InitiateTransaction()
+        {
+            return _connection.BeginTransaction();
+        }
+
+        public long DeletePickList()
         {
             var query =
-                @"INSERT INTO profitwisequery ( PwShopId )
-                    VALUES ( @PwShopId );
-                    SELECT LAST_INSERT_ID();";
+                @"DELETE FROM profitwisequerymasterproduct WHERE PwShopId = @PwShopId;";
 
             return _connection.Query<long>(
                 query, new {PwShopId = this.PwShop.PwShopId}).FirstOrDefault();
         }
 
-        public void InsertMasterProductPickList(long queryId, List<string> terms)
+        public int InsertPickList(List<string> terms)
         {
             var query =
-                @"INSERT INTO profitwisequerymasterproduct (PwQueryId, PwShopId, PwMasterProductId)
-                SELECT DISTINCT @QueryId, @PwShopId, t2.PwMasterProductId
+                @"INSERT INTO profitwisequerymasterproduct (PwShopId, PwMasterProductId)
+                SELECT DISTINCT @PwShopId, t2.PwMasterProductId
                 FROM profitwisevariant t1 
 	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN profitwiseproduct t3 ON t2.PwMasterProductId = t3.PwMasterProductId
@@ -48,10 +53,18 @@ namespace ProfitWise.Data.Repositories
                     $" AND ( (t1.Title LIKE '%{term}%') OR (t1.Sku LIKE '%{term}%') OR ( t3.Title LIKE '%{term}%' ) OR ( t3.Vendor LIKE '%{term}%' ) )";
                 query += clause;
             }
-            _connection.Execute(query, new { QueryId = queryId, PwShopId = this.PwShop.PwShopId});
-        }
 
-        public IList<PwCogsProductSearchResult> RetrieveMasterProducts(long queryId, int pageNumber, int resultsPerPage)
+            query += "; SELECT COUNT(*) FROM profitwisequerymasterproduct " +
+                     "WHERE PwShopId = @PwShopId";
+            
+            return _connection
+                    .Query<int>(query, new {PwShopId = this.PwShop.PwShopId})
+                    .First();
+        }
+        
+
+        public IList<PwCogsProductSearchResult> 
+                RetrieveMasterProducts(int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
         {
             if (resultsPerPage > 200)
             {
@@ -60,21 +73,25 @@ namespace ProfitWise.Data.Repositories
 
             var startRecord = (pageNumber - 1) * resultsPerPage;
 
+            var sortByClause = 
+                "ORDER BY " + 
+                    (sortByColumn == 0 ? "t1.Vendor " : "t1.Title ") +
+                    (sortByDirectionDown ? "ASC" : "DESC");
+
             var query =
                 @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
                 FROM profitwiseproduct t1
                 WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = true
                 AND t1.PwMasterProductId IN ( 
-	                SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = @PwShopId AND PwQueryId = @QueryId )
-                ORDER BY t1.Title ASC
-                LIMIT @StartRecord, @ResultsPerPage;";
+	                SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = @PwShopId ) " +
+                sortByClause +
+                " LIMIT @StartRecord, @ResultsPerPage;";
 
             return _connection.Query<PwCogsProductSearchResult>(
                 query,
                 new
                 {
                     PwShopId = this.PwShop.PwShopId,
-                    QueryId = queryId,
                     StartRecord = startRecord,
                     ResultsPerPage = resultsPerPage
                 }).ToList();
@@ -98,5 +115,6 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<PwCogsVariantSearchResult>(
                 query, new {PwShopId = this.PwShop.PwShopId, MasterProductIds = masterProductIds}).ToList();
         }
+
     }
 }

@@ -52,6 +52,7 @@
     input[type='text'] {
         width: 100px;
     }
+
 </style>
 
 <!-- KnockoutJS Templates -->
@@ -62,40 +63,34 @@
 
 <script type="text/html" id="Page-Header">
     <div id="fixed-positioning-container">
-    <div id="top-header-sleeve" style="height: 210px;">
+        <div id="top-header-sleeve" style="height: 210px;">
 
-        <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-        <div id="top-header">
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div id="top-header">
 
-            <div class="row" style="padding-left: 25px; padding-right: 25px;">
-                <!-- Filtering Widget -->
-                <div class="col-lg-6" style="padding-top: 20px;">
-                    <div class="pull-left;"
-                         data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
-                    </div>
-                </div>
-
-                <!-- Paging Widget -->
-                <div class="col-lg-6">
-                    <div style="height: 20px;" class="visible-lg"></div>
-                    <div data-bind="visible: $root.CurrentGrid().length > 0">
-                        <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                <div class="row" style="padding-left: 25px; padding-right: 25px;">
+                    <!-- Filtering Widget -->
+                    <div class="col-lg-6" style="padding-top: 20px;">
+                        <div class="pull-left;"
+                             data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
                         </div>
                     </div>
+
+                    <!-- Paging Widget -->
+                    <div class="col-lg-6">
+                        <div style="height: 20px;" class="visible-lg"></div>
+                        <div data-bind="visible: $root.CurrentGrid().length > 0">
+                            <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Create Purchase Order Button -->
-                <!-- <div class="visible-md visible-lg row header-horz-padding">
-                    <div class="col-xs-12" style="text-align: right;">
-                        <a style="width: 225px;" class="form-control btn btn-default" href="#"><i class="glyphicon glyphicon-copy"></i> &nbsp;&nbsp;Create Purchase Order</a>
-                    </div>
-                </div>-->
 
                 <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
                 <div class="header-horz-padding" style="position: absolute; top: 129px;"
                      data-bind="visible: $root.CurrentGrid().length > 0">
-                    <table class="table" id="heading" style="margin-bottom:0px;">
+                    <table class="table" id="heading" style="margin-bottom: 0px;">
                         <thead>
                         <tr>
                             <th class="order-by-column"
@@ -106,7 +101,6 @@
                                     <span data-bind="template: 'Sorting-Arrows-Active'"></span>
                                 </span>
                                 <span data-bind="visible: SortByColumnIndex() != 0">                                    
-                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
                                 </span>
                             </th>
 
@@ -117,42 +111,13 @@
                                     <span data-bind="template: 'Sorting-Arrows-Active'"></span>
                                 </span>
                                 <span data-bind="visible: SortByColumnIndex() != 1">
-                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
                                 </span>
                             </th>
 
-                            <th class="order-by-column" data-bind="click: function() { SortByClick(2); }">
-                                Inventory
+                            <th>Inventory</th>
+                            <th>Price</th>
+                            <th>CoGS</th>
 
-                                <span data-bind="visible: SortByColumnIndex() == 2">
-                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
-                                </span>
-                                <span data-bind="visible: SortByColumnIndex() != 2">
-                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
-                                </span>
-                            </th>
-                            
-                            <th class="order-by-column" data-bind="click: function() { SortByClick(3); }" style="text-align: center;">
-                                Price
-
-                                <span data-bind="visible: SortByColumnIndex() == 3">
-                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
-                                </span>
-                                <span data-bind="visible: SortByColumnIndex() != 3">
-                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
-                                </span>                            
-                            </th>
-                            
-                            <th class="order-by-column" data-bind="click: function() { SortByClick(4); }" style="text-align: center;">
-                                CoGS
-
-                                <span data-bind="visible: SortByColumnIndex() == 4">
-                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
-                                </span>
-                                <span data-bind="visible: SortByColumnIndex() != 4">
-                                    <span data-bind="template:'Sorting-Arrows-Inactive'"></span>
-                                </span>
-                            </th>
                             <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyHeaderClick">Stocked Directly</a></th>
                             <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludeHeaderLinkClick">Exclude</a></th>
                         </tr>
@@ -173,10 +138,6 @@
     </span>
 </script>
 
-<script type="text/html" id="Sorting-Arrows-Inactive">
-    <!--&nbsp;<i style="font-size:0.8em;" class="glyphicon glyphicon-sort"></i>-->
-</script>
-
 
 <script type="text/html" id="Main-Template">
     <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
@@ -186,7 +147,7 @@
 
             <!-- No Products Found matching XYZ -->
             <div id="no-products-found" style="width: 100%;"
-                 data-bind="visible: $root.NoProductsFoundEnabled() && $root.CurrentGrid().length == 0">
+                 data-bind="visible: $root.NoProductsFound() && $root.CurrentGrid().length == 0">
                 <div style="text-align: center; padding-top: 20px; padding-bottom: 100px;">
                     <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
                     <h3 style="color: #555; font-weight: 300;">Could not find any products</h3>
@@ -260,7 +221,7 @@
         var self = this;
 
         self.CurrentGrid = ko.observableArray();
-        self.NoProductsFoundEnabled = ko.observable(false);
+        self.NoProductsFound = ko.observable(false);
 
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
@@ -268,26 +229,7 @@
         self.FilterModel.RegisterCallbackFunction(function() { self.SearchForProducts(); });
 
 
-        self.SearchForProducts = function () {
-            var search = {
-                Text: self.FilterModel.SearchText(),
-                PageNumber: self.PagingModel.PageNumber(),
-                PageSize: self.PagingModel.PageSize(),
-            };
-
-            var ajax = new ProfitWiseFunctions.Ajax();
-
-            ajax.HttpPost("/Cogs/Search", search,
-                function (data) {
-                    console.log(data); 
-                    self.CurrentGrid.removeAll();
-                    self.CurrentGrid(data);
-                });
-        }; 
-
-
-        self.SortByColumns = ['Vendor', 'Product'];
-
+        // *** Sorting functionality *** //
         self.SortByColumnIndex = ko.observable(0);
         self.SortByDirectionDown = ko.observable(true);
         
@@ -298,31 +240,11 @@
                 self.SortByDirectionDown(true);
             }
             self.SortByColumnIndex(index);
+            self.LoadDataForCurrentPage();
         }
 
 
-        self.StockedDirectlyChecked = function (data) {
-            return data.StockedDirectlyCount == data.VariantCount;
-        };
-
-        self.StockedDirectlyCheckboxClick = function (model) {
-            // TODO => update server
-            self.LoadSingleProductRecord(model.Id);
-        };
-        
-        self.StockedDirectlyGridLinkClick = function(model) {
-            ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup(model.Id, function() {
-                alert("ok, let's do something!!!");
-            });
-        };
-        
-        self.StockedDirectlyHeaderClick = function() {
-            ProfitWiseShopify.LaunchStockedDirectlyProductsPopup(function () {
-                alert("ok, I'm changing a lot of Stocked Directly!!!");
-            });
-        };
-
-
+        // ** Excluded interactivity *** // 
         self.ExcludedChecked = function(data) {
             return data.ExcludedCount == data.VariantCount;
         };
@@ -343,27 +265,76 @@
                 alert("ok, I'm doing a lot of excluding!!!");
             });
         };
-        
 
-        // TODO => Search Button
+        self.ExcludedClick = function (model) {
+            alert("Stocked Directly Click");
+        };
 
-        self.LoadDataForCurrentPage = function (pageNumber, pageSize) {            
-            pageNumber = pageNumber || 1;
-            pageSize = pageSize || Number(self.PagingModel.PageSize());
 
-            // #1 - load only that page of numbers
-            // TODO => invoke external service
-            var data = window.cogsDataService(pageNumber, pageSize,
-                function(data) {
-                    self.PagingModel.RecordCount(2000);
+        // *** Stocked Directly interactivity *** //
+        self.StockedDirectlyChecked = function (data) {
+            return data.StockedDirectlyCount == data.VariantCount;
+        };
+
+        self.StockedDirectlyCheckboxClick = function (model) {
+            // TODO => update server
+            self.LoadSingleProductRecord(model.Id);
+        };
+
+        self.StockedDirectlyGridLinkClick = function (model) {
+            ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup(model.Id, function () {
+                alert("ok, let's do something!!!");
+            });
+        };
+
+        self.StockedDirectlyHeaderClick = function () {
+            ProfitWiseShopify.LaunchStockedDirectlyProductsPopup(function () {
+                alert("ok, I'm changing a lot of Stocked Directly!!!");
+            });
+        };
+
+        self.StockedDirectlyClick = function (model) {
+            alert("Stocked Directly Click");
+        };
+
+        self.SetProductAllStockedDirectly = function (model) {
+            alert("All " + model.Id);
+        };
+
+        self.SetProductNoneStockedDirectly = function (model) {
+            alert("None " + model.Id);
+        };
+
+
+        // *** Search for Products *** //
+        self.SearchForProducts = function () {
+            self.PagingModel.PageNumber(1);
+            self.LoadDataForCurrentPage();
+        };
+
+        self.LoadDataForCurrentPage = function () {            
+            var search = {
+                Text: self.FilterModel.SearchText(),
+                PageNumber: self.PagingModel.PageNumber(),
+                PageSize: self.PagingModel.PageSize(),
+                SortByColumn: self.SortByColumnIndex(),
+                SortByDirectionDown: self.SortByDirectionDown(),
+            };
+
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost("/Cogs/Search", search,
+                function (data) {
                     self.CurrentGrid.removeAll();
-                    self.CurrentGrid(data);
 
-                    self.NoProductsFoundEnabled(true);
-
+                    if (data.products.length == 0) {
+                        self.NoProductsFound(true);
+                        alert("should be showing no products")
+                    } else {
+                        self.NoProductsFound(false);
+                        self.CurrentGrid(data.products);
+                        self.PagingModel.RecordCount(data.totalRecords);
+                    }
                 });
-            // #2 - how many records match that criteria
-            // TODO => invoke external service
         };
 
         self.LoadSingleProductRecord = function (shopifyProductId) {
@@ -374,28 +345,11 @@
 
         self.LaunchBulkEditPopup = function (model) {
             ProfitWiseShopify.LaunchBulkEditPopUp(model.Id,
-                    function(shopifyProductId) {
-                        self.LoadSingleProductRecord(shopifyProductId);                        
-                    });
+                function(shopifyProductId) {
+                    self.LoadSingleProductRecord(shopifyProductId);                        
+                });
         }
 
-        self.StockedDirectlyClick = function(model) {
-            alert("Stocked Directly Click");
-        };
-
-        self.SetProductAllStockedDirectly = function(model) {
-            alert("All " + model.Id);
-        };
-
-        self.SetProductNoneStockedDirectly = function (model) {
-            alert("None " + model.Id);
-        };
-
-        self.ExcludedClick = function (model) {
-            alert("Stocked Directly Click");
-        };
-
-        //self.AjaxService = new ProfitWiseFunctions.Ajax(ProfitWiseFunctions.AjaxSettings);
 
         return self;
     };
@@ -412,61 +366,24 @@
             modeltmp = model;
 
             ko.applyBindings(model);
-            
-            // $root
-            // model.CurrentGrid [ 1 to N ]
-            // model.LaunchBulkEditPopup
         });
 </script>
 
+
 <script>
-    window.cogsDataService = function (pageNumber, pageSize, callback) {
-
-        var fakeDataFunction = function () {
-            if (pageNumber > 10) {
-                return [];
-            }
-
-            var output = [];
-            var startRecord = (pageNumber - 1) * pageSize + 1;
-            var endRecord = startRecord + pageSize - 1;
-
-            for (var count = startRecord; count <= endRecord; count++) {
-                output.push({
-                    Id: count,
-                    Vendor: '3D Universe 1234567890 1234567890 ' + count,
-                    ProductTitle: '3D Universe PLA ' + count + '2.85 mm 12345678890',
-                    InventoryCount: 175,
-                    VariantCount: 12,
-                    Price: {
-                        CurrencyId: 1,
-                        AmountLow: 34.00,
-                        AmountHigh: 42.00,
-                        IncludesAverages: 0,
-                    },
-                    Cogs: {
-                        CurrencyId: 2,
-                        AmountLow: 1000000.00,
-                        AmountHigh: 2300000.00,
-                        IncludesAverages: 1,
-                    },
-                    StockedDirectlyCount: 8,
-                    ExcludedCount: 8,
-                });
-            };
-
-            return output;
-        };
-
-        flow.exec(
+/*
+flow.exec(
             function () {
                 $("#spinner-layer").show();
                 setTimeout(this, 1500);
-            }, 
+            },
             function() {
                 $("#spinner-layer").hide();
                 callback(fakeDataFunction());
             });
-    }
+            */
+
 </script>
+
+
 
