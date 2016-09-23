@@ -1,4 +1,4 @@
-﻿@using OAuthSandbox.Attributes
+﻿@using ProfitWise.Web.Attributes
 @using ProfitWise.Web.Models
 @{
     var commonContext = (CommonContext)ViewBag.CommonContext;
@@ -20,8 +20,8 @@
 </head>
 
 <body style="background-color: #FFF !important; overflow: hidden; padding: 30px;">
-    <!--<p>Hello, @HttpContext.Current.RetreiveUserBriefFromContext().Email</p>
-    <p>Shop Name = @HttpContext.Current.RetreiveUserBriefFromContext().ShopName</p>-->
+    <!--<p>Hello, @HttpContext.Current.PullUserBriefFromContext().Email</p>
+    <p>Shop Name = @HttpContext.Current.PullUserBriefFromContext().ShopName</p>-->
 
     @RenderBody()
 

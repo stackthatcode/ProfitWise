@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ProfitWise.Data.Model;
 using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web.Attributes
@@ -15,5 +16,6 @@ namespace ProfitWise.Web.Attributes
         public bool IsAdmin => Roles != null ? Roles.Contains(SecurityConfig.AdminRole) : false;
         public string ShopName { get; set; }
         public string Domain { get; set; }
+        public PwShop Shop { get; set; }
     }
 }

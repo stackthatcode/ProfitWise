@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using OAuthSandbox.Attributes;
+using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Controllers;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
@@ -13,15 +13,14 @@ using Push.Foundation.Web.Interfaces;
 namespace ProfitWise.Web.Attributes
 {
     public class IdentityCachingAttribute : ActionFilterAttribute, IActionFilter
-    {
-        
+    {        
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
             var roleManager = DependencyResolver.Current.GetService<ApplicationRoleManager>();
             var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
             var credentialService = DependencyResolver.Current.GetService<IShopifyCredentialService>();
+            var shopRepository = DependencyResolver.Current.GetService<PwShopRepository>();
             var logger = DependencyResolver.Current.GetService<IPushLogger>();
-
 
             // Pull the User ID from OWIN plumbing...
             var userId = filterContext.HttpContext.User.ExtractUserId();
@@ -46,17 +45,21 @@ namespace ProfitWise.Web.Attributes
                         throw new Exception(result.Message);
                     }
 
+                    var shop = shopRepository.RetrieveByUserId(userId);
+
                     userBrief = new UserBrief()
                     {
                         Id = user.Id,
                         Email = user.Email,
                         UserName = user.UserName,
                         Roles = userRoles,
+                        Shop = shop,
+
                         Domain = result.ShopDomain,
                         ShopName = result.ShopDomain.ShopName(),
                     };
 
-                    filterContext.HttpContext.StoreUserBriefInContext(userBrief);
+                    filterContext.HttpContext.PushUserBriefToContext(userBrief);
                 }
                 else
                 {

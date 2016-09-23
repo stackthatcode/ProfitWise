@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using OAuthSandbox.Attributes;
 using ProfitWise.Web.Attributes;
 using Push.Utilities.Helpers;
 
@@ -27,7 +26,7 @@ namespace ProfitWise.Web.Models
             controller.ViewBag.CommonContext = new CommonContext
             {
                 ShopifyApiKey = ShopifyApiKey.Get(),
-                UserBrief = controller.HttpContext.RetreiveUserBriefFromContext(),
+                UserBrief = controller.HttpContext.PullUserBriefFromContext(),
             };
         }
     }

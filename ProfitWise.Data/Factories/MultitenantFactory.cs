@@ -12,6 +12,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwProductRepository> _productRepositoryFactory;
         private readonly Func<PwVariantRepository> _variantRepositoryFactory;
         private readonly Func<CatalogBuilderService> _productVariantServiceFactory;
+        private readonly Func<PwCogsRepository> _cogsRepositoryFactory;
 
 
         public MultitenantFactory(
@@ -19,15 +20,16 @@ namespace ProfitWise.Data.Factories
             Func<PwBatchStateRepository> profitWiseBatchStateRepositoryFactory,
             Func<PwProductRepository> productRepositoryFactory,
             Func<PwVariantRepository> variantRepositoryFactory,
-            Func<CatalogBuilderService> productVariantServiceFactory)
+            Func<CatalogBuilderService> productVariantServiceFactory,
+            Func<PwCogsRepository> cogsRepositoryFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
             _productRepositoryFactory = productRepositoryFactory;
             _variantRepositoryFactory = variantRepositoryFactory;
             _productVariantServiceFactory = productVariantServiceFactory;
+            _cogsRepositoryFactory = cogsRepositoryFactory;
         }
-
 
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
         {
@@ -61,6 +63,13 @@ namespace ProfitWise.Data.Factories
             var service = _productVariantServiceFactory();
             service.PwShop = shop;
             return service;
+        }
+
+        public virtual PwCogsRepository MakeCogsRepository(PwShop shop)
+        {
+            var repository = _cogsRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
         }
     }
 }

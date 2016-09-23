@@ -36,7 +36,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"INSERT INTO profitwisequerymasterproduct (PwQueryId, PwShopId, PwMasterProductId)
-                SELECT DISTINCT 900000, 100001, t2.PwMasterProductId
+                SELECT DISTINCT @QueryId, @PwShopId, t2.PwMasterProductId
                 FROM profitwisevariant t1 
 	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN profitwiseproduct t3 ON t2.PwMasterProductId = t3.PwMasterProductId
@@ -48,16 +48,17 @@ namespace ProfitWise.Data.Repositories
                     $" AND ( (t1.Title LIKE '%{term}%') OR (t1.Sku LIKE '%{term}%') OR ( t3.Title LIKE '%{term}%' ) OR ( t3.Vendor LIKE '%{term}%' ) )";
                 query += clause;
             }
-            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId});
+            _connection.Execute(query, new { QueryId = queryId, PwShopId = this.PwShop.PwShopId});
         }
 
-        public IList<PwCogsProductSearchResult> RetrieveQuery(long queryId, int pageNumber, int resultsPerPage)
+        public IList<PwCogsProductSearchResult> RetrieveMasterProducts(long queryId, int pageNumber, int resultsPerPage)
         {
             if (resultsPerPage > 200)
             {
                 throw new ArgumentException("Maximum number of results per page is 200");
             }
-            var startRecord = (pageNumber - 1)*resultsPerPage;
+
+            var startRecord = (pageNumber - 1) * resultsPerPage;
 
             var query =
                 @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
@@ -82,7 +83,7 @@ namespace ProfitWise.Data.Repositories
         /// <summary>
         /// Note: cannot handle more than 200 Master Product Ids
         /// </summary>
-        public IList<PwCogsVariantSearchResult> RetrieveVariants(IList<long> masterProductIds)
+        public IList<PwCogsVariantSearchResult> RetrieveMasterVariants(IList<long> masterProductIds)
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t2.Exclude, t2.StockedDirectly, 

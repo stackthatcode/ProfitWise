@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNet.Identity
-@using OAuthSandbox.Attributes
+@using ProfitWise.Web.Attributes
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "ShopifyAuth", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -7,19 +7,19 @@
     @Html.AntiForgeryToken()
 
     <ul class="nav navbar-nav navbar-right">
-        @if (HttpContext.Current.RetreiveUserBriefFromContext().IsAdmin)
+        @if (HttpContext.Current.PullUserBriefFromContext().IsAdmin)
         {
             <li>
-                @Html.ActionLink(HttpContext.Current.RetreiveUserBriefFromContext().UserName + " (" +
-                                 HttpContext.Current.RetreiveUserBriefFromContext().RolesFlattened + ")",
+                @Html.ActionLink(HttpContext.Current.PullUserBriefFromContext().UserName + " (" +
+                                 HttpContext.Current.PullUserBriefFromContext().RolesFlattened + ")",
                     "Index", "AdminHome", routeValues: null, htmlAttributes: new {title = "Manage"})
             </li>
         }
         else
         {
             <li>Hello,
-                @Html.ActionLink(HttpContext.Current.RetreiveUserBriefFromContext().UserName + " (" +
-                                 HttpContext.Current.RetreiveUserBriefFromContext().RolesFlattened + ")",
+                @Html.ActionLink(HttpContext.Current.PullUserBriefFromContext().UserName + " (" +
+                                 HttpContext.Current.PullUserBriefFromContext().RolesFlattened + ")",
                     "Index", "UserHome", routeValues: null, htmlAttributes: new { title = "Manage" })
             </li>
         }
