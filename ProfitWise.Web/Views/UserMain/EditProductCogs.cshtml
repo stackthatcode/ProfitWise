@@ -1,4 +1,7 @@
-﻿@{
+﻿@using Push.Foundation.Web.Json
+@model ProfitWise.Web.Models.EditProductCogsModel
+
+@{
     ViewBag.CommonContext.PageTitle = "Edit Product Cost of Goods";
 }
 
@@ -138,7 +141,6 @@
     </span>
 </script>
 
-
 <script type="text/html" id="Main-Template">
     <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
@@ -214,7 +216,11 @@
 </div>
 
 
+<!-- KnockoutJS Model -->
 <script>
+    var productTypes = @Html.Raw(Model.ProductTypes.SerializeToJson());
+    var productVendors = @Html.Raw(Model.Vendors.SerializeToJson());
+
     var ProfitWise = ProfitWise || {};
 
     ProfitWise.EditCogsModel = function () {
@@ -225,14 +231,15 @@
 
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
-        self.FilterModel = new ProfitWiseWidgets.ProductFilterModel();
+        self.FilterModel = new ProfitWiseWidgets.ProductFilterModel(productTypes, productVendors);
+
         self.FilterModel.RegisterCallbackFunction(function() { self.SearchForProducts(); });
 
 
         // *** Sorting functionality *** //
         self.SortByColumnIndex = ko.observable(0);
         self.SortByDirectionDown = ko.observable(true);
-        
+
         self.SortByClick = function(index) {
             if (index == self.SortByColumnIndex()) {
                 self.SortByDirectionDown(!self.SortByDirectionDown());
@@ -244,11 +251,11 @@
         }
 
 
-        // ** Excluded interactivity *** // 
+        // ** Excluded interactivity *** //
         self.ExcludedChecked = function(data) {
             return data.ExcludedCount == data.VariantCount;
         };
-        
+
         self.ExcludedCheckboxClick = function (model) {
             // TODO => update server
             self.LoadSingleProductRecord(model.Id);
@@ -306,13 +313,21 @@
         };
 
 
+        // *** Launch Bulk Edit Popup *** //
+        self.LaunchBulkEditPopup = function (model) {
+            ProfitWiseShopify.LaunchBulkEditPopUp(model.Id,
+                function (shopifyProductId) {
+                    self.LoadSingleProductRecord(shopifyProductId);
+                });
+        }
+
         // *** Search for Products *** //
         self.SearchForProducts = function () {
             self.PagingModel.PageNumber(1);
             self.LoadDataForCurrentPage();
         };
 
-        self.LoadDataForCurrentPage = function () {            
+        self.LoadDataForCurrentPage = function () {
             var search = {
                 Text: self.FilterModel.SearchText(),
                 PageNumber: self.PagingModel.PageNumber(),
@@ -322,13 +337,13 @@
             };
 
             var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpPost("/Cogs/Search", search,
+            ajax.HttpPost(
+                "/Cogs/Search", search,
                 function (data) {
                     self.CurrentGrid.removeAll();
 
                     if (data.products.length == 0) {
                         self.NoProductsFound(true);
-                        alert("should be showing no products")
                     } else {
                         self.NoProductsFound(false);
                         self.CurrentGrid(data.products);
@@ -338,18 +353,10 @@
         };
 
         self.LoadSingleProductRecord = function (shopifyProductId) {
-            ProfitWiseShopify.ErrorPopup();            
+            ProfitWiseShopify.ErrorPopup();
         }
 
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
-
-        self.LaunchBulkEditPopup = function (model) {
-            ProfitWiseShopify.LaunchBulkEditPopUp(model.Id,
-                function(shopifyProductId) {
-                    self.LoadSingleProductRecord(shopifyProductId);                        
-                });
-        }
-
 
         return self;
     };
@@ -363,8 +370,6 @@
 
             var model = new ProfitWise.EditCogsModel();
             model.LoadDataForCurrentPage();
-            modeltmp = model;
-
             ko.applyBindings(model);
         });
 </script>

@@ -73,11 +73,14 @@ namespace ProfitWise.Data.Repositories
 
             var startRecord = (pageNumber - 1) * resultsPerPage;
 
-            var sortByClause = 
-                "ORDER BY " + 
-                    (sortByColumn == 0 ? "t1.Vendor " : "t1.Title ") +
-                    (sortByDirectionDown ? "ASC" : "DESC");
+            var sortDirectionWord= (sortByDirectionDown ? "ASC" : "DESC");
 
+            var sortByClause =
+                "ORDER BY " +
+                (sortByColumn == 0
+                    ? $"t1.Vendor {sortDirectionWord}, t1.Title {sortDirectionWord} "
+                    : $"t1.Title {sortDirectionWord}, t1.Vendor {sortDirectionWord} ");
+                    
             var query =
                 @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
                 FROM profitwiseproduct t1
@@ -116,5 +119,31 @@ namespace ProfitWise.Data.Repositories
                 query, new {PwShopId = this.PwShop.PwShopId, MasterProductIds = masterProductIds}).ToList();
         }
 
+
+        public IList<string> RetrieveVendors()
+        {
+            var query = @"SELECT DISTINCT Vendor AS Vendor
+                        FROM profitwiseproduct 
+                        WHERE PwShopId = @PwShopId
+                        AND Vendor IS NOT NULL
+                        AND Vendor <> ''
+                        ORDER BY Vendor;";
+
+            return _connection.Query<string>(
+                query, new {PwShopId = this.PwShop.PwShopId}).ToList();
+        }
+
+        public IList<string> RetrieveProductType()
+        {
+            var query = @"SELECT DISTINCT ProductType AS ProductType
+                        FROM profitwiseproduct 
+                        WHERE PwShopId = @PwShopId
+                        AND ProductType IS NOT NULL
+                        AND ProductType <> ''
+                        ORDER BY ProductType;";
+
+            return _connection.Query<string>(
+                query, new { PwShopId = this.PwShop.PwShopId }).ToList();
+        }
     }
 }

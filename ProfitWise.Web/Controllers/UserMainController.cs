@@ -1,4 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
+using ProfitWise.Data.Factories;
+using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 
 namespace ProfitWise.Web.Controllers
@@ -6,6 +9,13 @@ namespace ProfitWise.Web.Controllers
     [Authorize(Roles = "ADMIN, USER")]
     public class UserMainController : Controller
     {
+        private readonly MultitenantFactory _factory;
+
+        public UserMainController(MultitenantFactory factory)
+        {
+            _factory = factory;
+        }
+
         public ActionResult Dashboard()
         {
             this.LoadCommonContextIntoViewBag();
@@ -25,14 +35,23 @@ namespace ProfitWise.Web.Controllers
         public ActionResult EditProductCogs()
         {
             this.LoadCommonContextIntoViewBag();
-            return View();
+
+            var userBrief = HttpContext.PullUserBriefFromContext();
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
+
+            var model = new EditProductCogsModel()
+            {
+                ProductTypes = cogsRepository.RetrieveProductType().ToList(),
+                Vendors = cogsRepository.RetrieveVendors().ToList(),
+            };
+
+            return View(model);
         }
 
 
 
         public ActionResult BulkEditProductVariantCogs(int shopifyProductId)
         {
-            this.LoadCommonContextIntoViewBag();
 
             var model = new SimpleShopifyProductId()
             {

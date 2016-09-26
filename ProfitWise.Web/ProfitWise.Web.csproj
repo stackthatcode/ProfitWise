@@ -240,6 +240,7 @@
     <Compile Include="Controllers\CogsController.cs" />
     <Compile Include="Models\CogsGridModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
+    <Compile Include="Models\EditProductCogsModel.cs" />
     <Compile Include="Models\MoneyRange.cs" />
     <Compile Include="Models\SimpleShopifyProductId.cs" />
     <Compile Include="Models\CommonContextModel.cs" />

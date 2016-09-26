@@ -7,17 +7,10 @@ namespace Push.Foundation.Web.Json
 {
     public class JsonNetResult : ActionResult
     {
-        public JsonSerializerSettings SerializerSettings { get; set; }
-        public Formatting Formatting { get; set; }
         public Encoding ContentEncoding { get; set; }
         public string ContentType { get; set; }
         public object Data { get; set; }
 
-        public JsonNetResult()
-        {
-            SerializerSettings = new JsonSerializerSettings();
-            this.Formatting = Formatting.Indented;  // default setting 
-        }
 
         public JsonNetResult(object data) : base()
         {
@@ -45,13 +38,7 @@ namespace Push.Foundation.Web.Json
                 response.ContentEncoding = ContentEncoding;
             }
 
-            if (Data != null)
-            {
-                var writer = new JsonTextWriter(response.Output) { Formatting = Formatting };
-                var serializer = JsonSerializer.Create(SerializerSettings);
-                serializer.Serialize(writer, Data);
-                writer.Flush();
-            }
+            Data?.SerializeToJson(response.Output);
         }
     }
 }

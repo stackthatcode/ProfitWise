@@ -17,10 +17,25 @@ SELECT LAST_INSERT_ID();
 /*** TEMPORARY ***/
 DELETE FROM profitwisequerymasterproduct;
 
+DELETE FROM profitwiseproduct WHERE Vendor = 'Zortrax';
+
 
 UPDATE profitwisemastervariant 
 SET CogsAmount = 20
 WHERE PwMasterProductId IN ( 6, 8, 9 );
+
+
+SELECT * FROM profitwisequerymasterproduct;
+
+
+SELECT COUNT(t2.PwMasterProductId)
+FROM profitwisevariant t1 
+	INNER JOIN profitwisemastervariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
+	INNER JOIN profitwiseproduct t3 ON t2.PwMasterProductId = t3.PwMasterProductId
+        
+WHERE (t1.PwShopId = 100001 AND t2.PwShopId = 100001 AND t3.PwShopId = 100001)
+AND ( (t1.Title LIKE '%RED%') OR (t1.Sku LIKE '%RED%') OR ( t3.Title LIKE '%RED%' ) OR ( t3.Vendor LIKE '%RED%' ) )
+AND ( (t1.Title LIKE '%Universe%') OR (t1.Sku LIKE '%Universe%') OR ( t3.Title LIKE '%Universe%' ) OR ( t3.Vendor LIKE '%Universe%' ) ); 
 
 
 
@@ -77,8 +92,9 @@ SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( SELECT PwMasterProd
 
 
 
+USE ProfitWise;
 
-SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 100001 AND PwQueryId = 900000;
+SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 100001 AND PwQueryId = 900004;
 
 
 
@@ -101,7 +117,8 @@ FROM profitwisemastervariant t2
 	INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
 WHERE t2.PwShopId = 100001
 AND t3.PwShopId = 100001 AND t3.IsPrimary = true
-AND t2.PwMasterProductId IN ( 2, 3, 5, 6 )
+AND t2.PwMasterProductId IN ( 
+	SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 100001 AND PwQueryId = 900004 )
 
 
 

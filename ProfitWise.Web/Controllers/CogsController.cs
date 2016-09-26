@@ -23,12 +23,22 @@ namespace ProfitWise.Web.Controllers
             _currencyService = currencyService;
         }
 
+        [HttpGet]
+        public ActionResult Vendors()
+        {
+            var userBrief = HttpContext.PullUserBriefFromContext();
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
+            var vendors = cogsRepository.RetrieveVendors();
+
+            return new JsonNetResult(vendors);
+        }
+
+
         [HttpPost]
         public ActionResult Search(CogsSearchParameters parameters)
         {
             var userBrief = HttpContext.PullUserBriefFromContext();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
-            var queryId = cogsRepository.DeletePickList();
 
             using (var transaction = cogsRepository.InitiateTransaction())
             {

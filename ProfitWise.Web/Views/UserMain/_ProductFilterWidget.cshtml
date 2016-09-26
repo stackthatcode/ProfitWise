@@ -44,6 +44,11 @@
     </div>
 </script>
 
+<style>
+    .selected-filters .tooltip-inner {
+        margin-top: -1px;
+    }
+</style>
 
 <script type="text/html" id="Product-Filter-Widget">
     <div class="popover-container" name="product-filter-widget">
@@ -67,7 +72,7 @@
                             value: SearchText,
                             valueUpdate: 'afterkeydown', 
                             hasFocus: true,
-                            event: { keyup: KeyPressCallback }" />
+                            event: { keyup: KeyPressCallback }"/>
 
                 <div class="input-group-addon btn btn-primary" data-bind="click: CallbackFunction">
                     Search &nbsp;<i class="glyphicon glyphicon-search"></i>
@@ -75,9 +80,11 @@
             </div>
 
             <div style="height: 10px;"></div>
-            <div class="input-group" data-bind="foreach: SelectedFiltersForSearch" style="min-height:30px;">
-
-                <div class="filter-tag-container" style="float: left; display: inline-block; margin-right: 5px; margin-bottom: 2px;">
+            <div class="input-group selected-filters" data-bind="foreach: SelectedFiltersForSearch" style="min-height: 30px;">
+                
+                <div class="filter-tag-container"
+                     style="float: left; display: inline-block; margin-right: 5px; margin-bottom: 2px;"
+                     data-bind="tooltip: { title: TagDescription, placement: 'bottom' }">
                     <div class="filter-description" data-bind="text: TagDescription">
                     </div>
 
@@ -123,32 +130,19 @@
 
 
 
-    ProfitWiseWidgets.ProductFilterModel = function () {
+    ProfitWiseWidgets.ProductFilterModel = function (productTypes, productVendors) {
         var self = this;
 
         self.FilterTypes =
             ko.observableArray([
-                { Name:'Product type', Type: ProfitWiseWidgets.FilterType.ProductType },
-                { Name:'Product vendor', Type: ProfitWiseWidgets.FilterType.ProductVendor },
+                { Name:'Type', Type: ProfitWiseWidgets.FilterType.ProductType },
+                { Name:'Vendor', Type: ProfitWiseWidgets.FilterType.ProductVendor },
                 { Name:'Tagged with', Type: ProfitWiseWidgets.FilterType.TaggedWith },
                 { Name:'Missing CoGS', Type: ProfitWiseWidgets.FilterType.MissingCogs },
         ]);        
 
-        // NOTE: test data - move to external service
-        self.ProductTypes = ko.observableArray([
-            '3D Printers',
-            'Filament',
-            'Accessories',
-        ]);
-
-        // NOTE: test data - move to external service
-        self.ProductVendors = ko.observableArray([
-            'Ultimaker',
-            '3D Universe',
-            'ColorFabb',
-            'Zortrax',
-        ]);
-
+        self.ProductTypes = ko.observableArray(productTypes);
+        self.ProductVendors = ko.observableArray(productVendors);
 
         self.SearchText = ko.observable("");
 
