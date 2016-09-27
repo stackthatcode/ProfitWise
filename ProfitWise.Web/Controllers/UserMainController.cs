@@ -49,7 +49,6 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-
         public ActionResult BulkEditProductVariantCogs(int shopifyProductId)
         {
 

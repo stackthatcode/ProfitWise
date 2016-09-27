@@ -44,7 +44,7 @@ namespace ProfitWise.Data.Repositories
             return $" AND ( (t1.Title LIKE @{termName}) OR (t1.Sku LIKE @{termName}) OR ( t3.Title LIKE @{termName} ) OR ( t3.Vendor LIKE @{termName} ) )";
         }
 
-        public int InsertPickList(List<string> terms)
+        public void InsertPickList(List<string> terms)
         {
             var query =
                 @"INSERT INTO profitwisequerymasterproduct (PwShopId, PwMasterProductId)
@@ -82,13 +82,8 @@ namespace ProfitWise.Data.Repositories
                 query += PickListClauseHelper("term4");
             }
 
-            query += "; SELECT COUNT(*) FROM profitwisequerymasterproduct " +
-                     "WHERE PwShopId = @PwShopId";
-            
-            return _connection
-                    .Query<int>(query, 
-                        new {PwShopId = this.PwShop.PwShopId, term0, term1, term2, term3, term4 })
-                    .First();
+            _connection.Execute(
+                query, new {PwShopId = this.PwShop.PwShopId, term0, term1, term2, term3, term4 });
         }
 
         public void FilterPickList(IList<ProductSearchFilter> filters)
@@ -158,6 +153,30 @@ namespace ProfitWise.Data.Repositories
                 PwShopId = this.PwShop.PwShopId, searchByVendor, searchByProductType, 
                     searchByTags0, searchByTags1, searchByTags2, searchByTags3, searchByTags4,
             });
+        }
+
+        public void FilterPickListMissingCogs()
+        {
+            var query =
+                @"DELETE FROM profitwisequerymasterproduct
+                WHERE PwShopId = @PwShopId
+                AND PwMasterProductId NOT IN (
+                    SELECT DISTINCT(PwMasterProductId)
+                    FROM profitwisemastervariant
+                    WHERE PwShopId = @PwShopId
+                    AND CogsAmount IS NULL
+                );";
+
+            _connection.Execute(query, new {PwShopId = PwShop.PwShopId});
+        }
+
+        public int RetreivePickListCount()
+        {
+            var query = @"SELECT COUNT(*) 
+                        FROM profitwisequerymasterproduct 
+                        WHERE PwShopId = @PwShopId";
+
+            return _connection.Query<int>(query, new { PwShopId = PwShop.PwShopId }).First();
         }
 
         public IList<PwCogsProductSearchResult> 

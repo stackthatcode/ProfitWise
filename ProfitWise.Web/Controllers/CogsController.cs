@@ -44,12 +44,15 @@ namespace ProfitWise.Web.Controllers
             using (var transaction = cogsRepository.InitiateTransaction())
             {
                 var terms = (parameters.Text ?? "").SplitBy(',');
-
-                var recordCount = cogsRepository.InsertPickList(terms);
+                cogsRepository.InsertPickList(terms);
 
                 if (parameters.Filters != null && parameters.Filters.Count > 0)
                 {
                     cogsRepository.FilterPickList(parameters.Filters);
+                    if (parameters.Filters.Any(x => x.Type == ProductSearchFilterType.MissingCogs))
+                    {
+                        cogsRepository.FilterPickListMissingCogs();
+                    }
                 }
 
                 var products =
@@ -76,6 +79,8 @@ namespace ProfitWise.Web.Controllers
                 products.PopulateVariants(variants);
 
                 var model = products.ToCogsGridModel(userBrief.Shop.CurrencyId);
+
+                var recordCount = cogsRepository.RetreivePickListCount();
 
                 return new JsonNetResult(new {products = model, totalRecords = recordCount});
             }

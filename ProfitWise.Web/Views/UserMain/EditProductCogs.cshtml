@@ -71,6 +71,7 @@
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div id="top-header">
 
+                <!-- Filtering and Paging -->
                 <div class="row" style="padding-left: 25px; padding-right: 25px;">
                     <!-- Filtering Widget -->
                     <div class="col-lg-6" style="padding-top: 20px;">
@@ -157,7 +158,7 @@
                 </div>
             </div>
 
-            <!-- Actual Product Cogs -->
+            <!-- Search Results -->
             <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
                 <tbody data-bind="foreach: $root.CurrentGrid">
                 <tr>
@@ -232,7 +233,6 @@
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
         self.FilterModel = new ProfitWiseWidgets.ProductFilterModel(productTypes, productVendors);
-
         self.FilterModel.RegisterCallbackFunction(function() { self.SearchForProducts(); });
 
 
