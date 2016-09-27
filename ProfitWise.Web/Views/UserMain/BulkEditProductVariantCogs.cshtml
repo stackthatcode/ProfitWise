@@ -1,5 +1,5 @@
-﻿@model ProfitWise.Web.Models.SimpleShopifyProductId
-
+﻿@using Push.Foundation.Web.Json
+@model ProfitWise.Web.Models.BulkEditProductCogsModel
 @{
     ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
     Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
@@ -10,6 +10,8 @@
 
 <script type="text/html" id="Main-Template">
     <form class="form-horizontal">
+        <input type="hidden" value="@Model.MasterProductId"/>
+
         <div class="form-group" style="height: 32px;">
             <label class="col-xs-3 control-label" style="color: #777;">Current Product</label>
 
@@ -74,7 +76,8 @@
 
 <script>
     // Extract Shopify Product Id from MVC layer
-    var shopifyProductId = @Model.ShopifyProductId;
+    var model = @Html.Raw(Model.SerializeToJson());
+
 
     $(document)
         .ready(function () {
@@ -115,7 +118,7 @@
                 AmountHigh : 266,
                 IncludesAverages : true,
             });
-            
+
             ko.applyBindings(model);
             window.ModelHandle = model;
             ProfitWiseFunctions.PopOverAutoCloseInit();

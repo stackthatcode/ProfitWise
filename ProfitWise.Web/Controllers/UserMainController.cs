@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model;
+using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 
@@ -10,10 +13,12 @@ namespace ProfitWise.Web.Controllers
     public class UserMainController : Controller
     {
         private readonly MultitenantFactory _factory;
+        private readonly CurrencyService _currencyService;
 
-        public UserMainController(MultitenantFactory factory)
+        public UserMainController(MultitenantFactory factory, CurrencyService currencyService)
         {
             _factory = factory;
+            _currencyService = currencyService;
         }
 
         public ActionResult Dashboard()
@@ -35,10 +40,9 @@ namespace ProfitWise.Web.Controllers
         public ActionResult EditProductCogs()
         {
             this.LoadCommonContextIntoViewBag();
-
             var userBrief = HttpContext.PullUserBriefFromContext();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
-
+            
             var model = new EditProductCogsModel()
             {
                 ProductTypes = cogsRepository.RetrieveProductType().ToList(),
@@ -49,13 +53,27 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        public ActionResult BulkEditProductVariantCogs(int shopifyProductId)
+        public ActionResult BulkEditProductVariantCogs(int masterProductId)
         {
+            var userBrief = HttpContext.PullUserBriefFromContext();
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
 
-            var model = new SimpleShopifyProductId()
+            var product = cogsRepository.RetrieveMasterProduct(masterProductId);
+            var variants =
+                cogsRepository
+                    .RetrieveMasterVariants(new List<long> {masterProductId})
+                    .PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.PwShopId);
+            
+            // TODO - Populate Product with Variants
+
+            var model = new BulkEditProductCogsModel
             {
-                ShopifyProductId = shopifyProductId
+                MasterProductId = masterProductId,
+                Title = product.Title,
+                CurrencyId = userBrief.Shop.CurrencyId,
+                Variant = variants,
             };
+
             return View(model);
         }
 

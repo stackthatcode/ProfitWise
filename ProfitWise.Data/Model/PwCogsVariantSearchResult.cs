@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Model
 {
@@ -22,5 +25,31 @@ namespace ProfitWise.Data.Model
         	
         [JsonIgnore]
         public PwCogsProductSearchResult Parent { get; set; }
+
+
+        public void PopulateNormalizedCogsAmount(
+                        CurrencyService currencyService, int targetCurrencyId)
+        {
+            if (CogsAmount != null && CogsCurrencyId != null)
+            {
+                NormalizedCogsAmount =
+                    currencyService.Convert(
+                        CogsAmount.Value, CogsCurrencyId.Value, targetCurrencyId, DateTime.Now);
+            }
+        }
+    }
+
+    public static class SearchResultExtension
+    {
+        public static IList<PwCogsVariantSearchResult> PopulateNormalizedCogsAmount(
+                    this IList<PwCogsVariantSearchResult> searchResults,
+                    CurrencyService currencyService, int targetCurrencyId)
+        {
+            foreach (var result in searchResults)
+            {
+                result.PopulateNormalizedCogsAmount(currencyService, targetCurrencyId);
+            }
+            return searchResults;
+        }
     }
 }

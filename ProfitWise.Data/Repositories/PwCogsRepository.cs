@@ -179,6 +179,19 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<int>(query, new { PwShopId = PwShop.PwShopId }).First();
         }
 
+        public PwCogsProductSearchResult RetrieveMasterProduct(int masterProductId)
+        {
+            var query =
+                @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
+                FROM profitwiseproduct
+                WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = true;";
+
+            return _connection
+                    .Query<PwCogsProductSearchResult>(
+                        query, new { PwShopId = this.PwShop.PwShopId })
+                    .FirstOrDefault();
+        }
+
         public IList<PwCogsProductSearchResult> 
                 RetrieveMasterProducts(int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
         {

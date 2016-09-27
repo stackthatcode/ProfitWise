@@ -238,6 +238,7 @@
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\IdentityCachingAttribute.cs" />
     <Compile Include="Controllers\CogsController.cs" />
+    <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\CogsGridModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
     <Compile Include="Models\EditProductCogsModel.cs" />

@@ -6,5 +6,6 @@ namespace ProfitWise.Web.Models
     {
         public IList<string> Vendors { get; set; }
         public IList<string> ProductTypes { get; set; }
+        public int CurrencyId { get; set; }
     }
 }

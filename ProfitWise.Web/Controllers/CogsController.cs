@@ -61,25 +61,12 @@ namespace ProfitWise.Web.Controllers
 
                 var variants =
                     cogsRepository
-                        .RetrieveMasterVariants(products.Select(x => x.PwMasterProductId).ToList());
-
-                foreach (var variant in variants)
-                {
-                    if (variant.CogsAmount != null && variant.CogsCurrencyId != null)
-                    {
-                        variant.NormalizedCogsAmount =
-                            _currencyService.Convert(
-                                variant.CogsAmount.Value,
-                                variant.CogsCurrencyId.Value,
-                                userBrief.Shop.CurrencyId,
-                                DateTime.Now);
-                    }
-                }
-
+                        .RetrieveMasterVariants(products.Select(x => x.PwMasterProductId).ToList())
+                        .PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.CurrencyId);
+                
                 products.PopulateVariants(variants);
 
                 var model = products.ToCogsGridModel(userBrief.Shop.CurrencyId);
-
                 var recordCount = cogsRepository.RetreivePickListCount();
 
                 return new JsonNetResult(new {products = model, totalRecords = recordCount});
