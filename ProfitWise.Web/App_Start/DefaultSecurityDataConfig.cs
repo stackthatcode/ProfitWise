@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Utilities.General;
@@ -26,7 +27,7 @@ namespace ProfitWise.Web
                 var result = roleManager.Create(new IdentityRole(SecurityConfig.AdminRole));
                 if (result.Succeeded == false)
                 {
-                    throw new Exception($"RoleManager.Create (Admin) failed: {result.Errors.JoinByNewline()}");
+                    throw new Exception($"RoleManager.Create (Admin) failed: {StringExtensions.JoinByNewline(result.Errors)}");
                 }
             }
 
@@ -36,7 +37,7 @@ namespace ProfitWise.Web
                 var result = roleManager.Create(new IdentityRole(SecurityConfig.UserRole));
                 if (result.Succeeded == false)
                 {
-                    throw new Exception($"RoleManager.Create (User) failed: {result.Errors.JoinByNewline()}");
+                    throw new Exception($"RoleManager.Create (User) failed: {StringExtensions.JoinByNewline(result.Errors)}");
                 }
             }
 
@@ -54,19 +55,19 @@ namespace ProfitWise.Web
                 var result = userManager.Create(newAdminUser, SecurityConfig.DefaultAdminPassword);
                 if (result.Succeeded == false)
                 {
-                    throw new Exception($"UserManager.Create failed: {result.Errors.JoinByNewline()}");
+                    throw new Exception($"UserManager.Create failed: {StringExtensions.JoinByNewline(result.Errors)}");
                 }
 
                 var resultAddToAdmin = userManager.AddToRole(newAdminUser.Id, SecurityConfig.AdminRole);
                 if (resultAddToAdmin.Succeeded == false)
                 {
-                    throw new Exception($"UserManager.AddToRole (Admin) failed: {resultAddToAdmin.Errors.JoinByNewline()}");
+                    throw new Exception($"UserManager.AddToRole (Admin) failed: {StringExtensions.JoinByNewline(resultAddToAdmin.Errors)}");
                 }
 
                 var resultAddToUser =userManager.AddToRole(newAdminUser.Id, SecurityConfig.UserRole);
                 if (resultAddToUser.Succeeded == false)
                 {
-                    throw new Exception($"UserManager.AddToRole (User) failed: {resultAddToUser.Errors.JoinByNewline()}");
+                    throw new Exception($"UserManager.AddToRole (User) failed: {StringExtensions.JoinByNewline(resultAddToUser.Errors)}");
                 }
             }
         }

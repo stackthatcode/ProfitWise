@@ -1,4 +1,7 @@
-﻿namespace ProfitWise.Web.Models
+﻿using System.Collections.Generic;
+using ProfitWise.Data.Model;
+
+namespace ProfitWise.Web.Models
 {
     public class CogsSearchParameters
     {
@@ -7,5 +10,8 @@
         public int PageSize { get; set; }
         public int SortByColumn { get; set; }
         public bool SortByDirectionDown { get; set; }
+
+        public IList<ProductSearchFilter> Filters { get; set; }
     }
+
 }

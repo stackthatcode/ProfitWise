@@ -328,12 +328,24 @@
         };
 
         self.LoadDataForCurrentPage = function () {
+
+            var filters = [];
+            ko.utils.arrayForEach(
+                self.FilterModel.SelectedFiltersForSearch(),
+                function(item) {
+                    filters.push({ 
+                        Type: item.Type(),
+                        Value: item.Value(),
+                    });
+                });
+
             var search = {
                 Text: self.FilterModel.SearchText(),
                 PageNumber: self.PagingModel.PageNumber(),
                 PageSize: self.PagingModel.PageSize(),
                 SortByColumn: self.SortByColumnIndex(),
                 SortByDirectionDown: self.SortByDirectionDown(),
+                Filters: filters,
             };
 
             var ajax = new ProfitWiseFunctions.Ajax();

@@ -1,4 +1,6 @@
-﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+﻿@using ProfitWise.Data.Model
+@using ProfitWise.Web.Models
+<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
 
 <script type="text/html" id="Product-Filter-Widget-Popover">
     <div style="width: 200px; padding-bottom: 15px; height: 100%;">
@@ -28,7 +30,7 @@
                 <input type="text" maxlength="50" class="form-control" data-bind="value: SelectedTags, hasFocus: true,  valueUpdate: 'afterkeydown',  event: { keypress: TagsFilterKeyPress }" placeholder="E.g.: Blue, Imported, Kids"/>
             </div>
 
-            <div style="font-size: 0.8em;">Enter Product Tags separated by comma</div>
+            <div style="font-size: 0.8em;">Enter up to 5 different Product Tags separated by comma</div>
         </div>
 
         <div data-bind="if: MissingCogsFilterSelected" style="font-size: 0.9em;">
@@ -67,7 +69,7 @@
                     </a>
                 </div>
 
-                <input type="text" class="form-control" placeholder="Enter product titles or SKU's"
+                <input type="text" class="form-control" placeholder="Enter up to 5 search terms for Titles, Vendors or SKU's, separated by comma"
                        data-bind="
                             value: SearchText,
                             valueUpdate: 'afterkeydown', 
@@ -81,10 +83,11 @@
 
             <div style="height: 10px;"></div>
             <div class="input-group selected-filters" data-bind="foreach: SelectedFiltersForSearch" style="min-height: 30px;">
-                
+
                 <div class="filter-tag-container"
                      style="float: left; display: inline-block; margin-right: 5px; margin-bottom: 2px;"
                      data-bind="tooltip: { title: TagDescription, placement: 'bottom' }">
+
                     <div class="filter-description" data-bind="text: TagDescription">
                     </div>
 
@@ -123,10 +126,10 @@
 
 
     ProfitWiseWidgets.FilterType = ProfitWiseWidgets.FilterType || {};
-    ProfitWiseWidgets.FilterType.ProductType = "product-type";
-    ProfitWiseWidgets.FilterType.ProductVendor = "product-vendor";
-    ProfitWiseWidgets.FilterType.TaggedWith = "tagged-with";
-    ProfitWiseWidgets.FilterType.MissingCogs = "missing-cogs";
+    ProfitWiseWidgets.FilterType.ProductType = "@ProductSearchFilterType.ProductType";
+    ProfitWiseWidgets.FilterType.ProductVendor = "@ProductSearchFilterType.ProductVendor";
+    ProfitWiseWidgets.FilterType.TaggedWith = "@ProductSearchFilterType.TaggedWith";
+    ProfitWiseWidgets.FilterType.MissingCogs = "@ProductSearchFilterType.MissingCogs";
 
 
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Push.Utilities.General
+namespace Push.Foundation.Utilities.General
 {
     public static class StringExtensions
     {

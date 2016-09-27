@@ -7,6 +7,7 @@ using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -42,13 +43,14 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = cogsRepository.InitiateTransaction())
             {
-                var terms =
-                    (parameters.Text ?? "")
-                        .Split(' ')
-                        .Select(x => x.Trim())
-                        .Where(x => x != "")
-                        .ToList();
+                var terms = (parameters.Text ?? "").SplitBy(',');
+
                 var recordCount = cogsRepository.InsertPickList(terms);
+
+                if (parameters.Filters != null && parameters.Filters.Count > 0)
+                {
+                    cogsRepository.FilterPickList(parameters.Filters);
+                }
 
                 var products =
                     cogsRepository.RetrieveMasterProducts(
