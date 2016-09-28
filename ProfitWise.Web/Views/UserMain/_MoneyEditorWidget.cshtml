@@ -28,11 +28,11 @@
              data-bind="text: SelectedCurrencyFriendly, 
                     popover: { options: { placement: 'bottom' , trigger: 'click' , }, template: 'Money-Editor-Widget-Popover', data: $data }">
         </div>
-        <input type="text" 
-               data-bind="
-                    formatMoney: Amount,
-                    event: { focus: function() { event.target.select(); } , keypress: InvokeKeyCallback }"
-               class="form-control money-editor-text" placeholder="Enter CoGS">
+        <input type="text"
+               data-bind="formatMoney: Amount,
+                        event: { focus: function() { event.target.select(); }, keyup: InvokeKeyCallback }"
+               class="form-control money-editor-text" 
+               placeholder="Enter CoGS">
     </div>
 </script>
 
@@ -99,11 +99,11 @@
 
         
         // Enter-key Stuff
-        self.RegisterEnterKeyCallback = function(callback) {
-            self.EnterKeyCallback = callback;
+        self.EnterKeyCallback = function () {
         };
 
-        self.EnterKeyCallback = function () {
+        self.RegisterEnterKeyCallback = function (callback) {
+            self.EnterKeyCallback = callback;
         };
 
         self.InvokeKeyCallback = function (model, event) {

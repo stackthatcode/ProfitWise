@@ -9,7 +9,7 @@
 @Html.Partial("_MoneyRangeWidget")
 
 <script type="text/html" id="Main-Template">
-    <form class="form-horizontal">
+    <form class="form-horizontal"  onsubmit="return false;">
         <div class="form-group" style="height: 32px;">
             <label class="col-xs-3 control-label" style="color: #777;">Current Product</label>
 
@@ -109,22 +109,21 @@
                             ShopifyApp.Modal.close(true);                               
                         });
 
+                    return false;
                 };
 
-                var cogsWidgetModel = new ProfitWiseWidgets.MoneyEditorWidgetModel();
+                self.CogsAmountEditorModel = new ProfitWiseWidgets.MoneyEditorWidgetModel();
 
-                cogsWidgetModel.RegisterEnterKeyCallback(function() {
-                    self.OkButtonClick();
+                self.CogsAmountEditorModel.RegisterEnterKeyCallback(function() {
+                    return self.OkButtonClick();
                 });
-
-                self.CogsAmountEditorModel = cogsWidgetModel;
             };
 
             var model = new ProfitWise.BulkEditProductVariantCogsModel();
 
+            // Log data into the model
             model.MasterProductId(data.PwMasterProductId);
             model.ProductTitle(data.Title);
-
             model.CurrentCogs({
                 CurrencyId : data.NormalizedCurrencyId,
                 AmountLow : data.LowNormalizedCogs,
@@ -132,9 +131,9 @@
                 IncludesAverages : data.HasCogsDetail,
             });
 
-            model.CogsAmountEditorModel =
-                new ProfitWiseWidgets.MoneyEditorWidgetModel(data.NormalizedCurrencyId, 0.00);
-            
+            model.CogsAmountEditorModel.CurrencyId(data.NormalizedCurrencyId);
+            model.CogsAmountEditorModel.Amount(data.LowNormalizedCogs);
+
             ko.applyBindings(model);
             window.ModelHandle = model;
             ProfitWiseFunctions.PopOverAutoCloseInit();

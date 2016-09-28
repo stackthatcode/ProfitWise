@@ -53,6 +53,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+
         public ActionResult BulkEditCogs(int masterProductId)
         {
             this.LoadCommonContextIntoViewBag();
@@ -66,6 +67,8 @@ namespace ProfitWise.Web.Controllers
 
             return View(product);
         }
+
+
 
         public ActionResult StockedDirectlyVariantsPopup(int shopifyProductId)
         {
