@@ -105,7 +105,6 @@ ProfitWiseFunctions.AjaxSettings = {
     ErrorCallbackFunction: ProfitWiseShopify.ErrorPopup,
 };
 
-
 ProfitWiseFunctions.Ajax = function (settings) {
     var self = this;
 
@@ -117,6 +116,8 @@ ProfitWiseFunctions.Ajax = function (settings) {
 
 
     self.ErrorCallback = function (jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown);
+
         if (jqXHR.status != 0 || textStatus == "timeout") {
             self.HideLoading();
             self.Settings.ErrorCallbackFunction();
@@ -148,6 +149,7 @@ ProfitWiseFunctions.Ajax = function (settings) {
         flow.exec(
             function () {
                 self.ShowLoading();
+
                 $.ajax({
                     type: 'POST',
                     dataType: 'json',

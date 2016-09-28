@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
-using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -56,21 +54,33 @@ namespace ProfitWise.Web.Controllers
                 }
 
                 var products =
-                    cogsRepository.RetrieveMasterProducts(
+                    cogsRepository.RetrieveProductsFromPicklist(
                         parameters.PageNumber, parameters.PageSize, parameters.SortByColumn, parameters.SortByDirectionDown);
 
-                var variants =
+                products.PopulateVariants(
                     cogsRepository
-                        .RetrieveMasterVariants(products.Select(x => x.PwMasterProductId).ToList())
-                        .PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.CurrencyId);
+                        .RetrieveVariants(products.Select(x => x.PwMasterProductId).ToList()));
+
+                products.PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.CurrencyId);
                 
-                products.PopulateVariants(variants);
 
                 var model = products.ToCogsGridModel(userBrief.Shop.CurrencyId);
                 var recordCount = cogsRepository.RetreivePickListCount();
 
                 return new JsonNetResult(new {products = model, totalRecords = recordCount});
             }
+        }
+
+
+        [HttpPost]
+        public ActionResult BulkUpdateCogs(long masterProductId, int currencyId, decimal amount)
+        {
+            var userBrief = HttpContext.PullUserBriefFromContext();
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
+
+            cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
+
+            return new JsonNetResult(new { Success = true});
         }
     }
 }

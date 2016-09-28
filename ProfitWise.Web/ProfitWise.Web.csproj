@@ -381,7 +381,7 @@
     <Content Include="Views\UserMain\_MoneyEditorWidget.cshtml" />
     <Content Include="Views\Shared\_UserLayoutDialogBox.cshtml" />
     <Content Include="Views\Shared\_UserScripts.cshtml" />
-    <Content Include="Views\UserMain\BulkEditProductVariantCogs.cshtml" />
+    <Content Include="Views\UserMain\BulkEditCogs.cshtml" />
     <Content Include="Views\UserMain\_MoneyRangeWidget.cshtml" />
     <Content Include="Views\UserMain\StockedDirectlyVariantsPopup.cshtml" />
     <Content Include="Views\UserMain\ExcludedProductsPopup.cshtml" />

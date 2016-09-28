@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Model
 {
-    public class PwCogsProductSearchResult
+    public class PwCogsProduct
     {
         public long PwMasterProductId { get; set; }
         public long PwProductId { get; set; }
@@ -13,11 +15,13 @@ namespace ProfitWise.Data.Model
 
 
         [JsonIgnore]
-        public IList<PwCogsVariantSearchResult> Variants { get; set; }
+        public IList<PwCogsVariant> Variants { get; set; }
 
         public int NumberOfVariants => Variants.Count();
 
-        
+
+        public int NormalizedCurrencyId { get; set; }
+
         public decimal? HighNormalizedCogs
         {
             get
@@ -120,22 +124,48 @@ namespace ProfitWise.Data.Model
         }
 
 
-        public PwCogsProductSearchResult()
+        public PwCogsProduct()
         {
-            Variants = new List<PwCogsVariantSearchResult>();
+            Variants = new List<PwCogsVariant>();
         }
+
+        public PwCogsProduct PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
+        {
+            this.NormalizedCurrencyId = targetCurrencyId;
+
+            if (currencyService.AllCurrencies().All(x => x.CurrencyId != targetCurrencyId))
+            {
+                throw new ArgumentException($"targetCurrencyId {targetCurrencyId} is not a valid currency");
+            }
+
+            foreach (var variant in this.Variants)
+            {
+                variant.PopulateNormalizedCogsAmount(currencyService, targetCurrencyId);
+            }
+            return this;
+        }
+
     }
 
-    public static class PwCogsProductSearchResultExtensions
+    public static class CogsExtensions
     {
         public static void PopulateVariants(
-            this IList<PwCogsProductSearchResult> products, IList<PwCogsVariantSearchResult> variants)
+            this IList<PwCogsProduct> products, IList<PwCogsVariant> variants)
         {
             foreach (var variant in variants)
             {
                 var product = products.First(x => x.PwMasterProductId == variant.PwMasterProductId);
                 product.Variants.Add(variant);
                 variant.Parent = product;
+            }
+        }
+
+        public static void PopulateNormalizedCogsAmount(
+                this IList<PwCogsProduct> products, CurrencyService currencyService, int targetCurrencyId)
+        {
+            foreach (var product in products)
+            {
+                product.PopulateNormalizedCogsAmount(currencyService, targetCurrencyId);
             }
         }
     }

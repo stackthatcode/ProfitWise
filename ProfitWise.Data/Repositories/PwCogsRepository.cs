@@ -179,21 +179,27 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<int>(query, new { PwShopId = PwShop.PwShopId }).First();
         }
 
-        public PwCogsProductSearchResult RetrieveMasterProduct(int masterProductId)
+        public PwCogsProduct RetrieveProduct(int masterProductId)
         {
             var query =
-                @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
+                @"SELECT PwMasterProductId, PwProductId, Title, Vendor
                 FROM profitwiseproduct
-                WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = true;";
+                WHERE PwShopId = @PwShopId
+                AND PwMasterProductId = @PwMasterProductId
+                AND IsPrimary = true;";
 
             return _connection
-                    .Query<PwCogsProductSearchResult>(
-                        query, new { PwShopId = this.PwShop.PwShopId })
+                    .Query<PwCogsProduct>(
+                        query, new
+                        {
+                            PwShopId = this.PwShop.PwShopId,
+                            PwMasterProductId = masterProductId,
+                        })
                     .FirstOrDefault();
         }
 
-        public IList<PwCogsProductSearchResult> 
-                RetrieveMasterProducts(int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
+        public IList<PwCogsProduct> 
+                RetrieveProductsFromPicklist(int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
         {
             if (resultsPerPage > 200)
             {
@@ -219,7 +225,7 @@ namespace ProfitWise.Data.Repositories
                 sortByClause +
                 " LIMIT @StartRecord, @ResultsPerPage;";
 
-            return _connection.Query<PwCogsProductSearchResult>(
+            return _connection.Query<PwCogsProduct>(
                 query,
                 new
                 {
@@ -232,7 +238,7 @@ namespace ProfitWise.Data.Repositories
         /// <summary>
         /// Note: cannot handle more than 200 Master Product Ids
         /// </summary>
-        public IList<PwCogsVariantSearchResult> RetrieveMasterVariants(IList<long> masterProductIds)
+        public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t2.Exclude, t2.StockedDirectly, 
@@ -244,10 +250,18 @@ namespace ProfitWise.Data.Repositories
                 AND t3.PwShopId = @PwShopId AND t3.IsPrimary = true
                 AND t2.PwMasterProductId IN @MasterProductIds";
 
-            return _connection.Query<PwCogsVariantSearchResult>(
+            return _connection.Query<PwCogsVariant>(
                 query, new {PwShopId = this.PwShop.PwShopId, MasterProductIds = masterProductIds}).ToList();
         }
 
+        public void UpdateProductCogsAllVariants(long masterProductId, int currencyId, decimal amount)
+        {
+            var query = @"UPDATE profitwisemastervariant
+                        SET CogsAmount = @amount, CogsCurrencyId = @currencyId
+                        WHERE PwMasterProductId = @masterProductId";
+
+            _connection.Execute(query, new {masterProductId, currencyId, amount});
+        }
 
         public IList<string> RetrieveVendors()
         {

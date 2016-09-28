@@ -94,8 +94,8 @@ ProfitWiseShopify.BarInitialize = function (title) {
 };
 
 
-ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId, callbackFunction) {
-    var url = '/ProfitWise/UserMain/BulkEditProductVariantCogs?shopifyProductId=' + shopifyProductId;
+ProfitWiseShopify.LaunchBulkEditPopUp = function(masterProductId, callbackFunction) {
+    var url = '/ProfitWise/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
 
     ShopifyApp.Modal.open({
             src: url,
@@ -105,7 +105,7 @@ ProfitWiseShopify.LaunchBulkEditPopUp = function(shopifyProductId, callbackFunct
         },
         function (result) {
             if (result) {
-                callbackFunction(shopifyProductId);
+                callbackFunction(masterProductId);
             }
         });
 };

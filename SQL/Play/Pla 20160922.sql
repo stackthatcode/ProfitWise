@@ -1,9 +1,13 @@
+USE ProfitWise;
 
 SET SQL_SAFE_UPDATES = 0;
 
 
 SELECT * FROM profitwiseshop;
 
+UPDATE profitwiseshop SET CurrencyId = 1;
+
+SELECT * FROM profitwiseproduct;
 
 
 
@@ -23,6 +27,9 @@ DELETE FROM profitwiseproduct WHERE Vendor = 'Zortrax';
 UPDATE profitwisemastervariant 
 SET CogsAmount = 20
 WHERE PwMasterProductId IN ( 6, 8, 9 );
+
+SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( 6, 8, 9 );
+
 
 
 SELECT * FROM profitwisequerymasterproduct;
@@ -78,7 +85,6 @@ AND PwMasterProductId NOT IN (
 /** STEP #4 - Apply the CoGS Filter **/
 DELETE FROM profitwisequerymasterproduct
 WHERE PwShopId = 100001
-AND PwQueryId = 900000
 AND PwMasterProductId NOT IN (
 	SELECT DISTINCT(PwMasterProductId)
 	FROM profitwisemastervariant 
@@ -86,6 +92,11 @@ AND PwMasterProductId NOT IN (
 	AND CogsAmount IS NULL
 );
 
+
+	SELECT DISTINCT(PwMasterProductId)
+	FROM profitwisemastervariant 
+	WHERE PwShopId = 100001
+	AND CogsAmount IS NULL;
 
 /*** TEMPORARY - what did we just select ??? ***/
 SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( SELECT PwMasterProductId FROM profitwisequerymasterproduct );
@@ -95,6 +106,14 @@ SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( SELECT PwMasterProd
 USE ProfitWise;
 
 SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 100001 AND PwQueryId = 900004;
+
+
+SELECT DISTINCT ProductType AS ProductType
+		FROM profitwiseproduct 
+		WHERE ProductType IS NOT NULL
+		AND ProductType <> ''
+		ORDER BY ProductType;
+                        
 
 
 

@@ -19,7 +19,7 @@ namespace ProfitWise.Web.Models
     public static class CogsGridModelExtension
     {
         public static IList<CogsGridModel> 
-                    ToCogsGridModel(this IList<PwCogsProductSearchResult> products, int currencyId)
+                    ToCogsGridModel(this IList<PwCogsProduct> products, int currencyId)
         {
             var output = new List<CogsGridModel>();
             foreach (var product in products)

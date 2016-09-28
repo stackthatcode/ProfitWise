@@ -53,28 +53,18 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        public ActionResult BulkEditProductVariantCogs(int masterProductId)
+        public ActionResult BulkEditCogs(int masterProductId)
         {
+            this.LoadCommonContextIntoViewBag();
+
             var userBrief = HttpContext.PullUserBriefFromContext();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
 
-            var product = cogsRepository.RetrieveMasterProduct(masterProductId);
-            var variants =
-                cogsRepository
-                    .RetrieveMasterVariants(new List<long> {masterProductId})
-                    .PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.PwShopId);
-            
-            // TODO - Populate Product with Variants
+            var product = cogsRepository.RetrieveProduct(masterProductId);
+            product.Variants = cogsRepository.RetrieveVariants(new List<long> {masterProductId});
+            product.PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.CurrencyId);
 
-            var model = new BulkEditProductCogsModel
-            {
-                MasterProductId = masterProductId,
-                Title = product.Title,
-                CurrencyId = userBrief.Shop.CurrencyId,
-                Variant = variants,
-            };
-
-            return View(model);
+            return View(product);
         }
 
         public ActionResult StockedDirectlyVariantsPopup(int shopifyProductId)

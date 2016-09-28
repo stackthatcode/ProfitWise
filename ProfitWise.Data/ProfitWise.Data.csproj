@@ -78,8 +78,8 @@
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\OrderLineItemSubset.cs" />
     <Compile Include="Model\ProductSearchFilter.cs" />
-    <Compile Include="Model\PwCogsVariantSearchResult.cs" />
-    <Compile Include="Model\PwCogsProductSearchResult.cs" />
+    <Compile Include="Model\PwCogsVariant.cs" />
+    <Compile Include="Model\PwCogsProduct.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />

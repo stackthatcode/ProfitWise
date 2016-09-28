@@ -5,7 +5,7 @@ using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Model
 {
-    public class PwCogsVariantSearchResult
+    public class PwCogsVariant
     {
         public long PwMasterProductId { get; set;  }
         public long PwMasterVariantId { get; set; }
@@ -24,7 +24,7 @@ namespace ProfitWise.Data.Model
 
         	
         [JsonIgnore]
-        public PwCogsProductSearchResult Parent { get; set; }
+        public PwCogsProduct Parent { get; set; }
 
 
         public void PopulateNormalizedCogsAmount(
@@ -39,17 +39,5 @@ namespace ProfitWise.Data.Model
         }
     }
 
-    public static class SearchResultExtension
-    {
-        public static IList<PwCogsVariantSearchResult> PopulateNormalizedCogsAmount(
-                    this IList<PwCogsVariantSearchResult> searchResults,
-                    CurrencyService currencyService, int targetCurrencyId)
-        {
-            foreach (var result in searchResults)
-            {
-                result.PopulateNormalizedCogsAmount(currencyService, targetCurrencyId);
-            }
-            return searchResults;
-        }
-    }
+
 }

@@ -28,7 +28,7 @@
              data-bind="text: SelectedCurrencyFriendly, 
                     popover: { options: { placement: 'bottom' , trigger: 'click' , }, template: 'Money-Editor-Widget-Popover', data: $data }">
         </div>
-        <input type="text" value="20.00"
+        <input type="text" 
                data-bind="
                     formatMoney: Amount,
                     event: { focus: function() { event.target.select(); } , keypress: InvokeKeyCallback }"
@@ -39,14 +39,17 @@
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.MoneyEditorWidgetModel = function() {
+    ProfitWiseWidgets.MoneyEditorWidgetModel = function(currencyId, amount) {
         var self = this;
         var defaultCurrencyId = 1;
         var defaultAmount = 0.00;
 
         // TODO: load this from the database...
         self.CurrencyCache = ProfitWiseFunctions.CurrencyCache;
-        self.CurrencyId = ko.observable(defaultCurrencyId);   // Default to Currency Id = 1;
+
+        // Populate the input amounts
+        self.CurrencyId = ko.observable(currencyId || defaultCurrencyId);   // Default to Currency Id = 1;
+        self.Amount = ko.observable(numeral(amount || defaultAmount).format('0,0.00'));
 
         ko.bindingHandlers.formatMoney = {
             init: function (element, valueAccessor) {
@@ -77,7 +80,6 @@
             }
         }
 
-        self.Amount = ko.observable(numeral(defaultAmount).format('0,0.00'));
 
         self.SelectedCurrency = ko.computed(function() {
             return AQ(ProfitWiseFunctions.CurrencyCache)

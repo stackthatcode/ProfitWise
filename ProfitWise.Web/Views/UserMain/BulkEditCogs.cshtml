@@ -1,5 +1,5 @@
 ﻿@using Push.Foundation.Web.Json
-@model ProfitWise.Web.Models.BulkEditProductCogsModel
+@model ProfitWise.Data.Model.PwCogsProduct
 @{
     ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
     Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
@@ -10,8 +10,6 @@
 
 <script type="text/html" id="Main-Template">
     <form class="form-horizontal">
-        <input type="hidden" value="@Model.MasterProductId"/>
-
         <div class="form-group" style="height: 32px;">
             <label class="col-xs-3 control-label" style="color: #777;">Current Product</label>
 
@@ -75,9 +73,8 @@
 </div>
 
 <script>
-    // Extract Shopify Product Id from MVC layer
-    var model = @Html.Raw(Model.SerializeToJson());
-
+    // Data pass via PwCogsProduct C# object
+    var data = @Html.Raw(Model.SerializeToJson());
 
     $(document)
         .ready(function () {
@@ -86,6 +83,7 @@
             ProfitWise.BulkEditProductVariantCogsModel = function() {
                 var self = this;
 
+                self.MasterProductId = ko.observable();
                 self.ProductTitle = ko.observable();
                 self.CurrentCogs = ko.observable();
 
@@ -97,10 +95,24 @@
                 };
 
                 self.OkButtonClick = function() {
-                    ShopifyApp.Modal.close(true);
+                    var postData = {
+                        masterProductId: self.MasterProductId(),
+                        currencyId: self.CogsAmountEditorModel.CurrencyId(),
+                        Amount: self.CogsAmountEditorModel.Amount(),
+                    };
+
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost(
+                        "/Cogs/BulkUpdateCogs", 
+                        postData,
+                        function() {
+                            ShopifyApp.Modal.close(true);                               
+                        });
+
                 };
 
                 var cogsWidgetModel = new ProfitWiseWidgets.MoneyEditorWidgetModel();
+
                 cogsWidgetModel.RegisterEnterKeyCallback(function() {
                     self.OkButtonClick();
                 });
@@ -110,15 +122,19 @@
 
             var model = new ProfitWise.BulkEditProductVariantCogsModel();
 
-            model.ProductTitle("3D Universe 2.85 mm PLA");
+            model.MasterProductId(data.PwMasterProductId);
+            model.ProductTitle(data.Title);
 
             model.CurrentCogs({
-                CurrencyId : 1,
-                AmountLow : 200,
-                AmountHigh : 266,
-                IncludesAverages : true,
+                CurrencyId : data.NormalizedCurrencyId,
+                AmountLow : data.LowNormalizedCogs,
+                AmountHigh : data.HighNormalizedCogs,
+                IncludesAverages : data.HasCogsDetail,
             });
 
+            model.CogsAmountEditorModel =
+                new ProfitWiseWidgets.MoneyEditorWidgetModel(data.NormalizedCurrencyId, 0.00);
+            
             ko.applyBindings(model);
             window.ModelHandle = model;
             ProfitWiseFunctions.PopOverAutoCloseInit();

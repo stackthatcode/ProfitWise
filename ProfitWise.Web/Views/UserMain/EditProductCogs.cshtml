@@ -315,9 +315,12 @@
 
         // *** Launch Bulk Edit Popup *** //
         self.LaunchBulkEditPopup = function (model) {
-            ProfitWiseShopify.LaunchBulkEditPopUp(model.Id,
-                function (shopifyProductId) {
-                    self.LoadSingleProductRecord(shopifyProductId);
+            console.log(model);
+
+            ProfitWiseShopify.LaunchBulkEditPopUp(
+                model.Id,
+                function () {
+                    self.LoadDataForCurrentPage();
                 });
         }
 
@@ -366,7 +369,7 @@
         };
 
         self.LoadSingleProductRecord = function (shopifyProductId) {
-            ProfitWiseShopify.ErrorPopup();
+            //ProfitWiseShopify.ErrorPopup();
         }
 
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
