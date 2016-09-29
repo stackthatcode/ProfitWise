@@ -21,18 +21,7 @@ namespace ProfitWise.Web.Controllers
             _factory = factory;
             _currencyService = currencyService;
         }
-
-        [HttpGet]
-        public ActionResult Vendors()
-        {
-            var userBrief = HttpContext.PullUserBriefFromContext();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
-            var vendors = cogsRepository.RetrieveVendors();
-
-            return new JsonNetResult(vendors);
-        }
-
-
+        
         [HttpPost]
         public ActionResult Search(CogsSearchParameters parameters)
         {

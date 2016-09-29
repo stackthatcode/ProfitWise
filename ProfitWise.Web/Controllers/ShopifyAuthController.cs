@@ -2,12 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OAuthSandbox.Controllers;
 using OAuthSandbox.Models;
+using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
@@ -23,7 +25,6 @@ namespace ProfitWise.Web.Controllers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IShopifyCredentialService _credentialService;
-        private readonly ApplicationDbContext _dbContext;
         private readonly IPushLogger _logger;
 
         public ShopifyAuthController(
@@ -38,26 +39,26 @@ namespace ProfitWise.Web.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _credentialService = credentialService;
-            _dbContext = dbContext;
             _logger = logger;
         }
 
 
-        // GET: /ShopifyAuth/Index
+        // GET: /ShopifyAuth/UnauthorizedAccess
         [HttpGet]
         [AllowAnonymous]
         public ActionResult UnauthorizedAccess(string returnUrl)
         {
-            return View(new UnauthorizedAccessModel {  ReturnUrl =  returnUrl});
+            var shop = returnUrl.ExtractQueryParameter("shop");
+            if (shop != null)
+            {
+                return Login(shop, returnUrl);
+            }
+            else
+            {
+                return View(new UnauthorizedAccessModel {ReturnUrl = returnUrl});
+            }
         }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public ActionResult UnauthorizedAccess(string returnUrl, string shopname)
-        {
-            return RedirectToAction("Login", new { @returnUrl = returnUrl, shop = shopname });
-        }
-
+        
         [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
         {
@@ -166,14 +167,6 @@ namespace ProfitWise.Web.Controllers
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
 
-        // POST: /ShopifyAuth/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult LogOff()
-        {
-            _authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("UnauthorizedAccess", "ShopifyAuth");
-        }
 
         // GET: /ShopifyAuth/ExternalLoginFailure
         [AllowAnonymous]

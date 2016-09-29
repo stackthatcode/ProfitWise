@@ -17,7 +17,9 @@
 
 <script type="text/html" id="Money-Editor-Widget-Popover">
     <div class="currency-popover" data-bind="foreach: ProfitWiseFunctions.CurrencyCache">
-        <a href="#" data-bind="click: $parent.ChangeSelectedCurrency"><span data-bind="text: Abbr" style="display:inline-block; width:32px;"></span> (<span data-bind="text: Symbol"></span>) </a>
+        <a href="#" data-bind="click: $parent.ChangeCurrencySelection">
+            <span data-bind="text: Abbr" style="display: inline-block; width: 32px;"></span> (<span data-bind="text: Symbol"></span>) 
+        </a>
     </div>
 </script>
 
@@ -43,7 +45,7 @@
         var self = this;
         var defaultCurrencyId = 1;
         var defaultAmount = 0.00;
-
+        
         // TODO: load this from the database...
         self.CurrencyCache = ProfitWiseFunctions.CurrencyCache;
 
@@ -92,9 +94,21 @@
             return self.SelectedCurrency().Abbr + " (" + self.SelectedCurrency().Symbol + ")";
         });
 
-        self.ChangeSelectedCurrency = function (model) {
+        self.ChangeCurrencySelection = function (model) {
             self.CurrencyId(model.Id);
             ProfitWiseFunctions.PopOverCloseAll();
+        };
+
+        self.PushState = function(currencyId, amount) {
+            self.CurrencyId(currencyId);
+            self.Amount(amount);
+        }
+
+        self.PullState = function() {
+            return {
+                CurrencyId: self.CurrencyId(),
+                Amount: self.Amount()
+            };
         };
 
         

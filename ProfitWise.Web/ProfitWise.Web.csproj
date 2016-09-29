@@ -313,6 +313,7 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\npm.js" />
+    <Content Include="Scripts\ProfitWiseCurrency.js" />
     <Content Include="Scripts\ProfitWiseShopify.js" />
     <Content Include="Scripts\ProfitWiseFunctions.js" />
     <Content Include="Scripts\_references.js" />
@@ -387,6 +388,7 @@
     <Content Include="Views\UserMain\ExcludedProductsPopup.cshtml" />
     <Content Include="Views\UserMain\ExcludedVariantsPopup.cshtml" />
     <Content Include="Views\UserMain\StockedDirectlyProductsPopup.cshtml" />
+    <Content Include="Views\Shared\ErrorDialogBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">

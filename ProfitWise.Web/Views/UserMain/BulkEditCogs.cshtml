@@ -24,7 +24,7 @@
             <label class="col-xs-3 control-label" style="color: #777;">Current CoGS</label>
 
             <div class="col-xs-7">
-                <span data-bind="template: { name: 'Money-Range-Widget-Horizontal', data: CurrentCogs }">
+                <span data-bind="template: { name: 'Money-Range-Widget-Horizontal', data: CurrentCogsRange }">
                 </span>
 
             </div>
@@ -85,8 +85,8 @@
 
                 self.MasterProductId = ko.observable();
                 self.ProductTitle = ko.observable();
-                self.CurrentCogs = ko.observable();
-
+                self.CurrentCogsRange = ko.observable();
+                
                 self.ValidationState = ko.computed(function() {
                 });
 
@@ -95,12 +95,14 @@
                 };
 
                 self.OkButtonClick = function() {
+                    var cogsAmount = self.CogsAmountEditorModel.PullState();
+
                     var postData = {
                         masterProductId: self.MasterProductId(),
-                        currencyId: self.CogsAmountEditorModel.CurrencyId(),
-                        Amount: self.CogsAmountEditorModel.Amount(),
+                        currencyId: cogsAmount.CurrencyId,
+                        Amount: cogsAmount.Amount,
                     };
-
+                    
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpPost(
                         "/Cogs/BulkUpdateCogs", 
@@ -121,21 +123,22 @@
 
             var model = new ProfitWise.BulkEditProductVariantCogsModel();
 
-            // Log data into the model
+            // Load Product data into the model
             model.MasterProductId(data.PwMasterProductId);
             model.ProductTitle(data.Title);
-            model.CurrentCogs({
+
+            // Load the Cogs Range model
+            model.CurrentCogsRange({
                 CurrencyId : data.NormalizedCurrencyId,
                 AmountLow : data.LowNormalizedCogs,
                 AmountHigh : data.HighNormalizedCogs,
                 IncludesAverages : data.HasCogsDetail,
             });
 
-            model.CogsAmountEditorModel.CurrencyId(data.NormalizedCurrencyId);
-            model.CogsAmountEditorModel.Amount(data.LowNormalizedCogs);
+            // Load the Cogs Amount money editor
+            model.CogsAmountEditorModel.PushState(data.NormalizedCurrencyId, data.LowNormalizedCogs);
 
             ko.applyBindings(model);
-            window.ModelHandle = model;
             ProfitWiseFunctions.PopOverAutoCloseInit();
         });
 </script>

@@ -67,6 +67,11 @@ ProfitWiseShopify.BarInitialize = function (title) {
                                 href: "/ProfitWise/UserMain/Products",
                                 target: "app"
                             },
+                            {
+                                label: "Error Page (Remove for Prod)",
+                                href: "/ProfitWise/UserMain/Error",
+                                target: "app"
+                            },
                         ]
                     },
                     {

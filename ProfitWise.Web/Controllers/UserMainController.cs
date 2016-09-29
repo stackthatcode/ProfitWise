@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -117,7 +118,10 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
-
+        public ActionResult Error()
+        {
+            throw new Exception("This is simulation of a server fault");
+        }
     }
 }
 

@@ -1,32 +1,11 @@
-﻿@using Microsoft.Owin.Security
-@model OAuthSandbox.Models.UnauthorizedAccessModel
-
+﻿@model OAuthSandbox.Models.UnauthorizedAccessModel
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Unauthorized Access";
 }
 
-<h2>Shopify Authorization</h2>
-
+<h2>Unauthorized ProfitWise Access</h2>
 <h4>It appears you are not logged into ProfitWise.</h4>
-
 <div style="height: 40px;"></div>
 
-<p>If you are seeing this inside of Shopify, please try refreshing your page. If not, please go to Shopify and relaunch ProfitWise from Apps.</p>
-
-
-@using (Html.BeginForm("Login", "ShopifyAuth", new {ReturnUrl = Model.ReturnUrl}))
-{
-    @Html.AntiForgeryToken()
-    <div>
-        <p>
-            Or, you can enter your Shop Name here, and we'll automatically send you to Shopify for authorization:
-        </p>
-        <label>Enter your Shop Name:</label>
-        <input class="form-control" style="max-width: 300px;" name="shop" id="shop" value="profitwise-sandbox-store"/>
-    <br/>
-        <button type="submit" class="btn btn-primary" id="submit" name="submit" value="shopify"
-                title="Log in using your Shopify Shop">
-            Log in using your Shopify Shop
-        </button>
-    </div>
-}
+<p>If you are seeing this inside of Shopify, please try refreshing your page. 
+    If that does not work, please go to Shopify and relaunch ProfitWise from Apps.</p>

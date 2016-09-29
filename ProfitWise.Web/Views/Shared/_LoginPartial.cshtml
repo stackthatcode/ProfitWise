@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNet.Identity
-@using ProfitWise.Web.Attributes
+﻿@using ProfitWise.Web.Attributes
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "ShopifyAuth", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
