@@ -10,16 +10,21 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
-    <title>@commonContext.FullyBrandedPageTitle</title>
+    <title>ProfitWise - Know Your Profitability</title>
 
     @Html.Partial("_UserScripts")
 
-    <!-- Shopify JavaScript API -->
-    <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
-    <script>
-        ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');
-        ProfitWiseShopify.BarInitialize('@commonContext.PageTitle');
-    </script>
+    @{
+        if (commonContext != null)
+        {
+            <!-- Shopify JavaScript API -->
+            <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+            <script>
+                ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');
+                ProfitWiseShopify.BarInitialize('@commonContext.PageTitle');
+            </script>
+        }
+    }
 </head>
 
 <body>

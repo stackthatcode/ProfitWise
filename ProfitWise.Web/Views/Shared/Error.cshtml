@@ -1,17 +1,19 @@
 ﻿@model ProfitWise.Web.Attributes.ErrorModel
-
 @{
-    ViewBag.Title = "Error";
-    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+    ViewBag.Title = "ProfitWise - System Error";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
 
-<!-- TODO - copy styling to other pages, possibly centralize in Anonymous Layout -->
-<div style="margin: 30px; padding: 30px; background-color: #FFF;  min-height: 500px;">
-    <h1 style="font-weight: 700; color: #666;">ProfitWise - System Error</h1>
-    <h3>An error occurred while processing your request.</h3>
+<div class="exception">
+    <h2 class="header">ProfitWise - <span style="color: #AAA;">System Error</span></h2>
+    <h4>An error occurred while processing your request.</h4>
+    <div class="top-spacer"></div>
     <p>
-        We're sorry, but we've just encountered a Server Fault. We'll have that cleared up soon!
-        You can click <a href="@Model.AspxErrorPath">click here to navigate back</a>.
+        We're sorry, but we've just encountered a Server Fault. We're working hard to have that fixed as soon as possible.
+    </p>
+
+    <p>
+        Please try refreshing your browser. Or, you can click <a href="@Model.AspxErrorPath">click here to navigate back</a>.
         If the issue persists, please contact our support team.
     </p>
 </div>

@@ -1,11 +1,13 @@
 ﻿@model ProfitWise.Web.Models.AuthorizationProblemModel
 @{
     ViewBag.Title = "ProfitWise - Unauthorized Access";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
 
-<h2>ProfitWise - Unauthorized Access</h2>
-<h4>It appears you are not logged into ProfitWise.</h4>
-<div style="height: 40px;"></div>
-<p>If you are seeing this inside of Shopify, please try refreshing your page. 
-    If that does not work, please go to Shopify and relaunch ProfitWise from Apps.</p>
-
+<div class="exception">
+    <h2 class="header">ProfitWise - <span style="color: #AAA;">Unauthorized Access</span></h2>
+    <h4>It appears you are not logged into ProfitWise.</h4>
+    <div class="top-spacer"></div>
+    <p>If you are seeing this inside of Shopify, please try refreshing your page.</p>
+    <p>If you are not seeing this inside of Shopify, please login to Shopify and relaunch ProfitWise from Apps.</p>
+</div>

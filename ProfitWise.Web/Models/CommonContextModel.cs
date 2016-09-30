@@ -8,7 +8,7 @@ namespace ProfitWise.Web.Models
     public class CommonContext
     {
         public string ShopifyApiKey { get; set; }
-        public IdentitySnapshot UserBrief { get; set; }
+        public IdentitySnapshot IdentitySnapshot { get; set; }
 
         // Controlled by View
         public string PageTitle { get; set; }
@@ -16,7 +16,7 @@ namespace ProfitWise.Web.Models
         public string FullyBrandedPageTitle => 
             "ProfitWise - " + (PageTitle.IsNullOrEmpty() ? "Know Your Profitability" : PageTitle);
 
-        public string ShopUrl => "https://" + UserBrief.ShopDomain;
+        public string ShopUrl => "https://" + IdentitySnapshot.ShopDomain;
     }
 
 
@@ -27,7 +27,7 @@ namespace ProfitWise.Web.Models
             controller.ViewBag.CommonContext = new CommonContext
             {
                 ShopifyApiKey = ShopifyApiKey.Get(),
-                UserBrief = controller.HttpContext.PullUserBriefFromContext(),
+                IdentitySnapshot = controller.HttpContext.PullIdentitySnapshot(),
             };
         }
     }

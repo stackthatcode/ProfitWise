@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 
@@ -9,19 +10,24 @@ namespace ProfitWise.Web.Attributes
     {
         public override void OnException(ExceptionContext filterContext)
         {
-            var container = DependencyResolver.Current;
-            var logger = container.GetService<IPushLogger>();
-
             if (filterContext.ExceptionHandled) return;
             if (new HttpException(null, filterContext.Exception).GetHttpCode() != 500) return;
             if (!ExceptionType.IsInstanceOfType(filterContext.Exception)) return;
-            
+
             // Log the Exception
-            logger.Error(
+            try
+            {
+                var container = DependencyResolver.Current;
+                var logger = container.GetService<IPushLogger>();
+                logger.Error(
                     "URL:" + filterContext.HttpContext.Request.Url + " - " +
                     "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest());
-            logger.Error(filterContext.Exception);
-
+                logger.Error(filterContext.Exception);
+            }
+            catch
+            {          
+                // TODO - create an Event Viewer log entry writer      
+            }
 
             // Notify System Admins
             //ErrorNotification.Send(filterContext.Exception);
@@ -46,11 +52,12 @@ namespace ProfitWise.Web.Attributes
                 model.AspxErrorPath = filterContext.HttpContext.Request.Url.ToString();
                 model.NavigatedFromAdminArea = true;
 
-                filterContext.Result = new ViewResult
-                {
-                    ViewName = "~/Views/Shared/Error.cshtml",
-                    ViewData = new ViewDataDictionary<ErrorModel>(model),
-                };
+                var result = new ViewResult();
+                result.ViewName = "~/Views/Shared/Error.cshtml";
+                result.ViewData = new ViewDataDictionary<ErrorModel>(model);
+                CommonContext commonContext = filterContext.Controller.ViewBag.CommonContext;
+                result.ViewBag.CommonContext = commonContext;
+                filterContext.Result = result;
             }
 
             filterContext.ExceptionHandled = true;

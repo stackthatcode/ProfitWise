@@ -4,15 +4,15 @@ namespace ProfitWise.Web.Attributes
 {
     public static class HttpContextExtensions
     {
-        public const string _key = "UserBriefCache";
+        public const string _key = "IdentitySnapshot";
         
         
-        public static IdentitySnapshot PullUserBriefFromContext(this HttpContextBase context)
+        public static IdentitySnapshot PullIdentitySnapshot(this HttpContextBase context)
         {
             return context.Items[_key] as IdentitySnapshot;
         }
 
-        public static IdentitySnapshot PullUserBriefFromContext(this HttpContext context)
+        public static IdentitySnapshot PullIdentitySnapshot(this HttpContext context)
         {
             return context.Items[_key] as IdentitySnapshot;
         }

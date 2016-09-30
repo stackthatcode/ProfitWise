@@ -8,6 +8,7 @@ using Microsoft.Owin.Security;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
+using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
@@ -38,7 +39,9 @@ namespace ProfitWise.Web.Controllers
                 ApplicationSignInManager signInManager,
                 IShopifyCredentialService credentialService,
                 UserService userService,
-                IPushLogger logger)
+                IPushLogger logger, 
+                CurrencyService currencyService, 
+                PwShopRepository pwShopRepository)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
@@ -46,6 +49,8 @@ namespace ProfitWise.Web.Controllers
             _credentialService = credentialService;
             _userService = userService;
             _logger = logger;
+            _currencyService = currencyService;
+            _pwShopRepository = pwShopRepository;
         }
 
         [AllowAnonymous]
@@ -254,6 +259,22 @@ namespace ProfitWise.Web.Controllers
             }
             return RedirectToAction("Dashboard", "UserMain");
         }
+
+
+
+        [AllowAnonymous]
+        public ActionResult AnonymousError()
+        {
+            throw new Exception("This is simulation of a server fault");
+        }
+
+        [IdentityProcessor]
+        public ActionResult AuthenticatedError()
+        {
+            throw new Exception("This is simulation of a server fault");
+        }
+
+
     }
 }
 

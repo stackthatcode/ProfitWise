@@ -11,6 +11,7 @@ using Push.Foundation.Web.Json;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
+    [IdentityProcessor]
     public class CogsController : Controller
     {
         private readonly MultitenantFactory _factory;
@@ -25,7 +26,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Search(CogsSearchParameters parameters)
         {
-            var userBrief = HttpContext.PullUserBriefFromContext();
+            var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
             using (var transaction = cogsRepository.InitiateTransaction())
@@ -64,7 +65,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult BulkUpdateCogs(long masterProductId, int currencyId, decimal amount)
         {
-            var userBrief = HttpContext.PullUserBriefFromContext();
+            var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
             cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);

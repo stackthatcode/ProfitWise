@@ -56,6 +56,7 @@ namespace ProfitWise.Web
                         SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
                             validateInterval: TimeSpan.FromMinutes(30),
                             regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
+
                     OnApplyRedirect = ctx =>
                     {
                         if (!AuthorizationResponseUrls.Any(x => ctx.Request.Uri.PathAndQuery.Contains(x)))
@@ -88,6 +89,7 @@ namespace ProfitWise.Web
                         // Currently unused Shop information
                         //string shopPrimaryEmailAddress = context.Email;
 
+                        // Add all this good stuff to these External Cookie Claims
                         context.Identity.AddClaim(
                             new Claim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal, accessToken));
 

@@ -236,7 +236,7 @@
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
-    <Compile Include="Attributes\IdentityProcessingAttribute.cs" />
+    <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
     <Compile Include="Controllers\CogsController.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\CogsGridModel.cs" />

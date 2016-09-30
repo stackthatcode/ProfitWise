@@ -10,7 +10,7 @@ using ProfitWise.Web.Models;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
-    [IdentityProcessing]
+    [IdentityProcessor]
     public class UserMainController : Controller
     {
         private readonly MultitenantFactory _factory;
@@ -41,7 +41,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult EditProductCogs()
         {
             this.LoadCommonContextIntoViewBag();
-            var userBrief = HttpContext.PullUserBriefFromContext();
+            var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
             
             var model = new EditProductCogsModel()
@@ -59,7 +59,7 @@ namespace ProfitWise.Web.Controllers
         {
             this.LoadCommonContextIntoViewBag();
 
-            var userBrief = HttpContext.PullUserBriefFromContext();
+            var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
             var product = cogsRepository.RetrieveProduct(masterProductId);
@@ -118,10 +118,6 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
-        public ActionResult Error()
-        {
-            throw new Exception("This is simulation of a server fault");
-        }
     }
 }
 

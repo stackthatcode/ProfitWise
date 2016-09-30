@@ -69,7 +69,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             },
                             {
                                 label: "Error Page (Remove for Prod)",
-                                href: "/ProfitWise/UserMain/Error",
+                                href: "/ProfitWise/ShopifyAuth/AuthenticatedError   ",
                                 target: "app"
                             },
                         ]
