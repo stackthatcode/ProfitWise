@@ -1,15 +1,19 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using ProfitWise.Data.Model;
+using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
-using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
+using Push.Foundation.Web.Shopify;
 using Push.Shopify.Model;
 
 namespace ProfitWise.Web.Controllers
@@ -20,23 +24,29 @@ namespace ProfitWise.Web.Controllers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IShopifyCredentialService _credentialService;
+        private readonly CurrencyService _currencyService;
+        private readonly PwShopRepository _pwShopRepository;
+        private readonly UserService _userService;
         private readonly IPushLogger _logger;
+
+        private readonly DateTime _defaultStartDateForOrders = new DateTime(2016, 8, 1);
+
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
                 ApplicationUserManager userManager,
                 ApplicationSignInManager signInManager,
                 IShopifyCredentialService credentialService,
+                UserService userService,
                 IPushLogger logger)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _credentialService = credentialService;
+            _userService = userService;
             _logger = logger;
         }
-
-
 
         [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
@@ -58,8 +68,9 @@ namespace ProfitWise.Web.Controllers
             if (externalLoginInfo == null)
             {
                 _logger.Warn("Unable to retrieve ExternalLoginInfo from Authentication Manager");
+
                 // Looks like the first cookie died, was corrupted, etc. We'll ask the User to refresh their browser.
-                return View("ExternalLoginFailure");
+                return ExternalLoginFailure(returnUrl);
             }
 
             // Sign in the user with this external login provider if the user already has a login
@@ -68,6 +79,12 @@ namespace ProfitWise.Web.Controllers
 
             if (externalLoginCookieResult == SignInStatus.Success)
             {
+                if (await IsShopExistingAndDisabled(externalLoginInfo))
+                {
+                    _logger.Error($"Attempt to login to disabled PwShop by {externalLoginInfo.DefaultUserName}");
+                    return SevereAuthorizationFailure(returnUrl);
+                }
+
                 _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
 
                 using (var transaction = new TransactionScope())
@@ -102,31 +119,8 @@ namespace ProfitWise.Web.Controllers
                 if (user == null)
                 {
                     user = new ApplicationUser {UserName = userName, Email = email,};
-
-                    var createUserResult = await _userManager.CreateAsync(user);
-                    if (!createUserResult.Succeeded)
+                    if (!await _userService.CreateNewUser(user, externalLoginInfo.Login))
                     {
-                        _logger.Error(
-                            $"Unable to create new User for {email} / {userName} - " +
-                            $"{createUserResult.Errors.StringJoin(";")}");
-                        return ExternalLoginFailure(returnUrl);
-                    }
-
-                    var addToRoleResult = await _userManager.AddToRoleAsync(user.Id, SecurityConfig.UserRole);
-                    if (!addToRoleResult.Succeeded)
-                    {
-                        _logger.Error(
-                            $"Unable to add User {email} / {userName} to {SecurityConfig.UserRole} - " +
-                            $"{createUserResult.Errors.StringJoin(";")}");
-                        return ExternalLoginFailure(returnUrl);
-                    }
-
-                    var addLoginResult = await _userManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
-                    if (!addLoginResult.Succeeded)
-                    {
-                        _logger.Error(
-                            $"Unable to add Login for User {email} / {userName} - " +
-                            $"{addLoginResult.Errors.StringJoin(";")}");
                         return ExternalLoginFailure(returnUrl);
                     }
                 }
@@ -135,16 +129,21 @@ namespace ProfitWise.Web.Controllers
                 await PushCookieClaimsToPersistence(externalLoginInfo);
 
                 transaction.Complete();
-
-                _logger.Info($"Created new User for {email} / {userName}");
-                _logger.Info($"Added User {email} / {userName} to {SecurityConfig.UserRole}");
-                _logger.Info($"Added Login for User {email} / {userName}");
             }
+
+            _logger.Info($"Created new User for {email}/{userName} - added to {SecurityConfig.UserRole} Roles and added Login");
 
             // Finally Sign-in Manager
             await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
             return RedirectToLocal(returnUrl);
+        }
+
+        private async Task<bool> IsShopExistingAndDisabled(ExternalLoginInfo externalLoginInfo)
+        {
+            ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
+            var pwShop = _pwShopRepository.RetrieveByUserId(user.Id);
+            return (pwShop != null && pwShop.IsShopEnabled == false);
         }
 
         private async Task PushCookieClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
@@ -153,21 +152,54 @@ namespace ProfitWise.Web.Controllers
 
             var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
             var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
-
-            _credentialService.SetUserCredentials(user.Id, domainClaim.Value, accessTokenClaim.Value);
-
             var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
 
-            var shop = new Shop(shopSerialised.Value);
+            // Push the Domain and the Access Token
+            _credentialService.SetUserCredentials(user.Id, domainClaim.Value, accessTokenClaim.Value);
 
-            // TODO - Refresh the Shop
+            // Update the Shop with the latest serialized Shop from the OAuth handshake
+            var shop = new Shop(shopSerialised.Value);
+            await RefreshProfitWiseShop(user.Id, shop);
 
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
 
-        private async Task CreateProfitWiseShop()
+        private async Task RefreshProfitWiseShop(string userId, Shop shop)
         {
-            
+            var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);
+            var pwShop = _pwShopRepository.RetrieveByUserId(userId);
+
+            if (pwShop == null)
+            {
+                var newShop = new PwShop
+                {
+                    ShopOwnerUserId = userId,
+                    CurrencyId = currencyId,
+                    ShopifyShopId = shop.Id,
+                    StartingDateForOrders = _defaultStartDateForOrders,
+                    TimeZone = shop.TimeZone,
+                    IsAccessTokenValid = true,
+                    IsShopEnabled = true,
+                    IsDataLoaded = false,
+                };
+
+                newShop.PwShopId = _pwShopRepository.Insert(newShop);
+
+                _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}, " +
+                             $"CurrencyId: {newShop.CurrencyId}, " +
+                             $"ShopifyShopId: {newShop.ShopifyShopId}, " +
+                             $"StartingDateForOrders: {newShop.StartingDateForOrders}");
+            }
+            else
+            {
+                pwShop.CurrencyId = currencyId;
+                pwShop.TimeZone = shop.TimeZone;
+                _pwShopRepository.Update(pwShop);
+
+                _logger.Info($"Updated Shop - UserId: {pwShop.ShopOwnerUserId}, " +
+                            $"CurrencyId: {pwShop.CurrencyId}, " +
+                            $"TimeZone: {pwShop.TimeZone}");
+            }
         }
 
 

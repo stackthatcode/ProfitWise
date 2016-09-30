@@ -7,7 +7,6 @@
         public const string ShopifyDomainClaimExternal = "urn:shopify:shopname:external";
         public const string ShopifyShopSerializedExternal = "urn:shopify:shop:serialized:external";
 
-
         // Internal Claim keys - internal means they "live in our database"
         public const string ShopifyOAuthAccessTokenClaim = "urn:shopify:oauth:accesstoken";
         public const string ShopifyDomainClaim = "urn:shopify:shopname";

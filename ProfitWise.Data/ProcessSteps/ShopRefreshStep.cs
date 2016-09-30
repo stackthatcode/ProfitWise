@@ -47,45 +47,30 @@ namespace ProfitWise.Data.ProcessSteps
 
             _pushLogger.Info($"Shop Refresh Service for UserId : {shopifyCredentials.ShopOwnerUserId}");
 
-            var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);            
-            if (shop == null)
-            {
-                // Create new Shop
-                var newShop = new PwShop
-                {
-                    ShopOwnerUserId = shopifyCredentials.ShopOwnerUserId,
-                    CurrencyId = shopCurrencyId,
-                    ShopifyShopId = shopFromShopify.Id,
-                    StartingDateForOrders = DefaultStartDateForOrders, 
-                    TimeZone = shopFromShopify.TimeZone,
-                    IsAccessTokenValid = true,
-                    IsShopEnabled = true,
-                    IsDataLoaded = false,
-                };
-                newShop.PwShopId = _shopDataRepository.Insert(newShop);
+            var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
+            var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(shop);
+            var batchState = profitWiseBatchStateRepository.Retrieve();
 
-                _pushLogger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}, CurrencyId: {newShop.CurrencyId}, " +
-                            $"ShopifyShopId: {newShop.ShopifyShopId}, StartingDateForOrders: {newShop.StartingDateForOrders}");
-                
-                // Add the Batch State
+            if (batchState == null)
+            {
                 var state = new PwBatchState
                 {
-                    PwShopId = newShop.PwShopId,                    
+                    PwShopId = shop.PwShopId,                    
                 };
 
-                var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(newShop);
                 profitWiseBatchStateRepository.Insert(state);
-                return newShop.PwShopId;
+                _pushLogger.Info($"Created Batch State for Shop - UserId: {shop.ShopOwnerUserId}");
             }
-            else
-            {
-                shop.CurrencyId = shopCurrencyId;
-                shop.TimeZone = shopFromShopify.TimeZone;
-                _pushLogger.Info($"Updating Shop - UserId: " +
-                        $"{shop.ShopOwnerUserId}, CurrencyId: {shop.CurrencyId}, TimeZone: {shop.TimeZone}");
-                _shopDataRepository.Update(shop);
-                return shop.PwShopId;
-            }
+
+            shop.CurrencyId = shopCurrencyId;
+            shop.TimeZone = shopFromShopify.TimeZone;
+            _shopDataRepository.Update(shop);
+            _pushLogger.Info(
+                    $"Updated Shop - UserId: {shop.ShopOwnerUserId}, " +
+                    $"CurrencyId: {shop.CurrencyId}, " +
+                    $"TimeZone: {shop.TimeZone}");
+
+            return shop.PwShopId;
         }
     }
 }

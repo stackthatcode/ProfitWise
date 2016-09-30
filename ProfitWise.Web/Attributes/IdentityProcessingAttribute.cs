@@ -25,8 +25,9 @@ namespace ProfitWise.Web.Attributes
 
                 // Pull the User ID from OWIN plumbing...
                 var currentUrl = filterContext.HttpContext.Request.Url.PathAndQuery;
-
                 var userId = filterContext.HttpContext.User.ExtractUserId();
+
+
                 if (userId == null)
                 {
                     logger.Debug($"Null UserId - aborting IdentityProcessing");
@@ -57,13 +58,12 @@ namespace ProfitWise.Web.Attributes
                 }
 
                 var pwShop = shopRepository.RetrieveByUserId(userId);
-
                 if (!pwShop.IsShopEnabled)
                 {
                     logger.Info(
                         $"PwShop {pwShop.PwShopId} has been disabled - aborting IdentityProcessing");
                     AuthConfig.GlobalSignOut(signInManager);
-                    filterContext.Result = AuthConfig.AccessTokenRefreshRedirect(currentUrl);
+                    filterContext.Result = AuthConfig.SevereAuthorizationFailureRedirect(currentUrl);
                     return;
                 }
 

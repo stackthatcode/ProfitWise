@@ -32,6 +32,7 @@ namespace Push.Foundation.Web
             builder.RegisterType<ApplicationUserManager>();
             builder.RegisterType<ApplicationSignInManager>();
             builder.RegisterType<ClaimsRepository>();
+            builder.RegisterType<UserService>();
 
             builder
                 .RegisterType<UserStore<ApplicationUser>>()
