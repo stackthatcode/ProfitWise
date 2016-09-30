@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Security.Claims;
 using System.Web.Mvc;
 using Autofac;
@@ -17,9 +19,20 @@ namespace ProfitWise.Web
     public class AuthConfig
     {
         // Could easily locate this in the ShopifyAuthController...
-        public const string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
-        public const string AuthorizationFailureUrl = "/ShopifyAuth/AuthorizationFailure";
-        public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
+        public const string SiteVirtualDirectory = "/ProfitWise";
+
+        public static readonly string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
+        public static readonly string ExternalLoginFailureUrl = "/ShopifyAuth/ExternalLoginFailure";
+        public static readonly string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
+        public static readonly string SevereAuthorizationFailureUrl = "/ShopifyAuth/SevereAuthorizationFailure";
+
+        public static string[] AuthorizationResponseUrls = new[]
+        {
+            UnauthorizedAccessUrl,
+            SevereAuthorizationFailureUrl,
+            AccessTokenRefreshUrl,
+            ExternalLoginFailureUrl
+        };
 
 
         public static void Configure(IAppBuilder app, IContainer autofacContainer)
@@ -42,7 +55,14 @@ namespace ProfitWise.Web
                     OnValidateIdentity = 
                         SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
                             validateInterval: TimeSpan.FromMinutes(30),
-                            regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
+                            regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
+                    OnApplyRedirect = ctx =>
+                    {
+                        if (!AuthorizationResponseUrls.Any(x => ctx.Request.Uri.PathAndQuery.Contains(x)))
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                        }
+                    },
                 }
             });
 
@@ -61,23 +81,21 @@ namespace ProfitWise.Web
                 {
                     OnAuthenticated = async context =>
                     {
-                        // Retrieve the OAuth access token to store for subsequent API calls
                         string accessToken = context.AccessToken;
-
-                        // Shop Id, Name, Domain and Email
-                        string domain = context.ShopifyDomain;
+                        var domain = context.ShopifyDomain;
+                        var serializedShopInformation = context.Shop.ToString();
 
                         // Currently unused Shop information
-                        //string shopId = context.Id;
-                        //string shopName = context.ShopName;
                         //string shopPrimaryEmailAddress = context.Email;
-                        //var serializedShopInformation = context.Shop;
 
                         context.Identity.AddClaim(
                             new Claim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal, accessToken));
 
                         context.Identity.AddClaim(
                             new Claim(SecurityConfig.ShopifyDomainClaimExternal, domain));
+
+                        context.Identity.AddClaim(
+                            new Claim(SecurityConfig.ShopifyShopSerializedExternal, serializedShopInformation));
                     },
                 }
             };
@@ -94,24 +112,23 @@ namespace ProfitWise.Web
         }
 
 
+        public static RedirectResult AccessTokenRefreshRedirect(string redirectUrl)
+        {
+            var url = $"{SiteVirtualDirectory}{AuthConfig.AccessTokenRefreshUrl}?returnUrl={redirectUrl}";
+            return new RedirectResult(url);
+        }
+
         public static RedirectResult UnauthorizedAccessRedirect(string redirectUrl)
         {
-            var url = $"{AuthConfig.UnauthorizedAccessUrl}?returnUrl={redirectUrl}";
+            var url = $"{SiteVirtualDirectory}{AuthConfig.UnauthorizedAccessUrl}?returnUrl={redirectUrl}";
             return new RedirectResult(url);
         }
 
-        public static RedirectResult AuthorizationFailureRedirect(string redirectUrl)
+        public static RedirectResult SevereAuthorizationFailureRedirect(string redirectUrl)
         {
-            var url = $"{AuthConfig.AuthorizationFailureUrl}?returnUrl={redirectUrl}";
+            var url = $"{SiteVirtualDirectory}{AuthConfig.SevereAuthorizationFailureUrl}?returnUrl={redirectUrl}";
             return new RedirectResult(url);
         }
-
-        public static RedirectResult AccessTokenRefresh(string redirectUrl)
-        {
-            var url = $"{AuthConfig.AccessTokenRefreshUrl}?returnUrl={redirectUrl}";
-            return new RedirectResult(url);
-        }
-
 
     }
 }

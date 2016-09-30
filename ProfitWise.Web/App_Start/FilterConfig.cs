@@ -9,7 +9,6 @@ namespace ProfitWise.Web
         {
             filters.Add(new HandleErrorAttributeImpl());
 
-            filters.Add(new IdentityProcessingAttribute());
         }
     }
 }

@@ -28,16 +28,11 @@ namespace Push.Shopify.Repositories
 
         public virtual Shop Retrieve()
         {
-            var path = "/admin/shop.json";
-                       
+            var path = "/admin/shop.json";                       
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
-            dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
-            var output = new Shop();
-            output.Id = parent.shop.id;
-            output.Currency = parent.shop.currency;
-            output.TimeZone = parent.shop.timezone;
+            var output = new Shop(clientResponse.Body);
             return output;
         }
         

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
@@ -9,6 +10,7 @@ using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
+using Push.Shopify.Model;
 
 namespace ProfitWise.Web.Controllers
 {
@@ -35,22 +37,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        // GET: /ShopifyAuth/UnauthorizedAccess
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult UnauthorizedAccess(string returnUrl)
-        {
-            var shop = returnUrl.ExtractQueryParameter("shop");
-            if (shop != null)
-            {
-                return Login(shop, returnUrl);
-            }
-            else
-            {
-                return View(new UnauthorizedAccessModel {ReturnUrl = returnUrl});
-            }
-        }
-        
+
         [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
         {
@@ -78,15 +65,25 @@ namespace ProfitWise.Web.Controllers
             // Sign in the user with this external login provider if the user already has a login
             var externalLoginCookieResult =
                 await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
+
             if (externalLoginCookieResult == SignInStatus.Success)
             {
                 _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
-                // The User exists already - good! Even so, copy the latest set of Claims to Persistence
-                await RefreshIdentityClaimsToPersistence(externalLoginInfo);
+
+                using (var transaction = new TransactionScope())
+                {
+                    // The User exists already - good! Even so, copy the latest set of Claims to Persistence
+                    await PushCookieClaimsToPersistence(externalLoginInfo);
+                    transaction.Complete();
+                }
+
                 return RedirectToLocal(returnUrl);
             }
-
-            return await CreateNewUserAndSignIn(returnUrl, externalLoginInfo);
+            else
+            {
+                // If no login, then provision a brand new ProfitWise account
+                return await CreateNewUserAndSignIn(returnUrl, externalLoginInfo);
+            }
         }
 
         private async Task<ActionResult> 
@@ -99,7 +96,7 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = new TransactionScope())
             {
-                user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
+                user = await _userManager.FindByNameAsync(userName);
 
                 // If User doesn't exist, create a new one
                 if (user == null)
@@ -134,6 +131,9 @@ namespace ProfitWise.Web.Controllers
                     }
                 }
 
+                // Save the Shopify Domain and Access Token to Persistence
+                await PushCookieClaimsToPersistence(externalLoginInfo);
+
                 transaction.Complete();
 
                 _logger.Info($"Created new User for {email} / {userName}");
@@ -141,45 +141,76 @@ namespace ProfitWise.Web.Controllers
                 _logger.Info($"Added Login for User {email} / {userName}");
             }
 
-            // Save the Shopify Domain and Access Token to Persistence
-            await RefreshIdentityClaimsToPersistence(externalLoginInfo);
-
             // Finally Sign-in Manager
             await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
             return RedirectToLocal(returnUrl);
         }
 
-        private async Task RefreshIdentityClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
+        private async Task PushCookieClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
-            var newDomainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
-            var newAccessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
 
-            _credentialService.SetUserCredentials(user.Id, newDomainClaim.Value, newAccessTokenClaim.Value);
+            var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
+            var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
+
+            _credentialService.SetUserCredentials(user.Id, domainClaim.Value, accessTokenClaim.Value);
+
+            var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
+
+            var shop = new Shop(shopSerialised.Value);
+
+            // TODO - Refresh the Shop
+
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
 
+        private async Task CreateProfitWiseShop()
+        {
+            
+        }
+
+
+
+        // GET: /ShopifyAuth/UnauthorizedAccess
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult UnauthorizedAccess(string returnUrl)
+        {
+            var shop = returnUrl.ExtractQueryParameter("shop");
+            if (shop != null)
+            {
+                return Login(shop, returnUrl);
+            }
+            else
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View(new AuthorizationProblemModel(returnUrl));
+            }
+        }
 
         // GET: /ShopifyAuth/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure(string returnUrl)
         {
-            return View();
+            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return View(new AuthorizationProblemModel(returnUrl));
         }
 
         // GET: /ShopifyAuth/AccessTokenRefresh
         [AllowAnonymous]
         public ActionResult AccessTokenRefresh(string returnUrl)
         {
-            return View();
+            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return View(new AuthorizationProblemModel(returnUrl));
         }
 
         // GET: /ShopifyAuth/AuthorizationFailure
         [AllowAnonymous]
-        public ActionResult AuthorizationFailure(string returnUrl)
+        public ActionResult SevereAuthorizationFailure(string returnUrl)
         {
-            return View();
+            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return View(new AuthorizationProblemModel(returnUrl));
         }
 
 

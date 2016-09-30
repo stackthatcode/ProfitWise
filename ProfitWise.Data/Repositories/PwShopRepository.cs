@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Model;
 using Dapper;
@@ -33,8 +34,11 @@ namespace ProfitWise.Data.Repositories
         public int Insert(PwShop shop)
         {
             var query =
-                @"INSERT INTO profitwiseshop (ShopOwnerUserId, ShopifyShopId, CurrencyId, StartingDateForOrders, TimeZone) 
-                VALUES (@ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @StartingDateForOrders, @TimeZone);
+                @"INSERT INTO profitwiseshop 
+                    (ShopOwnerUserId, ShopifyShopId, CurrencyId, StartingDateForOrders, TimeZone,
+                    IsAccessTokenValid, IsShopEnabled, IsDataLoaded) 
+                VALUES (@ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @StartingDateForOrders, @TimeZone,
+                    @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded);
                 SELECT LAST_INSERT_ID();";
             return _connection
                 .Query<int>(query, shop)
@@ -49,5 +53,38 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId";
             _connection.Execute(query, shop);
         }
+
+        public void UpdateStartingDateForOrders(int pwShopId, DateTime startingDateForOrders)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET StartingDateForOrders = @startingDateForOrders,
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, startingDateForOrders });
+        }
+
+        public void UpdateIsAccessTokenValid(int pwShopId, bool isAccessTokenValid)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET IsAccessTokenValid = @isAccessTokenValid,
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, isAccessTokenValid });
+        }
+
+        public void UpdateIsShopEnabled(int pwShopId, bool isShopEnabled)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET IsShopEnabled = @isShopEnabled,
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, isShopEnabled });
+        }
+
+        public void UpdateIsDataLoaded(int pwShopId, bool isDataLoaded)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET IsDataLoaded = @isDataLoaded,
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, isDataLoaded });
+        }
+
     }
 }

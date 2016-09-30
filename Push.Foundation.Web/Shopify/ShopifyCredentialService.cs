@@ -34,19 +34,18 @@ namespace Push.Foundation.Web.Shopify
         {
             var roles = _userManager.GetRoles(currentUserId);
             var isCurrentUserIsAdmin = roles.Contains(SecurityConfig.AdminRole);
-            var shopUserId = "";
 
+            var claims = _claimsRepository.RetrieveClaims(currentUserId);
+
+            var shopUserId = "";
             if (isCurrentUserIsAdmin)
             {
-                shopUserId = _claimsRepository.RetrieveClaimValue(currentUserId, SecurityConfig.UserImpersonationClaim);
+                shopUserId = claims.ValueByType(SecurityConfig.UserImpersonationClaim);
 
                 if (shopUserId == null)
                 {
-                    return new CredentialServiceResult()
-                    {
-                        Success = false,
-                        Message = "Admin User does not currently have a User selected for impersonation."
-                    };
+                    return new CredentialServiceResult(false,
+                        "Admin User does not currently have a User selected for impersonation.");
                 }
             }
             else
@@ -54,44 +53,21 @@ namespace Push.Foundation.Web.Shopify
                 shopUserId = currentUserId;
             }
 
-            var shopName = _claimsRepository.RetrieveClaimValue(shopUserId, SecurityConfig.ShopifyDomainClaim);
-
+            var shopName = claims.ValueByType(SecurityConfig.ShopifyDomainClaim);
             if (shopName == null)
             {
-                return new CredentialServiceResult()
-                {
-                    Success = false,
-                    Message = "Invalid/missing Shop Name",
-                };
+                return new CredentialServiceResult(false, "Invalid/missing Shop Name");
             }
 
-            var accessTokenEncrypted =
-                    _claimsRepository.RetrieveClaimValue(shopUserId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
-
+            var accessTokenEncrypted = claims.ValueByType(SecurityConfig.ShopifyOAuthAccessTokenClaim);
             if (accessTokenEncrypted == null)
             {
-                return new CredentialServiceResult
-                {
-                    Success = false,
-                    Message = "Invalid/missing Access Token",
-                };
+                return new CredentialServiceResult(false, "Invalid/missing Access Token");
             }
 
-            var accessToken = "";
-
-            try
-            {
-                accessToken = _encryptionService.Decrypt(accessTokenEncrypted);
-            }
-            catch(Exception e)
-            {
-                // Log that Exception, homey!
-                return new CredentialServiceResult
-                {
-                    Success = false,
-                    Message = "Failed to decrypt Access Token",
-                };
-            }
+            // Notice: if this causes an exception to be thrown, then it's *good* - it's a significant
+            // ... System failure for decryption to fail
+            string accessToken = _encryptionService.Decrypt(accessTokenEncrypted);
 
             return new CredentialServiceResult
             {

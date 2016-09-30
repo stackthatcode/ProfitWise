@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
@@ -14,17 +15,22 @@ namespace Push.Foundation.Web.Identity
             _userManager = userManager;
         }
 
-        public string RetrieveClaimValue(string userId, string claimId)
+        public IList<Claim> RetrieveClaims(string userId)
+        {
+            return _userManager.GetClaims(userId);
+        }
+
+        public string RetrieveClaimValue(string userId, string type)
         {
             var claims = _userManager.GetClaims(userId);
-            var claim = claims.FirstOrDefault(x => x.Type == claimId);
+            var claim = claims.FirstOrDefault(x => x.Type == type);
             return claim == null ? null : claim.Value;
         }
 
-        public void RemoveClaim(string userId, string claimId)
+        public void RemoveClaim(string userId, string type)
         {
             var claims = _userManager.GetClaims(userId);
-            var claim = claims.FirstOrDefault(x => x.Type == claimId);
+            var claim = claims.FirstOrDefault(x => x.Type == type);
             if (claim != null)
             {
                 var result = _userManager.RemoveClaim(userId, claim);
@@ -37,9 +43,9 @@ namespace Push.Foundation.Web.Identity
             }
         }
 
-        public void AddClaim(string userId, string claimId, string claimValue)
+        public void AddClaim(string userId, string type, string claimValue)
         {
-            var result = _userManager.AddClaim(userId, new Claim(claimId, claimValue));
+            var result = _userManager.AddClaim(userId, new Claim(type, claimValue));
 
             if (result.Succeeded == false)
             {

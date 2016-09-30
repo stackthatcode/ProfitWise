@@ -46,8 +46,8 @@ namespace ProfitWise.Data.ProcessSteps
             var shopCurrencyId = _currencyService.AbbreviationToCurrencyId(shopFromShopify.Currency);
 
             _pushLogger.Info($"Shop Refresh Service for UserId : {shopifyCredentials.ShopOwnerUserId}");
-            var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
-            
+
+            var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);            
             if (shop == null)
             {
                 // Create new Shop
@@ -58,6 +58,9 @@ namespace ProfitWise.Data.ProcessSteps
                     ShopifyShopId = shopFromShopify.Id,
                     StartingDateForOrders = DefaultStartDateForOrders, 
                     TimeZone = shopFromShopify.TimeZone,
+                    IsAccessTokenValid = true,
+                    IsShopEnabled = true,
+                    IsDataLoaded = false,
                 };
                 newShop.PwShopId = _shopDataRepository.Insert(newShop);
 

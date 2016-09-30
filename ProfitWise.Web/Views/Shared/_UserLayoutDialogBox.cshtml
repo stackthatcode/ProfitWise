@@ -14,21 +14,16 @@
     
     @Html.Partial("_UserScripts")
 
+    <!-- Shopify JavaScript API -->
+    <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
     <script>
         ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');
     </script>
 </head>
 
 <body style="background-color: #FFF !important; overflow: hidden; padding: 30px;">
-    <!--<p>Hello, @HttpContext.Current.PullUserBriefFromContext().Email</p>
-    <p>Shop Name = @HttpContext.Current.PullUserBriefFromContext().ShopName</p>-->
-
     @RenderBody()
 
-    <div id="spinner-layer" class="spinner-layer" style="display:none;">
-        <div id="spinner" class="spinner">
-            <img id="img-spinner" style="width: 80px; height: 80px;" src="@Url.Content("~/Content/images/spinner.gif")" />
-        </div>
-    </div>
+    @Html.Partial("_SpinnerLayer")
 </body>
 </html>

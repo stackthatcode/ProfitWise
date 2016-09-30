@@ -10,6 +10,7 @@ using ProfitWise.Web.Models;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
+    [IdentityProcessing]
     public class UserMainController : Controller
     {
         private readonly MultitenantFactory _factory;

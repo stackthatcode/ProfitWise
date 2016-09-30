@@ -19,6 +19,8 @@ DROP TABLE IF EXISTS `profitwisequery`;
 DROP TABLE IF EXISTS `profitwisequerymasterproduct`;
 
 
+
+
 CREATE TABLE `profitwiseshop` (
   `PwShopId` BIGINT NOT NULL AUTO_INCREMENT,
   `ShopOwnerUserId` varchar(128) NOT NULL,
@@ -26,7 +28,11 @@ CREATE TABLE `profitwiseshop` (
   `CurrencyId` INT NULL,
   `StartingDateForOrders` TIMESTAMP NULL,
   `TimeZone` varchar(50) NULL,
-  `ValidAccessToken` bit NOT NULL,
+  
+  `IsAccessTokenValid` TINYINT NOT NULL,
+  `IsShopEnabled` TINYINT NOT NULL,
+  `IsDataLoaded` TINYINT NOT NULL,
+  
   PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 

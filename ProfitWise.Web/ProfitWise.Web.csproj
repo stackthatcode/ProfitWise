@@ -336,7 +336,7 @@
     <Content Include="Views\UserAuxiliary\Contact.cshtml" />
     <Content Include="Views\AdminAuth\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\AdminAuth\ConfirmEmail.cshtml" />
-    <Content Include="Views\ShopifyAuth\AuthorizationFailure.cshtml" />
+    <Content Include="Views\ShopifyAuth\SevereAuthorizationFailure.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPassword.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPasswordConfirmation.cshtml" />
     <Content Include="Views\AdminAuth\Login.cshtml" />
@@ -350,7 +350,6 @@
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
-    <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\UserMain\Dashboard.cshtml" />
     <Content Include="Views\ShopifyAuth\_ViewStart.cshtml" />
@@ -373,7 +372,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <None Include="Project_Readme.html" />
     <Content Include="Views\UserMain\_PagingWidget.cshtml" />
     <Content Include="Views\UserMain\_ProductFilterWidget.cshtml" />
     <Content Include="Views\UserMain\_PageFooter.cshtml" />
@@ -409,6 +407,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ShopifyAuth\AccessTokenRefresh.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_SpinnerLayer.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

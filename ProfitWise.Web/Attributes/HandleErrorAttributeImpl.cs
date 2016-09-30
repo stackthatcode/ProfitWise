@@ -43,7 +43,7 @@ namespace ProfitWise.Web.Attributes
             else
             {
                 var model = new ErrorModel();
-                model.AspxErrorPath = filterContext.HttpContext.Request.Path;
+                model.AspxErrorPath = filterContext.HttpContext.Request.Url.ToString();
                 model.NavigatedFromAdminArea = true;
 
                 filterContext.Result = new ViewResult

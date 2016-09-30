@@ -1,5 +1,4 @@
-﻿@using ProfitWise.Web.Attributes
-@using ProfitWise.Web.Models
+﻿@using ProfitWise.Web.Models
 
 @{
     var commonContext = ViewBag.CommonContext as CommonContext;
@@ -15,6 +14,8 @@
 
     @Html.Partial("_UserScripts")
 
+    <!-- Shopify JavaScript API -->
+    <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
     <script>
         ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');
         ProfitWiseShopify.BarInitialize('@commonContext.PageTitle');
@@ -24,10 +25,6 @@
 <body>
     @RenderBody()
 
-    <div id="spinner-layer" class="spinner-layer" style="display:none;">
-        <div id="spinner" class="spinner">
-            <img id="img-spinner" style="width: 80px; height: 80px;" src="@Url.Content("~/Content/images/spinner.gif")" />
-        </div>
-    </div>
+    @Html.Partial("_SpinnerLayer")
 </body>
 </html>

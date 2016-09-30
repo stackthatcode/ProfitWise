@@ -5,6 +5,8 @@
         // External Claim keys - external is synonymous with "does not live in database"
         public const string ShopifyOAuthAccessTokenClaimExternal = "urn:shopify:oauth:accesstoken:external";
         public const string ShopifyDomainClaimExternal = "urn:shopify:shopname:external";
+        public const string ShopifyShopSerializedExternal = "urn:shopify:shop:serialized:external";
+
 
         // Internal Claim keys - internal means they "live in our database"
         public const string ShopifyOAuthAccessTokenClaim = "urn:shopify:oauth:accesstoken";
