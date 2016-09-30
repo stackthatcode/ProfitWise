@@ -2,7 +2,7 @@
 @using ProfitWise.Web.Models
 
 @{
-    var commonContext = (CommonContext) ViewBag.CommonContext;
+    var commonContext = ViewBag.CommonContext as CommonContext;
 }
 
 <!DOCTYPE html>
@@ -22,9 +22,6 @@
 </head>
 
 <body>
-    <!--<p>Hello, @HttpContext.Current.PullUserBriefFromContext().Email</p>
-    <p>Shop Name = @HttpContext.Current.PullUserBriefFromContext().ShopName</p>-->
-
     @RenderBody()
 
     <div id="spinner-layer" class="spinner-layer" style="display:none;">

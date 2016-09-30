@@ -11,5 +11,6 @@ namespace ProfitWise.Data.Model
         public int CurrencyId { get; set; }
         public DateTime? StartingDateForOrders { get; set; }
         public string TimeZone { get; set; }
+        public bool ValidAccessToken { get; set; }
     }
 }

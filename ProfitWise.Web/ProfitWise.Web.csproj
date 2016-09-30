@@ -236,7 +236,7 @@
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
-    <Compile Include="Attributes\IdentityCachingAttribute.cs" />
+    <Compile Include="Attributes\IdentityProcessingAttribute.cs" />
     <Compile Include="Controllers\CogsController.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\CogsGridModel.cs" />
@@ -246,13 +246,10 @@
     <Compile Include="Models\SimpleShopifyProductId.cs" />
     <Compile Include="Models\CommonContextModel.cs" />
     <Compile Include="Plumbing\ShopifyApiKey.cs" />
-    <Compile Include="Attributes\TokenRequiredAttribute.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />
     <Compile Include="Controllers\AdminAuthController.cs" />
     <Compile Include="Controllers\AdminHomeController.cs" />
-    <Compile Include="Controllers\UserAuxiliaryController.cs" />
     <Compile Include="Controllers\UserMainController.cs" />
-    <Compile Include="Controllers\_InterestingCodeDump.cs" />
     <Compile Include="Controllers\ShopifyAuthController.cs" />
     <Compile Include="Controllers\ShopifyChallengeResult.cs" />
     <Compile Include="Global.asax.cs">
@@ -262,8 +259,7 @@
     <Compile Include="Models\AdminHomeModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ShopifyAuthModels.cs" />
-    <Compile Include="Attributes\UserBrief.cs" />
-    <Compile Include="Plumbing\OwinServices.cs" />
+    <Compile Include="Attributes\IdentitySnapshot.cs" />
     <Compile Include="Plumbing\ShopifyApiKeyAndSecret.cs" />
     <Compile Include="Plumbing\ShopifyCredentialExtensions.cs" />
     <Compile Include="Plumbing\ShopifyExtensions.cs" />
@@ -340,7 +336,7 @@
     <Content Include="Views\UserAuxiliary\Contact.cshtml" />
     <Content Include="Views\AdminAuth\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\AdminAuth\ConfirmEmail.cshtml" />
-    <Content Include="Views\ShopifyAuth\ExternalLoginFailure.cshtml" />
+    <Content Include="Views\ShopifyAuth\AuthorizationFailure.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPassword.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPasswordConfirmation.cshtml" />
     <Content Include="Views\AdminAuth\Login.cshtml" />
@@ -372,7 +368,9 @@
     <Content Include="Views\UserMain\Products.cshtml" />
     <Content Include="Views\UserMain\ShopifyScript.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="bin\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
@@ -389,6 +387,7 @@
     <Content Include="Views\UserMain\ExcludedVariantsPopup.cshtml" />
     <Content Include="Views\UserMain\StockedDirectlyProductsPopup.cshtml" />
     <Content Include="Views\Shared\ErrorDialogBox.cshtml" />
+    <Content Include="Views\ShopifyAuth\ExternalLoginFailure.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">

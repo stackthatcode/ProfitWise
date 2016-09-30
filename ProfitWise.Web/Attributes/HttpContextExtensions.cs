@@ -7,22 +7,22 @@ namespace ProfitWise.Web.Attributes
         public const string _key = "UserBriefCache";
         
         
-        public static UserBrief PullUserBriefFromContext(this HttpContextBase context)
+        public static IdentitySnapshot PullUserBriefFromContext(this HttpContextBase context)
         {
-            return context.Items[_key] as UserBrief;
+            return context.Items[_key] as IdentitySnapshot;
         }
 
-        public static UserBrief PullUserBriefFromContext(this HttpContext context)
+        public static IdentitySnapshot PullUserBriefFromContext(this HttpContext context)
         {
-            return context.Items[_key] as UserBrief;
+            return context.Items[_key] as IdentitySnapshot;
         }
 
-        public static void PushUserBriefToContext(this HttpContextBase context, UserBrief user)
+        public static void PushIdentitySnapshot(this HttpContextBase context, IdentitySnapshot user)
         {
             context.Items[_key] = user;
         }
 
-        public static void PushUserBriefToContext(this HttpContext context, UserBrief user)
+        public static void PushIdentitySnapshot(this HttpContext context, IdentitySnapshot user)
         {
             context.Items[_key] = user;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Security.Claims;
+using System.Web.Mvc;
 using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -15,6 +16,12 @@ namespace ProfitWise.Web
 {
     public class AuthConfig
     {
+        // Could easily locate this in the ShopifyAuthController...
+        public const string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
+        public const string AuthorizationFailureUrl = "/ShopifyAuth/AuthorizationFailure";
+        public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
+
+
         public static void Configure(IAppBuilder app, IContainer autofacContainer)
         {
             app.UseAutofacMiddleware(autofacContainer);
@@ -27,7 +34,7 @@ namespace ProfitWise.Web
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/ShopifyAuth/UnauthorizedAccess"),
+                LoginPath = new PathString(UnauthorizedAccessUrl),
                 Provider = new CookieAuthenticationProvider
                 {
                     // Enables the application to validate the security stamp when the user logs in.
@@ -39,6 +46,7 @@ namespace ProfitWise.Web
                 }
             });
 
+            // This enables the OAuth flow to create a temporary 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Shopify Authorization
@@ -53,26 +61,18 @@ namespace ProfitWise.Web
                 {
                     OnAuthenticated = async context =>
                     {
-                        // TODO: simulate exception handling from this
-
                         // Retrieve the OAuth access token to store for subsequent API calls
                         string accessToken = context.AccessToken;
 
-                        // Shopify shop Id.
-                        string shopId = context.Id;
-
-                        // Shopify shop name
-                        string shopName = context.ShopName;
-
-                        // Shopify domain
+                        // Shop Id, Name, Domain and Email
                         string domain = context.ShopifyDomain;
 
-                        // Retrieve the Shopify shop's primary email address
-                        string shopPrimaryEmailAddress = context.Email;
+                        // Currently unused Shop information
+                        //string shopId = context.Id;
+                        //string shopName = context.ShopName;
+                        //string shopPrimaryEmailAddress = context.Email;
+                        //var serializedShopInformation = context.Shop;
 
-                        // You can even retrieve the full JSON-serialized shop
-                        var serializedShopInformation = context.Shop;
-                        
                         context.Identity.AddClaim(
                             new Claim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal, accessToken));
 
@@ -86,6 +86,33 @@ namespace ProfitWise.Web
             shopify_options.Scope.Add("read_products");
             app.UseShopifyAuthentication(shopify_options);
         }
+
+        public static void GlobalSignOut(ApplicationSignInManager signInManager)
+        {
+            signInManager.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+            signInManager.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+        }
+
+
+        public static RedirectResult UnauthorizedAccessRedirect(string redirectUrl)
+        {
+            var url = $"{AuthConfig.UnauthorizedAccessUrl}?returnUrl={redirectUrl}";
+            return new RedirectResult(url);
+        }
+
+        public static RedirectResult AuthorizationFailureRedirect(string redirectUrl)
+        {
+            var url = $"{AuthConfig.AuthorizationFailureUrl}?returnUrl={redirectUrl}";
+            return new RedirectResult(url);
+        }
+
+        public static RedirectResult AccessTokenRefresh(string redirectUrl)
+        {
+            var url = $"{AuthConfig.AccessTokenRefreshUrl}?returnUrl={redirectUrl}";
+            return new RedirectResult(url);
+        }
+
+
     }
 }
 

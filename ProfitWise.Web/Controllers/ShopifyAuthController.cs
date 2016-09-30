@@ -1,21 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Transactions;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using OAuthSandbox.Controllers;
-using OAuthSandbox.Models;
-using ProfitWise.Web.Attributes;
+using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
-using Push.Foundation.Web.Shopify;
 
 namespace ProfitWise.Web.Controllers
 {
@@ -32,7 +25,6 @@ namespace ProfitWise.Web.Controllers
                 ApplicationUserManager userManager,
                 ApplicationSignInManager signInManager,
                 IShopifyCredentialService credentialService,
-                ApplicationDbContext dbContext,
                 IPushLogger logger)
         {
             _authenticationManager = authenticationManager;
@@ -97,7 +89,8 @@ namespace ProfitWise.Web.Controllers
             return await CreateNewUserAndSignIn(returnUrl, externalLoginInfo);
         }
 
-        private async Task<ActionResult> CreateNewUserAndSignIn(string returnUrl, ExternalLoginInfo externalLoginInfo)
+        private async Task<ActionResult> 
+                    CreateNewUserAndSignIn(string returnUrl, ExternalLoginInfo externalLoginInfo)
         {
             // It appears that the User does not exist yet
             var email = externalLoginInfo.Email;
@@ -119,7 +112,7 @@ namespace ProfitWise.Web.Controllers
                         _logger.Error(
                             $"Unable to create new User for {email} / {userName} - " +
                             $"{createUserResult.Errors.StringJoin(";")}");
-                        return View("ExternalLoginFailure");
+                        return ExternalLoginFailure(returnUrl);
                     }
 
                     var addToRoleResult = await _userManager.AddToRoleAsync(user.Id, SecurityConfig.UserRole);
@@ -128,7 +121,7 @@ namespace ProfitWise.Web.Controllers
                         _logger.Error(
                             $"Unable to add User {email} / {userName} to {SecurityConfig.UserRole} - " +
                             $"{createUserResult.Errors.StringJoin(";")}");
-                        return View("ExternalLoginFailure");
+                        return ExternalLoginFailure(returnUrl);
                     }
 
                     var addLoginResult = await _userManager.AddLoginAsync(user.Id, externalLoginInfo.Login);
@@ -137,7 +130,7 @@ namespace ProfitWise.Web.Controllers
                         _logger.Error(
                             $"Unable to add Login for User {email} / {userName} - " +
                             $"{addLoginResult.Errors.StringJoin(";")}");
-                        return View("ExternalLoginFailure");
+                        return ExternalLoginFailure(returnUrl);
                     }
                 }
 
@@ -170,10 +163,25 @@ namespace ProfitWise.Web.Controllers
 
         // GET: /ShopifyAuth/ExternalLoginFailure
         [AllowAnonymous]
-        public ActionResult ExternalLoginFailure()
+        public ActionResult ExternalLoginFailure(string returnUrl)
         {
             return View();
         }
+
+        // GET: /ShopifyAuth/AccessTokenRefresh
+        [AllowAnonymous]
+        public ActionResult AccessTokenRefresh(string returnUrl)
+        {
+            return View();
+        }
+
+        // GET: /ShopifyAuth/AuthorizationFailure
+        [AllowAnonymous]
+        public ActionResult AuthorizationFailure(string returnUrl)
+        {
+            return View();
+        }
+
 
         private ActionResult RedirectToLocal(string returnUrl)
         {

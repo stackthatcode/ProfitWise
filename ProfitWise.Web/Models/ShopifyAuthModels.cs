@@ -1,4 +1,4 @@
-﻿namespace OAuthSandbox.Models
+﻿namespace ProfitWise.Web.Models
 {
     public class UnauthorizedAccessModel
     {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -42,7 +41,7 @@ namespace ProfitWise.Web.Controllers
         {
             this.LoadCommonContextIntoViewBag();
             var userBrief = HttpContext.PullUserBriefFromContext();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
             
             var model = new EditProductCogsModel()
             {
@@ -60,11 +59,11 @@ namespace ProfitWise.Web.Controllers
             this.LoadCommonContextIntoViewBag();
 
             var userBrief = HttpContext.PullUserBriefFromContext();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
             var product = cogsRepository.RetrieveProduct(masterProductId);
             product.Variants = cogsRepository.RetrieveVariants(new List<long> {masterProductId});
-            product.PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.CurrencyId);
+            product.PopulateNormalizedCogsAmount(_currencyService, userBrief.PwShop.CurrencyId);
 
             return View(product);
         }

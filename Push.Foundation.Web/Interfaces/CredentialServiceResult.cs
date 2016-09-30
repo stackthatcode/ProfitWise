@@ -7,9 +7,8 @@
 
         public string ShopOwnerUserId { get; set; }
         public bool Impersonated { get; set; }
-
-        public string AccessToken { get; set; }
         public string ShopDomain { get; set; }
+        public string AccessToken { get; set; }
     }
 
 }

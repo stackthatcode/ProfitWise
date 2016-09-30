@@ -15,7 +15,7 @@ namespace ProfitWise.Web.Attributes
             if (filterContext.ExceptionHandled) return;
             if (new HttpException(null, filterContext.Exception).GetHttpCode() != 500) return;
             if (!ExceptionType.IsInstanceOfType(filterContext.Exception)) return;
-
+            
             // Log the Exception
             logger.Error(
                     "URL:" + filterContext.HttpContext.Request.Url + " - " +

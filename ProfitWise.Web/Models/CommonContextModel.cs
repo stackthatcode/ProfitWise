@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using ProfitWise.Web.Attributes;
+using ProfitWise.Web.Plumbing;
 using Push.Utilities.Helpers;
 
 namespace ProfitWise.Web.Models
@@ -7,7 +8,7 @@ namespace ProfitWise.Web.Models
     public class CommonContext
     {
         public string ShopifyApiKey { get; set; }
-        public UserBrief UserBrief { get; set; }
+        public IdentitySnapshot UserBrief { get; set; }
 
         // Controlled by View
         public string PageTitle { get; set; }
@@ -15,7 +16,7 @@ namespace ProfitWise.Web.Models
         public string FullyBrandedPageTitle => 
             "ProfitWise - " + (PageTitle.IsNullOrEmpty() ? "Know Your Profitability" : PageTitle);
 
-        public string ShopUrl => "https://" + UserBrief.Domain;
+        public string ShopUrl => "https://" + UserBrief.ShopDomain;
     }
 
 

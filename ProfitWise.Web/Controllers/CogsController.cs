@@ -26,7 +26,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Search(CogsSearchParameters parameters)
         {
             var userBrief = HttpContext.PullUserBriefFromContext();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
             using (var transaction = cogsRepository.InitiateTransaction())
             {
@@ -50,10 +50,10 @@ namespace ProfitWise.Web.Controllers
                     cogsRepository
                         .RetrieveVariants(products.Select(x => x.PwMasterProductId).ToList()));
 
-                products.PopulateNormalizedCogsAmount(_currencyService, userBrief.Shop.CurrencyId);
+                products.PopulateNormalizedCogsAmount(_currencyService, userBrief.PwShop.CurrencyId);
                 
 
-                var model = products.ToCogsGridModel(userBrief.Shop.CurrencyId);
+                var model = products.ToCogsGridModel(userBrief.PwShop.CurrencyId);
                 var recordCount = cogsRepository.RetreivePickListCount();
 
                 return new JsonNetResult(new {products = model, totalRecords = recordCount});
@@ -65,7 +65,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult BulkUpdateCogs(long masterProductId, int currencyId, decimal amount)
         {
             var userBrief = HttpContext.PullUserBriefFromContext();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.Shop);
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
             cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
 
