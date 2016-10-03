@@ -2,7 +2,7 @@
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Helpers;
-using Push.Utilities.Helpers;
+
 
 namespace ProfitWise.Web.Models
 {
@@ -27,7 +27,7 @@ namespace ProfitWise.Web.Models
         {
             controller.ViewBag.CommonContext = new CommonContext
             {
-                ShopifyApiKey = ShopifyApiKey.Get(),
+                ShopifyApiKey = GlobalConfig.ShopifyApiKey,
                 IdentitySnapshot = controller.HttpContext.PullIdentitySnapshot(),
             };
         }

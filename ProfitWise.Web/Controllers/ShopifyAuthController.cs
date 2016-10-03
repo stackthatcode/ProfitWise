@@ -10,6 +10,7 @@ using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
+using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
@@ -57,7 +58,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Login(string shop, string returnUrl)
         {
             var correctedShopName = shop.Replace(".myshopify.com", "");
-            returnUrl = returnUrl ?? $"/ProfitWise/?shop={shop}";
+            returnUrl = returnUrl ?? $"{GlobalConfig.BaseUrl}/?shop={shop}";
 
             // Request a redirect to the external login provider
             return new ShopifyChallengeResult(

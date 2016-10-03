@@ -1,5 +1,9 @@
 ﻿var ProfitWiseShopify = ProfitWiseShopify || {};
 
+var ProfitWiseConfig = ProfitWiseConfig || {};
+ProfitWiseConfig.BaseUrl = '/ProfitWise';
+
+
 ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
     ShopifyApp.init({
         apiKey: apiKey,
@@ -17,7 +21,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
                 secondary: [
                     {
                         label: "Home",
-                        href: "/ProfitWise/",
+                        href: ProfitWiseConfig.BaseUrl,
                         target: "app",
                     },
                     {
@@ -26,17 +30,17 @@ ProfitWiseShopify.BarInitialize = function (title) {
                         links: [
                             {
                                 label: "Dashboard",
-                                href: "/ProfitWise/",
+                                href: ProfitWiseConfig.BaseUrl,
                                 target: "app"
                             },
                             {
                                 label: "Reports",
-                                href: "/ProfitWise/UserMain/Reports",
+                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Reports",
                                 target: "app"
                             },
                             {
                                 label: "Edit Preferences",
-                                href: "/ProfitWise/UserMain/Preferences",
+                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Preferences",
                                 target: "app"
                             },
                             {
@@ -46,37 +50,37 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             },
                             {
                                 label: "Edit Product CoGS",
-                                href: "/ProfitWise/UserMain/EditProductCogs",
+                                href: ProfitWiseConfig.BaseUrl + "/UserMain/EditProductCogs",
                                 target: "app"
                             },
                             {
                                 label: "Manage Purchase Orders",
-                                href: "/ProfitWise/UserMain/ManagePurchaseOrders",
+                                href: ProfitWiseConfig.BaseUrl + "/UserMain/ManagePurchaseOrders",
                                 target: "app"
                             },
                             {
                                 label: "Edit Goals",
-                                href: "/ProfitWise/UserMain/Goals",
+                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Goals",
                                 target: "app"
                             },
                             {
                                 label: "Product Consolidation",
-                                href: "/ProfitWise/UserMain/Products",
+                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Products",
                                 target: "app"
                             },
                             {
                                 label: "Error Page - Anon (Remove for Prod)",
-                                href: "/ProfitWise/Error/ThrowAnonymousError",
+                                href: ProfitWiseConfig.BaseUrl + "/Error/ThrowAnonymousError",
                                 target: "app"
                             },
                             {
                                 label: "Error Page - Authed (Remove for Prod)",
-                                href: "/ProfitWise/Error/ThrowAuthenticatedError",
+                                href: ProfitWiseConfig.BaseUrl + "/Error/ThrowAuthenticatedError",
                                 target: "app"
                             },
                             {
                                 label: "Not Found - 404 (Remove for Prod)",
-                                href: "/ProfitWise/NonsenseUrl",
+                                href: ProfitWiseConfig.BaseUrl + "/NonsenseUrl",
                                 target: "app"
                             },
                         ]
@@ -87,12 +91,12 @@ ProfitWiseShopify.BarInitialize = function (title) {
                         links: [
                             {
                                 label: "About ProfitWise",
-                                href: "/ProfitWise/UserAuxiliary/About",
+                                href: ProfitWiseConfig.BaseUrl + "/UserAuxiliary/About",
                                 target: "app"
                             },
                             {
                                 label: "Contact Us",
-                                href: "/ProfitWise/UserAuxiliary/Contact",
+                                href: ProfitWiseConfig.BaseUrl + "/UserAuxiliary/Contact",
                                 target: "app"
                             }
                         ]
@@ -142,7 +146,7 @@ ProfitWiseShopify.ErrorPopup = function () {
 
 
 ProfitWiseShopify.LaunchBulkEditPopUp = function (masterProductId, callback) {
-    var url = '/ProfitWise/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
+    var url = ProfitWiseConfig.BaseUrl + '/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
     ProfitWiseShopify.LaunchModal({
         src: url,
         title: 'Bulk Edit all Variant CoGS',
@@ -152,7 +156,7 @@ ProfitWiseShopify.LaunchBulkEditPopUp = function (masterProductId, callback) {
 };
 
 ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup = function (shopifyProductId, callbackFunction) {
-    var url = '/ProfitWise/UserMain/StockedDirectlyVariantsPopup?shopifyProductId=' + shopifyProductId;
+    var url = ProfitWiseConfig.BaseUrl + '/UserMain/StockedDirectlyVariantsPopup?shopifyProductId=' + shopifyProductId;
 
     ShopifyApp.Modal.open({
         src: url,
@@ -168,7 +172,7 @@ ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup = function (shopifyProductI
 };
 
 ProfitWiseShopify.LaunchStockedDirectlyProductsPopup = function (callbackFunction) {
-    var url = '/ProfitWise/UserMain/StockedDirectlyProductsPopup';
+    var url = ProfitWiseConfig.BaseUrl + '/UserMain/StockedDirectlyProductsPopup';
     
     ShopifyApp.Modal.open({
         src: url,
@@ -184,7 +188,7 @@ ProfitWiseShopify.LaunchStockedDirectlyProductsPopup = function (callbackFunctio
 };
 
 ProfitWiseShopify.LaunchExcludedProductVariantPopup = function(shopifyProductId, callbackFunction) {
-    var url = '/ProfitWise/UserMain/ExcludedVariantsPopup?shopifyProductId=' + shopifyProductId;
+    var url = ProfitWiseConfig.BaseUrl + '/UserMain/ExcludedVariantsPopup?shopifyProductId=' + shopifyProductId;
 
     ShopifyApp.Modal.open({
         src: url,
@@ -201,7 +205,7 @@ ProfitWiseShopify.LaunchExcludedProductVariantPopup = function(shopifyProductId,
 };
 
 ProfitWiseShopify.LaunchExcludedProductsPopup = function (callbackFunction) {
-    var url = '/ProfitWise/UserMain/ExcludedProductsPopup';
+    var url = ProfitWiseConfig.BaseUrl + '/UserMain/ExcludedProductsPopup';
     
     ShopifyApp.Modal.open({
         src: url,

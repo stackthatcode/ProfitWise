@@ -58,7 +58,7 @@ namespace ProfitWise.Batch
         {
             using (var scope = container.BeginLifetimeScope())
             {
-                var userId = "f4b10004-5457-4a75-a903-e56521190c7e";
+                var userId = "1a1c4212-e90a-4ff3-9e3f-b6a3a97d4fce";
 
                 var refreshProcess = scope.Resolve<RefreshProcess>();
                 refreshProcess.Execute(userId);

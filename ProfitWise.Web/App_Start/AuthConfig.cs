@@ -12,15 +12,13 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 using Owin.Security.Providers.Shopify;
+using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web
 {
     public class AuthConfig
     {
-        // Could easily locate this in the ShopifyAuthController...
-        public const string SiteVirtualDirectory = "/ProfitWise";
-
         public static readonly string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
         public static readonly string ExternalLoginFailureUrl = "/ShopifyAuth/ExternalLoginFailure";
         public static readonly string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
@@ -117,7 +115,7 @@ namespace ProfitWise.Web
         public static RedirectResult AccessTokenRefreshRedirect(string redirectUrl)
         {
             var url = 
-                $"{SiteVirtualDirectory}" + 
+                $"{GlobalConfig.BaseUrl}" + 
                 $"{AuthConfig.AccessTokenRefreshUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
             return new RedirectResult(url);
         }
@@ -125,7 +123,7 @@ namespace ProfitWise.Web
         public static RedirectResult UnauthorizedAccessRedirect(string redirectUrl)
         {
             var url = 
-                $"{SiteVirtualDirectory}" +
+                $"{GlobalConfig.BaseUrl}" +
                 $"{AuthConfig.UnauthorizedAccessUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
             return new RedirectResult(url);
         }
@@ -133,7 +131,7 @@ namespace ProfitWise.Web
         public static RedirectResult SevereAuthorizationFailureRedirect(string redirectUrl)
         {
             var url = 
-                $"{SiteVirtualDirectory}" +
+                $"{GlobalConfig.BaseUrl}" +
                 $"{AuthConfig.SevereAuthorizationFailureUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
             return new RedirectResult(url);
         }

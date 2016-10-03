@@ -1,6 +1,7 @@
 ﻿// Currency Functions
 var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
+
 ProfitWiseFunctions.CurrencyCache = [
     { Id: 1, Abbr: "USD", Symbol: "$" },
     { Id: 2, Abbr: "EUR", Symbol: "€" },

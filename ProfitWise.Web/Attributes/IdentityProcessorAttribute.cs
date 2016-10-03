@@ -99,7 +99,7 @@ namespace ProfitWise.Web.Attributes
             filterContext.HttpContext.PushIdentitySnapshot(identity);
             filterContext.Controller.ViewBag.CommonContext = new CommonContext
             {
-                ShopifyApiKey = ShopifyApiKey.Get(),
+                ShopifyApiKey = GlobalConfig.ShopifyApiKey,
                 IdentitySnapshot = identity,
             };
         }

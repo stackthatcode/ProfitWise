@@ -5,6 +5,7 @@ using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Web
@@ -33,7 +34,7 @@ namespace ProfitWise.Web
             Server.ClearError();
 
             var returnUrl = HttpContext.Current.Request.Url.ToString();
-            var url = $"/ProfitWise/Error/ServerFault?returnUrl={WebUtility.UrlEncode(returnUrl)}";
+            var url = $"{GlobalConfig.BaseUrl}/Error/ServerFault?returnUrl={WebUtility.UrlEncode(returnUrl)}";
             HttpContext.Current.Response.Redirect(url);
         }
     }

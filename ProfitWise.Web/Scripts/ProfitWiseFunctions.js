@@ -1,6 +1,8 @@
 ﻿
-var ProfitWiseFunctions = ProfitWiseFunctions || {};
+var ProfitWiseConfig = ProfitWiseConfig || {};
+ProfitWiseConfig.BaseUrl = '/ProfitWise';
 
+var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
 // movingElementSelector == '#top-header'
 
@@ -82,7 +84,7 @@ ProfitWiseFunctions.AjaxSettings = function (modal) {
     }
 
     return {
-        BaseUrl: "/ProfitWise",
+        BaseUrl: ProfitWiseConfig.BaseUrl,
         Timeout: 60000,
         WaitingLayerSelector: "#spinner-layer",
         ErrorCallbackFunction: errorCallback,

@@ -1,4 +1,5 @@
 ﻿@using ProfitWise.Web.Models
+@using ProfitWise.Web.Plumbing
 
 @{
     var commonContext = ViewBag.CommonContext as CommonContext;
@@ -13,7 +14,6 @@
     <title>ProfitWise - Know Your Profitability</title>
 
     @Html.Partial("_UserScripts")
-
     @{
         if (commonContext != null)
         {
