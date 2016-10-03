@@ -161,7 +161,14 @@
             <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
                 <tbody data-bind="foreach: $root.CurrentGrid">
                 <tr>
-                    <td class="overflow-gracefully" data-bind="text: Vendor"></td>
+                    <td class="overflow-gracefully">
+                        <span data-bind="if: Vendor">
+                            <span data-bind="text: Vendor"></span>
+                        </span>
+                        <span data-bind="ifnot: Vendor">
+                            (No Vendor)
+                        </span>
+                    </td>
                     <td class="overflow-gracefully"><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
                     <td><span data-bind="text: InventoryCount"></span> in stock<br/>
                         (<span data-bind="text: VariantCount"></span> variants)</td>

@@ -1,7 +1,4 @@
-﻿
-var ProfitWiseShopify = ProfitWiseShopify || {};
-// apiKey: '50d69dbaf54ee35929a946790d5884e4',
-// shopOrigin: 'https://3duniverse.myshopify.com'
+﻿var ProfitWiseShopify = ProfitWiseShopify || {};
 
 ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
     ShopifyApp.init({
@@ -126,6 +123,19 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
     );
 };
 
+ProfitWiseShopify.ErrorPopup = function () {
+    ShopifyApp.Modal.alert({
+        title: "System Error",
+        message: "We're sorry for the inconvenience, but the System has encountered an error. " +
+                "We'll reload the page. If the problem persists, reach out to our Support Team!",
+        okButton: "Ok, Thanks"
+    }, function (result) {
+        window.location.reload();
+    });
+};
+
+
+
 ProfitWiseShopify.LaunchBulkEditPopUp = function (masterProductId, callback) {
     var url = '/ProfitWise/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
     ProfitWiseShopify.LaunchModal({
@@ -135,7 +145,6 @@ ProfitWiseShopify.LaunchBulkEditPopUp = function (masterProductId, callback) {
         height: 380,
     }, callback);
 };
-
 
 ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup = function (shopifyProductId, callbackFunction) {
     var url = '/ProfitWise/UserMain/StockedDirectlyVariantsPopup?shopifyProductId=' + shopifyProductId;
@@ -168,7 +177,6 @@ ProfitWiseShopify.LaunchStockedDirectlyProductsPopup = function (callbackFunctio
             }
         });
 };
-
 
 ProfitWiseShopify.LaunchExcludedProductVariantPopup = function(shopifyProductId, callbackFunction) {
     var url = '/ProfitWise/UserMain/ExcludedVariantsPopup?shopifyProductId=' + shopifyProductId;
@@ -203,15 +211,3 @@ ProfitWiseShopify.LaunchExcludedProductsPopup = function (callbackFunction) {
         });
 
 };
-
-ProfitWiseShopify.ErrorPopup = function () {
-    ShopifyApp.Modal.alert({
-        title: "System Error",
-        message: "We're sorry for the inconvenience, but the System has encountered an error. " +
-                "We'll reload the page. If the problem persists, reach out to our Support Team!",
-        okButton: "Ok, Thanks"
-    }, function (result) {
-        window.location.reload();
-    });
-};
-

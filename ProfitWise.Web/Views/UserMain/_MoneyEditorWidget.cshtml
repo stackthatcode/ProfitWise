@@ -33,8 +33,9 @@
         <input type="text"
                data-bind="formatMoney: Amount,
                         event: { focus: function() { event.target.select(); }, keyup: InvokeKeyCallback }"
-               class="form-control money-editor-text" 
-               placeholder="Enter CoGS">
+               class="form-control money-editor-text"
+               placeholder="Enter CoGS"
+               maxlength="12">
     </div>
 </script>
 
