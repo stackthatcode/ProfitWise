@@ -69,25 +69,32 @@ ProfitWiseFunctions.PopOverAutoCloseInit = function () {
 
 // Temporary hard-coding of reference to ProfitWiseShopify.js
 
-ProfitWiseFunctions.AjaxSettings = {
-    // Override these settings in the PushLibrary Shim
-    BaseUrl: "/ProfitWise",
-    Timeout: 60000,
-    WaitingLayerSelector: "#spinner-layer",
-    ErrorCallbackFunction: ProfitWiseShopify.ErrorPopup,
+ProfitWiseFunctions.AjaxSettings = function (modal) {
+    var errorCallback;
+    if (modal) {
+        errorCallback = function () {
+            ShopifyApp.Modal.close("error");
+        }
+    } else {
+        errorCallback = function () {
+            ProfitWiseShopify.ErrorPopup();
+        };
+    }
+
+    return {
+        BaseUrl: "/ProfitWise",
+        Timeout: 60000,
+        WaitingLayerSelector: "#spinner-layer",
+        ErrorCallbackFunction: errorCallback,
+    };
 };
 
 ProfitWiseFunctions.Ajax = function (settings) {
     var self = this;
-
-    if (settings) {
-        self.Settings = settings;
-    } else {
-        self.Settings = ProfitWiseFunctions.AjaxSettings;
-    }
-
+    self.Settings = settings || new ProfitWiseFunctions.AjaxSettings();
 
     self.ErrorCallback = function (jqXHR, textStatus, errorThrown) {
+        // TODO: decide what to do here...
         console.log(errorThrown);
 
         if (jqXHR.status != 0 || textStatus == "timeout") {

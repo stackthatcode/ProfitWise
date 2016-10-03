@@ -6,6 +6,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
+using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
 {
@@ -118,6 +119,11 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult Ping()
+        {
+            return new JsonNetResult(new { Success = true });
+        }
     }
 }
 

@@ -196,8 +196,8 @@ a.filter-remove:active, a.filter-remove:focus, a.filter-remove:visited {
 
 /** Exception Page styling **/
 h2 {
-    font-size: 26px;
-    font-weight: 800;
+    font-size: 24px;
+    font-weight: 600; 
 }
 h4 {
     font-weight: 100;
@@ -210,9 +210,15 @@ h4 {
 }
 
 .exception h2.header {
-    font-weight: 700; color: #666;        
+    color: #666;        
 }
 
 .exception .top-spacer {
     height: 20px;
 }
+
+
+.main-space {
+    margin: 30px; padding: 30px; background-color: #FFF;  min-height: 500px;
+}
+

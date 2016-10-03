@@ -62,7 +62,6 @@
 @Html.Partial("_PagingWidget")
 @Html.Partial("_ProductFilterWidget")
 @Html.Partial("_MoneyRangeWidget")
-@Html.Partial("_PageFooter")
 
 <script type="text/html" id="Page-Header">
     <div id="fixed-positioning-container">
@@ -209,12 +208,12 @@
         </div>
     </div>
 
-    <div data-bind="template: { name: 'Page-Footer'}"></div>
 </script>
 
 <!-- KnockoutJS Root View --><!-- data: $root.EndlessGlider, -->
 <div data-bind="template: { name: 'Main-Template' }">
 </div>
+
 
 
 <!-- KnockoutJS Model -->

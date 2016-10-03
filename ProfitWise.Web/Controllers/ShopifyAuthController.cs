@@ -75,7 +75,8 @@ namespace ProfitWise.Web.Controllers
                 _logger.Warn("Unable to retrieve ExternalLoginInfo from Authentication Manager");
 
                 // Looks like the first cookie died, was corrupted, etc. We'll ask the User to refresh their browser.
-                return ExternalLoginFailure(returnUrl);
+                return RedirectToAction("ExternalLoginFailure", new { returnUrl });
+
             }
 
             // Sign in the user with this external login provider if the user already has a login
@@ -87,7 +88,7 @@ namespace ProfitWise.Web.Controllers
                 if (await IsShopExistingAndDisabled(externalLoginInfo))
                 {
                     _logger.Error($"Attempt to login to disabled PwShop by {externalLoginInfo.DefaultUserName}");
-                    return SevereAuthorizationFailure(returnUrl);
+                    return RedirectToAction("SevereAuthorizationFailure", new {returnUrl});
                 }
 
                 _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
@@ -126,7 +127,7 @@ namespace ProfitWise.Web.Controllers
                     user = new ApplicationUser {UserName = userName, Email = email,};
                     if (!await _userService.CreateNewUser(user, externalLoginInfo.Login))
                     {
-                        return ExternalLoginFailure(returnUrl);
+                        return RedirectToAction("ExternalLoginFailure", new { returnUrl });
                     }
                 }
 
@@ -169,7 +170,7 @@ namespace ProfitWise.Web.Controllers
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
 
-        private async Task RefreshProfitWiseShop(string userId, Shop shop)
+        private async Task RefreshProfitWiseShop(string userId, Shop shop)  
         {
             var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);
             var pwShop = _pwShopRepository.RetrieveByUserId(userId);
@@ -259,21 +260,6 @@ namespace ProfitWise.Web.Controllers
             }
             return RedirectToAction("Dashboard", "UserMain");
         }
-
-
-
-        [AllowAnonymous]
-        public ActionResult AnonymousError()
-        {
-            throw new Exception("This is simulation of a server fault");
-        }
-
-        [IdentityProcessor]
-        public ActionResult AuthenticatedError()
-        {
-            throw new Exception("This is simulation of a server fault");
-        }
-
 
     }
 }

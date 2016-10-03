@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Web.Mvc;
 using Autofac;
@@ -116,19 +116,25 @@ namespace ProfitWise.Web
 
         public static RedirectResult AccessTokenRefreshRedirect(string redirectUrl)
         {
-            var url = $"{SiteVirtualDirectory}{AuthConfig.AccessTokenRefreshUrl}?returnUrl={redirectUrl}";
+            var url = 
+                $"{SiteVirtualDirectory}" + 
+                $"{AuthConfig.AccessTokenRefreshUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
             return new RedirectResult(url);
         }
 
         public static RedirectResult UnauthorizedAccessRedirect(string redirectUrl)
         {
-            var url = $"{SiteVirtualDirectory}{AuthConfig.UnauthorizedAccessUrl}?returnUrl={redirectUrl}";
+            var url = 
+                $"{SiteVirtualDirectory}" +
+                $"{AuthConfig.UnauthorizedAccessUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
             return new RedirectResult(url);
         }
 
         public static RedirectResult SevereAuthorizationFailureRedirect(string redirectUrl)
         {
-            var url = $"{SiteVirtualDirectory}{AuthConfig.SevereAuthorizationFailureUrl}?returnUrl={redirectUrl}";
+            var url = 
+                $"{SiteVirtualDirectory}" +
+                $"{AuthConfig.SevereAuthorizationFailureUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
             return new RedirectResult(url);
         }
 

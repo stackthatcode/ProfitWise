@@ -68,8 +68,13 @@ ProfitWiseShopify.BarInitialize = function (title) {
                                 target: "app"
                             },
                             {
-                                label: "Error Page (Remove for Prod)",
-                                href: "/ProfitWise/ShopifyAuth/AuthenticatedError   ",
+                                label: "Error Page - Anon (Remove for Prod)",
+                                href: "/ProfitWise/Error/ThrowAnonymousError",
+                                target: "app"
+                            },
+                            {
+                                label: "Error Page - Authed (Remove for Prod)",
+                                href: "/ProfitWise/Error/ThrowAuthenticatedError",
                                 target: "app"
                             },
                         ]
@@ -98,21 +103,37 @@ ProfitWiseShopify.BarInitialize = function (title) {
     });
 };
 
-
-ProfitWiseShopify.LaunchBulkEditPopUp = function(masterProductId, callbackFunction) {
-    var url = '/ProfitWise/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
-
-    ShopifyApp.Modal.open({
-            src: url,
-            title: 'Bulk Edit all Variant CoGS',
-            width: 'small',
-            height: 390,
+ProfitWiseShopify.LaunchModal = function(settings, callback) {
+    flow.exec(
+        function () {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpGet("/UserMain/Ping", this);
         },
-        function (result) {
-            if (result) {
-                callbackFunction(masterProductId);
-            }
-        });
+        function () {            
+            ShopifyApp.Modal.open(
+                settings,
+                function (result) {
+                    //console.log(result);
+
+                    if (result === true) {
+                        callback();
+                    }
+                    if (result === "error") {
+                        ProfitWiseShopify.ErrorPopup();
+                    }
+                });
+        }
+    );
+};
+
+ProfitWiseShopify.LaunchBulkEditPopUp = function (masterProductId, callback) {
+    var url = '/ProfitWise/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
+    ProfitWiseShopify.LaunchModal({
+        src: url,
+        title: 'Bulk Edit all Variant CoGS',
+        width: 'small',
+        height: 380,
+    }, callback);
 };
 
 
@@ -183,10 +204,11 @@ ProfitWiseShopify.LaunchExcludedProductsPopup = function (callbackFunction) {
 
 };
 
-ProfitWiseShopify.ErrorPopup = function() {
+ProfitWiseShopify.ErrorPopup = function () {
     ShopifyApp.Modal.alert({
         title: "System Error",
-        message: "We're sorry for the inconvenience, but the System has encountered an error. We'll reload the page. If the problem persists, please contact Support!",
+        message: "We're sorry for the inconvenience, but the System has encountered an error. " +
+                "We'll reload the page. If the problem persists, reach out to our Support Team!",
         okButton: "Ok, Thanks"
     }, function (result) {
         window.location.reload();

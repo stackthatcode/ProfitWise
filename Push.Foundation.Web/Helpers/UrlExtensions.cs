@@ -7,6 +7,10 @@ namespace Push.Foundation.Web.Helpers
     {
         public static string ExtractQueryParameter(this string input, string name)
         {
+            if (input == null)
+            {
+                return null;
+            }
             var index = input.IndexOf("?", StringComparison.Ordinal);
             if (index == -1)
             {
