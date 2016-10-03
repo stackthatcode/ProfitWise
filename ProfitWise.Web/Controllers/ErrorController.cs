@@ -6,6 +6,19 @@ namespace ProfitWise.Web.Controllers
 {
     public class ErrorController : Controller
     {
+        public ActionResult ServerFault(string returnUrl)
+        {
+            var model = new ErrorModel() {ReturnUrl = returnUrl};
+            return View(model);
+        }
+
+        public ActionResult Http400()
+        {
+            return View();
+        }
+
+
+        /*** For testing purposes ***/
         [AllowAnonymous]
         public ActionResult ThrowAnonymousError()
         {

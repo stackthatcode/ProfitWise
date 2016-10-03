@@ -49,11 +49,10 @@ namespace ProfitWise.Web.Attributes
             else
             {
                 var model = new ErrorModel();
-                model.AspxErrorPath = filterContext.HttpContext.Request.Url.ToString();
-                model.NavigatedFromAdminArea = true;
+                model.ReturnUrl = filterContext.HttpContext.Request.Url.ToString();
 
                 var result = new ViewResult();
-                result.ViewName = "~/Views/Shared/Error.cshtml";
+                result.ViewName = "~/Views/Error/ServerFault.cshtml";
                 result.ViewData = new ViewDataDictionary<ErrorModel>(model);
                 CommonContext commonContext = filterContext.Controller.ViewBag.CommonContext;
                 result.ViewBag.CommonContext = commonContext;
@@ -69,7 +68,7 @@ namespace ProfitWise.Web.Attributes
 
     public class ErrorModel
     {
-        public string AspxErrorPath { get; set; }
+        public string ReturnUrl { get; set; }
         public bool NavigatedFromAdminArea { get; set; }
     }
 }

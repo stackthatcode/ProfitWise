@@ -74,6 +74,11 @@ ProfitWiseShopify.BarInitialize = function (title) {
                                 href: "/ProfitWise/Error/ThrowAuthenticatedError",
                                 target: "app"
                             },
+                            {
+                                label: "Not Found - 404 (Remove for Prod)",
+                                href: "/ProfitWise/NonsenseUrl",
+                                target: "app"
+                            },
                         ]
                     },
                     {

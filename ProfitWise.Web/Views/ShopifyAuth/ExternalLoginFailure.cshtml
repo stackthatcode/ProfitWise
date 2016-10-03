@@ -1,4 +1,5 @@
-﻿@model ProfitWise.Web.Models.AuthorizationProblemModel
+﻿@using Push.Utilities.Helpers
+@model ProfitWise.Web.Models.AuthorizationProblemModel
 @{
     ViewBag.Title = "ProfitWise - External Login Failure";
 }
@@ -8,6 +9,16 @@
     <h4>It appears that something went wrong while authorizing your Shopify Account.</h4>
 
     <div style="height: 25px;"></div>
-    
-    <p>Let's try logging you in again <a href="@Model.ReturnUrl">by clicking here</a>.</p>
+
+    <p>
+        @if (!Model.ReturnUrl.IsNullOrEmpty())
+        {
+            @:You can retry by <a href="@Model.ReturnUrl">clicking here</a>. 
+        }
+        else
+        {
+            @:You can try re-opening ProfitWise from Shopify Apps.
+        }
+         If the issue persists, feel free to reach out to our Support Team us at any time.
+    </p>
 </div>

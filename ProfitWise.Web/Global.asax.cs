@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -22,22 +24,17 @@ namespace ProfitWise.Web
 
         protected void Application_Error(object sender, EventArgs e)
         {
+            // TODO => use this?
             //if (!ConfigurationManager.AppSettings["ErrorHandlingEnabled"].ToBoolTryParse())
-            //{
-            //    return;
-            //}
 
             var lastError = Server.GetLastError();
             LoggerSingleton.Get().Error(lastError);
-            //ErrorNotification.Send(lastError);
 
             Server.ClearError();
 
-            //var redirectUrl = ConfigurationManager.AppSettings["AdminErrorRedirect"];
-            //if (redirectUrl != null)
-            //{
-            //    HttpContext.Current.Response.Redirect(redirectUrl);
-            //}
+            var returnUrl = HttpContext.Current.Request.Url.ToString();
+            var url = $"/ProfitWise/Error/ServerFault?returnUrl={WebUtility.UrlEncode(returnUrl)}";
+            HttpContext.Current.Response.Redirect(url);
         }
     }
 }

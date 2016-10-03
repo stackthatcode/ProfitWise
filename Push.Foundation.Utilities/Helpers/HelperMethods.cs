@@ -1,4 +1,4 @@
-﻿namespace Push.Utilities.Helpers
+﻿namespace Push.Foundation.Utilities.Helpers
 {
     public static class HelperMethods
     {

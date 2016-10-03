@@ -57,6 +57,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Login(string shop, string returnUrl)
         {
             var correctedShopName = shop.Replace(".myshopify.com", "");
+            returnUrl = returnUrl ?? $"/ProfitWise/?shop={shop}";
 
             // Request a redirect to the external login provider
             return new ShopifyChallengeResult(
@@ -69,6 +70,7 @@ namespace ProfitWise.Web.Controllers
         {
             // External Login Info is contained in the OWIN-issued cookie, and has information from the 
             // external call to the Shop's OAuth service.
+
             var externalLoginInfo = await _authenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
