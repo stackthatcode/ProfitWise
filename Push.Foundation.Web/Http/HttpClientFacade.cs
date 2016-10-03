@@ -40,33 +40,18 @@ namespace Push.Foundation.Web.Http
             {
                 string message = $"Invoking HTTP GET on {request.RequestUri.AbsolutePath}";
                 _pushLogger.Info(message);
-                return HttpInvocationWithThrottling(request);
+                return HttpInvocation(request);
             }
         }
 
         // NOTE: all HTTP calls must be routed through this method
-        private HttpClientResponse HttpInvocationWithThrottling(HttpWebRequest request)
+        private HttpClientResponse HttpInvocation(HttpWebRequest request)
         {
             var hostname = request.RequestUri.Host;
+            ProcessIntentionalDelay(hostname);
 
-            if (_hostLastExecutionTime.ContainsKey(hostname))
-            {
-                var lastExecutionTime = _hostLastExecutionTime[hostname];
-                var timeSinceLastExecutionTimeSpan = DateTime.Now - lastExecutionTime;
-
-                var throttlingDelayTimeSpan = new TimeSpan(0, 0, 0, 0, _configuration.ThrottlingDelay);
-                
-                if (timeSinceLastExecutionTimeSpan < throttlingDelayTimeSpan)
-                {
-                    var remainingTimeToDelay = throttlingDelayTimeSpan - timeSinceLastExecutionTimeSpan;
-                    _pushLogger.Info($"Intentional delay before next call: {remainingTimeToDelay} ms");
-                    System.Threading.Thread.Sleep(remainingTimeToDelay);
-                }
-            }
-
-            _pushLogger.Info($"Invoking HTTP GET on {request.RequestUri.AbsoluteUri}");
+            _pushLogger.Info($"Invoking HTTP {request.Method} on {request.RequestUri.AbsoluteUri}");
             _hostLastExecutionTime[hostname] = DateTime.Now;
-
             var response = _httpClient.ProcessRequest(request);
 
             // TODO => work in the logic to catch 429's and retry
@@ -76,10 +61,29 @@ namespace Push.Foundation.Web.Http
                 throw new BadHttpStatusCodeException(response.StatusCode);
             }
 
+
+
             var executionTime = DateTime.Now - _hostLastExecutionTime[hostname];
             _pushLogger.Debug(string.Format("Call performance - {0} ms", executionTime));
-
             return response;
+        }
+
+        private void ProcessIntentionalDelay(string hostname)
+        {
+            if (_hostLastExecutionTime.ContainsKey(hostname))
+            {
+                var lastExecutionTime = _hostLastExecutionTime[hostname];
+                var timeSinceLastExecution = DateTime.Now - lastExecutionTime;
+
+                var throttlingDelay = new TimeSpan(0, 0, 0, 0, _configuration.ThrottlingDelay);
+
+                if (timeSinceLastExecution < throttlingDelay)
+                {
+                    var remainingTimeToDelay = throttlingDelay - timeSinceLastExecution;
+                    _pushLogger.Info($"Intentional delay before next call: {remainingTimeToDelay} ms");
+                    System.Threading.Thread.Sleep(remainingTimeToDelay);
+                }
+            }
         }
 
         private HttpClientResponse HttpInvocationWithRetries(HttpWebRequest request)
@@ -90,7 +94,7 @@ namespace Push.Foundation.Web.Http
             {
                 try
                 {
-                    var response = HttpInvocationWithThrottling(request);
+                    var response = HttpInvocation(request);
                     return response;
                 }
                 catch (BadHttpStatusCodeException e)
