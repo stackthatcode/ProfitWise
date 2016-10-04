@@ -32,17 +32,19 @@ namespace ProfitWise.Web.Controllers
             using (var transaction = cogsRepository.InitiateTransaction())
             {
                 var terms = (parameters.Text ?? "").SplitBy(',');
-                cogsRepository.InsertPickList(terms);
+                cogsRepository.PopulatePickList(terms);
 
                 if (parameters.Filters != null && parameters.Filters.Count > 0)
                 {
                     cogsRepository.FilterPickList(parameters.Filters);
+
                     if (parameters.Filters.Any(x => x.Type == ProductSearchFilterType.MissingCogs))
                     {
                         cogsRepository.FilterPickListMissingCogs();
                     }
                 }
 
+                // Pull the Search Results by page number
                 var products =
                     cogsRepository.RetrieveProductsFromPicklist(
                         parameters.PageNumber, parameters.PageSize, parameters.SortByColumn, parameters.SortByDirectionDown);

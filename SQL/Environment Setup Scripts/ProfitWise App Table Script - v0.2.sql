@@ -18,6 +18,9 @@ DROP TABLE IF EXISTS `profitwisebatchstate`;
 DROP TABLE IF EXISTS `profitwisequery`;
 DROP TABLE IF EXISTS `profitwisequerymasterproduct`;
 
+DROP TABLE IF EXISTS `profitwisepicklist`;
+DROP TABLE IF EXISTS `profitwisepicklistrow`;
+
 
 
 
@@ -97,7 +100,7 @@ CREATE TABLE `profitwisevariant` (
 
 
 CREATE TABLE `profitwisebatchstate` (
-  `PwShopId` int(6) unsigned NOT NULL,
+  `PwShopId` BIGINT unsigned NOT NULL,
   `ProductsLastUpdated` TIMESTAMP NULL,
   `OrderDatasetStart` TIMESTAMP NULL,
   `OrderDatasetEnd` TIMESTAMP NULL,
@@ -105,9 +108,18 @@ CREATE TABLE `profitwisebatchstate` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `profitwisequerymasterproduct` (
-    `PwShopId` int(6) unsigned NOT NULL,
-	`PwMasterProductId` int(6) unsigned NOT NULL
+
+CREATE TABLE `profitwisepicklist` (
+  `PwPickListId` BIGINT NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT NOT NULL,
+  `CreatedDate` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`PwQueryId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwisepicklistmasterproduct` (
+	`PwPickListId` BIGINT NOT NULL,
+    `PwShopId` BIGINT NOT NULL,
+    `PwMasterProductId` BIGINT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

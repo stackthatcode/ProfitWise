@@ -4,6 +4,8 @@ using ProfitWise.Web.Attributes;
 
 namespace ProfitWise.Web.Controllers
 {
+    [Authorize(Roles = "ADMIN, USER")]
+    [IdentityProcessor]
     public class ErrorController : Controller
     {
         public ActionResult ServerFault(string returnUrl)

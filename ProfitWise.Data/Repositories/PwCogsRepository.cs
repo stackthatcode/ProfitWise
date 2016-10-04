@@ -29,26 +29,46 @@ namespace ProfitWise.Data.Repositories
             return _connection.BeginTransaction();
         }
 
-        public long DeletePickList()
+
+        // Pick List provisioning operation
+        public long ProvisionPickList()
         {
             var query =
-                @"DELETE FROM profitwisequerymasterproduct WHERE PwShopId = @PwShopId;";
+                @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate) VALUES (@PwShopId, @createdDate);
+                SELECT LAST_INSERT_ID();";
+
+            return _connection.Query<long>(query, 
+                    new { PwShopId = this.PwShop.PwShopId, createdDate = DateTime.Now }).First();
+        }
+
+        public long DecommissionPickList(long pickListId)
+        {
+            var query =
+                @"DELETE FROM profitwisepicklist
+                WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId;";
 
             return _connection.Query<long>(
-                query, new {PwShopId = this.PwShop.PwShopId}).FirstOrDefault();
+                query, new {PwShopId = this.PwShop.PwShopId, pickListId}).FirstOrDefault();
         }
 
-
-        private string PickListClauseHelper(string termName)
-        {
-            return $" AND ( (t1.Title LIKE @{termName}) OR (t1.Sku LIKE @{termName}) OR ( t3.Title LIKE @{termName} ) OR ( t3.Vendor LIKE @{termName} ) )";
-        }
-
-        public void InsertPickList(List<string> terms)
+        public long DecommissionPickList(DateTime cutoffDate)
         {
             var query =
-                @"INSERT INTO profitwisequerymasterproduct (PwShopId, PwMasterProductId)
-                SELECT DISTINCT @PwShopId, t2.PwMasterProductId
+                @"DELETE FROM profitwisepicklist
+                WHERE PwShopId = @PwShopId AND CreatedDate <= @cutoffDate;";
+
+            return _connection.Query<long>(
+                query, new { PwShopId = this.PwShop.PwShopId, cutoffDate }).FirstOrDefault();
+        }
+
+
+
+        // Pick List population/filter operations
+        public void PopulatePickList(long pickListId, List<string> searchTerms)
+        {
+            var query =
+                @"INSERT INTO profitwisepicklistmasterproduct (PwShopId, PwMasterProductId)
+                SELECT DISTINCT @PwShopId, @PwPickListId, t2.PwMasterProductId
                 FROM profitwisevariant t1 
 	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN profitwiseproduct t3 ON t2.PwMasterProductId = t3.PwMasterProductId
@@ -56,37 +76,43 @@ namespace ProfitWise.Data.Repositories
 
             string term0 = "",term1 = "", term2 = "", term3 = "", term4 = "";
 
-            if (terms.Count > 0)
+            if (searchTerms.Count > 0)
             {
-                term0 = terms[0].PrepForLike();
+                term0 = searchTerms[0].PrepForLike();
                 query += PickListClauseHelper("term0");
             }
-            if (terms.Count > 1)
+            if (searchTerms.Count > 1)
             {
-                term1 = terms[1].PrepForLike();
+                term1 = searchTerms[1].PrepForLike();
                 query += PickListClauseHelper("term1");
             }
-            if (terms.Count > 2)
+            if (searchTerms.Count > 2)
             {
-                term2 = terms[2].PrepForLike();
+                term2 = searchTerms[2].PrepForLike();
                 query += PickListClauseHelper("term2");
             }
-            if (terms.Count > 3)
+            if (searchTerms.Count > 3)
             {
-                term3 = terms[3].PrepForLike();
+                term3 = searchTerms[3].PrepForLike();
                 query += PickListClauseHelper("term3");
             }
-            if (terms.Count > 4)
+            if (searchTerms.Count > 4)
             {
-                term4 = terms[4].PrepForLike();
+                term4 = searchTerms[4].PrepForLike();
                 query += PickListClauseHelper("term4");
             }
 
             _connection.Execute(
-                query, new {PwShopId = this.PwShop.PwShopId, term0, term1, term2, term3, term4 });
+                query, new {PwShopId = this.PwShop.PwShopId, @PwPickListId = pickListId,
+                            term0, term1, term2, term3, term4 });
         }
 
-        public void FilterPickList(IList<ProductSearchFilter> filters)
+        private string PickListClauseHelper(string termName)
+        {
+            return $" AND ( (t1.Title LIKE @{termName}) OR (t1.Sku LIKE @{termName}) OR ( t3.Title LIKE @{termName} ) OR ( t3.Vendor LIKE @{termName} ) )";
+        }
+
+        public void FilterPickList(long pickListId, IList<ProductSearchFilter> filters)
         {
             var filterClause = "";
             var searchByVendor = "";
@@ -141,8 +167,9 @@ namespace ProfitWise.Data.Repositories
             }
 
             var query =
-                @"DELETE FROM profitwisequerymasterproduct
+                @"DELETE FROM profitwisepicklistmasterproduct
                 WHERE PwShopId = @PwShopId
+                AND PwPickListId = @PwPickListId
                 AND PwMasterProductId NOT IN (
                     SELECT PwMasterProductId
                     FROM profitwiseproduct
@@ -150,33 +177,36 @@ namespace ProfitWise.Data.Repositories
 
             _connection.Execute(query, new
             {
-                PwShopId = this.PwShop.PwShopId, searchByVendor, searchByProductType, 
-                    searchByTags0, searchByTags1, searchByTags2, searchByTags3, searchByTags4,
+                PwShopId = this.PwShop.PwShopId, @PwPickListId = pickListId, searchByVendor, searchByProductType, 
+                searchByTags0, searchByTags1, searchByTags2, searchByTags3, searchByTags4,
             });
         }
 
-        public void FilterPickListMissingCogs()
+        public void FilterPickListMissingCogs(long pickListId)
         {
             var query =
-                @"DELETE FROM profitwisequerymasterproduct
+                @"DELETE FROM profitwisepicklistmasterproduct
                 WHERE PwShopId = @PwShopId
+                AND PwPickListId = @PwPickListId
                 AND PwMasterProductId NOT IN (
                     SELECT DISTINCT(PwMasterProductId)
                     FROM profitwisemastervariant
                     WHERE PwShopId = @PwShopId
-                    AND CogsAmount IS NULL
-                );";
+                    AND CogsAmount IS NULL );";
 
-            _connection.Execute(query, new {PwShopId = PwShop.PwShopId});
+            _connection.Execute(query, new {PwShopId = PwShop.PwShopId, PwPickListId = pickListId});
         }
 
-        public int RetreivePickListCount()
+
+
+        // Pick List retrieve operations
+        public int RetreivePickListCount(long pickListId)
         {
             var query = @"SELECT COUNT(*) 
-                        FROM profitwisequerymasterproduct 
-                        WHERE PwShopId = @PwShopId";
+                        FROM profitwisepicklistmasterproduct 
+                        WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId";
 
-            return _connection.Query<int>(query, new { PwShopId = PwShop.PwShopId }).First();
+            return _connection.Query<int>(query, new { PwShopId = PwShop.PwShopId, pickListId }).First();
         }
 
         public PwCogsProduct RetrieveProduct(int masterProductId)
@@ -199,7 +229,7 @@ namespace ProfitWise.Data.Repositories
         }
 
         public IList<PwCogsProduct> 
-                RetrieveProductsFromPicklist(int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
+                RetrieveProductsFromPicklist(long pickListId, int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
         {
             if (resultsPerPage > 200)
             {
@@ -221,7 +251,7 @@ namespace ProfitWise.Data.Repositories
                 FROM profitwiseproduct t1
                 WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = true
                 AND t1.PwMasterProductId IN ( 
-	                SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = @PwShopId ) " +
+	                SELECT PwMasterProductId FROM profitwisepicklistmasterproduct WHERE PwShopId = @PwShopId ) " +
                 sortByClause +
                 " LIMIT @StartRecord, @ResultsPerPage;";
 
@@ -263,6 +293,8 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new {masterProductId, currencyId, amount});
         }
 
+
+        // Product Search input
         public IList<string> RetrieveVendors()
         {
             var query = @"SELECT DISTINCT Vendor AS Vendor
