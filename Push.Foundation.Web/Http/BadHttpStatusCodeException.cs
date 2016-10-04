@@ -7,8 +7,8 @@ namespace Push.Foundation.Web.Http
     {
         public HttpStatusCode StatusCode { get; set; }
 
-        public BadHttpStatusCodeException(HttpStatusCode statusCode) 
-                    : base("Shopify returned bad Http Status Code: " + statusCode)
+        public BadHttpStatusCodeException(HttpStatusCode statusCode, string message) 
+                    : base(message)
         {
             StatusCode = statusCode;
         }

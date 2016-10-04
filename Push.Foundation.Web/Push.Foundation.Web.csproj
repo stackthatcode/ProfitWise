@@ -143,6 +143,7 @@
     <Compile Include="Helpers\QueryStringBuilder.cs" />
     <Compile Include="Helpers\RouteValueDictionaryExtensions.cs" />
     <Compile Include="Helpers\UrlExtensions.cs" />
+    <Compile Include="Http\TooManyHttpRequestsException.cs" />
     <Compile Include="Http\BadHttpStatusCodeException.cs" />
     <Compile Include="Http\HttpClient.cs" />
     <Compile Include="Http\HttpClientFacade.cs" />

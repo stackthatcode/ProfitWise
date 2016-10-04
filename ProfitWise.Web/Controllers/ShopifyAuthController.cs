@@ -205,9 +205,10 @@ namespace ProfitWise.Web.Controllers
                 pwShop.TimeZone = shop.TimeZone;
                 _pwShopRepository.Update(pwShop);
 
+                _pwShopRepository.UpdateIsAccessTokenValid(pwShop.PwShopId, true);
                 _logger.Info($"Updated Shop - UserId: {pwShop.ShopOwnerUserId}, " +
                             $"CurrencyId: {pwShop.CurrencyId}, " +
-                            $"TimeZone: {pwShop.TimeZone}");
+                            $"TimeZone: {pwShop.TimeZone} - and set IsAccessTokenValid = true");
             }
         }
 

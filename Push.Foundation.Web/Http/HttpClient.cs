@@ -15,16 +15,40 @@ namespace Push.Foundation.Web.Http
 
         public virtual HttpClientResponse ProcessRequest(HttpWebRequest request)
         {
-            using (HttpWebResponse resp = (HttpWebResponse) request.GetResponse())
+            try
             {
-                var sr = new StreamReader(resp.GetResponseStream());
-                var messageResponse = sr.ReadToEnd();
-                
-                return new HttpClientResponse
+                using (HttpWebResponse resp = (HttpWebResponse) request.GetResponse())
                 {
-                    StatusCode = resp.StatusCode,
-                    Body = messageResponse,
-                };
+                    var sr = new StreamReader(resp.GetResponseStream());
+                    var messageResponse = sr.ReadToEnd();
+
+                    return new HttpClientResponse
+                    {
+                        StatusCode = resp.StatusCode,
+                        Body = messageResponse,
+                    };
+                }
+            }
+            catch (WebException e)
+            {
+                using (WebResponse response = e.Response)
+                {
+                    HttpWebResponse httpResponse = (HttpWebResponse) response;
+                    _logger.Error($"Error code: {httpResponse.StatusCode}");
+
+                    using (Stream data = response.GetResponseStream())
+                    using (var reader = new StreamReader(data))
+                    {
+                        string text = reader.ReadToEnd();
+                        _logger.Error(text);
+
+                        return new HttpClientResponse()
+                        {
+                            StatusCode = httpResponse.StatusCode,
+                            Body = text
+                        };
+                    }
+                }
             }
         }
     }

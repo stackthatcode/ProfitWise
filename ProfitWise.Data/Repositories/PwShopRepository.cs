@@ -65,7 +65,7 @@ namespace ProfitWise.Data.Repositories
         public void UpdateIsAccessTokenValid(int pwShopId, bool isAccessTokenValid)
         {
             var query = @"UPDATE profitwiseshop 
-                        SET IsAccessTokenValid = @isAccessTokenValid,
+                        SET IsAccessTokenValid = @isAccessTokenValid
                         WHERE PwShopId = @pwShopId";
             _connection.Execute(query, new { pwShopId, isAccessTokenValid });
         }
@@ -73,7 +73,7 @@ namespace ProfitWise.Data.Repositories
         public void UpdateIsShopEnabled(int pwShopId, bool isShopEnabled)
         {
             var query = @"UPDATE profitwiseshop 
-                        SET IsShopEnabled = @isShopEnabled,
+                        SET IsShopEnabled = @isShopEnabled
                         WHERE PwShopId = @pwShopId";
             _connection.Execute(query, new { pwShopId, isShopEnabled });
         }
@@ -81,7 +81,7 @@ namespace ProfitWise.Data.Repositories
         public void UpdateIsDataLoaded(int pwShopId, bool isDataLoaded)
         {
             var query = @"UPDATE profitwiseshop 
-                        SET IsDataLoaded = @isDataLoaded,
+                        SET IsDataLoaded = @isDataLoaded
                         WHERE PwShopId = @pwShopId";
             _connection.Execute(query, new { pwShopId, isDataLoaded });
         }

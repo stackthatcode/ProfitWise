@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Net;
 using ProfitWise.Data.ProcessSteps;
+using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.HttpClient;
 
@@ -13,6 +16,7 @@ namespace ProfitWise.Data.Processes
         private readonly ProductRefreshStep _productRefreshStep;
         private readonly OrderRefreshStep _orderRefreshStep;
         private readonly ProductCleanupStep _productCleanupStep;
+        private readonly PwShopRepository _pwShopRepository;
         private readonly IPushLogger _pushLogger;
 
 
@@ -22,13 +26,14 @@ namespace ProfitWise.Data.Processes
                 ProductRefreshStep productRefreshStep,
                 OrderRefreshStep orderRefreshStep,
                 ProductCleanupStep productCleanupStep,
-                IPushLogger logger)
+                IPushLogger logger, PwShopRepository pwShopRepository)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _orderRefreshStep = orderRefreshStep;
             _productCleanupStep = productCleanupStep;
             _productRefreshStep = productRefreshStep;
             _pushLogger = logger;
+            _pwShopRepository = pwShopRepository;
             _shopRefreshStep = shopRefreshStep;
         }
 
@@ -51,12 +56,22 @@ namespace ProfitWise.Data.Processes
                 AccessToken = shopifyFromClaims.AccessToken,
             };
 
-            _shopRefreshStep.Execute(shopifyClientCredentials);
-            _productRefreshStep.Execute(shopifyClientCredentials);
-            _orderRefreshStep.Execute(shopifyClientCredentials);
-            _productCleanupStep.Execute(shopifyClientCredentials);
+            try
+            {
+                _shopRefreshStep.Execute(shopifyClientCredentials);
+                _productRefreshStep.Execute(shopifyClientCredentials);
+                _orderRefreshStep.Execute(shopifyClientCredentials);
+                _productCleanupStep.Execute(shopifyClientCredentials);
+            }
+            catch (BadHttpStatusCodeException exception)
+            {
+                if (exception.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var shop = _pwShopRepository.RetrieveByUserId(userId);
+                    _pwShopRepository.UpdateIsAccessTokenValid(shop.PwShopId, false);
+                }
+            }
 
-            //Console.WriteLine($"Wassup {shopifyFromClaims.ShopOwnerUserId}");
             _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");
         }
     }

@@ -54,15 +54,15 @@ namespace Push.Foundation.Web.Http
             _hostLastExecutionTime[hostname] = DateTime.Now;
             var response = _httpClient.ProcessRequest(request);
 
-            // TODO => work in the logic to catch 429's and retry
-
+            if (response.StatusCode == (HttpStatusCode)429)
+            {
+                throw new TooManyHttpRequestsException(response.Body);
+            }
             if (response.StatusCode != HttpStatusCode.OK && _configuration.ThrowExceptionOnBadHttpStatusCode)
             {
-                throw new BadHttpStatusCodeException(response.StatusCode);
+                throw new BadHttpStatusCodeException(response.StatusCode, response.Body);
             }
-
-
-
+            
             var executionTime = DateTime.Now - _hostLastExecutionTime[hostname];
             _pushLogger.Debug(string.Format("Call performance - {0} ms", executionTime));
             return response;
