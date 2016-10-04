@@ -407,7 +407,7 @@
     <Content Include="Views\Shared\_SpinnerLayer.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Error\Http400.cshtml" />
+    <Content Include="Views\Error\Http404.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

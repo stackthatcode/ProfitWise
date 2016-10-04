@@ -12,7 +12,9 @@ namespace ProfitWise.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Http400()
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult Http404()
         {
             return View();
         }
