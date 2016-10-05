@@ -13,7 +13,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwVariantRepository> _variantRepositoryFactory;
         private readonly Func<CatalogBuilderService> _productVariantServiceFactory;
         private readonly Func<PwCogsRepository> _cogsRepositoryFactory;
-
+        private readonly Func<PwPickListRepository> _pickListRepositoryFactory;
 
         public MultitenantFactory(
             Func<ShopifyOrderRepository> orderRepositoryFactory,
@@ -21,7 +21,8 @@ namespace ProfitWise.Data.Factories
             Func<PwProductRepository> productRepositoryFactory,
             Func<PwVariantRepository> variantRepositoryFactory,
             Func<CatalogBuilderService> productVariantServiceFactory,
-            Func<PwCogsRepository> cogsRepositoryFactory)
+            Func<PwCogsRepository> cogsRepositoryFactory, 
+            Func<PwPickListRepository> pickListRepositoryFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -29,6 +30,7 @@ namespace ProfitWise.Data.Factories
             _variantRepositoryFactory = variantRepositoryFactory;
             _productVariantServiceFactory = productVariantServiceFactory;
             _cogsRepositoryFactory = cogsRepositoryFactory;
+            _pickListRepositoryFactory = pickListRepositoryFactory;
         }
 
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
@@ -68,6 +70,13 @@ namespace ProfitWise.Data.Factories
         public virtual PwCogsRepository MakeCogsRepository(PwShop shop)
         {
             var repository = _cogsRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual PwPickListRepository MakePickListRepository(PwShop shop)
+        {
+            var repository = _pickListRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }

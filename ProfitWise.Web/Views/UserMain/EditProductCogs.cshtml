@@ -233,6 +233,7 @@
     ProfitWise.EditCogsModel = function () {
         var self = this;
 
+        self.PickListId = ko.observable();
         self.CurrentGrid = ko.observableArray();
         self.NoProductsFound = ko.observable(false);
 
@@ -330,13 +331,7 @@
 
 
         // *** Search for Products *** //
-        self.SearchForProducts = function () {
-            self.PagingModel.PageNumber(1);
-            self.LoadDataForCurrentPage();
-        };
-
-        self.LoadDataForCurrentPage = function () {
-
+        self.SearchForProducts = function () {            
             var filters = [];
             ko.utils.arrayForEach(
                 self.FilterModel.SelectedFiltersForSearch(),
@@ -349,16 +344,33 @@
 
             var search = {
                 Text: self.FilterModel.SearchText(),
+                Filters: filters,
+            };
+            
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost(
+                "/Cogs/Search",
+                search,
+                function(data) {
+                    self.PickListId(data.PickListId);
+                    self.PagingModel.PageNumber(1);
+                    self.LoadDataForCurrentPage();
+                });
+        };
+
+        self.LoadDataForCurrentPage = function () {
+            var resultsPaging = {
+                PickListId: self.PickListId(),
                 PageNumber: self.PagingModel.PageNumber(),
                 PageSize: self.PagingModel.PageSize(),
                 SortByColumn: self.SortByColumnIndex(),
                 SortByDirectionDown: self.SortByDirectionDown(),
-                Filters: filters,
             };
-
+ 
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost(
-                "/Cogs/Search", search,
+                "/Cogs/RetrieveResults", 
+                resultsPaging,
                 function (data) {
                     self.CurrentGrid.removeAll();
 
@@ -389,7 +401,7 @@
             ProfitWiseFunctions.PopOverAutoCloseInit();
 
             var model = new ProfitWise.EditCogsModel();
-            model.LoadDataForCurrentPage();
+            model.SearchForProducts();
             ko.applyBindings(model);
         });
 </script>

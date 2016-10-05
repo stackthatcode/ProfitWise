@@ -27,6 +27,7 @@ namespace ProfitWise.Data
             builder.RegisterType<PwVariantRepository>();
             builder.RegisterType<PwCogsRepository>();
             builder.RegisterType<CurrencyRepository>();
+            builder.RegisterType<PwPickListRepository>();
 
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));

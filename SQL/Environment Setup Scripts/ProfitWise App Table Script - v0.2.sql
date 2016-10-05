@@ -113,13 +113,14 @@ CREATE TABLE `profitwisepicklist` (
   `PwPickListId` BIGINT NOT NULL AUTO_INCREMENT,
   `PwShopId` BIGINT NOT NULL,
   `CreatedDate` TIMESTAMP NOT NULL,
-  PRIMARY KEY (`PwQueryId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`PwPickListId`)
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwisepicklistmasterproduct` (
 	`PwPickListId` BIGINT NOT NULL,
     `PwShopId` BIGINT NOT NULL,
-    `PwMasterProductId` BIGINT NOT NULL
+    `PwMasterProductId` BIGINT NOT NULL,
+    PRIMARY KEY (`PwPickListId`, `PwShopId`, `PwMasterProductId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
