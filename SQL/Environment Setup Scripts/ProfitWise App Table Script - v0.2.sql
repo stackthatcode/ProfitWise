@@ -133,7 +133,7 @@ CREATE TABLE `shopifyorder` (
   `OrderNumber` varchar(128) DEFAULT NULL,  
   `OrderLevelDiscount` decimal(15,2) DEFAULT NULL,
   `SubTotal` decimal(15,2) DEFAULT NULL,
-  `TotalRefund` decimal(15,2) DEFAULT NULL,
+  `TotalRefund` decimal(15,2) DEFAULT NULL,	
   `TaxRefundAmount` decimal(15,2) DEFAULT NULL,
   `ShippingRefundAmount` decimal(15,2) DEFAULT NULL,
   `FinancialStatus` varchar(25) DEFAULT NULL,

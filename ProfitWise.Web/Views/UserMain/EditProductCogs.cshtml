@@ -121,8 +121,8 @@
                             <th>Price</th>
                             <th>CoGS</th>
 
-                            <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyHeaderClick">Stocked Directly</a></th>
-                            <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludeHeaderLinkClick">Exclude</a></th>
+                            <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked Directly</a></th>
+                            <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
                         </tr>
                         </thead>
                     </table>
@@ -177,14 +177,14 @@
                     </td>
 
                     <td>
-                        <a href="#" data-bind="click: $root.LaunchBulkEditPopup">
+                        <a href="#" data-bind="click: $root.BulkEditPopUp">
                             <span data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Cogs }">
                             </span>
                         </a>
                     </td>
                     <td>
                         <div data-bind="if: StockedDirectlyCount == VariantCount || StockedDirectlyCount == 0">
-                            <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyChecked($data)"/>
+                            <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyIsChecked($data)"/>
                         </div>
 
                         <div data-bind="if: StockedDirectlyCount > 0 && StockedDirectlyCount < VariantCount">
@@ -198,7 +198,7 @@
 
                     <td>
                         <div data-bind="if: ExcludedCount == VariantCount || ExcludedCount == 0">
-                            <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedChecked($data)"/>
+                            <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedIsChecked($data)"/>
                         </div>
 
                         <div data-bind="if: ExcludedCount > 0 && ExcludedCount < VariantCount">
@@ -257,42 +257,49 @@
             self.LoadDataForCurrentPage();
         }
 
+        
+        // *** Launch Bulk Edit Popup *** //
+        self.BulkEditPopUp = function (model) {
+            var url =
+                ProfitWiseConfig.BaseUrl +
+                    '/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
 
-        // ** Excluded interactivity *** //
-        self.ExcludedChecked = function(data) {
-            return data.ExcludedCount == data.VariantCount;
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Bulk Edit all Variant CoGS',
+                width: 'small',
+                height: 380,
+            }, self.LoadDataForCurrentPage);
+        }
+
+        
+        // *** Stocked Directly interactivity *** //        
+        self.StockedDirectlyPickListPopup = function () {
+            var url =
+                ProfitWiseConfig.BaseUrl +
+                    '/UserMain/StockedPicklistPopup?pickListId=' + self.PickListId();
+    
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Set Stocked Directly for all Products in Search',
+                width: 'small',
+                height: 300,
+            }, self.LoadDataForCurrentPage);
         };
-
-        self.ExcludedCheckboxClick = function (model) {
-            // TODO => update server
-            self.LoadSingleProductRecord(model.Id);
-        };
-
-        self.ExcludedGridLinkClick = function (model) {
-            ProfitWiseShopify.LaunchExcludedProductVariantPopup(model.Id, function () {
-                alert("ok, let's do something for excluded!!!");
-            });
-        };
-
-        self.ExcludeHeaderLinkClick = function () {
-            ProfitWiseShopify.LaunchExcludedProductsPopup(function () {
-                alert("ok, I'm doing a lot of excluding!!!");
-            });
-        };
-
-        self.ExcludedClick = function (model) {
-            alert("Stocked Directly Click");
-        };
-
-
-        // *** Stocked Directly interactivity *** //
-        self.StockedDirectlyChecked = function (data) {
+        
+        self.StockedDirectlyIsChecked = function (data) {
             return data.StockedDirectlyCount == data.VariantCount;
         };
 
         self.StockedDirectlyCheckboxClick = function (model) {
-            // TODO => update server
-            self.LoadSingleProductRecord(model.Id);
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var data = {
+                masterProductId: model.Id,
+                value: !self.StockedDirectlyIsChecked(model),
+            };
+
+            ajax.HttpPost("/Cogs/StockedDirectlyById", data, self.LoadDataForCurrentPage);
         };
 
         self.StockedDirectlyGridLinkClick = function (model) {
@@ -301,33 +308,43 @@
             });
         };
 
-        self.StockedDirectlyHeaderClick = function () {
-            ProfitWiseShopify.LaunchStockedDirectlyProductsPopup(function () {
-                alert("ok, I'm changing a lot of Stocked Directly!!!");
+
+        // ** Excluded interactivity *** //        
+        self.ExcludePickListPopup = function () {
+            var url = 
+                ProfitWiseConfig.BaseUrl + 
+                    '/UserMain/ExcludedPickListPopup?pickListId=' + self.PickListId();
+            
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Set Exclude/Include for all Products in Search',
+                width: 'small',
+                height: 350,
+            }, self.LoadDataForCurrentPage);
+        };
+
+        self.ExcludedIsChecked = function(data) {
+            return data.ExcludedCount == data.VariantCount;
+        };
+        
+        self.ExcludedCheckboxClick = function (model) {
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var data = {
+                masterProductId: model.Id,
+                value: !self.ExcludedIsChecked(model),
+            };
+
+            ajax.HttpPost("/Cogs/ExcludeById", data, self.LoadDataForCurrentPage);
+        };
+
+        self.ExcludedGridLinkClick = function (model) {
+            ProfitWiseShopify.LaunchExcludedProductVariantPopup(model.Id, function () {
+                alert("ok, let's do something for excluded!!!");
             });
         };
 
-        self.StockedDirectlyClick = function (model) {
-            alert("Stocked Directly Click");
-        };
 
-        self.SetProductAllStockedDirectly = function (model) {
-            alert("All " + model.Id);
-        };
-
-        self.SetProductNoneStockedDirectly = function (model) {
-            alert("None " + model.Id);
-        };
-
-
-        // *** Launch Bulk Edit Popup *** //
-        self.LaunchBulkEditPopup = function (model) {
-            ProfitWiseShopify.LaunchBulkEditPopUp(
-                model.Id,
-                function () {
-                    self.LoadDataForCurrentPage();
-                });
-        }
 
 
         // *** Search for Products *** //
@@ -383,11 +400,7 @@
                     }
                 });
         };
-
-        self.LoadSingleProductRecord = function (shopifyProductId) {
-            //ProfitWiseShopify.ErrorPopup();
-        }
-
+        
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
 
         return self;

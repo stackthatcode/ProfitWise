@@ -72,41 +72,28 @@ namespace ProfitWise.Web.Controllers
 
 
 
-        public ActionResult StockedDirectlyVariantsPopup(int shopifyProductId)
+        public ActionResult StockedPicklistPopup(int pickListId)
         {
-            this.LoadCommonContextIntoViewBag();
-
-            var model = new SimpleShopifyProductId()
-            {
-                ShopifyProductId = shopifyProductId
-            };
-            return View(model);
+            return View(new SimplePickList(pickListId));
         }
 
-        public ActionResult StockedDirectlyProductsPopup()
+        public ActionResult StockedProductPopup(int masterProductId)
         {
-            this.LoadCommonContextIntoViewBag();
-            return View();
+            return View(new SimpleMasterProduct(masterProductId));
         }
 
 
 
-        public ActionResult ExcludedVariantsPopup(int shopifyProductId)
+        public ActionResult ExcludedPickListPopup(int pickListId)
         {
-            this.LoadCommonContextIntoViewBag();
-
-            var model = new SimpleShopifyProductId()
-            {
-                ShopifyProductId = shopifyProductId
-            };
-            return View(model);
+            return View(new SimplePickList(pickListId));
         }
 
-        public ActionResult ExcludedProductsPopup()
+        public ActionResult ExcludedProductPopup(int masterProductId)
         {
-            this.LoadCommonContextIntoViewBag();
-            return View();
+            return View(new SimpleMasterProduct(masterProductId));
         }
+
 
 
         public ActionResult Goals()

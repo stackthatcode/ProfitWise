@@ -245,7 +245,8 @@
     <Compile Include="Models\EditProductCogsModel.cs" />
     <Compile Include="Models\MoneyRange.cs" />
     <Compile Include="Models\SearchResultSelection.cs" />
-    <Compile Include="Models\SimpleShopifyProductId.cs" />
+    <Compile Include="Models\SimplePickList.cs" />
+    <Compile Include="Models\SimpleMasterProduct.cs" />
     <Compile Include="Models\CommonContextModel.cs" />
     <Compile Include="Plumbing\GlobalConfig.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />
@@ -373,10 +374,10 @@
     <Content Include="Views\Shared\_UserScripts.cshtml" />
     <Content Include="Views\UserMain\BulkEditCogs.cshtml" />
     <Content Include="Views\UserMain\_MoneyRangeWidget.cshtml" />
-    <Content Include="Views\UserMain\StockedDirectlyVariantsPopup.cshtml" />
-    <Content Include="Views\UserMain\ExcludedProductsPopup.cshtml" />
-    <Content Include="Views\UserMain\ExcludedVariantsPopup.cshtml" />
-    <Content Include="Views\UserMain\StockedDirectlyProductsPopup.cshtml" />
+    <Content Include="Views\UserMain\StockedProductPopup.cshtml" />
+    <Content Include="Views\UserMain\ExcludedPickListPopup.cshtml" />
+    <Content Include="Views\UserMain\ExcludedProductPopup.cshtml" />
+    <Content Include="Views\UserMain\StockedPickListPopup.cshtml" />
     <Content Include="Views\Error\ErrorDialogBox.cshtml" />
     <Content Include="Views\ShopifyAuth\ExternalLoginFailure.cshtml" />
   </ItemGroup>

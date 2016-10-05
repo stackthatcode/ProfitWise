@@ -1,4 +1,4 @@
-﻿@model ProfitWise.Web.Models.SimpleShopifyProductId
+﻿@model ProfitWise.Web.Models.SimplePickList
 
 @{
     ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
@@ -32,6 +32,8 @@
 
 
 <script>
+    var pickListId = @Model.Id;
+
     $(document)
         .ready(function () {
             var ProfitWise = ProfitWise || {};
@@ -39,21 +41,37 @@
             ProfitWise.ExcludedModel = function() {
                 var self = this;
 
-                self.IncludeAllProducts = function() {
-                    alert("Include All for Product");
+                self.PickListId = ko.observable();
 
-                    ShopifyApp.Modal.close(true);
+                self.IncludeAllProducts = function() {
+                    self.UpdateServer(true);
                 };
 
                 self.ExcludeAllProducts = function() {
-                    alert("Exclude All for Product");
-
-                    ShopifyApp.Modal.close(true);
+                    self.UpdateServer(false);
                 };
+
+                self.UpdateServer = function(value) {
+                        var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                        var ajax = new ProfitWiseFunctions.Ajax(settings);
+                        var data = {
+                            pickListId: self.PickListId() ,
+                            value: value,
+                        };
+                        
+                        ajax.HttpPost(
+                            "/Cogs/ExcludeByPickList", 
+                            data,
+                            function () {
+                                ShopifyApp.Modal.close(true);
+                            });
+
+                }
             };
 
-            var model = new ProfitWise.ExcludedModel();            
+            var model = new ProfitWise.ExcludedModel();
             ko.applyBindings(model);
+            model.PickListId(pickListId);
             window.ModelHandle = model;
         });
 </script>

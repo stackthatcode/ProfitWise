@@ -145,28 +145,6 @@ ProfitWiseShopify.ErrorPopup = function () {
 
 
 
-ProfitWiseShopify.LaunchBulkEditPopUp = function (masterProductId, callback) {
-    var url = ProfitWiseConfig.BaseUrl + '/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
-    ProfitWiseShopify.LaunchModal({
-        src: url,
-        title: 'Bulk Edit all Variant CoGS',
-        width: 'small',
-        height: 380,
-    }, callback);
-};
-
-ProfitWiseShopify.LaunchStockedDirectlyProductsPopup = function (callback) {
-    var url = ProfitWiseConfig.BaseUrl + '/UserMain/StockedDirectlyProductsPopup';
-
-    ProfitWiseShopify.LaunchModal({
-            src: url,
-            title: 'Set Stocked Directly for all Products in Search',
-            width: 'small',
-            height: 300,
-        }, callback);
-};
-
-
 
 ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup = function (shopifyProductId, callbackFunction) {
     var url = ProfitWiseConfig.BaseUrl + '/UserMain/StockedDirectlyVariantsPopup?shopifyProductId=' + shopifyProductId;
@@ -196,23 +174,6 @@ ProfitWiseShopify.LaunchExcludedProductVariantPopup = function(shopifyProductId,
         function (result) {
             if (result) {
                 callbackFunction(shopifyProductId);
-            }
-        });
-
-};
-
-ProfitWiseShopify.LaunchExcludedProductsPopup = function (callbackFunction) {
-    var url = ProfitWiseConfig.BaseUrl + '/UserMain/ExcludedProductsPopup';
-    
-    ShopifyApp.Modal.open({
-        src: url,
-        title: 'Set Exclude/Include for all Products in Search',
-        width: 'small',
-        height: 270,
-    },
-        function (result) {
-            if (result) {
-                callbackFunction();
             }
         });
 

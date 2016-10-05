@@ -5,9 +5,24 @@ SET SQL_SAFE_UPDATES = 0;
 
 SELECT * FROM profitwiseshop;
 
+SELECT * FROM profitwisebatchstate;
+
+SELECT * FROM aspnetusers;
+	
+SELECT * FROM aspnetuserroles;
+
+SELECT * FROM aspnetuserlogins;
+
+SELECT * FROM aspnetuserclaims;
+
+
+UPDATE profitwiseshop SET IsAccessTokenValid = 1;
+
 UPDATE profitwiseshop SET CurrencyId = 1;
 
 SELECT * FROM profitwiseproduct;
+
+SELECT * FROM profitwisepicklist;
 
 
 
@@ -17,11 +32,6 @@ INSERT INTO profitwisequery (PwShopId) VALUES ( 100001 );
 
 SELECT LAST_INSERT_ID();
 
-
-/*** TEMPORARY ***/
-DELETE FROM profitwisequerymasterproduct;
-
-DELETE FROM profitwiseproduct WHERE Vendor = 'Zortrax';
 
 
 UPDATE profitwisemastervariant 
@@ -146,7 +156,13 @@ SELECT PwMasterProductId FROM profitwisequerymasterproduct WHERE PwShopId = 1000
 
 SELECT * FROM profitwiseproduct;
 
-PwMasterVariantId, PwShopId, PwMasterProductId, Exclude, StockedDirectly, CogsCurrencyId, CogsAmount, CogsDetail
+-- PwMasterVariantId, PwShopId, PwMasterProductId, Exclude, StockedDirectly, CogsCurrencyId, CogsAmount, CogsDetail
+
+
+DELETE FROM profitwisepicklistmasterproduct 
+WHERE PwShopId = 100001 AND PwPickListId IN 
+	( SELECT PwPickListId FROM profitwisepicklist WHERE PwShopId = 100001 AND CreatedDate <= '2019-01-01' );
+
 
 
 

@@ -20,6 +20,8 @@ namespace ProfitWise.Data.Repositories
         }
 
         public PwShop PwShop { get; set; }
+        public long PwShopId => PwShop.PwShopId;
+
 
         public MySqlTransaction InitiateTransaction()
         {
@@ -102,17 +104,70 @@ namespace ProfitWise.Data.Repositories
                 AND t2.PwMasterProductId IN @MasterProductIds";
 
             return _connection.Query<PwCogsVariant>(
-                query, new {PwShopId = this.PwShop.PwShopId, MasterProductIds = masterProductIds}).ToList();
+                query, new { this.PwShopId, MasterProductIds = masterProductIds }).ToList();
         }
 
         public void UpdateProductCogsAllVariants(long masterProductId, int currencyId, decimal amount)
         {
             var query = @"UPDATE profitwisemastervariant
                         SET CogsAmount = @amount, CogsCurrencyId = @currencyId
-                        WHERE PwMasterProductId = @masterProductId";
+                        WHERE PwShopId = @PwShopId
+                        AND PwMasterProductId = @masterProductId;";
 
-            _connection.Execute(query, new {masterProductId, currencyId, amount});
+            _connection.Execute(query, 
+                new { this.PwShopId, masterProductId, currencyId, amount});
         }
+
+        public void UpdateStockedDirectlyByPicklist(long pickListId, bool stockedDirectly)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant 
+                SET StockedDirectly = @stockedDirectly
+                WHERE PwShopId = @PwShopId
+                AND PwMasterProductId IN
+                    (SELECT PwMasterProductId 
+                    FROM profitwisepicklistmasterproduct 
+                    WHERE PwShopId = @pwShopId AND PwPickListId = @pickListId);";
+
+            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId, stockedDirectly});
+        }
+
+        public void UpdateStockedDirectlyById(long masterProductId, bool stockedDirectly)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant 
+                SET StockedDirectly = @stockedDirectly
+                WHERE PwShopId = @PwShopId
+                AND PwMasterProductId = @masterProductId;";
+
+            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterProductId, stockedDirectly });
+        }
+
+        public void UpdateExcludeByPicklist(long pickListId, bool exclude)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant 
+                SET Exclude = @exclude
+                WHERE PwShopId = @PwShopId
+                AND PwMasterProductId IN
+                    (SELECT PwMasterProductId 
+                    FROM profitwisepicklistmasterproduct 
+                    WHERE PwShopId = @pwShopId AND PwPickListId = @pickListId);";
+
+            _connection.Execute(query, new { PwShopId, pickListId, exclude });
+        }
+
+        public void UpdateExcludeById(long masterProductId, bool exclude)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant 
+                SET Exclude = @exclude
+                WHERE PwShopId = @PwShopId
+                AND PwMasterProductId = @masterProductId;";
+
+            _connection.Execute(query, new { PwShopId, masterProductId, exclude });
+        }
+
 
 
         // Product Search input
