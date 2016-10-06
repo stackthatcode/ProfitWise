@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS `profitwisequery`;
 DROP TABLE IF EXISTS `profitwisequerymasterproduct`;
 
 DROP TABLE IF EXISTS `profitwisepicklist`;
-DROP TABLE IF EXISTS `profitwisepicklistrow`;
+DROP TABLE IF EXISTS `profitwisepicklistmasterproduct`;
 
 
 
