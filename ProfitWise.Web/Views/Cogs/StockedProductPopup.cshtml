@@ -1,0 +1,77 @@
+﻿@model ProfitWise.Data.Model.PwCogsProduct
+
+@{
+    ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
+    Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
+}
+
+
+<script id="Main-Template" type="text/html">
+    <h4 style="font-weight: 600;" data-bind="text: $data.ProductTitle"></h4>
+    <p>
+        How would you like to set Stocked Directly for all <span data-bind="text: VariantCount"></span> Variants?
+    </p>
+
+    <div style="height: 24px;"></div>
+    <form class="form-inline">
+        <div class="form-group">
+            <a href="#" data-bind="click: $root.SetAllVariants" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-ok"></i> &nbsp; Mark ALL as Stocked Directly</a>
+            <a href="#" data-bind="click: $root.SetNoneVariants" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-remove"></i> &nbsp; Mark NONE as Stocked Directly</a>
+        </div>
+    </form>
+</script>
+
+<div data-bind="template: { name: 'Main-Template' }">
+</div>
+
+
+<script>
+    var masterProductId = @Model.PwMasterProductId;
+    var productTitle = '@Model.Title';
+    var variantCount = @Model.Variants.Count;
+
+    $(document)
+        .ready(function () {
+            var ProfitWise = ProfitWise || {};
+            
+            ProfitWise.StockedDirectlyModel = function() {
+                var self = this;
+
+                self.MasterProductId = ko.observable();
+                self.ProductTitle = ko.observable();
+                self.VariantCount = ko.observable();
+                
+                self.SetAllVariants = function() {
+                    self.UpdateServer(true);
+                };
+
+                self.SetNoneVariants = function() {
+                    self.UpdateServer(false);
+                };
+
+                self.UpdateServer = function(value) {
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    var data = {
+                        masterProductId: self.MasterProductId(),
+                        value: value,
+                    };
+
+                    ajax.HttpPost("/CogsService/StockedDirectlyById", data,
+                        function() {
+                            ShopifyApp.Modal.close(true);
+                        });
+                }
+            };
+
+            var model = new ProfitWise.StockedDirectlyModel();
+            
+            model.MasterProductId(masterProductId);
+            model.ProductTitle(productTitle);
+            model.VariantCount(variantCount);
+
+            ko.applyBindings(model);
+            window.ModelHandle = model;
+        });
+</script>
+   

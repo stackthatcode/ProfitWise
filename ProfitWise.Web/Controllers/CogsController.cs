@@ -1,11 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
-using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -22,118 +23,69 @@ namespace ProfitWise.Web.Controllers
             _factory = factory;
             _currencyService = currencyService;
         }
-        
-        [HttpPost]
-        public ActionResult Search(CogsSearchParameters parameters)
+
+
+        public ActionResult Products()
         {
+            this.LoadCommonContextIntoViewBag();
             var userBrief = HttpContext.PullIdentitySnapshot();
-            var pickListRepository = _factory.MakePickListRepository(userBrief.PwShop);
-
-            long pickListId;
-
-            using (var transaction = pickListRepository.InitiateTransaction())
-            {
-                pickListId = pickListRepository.Provision();
-
-                var terms = (parameters.Text ?? "").SplitBy(',');
-                pickListRepository.Populate(pickListId, terms);
-
-                if (parameters.Filters != null && parameters.Filters.Count > 0)
-                {
-                    pickListRepository.Filter(pickListId, parameters.Filters);
-
-                    if (parameters.Filters.Any(x => x.Type == ProductSearchFilterType.MissingCogs))
-                    {
-                        pickListRepository.FilterMissingCogs(pickListId);
-                    }
-                }
-
-                transaction.Commit();
-            }
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
             
-            return new JsonNetResult(new { PickListId = pickListId});
+            var model = new EditProductCogsModel()
+            {
+                ProductTypes = cogsRepository.RetrieveProductType().ToList(),
+                Vendors = cogsRepository.RetrieveVendors().ToList(),
+            };
+
+            return View(model);
         }
 
-        [HttpPost]
-        public ActionResult RetrieveResults(SearchResultSelection resultSelection)
+        public ActionResult BulkEditCogs(int masterProductId)
+        {            
+            return View(RetrieveProduct(masterProductId));
+        }
+
+
+
+        public ActionResult StockedPicklistPopup(int pickListId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-            var pickListRepository = _factory.MakePickListRepository(userBrief.PwShop);
-
-            var recordCount = pickListRepository.Count(resultSelection.PickListId);
-
-
-            // Pull the Search Results by Pick List page number
-            var products =
-                cogsRepository.RetrieveProductsFromPicklist(
-                    resultSelection.PickListId,
-                    resultSelection.PageNumber, 
-                    resultSelection.PageSize,
-                    resultSelection.SortByColumn, 
-                    resultSelection.SortByDirectionDown);
-
-            products.PopulateVariants(
-                cogsRepository
-                    .RetrieveVariants(products.Select(x => x.PwMasterProductId).ToList()));
-
-            products.PopulateNormalizedCogsAmount(_currencyService, userBrief.PwShop.CurrencyId);
-
-            var model = products.ToCogsGridModel(userBrief.PwShop.CurrencyId);
-            return new JsonNetResult(new { products = model, totalRecords = recordCount });
-
+            return View(new SimplePickList(pickListId));
         }
 
-        [HttpPost]
-        public ActionResult BulkUpdateCogs(long masterProductId, int currencyId, decimal amount)
+        public ActionResult StockedProductPopup(int masterProductId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-
-            cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
-
-            return JsonNetResult.Success();
+            return View(RetrieveProduct(masterProductId));
         }
 
 
-        [HttpPost]
-        public ActionResult StockedDirectlyByPickList(long pickListId, bool newValue)
+
+        public ActionResult ExcludedPickListPopup(int pickListId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-
-            cogsRepository.UpdateStockedDirectlyByPicklist(pickListId, newValue);
-            return JsonNetResult.Success();
+            return View(new SimplePickList(pickListId));
         }
 
-        [HttpPost]
-        public ActionResult StockedDirectlyById(long masterProductId, bool value)
+        public ActionResult ExcludedProductPopup(int masterProductId)
+        {
+            return View(RetrieveProduct(masterProductId));
+        }
+
+        [HttpGet]
+        public ActionResult Ping()
+        {
+            return new JsonNetResult(new { Success = true });
+        }
+
+
+        private PwCogsProduct RetrieveProduct(int masterProductId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
-            cogsRepository.UpdateStockedDirectlyById(masterProductId, value);
-            return JsonNetResult.Success();
-        }
+            var product = cogsRepository.RetrieveProduct(masterProductId);
+            product.Variants = cogsRepository.RetrieveVariants(new List<long> { masterProductId });
+            product.PopulateNormalizedCogsAmount(_currencyService, userBrief.PwShop.CurrencyId);
 
-        [HttpPost]
-        public ActionResult ExcludeByPickList(long pickListId, bool value)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-
-            cogsRepository.UpdateExcludeByPicklist(pickListId, value);
-            return JsonNetResult.Success();
-        }
-
-        [HttpPost]
-        public ActionResult ExcludeById(long masterProductId, bool value)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-
-            cogsRepository.UpdateExcludeById(masterProductId, value);
-            return JsonNetResult.Success();
+            return product;
         }
     }
 }

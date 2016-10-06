@@ -61,7 +61,7 @@ namespace ProfitWise.Web
             var registry = new InceptorRegistry();
             //registry.Add(typeof(ErrorForensics));
 
-            // Controller registration
+            // Controller registration            
             builder.RegisterType<UserMainController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
@@ -72,6 +72,10 @@ namespace ProfitWise.Web
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ShopifyAuthController>()
+                .InstancePerDependency()
+                .EnableClassInterceptorsWithRegistry(registry);
+
+            builder.RegisterType<CogsServiceController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<CogsController>()

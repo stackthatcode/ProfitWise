@@ -59,9 +59,9 @@
 </style>
 
 <!-- KnockoutJS Templates -->
-@Html.Partial("_PagingWidget")
-@Html.Partial("_ProductFilterWidget")
-@Html.Partial("_MoneyRangeWidget")
+@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_ProductFilterWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
 
 <script type="text/html" id="Page-Header">
     <div id="fixed-positioning-container">
@@ -262,7 +262,7 @@
         self.BulkEditPopUp = function (model) {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/UserMain/BulkEditCogs?masterProductId=' + masterProductId;
+                    '/Cogs/BulkEditCogs?masterProductId=' + model.Id;
 
             ProfitWiseShopify.LaunchModal({
                 src: url,
@@ -277,8 +277,8 @@
         self.StockedDirectlyPickListPopup = function () {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/UserMain/StockedPicklistPopup?pickListId=' + self.PickListId();
-    
+                    '/Cogs/StockedPicklistPopup?pickListId=' + self.PickListId();
+            
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Set Stocked Directly for all Products in Search',
@@ -299,13 +299,20 @@
                 value: !self.StockedDirectlyIsChecked(model),
             };
 
-            ajax.HttpPost("/Cogs/StockedDirectlyById", data, self.LoadDataForCurrentPage);
+            ajax.HttpPost("/CogsService/StockedDirectlyById", data, self.LoadDataForCurrentPage);
         };
 
         self.StockedDirectlyGridLinkClick = function (model) {
-            ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup(model.Id, function () {
-                alert("ok, let's do something!!!");
-            });
+            var url = 
+                ProfitWiseConfig.BaseUrl +
+                    '/Cogs/StockedProductPopup?masterProductId=' + model.Id;
+
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Set Stocked Directly for all Variants for this Product',
+                width: 'small',
+                height: 250,
+            }, self.LoadDataForCurrentPage);
         };
 
 
@@ -313,7 +320,7 @@
         self.ExcludePickListPopup = function () {
             var url = 
                 ProfitWiseConfig.BaseUrl + 
-                    '/UserMain/ExcludedPickListPopup?pickListId=' + self.PickListId();
+                    '/Cogs/ExcludedPickListPopup?pickListId=' + self.PickListId();
             
             ProfitWiseShopify.LaunchModal({
                 src: url,
@@ -335,13 +342,19 @@
                 value: !self.ExcludedIsChecked(model),
             };
 
-            ajax.HttpPost("/Cogs/ExcludeById", data, self.LoadDataForCurrentPage);
+            ajax.HttpPost("/CogsService/ExcludeById", data, self.LoadDataForCurrentPage);
         };
-
+        
         self.ExcludedGridLinkClick = function (model) {
-            ProfitWiseShopify.LaunchExcludedProductVariantPopup(model.Id, function () {
-                alert("ok, let's do something for excluded!!!");
-            });
+            var url = 
+                ProfitWiseConfig.BaseUrl + 
+                    '/Cogs/ExcludedProductPopup?masterProductId=' + model.Id;
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                    title: 'Set Exclude/Include for all Product Variants',
+                    width: 'small',
+                    height: 200,
+            }, self.LoadDataForCurrentPage);            
         };
 
 
@@ -366,7 +379,7 @@
             
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost(
-                "/Cogs/Search",
+                "/CogsService/Search",
                 search,
                 function(data) {
                     self.PickListId(data.PickListId);
@@ -386,7 +399,7 @@
  
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost(
-                "/Cogs/RetrieveResults", 
+                "/CogsService/RetrieveResults", 
                 resultsPaging,
                 function (data) {
                     self.CurrentGrid.removeAll();

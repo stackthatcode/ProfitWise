@@ -5,8 +5,8 @@
     Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
 }
 
-@Html.Partial("_MoneyEditorWidget")
-@Html.Partial("_MoneyRangeWidget")
+@Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
 
 <script type="text/html" id="Main-Template">
     <form class="form-horizontal" onsubmit="return false;">
@@ -102,7 +102,7 @@
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
 
                     ajax.HttpPost(
-                        "/Cogs/BulkUpdateCogs", 
+                        "/CogsService/BulkUpdateCogs", 
                         postData,
                         function() {
                             ShopifyApp.Modal.close(true);                               

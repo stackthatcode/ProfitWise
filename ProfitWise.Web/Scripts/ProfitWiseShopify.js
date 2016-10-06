@@ -50,7 +50,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             },
                             {
                                 label: "Edit Product CoGS",
-                                href: ProfitWiseConfig.BaseUrl + "/UserMain/EditProductCogs",
+                                href: ProfitWiseConfig.BaseUrl + "/Cogs/Products",
                                 target: "app"
                             },
                             {
@@ -143,38 +143,3 @@ ProfitWiseShopify.ErrorPopup = function () {
     });
 };
 
-
-
-
-ProfitWiseShopify.LaunchStockedDirectlyVariantsPopup = function (shopifyProductId, callbackFunction) {
-    var url = ProfitWiseConfig.BaseUrl + '/UserMain/StockedDirectlyVariantsPopup?shopifyProductId=' + shopifyProductId;
-
-    ShopifyApp.Modal.open({
-        src: url,
-        title: 'Set Stocked Directly for all Product Variants',
-        width: 'small',
-        height: 200,
-    },
-        function (result) {
-            if (result) {
-                callbackFunction(shopifyProductId);
-            }
-        });
-};
-
-ProfitWiseShopify.LaunchExcludedProductVariantPopup = function(shopifyProductId, callbackFunction) {
-    var url = ProfitWiseConfig.BaseUrl + '/UserMain/ExcludedVariantsPopup?shopifyProductId=' + shopifyProductId;
-
-    ShopifyApp.Modal.open({
-        src: url,
-        title: 'Set Exclude/Include for all Product Variants',
-        width: 'small',
-        height: 200,
-    },
-        function (result) {
-            if (result) {
-                callbackFunction(shopifyProductId);
-            }
-        });
-
-};

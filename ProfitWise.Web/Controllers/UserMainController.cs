@@ -38,63 +38,8 @@ namespace ProfitWise.Web.Controllers
         {
             return View();
         }
-
-        public ActionResult EditProductCogs()
-        {
-            this.LoadCommonContextIntoViewBag();
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-            
-            var model = new EditProductCogsModel()
-            {
-                ProductTypes = cogsRepository.RetrieveProductType().ToList(),
-                Vendors = cogsRepository.RetrieveVendors().ToList(),
-            };
-
-            return View(model);
-        }
-
-
-
-        public ActionResult BulkEditCogs(int masterProductId)
-        {
-            this.LoadCommonContextIntoViewBag();
-
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-
-            var product = cogsRepository.RetrieveProduct(masterProductId);
-            product.Variants = cogsRepository.RetrieveVariants(new List<long> {masterProductId});
-            product.PopulateNormalizedCogsAmount(_currencyService, userBrief.PwShop.CurrencyId);
-
-            return View(product);
-        }
-
-
-
-        public ActionResult StockedPicklistPopup(int pickListId)
-        {
-            return View(new SimplePickList(pickListId));
-        }
-
-        public ActionResult StockedProductPopup(int masterProductId)
-        {
-            return View(new SimpleMasterProduct(masterProductId));
-        }
-
-
-
-        public ActionResult ExcludedPickListPopup(int pickListId)
-        {
-            return View(new SimplePickList(pickListId));
-        }
-
-        public ActionResult ExcludedProductPopup(int masterProductId)
-        {
-            return View(new SimpleMasterProduct(masterProductId));
-        }
-
-
+        
+        
 
         public ActionResult Goals()
         {

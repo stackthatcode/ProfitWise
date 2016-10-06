@@ -1,4 +1,4 @@
-﻿@model ProfitWise.Web.Models.SimpleMasterProduct
+﻿@model ProfitWise.Data.Model.PwCogsProduct
 
 @{
     ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
@@ -24,38 +24,51 @@
 <div data-bind="template: { name: 'Main-Template' }">
 </div>
 
-
 <script>
-    // Extract Shopify Product Id from MVC layer
-    var shopifyProductId = @Model.ShopifyProductId;
+    var masterProductId = @Model.PwMasterProductId;
+    var productTitle = '@Model.Title';
+    var variantCount = @Model.Variants.Count;
 
     $(document)
         .ready(function () {
             var ProfitWise = ProfitWise || {};
-            
+
             ProfitWise.ExcludedModel = function() {
                 var self = this;
 
-                self.ShopifyProductId = ko.observable();
+                self.MasterProductId = ko.observable();
                 self.ProductTitle = ko.observable();
                 self.VariantCount = ko.observable();
                 self.IncludeAllProductVariants = function() {
-                    alert("Include All for Product");
+                    self.UpdateServer(true);
 
-                    ShopifyApp.Modal.close(true);
                 };
 
                 self.ExcludeAllProductVariants = function() {
-                    alert("Exclude All for Product");
-
-                    ShopifyApp.Modal.close(true);
+                    self.UpdateServer(false);
                 };
+
+                
+                self.UpdateServer = function(value) {
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    var data = {
+                        masterProductId: self.MasterProductId(),
+                        value: value,
+                    };
+
+                    ajax.HttpPost("/CogsService/ExcludeById", data,
+                        function() {
+                            ShopifyApp.Modal.close(true);
+                        });
+                }
             };
 
+
             var model = new ProfitWise.ExcludedModel();
-            model.ProductTitle("3D Universe 2.85 mm PLA");
-            model.VariantCount(84);
-            
+            model.ProductTitle(productTitle);
+            model.VariantCount(variantCount);
+            model.MasterProductId(masterProductId);
             ko.applyBindings(model);
             window.ModelHandle = model;
         });

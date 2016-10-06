@@ -237,8 +237,9 @@
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
-    <Compile Include="Controllers\CogsController.cs" />
+    <Compile Include="Controllers\CogsServiceController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\CogsController.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\CogsGridModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
@@ -356,7 +357,7 @@
     <Content Include="Views\ShopifyAuth\UnauthorizedAccess.cshtml" />
     <Content Include="Views\UserMain\Reports.cshtml" />
     <Content Include="Views\UserMain\Preferences.cshtml" />
-    <Content Include="Views\UserMain\EditProductCogs.cshtml" />
+    <Content Include="Views\Cogs\Products.cshtml" />
     <Content Include="Views\UserMain\Goals.cshtml" />
     <Content Include="Views\UserMain\Products.cshtml" />
     <Content Include="Views\UserMain\ShopifyScript.cshtml" />
@@ -366,18 +367,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Views\UserMain\_PagingWidget.cshtml" />
-    <Content Include="Views\UserMain\_ProductFilterWidget.cshtml" />
+    <Content Include="Views\SharedTemplates\_PagingWidget.cshtml" />
+    <Content Include="Views\SharedTemplates\_ProductFilterWidget.cshtml" />
     <Content Include="Views\Shared\_PageFooter.cshtml" />
-    <Content Include="Views\UserMain\_MoneyEditorWidget.cshtml" />
+    <Content Include="Views\SharedTemplates\_MoneyEditorWidget.cshtml" />
     <Content Include="Views\Shared\_UserLayoutDialogBox.cshtml" />
     <Content Include="Views\Shared\_UserScripts.cshtml" />
-    <Content Include="Views\UserMain\BulkEditCogs.cshtml" />
-    <Content Include="Views\UserMain\_MoneyRangeWidget.cshtml" />
-    <Content Include="Views\UserMain\StockedProductPopup.cshtml" />
-    <Content Include="Views\UserMain\ExcludedPickListPopup.cshtml" />
-    <Content Include="Views\UserMain\ExcludedProductPopup.cshtml" />
-    <Content Include="Views\UserMain\StockedPickListPopup.cshtml" />
+    <Content Include="Views\Cogs\BulkEditCogs.cshtml" />
+    <Content Include="Views\SharedTemplates\_MoneyRangeWidget.cshtml" />
+    <Content Include="Views\Cogs\StockedProductPopup.cshtml" />
+    <Content Include="Views\Cogs\ExcludedPickListPopup.cshtml" />
+    <Content Include="Views\Cogs\ExcludedProductPopup.cshtml" />
+    <Content Include="Views\Cogs\StockedPickListPopup.cshtml" />
     <Content Include="Views\Error\ErrorDialogBox.cshtml" />
     <Content Include="Views\ShopifyAuth\ExternalLoginFailure.cshtml" />
   </ItemGroup>
@@ -410,6 +411,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Error\Http404.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Cogs\_ViewStart.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
