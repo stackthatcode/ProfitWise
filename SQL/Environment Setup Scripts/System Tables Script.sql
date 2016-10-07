@@ -1,3 +1,6 @@
+USE profitwise;
+
+SET SQL_SAFE_UPDATES = 0;
 
 
 DROP TABLE IF EXISTS `currency`;

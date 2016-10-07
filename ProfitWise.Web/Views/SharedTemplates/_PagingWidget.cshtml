@@ -120,11 +120,13 @@
             self.PageNumber.valueHasMutated();
             
             //console.log("current PageNumber " + self.PageNumber());
-            self.InvokeCallbackFunction();
+            self.InvokeCallbackFunction();                
             ProfitWiseFunctions.PopOverCloseAll();
 
             self.JumpToPage("");
             self.JumpToPage.valueHasMutated();
+
+            self.ScrollToTop();
         };
         
         self.PageCount = ko.computed(function () {
@@ -134,10 +136,15 @@
             return (computedPageCount);
         });
 
+        self.ScrollToTop = function(){
+            $('html,body').animate({ scrollTop: 0 });
+        }
+
         self.Forward = function() {
             if (self.PageNumber() < self.PageCount()) {
                 self.PageNumber(self.PageNumber() + 1);
                 self.InvokeCallbackFunction();
+                self.ScrollToTop();
             }
         };
 
@@ -145,18 +152,21 @@
             if (self.PageNumber() > 1) {
                 self.PageNumber(self.PageNumber() - 1);
                 self.InvokeCallbackFunction();
+                self.ScrollToTop();
             }
         };
 
         self.First = function() {
             self.PageNumber(1);
             self.InvokeCallbackFunction();
-
+            self.ScrollToTop();
         };
 
         self.Last = function() {
             self.PageNumber(self.PageCount());
             self.InvokeCallbackFunction();
+            self.ScrollToTop();
+
         };
 
         self.CallbackFunction = function() {
