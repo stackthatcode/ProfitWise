@@ -316,6 +316,14 @@
     <Content Include="Scripts\ProfitWiseShopify.js" />
     <Content Include="Scripts\ProfitWiseFunctions.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Static\CoGS.html" />
+    <Content Include="Static\CoGSProduct.html" />
+    <Content Include="Static\EditVariantCogsDetail.html" />
+    <Content Include="Static\POAddLineItemAddVariants.html" />
+    <Content Include="Static\POAddLineItemProductSearch.html" />
+    <Content Include="Static\PurchaseOrderEditor.html" />
+    <Content Include="Static\PurchaseOrderManager.html" />
+    <Content Include="Static\SimpleCogsEditor.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

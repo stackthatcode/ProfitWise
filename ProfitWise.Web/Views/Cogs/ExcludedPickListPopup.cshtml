@@ -44,11 +44,11 @@
                 self.PickListId = ko.observable();
 
                 self.IncludeAllProducts = function() {
-                    self.UpdateServer(true);
+                    self.UpdateServer(false);
                 };
 
                 self.ExcludeAllProducts = function() {
-                    self.UpdateServer(false);
+                    self.UpdateServer(true);
                 };
 
                 self.UpdateServer = function(value) {

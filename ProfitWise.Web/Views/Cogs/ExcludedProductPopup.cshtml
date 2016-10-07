@@ -40,12 +40,12 @@
                 self.ProductTitle = ko.observable();
                 self.VariantCount = ko.observable();
                 self.IncludeAllProductVariants = function() {
-                    self.UpdateServer(true);
+                    self.UpdateServer(false);
 
                 };
 
                 self.ExcludeAllProductVariants = function() {
-                    self.UpdateServer(false);
+                    self.UpdateServer(true);
                 };
 
                 
