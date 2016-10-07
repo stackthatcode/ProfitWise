@@ -2,7 +2,107 @@
     ViewBag.CommonContext.PageTitle = "ProfitWise Dashboard";
 }
 
-<div class="main-space">
-    <h2>Welcome to ProfitWise</h2>
-    <p>We're going to add our beautiful HighCharts here!</p>
+<style>
+    .daterangepicker {
+        width: 720px !important;
+    }
+
+</style>
+
+<script type="text/html" id="Page-Header">
+    <div id="fixed-positioning-container">
+        <div id="top-header-sleeve" style="height: 120px; border-bottom: 1px solid #FFF;">
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div id="top-header">
+
+                <div class="row-fluid" style="padding-left: 25px; padding-right: 25px; padding-top: 20px;">
+                    <div class="col-xs-6">
+
+                    </div>
+
+                    <div class="col-xs-6">
+                        <div id="date-range-picker-parent">
+                            <input type="text" class="form-control" style="width:100%;" id="date-range-picker" />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="Main-Template">
+    <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
+
+    <div class="container page-content-sleeve">
+        <div class="page-content" style="margin-top: 119px; min-height:700px;">
+
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+            <p>Charts Galore, here!!!</p>
+
+        </div>
+    </div>
+</script>
+
+<!-- KnockoutJS Root View -->
+<div data-bind="template: { name: 'Main-Template' }">
 </div>
+
+<!-- KnockoutJS Model -->
+<script>
+    var ProfitWise = ProfitWise || {};
+
+    ProfitWise.DashboardModel = function() {
+        var self = this;
+
+        self.CreateDateRangePicker = function() {
+
+            $('#date-range-picker')
+                .daterangepicker({
+                    "parentEl": "#date-range-picker-parent",
+                        "startDate": "10/01/2016",
+                        "endDate": "10/07/2016",
+                        "alwaysShowCalendars": true,
+                        "linkedCalendars": false,
+                        "ranges": {
+                            'Today': [moment(), moment()],
+                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                            'This Month': [moment().startOf('month'), moment().endOf('month')],
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        "opens": "left",
+                    },
+                    function(start, end, label) {
+                        console
+                            .log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
+                    });
+
+        };
+        return self;
+    };
+
+
+    $(document)
+        .ready(function () {
+            ProfitWiseFunctions.FixedHeaderScrollingInit("#top-header");
+
+
+            var model = new ProfitWise.DashboardModel();
+            ko.applyBindings(model);
+
+            model.CreateDateRangePicker();
+
+        });
+</script>
+

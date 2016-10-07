@@ -55,7 +55,6 @@
     input[type='text'] {
         width: 100px;
     }
-
 </style>
 
 <!-- KnockoutJS Templates -->
@@ -144,8 +143,8 @@
 <script type="text/html" id="Main-Template">
     <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
-    <div class="container" style="margin: 0; width: 100%; padding-left: 20px; padding-right: 20px;">
-        <div style="position: relative; min-width: 900px; margin-top: 209px; background-color: #FFF; padding-left: 25px; padding-right: 25px;">
+    <div class="container page-content-sleeve">
+        <div class="page-content">
 
             <!-- No Products Found matching XYZ -->
             <div id="no-products-found" style="width: 100%;"
@@ -217,7 +216,7 @@
 
 </script>
 
-<!-- KnockoutJS Root View --><!-- data: $root.EndlessGlider, -->
+<!-- KnockoutJS Root View -->
 <div data-bind="template: { name: 'Main-Template' }">
 </div>
 
@@ -431,22 +430,5 @@
             ko.applyBindings(model);
         });
 </script>
-
-
-<script>
-/*
-flow.exec(
-            function () {
-                $("#spinner-layer").show();
-                setTimeout(this, 1500);
-            },
-            function() {
-                $("#spinner-layer").hide();
-                callback(fakeDataFunction());
-            });
-            */
-
-</script>
-
 
 
