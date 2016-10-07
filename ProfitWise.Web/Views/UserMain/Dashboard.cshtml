@@ -11,20 +11,52 @@
 
 <script type="text/html" id="Page-Header">
     <div id="fixed-positioning-container">
-        <div id="top-header-sleeve" style="height: 120px; border-bottom: 1px solid #FFF;">
+        <div id="top-header-sleeve" style="height: 160px; border-bottom: 1px solid #FFF;">
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div id="top-header">
+            <div id="top-header" style="padding-left: 25px; padding-right: 25px;">
 
-                <div class="row-fluid" style="padding-left: 25px; padding-right: 25px; padding-top: 20px;">
-                    <div class="col-xs-6">
-
+                <div class="row-fluid" style="padding-top: 20px;">
+                    <div class="col-xs-5" style="padding: 0px;">
+                        <h4>Profitability by Vendor</h4>
+                        <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
+                            Grouped by SKU, ordered by most profitable
+                            <br/>
+                            <span style="font-weight:400">12 Products with 33 Variants selected</span>
+                        </div>
                     </div>
-
-                    <div class="col-xs-6">
-                        <div id="date-range-picker-parent">
-                            <input type="text" class="form-control" style="width:100%;" id="date-range-picker" />
+                    <div class="col-xs-7" style="padding:0px;">
+                        <div id="date-range-picker-parent" class="pull-right">
+                            <input type="text" class="form-control" style="width: 200px;" id="date-range-picker"/>
                         </div>
 
+                        <div style="width: 10px; display: inline-block;" class="pull-right">
+                            &nbsp;
+                        </div>
+                        <div class="pull-right">
+                            <select class="form-control">
+                                <option>Overall Profitability</option>
+                                <option>Profitability by Vendor</option>
+                                <option>Profitability by Product Type</option>
+                                <option>Profitability by Product</option>
+                                <option>Profitability by SKU</option>
+                            </select>
+                        </div>
+
+                        <div style="clear: both; height: 15px;"></div>
+
+                        <div class="pull-right">
+                            <a href="" class="btn btn-default pull-right">
+                                <i class="glyphicon glyphicon-floppy-disk"></i> Save This View
+                            </a>
+
+                            <div style="width: 10px; display: inline-block;" class="pull-right">
+                                &nbsp;
+                            </div>
+
+                            <a href="" class="btn btn-primary">
+                                <i class="glyphicon glyphicon-pencil"></i> Edit Filtering &amp; Grouping
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -36,7 +68,7 @@
     <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
     <div class="container page-content-sleeve">
-        <div class="page-content" style="margin-top: 119px; min-height:700px;">
+        <div class="page-content" style="margin-top: 159px; min-height:700px;">
 
             <p>Charts Galore, here!!!</p>
             <p>Charts Galore, here!!!</p>
@@ -83,9 +115,8 @@
                         },
                         "opens": "left",
                     },
-                    function(start, end, label) {
-                        console
-                            .log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
+                    function (start, end, label) {
+                        alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
                     });
 
         };
