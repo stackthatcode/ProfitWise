@@ -85,7 +85,7 @@ namespace ProfitWise.Web
                         var serializedShopInformation = context.Shop.ToString();
 
                         // Currently unused Shop information
-                        //string shopPrimaryEmailAddress = context.Email;
+                        string shopPrimaryEmailAddress = context.Email;
 
                         // Add all this good stuff to these External Cookie Claims
                         context.Identity.AddClaim(

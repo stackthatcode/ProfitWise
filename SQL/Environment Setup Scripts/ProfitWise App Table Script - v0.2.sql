@@ -109,21 +109,6 @@ CREATE TABLE `profitwisebatchstate` (
 
 
 
-CREATE TABLE `profitwisepicklist` (
-  `PwPickListId` BIGINT NOT NULL AUTO_INCREMENT,
-  `PwShopId` BIGINT NOT NULL,
-  `CreatedDate` TIMESTAMP NOT NULL,
-  PRIMARY KEY (`PwPickListId`)
-) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
-
-CREATE TABLE `profitwisepicklistmasterproduct` (
-	`PwPickListId` BIGINT NOT NULL,
-    `PwShopId` BIGINT NOT NULL,
-    `PwMasterProductId` BIGINT NOT NULL,
-    PRIMARY KEY (`PwPickListId`, `PwShopId`, `PwMasterProductId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 
 
 CREATE TABLE `shopifyorder` (
@@ -157,5 +142,69 @@ CREATE TABLE `shopifyorderlineitem` (
   `GrossRevenue` decimal(15,2) DEFAULT NULL,
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+CREATE TABLE `profitwisepicklist` (
+  `PwPickListId` BIGINT NOT NULL AUTO_INCREMENT,
+  `PwShopId` BIGINT NOT NULL,
+  `CreatedDate` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`PwPickListId`)
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwisepicklistmasterproduct` (
+	`PwPickListId` BIGINT NOT NULL,
+    `PwShopId` BIGINT NOT NULL,
+    `PwMasterProductId` BIGINT NOT NULL,
+    PRIMARY KEY (`PwPickListId`, `PwShopId`, `PwMasterProductId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/** Filter Structures **/
+
+CREATE TABLE `profitwisefilter` (
+	`PwFilterId` BIGINT NOT NULL AUTO_INCREMENT,
+	`PwShopId` BIGINT NOT NULL,
+	`Name` varchar(50) NULL,
+    `Saved` TINYINT NOT NULL,
+    `AllProductTypes` TINYINT NOT NULL,
+    `AllVendors` TINYINT NOT NULL,
+    `AllProducts` TINYINT NOT NULL,
+    `AllSkus` TINYINT NOT NULL,
+	`CreatedDate` TIMESTAMP NOT NULL,
+	`LastAccessedDate` TIMESTAMP NOT NULL,
+    PRIMARY KEY (`PwFilterId`, `PwShopId` )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwisefilterproducttype` (
+	`PwFilterId` BIGINT NOT NULL AUTO_INCREMENT,
+	`PwShopId` BIGINT NOT NULL,
+	`ProductType` varchar(100) NOT NULL,
+    PRIMARY KEY (`PwFilterId`, `PwShopId`, `ProductType` )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwisefiltervendor` (
+	`PwFilterId` BIGINT NOT NULL AUTO_INCREMENT,
+	`PwShopId` BIGINT NOT NULL,
+	`Vendor` varchar(100) NOT NULL,
+    PRIMARY KEY (`PwFilterId`, `PwShopId`, `ProductType` )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwisefiltermasterproduct` (
+	`PwFilterId` BIGINT NOT NULL AUTO_INCREMENT,
+	`PwShopId` BIGINT NOT NULL,
+	`PwMasterProductId` BIGINT NOT NULL,
+    PRIMARY KEY (`PwFilterId`, `PwShopId`, `ProductType` )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profitwisefiltersku` (
+	`PwFilterId` BIGINT NOT NULL AUTO_INCREMENT,
+	`PwShopId` BIGINT NOT NULL,
+	`Sku` varchar(100) NOT NULL,
+    PRIMARY KEY (`PwFilterId`, `PwShopId`, `ProductType` )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 

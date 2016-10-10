@@ -82,15 +82,9 @@ namespace ProfitWise.Web
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
 
-
-            // *** Filter Registration
-            //filters.Add(new HandleErrorAttributeImpl());
-            //filters.Add(new IdentityCachingAttribute());
-
-            //builder.Register(c => new HandleErrorAttributeImpl())
-            //        .AsActionFilterFor<UserHomeController>(c => c.Index())
-            //        .InstancePerHttpRequest();
-
+            builder.RegisterType<FilterServiceController>()
+                .InstancePerDependency()
+                .EnableClassInterceptorsWithRegistry(registry);
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

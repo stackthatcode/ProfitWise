@@ -80,6 +80,11 @@
     <Compile Include="Model\ProductSearchFilter.cs" />
     <Compile Include="Model\PwCogsVariant.cs" />
     <Compile Include="Model\PwCogsProduct.cs" />
+    <Compile Include="Model\PwFilterSku.cs" />
+    <Compile Include="Model\PwFilterMasterProduct.cs" />
+    <Compile Include="Model\PwFilterVendor.cs" />
+    <Compile Include="Model\PwFilterProductType.cs" />
+    <Compile Include="Model\PwFilter.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />
