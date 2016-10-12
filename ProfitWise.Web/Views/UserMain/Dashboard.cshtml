@@ -14,16 +14,12 @@
         padding: 0px !important;
         line-height: 33px;
     }
-
     .modal-backdrop {
         z-index: 900;
-    }
-
-    
+    }    
     i.date-range-picker-icon {
         position: absolute; bottom: 10px; right: 10px; top: auto; cursor: pointer;
     }
-
 </style>
 
 
@@ -36,23 +32,24 @@
 
                 <!-- Nav tabs -->
                 <div class="row-fluid">
-                    <div class="col-xs-8 no-side-padding">
-                        <ul class="nav nav-tabs" role="tablist">
+                    <div class="col-xs-12 no-side-padding" style="height: 40px;">
+                        <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
                             <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Product Types</a></li>
                             <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Vendors</a></li>
                             <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Products</a></li>
                             <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">SKUs</a></li>
                             <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Grouping</a></li>
                         </ul>
-                    </div>
-                    <div class="col-xs-4 no-side-padding" style="text-align: right; height: 40px;">
-                        <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: SaveQueryParameters">
-                            Cancel &nbsp;<i class="glyphicon glyphicon-remove" style="top: 3px;"></i>
-                        </a>
 
-                        <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: SaveQueryParameters">
-                            Save View &nbsp;<i class="glyphicon glyphicon-floppy-disk" style="top: 3px;"></i>
-                        </a>
+                        <div style="position: absolute; width: 100%; height: 0px; overflow: visible; text-align: right;">
+                            <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: SaveQueryParameters">
+                                Cancel &nbsp;<i class="glyphicon glyphicon-remove" style="top: 3px;"></i>
+                            </a>
+
+                            <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: SaveQueryParameters">
+                                Save View &nbsp;<i class="glyphicon glyphicon-floppy-disk" style="top: 3px;"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -63,25 +60,22 @@
                         <div class="row-fluid" style="padding-top: 20px;">
                             <div class="col-xs-3 no-side-padding">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search for Products...">
+                                    <input type="text" class="form-control" placeholder="Search...">
                                     <span class="input-group-btn">
                                         <a href="#" class="btn btn-default" type="button" style="height: 34px !important;">Go!</a>
                                     </span>
                                 </div><!-- /input-group -->
                             </div>
-                            <div class="col-xs-2">
-                                <!-- Single button -->
-                                <select class="form-control">
+                            <div class="col-xs-9 no-side-padding">
+                                <!--<div data-bind="visible: $root.CurrentGrid().length > 0">-->
+                                <div style="min-width: 500px;"
+                                     data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                                </div>
+                                <select class="form-control pull-right" style="display: inline-block; width: auto; margin-right: 15px; height: 35px;">
                                     <option value="">Show All</option>
                                     <option value="">Show Selected Only</option>
                                 </select>
-                            </div>
-                            <div class="col-xs-7 no-side-padding">
-                                <div style="height: 20px;" class="visible-lg"></div>
-                                <!--<div data-bind="visible: $root.CurrentGrid().length > 0">-->
-                                <div style="min-width: 500px;" 
-                                     data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
-                                </div>
+
                                 <!--</div>-->
                             </div>
                         </div>
@@ -109,17 +103,7 @@
                 <div class="row-fluid" style="padding-top: 20px;">
                     <div class="col-xs-5 no-side-padding">
                         <div class="popover-container">
-
                             <h4 style="display: inline-block">Profitability by Vendor</h4>
-
-                            <!--
-                            <a href="#" rel="popover" class="no-underline popover-launcher"
-                               data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Query-Selection-Popover', data: $data }">
-                                <h4 style="display: inline-block">Profitability by Vendor</h4>
-                                <i style="display: inline-block" class="glyphicon glyphicon-chevron-down"></i>
-                            </a>
-                            -->
-
                         </div>
 
                         <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
@@ -129,10 +113,7 @@
                         </div>
                     </div>
 
-
-
                     <div class="col-xs-7 no-side-padding">
-
                         <div class="btn-group pull-right">
                             <a href="#" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Select View <span class="caret"></span>
@@ -143,8 +124,13 @@
                                 <li><a href="#">Profitability by Vendor</a></li>
                                 <li><a href="#">Profitability by Product</a></li>
                                 <li><a href="#">Profitability by SKUs</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Custom Report #1</a></li>
+                                <li><a href="#">Custom Report #2</a></li>
+                                <li><a href="#">Custom Report #3</a></li>
+                                <li><a href="#">Custom Report #4</a></li>
+                                <li><a href="#">Custom Report #5</a></li>
                             </ul>
-
                         </div>
 
                         <div class="pull-right" style="margin-right: 3px;">
@@ -185,8 +171,7 @@
             </div>
         </div>
     </div>
-
-    </script>
+</script>
 
 <script type="text/html" id="Main-Template">
     <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
@@ -199,88 +184,87 @@
             </div>
         </div>
     </div>
-    </script>
+</script>
     
-    <!-- KnockoutJS Root View -->
-    <div data-bind="template: { name: 'Main-Template' }">
-    </div>
+<!-- KnockoutJS Root View -->
+<div data-bind="template: { name: 'Main-Template' }">
+</div>
 
-    <!-- KnockoutJS Model -->
-    <script>
-        var ProfitWise = ProfitWise || {};
+<!-- KnockoutJS Model -->
+<script>
+    var ProfitWise = ProfitWise || {};
 
-        ProfitWise.FilterTypes = {
-            ProductType: "ProductType",
-            Vendor: "Vendor",
-            Product: "Product",
-            Skus: "Skus"
-        };
+    ProfitWise.FilterTypes = {
+        ProductType: "ProductType",
+        Vendor: "Vendor",
+        Product: "Product",
+        Skus: "Skus"
+    };
 
-        ProfitWise.DashboardModel = function () {
-            var self = this;
+    ProfitWise.DashboardModel = function () {
+        var self = this;
+        self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
-            self.PagingModel = new ProfitWiseWidgets.PagingModel();
-            self.PagingModel.HeightCorrection("35px");
-
-            self.CreateDateRangePicker = function () {
-                $(".date-range-picker-icon").click(function () {
-                    $(this).parent().find('input').click();
-                });
-
-                $('#date-range-picker')
-                    .daterangepicker({
-                        "parentEl": "#date-range-picker-parent",
-                        "startDate": "10/01/2016",
-                        "endDate": "10/07/2016",
-                        "alwaysShowCalendars": true,
-                        "linkedCalendars": false,
-                        "ranges": {
-                            'Today': [moment(), moment()],
-                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                            'This Month': [moment().startOf('month'), moment().endOf('month')],
-                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                            'This Year': [moment().startOf('year'), moment().endOf('year')],
-                            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-                        },
-                        "opens": "left",
-                    },
-                        function (start, end, label) {
-                            alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-                        });
-
-            };
-
-            self.LoadDashboardData = function () {
-
-            };
-
-            self.InEditMode = ko.observable(false);
-
-            self.EditQueryParameters = function () {
-                $("#filter-top-panel").show();
-                self.InEditMode(true);
-            };
-
-            self.SaveQueryParameters = function () {
-                $("#filter-top-panel").hide();
-                self.InEditMode(false);
-            };
-
-            return self;
-        };
-
-
-        $(document)
-            .ready(function () {
-                ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");
-                ProfitWiseFunctions.PopOverAutoCloseInit();
-
-                var model = new ProfitWise.DashboardModel();
-                ko.applyBindings(model);
-                model.SaveQueryParameters();
-                model.CreateDateRangePicker();
+        self.CreateDateRangePicker = function () {
+            $(".date-range-picker-icon").click(function () {
+                $(this).parent().find('input').click();
             });
-    </script>
+
+            $('#date-range-picker')
+                .daterangepicker({
+                    "parentEl": "#date-range-picker-parent",
+                    "startDate": "10/01/2016",
+                    "endDate": "10/07/2016",
+                    "alwaysShowCalendars": true,
+                    "linkedCalendars": false,
+                    "applyClass": "btn-primary",
+                    "ranges": {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                        'This Year': [moment().startOf('year'), moment().endOf('year')],
+                        'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                    },
+                    "opens": "left",
+                },
+                    function (start, end, label) {
+                        alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                    });
+
+        };
+
+        self.LoadDashboardData = function () {
+
+        };
+
+        self.InEditMode = ko.observable(false);
+
+        self.EditQueryParameters = function () {
+            $("#filter-top-panel").show();
+            self.InEditMode(true);
+        };
+
+        self.SaveQueryParameters = function () {
+            $("#filter-top-panel").hide();
+            self.InEditMode(false);
+        };
+
+        return self;
+    };
+
+
+    $(document)
+        .ready(function () {
+            ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");
+            ProfitWiseFunctions.PopOverAutoCloseInit();
+
+            var model = new ProfitWise.DashboardModel();
+            ko.applyBindings(model);
+            model.SaveQueryParameters();
+            model.CreateDateRangePicker();
+        });
+</script>
 
