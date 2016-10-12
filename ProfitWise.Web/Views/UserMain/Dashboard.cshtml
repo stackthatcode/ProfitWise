@@ -8,10 +8,20 @@
 <style>
     .daterangepicker {
         width: 720px !important;
+        font-size: 13px !important;
+    }
+    div.calendar-table td {
+        padding: 0px !important;
+        line-height: 33px;
     }
 
     .modal-backdrop {
         z-index: 900;
+    }
+
+    
+    i.date-range-picker-icon {
+        position: absolute; bottom: 10px; right: 10px; top: auto; cursor: pointer;
     }
 
 </style>
@@ -112,51 +122,57 @@
                             </a>
                             -->
 
-                            <div style="display: inline-block; margin-left: 10px; margin-top:20px;" class="popover-container">
-                                    <a href="#" class="btn btn-sm btn-default dropdown-toggle popover-launcher"
-                                       data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Query-Selection-Popover', data: $data }">
-                                        <span class="caret"></span>
-                                    </a>
-                                    
-                                    <!--
-                                    <ul class="dropdown-menu">
-                                    <li><a href="#">Profitability by Product Type</a></li>
-                                    <li><a href="#">Profitability by Vendor</a></li>
-                                    <li><a href="#">Profitability by Product</a></li>
-                                    <li><a href="#">Profitability by SKUs</a></li>
-                                    </ul>
-                                    -->
-                                    
-                        </div>
-
                         </div>
 
                         <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
                             Grouped by SKU, ordered by most profitable
-                            <br />
+                            <br/>
                             <span style="font-weight: 400">12 Products with 33 Variants selected</span>
                         </div>
                     </div>
 
-                    <div class="col-xs-7 no-side-padding" style="padding-top:20px;">
-                        <div id="date-range-picker-parent" class="pull-right">
-                            <input type="text" class="form-control" style="width: 200px;" id="date-range-picker" />
+                    <!--
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Profitability by Product Type</a></li>
+                        <li><a href="#">Profitability by Vendor</a></li>
+                        <li><a href="#">Profitability by Product</a></li>
+                        <li><a href="#">Profitability by SKUs</a></li>
+                    </ul>
+                    -->
+
+
+                    <div class="col-xs-7 no-side-padding">
+                        <!--
+                        <div class="popover-container pull-right">
+                            <a href="#" class="btn btn-sm btn-default dropdown-toggle popover-launcher"
+                               data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Query-Selection-Popover', data: $data }">
+                                Select View <span class="caret"></span>
+                            </a>
+
+
                         </div>
-
-                        <div style="clear: both; height: 15px;"></div>
-
-                        <div class="pull-right">
+                        <div class="pull-right" style="margin-right:10px;">
                             <div data-bind="ifnot:InEditMode">
-                                <a href="" class="btn btn-primary" data-bind="click: EditQueryParameters">
-                                    <i class="glyphicon glyphicon-pencil"></i> Edit Query Parameters
+                                <a href="" class="btn btn-sm btn-default" data-bind="click: EditQueryParameters">
+                                    Edit View <i class="glyphicon glyphicon-pencil"></i>
                                 </a>
                             </div>
                             <div data-bind="if:InEditMode">
-                                <a href="" class="btn btn-primary" data-bind="click: SaveQueryParameters">
-                                    <i class="glyphicon glyphicon-pencil"></i> Save Query Parameters
+                                <a href="" class="btn btn-sm btn-default" data-bind="click: SaveQueryParameters">
+                                    <i class="glyphicon glyphicon-floppy-disk"></i> SaveView
                                 </a>
                             </div>
                         </div>
+
+                        <div style="clear: both; height: 10px;"></div>
+                        -->
+                        <div id="date-range-picker-parent" class="pull-right" style="width:205px; position:relative;">
+                            <input type="text" class="form-control" style="width: 100%;" id="date-range-picker"/>
+                            <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
+                        </div>
+
+                        <div style="clear: both; height: 10px;"></div>
+
                     </div>
                 </div>
             </div>
@@ -201,6 +217,9 @@
             self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
             self.CreateDateRangePicker = function () {
+                $(".date-range-picker-icon").click(function () {
+                    $(this).parent().find('input').click();
+                });
 
                 $('#date-range-picker')
                     .daterangepicker({
@@ -215,7 +234,9 @@
                             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                             'This Month': [moment().startOf('month'), moment().endOf('month')],
-                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                            'This Year': [moment().startOf('year'), moment().endOf('year')],
+                            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
                         },
                         "opens": "left",
                     },

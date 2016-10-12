@@ -1,12 +1,12 @@
 ﻿html, body {
-    font-family: 'Open Sans', sans-serif;
+   font-family: 'Open Sans', sans-serif;
     padding: 0;
     margin: 0;
     height: 100%;
     background-color: rgb(235, 238, 240) !important;
     font-size: 14px;
     color: #555;
-    line-height: 32px;
+    /*line-height: 32px;*/
 }
 
 
