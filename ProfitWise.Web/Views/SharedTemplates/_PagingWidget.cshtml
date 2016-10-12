@@ -1,5 +1,10 @@
 ﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
 
+<style>
+    .standard-height {
+        height: 33px !important;
+    }
+</style>
 <script type="text/html" id="Paging-Widget-Popover">
     <!--<div id="pagination-popover-content"> <!-- style="display: none;"-->
     <div id="pagination-popover" class="input-group">
@@ -10,8 +15,8 @@
                     hasFocus: true,
                     event: { keyup: JumpToPageOnEnter }" />
 
-        <span class="input-group-btn">
-            <button class="btn btn-primary" data-bind="click: JumpToPageFunction" type="button">Go!</button>
+        <span class="input-group-addon input-group-btn">
+            <a href="#" class="btn btn-primary" data-bind="click: JumpToPageFunction" type="button">Go!</a>
         </span>
     </div>
 </script>
@@ -52,7 +57,8 @@
     <div style="float: right;">
         <div class="input-group pull-right;" style="width: 160px;">
 
-            <select class="form-control" data-bind="value: PageSize, event:{ change: PageSizeChanged}">
+            <select class="form-control" 
+                    data-bind="value: PageSize, event:{ change: PageSizeChanged}, style: { height: HeightCorrection }">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -75,6 +81,10 @@
         self.PageNumber = ko.observable(1);
         self.PageSize = ko.observable(25);
 
+        // Workaround for Chrome defect
+        self.HeightCorrection = ko.observable("34px");
+
+        
         self.PageSizeChanged = function() {
             if (self.PageNumber() > self.PageCount()) {
                 self.PageNumber(self.PageCount());

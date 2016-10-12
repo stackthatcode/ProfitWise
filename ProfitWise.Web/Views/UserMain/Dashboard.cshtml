@@ -26,18 +26,6 @@
 
 </style>
 
-<script type="text/html" id="Query-Selection-Popover">
-    <div style="text-align:center; padding-top:10px; font-size:12px; padding-bottom:10px; font-weight:800; color:#777; text-transform:uppercase;">Select a Query to View</div>
-    <select class="form-control">
-        <option>Overall Profitability</option>
-        <option>Profitability by Vendor</option>
-        <option>Profitability by Product Type</option>
-        <option>Profitability by Product</option>
-        <option>Profitability by SKU</option>
-    </select>
-    <div style="height:10px;"></div>
-</script>
-
 
 <script type="text/html" id="Page-Header">
     <div class="fixed-positioning-container" style="top: 150px;">
@@ -47,42 +35,52 @@
                 <div style="height: 15px;"></div>
 
                 <!-- Nav tabs -->
-                <ul class="nav nav-pills" role="tablist">
-                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Product Types</a></li>
-                    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Vendors</a></li>
-                    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Products</a></li>
-                    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">SKUs</a></li>
-                    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Grouping</a></li>
-                </ul>
+                <div class="row-fluid">
+                    <div class="col-xs-8 no-side-padding">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Product Types</a></li>
+                            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Vendors</a></li>
+                            <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Products</a></li>
+                            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">SKUs</a></li>
+                            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Grouping</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-4 no-side-padding" style="text-align: right; height: 40px;">
+                        <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: SaveQueryParameters">
+                            Cancel &nbsp;<i class="glyphicon glyphicon-remove" style="top: 3px;"></i>
+                        </a>
+
+                        <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: SaveQueryParameters">
+                            Save View &nbsp;<i class="glyphicon glyphicon-floppy-disk" style="top: 3px;"></i>
+                        </a>
+                    </div>
+                </div>
+
 
                 <!-- Tab panes -->
-                <div class="tab-content">
+                <div class="tab-content" style="clear: both;">
                     <div role="tabpanel" class="tab-pane active" id="home">
                         <div class="row-fluid" style="padding-top: 20px;">
                             <div class="col-xs-3 no-side-padding">
                                 <div class="input-group">
                                     <input type="text" class="form-control" placeholder="Search for Products...">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">Go!</button>
+                                        <a href="#" class="btn btn-default" type="button" style="height: 34px !important;">Go!</a>
                                     </span>
                                 </div><!-- /input-group -->
                             </div>
                             <div class="col-xs-2">
                                 <!-- Single button -->
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Show Selected Only <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Show All</a></li>
-                                        <li><a href="#">Show Selected Only</a></li>
-                                    </ul>
-                                </div>
+                                <select class="form-control">
+                                    <option value="">Show All</option>
+                                    <option value="">Show Selected Only</option>
+                                </select>
                             </div>
                             <div class="col-xs-7 no-side-padding">
                                 <div style="height: 20px;" class="visible-lg"></div>
                                 <!--<div data-bind="visible: $root.CurrentGrid().length > 0">-->
-                                <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                                <div style="min-width: 500px;" 
+                                     data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                                 </div>
                                 <!--</div>-->
                             </div>
@@ -131,43 +129,52 @@
                         </div>
                     </div>
 
-                    <!--
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Profitability by Product Type</a></li>
-                        <li><a href="#">Profitability by Vendor</a></li>
-                        <li><a href="#">Profitability by Product</a></li>
-                        <li><a href="#">Profitability by SKUs</a></li>
-                    </ul>
-                    -->
 
 
                     <div class="col-xs-7 no-side-padding">
-                        <!--
-                        <div class="popover-container pull-right">
-                            <a href="#" class="btn btn-sm btn-default dropdown-toggle popover-launcher"
-                               data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Query-Selection-Popover', data: $data }">
+
+                        <div class="btn-group pull-right">
+                            <a href="#" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Select View <span class="caret"></span>
                             </a>
-
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Overall Profitability</a></li>
+                                <li><a href="#">Profitability by Product Type</a></li>
+                                <li><a href="#">Profitability by Vendor</a></li>
+                                <li><a href="#">Profitability by Product</a></li>
+                                <li><a href="#">Profitability by SKUs</a></li>
+                            </ul>
 
                         </div>
-                        <div class="pull-right" style="margin-right:10px;">
+
+                        <div class="pull-right" style="margin-right: 3px;">
                             <div data-bind="ifnot:InEditMode">
                                 <a href="" class="btn btn-sm btn-default" data-bind="click: EditQueryParameters">
                                     Edit View <i class="glyphicon glyphicon-pencil"></i>
                                 </a>
                             </div>
                             <div data-bind="if:InEditMode">
-                                <a href="" class="btn btn-sm btn-default" data-bind="click: SaveQueryParameters">
-                                    <i class="glyphicon glyphicon-floppy-disk"></i> SaveView
+                                <a href="" class="btn btn-sm btn-default disabled" data-bind="click: SaveQueryParameters">
+                                    Edit View <i class="glyphicon glyphicon-pencil"></i>
                                 </a>
                             </div>
                         </div>
 
+                        <div class="pull-right btn-group" style="margin-right: 3px;">
+                            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Save As</a></li>
+                                <li><a href="#">Rename</a></li>
+                                <li><a href="#">Delete</a></li>
+                            </ul>
+                        </div>
+
+
                         <div style="clear: both; height: 10px;"></div>
-                        -->
-                        <div id="date-range-picker-parent" class="pull-right" style="width:205px; position:relative;">
-                            <input type="text" class="form-control" style="width: 100%;" id="date-range-picker"/>
+
+                        <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
+                            <input type="text" class="form-control" style="width: 100%; font-size: 13px;" id="date-range-picker"/>
                             <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
                         </div>
 
@@ -179,23 +186,21 @@
         </div>
     </div>
 
-
     </script>
 
-    <script type="text/html" id="Main-Template">
-        <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
+<script type="text/html" id="Main-Template">
+    <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
-        <div class="container page-content-sleeve">
-            <!-- Will move/transistion when the filters appear -->
-            <div class="page-content" style="margin-top: 149px; min-height: 700px;">
-                <div style="position: relative; width: 100%;">
-
-                    <img style="width:100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
-                </div>
+    <div class="container page-content-sleeve">
+        <!-- Will move/transistion when the filters appear -->
+        <div class="page-content" style="margin-top: 149px; min-height: 700px;">
+            <div data-bind="ifnot: InEditMode" style="position: relative; width: 100%;">
+                <img style="width:100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
             </div>
         </div>
+    </div>
     </script>
-
+    
     <!-- KnockoutJS Root View -->
     <div data-bind="template: { name: 'Main-Template' }">
     </div>
@@ -215,6 +220,7 @@
             var self = this;
 
             self.PagingModel = new ProfitWiseWidgets.PagingModel();
+            self.PagingModel.HeightCorrection("35px");
 
             self.CreateDateRangePicker = function () {
                 $(".date-range-picker-icon").click(function () {
@@ -273,7 +279,7 @@
 
                 var model = new ProfitWise.DashboardModel();
                 ko.applyBindings(model);
-
+                model.SaveQueryParameters();
                 model.CreateDateRangePicker();
             });
     </script>
