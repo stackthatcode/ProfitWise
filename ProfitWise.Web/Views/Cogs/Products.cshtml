@@ -63,14 +63,14 @@
 @Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
 
 <script type="text/html" id="Page-Header">
-    <div id="fixed-positioning-container">
-        <div id="top-header-sleeve" style="height: 210px;">
+    <div class="fixed-positioning-container">
+        <div class="standard-header-sleeve" style="height: 210px;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div id="top-header">
+            <div class="standard-header">
 
                 <!-- Filtering and Paging -->
-                <div class="row" style="padding-left: 25px; padding-right: 25px;">
+                <div class="row standard-padding">
                     <!-- Filtering Widget -->
                     <div class="col-lg-6" style="padding-top: 20px;">
                         <div class="pull-left;"
@@ -90,7 +90,7 @@
 
 
                 <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
-                <div class="header-horz-padding" style="position: absolute; top: 129px;"
+                <div class="standard-padding" style="position: absolute; top: 129px;"
                      data-bind="visible: $root.CurrentGrid().length > 0">
                     <table class="table" id="heading" style="margin-bottom: 0px;">
                         <thead>
@@ -422,7 +422,7 @@
     $(document)
         .ready(function () {
             ProfitWiseFunctions.TableHeaderWidthInit("table#product-cogs tbody tr td", "table#heading thead tr th");
-            ProfitWiseFunctions.FixedHeaderScrollingInit("#top-header");
+            ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");
             ProfitWiseFunctions.PopOverAutoCloseInit();
 
             var model = new ProfitWise.EditCogsModel();

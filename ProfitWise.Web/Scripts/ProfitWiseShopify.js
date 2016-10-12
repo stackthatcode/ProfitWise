@@ -9,11 +9,6 @@ ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
         apiKey: apiKey,
         shopOrigin: shopOrigin,
     });
-
-    ShopifyApp.ready(function () {
-        alert(ShopifyApp.User.current.accountAccess);
-        console.log(ShopifyApp.User);
-    });
 };
 
 ProfitWiseShopify.BarInitialize = function (title) {

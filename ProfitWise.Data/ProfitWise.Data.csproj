@@ -96,6 +96,7 @@
     <Compile Include="Model\ShopifyOrderExtensions.cs" />
     <Compile Include="Model\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\PwShop.cs" />
+    <Compile Include="Repositories\PwFilterRepository.cs" />
     <Compile Include="Repositories\PwPickListRepository.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Aspect\IShopFilter.cs" />

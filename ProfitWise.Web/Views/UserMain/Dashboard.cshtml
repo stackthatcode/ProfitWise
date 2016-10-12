@@ -2,105 +2,209 @@
     ViewBag.CommonContext.PageTitle = "ProfitWise Dashboard";
 }
 
+<!-- KnockoutJS Templates -->
+@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
+
 <style>
     .daterangepicker {
         width: 720px !important;
     }
 
+    .modal-backdrop {
+        z-index: 900;
+    }
+
 </style>
 
-<script type="text/html" id="Page-Header">
-    <div id="fixed-positioning-container">
-        <div id="top-header-sleeve" style="height: 160px; border-bottom: 1px solid #FFF;">
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div id="top-header" style="padding-left: 25px; padding-right: 25px;">
+<script type="text/html" id="Query-Selection-Popover">
+    <div style="text-align:center; padding-top:10px; font-size:12px; padding-bottom:10px; font-weight:800; color:#777; text-transform:uppercase;">Select a Query to View</div>
+    <select class="form-control">
+        <option>Overall Profitability</option>
+        <option>Profitability by Vendor</option>
+        <option>Profitability by Product Type</option>
+        <option>Profitability by Product</option>
+        <option>Profitability by SKU</option>
+    </select>
+    <div style="height:10px;"></div>
+</script>
 
-                <div class="row-fluid" style="padding-top: 20px;">
-                    <div class="col-xs-5" style="padding: 0px;">
-                        <h4>Profitability by Vendor</h4>
-                        <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
-                            Grouped by SKU, ordered by most profitable
-                            <br/>
-                            <span style="font-weight:400">12 Products with 33 Variants selected</span>
+
+<script type="text/html" id="Page-Header">
+    <div class="fixed-positioning-container" style="top: 150px;">
+        <div class="standard-header-sleeve" id="filter-top-panel" style="height: 140px;">
+            <div class="standard-header standard-padding">
+
+                <div style="height: 15px;"></div>
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills" role="tablist">
+                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Product Types</a></li>
+                    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Vendors</a></li>
+                    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Products</a></li>
+                    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">SKUs</a></li>
+                    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Grouping</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="home">
+                        <div class="row-fluid" style="padding-top: 20px;">
+                            <div class="col-xs-3 no-side-padding">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search for Products...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">Go!</button>
+                                    </span>
+                                </div><!-- /input-group -->
+                            </div>
+                            <div class="col-xs-2">
+                                <!-- Single button -->
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Show Selected Only <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Show All</a></li>
+                                        <li><a href="#">Show Selected Only</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-xs-7 no-side-padding">
+                                <div style="height: 20px;" class="visible-lg"></div>
+                                <!--<div data-bind="visible: $root.CurrentGrid().length > 0">-->
+                                <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                                </div>
+                                <!--</div>-->
+                            </div>
                         </div>
                     </div>
-                    <div class="col-xs-7" style="padding:0px;">
-                        <div id="date-range-picker-parent" class="pull-right">
-                            <input type="text" class="form-control" style="width: 200px;" id="date-range-picker"/>
+
+                    <div role="tabpanel" class="tab-pane" id="profile"></div>
+                    <div role="tabpanel" class="tab-pane" id="messages"></div>
+                    <div role="tabpanel" class="tab-pane" id="settings">
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-positioning-container">
+        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
+
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div class="standard-header standard-padding top-border-facade" style="overflow: visible;">
+
+                <!-- Non-"filter editor" segment -->
+                <div class="row-fluid" style="padding-top: 20px;">
+                    <div class="col-xs-5 no-side-padding">
+                        <div class="popover-container">
+
+                            <h4 style="display: inline-block">Profitability by Vendor</h4>
+
+                            <!--
+                            <a href="#" rel="popover" class="no-underline popover-launcher"
+                               data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Query-Selection-Popover', data: $data }">
+                                <h4 style="display: inline-block">Profitability by Vendor</h4>
+                                <i style="display: inline-block" class="glyphicon glyphicon-chevron-down"></i>
+                            </a>
+                            -->
+
+                            <div style="display: inline-block; margin-left: 10px; margin-top:20px;" class="popover-container">
+                                    <a href="#" class="btn btn-sm btn-default dropdown-toggle popover-launcher"
+                                       data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  template: 'Query-Selection-Popover', data: $data }">
+                                        <span class="caret"></span>
+                                    </a>
+                                    
+                                    <!--
+                                    <ul class="dropdown-menu">
+                                    <li><a href="#">Profitability by Product Type</a></li>
+                                    <li><a href="#">Profitability by Vendor</a></li>
+                                    <li><a href="#">Profitability by Product</a></li>
+                                    <li><a href="#">Profitability by SKUs</a></li>
+                                    </ul>
+                                    -->
+                                    
                         </div>
 
-                        <div style="width: 10px; display: inline-block;" class="pull-right">
-                            &nbsp;
                         </div>
-                        <div class="pull-right">
-                            <select class="form-control">
-                                <option>Overall Profitability</option>
-                                <option>Profitability by Vendor</option>
-                                <option>Profitability by Product Type</option>
-                                <option>Profitability by Product</option>
-                                <option>Profitability by SKU</option>
-                            </select>
+
+                        <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
+                            Grouped by SKU, ordered by most profitable
+                            <br />
+                            <span style="font-weight: 400">12 Products with 33 Variants selected</span>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-7 no-side-padding" style="padding-top:20px;">
+                        <div id="date-range-picker-parent" class="pull-right">
+                            <input type="text" class="form-control" style="width: 200px;" id="date-range-picker" />
                         </div>
 
                         <div style="clear: both; height: 15px;"></div>
 
                         <div class="pull-right">
-                            <a href="" class="btn btn-default pull-right">
-                                <i class="glyphicon glyphicon-floppy-disk"></i> Save This View
-                            </a>
-
-                            <div style="width: 10px; display: inline-block;" class="pull-right">
-                                &nbsp;
+                            <div data-bind="ifnot:InEditMode">
+                                <a href="" class="btn btn-primary" data-bind="click: EditQueryParameters">
+                                    <i class="glyphicon glyphicon-pencil"></i> Edit Query Parameters
+                                </a>
                             </div>
-
-                            <a href="" class="btn btn-primary">
-                                <i class="glyphicon glyphicon-pencil"></i> Edit Filtering &amp; Grouping
-                            </a>
+                            <div data-bind="if:InEditMode">
+                                <a href="" class="btn btn-primary" data-bind="click: SaveQueryParameters">
+                                    <i class="glyphicon glyphicon-pencil"></i> Save Query Parameters
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</script>
 
-<script type="text/html" id="Main-Template">
-    <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
-    <div class="container page-content-sleeve">
-        <div class="page-content" style="margin-top: 159px; min-height:700px;">
+    </script>
 
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
-            <p>Charts Galore, here!!!</p>
+    <script type="text/html" id="Main-Template">
+        <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
+        <div class="container page-content-sleeve">
+            <!-- Will move/transistion when the filters appear -->
+            <div class="page-content" style="margin-top: 149px; min-height: 700px;">
+                <div style="position: relative; width: 100%;">
+
+                    <img style="width:100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
+                </div>
+            </div>
         </div>
+    </script>
+
+    <!-- KnockoutJS Root View -->
+    <div data-bind="template: { name: 'Main-Template' }">
     </div>
-</script>
 
-<!-- KnockoutJS Root View -->
-<div data-bind="template: { name: 'Main-Template' }">
-</div>
+    <!-- KnockoutJS Model -->
+    <script>
+        var ProfitWise = ProfitWise || {};
 
-<!-- KnockoutJS Model -->
-<script>
-    var ProfitWise = ProfitWise || {};
+        ProfitWise.FilterTypes = {
+            ProductType: "ProductType",
+            Vendor: "Vendor",
+            Product: "Product",
+            Skus: "Skus"
+        };
 
-    ProfitWise.DashboardModel = function() {
-        var self = this;
+        ProfitWise.DashboardModel = function () {
+            var self = this;
 
-        self.CreateDateRangePicker = function() {
+            self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
-            $('#date-range-picker')
-                .daterangepicker({
-                    "parentEl": "#date-range-picker-parent",
+            self.CreateDateRangePicker = function () {
+
+                $('#date-range-picker')
+                    .daterangepicker({
+                        "parentEl": "#date-range-picker-parent",
                         "startDate": "10/01/2016",
                         "endDate": "10/07/2016",
                         "alwaysShowCalendars": true,
@@ -115,25 +219,41 @@
                         },
                         "opens": "left",
                     },
-                    function (start, end, label) {
-                        alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-                    });
+                        function (start, end, label) {
+                            alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                        });
 
+            };
+
+            self.LoadDashboardData = function () {
+
+            };
+
+            self.InEditMode = ko.observable(false);
+
+            self.EditQueryParameters = function () {
+                $("#filter-top-panel").show();
+                self.InEditMode(true);
+            };
+
+            self.SaveQueryParameters = function () {
+                $("#filter-top-panel").hide();
+                self.InEditMode(false);
+            };
+
+            return self;
         };
-        return self;
-    };
 
 
-    $(document)
-        .ready(function () {
-            ProfitWiseFunctions.FixedHeaderScrollingInit("#top-header");
+        $(document)
+            .ready(function () {
+                ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");
+                ProfitWiseFunctions.PopOverAutoCloseInit();
 
+                var model = new ProfitWise.DashboardModel();
+                ko.applyBindings(model);
 
-            var model = new ProfitWise.DashboardModel();
-            ko.applyBindings(model);
-
-            model.CreateDateRangePicker();
-
-        });
-</script>
+                model.CreateDateRangePicker();
+            });
+    </script>
 

@@ -24,15 +24,11 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        public ActionResult FilterEditor()
+        public ActionResult Editor(long filterId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-            
-            var model = new EditProductCogsModel()
+            var model = new FilterEditorModel()
             {
-                ProductTypes = cogsRepository.RetrieveProductType().ToList(),
-                Vendors = cogsRepository.RetrieveVendors().ToList(),
+                FilterId = filterId,
             };
 
             return View(model);

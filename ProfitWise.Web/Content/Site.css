@@ -35,7 +35,7 @@ td.overflow-gracefully {
 
 
 /** Page Header common styling **/
-#fixed-positioning-container {
+.fixed-positioning-container {
     position: fixed; 
     width: 100%; 
     top: 0; 
@@ -44,22 +44,29 @@ td.overflow-gracefully {
     z-index: 100;
 }
 
-/** This element is where we set Height **/
-#top-header-sleeve {
+/** This element is where we set height **/
+.standard-header-sleeve {
     position: relative; 
-    width: 100%; 
+    width: 100%;
 }
 
-#top-header {
+.standard-header {
     position: absolute; 
     min-width: 900px; 
     width: 100%; 
     background-color: #FFF; 
-    border-top: 20px rgb(235, 238, 240) solid; 
     height: 100%;
 }
 
-.header-horz-padding {
+.top-border-facade {
+    border-top: 20px rgb(235, 238, 240) solid; 
+}
+
+.no-side-padding {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.standard-padding {
     padding-left: 25px; 
     padding-right: 25px;   
 }
@@ -239,5 +246,11 @@ h4 {
 
 .main-space {
     margin: 30px; padding: 30px; background-color: #FFF;  min-height: 500px;
+}
+
+
+
+a.no-underline:hover, a.no-underline:active {
+    text-decoration: none;
 }
 

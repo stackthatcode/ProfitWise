@@ -81,7 +81,10 @@ namespace ProfitWise.Web
             builder.RegisterType<CogsController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
-
+            
+            builder.RegisterType<FilterController>()
+                .InstancePerDependency()
+                .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<FilterServiceController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
