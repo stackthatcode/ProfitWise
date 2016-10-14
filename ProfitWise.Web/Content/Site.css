@@ -71,6 +71,11 @@ td.overflow-gracefully {
     padding-right: 25px;   
 }
 
+.reduced-padding {
+    padding-left: 10px; 
+    padding-right: 10px;   
+}
+
 
 /** Standardized Page Count container styling **/
 .page-content-sleeve {

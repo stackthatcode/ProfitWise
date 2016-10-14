@@ -24,15 +24,16 @@
 
 
 <script type="text/html" id="Page-Header">
-    <div class="fixed-positioning-container" style="top: 150px;">
-        <div class="standard-header-sleeve" id="filter-top-panel" style="height: 140px;">
+    <div class="fixed-positioning-container" style="top: 145px;">
+        <!-- Space -->
+        <div class="standard-header-sleeve" id="filter-top-panel" style="height: 178px;">
             <div class="standard-header standard-padding">
+                <!-- Spacer - 15px -->
+                <div class="vert-spacer" style="height: 15px;"></div>
 
-                <div style="height: 15px;"></div>
-
-                <!-- Nav tabs -->
-                <div class="row-fluid">
-                    <div class="col-xs-12 no-side-padding" style="height: 40px;">
+                <!-- Nav tabs - 43px -->
+                <div class="row-fluid" style="height: 43px;">
+                    <div class="col-xs-12 no-side-padding">
                         <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
                             <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Product Types</a></li>
                             <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Vendors</a></li>
@@ -53,30 +54,52 @@
                     </div>
                 </div>
 
-
                 <!-- Tab panes -->
                 <div class="tab-content" style="clear: both;">
-                    <div role="tabpanel" class="tab-pane active" id="home">
-                        <div class="row-fluid" style="padding-top: 20px;">
-                            <div class="col-xs-3 no-side-padding">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <span class="input-group-btn">
-                                        <a href="#" class="btn btn-default" type="button" style="height: 34px !important;">Go!</a>
-                                    </span>
-                                </div><!-- /input-group -->
-                            </div>
-                            <div class="col-xs-9 no-side-padding">
-                                <!--<div data-bind="visible: $root.CurrentGrid().length > 0">-->
-                                <div style="min-width: 500px;"
-                                     data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
-                                </div>
-                                <select class="form-control pull-right" style="display: inline-block; width: auto; margin-right: 15px; height: 35px;">
-                                    <option value="">Show All</option>
-                                    <option value="">Show Selected Only</option>
-                                </select>
 
-                                <!--</div>-->
+                    <!-- Total - 120px -->
+                    <div id="home" role="tabpanel" class="tab-pane active reduced-padding">
+                        <div class="row-fluid">
+                            <div class="col-xs-8 no-side-padding">
+                                <div class="row-fluid" style="height: 70px; overflow: auto;">
+                                    <div class="col-xs-8 no-side-padding" style="padding-top: 20px;">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Search...">
+                                            <span class="input-group-btn">
+                                                <a href="#" class="btn btn-default" type="button" style="height: 34px !important;">Go!</a>
+                                            </span>
+                                        </div><!-- /input-group -->
+                                    </div>
+                                    <div class="col-xs-4 no-side-padding" style="padding-top: 20px;">
+                                        <select class="form-control pull-right" style="display: inline-block; width: auto; height: 35px;">
+                                            <option value="">Show All</option>
+                                            <option value="">Show Selected Only</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row-fluid" style="height: 50px; overflow: auto;">
+                                    <div class="col-xs-4 no-side-padding" style="padding-top: 10px;">
+                                        <a href="#" style="font-weight: 700;">Select All</a>
+                                    </div>
+                                    <div class="col-xs-8 no-side-padding">
+                                        <div data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-1"></div>
+                            <div class="col-xs-3" style="padding-top:20px;">
+                                <p>Select the Product Types you'd like to include in your ProfitWise View</p>
+                            </div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="col-xs-8" style="border-top: 1px dashed #CCC;">
+
+                            </div>
+                            <div class="col-xs-4" style="background-color: white; height:150px;">
+
                             </div>
                         </div>
                     </div>
@@ -88,7 +111,6 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -176,11 +198,99 @@
 <script type="text/html" id="Main-Template">
     <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
 
+    <style>
+        table#product-types td {
+            height: 70px !important;
+            font-size: 14px;
+            vertical-align: middle !important;
+        }
+
+        table#product-types tr td:nth-child(1) {
+            width: 10%;
+        }
+        table#product-types tr td:nth-child(2) {
+            width: 45%;
+        }
+        table#product-types tr td:nth-child(3) {
+            width: 45%;
+        }
+    </style>
+
     <div class="container page-content-sleeve">
         <!-- Will move/transistion when the filters appear -->
-        <div class="page-content" style="margin-top: 149px; min-height: 700px;">
+        <div class="page-content" style="margin-top: 323px; min-height: 700px;">
             <div data-bind="ifnot: InEditMode" style="position: relative; width: 100%;">
-                <img style="width:100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
+                <img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")"/>
+            </div>
+            <div data-bind="if: InEditMode">
+                <div class="row-fluid">
+                    <div class="col-xs-8 reduced-padding">
+                        <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
+                            <tbody>
+                            <tr style="border-top: 0;">
+                                <td>
+                                    <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;"/>
+                                </td>
+
+                                <td>3D Printers</td>
+                                <td>(11 Products, 18 SKUS)</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;"/>
+                                </td>
+                                <td>Filament</td>
+                                <td>(20 Products, 203 SKUS)</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;"/>
+                                </td>
+                                <td>Project Kits</td>
+                                <td>(5 Products, 5 SKUS)</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;" />
+                                </td>
+                                <td>Accessories</td>
+                                <td>(24 Products, 55 SKUS)</td>
+                            </tr>
+                                <tr style="border-top: 0px;">
+                                    <td>
+                                        <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                                    </td>
+
+                                    <td>3D Printers</td>
+                                    <td>(11 Products, 18 SKUS)</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                                    </td>
+                                    <td>Filament</td>
+                                    <td>(20 Products, 203 SKUS)</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                                    </td>
+                                    <td>Project Kits</td>
+                                    <td>(5 Products, 5 SKUS)</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                                    </td>
+                                    <td>Accessories</td>
+                                    <td>(24 Products, 55 SKUS)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-xs-4">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
