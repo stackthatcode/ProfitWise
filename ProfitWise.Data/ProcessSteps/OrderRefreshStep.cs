@@ -102,8 +102,7 @@ namespace ProfitWise.Data.ProcessSteps
             var postBatchState = batchStateRepository.Retrieve();
             postBatchState.OrderDatasetEnd = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
             batchStateRepository.Update(postBatchState);
-
-            _pushLogger.Info("Complete: " + preBatchState.ToString());
+            _pushLogger.Info("Complete: " + postBatchState.ToString());
         }
 
         private void EarlierStartDateWorker(ShopifyCredentials shopCredentials, PwShop shop)

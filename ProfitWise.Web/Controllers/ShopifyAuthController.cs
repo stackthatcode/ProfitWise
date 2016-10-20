@@ -227,6 +227,9 @@ namespace ProfitWise.Web.Controllers
             else
             {
                 Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                Response.SuppressFormsAuthenticationRedirect = true;
+                Response.TrySkipIisCustomErrors = true;
+
                 return View(new AuthorizationProblemModel(returnUrl));
             }
         }
@@ -236,6 +239,9 @@ namespace ProfitWise.Web.Controllers
         public ActionResult ExternalLoginFailure(string returnUrl)
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            Response.SuppressFormsAuthenticationRedirect = true;
+            Response.TrySkipIisCustomErrors = true;
+
             return View(new AuthorizationProblemModel(returnUrl));
         }
 
@@ -244,6 +250,9 @@ namespace ProfitWise.Web.Controllers
         public ActionResult AccessTokenRefresh(string returnUrl)
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            Response.SuppressFormsAuthenticationRedirect = true;
+            Response.TrySkipIisCustomErrors = true;
+
             return View(new AuthorizationProblemModel(returnUrl));
         }
 
@@ -252,6 +261,8 @@ namespace ProfitWise.Web.Controllers
         public ActionResult SevereAuthorizationFailure(string returnUrl)
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            Response.SuppressFormsAuthenticationRedirect = true;
+            Response.TrySkipIisCustomErrors = true;
             return View(new AuthorizationProblemModel(returnUrl));
         }
 

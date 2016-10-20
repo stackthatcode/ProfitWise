@@ -15,7 +15,7 @@ namespace ProfitWise.Data.Services
         private static Dictionary<DateTime, List<ExchangeRate>> _ratecache;
         
         private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(0, 0, 15, 0);
-        private static DateTime CacheRefreshAllowed = DateTime.Now.Add(-CacheRefreshLockInterval);
+        private static DateTime _cacheRefreshAllowed = DateTime.Now.Add(-CacheRefreshLockInterval);
 
 
         public CurrencyService(CurrencyRepository repository, IPushLogger logger)
@@ -56,9 +56,9 @@ namespace ProfitWise.Data.Services
         
         public void LoadExchangeRateCache(DateTime? minimumDate = null)
         {
-            if (DateTime.Now < CacheRefreshAllowed)
+            if (DateTime.Now < _cacheRefreshAllowed)
             {
-                _logger.Trace($"LoadExchangeRateCache not allowed until {CacheRefreshAllowed}");
+                _logger.Trace($"LoadExchangeRateCache not allowed until {_cacheRefreshAllowed}");
                 return;
             }
 
@@ -89,8 +89,8 @@ namespace ProfitWise.Data.Services
                     $"Exchange Rates cached from {_ratecache.Keys.Min()} through {_ratecache.Keys.Max()}");
             }
 
-            CacheRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
-            _logger.Info($"CacheRefreshAllowed set to {CacheRefreshAllowed}");
+            _cacheRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
+            _logger.Info($"CacheRefreshAllowed set to {_cacheRefreshAllowed}");
         }
 
         public DateTime? LatestExchangeRateDate => 

@@ -15,7 +15,6 @@ using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.HttpClient;
 using Push.Utilities.CastleProxies;
-using Push.Utilities.Helpers;
 
 
 namespace ProfitWise.Batch
@@ -43,7 +42,7 @@ namespace ProfitWise.Batch
             var mysqlConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             var hangFileConnectionString = ConfigurationManager.ConnectionStrings["HangFireConnection"].ConnectionString;
 
-            // ... and register configurationa
+            // ... and register configuration
             builder
                 .Register<MySqlConnection>(ctx =>
                 {
@@ -113,21 +112,7 @@ namespace ProfitWise.Batch
             Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
 
 
-            // ProfitWise.Data OrderDiagnostic
-            var shop = ConfigurationManager.AppSettings
-                            .GetAndTryParseAsLongNullable("ProfitWiseDiagonosticShop", -1);
-            var orderList = ConfigurationManager.AppSettings
-                            .GetAndTryParseAsString("ProfitWiseDiagonosticOrders", "");
-            var orderIds =
-                orderList.IsNullOrEmpty()
-                    ? new List<long>() : 
-                    orderList.Split(',').Select(x => long.Parse(x)).ToList();
-
-            builder.Register(x => new ShopifyOrderDiagnosticShim
-            {
-                PwShopId = shop,
-                OrderIds = orderIds,
-            });
+            AddDiagnostics(builder);
 
 
             // TODO => find an appropriate hook to prevent from running in production(!!!)
@@ -135,6 +120,26 @@ namespace ProfitWise.Batch
 
             // Fin!
             return builder.Build();
+        }
+
+
+        private static void AddDiagnostics(ContainerBuilder builder)
+        {
+            // ProfitWise.Data OrderDiagnostic
+            var shop = ConfigurationManager.AppSettings
+                .GetAndTryParseAsLongNullable("ProfitWiseDiagonosticShop", -1);
+            var orderList = ConfigurationManager.AppSettings
+                .GetAndTryParseAsString("ProfitWiseDiagonosticOrders", "");
+            var orderIds =
+                orderList.IsNullOrEmpty()
+                    ? new List<long>()
+                    : orderList.Split(',').Select(x => long.Parse(x)).ToList();
+
+            builder.Register(x => new ShopifyOrderDiagnosticShim
+            {
+                PwShopId = shop,
+                OrderIds = orderIds,
+            });
         }
     }
 }

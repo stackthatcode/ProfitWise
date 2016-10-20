@@ -129,6 +129,7 @@
     <Compile Include="AsyncQuerySimulation.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Bootstrap.cs" />
+    <Compile Include="_HangFireStuff.cs" />
     <Compile Include="_TempHoldingCell\CodeDumps.cs" />
     <Compile Include="_TempHoldingCell\DependencyInjectionSchool.cs" />
     <Compile Include="_TempHoldingCell\Interceptors.cs" />

@@ -162,7 +162,11 @@ CREATE TABLE `profitwisepicklistmasterproduct` (
 
 
 
-/** Filter Structures **/
+/** Filter Structures 
+
+
+DROP TABLE IF EXISTS `profitwisefilter`;
+
 
 CREATE TABLE `profitwisefilter` (
 	`PwFilterId` BIGINT NOT NULL AUTO_INCREMENT,
@@ -189,7 +193,7 @@ CREATE TABLE `profitwisefiltervendor` (
 	`PwFilterId` BIGINT NOT NULL AUTO_INCREMENT,
 	`PwShopId` BIGINT NOT NULL,
 	`Vendor` varchar(100) NOT NULL,
-    PRIMARY KEY (`PwFilterId`, `PwShopId`, `ProductType` )
+    PRIMARY KEY (`PwFilterId`, `PwShopId`, `Vendor` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profitwisefiltermasterproduct` (
@@ -206,5 +210,5 @@ CREATE TABLE `profitwisefiltersku` (
     PRIMARY KEY (`PwFilterId`, `PwShopId`, `ProductType` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+**/
 

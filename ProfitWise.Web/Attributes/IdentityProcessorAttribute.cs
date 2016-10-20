@@ -56,6 +56,16 @@ namespace ProfitWise.Web.Attributes
             }
 
             var pwShop = shopRepository.RetrieveByUserId(userId);
+            if (pwShop == null)
+            {
+                // On failure of credential service, throw an error, which will redirect to Server Fault page
+                logger.Error(
+                    $"Shop does not exist for User {userId}: '{result.Message}' - aborting IdentityProcessing");
+                AuthConfig.GlobalSignOut(signInManager);
+                filterContext.Result = AuthConfig.SevereAuthorizationFailureRedirect(currentUrl);
+                return;
+            }
+
             if (!pwShop.IsShopEnabled)
             {
                 logger.Info(

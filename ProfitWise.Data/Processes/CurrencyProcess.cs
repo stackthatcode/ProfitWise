@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
+
 
 namespace ProfitWise.Data.Processes
 {
