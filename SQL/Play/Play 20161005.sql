@@ -5,52 +5,16 @@ SET SQL_SAFE_UPDATES = 0;
 
 SELECT * FROM profitwiseshop;
 
+SELECT * FROM profitwisebatchstate;
+
+
 UPDATE profitwiseshop SET StartingDateForOrders = '2016-01-01';
 
 SELECT * FROM profitwisebatchstate;
 
-SELECT * FROM aspnetusers;
-	
-SELECT * FROM aspnetuserroles;
 
-SELECT * FROM aspnetuserlogins;
+SELECT * FROM profitwisevariant;
 
-SELECT * FROM profitwisepicklist;
-
-
-
-UPDATE profitwisemastervariant 
-SET StockedDirectly = 0
-WHERE PwMasterProductId IN 
-	( SELECT PwMasterProductId FROM profitwisepicklistmasterproduct WHERE PwShopId = 100001 AND PwPickListId = 100008 );
-
-    
-SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 3;
-
-
-UPDATE profitwisemastervariant SET StockedDirectly = 0, Exclude = 0 WHERE PwMasterVariantId > 20 AND PwMasterVariantId <= 32;
-
-SELECT * FROM profitwiseproduct WHERE PwMasterProductId = 3;
-
-SELECT * FROM shopifyorderlineitem;
-
-SELECT PwMasterProductId FROM profitwisepicklistmasterproduct WHERE PwShopId = 100001 AND PwPickListId = 100008;
-
-
-
-/*** Building our Filter Queries ***/
-
-
-SELECT DISTINCT(ProductType) FROM profitwiseproduct;
-
-SELECT DISTINCT Vendor FROM profitwiseproduct WHERE ProductType = 'Filament'
-
-SELECT DISTINCT Vendor FROM profitwiseproduct WHERE ProductType IN ( SELECT 'Accessories' );
-
-
-
-
-SELECT PwMasterVariantId, COUNT(*) FROM profitwisevariant GROUP BY PwMasterVariantId;
 
 
 
@@ -65,10 +29,13 @@ FROM shopifyorderlineitem t1
 		
 
 
+SELECT t1.PwMasterVariantId, t1.Exclude, t1.StockedDirectly, t1.CogsCurrencyId, t1.CogsAmount, t2.Title FROM profitwisemastervariant t1
+	INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
+WHERE t1.PwShopId = 100001;
+
+
+
 SELECT * FROM profitwisemastervariant;
 
-
-profitwisemastervariant t1 INNER JOIN shopifyorderlineitem t2 t1.Pw;
-
-
+SELECT * FROM profitwisevariant;
 

@@ -1,4 +1,4 @@
-﻿@model ProfitWise.Data.Model.PwCogsProduct
+﻿@model ProfitWise.Data.Model.PwCogsProductSummary
 
 @{
     ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
@@ -57,7 +57,7 @@
                         value: value,
                     };
 
-                    ajax.HttpPost("/CogsService/ExcludeById", data,
+                    ajax.HttpPost("/CogsService/ExcludeByMasterProductId", data,
                         function() {
                             ShopifyApp.Modal.close(true);
                         });

@@ -6,7 +6,7 @@ using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Model
 {
-    public class PwCogsProduct
+    public class PwCogsProductSummary
     {
         public long PwMasterProductId { get; set; }
         public long PwProductId { get; set; }
@@ -18,7 +18,6 @@ namespace ProfitWise.Data.Model
         public IList<PwCogsVariant> Variants { get; set; }
 
         public int NumberOfVariants => Variants.Count();
-
 
         public int NormalizedCurrencyId { get; set; }
 
@@ -123,13 +122,12 @@ namespace ProfitWise.Data.Model
             }
         }
 
-
-        public PwCogsProduct()
+        public PwCogsProductSummary()
         {
             Variants = new List<PwCogsVariant>();
         }
 
-        public PwCogsProduct PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
+        public PwCogsProductSummary PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
         {
             this.NormalizedCurrencyId = targetCurrencyId;
 
@@ -144,13 +142,12 @@ namespace ProfitWise.Data.Model
             }
             return this;
         }
-
     }
 
     public static class CogsExtensions
     {
         public static void PopulateVariants(
-            this IList<PwCogsProduct> products, IList<PwCogsVariant> variants)
+                this IList<PwCogsProductSummary> products, IList<PwCogsVariant> variants)
         {
             foreach (var variant in variants)
             {
@@ -161,7 +158,7 @@ namespace ProfitWise.Data.Model
         }
 
         public static void PopulateNormalizedCogsAmount(
-                this IList<PwCogsProduct> products, CurrencyService currencyService, int targetCurrencyId)
+                this IList<PwCogsProductSummary> products, CurrencyService currencyService, int targetCurrencyId)
         {
             foreach (var product in products)
             {

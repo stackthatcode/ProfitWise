@@ -20,34 +20,34 @@
         height: 60px;
     }
 
-    #product-cogs tr td:nth-child(1), #heading tr th:nth-child(1) {
+    #product-search-grid tr td:nth-child(1), #product-search-heading tr th:nth-child(1) {
         width: 15%;
     }
 
-    #product-cogs tr td:nth-child(2), #heading tr th:nth-child(2) {
+    #product-search-grid tr td:nth-child(2), #product-search-heading tr th:nth-child(2) {
         width: 25%;
     }
 
-    #product-cogs tr td:nth-child(3), #heading tr th:nth-child(3) {
+    #product-search-grid tr td:nth-child(3), #product-search-heading tr th:nth-child(3) {
         width: 14%;
     }
 
-    #product-cogs tr td:nth-child(4), #heading tr th:nth-child(4) {
+    #product-search-grid tr td:nth-child(4), #product-search-heading tr th:nth-child(4) {
         width: 13%;
         text-align: center;
     }
 
-    #product-cogs tr td:nth-child(5), #heading tr th:nth-child(5) {
+    #product-search-grid tr td:nth-child(5), #product-search-heading tr th:nth-child(5) {
         width: 13%;
         text-align: center;
     }
 
-    #product-cogs tr td:nth-child(6), #heading tr th:nth-child(6) {
+    #product-search-grid tr td:nth-child(6), #product-search-heading tr th:nth-child(6) {
         width: 10%;
         text-align: center;
     }
 
-    #product-cogs tr td:nth-child(7), #heading tr th:nth-child(7) {
+    #product-search-grid tr td:nth-child(7), #product-search-heading tr th:nth-child(7) {
         width: 10%;
         text-align: center;
     }
@@ -62,6 +62,7 @@
 @Html.Partial("~/Views/SharedTemplates/_ProductFilterWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
+@Html.Partial("~/Views/Cogs/_EditMasterProduct.cshtml")
 
 
 <script type="text/html" id="Product-Search-Header">
@@ -86,9 +87,10 @@
 
 
     <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
-    <div class="standard-padding" style="position: absolute; top: 129px;"
-         data-bind="visible: $root.CurrentGrid().length > 0">
-        <table class="table" id="heading" style="margin-bottom: 0px;">
+    <div    class="standard-padding" 
+            style="position: absolute; top: 129px;"
+            data-bind="visible: $root.CurrentGrid().length > 0">
+        <table class="table" id="product-search-heading" style="margin-bottom: 0px;">
             <thead>
             <tr>
                 <th data-bind="template: { name: 'Sortable-Column-Header', 
@@ -114,7 +116,7 @@
 <script type="text/html" id="Product-Search-Body">
     <!-- No Products Found matching XYZ -->
     <div id="no-products-found" style="width: 100%;"
-         data-bind="visible: $root.NoProductsFound() && $root.CurrentGrid().length == 0">
+         data-bind="visible: $root.ShowNoProductsFound() && $root.CurrentGrid().length == 0">
         <div style="text-align: center; padding-top: 20px; padding-bottom: 100px;">
             <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
             <h3 style="color: #555; font-weight: 300;">Could not find any products</h3>
@@ -123,18 +125,19 @@
     </div>
 
     <!-- Search Results -->
-    <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
+    <table id="product-search-grid" class="table" style="width: 100%; height: 100%; margin: 0;">
         <tbody data-bind="foreach: $root.CurrentGrid">
-            <tr>
-                <td class="overflow-gracefully">
-                    <span data-bind="if: Vendor">
+        <tr>
+            <td class="overflow-gracefully">
+                <span data-bind="if: Vendor">
                         <span data-bind="text: Vendor"></span>
                     </span>
-                    <span data-bind="ifnot: Vendor">
+                <span data-bind="ifnot: Vendor">
                         (No Vendor)
                     </span>
-                </td>
-                <td class="overflow-gracefully"><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
+            </td>
+            <td class="overflow-gracefully">
+            <a href="#" data-bind="text: ProductTitle, click: $root.LaunchProductVariantCogsEditor"></a></td>
                 <td>
                     <span data-bind="text: InventoryCount"></span> in stock<br />
                     (<span data-bind="text: VariantCount"></span> variants)
@@ -180,78 +183,31 @@
     </table>
 </script>
 
-
-<script type="text/html" id="Product-Edit-Header">
-    <!-- Filtering and Paging -->
-    <div class="row standard-padding">
-
-        <div class="col-xs-6" style="padding-top: 20px;">
-            <a style="width: 200px;" href="CoGS.html"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Products</a>
-            <h3 style="font-weight: 700; margin-bottom: 3px;">3D Universe 2.85 mm PLA Filament</h3>
-            <div style="font-size: 0.85em;">18 Variants</div>
-            <div style="height: 20px;"></div>
-        </div>
-
-        <div class="col-xs-6" style="text-align: right; padding: 0;">
-            <a style="width: 200px;" class="form-control btn btn-default" href="CoGS.html"><i class="glyphicon glyphicon-th-list"></i> &nbsp;&nbsp;Bulk Edit CoGS</a>
-        </div>
-    </div>
-
-    <div class="standard-padding" style="position: absolute; top: 129px;"
-         data-bind="visible: $root.CurrentGrid().length > 0">
-        <table class="table" id="heading" style="margin-bottom: 0px;">
-            <thead>
-                <tr>
-                    <th class="order-by-column"
-                        data-bind="click: function() { SortByClick(0) }">
-                        Vendor
-
-                        <span data-bind="visible: SortByColumnIndex() == 0">
-                            <span data-bind="template: 'Sorting-Arrows-Active'"></span>
-                        </span>
-                        <span data-bind="visible: SortByColumnIndex() != 0">
-                        </span>
-                    </th>
-
-                    <th class="order-by-column" data-bind="click: function() { SortByClick(1); }">
-                        Product
-
-                        <span data-bind="visible: SortByColumnIndex() == 1">
-                            <span data-bind="template: 'Sorting-Arrows-Active'"></span>
-                        </span>
-                        <span data-bind="visible: SortByColumnIndex() != 1">
-                        </span>
-                    </th>
-
-                    <th>Inventory</th>
-                    <th>Price</th>
-                    <th>CoGS</th>
-
-                    <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked Directly</a></th>
-                    <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-
-</script>
-
 <script type="text/html" id="Main-Template">
     <div class="fixed-positioning-container">
         <div class="standard-header-sleeve" style="height: 210px;">
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header top-border-facade">
-                <div data-bind="template: { name: 'Product-Search-Header', data: $data }"></div>
+                <div data-bind="if: EditProductId">
+                    <div data-bind="template: { name: 'Product-Edit-Header', data: $root.ProductVariantEditorModel }"></div>
+                </div>
+                <div data-bind="ifnot: EditProductId">
+                    <div data-bind="template: { name: 'Product-Search-Header', data: $root }"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="container page-content-sleeve">
         <div class="page-content" style="margin-top: 209px;">
-
-            <div data-bind="template: { name: 'Product-Search-Body', data: $data }"></div>
+            <div data-bind="if: EditProductId">
+                <div data-bind="template: { name: 'Product-Edit-Body', data: $root.ProductVariantEditorModel }"></div>
+            </div>
+            <div data-bind="ifnot: EditProductId">
+                <div data-bind="template: { name: 'Product-Search-Body', data: $data }"></div>
             </div>
         </div>
+    </div>
     </script>
 
 <!-- KnockoutJS Root View -->
@@ -263,31 +219,28 @@
     var productTypes = @Html.Raw(Model.ProductTypes.SerializeToJson());
     var productVendors = @Html.Raw(Model.Vendors.SerializeToJson());
 
-    var ProfitWise = ProfitWise || {};
-
-    ProfitWise.EditCogsModel = function () {
+    ProfitWise.EditProductCogsModel = function () {
         var self = this;
 
         self.PickListId = ko.observable();
         self.CurrentGrid = ko.observableArray();
-        self.NoProductsFound = ko.observable(false);
+        self.ShowNoProductsFound = ko.observable(false);
 
+        // *** Widget Model instantiation
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
-
+        self.PagingModel.Callback = function() { self.SubscribeCallbackFunction(); };
+        
         self.FilterModel = new ProfitWiseWidgets.ProductFilterModel(productTypes, productVendors);
-        self.FilterModel.RegisterCallbackFunction(function() { self.SearchForProducts(); });
+        self.FilterModel.Callback = function() { self.SearchForProducts(); };
 
-
-        // *** Sorting functionality *** //
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
         self.SortingModel.Callback = function() { self.LoadDataForCurrentPage(); };
-
 
         // *** Launch Bulk Edit Popup *** //
         self.BulkEditPopUp = function (model) {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/Cogs/BulkEditCogs?masterProductId=' + model.Id;
+                    '/Cogs/BulkEditCogs?masterProductId=' + model.MasterProductId;
 
             ProfitWiseShopify.LaunchModal({
                 src: url,
@@ -296,7 +249,6 @@
                 height: 380,
             }, self.LoadDataForCurrentPage);
         }
-
 
         // *** Stocked Directly interactivity *** //
         self.StockedDirectlyPickListPopup = function () {
@@ -320,17 +272,17 @@
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             var data = {
-                masterProductId: model.Id,
+                masterProductId: model.MasterProductId,
                 value: !self.StockedDirectlyIsChecked(model),
             };
 
-            ajax.HttpPost("/CogsService/StockedDirectlyById", data, self.LoadDataForCurrentPage);
+            ajax.HttpPost("/CogsService/StockedDirectlyByMasterProductId", data, self.LoadDataForCurrentPage);
         };
 
         self.StockedDirectlyGridLinkClick = function (model) {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/Cogs/StockedProductPopup?masterProductId=' + model.Id;
+                    '/Cogs/StockedProductPopup?masterProductId=' + model.MasterProductId;
 
             ProfitWiseShopify.LaunchModal({
                 src: url,
@@ -339,7 +291,6 @@
                 height: 250,
             }, self.LoadDataForCurrentPage);
         };
-
 
         // ** Excluded interactivity *** //
         self.ExcludePickListPopup = function () {
@@ -363,17 +314,17 @@
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             var data = {
-                masterProductId: model.Id,
+                masterProductId: model.MasterProductId,
                 value: !self.ExcludedIsChecked(model),
             };
 
-            ajax.HttpPost("/CogsService/ExcludeById", data, self.LoadDataForCurrentPage);
+            ajax.HttpPost("/CogsService/ExcludeByMasterProductId", data, self.LoadDataForCurrentPage);
         };
 
         self.ExcludedGridLinkClick = function (model) {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/Cogs/ExcludedProductPopup?masterProductId=' + model.Id;
+                    '/Cogs/ExcludedProductPopup?masterProductId=' + model.MasterProductId;
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Set Exclude/Include for all Product Variants',
@@ -381,8 +332,6 @@
                 height: 200,
             }, self.LoadDataForCurrentPage);
         };
-
-
 
 
         // *** Search for Products *** //
@@ -430,30 +379,45 @@
                     self.CurrentGrid.removeAll();
 
                     if (data.products.length == 0) {
-                        self.NoProductsFound(true);
+                        self.ShowNoProductsFound(true);
                     } else {
-                        self.NoProductsFound(false);
+                        self.ShowNoProductsFound(false);
                         self.CurrentGrid(data.products);
                         self.PagingModel.RecordCount(data.totalRecords);
                     }
                 });
         };
 
-        self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
+        //** Edit Product Variant Cogs functions **//
+        self.EditProductId = ko.observable(null);
+        
+        self.ProductVariantEditorModel = new ProfitWise.ProductVariantCogsEditorModel();
 
+        self.LaunchProductVariantCogsEditor = function(model) {
+            self.EditProductId(model.MasterProductId);
+            self.ProductVariantEditorModel.RetrieveMasterProduct(model.MasterProductId);
+        };
+
+        self.JQueryInit = function() {
+            ProfitWiseFunctions.SynchronizeWidth(
+                "table#product-search-grid tbody tr td",
+                "table#product-search-heading thead tr th");
+
+            ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");            
+            ProfitWiseFunctions.PopOverAutoCloseInit();
+
+            self.ProductVariantEditorModel.JQueryInit();
+        };
         return self;
     };
 
-
     $(document)
         .ready(function () {
-            ProfitWiseFunctions.TableHeaderWidthInit("table#product-cogs tbody tr td", "table#heading thead tr th");
-            ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");
-            ProfitWiseFunctions.PopOverAutoCloseInit();
 
-            var model = new ProfitWise.EditCogsModel();
+            var model = new ProfitWise.EditProductCogsModel();
             model.SearchForProducts();
             ko.applyBindings(model);
+            model.JQueryInit();
         });
 </script>
 

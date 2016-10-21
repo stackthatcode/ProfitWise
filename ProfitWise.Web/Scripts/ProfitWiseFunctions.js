@@ -13,14 +13,14 @@ ProfitWiseFunctions.FixedHeaderScrollingInit = function (movingElementSelector) 
 }
 
 
-ProfitWiseFunctions.TableHeaderWidthInit = function (bodyCellSelector, headerCellSelector) {
+ProfitWiseFunctions.SynchronizeWidth = function (sourceSelector, targetSelector) {
     var columnFixed = function () {
-        var bodyColumnCells = $(bodyCellSelector);
-        var headerColumnHeaders = $(headerCellSelector);
+        var sourceCells = $(sourceSelector);
+        var targetCells = $(targetSelector);
 
-        for (var i = 0; i < bodyColumnCells.length; i++) {
-            var widthCSS = $(bodyColumnCells[i]).css("width");
-            $(headerColumnHeaders[i]).css("width", widthCSS);
+        for (var i = 0; i < sourceCells.length; i++) {
+            var widthCSS = $(sourceCells[i]).css("width");
+            $(targetCells[i]).css("width", widthCSS);
         }
     };
 
@@ -30,6 +30,8 @@ ProfitWiseFunctions.TableHeaderWidthInit = function (bodyCellSelector, headerCel
     $(document).ready(function () {
         columnFixed();
     });
+
+    columnFixed();
 }
 
 

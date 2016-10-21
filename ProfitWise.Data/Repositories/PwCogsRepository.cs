@@ -29,8 +29,7 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-
-        public PwCogsProduct RetrieveProduct(int masterProductId)
+        public PwCogsProductSummary RetrieveProduct(long masterProductId)
         {
             var query =
                 @"SELECT PwMasterProductId, PwProductId, Title, Vendor
@@ -40,7 +39,7 @@ namespace ProfitWise.Data.Repositories
                 AND IsPrimary = true;";
 
             return _connection
-                    .Query<PwCogsProduct>(
+                    .Query<PwCogsProductSummary>(
                         query, new
                         {
                             PwShopId = this.PwShop.PwShopId,
@@ -49,7 +48,7 @@ namespace ProfitWise.Data.Repositories
                     .FirstOrDefault();
         }
 
-        public IList<PwCogsProduct> 
+        public IList<PwCogsProductSummary> 
                 RetrieveProductsFromPicklist(long pickListId, int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
         {
             if (resultsPerPage > 200)
@@ -77,7 +76,7 @@ namespace ProfitWise.Data.Repositories
                 sortByClause +
                 " LIMIT @StartRecord, @ResultsPerPage;";
 
-            return _connection.Query<PwCogsProduct>(
+            return _connection.Query<PwCogsProductSummary>(
                 query,
                 new
                 {
@@ -94,7 +93,7 @@ namespace ProfitWise.Data.Repositories
         public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)
         {
             var query =
-                @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t2.Exclude, t2.StockedDirectly, 
+                @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t3.Sku, t2.Exclude, t2.StockedDirectly, 
                     t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, t3.PwVariantId, 
                     t3.LowPrice, t3.HighPrice, t3.Inventory
                 FROM profitwisemastervariant t2 

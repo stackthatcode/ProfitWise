@@ -42,7 +42,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        private PwCogsProduct RetrieveProduct(int masterProductId)
+        private PwCogsProductSummary RetrieveProduct(int masterProductId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);

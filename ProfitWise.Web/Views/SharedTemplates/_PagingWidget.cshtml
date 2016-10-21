@@ -91,7 +91,7 @@
             if (self.JumpToPage() > self.PageCount()) {
                 self.JumpToPage(self.PageCount());
             }
-            self.InvokeCallbackFunction();
+            self.Callback();
         }
 
         self.HighlightJumpToPage = function () {            
@@ -127,7 +127,7 @@
             self.PageNumber.valueHasMutated();
             
             //console.log("current PageNumber " + self.PageNumber());
-            self.InvokeCallbackFunction();                
+            self.Callback();                
             ProfitWiseFunctions.PopOverCloseAll();
 
             self.JumpToPage("");
@@ -150,7 +150,7 @@
         self.Forward = function() {
             if (self.PageNumber() < self.PageCount()) {
                 self.PageNumber(self.PageNumber() + 1);
-                self.InvokeCallbackFunction();
+                self.Callback();
                 self.ScrollToTop();
             }
         };
@@ -158,34 +158,24 @@
         self.Backward = function() {
             if (self.PageNumber() > 1) {
                 self.PageNumber(self.PageNumber() - 1);
-                self.InvokeCallbackFunction();
+                self.Callback();
                 self.ScrollToTop();
             }
         };
 
         self.First = function() {
             self.PageNumber(1);
-            self.InvokeCallbackFunction();
+            self.Callback();
             self.ScrollToTop();
         };
 
         self.Last = function() {
             self.PageNumber(self.PageCount());
-            self.InvokeCallbackFunction();
+            self.Callback();
             self.ScrollToTop();
-
         };
 
-        self.CallbackFunction = function() {
-        };
-
-        self.InvokeCallbackFunction = function () {
-            self.CallbackFunction(Number(self.PageNumber()), Number(self.PageSize()));
-        };
-
-        self.SubscribeCallbackFunction = function(callback) {
-            self.CallbackFunction = callback;
-        };
+        self.Callback = function() { };
 
         return self;
     };

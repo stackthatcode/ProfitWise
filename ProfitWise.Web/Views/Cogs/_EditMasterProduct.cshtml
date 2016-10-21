@@ -1,0 +1,224 @@
+﻿
+<style>
+     #product-edit-grid td {
+        height: 70px !important;
+        font-size: 14px;
+        vertical-align: middle !important;
+    }
+
+    #product-edit-grid th {
+        font-size: 14px !important;
+        font-weight: 700;
+        color: #777;
+        height: 60px;
+    }
+
+    #product-edit-grid tr td:nth-child(1), #product-edit-heading tr th:nth-child(1) {
+        width: 25%;
+    }
+
+    #product-edit-grid tr td:nth-child(2), #product-edit-heading tr th:nth-child(2) {
+        width: 25%;
+    }
+
+    #product-edit-grid tr td:nth-child(3), #product-edit-heading tr th:nth-child(3) {
+        width: 10%;
+    }
+
+    #product-edit-grid tr td:nth-child(4), #product-edit-heading tr th:nth-child(4) {
+        width: 10%;
+        text-align: center;
+    }
+
+    #product-edit-grid tr td:nth-child(5), #product-edit-heading tr th:nth-child(5) {
+        width: 10%;
+        text-align: center;
+    }
+
+    #product-edit-grid tr td:nth-child(6), #product-edit-heading tr th:nth-child(6) {
+        width: 10%;
+        text-align: center;
+    }
+
+    #product-edit-grid tr td:nth-child(7), #product-edit-heading tr th:nth-child(7) {
+        width: 10%;
+        text-align: center;
+    }
+
+    input[type='text'] {
+        width: 100px;
+    }
+</style>
+
+
+<script type="text/html" id="Product-Edit-Header">
+    <!-- Filtering and Paging -->
+    <div class="row standard-padding">
+        <div class="col-xs-12" style="padding-top: 20px;">
+            <a style="width: 200px;" href="#"
+               data-bind="click: function() { $root.EditProductId(null); }">
+                <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Product Search
+            </a>
+            <h3 style="font-weight: 700; margin-bottom: 8px;" data-bind="text: MasterProductTitle"></h3>
+            <div style="font-size: 1.0em; font-weight:700;" data-bind="text: VariantTitle"></div>
+            <div style="height: 20px;"></div>
+        </div>
+    </div>
+
+    <div class="standard-padding"
+         style="position: absolute; top: 129px;"
+         data-bind="visible: $data.Grid().length > 0">
+        <table class="table" id="product-edit-heading" style="margin-bottom: 0px;">
+            <thead>
+                <tr>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 0, ColumnName: 'Title', Model: $data.SortingModel } }">
+                    </th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 1, ColumnName: 'Sku', Model: $data.SortingModel } }">
+                    </th>
+
+                    <th>Inventory</th>
+                    <th>Price</th>
+                    <th>CoGS</th>
+
+                    <th style="text-align: center;"><a href="#" data-bind="click: $data.StockedDirectlyPickListPopup">Stocked Directly</a></th>
+                    <th style="text-align: center;"><a href="#" data-bind="click: $data.ExcludePickListPopup">Exclude</a></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</script>
+
+<script type="text/html" id="Product-Edit-Body">
+    <!-- Search Results -->
+    <table id="product-edit-grid" class="table" style="width: 100%; height: 100%; margin: 0;">
+        <tbody data-bind="foreach: $data.Grid">
+        <tr>
+            <td class="overflow-gracefully">
+                <span data-bind="text: Title"></span>
+            </td>
+            <td class="overflow-gracefully">
+                <span data-bind="text: Sku"></span>
+            </td>
+            <td>
+                <span data-bind="text: Inventory"></span>
+            </td>
+
+            <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
+
+            <td><a href="#">$1234.00 USD</a></td>
+
+            <td>
+                <input type="checkbox"
+                       data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.Excluded"/>
+            </td>
+
+            <td>
+                <input type="checkbox"
+                       data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.StockedDirectly"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<script>
+
+    var ProfitWise = ProfitWise || {};
+
+    ProfitWise.ProductVariantCogsEditorModel = function () {
+        self.MasterProductId = ko.observable(null);
+        self.MasterProductTitle = ko.observable("");
+        self.Grid = ko.observable([]);
+        self.SortingModel = new ProfitWiseWidgets.SortingModel();
+
+        self.SortingModel.Callback = function() {
+            var gridData = self.Grid();
+            AQ(gridData).orderBy(function(n) { return n.Sku; }).toArray();
+        };
+
+        // *** Sorting stuff...
+
+        self.VariantTitle = ko.computed(function () {
+            return self.Grid().length + " Variant(s)";
+        });
+
+        self.RetrieveMasterProduct = function (masterProductId) {
+            self.MasterProductId(masterProductId);
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var url = "/CogsService/RetrieveMasterProduct?masterProductId=" + self.MasterProductId();
+            ajax.HttpGet(url, self.LoadMasterProduct);
+        };
+        
+        self.LoadMasterProduct = function (data) {
+            console.log(data);
+            self.MasterProductTitle(data.MasterProduct.Title);
+            self.Grid(data.MasterProduct.MasterVariants);
+        };
+
+        self.UpdateVariantCogs = function (data) {
+
+        };
+
+        // *** Stocked Directly interactivity *** //
+        self.StockedDirectlyPickListPopup = function () {
+            var url =
+                ProfitWiseConfig.BaseUrl +
+                    '/Cogs/StockedPicklistPopup?pickListId=' + self.PickListId();
+
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Set Stocked Directly for all Products in Search',
+                width: 'small',
+                height: 300,
+            }, self.LoadDataForCurrentPage);
+        };
+
+        self.StockedDirectlyCheckboxClick = function (model) {
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var data = {
+                masterProductId: model.MasterProductId,
+                value: !self.StockedDirectlyIsChecked(model),
+            };
+
+            ajax.HttpPost("/CogsService/StockedDirectlyByMasterProductId", data, self.LoadDataForCurrentPage);
+        };
+
+        // ** Excluded interactivity *** //
+        self.ExcludePickListPopup = function () {
+            var url =
+                ProfitWiseConfig.BaseUrl +
+                    '/Cogs/ExcludedPickListPopup?pickListId=' + self.PickListId();
+
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Set Exclude/Include for all Products in Search',
+                width: 'small',
+                height: 350,
+            }, self.LoadDataForCurrentPage);
+        };
+
+        self.ExcludedCheckboxClick = function (model) {
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var data = {
+                masterProductId: model.MasterProductId,
+                value: !self.ExcludedIsChecked(model),
+            };
+
+            ajax.HttpPost("/CogsService/ExcludeByMasterProductId", data, self.LoadDataForCurrentPage);
+        };
+
+        // Some JQuery initialization
+        self.JQueryInit = function() {
+            ProfitWiseFunctions.SynchronizeWidth(
+                "table#product-edit-grid tbody tr td",
+                "table#product-edit-heading thead tr th");
+        };
+
+        return self;
+    };
+</script>

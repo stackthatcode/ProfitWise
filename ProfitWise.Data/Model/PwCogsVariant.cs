@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using ProfitWise.Data.Services;
 
@@ -9,6 +8,8 @@ namespace ProfitWise.Data.Model
     {
         public long PwMasterProductId { get; set;  }
         public long PwMasterVariantId { get; set; }
+        public string Title { get; set; }
+        public string Sku { get; set; }
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
         public int? CogsCurrencyId { get; set; }
@@ -24,7 +25,7 @@ namespace ProfitWise.Data.Model
 
         	
         [JsonIgnore]
-        public PwCogsProduct Parent { get; set; }
+        public PwCogsProductSummary Parent { get; set; }
 
 
         public void PopulateNormalizedCogsAmount(
@@ -38,6 +39,5 @@ namespace ProfitWise.Data.Model
             }
         }
     }
-
-
 }
+

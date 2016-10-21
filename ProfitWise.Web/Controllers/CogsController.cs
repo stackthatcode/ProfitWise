@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -8,6 +7,7 @@ using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Web.Json;
+
 
 namespace ProfitWise.Web.Controllers
 {
@@ -76,7 +76,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        private PwCogsProduct RetrieveProduct(int masterProductId)
+        private PwCogsProductSummary RetrieveProduct(int masterProductId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);

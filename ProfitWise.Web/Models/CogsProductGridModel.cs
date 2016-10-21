@@ -3,9 +3,9 @@ using ProfitWise.Data.Model;
 
 namespace ProfitWise.Web.Models
 {
-    public class CogsGridModel
+    public class CogsProductGridModel
     {
-        public long Id { get; set; }
+        public long MasterProductId { get; set; }
         public string Vendor { get; set; }
         public string ProductTitle { get; set; }
         public int InventoryCount { get; set; }
@@ -18,15 +18,15 @@ namespace ProfitWise.Web.Models
 
     public static class CogsGridModelExtension
     {
-        public static IList<CogsGridModel> 
-                    ToCogsGridModel(this IList<PwCogsProduct> products, int currencyId)
+        public static IList<CogsProductGridModel> 
+                    ToCogsGridModel(this IList<PwCogsProductSummary> products, int currencyId)
         {
-            var output = new List<CogsGridModel>();
+            var output = new List<CogsProductGridModel>();
             foreach (var product in products)
             {
-                output.Add(new CogsGridModel()
+                output.Add(new CogsProductGridModel()
                 {
-                    Id = product.PwMasterProductId,
+                    MasterProductId = product.PwMasterProductId,
                     ProductTitle = product.Title,
                     Vendor = product.Vendor,
                     Price = new MoneyRange

@@ -79,7 +79,7 @@
                             hasFocus: true,
                             event: { keyup: KeyPressCallback }"/>
 
-                <div class="input-group-addon btn btn-primary" data-bind="click: CallbackFunction">
+                <div class="input-group-addon btn btn-primary" data-bind="click: Callback">
                     Search &nbsp;<i class="glyphicon glyphicon-search"></i>
                 </div>
             </div>
@@ -226,16 +226,12 @@
             self.SelectedFiltersForSearch.remove(data);
         };
 
-        self.RegisterCallbackFunction = function(callback) {
-            self.CallbackFunction = callback;
-        };
-
-        self.CallbackFunction = function() {
+        self.Callback = function() {
         };
 
         self.KeyPressCallback = function() {
             if (event.keyCode == 13) {
-                self.CallbackFunction();
+                self.Callback();
                 return false;
             } else {
                 return true;
