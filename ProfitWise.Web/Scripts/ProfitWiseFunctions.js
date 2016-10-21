@@ -4,7 +4,6 @@ ProfitWiseConfig.BaseUrl = '/ProfitWise';
 
 var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
-// movingElementSelector == '#top-header'
 
 ProfitWiseFunctions.FixedHeaderScrollingInit = function (movingElementSelector) {
     $(window)
@@ -13,9 +12,6 @@ ProfitWiseFunctions.FixedHeaderScrollingInit = function (movingElementSelector) 
         });
 }
 
-
-// var bodyColumnCells = $("table#cogs tbody tr td");
-// var headerColumnHeaders = $("table#heading thead tr th");
 
 ProfitWiseFunctions.TableHeaderWidthInit = function (bodyCellSelector, headerCellSelector) {
     var columnFixed = function () {
@@ -59,12 +55,6 @@ ProfitWiseFunctions.PopOverAutoCloseInit = function () {
                 $(element).data()["bs.popover"]["inState"]["click"] = false;
             });
     });
-
-/*    $(document)
-        .on("scroll",
-            function() {
-                ProfitWiseFunctions.PopOverCloseAll();
-            });*/
 };
 
 

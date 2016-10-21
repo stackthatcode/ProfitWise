@@ -61,166 +61,202 @@
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_ProductFilterWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
-
-<script type="text/html" id="Page-Header">
-    <div class="fixed-positioning-container">
-        <div class="standard-header-sleeve" style="height: 210px;">
-
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header top-border-facade">
-
-                <!-- Filtering and Paging -->
-                <div class="row standard-padding">
-                    <!-- Filtering Widget -->
-                    <div class="col-lg-6" style="padding-top: 20px;">
-                        <div class="pull-left;"
-                             data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
-                        </div>
-                    </div>
-
-                    <!-- Paging Widget -->
-                    <div class="col-lg-6">
-                        <div style="height: 20px;" class="visible-lg"></div>
-                        <div data-bind="visible: $root.CurrentGrid().length > 0">
-                            <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+@Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
 
 
-                <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
-                <div class="standard-padding" style="position: absolute; top: 129px;"
-                     data-bind="visible: $root.CurrentGrid().length > 0">
-                    <table class="table" id="heading" style="margin-bottom: 0px;">
-                        <thead>
-                        <tr>
-                            <th class="order-by-column"
-                                data-bind="click: function() { SortByClick(0) }">
-                                Vendor
+<script type="text/html" id="Product-Search-Header">
+    <!-- Filtering and Paging -->
+    <div class="row standard-padding">
+        <!-- Filtering Widget -->
+        <div class="col-lg-6" style="padding-top: 20px;">
+            <div class="pull-left;"
+                 data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
+            </div>
+        </div>
 
-                                <span data-bind="visible: SortByColumnIndex() == 0">
-                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
-                                </span>
-                                <span data-bind="visible: SortByColumnIndex() != 0">                                    
-                                </span>
-                            </th>
-
-                            <th class="order-by-column" data-bind="click: function() { SortByClick(1); }">
-                                Product
-
-                                <span data-bind="visible: SortByColumnIndex() == 1">
-                                    <span data-bind="template: 'Sorting-Arrows-Active'"></span>
-                                </span>
-                                <span data-bind="visible: SortByColumnIndex() != 1">
-                                </span>
-                            </th>
-
-                            <th>Inventory</th>
-                            <th>Price</th>
-                            <th>CoGS</th>
-
-                            <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked Directly</a></th>
-                            <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
-                        </tr>
-                        </thead>
-                    </table>
+        <!-- Paging Widget -->
+        <div class="col-lg-6">
+            <div style="height: 20px;" class="visible-lg"></div>
+            <div data-bind="visible: $root.CurrentGrid().length > 0">
+                <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                 </div>
             </div>
         </div>
     </div>
+
+
+    <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
+    <div class="standard-padding" style="position: absolute; top: 129px;"
+         data-bind="visible: $root.CurrentGrid().length > 0">
+        <table class="table" id="heading" style="margin-bottom: 0px;">
+            <thead>
+            <tr>
+                <th data-bind="template: { name: 'Sortable-Column-Header', 
+                                data: { ColumnIndex: 0, ColumnName: 'Vendor', Model: $root.SortingModel } }">
+                </th>
+                <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 1, ColumnName: 'Product', Model: $root.SortingModel } }">
+                </th>
+
+                <th>Inventory</th>
+                <th>Price</th>
+                <th>CoGS</th>
+
+                <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked Directly</a></th>
+                <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
+
+            </tr>
+        </thead>
+    </table>
+</div>
 </script>
 
-<script type="text/html" id="Sorting-Arrows-Active">
-    <span data-bind="if: $root.SortByDirectionDown">
-        <i class="glyphicon glyphicon-triangle-bottom"></i>
-    </span>
-    <span data-bind="ifnot: $root.SortByDirectionDown">
-        <i class="glyphicon glyphicon-triangle-top"></i>
-    </span>
+<script type="text/html" id="Product-Search-Body">
+    <!-- No Products Found matching XYZ -->
+    <div id="no-products-found" style="width: 100%;"
+         data-bind="visible: $root.NoProductsFound() && $root.CurrentGrid().length == 0">
+        <div style="text-align: center; padding-top: 20px; padding-bottom: 100px;">
+            <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
+            <h3 style="color: #555; font-weight: 300;">Could not find any products</h3>
+            <span style="color: #AAA;">Try changing the filters or search term</span>
+        </div>
+    </div>
+
+    <!-- Search Results -->
+    <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
+        <tbody data-bind="foreach: $root.CurrentGrid">
+            <tr>
+                <td class="overflow-gracefully">
+                    <span data-bind="if: Vendor">
+                        <span data-bind="text: Vendor"></span>
+                    </span>
+                    <span data-bind="ifnot: Vendor">
+                        (No Vendor)
+                    </span>
+                </td>
+                <td class="overflow-gracefully"><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
+                <td>
+                    <span data-bind="text: InventoryCount"></span> in stock<br />
+                    (<span data-bind="text: VariantCount"></span> variants)
+                </td>
+
+                <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
+
+                <td>
+                    <a href="#" data-bind="click: $root.BulkEditPopUp">
+                        <span data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Cogs }">
+                        </span>
+                    </a>
+                </td>
+                <td>
+                    <div data-bind="if: StockedDirectlyCount == VariantCount || StockedDirectlyCount == 0">
+                        <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyIsChecked($data)" />
+                    </div>
+
+                    <div data-bind="if: StockedDirectlyCount > 0 && StockedDirectlyCount < VariantCount">
+                        <a href="#"
+                           data-bind="click: $root.StockedDirectlyGridLinkClick">
+                            <span data-bind="text: StockedDirectlyCount"></span> of
+                            <span data-bind="text: VariantCount"></span>
+                        </a>
+                    </div>
+                </td>
+
+                <td>
+                    <div data-bind="if: ExcludedCount == VariantCount || ExcludedCount == 0">
+                        <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedIsChecked($data)" />
+                    </div>
+
+                    <div data-bind="if: ExcludedCount > 0 && ExcludedCount < VariantCount">
+                        <a href="#"
+                           data-bind="click: $root.ExcludedGridLinkClick">
+                            <span data-bind="text: ExcludedCount"></span> of
+                            <span data-bind="text: VariantCount"></span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</script>
+
+
+<script type="text/html" id="Product-Edit-Header">
+    <!-- Filtering and Paging -->
+    <div class="row standard-padding">
+
+        <div class="col-xs-6" style="padding-top: 20px;">
+            <a style="width: 200px;" href="CoGS.html"><i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Products</a>
+            <h3 style="font-weight: 700; margin-bottom: 3px;">3D Universe 2.85 mm PLA Filament</h3>
+            <div style="font-size: 0.85em;">18 Variants</div>
+            <div style="height: 20px;"></div>
+        </div>
+
+        <div class="col-xs-6" style="text-align: right; padding: 0;">
+            <a style="width: 200px;" class="form-control btn btn-default" href="CoGS.html"><i class="glyphicon glyphicon-th-list"></i> &nbsp;&nbsp;Bulk Edit CoGS</a>
+        </div>
+    </div>
+
+    <div class="standard-padding" style="position: absolute; top: 129px;"
+         data-bind="visible: $root.CurrentGrid().length > 0">
+        <table class="table" id="heading" style="margin-bottom: 0px;">
+            <thead>
+                <tr>
+                    <th class="order-by-column"
+                        data-bind="click: function() { SortByClick(0) }">
+                        Vendor
+
+                        <span data-bind="visible: SortByColumnIndex() == 0">
+                            <span data-bind="template: 'Sorting-Arrows-Active'"></span>
+                        </span>
+                        <span data-bind="visible: SortByColumnIndex() != 0">
+                        </span>
+                    </th>
+
+                    <th class="order-by-column" data-bind="click: function() { SortByClick(1); }">
+                        Product
+
+                        <span data-bind="visible: SortByColumnIndex() == 1">
+                            <span data-bind="template: 'Sorting-Arrows-Active'"></span>
+                        </span>
+                        <span data-bind="visible: SortByColumnIndex() != 1">
+                        </span>
+                    </th>
+
+                    <th>Inventory</th>
+                    <th>Price</th>
+                    <th>CoGS</th>
+
+                    <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked Directly</a></th>
+                    <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
 </script>
 
 <script type="text/html" id="Main-Template">
-    <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
-
-    <div class="container page-content-sleeve">
-        <div class="page-content" style="margin-top:209px;">
-
-            <!-- No Products Found matching XYZ -->
-            <div id="no-products-found" style="width: 100%;"
-                 data-bind="visible: $root.NoProductsFound() && $root.CurrentGrid().length == 0">
-                <div style="text-align: center; padding-top: 20px; padding-bottom: 100px;">
-                    <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
-                    <h3 style="color: #555; font-weight: 300;">Could not find any products</h3>
-                    <span style="color: #AAA;">Try changing the filters or search term</span>
-                </div>
+    <div class="fixed-positioning-container">
+        <div class="standard-header-sleeve" style="height: 210px;">
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div class="standard-header top-border-facade">
+                <div data-bind="template: { name: 'Product-Search-Header', data: $data }"></div>
             </div>
-
-            <!-- Search Results -->
-            <table id="product-cogs" class="table" style="width: 100%; height: 100%; margin: 0;">
-                <tbody data-bind="foreach: $root.CurrentGrid">
-                <tr>
-                    <td class="overflow-gracefully">
-                        <span data-bind="if: Vendor">
-                            <span data-bind="text: Vendor"></span>
-                        </span>
-                        <span data-bind="ifnot: Vendor">
-                            (No Vendor)
-                        </span>
-                    </td>
-                    <td class="overflow-gracefully"><a href="CoGSProduct.html" data-bind="text: ProductTitle"></a></td>
-                    <td><span data-bind="text: InventoryCount"></span> in stock<br/>
-                        (<span data-bind="text: VariantCount"></span> variants)</td>
-
-                    <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }">
-                    </td>
-
-                    <td>
-                        <a href="#" data-bind="click: $root.BulkEditPopUp">
-                            <span data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Cogs }">
-                            </span>
-                        </a>
-                    </td>
-                    <td>
-                        <div data-bind="if: StockedDirectlyCount == VariantCount || StockedDirectlyCount == 0">
-                            <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyIsChecked($data)"/>
-                        </div>
-
-                        <div data-bind="if: StockedDirectlyCount > 0 && StockedDirectlyCount < VariantCount">
-                            <a href="#"
-                               data-bind="click: $root.StockedDirectlyGridLinkClick">
-                                <span data-bind="text: StockedDirectlyCount"></span> of
-                                <span data-bind="text: VariantCount"></span>
-                            </a>
-                        </div>
-                    </td>
-
-                    <td>
-                        <div data-bind="if: ExcludedCount == VariantCount || ExcludedCount == 0">
-                            <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedIsChecked($data)"/>
-                        </div>
-
-                        <div data-bind="if: ExcludedCount > 0 && ExcludedCount < VariantCount">
-                            <a href="#"
-                               data-bind="click: $root.ExcludedGridLinkClick">
-                                <span data-bind="text: ExcludedCount"></span> of
-                                <span data-bind="text: VariantCount"></span>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
-</script>
+    <div class="container page-content-sleeve">
+        <div class="page-content" style="margin-top: 209px;">
+
+            <div data-bind="template: { name: 'Product-Search-Body', data: $data }"></div>
+            </div>
+        </div>
+    </script>
 
 <!-- KnockoutJS Root View -->
 <div data-bind="template: { name: 'Main-Template' }">
 </div>
-
-
 
 <!-- KnockoutJS Model -->
 <script>
@@ -243,20 +279,10 @@
 
 
         // *** Sorting functionality *** //
-        self.SortByColumnIndex = ko.observable(0);
-        self.SortByDirectionDown = ko.observable(true);
+        self.SortingModel = new ProfitWiseWidgets.SortingModel();
+        self.SortingModel.Callback = function() { self.LoadDataForCurrentPage(); };
 
-        self.SortByClick = function(index) {
-            if (index == self.SortByColumnIndex()) {
-                self.SortByDirectionDown(!self.SortByDirectionDown());
-            } else {
-                self.SortByDirectionDown(true);
-            }
-            self.SortByColumnIndex(index);
-            self.LoadDataForCurrentPage();
-        }
 
-        
         // *** Launch Bulk Edit Popup *** //
         self.BulkEditPopUp = function (model) {
             var url =
@@ -271,13 +297,13 @@
             }, self.LoadDataForCurrentPage);
         }
 
-        
-        // *** Stocked Directly interactivity *** //        
+
+        // *** Stocked Directly interactivity *** //
         self.StockedDirectlyPickListPopup = function () {
             var url =
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/StockedPicklistPopup?pickListId=' + self.PickListId();
-            
+
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Set Stocked Directly for all Products in Search',
@@ -285,7 +311,7 @@
                 height: 300,
             }, self.LoadDataForCurrentPage);
         };
-        
+
         self.StockedDirectlyIsChecked = function (data) {
             return data.StockedDirectlyCount == data.VariantCount;
         };
@@ -302,7 +328,7 @@
         };
 
         self.StockedDirectlyGridLinkClick = function (model) {
-            var url = 
+            var url =
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/StockedProductPopup?masterProductId=' + model.Id;
 
@@ -315,12 +341,12 @@
         };
 
 
-        // ** Excluded interactivity *** //        
+        // ** Excluded interactivity *** //
         self.ExcludePickListPopup = function () {
-            var url = 
-                ProfitWiseConfig.BaseUrl + 
+            var url =
+                ProfitWiseConfig.BaseUrl +
                     '/Cogs/ExcludedPickListPopup?pickListId=' + self.PickListId();
-            
+
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Set Exclude/Include for all Products in Search',
@@ -332,7 +358,7 @@
         self.ExcludedIsChecked = function(data) {
             return data.ExcludedCount == data.VariantCount;
         };
-        
+
         self.ExcludedCheckboxClick = function (model) {
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
@@ -343,29 +369,29 @@
 
             ajax.HttpPost("/CogsService/ExcludeById", data, self.LoadDataForCurrentPage);
         };
-        
+
         self.ExcludedGridLinkClick = function (model) {
-            var url = 
-                ProfitWiseConfig.BaseUrl + 
+            var url =
+                ProfitWiseConfig.BaseUrl +
                     '/Cogs/ExcludedProductPopup?masterProductId=' + model.Id;
             ProfitWiseShopify.LaunchModal({
                 src: url,
-                    title: 'Set Exclude/Include for all Product Variants',
-                    width: 'small',
-                    height: 200,
-            }, self.LoadDataForCurrentPage);            
+                title: 'Set Exclude/Include for all Product Variants',
+                width: 'small',
+                height: 200,
+            }, self.LoadDataForCurrentPage);
         };
 
 
 
 
         // *** Search for Products *** //
-        self.SearchForProducts = function () {            
+        self.SearchForProducts = function () {
             var filters = [];
             ko.utils.arrayForEach(
                 self.FilterModel.SelectedFiltersForSearch(),
                 function(item) {
-                    filters.push({ 
+                    filters.push({
                         Type: item.Type(),
                         Value: item.Value(),
                     });
@@ -375,7 +401,7 @@
                 Text: self.FilterModel.SearchText(),
                 Filters: filters,
             };
-            
+
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost(
                 "/CogsService/Search",
@@ -392,13 +418,13 @@
                 PickListId: self.PickListId(),
                 PageNumber: self.PagingModel.PageNumber(),
                 PageSize: self.PagingModel.PageSize(),
-                SortByColumn: self.SortByColumnIndex(),
-                SortByDirectionDown: self.SortByDirectionDown(),
+                SortByColumn: self.SortingModel.SelectedColumnIndex(),
+                SortByDirectionDown: self.SortingModel.SortByDirectionDown(),
             };
- 
+
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost(
-                "/CogsService/RetrieveResults", 
+                "/CogsService/RetrieveResults",
                 resultsPaging,
                 function (data) {
                     self.CurrentGrid.removeAll();
@@ -412,7 +438,7 @@
                     }
                 });
         };
-        
+
         self.PagingModel.SubscribeCallbackFunction(self.LoadDataForCurrentPage);
 
         return self;
@@ -430,5 +456,4 @@
             ko.applyBindings(model);
         });
 </script>
-
 

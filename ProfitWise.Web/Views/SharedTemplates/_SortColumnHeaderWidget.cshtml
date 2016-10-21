@@ -1,0 +1,41 @@
+﻿<script>
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.SortingModel = function() {
+        var self = this;
+
+        self.Callback = function(index) {   /* Users of this model will override as needed... */ };
+
+        self.SortByClick = function(index) {
+            if (index == self.SelectedColumnIndex()) {
+                self.SortByDirectionDown(!self.SortByDirectionDown());
+            } else {
+                self.SortByDirectionDown(true);
+            }
+            self.SelectedColumnIndex(index);
+
+            // Now invoke the Callback function
+            self.Callback(index);
+        }
+
+        self.SelectedColumnIndex = ko.observable(0);
+        self.SortByDirectionDown = ko.observable(true);
+    };
+</script>
+<script type="text/html" id="Sortable-Column-Header">
+    <!-- Expects to receive templateOption -> ColumnIndex, ColumnName -->
+    <div class="order-by-column" data-bind="click: function() { $data.Model.SortByClick($data.ColumnIndex) }">
+        <span data-bind="text: $data.ColumnName"></span>
+
+        <span data-bind="visible: $data.Model.SelectedColumnIndex() == $data.ColumnIndex">
+            <span data-bind="if: $data.Model.SortByDirectionDown">
+                <i class="glyphicon glyphicon-triangle-bottom"></i>
+            </span>
+            <span data-bind="ifnot: $data.Model.SortByDirectionDown">
+                <i class="glyphicon glyphicon-triangle-top"></i>
+            </span>
+        </span>
+    </div>
+</script>
+
+
