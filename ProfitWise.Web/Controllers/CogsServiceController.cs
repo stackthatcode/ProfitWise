@@ -157,6 +157,15 @@ namespace ProfitWise.Web.Controllers
 
             return new JsonNetResult(new { MasterProduct = masterProduct });
         }
+
+        [HttpPost]
+        public ActionResult UpdateCogs(long masterVariantId, int currencyId, decimal amount)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
+            cogsRepository.UpdateMasterVariantCogs(masterVariantId, currencyId, amount);
+            return JsonNetResult.Success();
+        }
     }
 }
 

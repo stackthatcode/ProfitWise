@@ -34,8 +34,9 @@ namespace ProfitWise.Web.Models
                 MasterVariantId = variant.PwMasterVariantId,
                 Title = variant.Title,
                 CogsAmount = variant.CogsAmount,
-                CogsCurrencyId = variant.CogsCurrencyId,
+                CogsCurrencyId = variant.CogsCurrencyId ?? shopCurrencyId,
                 Inventory = variant.Inventory ?? 0,
+
                 Price = new MoneyRange()
                 {
                     CurrencyId = shopCurrencyId,

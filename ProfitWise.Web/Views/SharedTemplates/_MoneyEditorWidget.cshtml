@@ -117,11 +117,23 @@
         self.EnterKeyCallback = function () {
         };
 
+        self.EscapeKeyCallback = function () {
+        };
+
+
         self.RegisterEnterKeyCallback = function (callback) {
             self.EnterKeyCallback = callback;
         };
 
+        self.RegisterEscapeKeyCallback = function (callback) {
+            self.EscapeKeyCallback = callback;
+        };
+
         self.InvokeKeyCallback = function (model, event) {
+            if (event.keyCode == 27) {
+                self.EscapeKeyCallback();
+                return false;
+            }
             if (event.keyCode == 13) {
                 self.EnterKeyCallback();
                 return false;

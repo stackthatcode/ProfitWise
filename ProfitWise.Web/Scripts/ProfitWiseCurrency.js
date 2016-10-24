@@ -16,16 +16,22 @@ ProfitWiseFunctions.CurrencyCache = [
 ProfitWiseFunctions.FormatCurrencyWithAbbr = function (amount, currencyId) {
     var item =
         AQ(ProfitWiseFunctions.CurrencyCache)
-            .first(function (item) { return item.Id == currencyId; });
+            .firstOrDefault(function (item) { return item.Id == currencyId; });
 
+    if (!item) {
+        throw "Unable to locate Currency for Id: " + currencyId;
+    }
     return item.Symbol + numeral(amount).format("0,0.00") + " " + item.Abbr;
 };
 
 ProfitWiseFunctions.FormatCurrency = function (amount, currencyId) {
     var item =
         AQ(ProfitWiseFunctions.CurrencyCache)
-            .first(function (item) { return item.Id == currencyId; });
+            .firstOrDefault(function (item) { return item.Id == currencyId; });
 
+    if (!item) {
+        throw "Unable to locate Currency for Id: " + currencyId;
+    }
     return item.Symbol + numeral(amount).format("0,0.00");
 };
 

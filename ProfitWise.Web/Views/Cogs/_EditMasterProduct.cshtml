@@ -1,7 +1,7 @@
 ﻿
 <style>
      #product-edit-grid td {
-        height: 70px !important;
+        height: 85px !important;
         font-size: 14px;
         vertical-align: middle !important;
     }
@@ -14,15 +14,17 @@
     }
 
     #product-edit-grid tr td:nth-child(1), #product-edit-heading tr th:nth-child(1) {
-        width: 25%;
+        width: 35%;
     }
 
     #product-edit-grid tr td:nth-child(2), #product-edit-heading tr th:nth-child(2) {
-        width: 25%;
+        width: 20%;
+        text-align: center;
     }
 
     #product-edit-grid tr td:nth-child(3), #product-edit-heading tr th:nth-child(3) {
-        width: 10%;
+        width: 20%;
+        text-align: center;
     }
 
     #product-edit-grid tr td:nth-child(4), #product-edit-heading tr th:nth-child(4) {
@@ -31,17 +33,12 @@
     }
 
     #product-edit-grid tr td:nth-child(5), #product-edit-heading tr th:nth-child(5) {
-        width: 10%;
+        width: 7.5%;
         text-align: center;
     }
 
     #product-edit-grid tr td:nth-child(6), #product-edit-heading tr th:nth-child(6) {
-        width: 10%;
-        text-align: center;
-    }
-
-    #product-edit-grid tr td:nth-child(7), #product-edit-heading tr th:nth-child(7) {
-        width: 10%;
+        width: 7.5%;
         text-align: center;
     }
 
@@ -60,7 +57,7 @@
                 <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Product Search
             </a>
             <h3 style="font-weight: 700; margin-bottom: 8px;" data-bind="text: MasterProductTitle"></h3>
-            <div style="font-size: 1.0em; font-weight:700;" data-bind="text: VariantTitle"></div>
+            <div style="font-size: 1.0em; font-weight: 700;" data-bind="text: VariantTitle"></div>
             <div style="height: 20px;"></div>
         </div>
     </div>
@@ -70,18 +67,20 @@
          data-bind="visible: $data.Grid().length > 0">
         <table class="table" id="product-edit-heading" style="margin-bottom: 0px;">
             <thead>
-                <tr>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 0, ColumnName: 'Title', Model: $data.SortingModel } }">
-                    </th>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
+            <tr>
+                <th>
+                    <span data-bind="template: { name: 'Sortable-Column-Header',
                                 data: { ColumnIndex: 1, ColumnName: 'Sku', Model: $data.SortingModel } }">
-                    </th>
+                    </span>
+                    <span>&nbsp;/&nbsp;</span>
+                    <span data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 0, ColumnName: 'Title', Model: $data.SortingModel } }">
+                    </span>
+                </th>
 
-                    <th>Inventory</th>
-                    <th>Price</th>
-                    <th>CoGS</th>
-
+                <th>Price</th>
+                <th>CoGS</th>
+                <th>Detail</th>
                     <th style="text-align: center;"><a href="#" data-bind="click: $data.StockedDirectlyPickListPopup">Stocked Directly</a></th>
                     <th style="text-align: center;"><a href="#" data-bind="click: $data.ExcludePickListPopup">Exclude</a></th>
                 </tr>
@@ -96,19 +95,28 @@
         <tbody data-bind="foreach: $data.Grid">
         <tr>
             <td class="overflow-gracefully">
-                <span data-bind="text: Title"></span>
-            </td>
-            <td class="overflow-gracefully">
-                <span data-bind="text: Sku"></span>
-            </td>
-            <td>
-                <span data-bind="text: Inventory"></span>
+                <span style="font-weight: 700;" data-bind="text: Sku"></span><br/>
+                <span data-bind="text: Title, tooltip: { title: Title }"></span><br/>
+                <span style="font-size: 0.8em;" data-bind="text: Inventory"></span> 
+                <span> in-stock</span>
             </td>
 
             <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
 
-            <td><a href="#">$1234.00 USD</a></td>
+            <td>
+                <div data-bind="ifnot: EditorVisible">
+                    <a href="#" data-bind="click: ClickOnCogs">
+                        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount, CogsCurrencyId)">
+                        </span>
+                    </a>
+                </div>
 
+                <div data-bind="if: EditorVisible">
+                    <div data-bind="template: { name: 'Money-Editor-Widget', data: EditorModel }">
+                    </div>
+                </div>
+            </td>
+            <td><a href="#">Edit</a>|<a href="#">Delete</a></td>
             <td>
                 <input type="checkbox"
                        data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.Excluded"/>
@@ -139,7 +147,6 @@
         };
 
         // *** Sorting stuff...
-
         self.VariantTitle = ko.computed(function () {
             return self.Grid().length + " Variant(s)";
         });
@@ -151,15 +158,59 @@
             var url = "/CogsService/RetrieveMasterProduct?masterProductId=" + self.MasterProductId();
             ajax.HttpGet(url, self.LoadMasterProduct);
         };
-        
+
+        self.RefreshMasterProduct = function() {
+            self.RetrieveMasterProduct(self.MasterProductId());
+        };
+
         self.LoadMasterProduct = function (data) {
             console.log(data);
             self.MasterProductTitle(data.MasterProduct.Title);
+
+            AQ(data.MasterProduct.MasterVariants).each(function (item) {
+                item.EditorVisible = ko.observable(false);
+
+                item.EditorModel = 
+                    new ProfitWiseWidgets.MoneyEditorWidgetModel(
+                            item.CogsCurrencyId, item.CogsAmount);
+
+                item.ClickOnCogs = function () {
+                    self.HideAllVisibleEditors();
+                    item.EditorVisible(true);
+                    $('input.money-editor-text').focus();
+                }
+
+                item.EditorModel.RegisterEnterKeyCallback(function () {
+                    item.EditorVisible(false);
+                    self.UpdateVariantCogs(item);
+                });
+
+                item.EditorModel.RegisterEscapeKeyCallback(function () {
+                    item.EditorVisible(false);
+                });
+
+            });
+
             self.Grid(data.MasterProduct.MasterVariants);
         };
 
-        self.UpdateVariantCogs = function (data) {
+        self.HideAllVisibleEditors = function () {
+            AQ(self.Grid()).each(function (item) {
+                item.EditorVisible(false);
+            });
+        };
 
+        // 
+        self.UpdateVariantCogs = function (item) {
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var data = {
+                masterVariantId: item.MasterVariantId,
+                currencyId: item.EditorModel.CurrencyId(),
+                amount: item.EditorModel.Amount(),
+            };
+
+            ajax.HttpPost("/CogsService/UpdateCogs", data, self.RefreshMasterProduct);
         };
 
         // *** Stocked Directly interactivity *** //

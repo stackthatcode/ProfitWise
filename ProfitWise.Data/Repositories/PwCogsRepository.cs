@@ -195,5 +195,18 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<string>(
                 query, new { PwShopId = this.PwShop.PwShopId }).ToList();
         }
+
+
+
+        // Master Variant Cogs entry
+        public void UpdateMasterVariantCogs(long masterVariantId, int currencyId, decimal amount)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant
+                SET CogsCurrencyId = @currencyId, CogsAmount = @amount
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
+            _connection.Execute(
+                query, new { this.PwShopId, masterVariantId, currencyId, amount });
+        }
     }
 }
