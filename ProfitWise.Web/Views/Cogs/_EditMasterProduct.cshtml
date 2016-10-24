@@ -106,7 +106,7 @@
             <td>
                 <div data-bind="ifnot: EditorVisible">
                     <a href="#" data-bind="click: ClickOnCogs">
-                        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount, CogsCurrencyId)">
+                        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CurrentCogsAmount(), CurrentCogsCurrencyId())">
                         </span>
                     </a>
                 </div>
@@ -164,18 +164,22 @@
         };
 
         self.LoadMasterProduct = function (data) {
-            console.log(data);
+            // console.log(data);
             self.MasterProductTitle(data.MasterProduct.Title);
 
             AQ(data.MasterProduct.MasterVariants).each(function (item) {
                 item.EditorVisible = ko.observable(false);
+
+                item.CurrentCogsCurrencyId = ko.observable(item.CogsCurrencyId);
+                item.CurrentCogsAmount = ko.observable(item.CogsAmount);
 
                 item.EditorModel = 
                     new ProfitWiseWidgets.MoneyEditorWidgetModel(
                             item.CogsCurrencyId, item.CogsAmount);
 
                 item.ClickOnCogs = function () {
-                    self.HideAllVisibleEditors();
+                    self.SaveAndHideVisibleEditor();
+
                     item.EditorVisible(true);
                     $('input.money-editor-text').focus();
                 }
@@ -194,13 +198,16 @@
             self.Grid(data.MasterProduct.MasterVariants);
         };
 
-        self.HideAllVisibleEditors = function () {
+        self.SaveAndHideVisibleEditor = function () {
             AQ(self.Grid()).each(function (item) {
-                item.EditorVisible(false);
+                if (item.EditorVisible() == true) {
+                    self.UpdateVariantCogs(item);
+                    item.EditorVisible(false);
+                    return;
+                }
             });
         };
 
-        // 
         self.UpdateVariantCogs = function (item) {
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
@@ -210,7 +217,11 @@
                 amount: item.EditorModel.Amount(),
             };
 
-            ajax.HttpPost("/CogsService/UpdateCogs", data, self.RefreshMasterProduct);
+            // Update observables
+            item.CurrentCogsAmount(item.EditorModel.Amount());
+            item.CurrentCogsCurrencyId(item.EditorModel.CurrencyId());
+
+            ajax.HttpPost("/CogsService/UpdateCogs", data);
         };
 
         // *** Stocked Directly interactivity *** //
