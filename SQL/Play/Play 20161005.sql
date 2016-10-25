@@ -13,7 +13,17 @@ UPDATE profitwiseshop SET StartingDateForOrders = '2016-01-01';
 SELECT * FROM profitwisebatchstate;
 
 
-SELECT * FROM profitwisevariant;
+SELECT * FROM profitwisemastervariant ORDER BY CogsCurrencyId DESC;
+
+UPDATE profitwisemastervariant SET CogsCurrencyId = 1 WHERE CogsCurrencyId  = 4000;
+
+
+
+UPDATE profitwisemastervariant 
+SET CogsCurrencyId = 1, CogsAmount = 10.0
+WHERE PwShopId = 100001 AND PwMasterVariantId = 3;
+
+
 
 
 
@@ -29,9 +39,11 @@ FROM shopifyorderlineitem t1
 		
 
 
-SELECT t1.PwMasterVariantId, t1.Exclude, t1.StockedDirectly, t1.CogsCurrencyId, t1.CogsAmount, t2.Title FROM profitwisemastervariant t1
+SELECT t1.PwMasterVariantId, t1.Exclude, t1.StockedDirectly, t1.CogsCurrencyId, t1.CogsAmount, t2.Title, t2.Sku 
+FROM profitwisemastervariant t1
 	INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
-WHERE t1.PwShopId = 100001;
+WHERE t1.PwShopId = 100001
+AND t1.PwMasterProductId = 5;
 
 
 

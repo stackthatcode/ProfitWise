@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -87,9 +88,10 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
+            
+            ValidateCogs(currencyId, amount);
 
             cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
-
             return JsonNetResult.Success();
         }
 
@@ -164,10 +166,25 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
             cogsRepository.UpdateMasterVariantCogs(masterVariantId, currencyId, amount);
+
+            ValidateCogs(currencyId, amount);
+
             return JsonNetResult.Success();
         }
 
-        
+        public void ValidateCogs(int currencyId, decimal amount)
+        {
+            if (!_currencyService.CurrencyExists(currencyId))
+            {
+                throw new Exception($"Unable to locate Currency {currencyId} (Amount: {amount}");
+            }
+            if (amount < 0 || amount > 999999999m)
+            {
+                throw new Exception($"Dollar Amount {amount} out of acceptable range (Currency Id: {currencyId})");
+            }
+        }
+
+
         [HttpPost]
         public ActionResult ExcludeByMasterVariantId(long masterVariantId, bool value)
         {
@@ -187,7 +204,6 @@ namespace ProfitWise.Web.Controllers
             cogsRepository.UpdateStockedDirectlyByMasterVariantId(masterVariantId, value);
             return JsonNetResult.Success();
         }
-
 
     }
 }

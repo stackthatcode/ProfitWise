@@ -148,5 +148,10 @@ namespace ProfitWise.Data.Services
             }
             return currency.Abbreviation;
         }
+
+        public bool CurrencyExists(int currencyId)
+        {
+            return CurrencyCache.Exists(x => x.CurrencyId == currencyId);
+        }
     }
 }

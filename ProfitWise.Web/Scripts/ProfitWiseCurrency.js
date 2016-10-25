@@ -36,6 +36,7 @@ ProfitWiseFunctions.FormatCurrency = function (amount, currencyId) {
 };
 
 ProfitWiseFunctions.UnformatCurrency = function (amount) {
+    amount = amount || 0;
     amountAsString = typeof amount == "string" ? amount : amount.toString();
     return numeral().unformat(amountAsString);
 };

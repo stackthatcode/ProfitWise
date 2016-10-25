@@ -84,10 +84,10 @@ namespace ProfitWise.Data.ProcessSteps
             }
 
             foreach (var variant in 
-                masterVariants
-                    .SelectMany(x => x.Variants)
-                    .Where(x => x.IsActive == false)
-                    .ToList())
+                        masterVariants
+                            .SelectMany(x => x.Variants)
+                            .Where(x => x.IsActive == false)
+                            .ToList())
             {
                 if (orderLineItems.All(x => x.PwProductId != variant.PwProductId))
                 {

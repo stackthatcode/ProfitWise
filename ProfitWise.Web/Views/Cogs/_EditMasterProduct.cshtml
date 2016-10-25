@@ -52,8 +52,7 @@
     <!-- Filtering and Paging -->
     <div class="row standard-padding">
         <div class="col-xs-12" style="padding-top: 20px;">
-            <a style="width: 200px;" href="#"
-               data-bind="click: function() { $root.EditProductId(null); }">
+            <a style="width: 200px;" href="#" data-bind="click: ExitCallback">
                 <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;&nbsp;Go Back to Product Search
             </a>
             <h3 style="font-weight: 700; margin-bottom: 8px;" data-bind="text: MasterProductTitle"></h3>
@@ -70,11 +69,11 @@
             <tr>
                 <th>
                     <span data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 1, ColumnName: 'Sku', Model: $data.SortingModel } }">
+                                data: { ColumnIndex: 0, ColumnName: 'Sku', Model: $data.SortingModel } }">
                     </span>
                     <span>&nbsp;/&nbsp;</span>
                     <span data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 0, ColumnName: 'Title', Model: $data.SortingModel } }">
+                                data: { ColumnIndex: 1, ColumnName: 'Title', Model: $data.SortingModel } }">
                     </span>
                 </th>
 
@@ -156,9 +155,23 @@
         self.Grid = ko.observable([]);
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
 
-        self.SortingModel.Callback = function() {
+        self.RefreshSort = function() {
             var gridData = self.Grid();
-            AQ(gridData).orderBy(function(n) { return n.Sku; }).toArray();
+
+            var columnLambda =
+                (self.SortingModel.SelectedColumnIndex() == 0)
+                    ? function(n) { return n.Sku; }
+                    : function (n) { return n.Title; };
+
+            if (self.SortingModel.SortByDirectionDown()) {
+                self.Grid(AQ(gridData).orderBy(columnLambda).toArray());
+            } else {
+                self.Grid(AQ(gridData).orderByDescending(columnLambda).toArray());
+            }
+        }
+
+        self.SortingModel.Callback = function () {
+            self.RefreshSort();
         };
 
         // *** Sorting stuff...
@@ -179,6 +192,10 @@
                 }
             });
         };
+
+        self.ExitCallback = function() {
+        };
+        
 
         self.Refresh = function() {
             self.RetrieveMasterProduct(self.MasterProductId());
@@ -206,12 +223,12 @@
                         new ProfitWiseWidgets.MoneyEditorWidgetModel(
                                 item.CogsCurrencyId, item.CogsAmount);
 
-                    item.UpdateAndHide = function (item) {
+                    item.UpdateAndHide = function () {
                         item.EditorVisible(false);
                         self.UpdateVariantCogs(item);
                     };
 
-                    item.CancelAndHide = function (item) {
+                    item.CancelAndHide = function () {
                         item.EditorModel.PushState(
                             item.CurrentCogsCurrencyId(), item.CurrentCogsAmount());
                         item.EditorVisible(false);
@@ -232,6 +249,7 @@
                 });
 
             self.Grid(data.MasterProduct.MasterVariants);
+            self.RefreshSort();
         };
 
         self.HideCurrentCogsEditor = function () {
