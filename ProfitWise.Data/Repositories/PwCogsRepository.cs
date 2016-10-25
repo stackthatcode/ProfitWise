@@ -131,7 +131,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId, stockedDirectly});
         }
 
-        public void UpdateStockedDirectlyById(long masterProductId, bool stockedDirectly)
+        public void UpdateStockedDirectlyByMasterProductId(long masterProductId, bool stockedDirectly)
         {
             var query =
                 @"UPDATE profitwisemastervariant 
@@ -141,6 +141,18 @@ namespace ProfitWise.Data.Repositories
 
             _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterProductId, stockedDirectly });
         }
+
+        public void UpdateStockedDirectlyByMasterVariantId(long masterVariantId, bool stockedDirectly)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant 
+                SET StockedDirectly = @stockedDirectly
+                WHERE PwShopId = @PwShopId
+                AND PwMasterVariantId = @masterVariantId;";
+
+            _connection.Execute(query, new { PwShopId = this.PwShop.PwShopId, masterVariantId, stockedDirectly });
+        }
+
 
         public void UpdateExcludeByPicklist(long pickListId, bool exclude)
         {
@@ -156,7 +168,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, pickListId, exclude });
         }
 
-        public void UpdateExcludeById(long masterProductId, bool exclude)
+        public void UpdateExcludeByMasterProductId(long masterProductId, bool exclude)
         {
             var query =
                 @"UPDATE profitwisemastervariant 
@@ -165,6 +177,17 @@ namespace ProfitWise.Data.Repositories
                 AND PwMasterProductId = @masterProductId;";
 
             _connection.Execute(query, new { PwShopId, masterProductId, exclude });
+        }
+
+        public void UpdateExcludeByMasterVariantId(long masterVariantId, bool exclude)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant 
+                SET Exclude = @exclude
+                WHERE PwShopId = @PwShopId
+                AND PwMasterVariantId = @masterVariantId;";
+
+            _connection.Execute(query, new { PwShopId, masterVariantId, exclude });
         }
 
 

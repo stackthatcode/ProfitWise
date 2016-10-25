@@ -110,7 +110,7 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
-            cogsRepository.UpdateStockedDirectlyById(masterProductId, value);
+            cogsRepository.UpdateStockedDirectlyByMasterProductId(masterProductId, value);
             return JsonNetResult.Success();
         }
 
@@ -130,7 +130,7 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
-            cogsRepository.UpdateExcludeById(masterProductId, value);
+            cogsRepository.UpdateExcludeByMasterProductId(masterProductId, value);
             return JsonNetResult.Success();
         }
 
@@ -166,6 +166,29 @@ namespace ProfitWise.Web.Controllers
             cogsRepository.UpdateMasterVariantCogs(masterVariantId, currencyId, amount);
             return JsonNetResult.Success();
         }
+
+        
+        [HttpPost]
+        public ActionResult ExcludeByMasterVariantId(long masterVariantId, bool value)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
+
+            cogsRepository.UpdateExcludeByMasterVariantId(masterVariantId, value);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult StockedDirectlyByMasterVariantId(long masterVariantId, bool value)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
+
+            cogsRepository.UpdateStockedDirectlyByMasterVariantId(masterVariantId, value);
+            return JsonNetResult.Success();
+        }
+
+
     }
 }
 

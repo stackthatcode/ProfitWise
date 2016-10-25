@@ -395,7 +395,7 @@
         self.EditProductId = ko.observable(null);
         
         self.ProductVariantEditorModel = new ProfitWise.ProductVariantCogsEditorModel();
-
+        
         self.LaunchProductVariantCogsEditor = function(model) {
             self.EditProductId(model.MasterProductId);
             self.ProductVariantEditorModel.RetrieveMasterProduct(model.MasterProductId);
