@@ -25,14 +25,17 @@
 
 <script type="text/html" id="Money-Editor-Widget">
     <div class="input-group popover-container currency-widget">
-        <div style="width: 82px; line-height: 22px !important;"
+        <div style="width: 70px;"
              class="input-group-addon popover-launcher"
              data-bind="text: SelectedCurrencyFriendly, 
                     popover: { options: { placement: 'bottom' , trigger: 'click' , }, template: 'Money-Editor-Widget-Popover', data: $data }">
         </div>
         <input type="text"
                data-bind="formatMoney: Amount,
-                        event: { focus: function() { event.target.select(); }, keyup: InvokeKeyCallback }"
+                        event: { 
+                            focus: function() { event.target.select(); }, 
+                            keyup: InvokeKeyCallback,
+                            blur: function() { alert('Wake up!!!'); } }"
                class="form-control money-editor-text"
                placeholder="Enter CoGS"
                maxlength="12">
@@ -55,34 +58,33 @@
         self.Amount = ko.observable(numeral(amount || defaultAmount).format('0,0.00'));
 
         ko.bindingHandlers.formatMoney = {
-            init: function (element, valueAccessor) {
+            init: function(element, valueAccessor) {
                 var value = valueAccessor();
                 var interceptor = ko.computed({
-                    read: function () {
-                        // Here's the formatting injection point
-                        return numeral(ko.unwrap(value)).format('0,0.00');
-                    },
-                    write: function (newValue) {
-                        if ($.trim(newValue) == '')
-                            value("0");
-                        else
-                            value(numeral().unformat(newValue));
-                        value.valueHasMutated();
-                    }
-                }).extend({ notify: 'always' });
+                        read: function() {
+                            // Here's the formatting injection point
+                            var unwrapperValue = ProfitWiseFunctions.UnformatCurrency(ko.unwrap(value));
+                            var output = numeral(unwrapperValue).format('0,0.00');
+                            return output;
+                        },
+                        write: function(newValue) {
+                            if ($.trim(newValue) == '')
+                                value("0");
+                            else
+                                value(numeral().unformat(newValue));
+                            value.valueHasMutated();
+                        }
+                    })
+                    .extend({ notify: 'always' });
 
                 // Only apply bindings to node...?
-                if (element.tagName.toLowerCase() == 'input')
-                    ko.applyBindingsToNode(element, {
-                        value: interceptor
-                    });
-                else
-                    ko.applyBindingsToNode(element, {
-                        text: interceptor
-                    });
+                if (element.tagName.toLowerCase() == 'input') {
+                    ko.applyBindingsToNode(element, { value: interceptor });
+                } else {
+                    ko.applyBindingsToNode(element, { text: interceptor });
+                }
             }
-        }
-
+        };
 
         self.SelectedCurrency = ko.computed(function() {
             return AQ(ProfitWiseFunctions.CurrencyCache)
@@ -98,6 +100,7 @@
         self.ChangeCurrencySelection = function (model) {
             self.CurrencyId(model.Id);
             ProfitWiseFunctions.PopOverCloseAll();
+            self.ChangeCurrencyCallback();
         };
 
         self.PushState = function(currencyId, amount) {
@@ -114,12 +117,9 @@
 
         
         // Enter-key Stuff
-        self.EnterKeyCallback = function () {
-        };
-
-        self.EscapeKeyCallback = function () {
-        };
-
+        self.EnterKeyCallback = function () { };
+        self.EscapeKeyCallback = function () { };
+        self.ChangeCurrencyCallback = function() {};
 
         self.RegisterEnterKeyCallback = function (callback) {
             self.EnterKeyCallback = callback;
@@ -127,6 +127,10 @@
 
         self.RegisterEscapeKeyCallback = function (callback) {
             self.EscapeKeyCallback = callback;
+        };
+
+        self.RegisterChangeCurrencyCallback = function(callback) {
+            self.ChangeCurrencyCallback = callback;
         };
 
         self.InvokeKeyCallback = function (model, event) {

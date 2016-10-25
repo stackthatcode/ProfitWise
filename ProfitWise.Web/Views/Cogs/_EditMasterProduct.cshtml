@@ -111,20 +111,22 @@
                     </a>
                 </div>
 
-                <div data-bind="if: EditorVisible">
+                <div data-bind="if: EditorVisible, event: { onblur: function() { alert('blur!'); } }">
                     <div data-bind="template: { name: 'Money-Editor-Widget', data: EditorModel }">
                     </div>
                 </div>
             </td>
+
             <td><a href="#">Edit</a>|<a href="#">Delete</a></td>
+
             <td>
                 <input type="checkbox"
-                       data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.Excluded"/>
+                       data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.Excluded" />
             </td>
 
             <td>
                 <input type="checkbox"
-                       data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.StockedDirectly"/>
+                       data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.StockedDirectly" />
             </td>
         </tr>
         </tbody>
@@ -151,77 +153,116 @@
             return self.Grid().length + " Variant(s)";
         });
 
-        self.RetrieveMasterProduct = function (masterProductId) {
+        self.RetrieveMasterProduct = function (masterProductId, callback) {
             self.MasterProductId(masterProductId);
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             var url = "/CogsService/RetrieveMasterProduct?masterProductId=" + self.MasterProductId();
-            ajax.HttpGet(url, self.LoadMasterProduct);
+
+            ajax.HttpGet(url, function (data) {
+                self.LoadMasterProduct(data);
+                if (callback) {
+                    callback();
+                }
+            });
         };
 
-        self.RefreshMasterProduct = function() {
-            self.RetrieveMasterProduct(self.MasterProductId());
+        self.RefreshMasterProduct = function(callback) {
+            self.RetrieveMasterProduct(self.MasterProductId(), callback);
         };
 
         self.LoadMasterProduct = function (data) {
-            // console.log(data);
             self.MasterProductTitle(data.MasterProduct.Title);
+            
+            AQ(data.MasterProduct.MasterVariants)
+                .each(function (item) {
+                    item.CurrentCogsCurrencyId = ko.observable(item.CogsCurrencyId);
+                    item.CurrentCogsAmount = ko.observable(item.CogsAmount);
+                    item.EditorVisible = ko.observable(false);
+                    
+                    item.ClickOnCogs = function () {
+                        var id = item.MasterVariantId;
+                        self.SaveCurrentAndSelectCogs(id);
+                    }
 
-            AQ(data.MasterProduct.MasterVariants).each(function (item) {
-                item.EditorVisible = ko.observable(false);
+                    item.EditorModel =
+                        new ProfitWiseWidgets.MoneyEditorWidgetModel(
+                                item.CogsCurrencyId, item.CogsAmount);
 
-                item.CurrentCogsCurrencyId = ko.observable(item.CogsCurrencyId);
-                item.CurrentCogsAmount = ko.observable(item.CogsAmount);
+                    item.EditorModel.RegisterEnterKeyCallback(function () {
+                        item.EditorVisible(false);
+                        self.UpdateVariantCogs(item);
+                    });
 
-                item.EditorModel = 
-                    new ProfitWiseWidgets.MoneyEditorWidgetModel(
-                            item.CogsCurrencyId, item.CogsAmount);
+                    item.EditorModel.RegisterEscapeKeyCallback(function () {
+                        item.EditorVisible(false);
+                    });
 
-                item.ClickOnCogs = function () {
-                    self.SaveAndHideVisibleEditor();
-
-                    item.EditorVisible(true);
-                    $('input.money-editor-text').focus();
-                }
-
-                item.EditorModel.RegisterEnterKeyCallback(function () {
-                    item.EditorVisible(false);
-                    self.UpdateVariantCogs(item);
+                    item.EditorModel.RegisterChangeCurrencyCallback(function() {
+                        self.UpdateVariantCogs(item);
+                    });
                 });
-
-                item.EditorModel.RegisterEscapeKeyCallback(function () {
-                    item.EditorVisible(false);
-                });
-
-            });
 
             self.Grid(data.MasterProduct.MasterVariants);
         };
 
-        self.SaveAndHideVisibleEditor = function () {
-            AQ(self.Grid()).each(function (item) {
-                if (item.EditorVisible() == true) {
-                    self.UpdateVariantCogs(item);
-                    item.EditorVisible(false);
-                    return;
-                }
-            });
+        self.SaveCurrentAndSelectCogs = function (masterVariantId) {
+            var current =
+                AQ(self.Grid()).firstOrDefault(function(item) {
+                    return item.EditorVisible() == true;
+                });
+
+            if (current) {
+                flow.exec(
+                    function () {
+                        self.UpdateVariantCogs(current, this);
+                    },
+                    function() {
+                        self.RefreshMasterProduct(this);
+                    },
+                    function() {
+                        self.SelectCogsByMasterVariantId(masterVariantId);
+                    });
+
+            } else {
+                self.SelectCogsByMasterVariantId(masterVariantId);
+            }
         };
 
-        self.UpdateVariantCogs = function (item) {
+        self.CurrentlySelectedVariant = function() {
+            var item =
+                AQ(self.Grid())
+                    .firstOrDefault(function(n) { return n.EditorVisible(); });
+            return item;
+        };
+
+        self.SelectCogsByMasterVariantId = function (id) {            
+            var item =
+                AQ(self.Grid())
+                    .firstOrDefault(function (n) { return n.MasterVariantId == id; });
+
+            if (item) {
+                item.EditorVisible(true);
+                $('input.money-editor-text').focus();
+            }
+        }
+
+        self.UpdateVariantCogs = function (item, callback) {
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
-            var data = {
-                masterVariantId: item.MasterVariantId,
-                currencyId: item.EditorModel.CurrencyId(),
-                amount: item.EditorModel.Amount(),
-            };
-
+            
             // Update observables
-            item.CurrentCogsAmount(item.EditorModel.Amount());
+            item.CurrentCogsAmount(
+                ProfitWiseFunctions.UnformatCurrency(item.EditorModel.Amount()));
             item.CurrentCogsCurrencyId(item.EditorModel.CurrencyId());
 
-            ajax.HttpPost("/CogsService/UpdateCogs", data);
+            var data = {
+                masterVariantId: item.MasterVariantId,
+                currencyId: item.CurrentCogsCurrencyId(),
+                amount: item.CurrentCogsAmount(),
+            };
+
+            ajax.HttpPost("/CogsService/UpdateCogs", data, callback);
         };
 
         // *** Stocked Directly interactivity *** //

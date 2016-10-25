@@ -35,3 +35,9 @@ ProfitWiseFunctions.FormatCurrency = function (amount, currencyId) {
     return item.Symbol + numeral(amount).format("0,0.00");
 };
 
+ProfitWiseFunctions.UnformatCurrency = function (amount) {
+    amountAsString = typeof amount == "string" ? amount : amount.toString();
+    return numeral().unformat(amountAsString);
+};
+
+

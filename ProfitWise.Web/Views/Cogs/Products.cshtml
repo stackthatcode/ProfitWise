@@ -132,54 +132,56 @@
             <td class="overflow-gracefully">
                 <span data-bind="if: Vendor">
                         <span data-bind="text: Vendor"></span>
-                    </span>
+                </span>
                 <span data-bind="ifnot: Vendor">
                         (No Vendor)
-                    </span>
+                </span>
             </td>
+
             <td class="overflow-gracefully">
-            <a href="#" data-bind="text: ProductTitle, click: $root.LaunchProductVariantCogsEditor"></a></td>
-                <td>
-                    <span data-bind="text: InventoryCount"></span> in stock<br />
-                    (<span data-bind="text: VariantCount"></span> variants)
-                </td>
+                <a href="#" data-bind="text: ProductTitle, click: $root.LaunchProductVariantCogsEditor"></a></td>
+            <td>
+                <span data-bind="text: InventoryCount"></span> in stock<br/>
+                (<span data-bind="text: VariantCount"></span> variants)
+            </td>
 
-                <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
+            <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
 
-                <td>
-                    <a href="#" data-bind="click: $root.BulkEditPopUp">
-                        <span data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Cogs }">
+            <td>
+                <a href="#" data-bind="click: $root.BulkEditPopUp">
+                    <span data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Cogs }">
                         </span>
+                </a>
+            </td>
+
+            <td>
+                <div data-bind="if: StockedDirectlyCount == VariantCount || StockedDirectlyCount == 0">
+                    <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyIsChecked($data)" />
+                </div>
+
+                <div data-bind="if: StockedDirectlyCount > 0 && StockedDirectlyCount < VariantCount">
+                    <a href="#"
+                        data-bind="click: $root.StockedDirectlyGridLinkClick">
+                        <span data-bind="text: StockedDirectlyCount"></span> of
+                        <span data-bind="text: VariantCount"></span>
                     </a>
-                </td>
-                <td>
-                    <div data-bind="if: StockedDirectlyCount == VariantCount || StockedDirectlyCount == 0">
-                        <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyIsChecked($data)" />
-                    </div>
+                </div>
+            </td>
 
-                    <div data-bind="if: StockedDirectlyCount > 0 && StockedDirectlyCount < VariantCount">
-                        <a href="#"
-                           data-bind="click: $root.StockedDirectlyGridLinkClick">
-                            <span data-bind="text: StockedDirectlyCount"></span> of
-                            <span data-bind="text: VariantCount"></span>
-                        </a>
-                    </div>
-                </td>
+            <td>
+                <div data-bind="if: ExcludedCount == VariantCount || ExcludedCount == 0">
+                    <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedIsChecked($data)" />
+                </div>
 
-                <td>
-                    <div data-bind="if: ExcludedCount == VariantCount || ExcludedCount == 0">
-                        <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedIsChecked($data)" />
-                    </div>
-
-                    <div data-bind="if: ExcludedCount > 0 && ExcludedCount < VariantCount">
-                        <a href="#"
-                           data-bind="click: $root.ExcludedGridLinkClick">
-                            <span data-bind="text: ExcludedCount"></span> of
-                            <span data-bind="text: VariantCount"></span>
-                        </a>
-                    </div>
-                </td>
-            </tr>
+                <div data-bind="if: ExcludedCount > 0 && ExcludedCount < VariantCount">
+                    <a href="#"
+                        data-bind="click: $root.ExcludedGridLinkClick">
+                        <span data-bind="text: ExcludedCount"></span> of
+                        <span data-bind="text: VariantCount"></span>
+                    </a>
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
 </script>
