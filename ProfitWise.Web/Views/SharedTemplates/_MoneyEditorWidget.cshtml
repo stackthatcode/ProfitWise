@@ -35,7 +35,7 @@
                         event: { 
                             focus: function() { event.target.select(); }, 
                             keyup: InvokeKeyCallback,
-                            blur: function() { alert('Wake up!!!'); } }"
+                            blur: InvokeEditorLostFocusCallback }"
                class="form-control money-editor-text"
                placeholder="Enter CoGS"
                maxlength="12">
@@ -120,6 +120,7 @@
         self.EnterKeyCallback = function () { };
         self.EscapeKeyCallback = function () { };
         self.ChangeCurrencyCallback = function() {};
+        self.EditorLostFocusCallback = function() {};
 
         self.RegisterEnterKeyCallback = function (callback) {
             self.EnterKeyCallback = callback;
@@ -133,6 +134,10 @@
             self.ChangeCurrencyCallback = callback;
         };
 
+        self.RegisterEditorLostFocusCallback = function(callback) {
+            self.EditorLostFocusCallback = callback;
+        };
+
         self.InvokeKeyCallback = function (model, event) {
             if (event.keyCode == 27) {
                 self.EscapeKeyCallback();
@@ -144,6 +149,10 @@
             } else {
                 return true;
             }
+        };
+
+        self.InvokeEditorLostFocusCallback = function(model, event) {
+            self.EditorLostFocusCallback();
         };
 
         return self;

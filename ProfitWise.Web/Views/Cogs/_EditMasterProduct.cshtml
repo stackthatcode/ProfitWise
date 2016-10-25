@@ -111,9 +111,15 @@
                     </a>
                 </div>
 
-                <div data-bind="if: EditorVisible, event: { onblur: function() { alert('blur!'); } }">
-                    <div data-bind="template: { name: 'Money-Editor-Widget', data: EditorModel }">
-                    </div>
+                <div data-bind="if: EditorVisible">
+                    <span data-bind="template: { name: 'Money-Editor-Widget', data: EditorModel }">
+                    </span>
+                    <div style="height: 5px;"></div>
+                    <a href="#" style="font-size: 0.8em; font-weight: 600;" 
+                        data-bind="click: CancelAndHide"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+                    <span>|</span>
+                    <a href="#" style="font-size: 0.8em; font-weight: 600;" 
+                        data-bind="click: UpdateAndHide"><i class="glyphicon glyphicon-ok"></i> Save</a>
                 </div>
             </td>
 
@@ -134,7 +140,6 @@
 </script>
 
 <script>
-
     var ProfitWise = ProfitWise || {};
 
     ProfitWise.ProductVariantCogsEditorModel = function () {
@@ -167,10 +172,6 @@
             });
         };
 
-        self.RefreshMasterProduct = function(callback) {
-            self.RetrieveMasterProduct(self.MasterProductId(), callback);
-        };
-
         self.LoadMasterProduct = function (data) {
             self.MasterProductTitle(data.MasterProduct.Title);
             
@@ -180,22 +181,35 @@
                     item.CurrentCogsAmount = ko.observable(item.CogsAmount);
                     item.EditorVisible = ko.observable(false);
                     
-                    item.ClickOnCogs = function () {
+                    item.ClickOnCogs = function (data, event) {
+                        // console.log(event.target);
                         var id = item.MasterVariantId;
-                        self.SaveCurrentAndSelectCogs(id);
+                        self.HideCurrentCogsEditor();
+                        self.SelectCogsByMasterVariantId(id);
                     }
 
                     item.EditorModel =
                         new ProfitWiseWidgets.MoneyEditorWidgetModel(
                                 item.CogsCurrencyId, item.CogsAmount);
 
+                    item.UpdateAndHide = function (item) {
+                        item.EditorVisible(false);
+                        self.UpdateVariantCogs(item);
+                    };
+
+                    item.CancelAndHide = function (item) {
+                        item.EditorModel.PushState(
+                            item.CurrentCogsCurrencyId(), item.CurrentCogsAmount());
+                        item.EditorVisible(false);
+                    };
+
+                    item.EditorModel.RegisterEscapeKeyCallback(function () {
+                        item.CancelAndHide();
+                    });
+
                     item.EditorModel.RegisterEnterKeyCallback(function () {
                         item.EditorVisible(false);
                         self.UpdateVariantCogs(item);
-                    });
-
-                    item.EditorModel.RegisterEscapeKeyCallback(function () {
-                        item.EditorVisible(false);
                     });
 
                     item.EditorModel.RegisterChangeCurrencyCallback(function() {
@@ -206,36 +220,16 @@
             self.Grid(data.MasterProduct.MasterVariants);
         };
 
-        self.SaveCurrentAndSelectCogs = function (masterVariantId) {
+        self.HideCurrentCogsEditor = function () {
             var current =
-                AQ(self.Grid()).firstOrDefault(function(item) {
-                    return item.EditorVisible() == true;
-                });
+                AQ(self.Grid())
+                    .firstOrDefault(function (item) { return item.EditorVisible(); });
 
             if (current) {
-                flow.exec(
-                    function () {
-                        self.UpdateVariantCogs(current, this);
-                    },
-                    function() {
-                        self.RefreshMasterProduct(this);
-                    },
-                    function() {
-                        self.SelectCogsByMasterVariantId(masterVariantId);
-                    });
-
-            } else {
-                self.SelectCogsByMasterVariantId(masterVariantId);
+                current.EditorVisible(false);
             }
         };
-
-        self.CurrentlySelectedVariant = function() {
-            var item =
-                AQ(self.Grid())
-                    .firstOrDefault(function(n) { return n.EditorVisible(); });
-            return item;
-        };
-
+        
         self.SelectCogsByMasterVariantId = function (id) {            
             var item =
                 AQ(self.Grid())
@@ -321,7 +315,7 @@
                 "table#product-edit-grid tbody tr td",
                 "table#product-edit-heading thead tr th");
         };
-
+        
         return self;
     };
 </script>
