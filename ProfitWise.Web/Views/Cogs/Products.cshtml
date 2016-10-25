@@ -140,7 +140,12 @@
             </td>
 
             <td class="overflow-gracefully">
-                <a href="#" data-bind="text: ProductTitle, click: $root.ShowVariantCogsEditor"></a></td>
+                <a href="#" data-bind="text: ProductTitle, click: $root.ShowVariantCogsEditor"></a>
+
+                <!-- Debug mode -->
+                <div>Master Product ID: <span data-bind="text: MasterProductId"></span></div>
+            </td>
+            
             <td>
                 <span data-bind="text: InventoryCount"></span> in stock<br/>
                 (<span data-bind="text: VariantCount"></span> variants)

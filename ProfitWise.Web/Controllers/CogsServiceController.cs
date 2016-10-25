@@ -146,6 +146,12 @@ namespace ProfitWise.Web.Controllers
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
 
             var masterProductSummary = cogsRepository.RetrieveProduct(masterProductId);
+
+            if (masterProductSummary == null)
+            {
+                return new JsonNetResult(new { MasterProduct = (CogsMasterProductModel)null });
+            }
+
             var masterVariants = cogsRepository.RetrieveVariants(new[] { masterProductId });
 
             var masterProduct = new CogsMasterProductModel()
@@ -204,7 +210,6 @@ namespace ProfitWise.Web.Controllers
             cogsRepository.UpdateStockedDirectlyByMasterVariantId(masterVariantId, value);
             return JsonNetResult.Success();
         }
-
     }
 }
 

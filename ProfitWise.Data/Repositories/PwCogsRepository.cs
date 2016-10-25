@@ -65,16 +65,17 @@ namespace ProfitWise.Data.Repositories
                 (sortByColumn == 0
                     ? $"t1.Vendor {sortDirectionWord}, t1.Title {sortDirectionWord} "
                     : $"t1.Title {sortDirectionWord}, t1.Vendor {sortDirectionWord} ");
-                    
+            
             var query =
                 @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
                 FROM profitwiseproduct t1
-                WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = true
+                    INNER JOIN profitwisemasterproduct t2
+                        ON t1.PwMasterProductId = t2.PwMasterProductId
+                WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = true AND t2.PwShopId = @PwShopId
                 AND t1.PwMasterProductId IN ( 
 	                SELECT PwMasterProductId FROM profitwisepicklistmasterproduct 
-                    WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId  ) " +
-                sortByClause +
-                " LIMIT @StartRecord, @ResultsPerPage;";
+                    WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId ) " +
+                sortByClause + " LIMIT @StartRecord, @ResultsPerPage;";
 
             return _connection.Query<PwCogsProductSummary>(
                 query,

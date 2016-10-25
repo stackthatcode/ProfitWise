@@ -186,6 +186,11 @@
             var url = "/CogsService/RetrieveMasterProduct?masterProductId=" + self.MasterProductId();
 
             ajax.HttpGet(url, function (data) {
+                if (!data.MasterProduct) {
+                    self.ExitCallback();
+                    return;
+                }
+
                 self.LoadMasterProduct(data);
                 if (callback) {
                     callback();
