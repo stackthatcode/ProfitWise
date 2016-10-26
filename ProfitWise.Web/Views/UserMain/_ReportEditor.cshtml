@@ -20,7 +20,6 @@
     }
 </style>
 
-
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
 <script type="text/html" id="Report-Editor-Header">
     <!-- Spacer - 15px -->
@@ -32,20 +31,27 @@
             <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
                 <li role="presentation" class="active">
                     <a href="#report-filter-product-type"
-                       data-bind="click: function() { alert('ok'); }"
+                       data-bind="click: ProductTypeClick"
                        aria-controls="home" role="tab" data-toggle="tab">Product Types</a>
                 </li>
                 <li role="presentation">
-                    <a href="#report-filter-vendor" aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
+                    <a href="#report-filter-vendor"
+                       data-bind="click: VendorClick"
+                       aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
                 </li>
                 <li role="presentation">
-                    <a href="#report-filter-product" aria-controls="messages" role="tab" data-toggle="tab">Products</a>
+                    <a href="#report-filter-product"
+                       data-bind="click: ProductClick"
+                       aria-controls="messages" role="tab" data-toggle="tab">Products</a>
                 </li>
                 <li role="presentation">
-                    <a href="#report-filter-sku" aria-controls="settings" role="tab" data-toggle="tab">SKUs</a>
+                    <a href="#report-filter-sku"
+                       data-bind="click: SkuClick"
+                       aria-controls="settings" role="tab" data-toggle="tab">SKUs</a>
                 </li>
                 <li role="presentation">
-                    <a href="#report-filter-grouping" aria-controls="settings" role="tab" data-toggle="tab">Grouping</a>
+                    <a href="#report-filter-grouping"
+                       aria-controls="settings" role="tab" data-toggle="tab">Grouping</a>
                 </li>
             </ul>
 
@@ -63,14 +69,23 @@
 
     <!-- Tab panes -->
     <div class="tab-content" style="clear: both;">
-        <!-- Total - 120px -->
+        <!-- Height - 120px -->
         <div id="report-filter-product-type" role="tabpanel" class="tab-pane active reduced-padding">
-            <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.ProductTypeFilterModel }"></div>
+            <div class="row-fluid">
+                <div class="col-xs-8 no-side-padding">
+                    <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.ProductTypeFilterModel }"></div>
+                </div>
+                <!-- Possibly move to another widget -->
+                <div class="col-xs-1"></div>
+                <div class="col-xs-3" style="padding-top: 20px;">
+                    <p>Select the Product Types you'd like to include in your ProfitWise View</p>
+                </div>
+            </div>
 
             <!-- Bottom dashed-line and the -->
             <div class="row-fluid">
                 <div class="col-xs-8" style="border-top: 1px dashed #CCC;"></div>
-                <div class="col-xs-4" style="background-color: white; height: 150px;"></div>
+                <div class="col-xs-4" style="background-color: red; height: 150px;"></div>
             </div>
         </div>
 
@@ -106,9 +121,24 @@
     </div>
 </script>
 
-
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
-<script type="text/html" id="Report-Editor-Body">    
+<script type="text/html" id="Report-Editor-Body">
+    <div data-bind="if: SelectedFilter() == ReportFilterTypes.ProductType">
+        <div data-bind="template: { name: 'Report-Editor-Body-Product-Type' }"></div>
+    </div>
+    <div data-bind="if: SelectedFilter() == ReportFilterTypes.Vendor">
+        <div data-bind="template: { name: 'Report-Editor-Body-Vendor' }"></div>
+    </div>
+    <div data-bind="if: SelectedFilter() == ReportFilterTypes.Product">
+        <div data-bind="template: { name: 'Report-Editor-Body-Product' }"></div>
+    </div>
+    <div data-bind="if: SelectedFilter() == ReportFilterTypes.Sku">
+        <div data-bind="template: { name: 'Report-Editor-Body-Sku' }"></div>
+    </div>
+
+</script>
+
+<script type="text/html" id="Report-Editor-Body-Product-Type">
     <div class="row-fluid">
         <div class="col-xs-8 reduced-padding">
             <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
@@ -179,19 +209,27 @@
     </div>
 </script>
 
+<script type="text/html" id="Report-Editor-Body-Vendor">
+</script>
+
+<script type="text/html" id="Report-Editor-Body-Product">
+</script>
+
+<script type="text/html" id="Report-Editor-Body-Sku">
+</script>
 
 
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.ReportEditorModel = function() {
+    ProfitWiseWidgets.ReportEditorModel = function () {
         var self = this;
 
         self.ReportFilterTypes = {
             ProductType: "ProductType",
             Vendor: "Vendor",
             Product: "Product",
-            Skus: "Skus"
+            Sku: "Skus"
         };
 
         self.ProductTypeFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Product Types...");
@@ -199,18 +237,59 @@
         self.ProductFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Products by Title");
         self.SkuFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for SKU by Title");
 
-        self.ProductTypeClick = function() {
+        self.ProductTypeClick = function () {
             self.SelectedFilter(self.ReportFilterTypes.ProductType);
+        };
+
+        self.VendorClick = function () {
+            self.SelectedFilter(self.ReportFilterTypes.Vendor);
+        };
+
+        self.ProductClick = function () {
+            self.SelectedFilter(self.ReportFilterTypes.Product);
+        };
+
+        self.SkuClick = function () {
+            self.SelectedFilter(self.ReportFilterTypes.Sku);
+        };
+
+        self.ProductTypesGrid = ko.observable([]);
+        self.VendorGrid = ko.observable([]);
+        self.ProductGrid = ko.observable([]);
+        self.SkuGrid = ko.observable([]);
+
+        self.GotoNextTab = function() {
+            // TODO => build this out
+        };
+
+        self.GotoPreviousTab = function() {
+            // TODO => build this out
         };
 
         self.SelectedFilter = ko.observable(self.ReportFilterTypes.ProductType);
 
         self.OkCallback = function () { };
 
-        self.RegisterOkCallback = function(callback) {
+        self.RegisterOkCallback = function (callback) {
             self.OkCallback = callback;
         };
-        
+
+        return self;
+    };
+
+    ProfitWiseWidgets.ReportProductTypeRow = function() {
+        var self = this;
+
+        self.ProductType = "";
+        self.NumberOfProducts = 0;
+        self.Selected = ko.observable(true);
+
+        self.SelectedClick = function() {
+            // Get the value to update
+
+            return true;
+        };
+
         return self;
     };
 </script>
