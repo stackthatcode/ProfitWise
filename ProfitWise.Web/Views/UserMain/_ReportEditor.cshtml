@@ -1,0 +1,216 @@
+﻿@Html.Partial("~/Views/UserMain/_FilterPagingWidget.cshtml")
+
+<style>
+    table#product-types td {
+        height: 70px !important;
+        font-size: 14px;
+        vertical-align: middle !important;
+    }
+
+    table#product-types tr td:nth-child(1) {
+        width: 10%;
+    }
+
+    table#product-types tr td:nth-child(2) {
+        width: 45%;
+    }
+
+    table#product-types tr td:nth-child(3) {
+        width: 45%;
+    }
+</style>
+
+
+<!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
+<script type="text/html" id="Report-Editor-Header">
+    <!-- Spacer - 15px -->
+    <div class="vert-spacer" style="height: 15px;"></div>
+
+    <!-- Nav tabs - 43px -->
+    <div class="row-fluid" style="height: 43px;">
+        <div class="col-xs-12 no-side-padding">
+            <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
+                <li role="presentation" class="active">
+                    <a href="#report-filter-product-type"
+                       data-bind="click: function() { alert('ok'); }"
+                       aria-controls="home" role="tab" data-toggle="tab">Product Types</a>
+                </li>
+                <li role="presentation">
+                    <a href="#report-filter-vendor" aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
+                </li>
+                <li role="presentation">
+                    <a href="#report-filter-product" aria-controls="messages" role="tab" data-toggle="tab">Products</a>
+                </li>
+                <li role="presentation">
+                    <a href="#report-filter-sku" aria-controls="settings" role="tab" data-toggle="tab">SKUs</a>
+                </li>
+                <li role="presentation">
+                    <a href="#report-filter-grouping" aria-controls="settings" role="tab" data-toggle="tab">Grouping</a>
+                </li>
+            </ul>
+
+            <div style="position: absolute; width: 100%; height: 0px; overflow: visible; text-align: right;">
+                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: OkCallback">
+                    Cancel &nbsp;<i class="glyphicon glyphicon-remove" style="top: 3px;"></i>
+                </a>
+
+                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: OkCallback">
+                    Save View &nbsp;<i class="glyphicon glyphicon-floppy-disk" style="top: 3px;"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab panes -->
+    <div class="tab-content" style="clear: both;">
+        <!-- Total - 120px -->
+        <div id="report-filter-product-type" role="tabpanel" class="tab-pane active reduced-padding">
+            <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.ProductTypeFilterModel }"></div>
+
+            <!-- Bottom dashed-line and the -->
+            <div class="row-fluid">
+                <div class="col-xs-8" style="border-top: 1px dashed #CCC;"></div>
+                <div class="col-xs-4" style="background-color: white; height: 150px;"></div>
+            </div>
+        </div>
+
+        <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding">
+            <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.VendorFilterModel }"></div>
+
+            <!-- Bottom dashed-line and the -->
+            <div class="row-fluid">
+                <div class="col-xs-8" style="border-top: 1px dashed #CCC;"></div>
+                <div class="col-xs-4" style="background-color: white; height: 150px;"></div>
+            </div>
+        </div>
+
+        <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding">
+            <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.ProductFilterModel }"></div>
+
+            <!-- Bottom dashed-line and the -->
+            <div class="row-fluid">
+                <div class="col-xs-8" style="border-top: 1px dashed #CCC;"></div>
+                <div class="col-xs-4" style="background-color: white; height: 150px;"></div>
+            </div>
+        </div>
+
+        <div id="report-filter-sku" role="tabpanel" class="tab-pane reduced-padding">
+            <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.SkuFilterModel }"></div>
+
+            <!-- Bottom dashed-line and the -->
+            <div class="row-fluid">
+                <div class="col-xs-8" style="border-top: 1px dashed #CCC;"></div>
+                <div class="col-xs-4" style="background-color: white; height: 150px;"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
+<script type="text/html" id="Report-Editor-Body">    
+    <div class="row-fluid">
+        <div class="col-xs-8 reduced-padding">
+            <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
+                <tbody>
+                    <tr style="border-top: 0;">
+                        <td>
+                            <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+
+                        <td>3D Printers</td>
+                        <td>(11 Products, 18 SKUS)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+                        <td>Filament</td>
+                        <td>(20 Products, 203 SKUS)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+                        <td>Project Kits</td>
+                        <td>(5 Products, 5 SKUS)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+                        <td>Accessories</td>
+                        <td>(24 Products, 55 SKUS)</td>
+                    </tr>
+                    <tr style="border-top: 0px;">
+                        <td>
+                            <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+
+                        <td>3D Printers</td>
+                        <td>(11 Products, 18 SKUS)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+                        <td>Filament</td>
+                        <td>(20 Products, 203 SKUS)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+                        <td>Project Kits</td>
+                        <td>(5 Products, 5 SKUS)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-control" type="checkbox" style="height: 15px; width: 15px;" />
+                        </td>
+                        <td>Accessories</td>
+                        <td>(24 Products, 55 SKUS)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-4">
+        </div>
+    </div>
+</script>
+
+
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.ReportEditorModel = function() {
+        var self = this;
+
+        self.ReportFilterTypes = {
+            ProductType: "ProductType",
+            Vendor: "Vendor",
+            Product: "Product",
+            Skus: "Skus"
+        };
+
+        self.ProductTypeFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Product Types...");
+        self.VendorFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Vendors...");
+        self.ProductFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Products by Title");
+        self.SkuFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for SKU by Title");
+
+        self.ProductTypeClick = function() {
+            self.SelectedFilter(self.ReportFilterTypes.ProductType);
+        };
+
+        self.SelectedFilter = ko.observable(self.ReportFilterTypes.ProductType);
+
+        self.OkCallback = function () { };
+
+        self.RegisterOkCallback = function(callback) {
+            self.OkCallback = callback;
+        };
+        
+        return self;
+    };
+</script>

@@ -1,0 +1,96 @@
+﻿<!-- Depends on Paging Widget *** please include -->
+
+<!-- Requires FilterPagingWidget model to be passed in KO $data parameter -->
+<script type="text/html" id="Filter-Paging-Widget">
+    <!-- This element is 120px tall -->
+    <div class="row-fluid">
+        <div class="col-xs-8 no-side-padding">
+            <div class="row-fluid" style="height: 70px; overflow: auto;">
+                <div class="col-xs-8 no-side-padding" style="padding-top: 20px;">
+                    <div class="input-group">
+                        <input type="text" class="form-control"
+                               data-bind="text: SearchText, attr: { placeholder: $data.PlaceHolderText }">
+                        <span class="input-group-btn">
+                            <a href="#" class="btn btn-default" type="button" style="height: 34px !important;">Go!</a>
+                        </span>
+                    </div><!-- /input-group -->
+                </div>
+
+                <div class="col-xs-4 no-side-padding" style="padding-top: 20px;">
+                    <select class="form-control pull-right"
+                            data-bind="value: ShowFilter, event: { change: ShowFilterChanged }"
+                            style="display: inline-block; width: auto; height: 35px;">
+                        <option value="Show All">Show All</option>
+                        <option value="Show Selected Only">Show Selected Only</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row-fluid" style="height: 50px; overflow: visible;">
+                <div class="col-xs-4 no-side-padding" style="padding-top: 10px;">
+                    <a href="#" style="font-weight: 700;"
+                       data-bind="click: SelectAllClick">Select All</a>
+                </div>
+                <div class="col-xs-8 no-side-padding">
+                    <div data-bind="template: { name: 'Paging-Widget', data: $data.PagingModel }">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Possibly move to another widget -->
+        <div class="col-xs-1"></div>
+        <div class="col-xs-3" style="padding-top: 20px;">
+            <p>Select the Product Types you'd like to include in your ProfitWise View</p>
+        </div>
+    </div>
+</script>
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.FilterPagingWidgetModel = function(placeholderText) {
+        var self = this;
+
+        self.PagingModel = new ProfitWiseWidgets.PagingModel();
+
+        self.UpdateCallback = function() { };
+        self.SelectAllCallback = function () { };
+        
+        self.RegisterUpdateCallback = function(callback) {
+            self.UpdateCallback = callback;
+            self.PagingModel.Callback = callback;
+        };
+
+        self.RegisterSelectAllCallback = function(callback) {
+            self.SelectAllCallback = callback;
+        };
+
+        self.ShowFilter = ko.observable("Show All");
+
+        self.ShowAll = ko.computed(function() { return self.ShowFilter() === "Show All"; });
+
+        self.ShowFilterChanged = function() {
+            self.UpdateCallback();
+        };
+
+        self.SelectAllClick = function () {
+            self.SelectAllCallback();
+        };
+
+        self.PlaceHolderText = ko.observable(placeholderText || "Search...");
+        self.SearchText = ko.observable();
+        console.log(self.PlaceHolderText());
+
+        self.SearchKeyCallback = function(model, event) {
+            if (event.keyCode == 13) {
+                self.UpdateCallback();
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        return self;
+    };
+</script>

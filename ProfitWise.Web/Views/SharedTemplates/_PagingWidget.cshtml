@@ -122,11 +122,9 @@
                 newPage = self.PageCount();
             }
             
-            //console.log("newPage " + newPage);
             self.PageNumber(newPage);
             self.PageNumber.valueHasMutated();
             
-            //console.log("current PageNumber " + self.PageNumber());
             self.Callback();                
             ProfitWiseFunctions.PopOverCloseAll();
 

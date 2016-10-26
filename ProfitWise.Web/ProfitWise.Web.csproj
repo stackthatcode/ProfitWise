@@ -369,12 +369,7 @@
     <Content Include="Views\AdminAuth\_ViewStart.cshtml" />
     <Content Include="Views\AdminHome\_ViewStart.cshtml" />
     <Content Include="Views\ShopifyAuth\UnauthorizedAccess.cshtml" />
-    <Content Include="Views\UserMain\Reports.cshtml" />
-    <Content Include="Views\UserMain\Preferences.cshtml" />
     <Content Include="Views\Cogs\Products.cshtml" />
-    <Content Include="Views\UserMain\Goals.cshtml" />
-    <Content Include="Views\UserMain\Products.cshtml" />
-    <Content Include="Views\UserMain\ShopifyScript.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
@@ -415,9 +410,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\ShopifyAuth\AccessTokenRefresh.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -437,6 +429,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cogs\_EditMasterProduct.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\UserMain\_ReportEditor.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\UserMain\_FilterPagingWidget.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
