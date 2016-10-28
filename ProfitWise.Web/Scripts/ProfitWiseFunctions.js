@@ -4,14 +4,12 @@ ProfitWiseConfig.BaseUrl = '/ProfitWise';
 
 var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
-
 ProfitWiseFunctions.FixedHeaderScrollingInit = function (movingElementSelector) {
     $(window)
         .scroll(function() {
             $(movingElementSelector).css('left', -($(this).scrollLeft()) + "px");
         });
 }
-
 
 ProfitWiseFunctions.SynchronizeWidth = function (sourceSelector, targetSelector) {
     var columnFixed = function () {
@@ -33,6 +31,7 @@ ProfitWiseFunctions.SynchronizeWidth = function (sourceSelector, targetSelector)
 
     columnFixed();
 }
+
 
 
 // Relies upon .popover-container for enclosing parent & .popover-launcher for the triggering element
@@ -57,6 +56,10 @@ ProfitWiseFunctions.PopOverAutoCloseInit = function () {
                 $(element).data()["bs.popover"]["inState"]["click"] = false;
             });
     });
+};
+
+ProfitWiseFunctions.BsActivateTab = function(tab) {
+    $('.nav-tabs a[href="#' + tab + '"]').tab('show');
 };
 
 

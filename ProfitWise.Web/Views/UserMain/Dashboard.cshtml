@@ -60,16 +60,15 @@
 
                     <div class="col-xs-7 no-side-padding">
                         <div class="btn-group pull-right">
-                            <a href="#" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Select View <span class="caret"></span>
+                            <a href="#" class="btn btn-sm btn-default dropdown-toggle" 
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Select Report <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a href="#">Overall Profitability</a></li>
-                                <li><a href="#">Profitability by Product Type</a></li>
-                                <li><a href="#">Profitability by Vendor</a></li>
-                                <li><a href="#">Profitability by Product</a></li>
-                                <li><a href="#">Profitability by SKUs</a></li>
+                                
                                 <li role="separator" class="divider"></li>
+
                                 <li><a href="#">Custom Report #1</a></li>
                                 <li><a href="#">Custom Report #2</a></li>
                                 <li><a href="#">Custom Report #3</a></li>
@@ -81,12 +80,12 @@
                         <div class="pull-right" style="margin-right: 3px;">
                             <div data-bind="ifnot:ReportEditorVisible">
                                 <a href="" class="btn btn-sm btn-default" data-bind="click: EditReport">
-                                    Edit View <i class="glyphicon glyphicon-pencil"></i>
+                                    Edit Report <i class="glyphicon glyphicon-pencil"></i>
                                 </a>
                             </div>
                             <div data-bind="if:ReportEditorVisible">
                                 <a href="" class="btn btn-sm btn-default disabled" data-bind="click: SaveReport">
-                                    Edit View <i class="glyphicon glyphicon-pencil"></i>
+                                    Edit Report <i class="glyphicon glyphicon-pencil"></i>
                                 </a>
                             </div>
                         </div>

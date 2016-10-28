@@ -1,4 +1,7 @@
+
+
 USE profitwise;
+
 
 
 DROP TABLE IF EXISTS `aspnetuserclaims`; 
