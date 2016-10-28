@@ -143,6 +143,27 @@
 <!-- KnockoutJS Root Element -->
 <div data-bind="template: { name: 'Main-Template' }"></div>
 
+<script>    
+    var ProfitWise = ProfitWise || {};
+
+    ProfitWise.ReportView = function() {
+        var self = this;
+
+        self.CurrentReport = ko.observable();
+        self.PreviousReport = ko.observable();
+
+        self.DateRange = ko.observable();
+        return self;
+    };
+
+    ProfitWise.Report = function () {
+        self.ReportId = ko.observable();
+        self.Title = ko.observable();
+        self.GroupedBy = ko.observable();
+        self.FilterDigest = ko.observable();
+    };
+</script>
+
 <!-- KnockoutJS Model -->
 <script>
     var ProfitWise = ProfitWise || {};
@@ -158,24 +179,24 @@
 
             $('#date-range-picker')
                 .daterangepicker({
-                    "parentEl": "#date-range-picker-parent",
-                    "startDate": "10/01/2016",
-                    "endDate": "10/07/2016",
-                    "alwaysShowCalendars": true,
-                    "linkedCalendars": false,
-                    "applyClass": "btn-primary",
-                    "ranges": {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                        'This Year': [moment().startOf('year'), moment().endOf('year')],
-                        'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                        "parentEl": "#date-range-picker-parent",
+                        "startDate": "10/01/2016",
+                        "endDate": "10/07/2016",
+                        "alwaysShowCalendars": true,
+                        "linkedCalendars": false,
+                        "applyClass": "btn-primary",
+                        "ranges": {
+                            'Today': [moment(), moment()],
+                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                            'This Month': [moment().startOf('month'), moment().endOf('month')],
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                            'This Year': [moment().startOf('year'), moment().endOf('year')],
+                            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                        },
+                        "opens": "left",
                     },
-                    "opens": "left",
-                },
                     function (start, end, label) {
                         alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
                     });
@@ -185,8 +206,11 @@
 
         self.EditReport = function () {
             self.ReportEditorVisible(true);
-        };
 
+            self.ReportView.CurrentReport().ReportId();
+            self.ReportEditorModel.CopyAndLoad(reportId);
+        };
+        
         self.SaveReport = function () {
             self.ReportEditorVisible(false);
         };

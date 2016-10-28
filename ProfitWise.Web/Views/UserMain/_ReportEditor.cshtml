@@ -291,6 +291,12 @@
             Sku: "Skus"
         };
 
+        self.CopyAndLoad = function(reportId) {
+            // Hit the server and make a copy of this report Id
+            // Return with the current selections of Product Types, Vendors, etc.
+
+        };
+
         self.ProductTypeFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Product Types...");
         self.VendorFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Vendors...");
         self.ProductFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Products by Title");
