@@ -242,6 +242,7 @@
     <Compile Include="Controllers\CogsServiceController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\CogsController.cs" />
+    <Compile Include="Controllers\ReportServiceController.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\CogsMasterProductModel.cs" />
     <Compile Include="Models\CogsProductGridModel.cs" />
