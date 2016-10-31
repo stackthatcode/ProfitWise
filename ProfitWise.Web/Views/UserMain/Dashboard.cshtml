@@ -4,6 +4,7 @@
 
 <!-- KnockoutJS Templates -->
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
+@Html.Partial("~/Views/UserMain/_ReportView.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditor.cshtml")
 
 
@@ -26,13 +27,13 @@
 
 <script type="text/html" id="Page-Header">
     <!-- Bottom Header - Report Header -->
-    <div class="fixed-positioning-container" style="top: 145px;" data-bind="visible: ReportEditorVisible">
+    <div class="fixed-positioning-container" style="top: 145px;" data-bind="visible: $root.ReportViewModel.ReportEditorVisible">
         <!-- Space -->
         <div class="standard-header-sleeve" style="height: 178px;">
             <div class="standard-header standard-padding" style="overflow: visible;">
 
                 <!-- Report Editor component -->
-                <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportEditorModel }"></div>
+                <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportViewModel.ReportEditorModel }"></div>
             </div>
         </div>
     </div>
@@ -46,70 +47,13 @@
 
                 <!-- Non-"filter editor" segment -->
                 <div class="row-fluid" style="padding-top: 20px;">
-                    <div class="col-xs-5 no-side-padding">
-                        <div class="popover-container">
-                            <h4 style="display: inline-block">Profitability by Vendor</h4>
-                        </div>
-
-                        <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
-                            Grouped by SKU, ordered by most profitable
-                            <br />
-                            <span style="font-weight: 400">12 Products with 33 Variants selected</span>
-                        </div>
+                    <div class="col-xs-5 no-side-padding"
+                         data-bind="template: { name: 'Report-View-Synopsis', data: $root.ReportViewModel }">                        
                     </div>
 
-                    <div class="col-xs-7 no-side-padding">
-                        <div class="btn-group pull-right">
-                            <a href="#" class="btn btn-sm btn-default dropdown-toggle" 
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Select Report <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Overall Profitability</a></li>
-                                
-                                <li role="separator" class="divider"></li>
-
-                                <li><a href="#">Custom Report #1</a></li>
-                                <li><a href="#">Custom Report #2</a></li>
-                                <li><a href="#">Custom Report #3</a></li>
-                                <li><a href="#">Custom Report #4</a></li>
-                                <li><a href="#">Custom Report #5</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="pull-right" style="margin-right: 3px;">
-                            <div data-bind="ifnot:ReportEditorVisible">
-                                <a href="" class="btn btn-sm btn-default" data-bind="click: EditReport">
-                                    Edit Report <i class="glyphicon glyphicon-pencil"></i>
-                                </a>
-                            </div>
-                            <div data-bind="if:ReportEditorVisible">
-                                <a href="" class="btn btn-sm btn-default disabled" data-bind="click: SaveReport">
-                                    Edit Report <i class="glyphicon glyphicon-pencil"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="pull-right btn-group" style="margin-right: 3px;">
-                            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
-
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Save As</a></li>
-                                <li><a href="#">Rename</a></li>
-                                <li><a href="#">Delete</a></li>
-                            </ul>
-                        </div>
-
-
-                        <div style="clear: both; height: 10px;"></div>
-
-                        <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
-                            <input type="text" class="form-control" style="width: 100%; font-size: 13px;" id="date-range-picker" />
-                            <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
-                        </div>
-
-                        <div style="clear: both; height: 10px;"></div>
-
+                    <div class="col-xs-7 no-side-padding"
+                         data-bind="template: { name: 'Report-View-Interface', data: $root.ReportViewModel }">
+                        
                     </div>
                 </div>
             </div>
@@ -121,12 +65,12 @@
     <!-- Will move/transistion when the filters appear -->
     <div class="page-content" style="margin-top: 150px; min-height: 700px; padding-top: 30px;">
 
-        <div data-bind="ifnot: ReportEditorVisible">
+        <div data-bind="ifnot: $root.ReportViewModel.ReportEditorVisible">
             <div data-bind="template: { name: 'Dashboard-Body'}" style="position: relative; width: 100%;"></div>
         </div>
 
-        <div data-bind="if: ReportEditorVisible">
-            <div data-bind="template: { name: 'Report-Editor-Body', data: $root.ReportEditorModel }"></div>
+        <div data-bind="if: $root.ReportViewModel.ReportEditorVisible">
+            <div data-bind="template: { name: 'Report-Editor-Body', data: $root.ReportViewModel.ReportEditorModel }"></div>
         </div>
     </div>
 </script>
@@ -143,27 +87,6 @@
 <!-- KnockoutJS Root Element -->
 <div data-bind="template: { name: 'Main-Template' }"></div>
 
-<script>    
-    var ProfitWise = ProfitWise || {};
-
-    ProfitWise.ReportView = function() {
-        var self = this;
-
-        self.CurrentReport = ko.observable();
-        self.PreviousReport = ko.observable();
-
-        self.DateRange = ko.observable();
-        return self;
-    };
-
-    ProfitWise.Report = function () {
-        self.ReportId = ko.observable();
-        self.Title = ko.observable();
-        self.GroupedBy = ko.observable();
-        self.FilterDigest = ko.observable();
-    };
-</script>
-
 <!-- KnockoutJS Model -->
 <script>
     var ProfitWise = ProfitWise || {};
@@ -172,56 +95,13 @@
         var self = this;
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
-        self.CreateDateRangePicker = function () {
-            $(".date-range-picker-icon").click(function () {
-                $(this).parent().find('input').click();
-            });
-
-            $('#date-range-picker')
-                .daterangepicker({
-                        "parentEl": "#date-range-picker-parent",
-                        "startDate": "10/01/2016",
-                        "endDate": "10/07/2016",
-                        "alwaysShowCalendars": true,
-                        "linkedCalendars": false,
-                        "applyClass": "btn-primary",
-                        "ranges": {
-                            'Today': [moment(), moment()],
-                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                            'This Month': [moment().startOf('month'), moment().endOf('month')],
-                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                            'This Year': [moment().startOf('year'), moment().endOf('year')],
-                            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-                        },
-                        "opens": "left",
-                    },
-                    function (start, end, label) {
-                        alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-                    });
-        };
-
         self.LoadDashboardData = function () { };
 
-        self.EditReport = function () {
-            self.ReportEditorVisible(true);
+        self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel();
 
-            self.ReportView.CurrentReport().ReportId();
-            self.ReportEditorModel.CopyAndLoad(reportId);
+        self.ReportViewModel.SelectReportCallback = function() {
+            alert('need to wire me in!');
         };
-        
-        self.SaveReport = function () {
-            self.ReportEditorVisible(false);
-        };
-
-        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
-        
-        self.ReportEditorModel.OkCallback = function() {
-            self.ReportEditorVisible(false);
-        };
-        self.ReportEditorVisible = ko.observable(false);
-
         return self;
     };
 
@@ -231,8 +111,10 @@
             ProfitWiseFunctions.PopOverAutoCloseInit();
 
             var model = new ProfitWise.DashboardModel();
+
             ko.applyBindings(model);
-            model.CreateDateRangePicker();
+            model.ReportViewModel.CreateDateRangePicker();
+            model.ReportViewModel.LoadReports();
         });
 </script>
 
