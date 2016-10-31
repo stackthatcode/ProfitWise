@@ -102,6 +102,8 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId, grouping });
         }
 
+
+
         public void SelectAllProductTypes(long reportId)
         {
             var query = 
