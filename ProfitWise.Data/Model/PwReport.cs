@@ -6,7 +6,7 @@ namespace ProfitWise.Data.Model
     {
         public long PwReportId { get; set; }
         public long PwShopId { get; set; }
-        public int Name { get; set; }
+        public string Name { get; set; }
         public bool Saved { get; set; }
         public bool AllProductTypes { get; set; }
         public bool AllVendors { get; set; }

@@ -89,6 +89,10 @@ namespace ProfitWise.Web
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
 
+            builder.RegisterType<ReportServiceController>()
+                 .InstancePerDependency()
+                 .EnableClassInterceptorsWithRegistry(registry);
+            
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

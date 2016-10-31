@@ -98,7 +98,6 @@
         self.LoadDashboardData = function () { };
 
         self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel();
-
         self.ReportViewModel.SelectReportCallback = function() {
             alert('need to wire me in!');
         };
@@ -114,7 +113,8 @@
 
             ko.applyBindings(model);
             model.ReportViewModel.CreateDateRangePicker();
-            model.ReportViewModel.LoadReports();
+            model.ReportViewModel.LoadReports(
+                model.ReportViewModel.OverallProfitabilityClick);
         });
 </script>
 

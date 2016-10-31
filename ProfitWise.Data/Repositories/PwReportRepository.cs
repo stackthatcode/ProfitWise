@@ -37,7 +37,7 @@ namespace ProfitWise.Data.Repositories
 
         public List<PwReport> RetrieveReportsAll()
         {
-            var query = "SELECT * FROM profitwisereport WHERE PwShopId = @PwShopId;";
+            var query = "SELECT * FROM profitwisereport WHERE PwShopId = @PwShopId AND Saved = 1;";
             return _connection.Query<PwReport>(query, new {PwShopId}).ToList();
         }
 
@@ -210,11 +210,11 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId, masterProductId });
         }
 
-        public List<string> RetrieveMasterProducts(long reportId)
+        public List<long> RetrieveMasterProducts(long reportId)
         {
             var query = @"SELECT PwMasterProductId FROM profitwisereportmasterproduct
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            return _connection.Query<string>(query, new { PwShopId, reportId }).ToList();
+            return _connection.Query<long>(query, new { PwShopId, reportId }).ToList();
         }
 
 

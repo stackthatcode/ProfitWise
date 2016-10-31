@@ -1,13 +1,15 @@
 ﻿
 <script type="text/html" id="Report-View-Synopsis">
-    <div class="popover-container">
-        <h4 style="display: inline-block">Profitability by Vendor</h4>
-    </div>
+    <div data-bind="with: CurrentReport">
+        <div class="popover-container">
+            <h4 style="display: inline-block" data-bind="text: Name"></h4>
+        </div>
 
-    <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
-        Grouped by SKU, ordered by most profitable
-        <br />
-        <span style="font-weight: 400">12 Products with 33 Variants selected</span>
+        <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
+            <span data-bind="text: GroupAndOrderingDigest"></span>
+            <br />
+            <span style="font-weight: 400" data-bind="text:FilterDigest"></span>
+        </div>
     </div>
 </script>
 
@@ -18,17 +20,19 @@
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Select Report <span class="caret"></span>
         </a>
-        <ul class="dropdown-menu">
-            <li><a href="#">Overall Profitability</a></li>
+        <ul class="dropdown-menu" style="width:260px;">  
+            <li><a href="#" data-bind="click: OverallProfitabilityClick">Overall Profitability</a></li>
 
             <li role="separator" class="divider"></li>
             
-            <!-- ADD CODE TO READ REPORT LIST -->
-            <li><a href="#">Custom Report #1</a></li>
-            <li><a href="#">Custom Report #2</a></li>
-            <li><a href="#">Custom Report #3</a></li>
-            <li><a href="#">Custom Report #4</a></li>
-            <li><a href="#">Custom Report #5</a></li>
+            <!-- ko if: Reports().length == 0 -->
+            <li><a href="#">(No custom reports defined yet)</a></li>
+            <!-- /ko -->
+
+
+            <!-- ko foreach: Reports -->
+            <li><a href="#" data-bind="click: $parent.ReportClick, text: Name"></a></li>
+            <!-- /ko -->
         </ul>
     </div>
 
@@ -71,7 +75,7 @@
 
     ProfitWiseWidgets.Report = function () {
         self.ReportId = ko.observable();
-        self.Title = ko.observable();
+        self.Name = ko.observable();
         self.GroupedBy = ko.observable();
         self.FilterDigest = ko.observable();
     };
@@ -83,8 +87,29 @@
         self.DateRange = ko.observable();
         self.CurrentReport = ko.observable();
         self.PreviousReport = ko.observable();
+        self.Reports = ko.observable([{
+                Name: 'Test1',
+            }, {
+                Name: 'Test2',
+            }, {
+                Name: 'Test3',
+            }
+        ]);
 
-        self.Reports = ko.observable([]);
+        self.OverallProfitabilityClick = function() {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpGet(
+                "/ReportService/OverallProfitability",
+                function (data) {
+                    console.log(data);
+                    self.CurrentReport(data.report);
+                    callback();
+                });
+        };
+
+        self.ReportClick = function(data) {
+            console.log(data);
+        }
 
         self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
 
@@ -121,7 +146,8 @@
         self.EditReport = function () {
             self.ReportEditorVisible(true);
 
-            self.ReportView.CurrentReport().ReportId();
+            var reportId = self.ReportView.CurrentReport().ReportId();
+
             self.ReportEditorModel.CopyAndLoad(reportId);
         };
 
@@ -143,8 +169,15 @@
 
         };
 
-        self.LoadReports = function(callback) {
-            // TODO
+        self.LoadReports = function (callback) {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpGet(
+                "/ReportService/All",
+                function (data) {
+                    console.log(data);
+                    self.Reports(data.reports);
+                    callback();
+                });
         };
 
         return self;
