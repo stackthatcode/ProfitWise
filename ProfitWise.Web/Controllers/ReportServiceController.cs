@@ -39,8 +39,8 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             
             var report = repository.RetrieveReport(reportId);
-            report.ProductTypes = repository.RetrieveProductTypes(reportId);
-            report.Vendors = repository.RetrieveVendors(reportId);
+            report.ProductTypes = repository.RetrieveSelectedProductTypes(reportId);
+            report.Vendors = repository.RetrieveSelectedVendors(reportId);
             report.MasterProductIds = repository.RetrieveMasterProducts(reportId);
             report.Skus = repository.RetrieveSkus(reportId);
 
@@ -58,5 +58,29 @@ namespace ProfitWise.Web.Controllers
             var report = repository.RetrieveReport(newReportId);
             return new JsonNetResult(report);
         }
+
+        [HttpGet]
+        public ActionResult ProductTypes()
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var data = repository.RetrieveProductTypeSummary();
+            return new JsonNetResult(data);
+        }
+
+        [HttpGet]
+        public ActionResult SelectedProductTypes(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var report = repository.RetrieveReport(reportId);
+            var selected = repository.RetrieveSelectedProductTypes(reportId);
+            return new JsonNetResult(new
+            {
+                AllProductTypes = report.AllProductTypes,
+                SelectedProductTypes = selected
+            });
+        }
+
     }
 }

@@ -84,10 +84,10 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"INSERT INTO profitwisereport (
                             PwShopId, Name, Saved, AllProductTypes, AllVendors, AllProducts, AllSkus, 
-                            Grouping, CreatedDate, LastAccessedDate ) 
+                            Grouping, Ordering, CreatedDate, LastAccessedDate ) 
                         VALUES ( 
                             @PwShopId, @Name, 0, @AllProductTypes, @AllVendors, @AllProducts, @AllSkus, 
-                            @Grouping, NOW(), NOW() );
+                            @Grouping, @Ordering, NOW(), NOW() );
                         SELECT LAST_INSERT_ID();";
 
             return _connection.Query<long>(query, report).First();
@@ -123,6 +123,23 @@ namespace ProfitWise.Data.Repositories
 
 
 
+        public List<PwProductTypeSummary> RetrieveProductTypeSummary()
+        {
+            var query =
+                @"SELECT ProductType, COUNT(*) AS Count
+                FROM profitwiseproduct
+                WHERE PwShopId = @PwShopId
+                AND IsPrimary = 1 GROUP BY ProductType;";
+            return _connection.Query<PwProductTypeSummary>(query, new {PwShopId}).ToList();
+        }
+
+        public List<string> RetrieveSelectedProductTypes(long reportId)
+        {
+            var query = @"SELECT ProductType FROM profitwisereportproducttype
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
+            return _connection.Query<string>(query, new { PwShopId, reportId }).ToList();
+        }
+
         public void SelectAllProductTypes(long reportId)
         {
             var query = 
@@ -139,24 +156,17 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId });
         }
 
-        public void InsertProductType(long reportId, string productType)
+        public void SelectProductType(long reportId, string productType)
         {
             var query = @"INSERT profitwisereportproducttype VALUES ( @PwShopId, @reportId, @productType )";
             _connection.Execute(query, new { PwShopId, reportId, productType });
         }
 
-        public void DeleteProductType(long reportId, string productType)
+        public void DeselectProductType(long reportId, string productType)
         {
             var query = @"DELETE FROM profitwisereportproducttype 
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId AND ProductType = @productType";
             _connection.Execute(query, new { PwShopId, reportId, productType });
-        }
-
-        public List<string> RetrieveProductTypes(long reportId)
-        {
-            var query = @"SELECT ProductType FROM profitwisereportproducttype
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            return _connection.Query<string>(query, new { PwShopId, reportId }).ToList();
         }
 
 
@@ -190,7 +200,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId, vendor });
         }
 
-        public List<string> RetrieveVendors(long reportId)
+        public List<string> RetrieveSelectedVendors(long reportId)
         {
             var query = @"SELECT Vendor FROM profitwisereportvendor
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId";

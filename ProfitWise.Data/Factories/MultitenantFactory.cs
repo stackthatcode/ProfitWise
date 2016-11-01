@@ -14,7 +14,6 @@ namespace ProfitWise.Data.Factories
         private readonly Func<CatalogBuilderService> _productVariantServiceFactory;
         private readonly Func<PwCogsRepository> _cogsRepositoryFactory;
         private readonly Func<PwPickListRepository> _pickListRepositoryFactory;
-        private readonly Func<PwFilterRepository> _filterRepositoryFactory;
         private readonly Func<PwReportRepository> _reportRepositoryFactory;
 
         public MultitenantFactory(
@@ -25,7 +24,6 @@ namespace ProfitWise.Data.Factories
             Func<CatalogBuilderService> productVariantServiceFactory,
             Func<PwCogsRepository> cogsRepositoryFactory, 
             Func<PwPickListRepository> pickListRepositoryFactory,
-            Func<PwFilterRepository> filterRepositoryFactory,
             Func<PwReportRepository> reportRepositoryFactory 
             )
         {
@@ -36,7 +34,6 @@ namespace ProfitWise.Data.Factories
             _productVariantServiceFactory = productVariantServiceFactory;
             _cogsRepositoryFactory = cogsRepositoryFactory;
             _pickListRepositoryFactory = pickListRepositoryFactory;
-            _filterRepositoryFactory = filterRepositoryFactory;
             _reportRepositoryFactory = reportRepositoryFactory;
         }
 
@@ -87,13 +84,7 @@ namespace ProfitWise.Data.Factories
             repository.PwShop = shop;
             return repository;
         }
-
-        public virtual PwFilterRepository MakeFilterRepository(PwShop shop)
-        {
-            var repository = _filterRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
+        
 
         public virtual PwReportRepository MakeReportRepository(PwShop shop)
         {

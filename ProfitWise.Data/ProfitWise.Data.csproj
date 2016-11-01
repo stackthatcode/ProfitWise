@@ -80,14 +80,10 @@
     <Compile Include="Model\ProductSearchFilter.cs" />
     <Compile Include="Model\PwCogsVariant.cs" />
     <Compile Include="Model\PwCogsProductSummary.cs" />
-    <Compile Include="Model\PwFilterSku.cs" />
-    <Compile Include="Model\PwFilterMasterProduct.cs" />
-    <Compile Include="Model\PwFilterVendor.cs" />
-    <Compile Include="Model\PwFilterProductType.cs" />
-    <Compile Include="Model\PwFilter.cs" />
     <Compile Include="Model\PwMasterProductExtensions.cs" />
     <Compile Include="Model\PwMasterVariant.cs" />
     <Compile Include="Model\PwMasterProduct.cs" />
+    <Compile Include="Model\PwProductTypeSummary.cs" />
     <Compile Include="Model\PwReport.cs" />
     <Compile Include="Model\PwReportMasterProduct.cs" />
     <Compile Include="Model\PwReportProductType.cs" />
@@ -101,7 +97,6 @@
     <Compile Include="Model\ShopifyOrderExtensions.cs" />
     <Compile Include="Model\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\PwShop.cs" />
-    <Compile Include="Repositories\PwFilterRepository.cs" />
     <Compile Include="Repositories\PwPickListRepository.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Aspect\IShopFilter.cs" />

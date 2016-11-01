@@ -28,7 +28,6 @@ namespace ProfitWise.Data.Repositories
             return _connection.BeginTransaction();
         }
 
-
         public PwCogsProductSummary RetrieveProduct(long masterProductId)
         {
             var query =

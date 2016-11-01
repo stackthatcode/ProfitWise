@@ -1,20 +1,18 @@
-﻿@using ProfitWise.Data.Model
-@using ProfitWise.Web.Models
-
-<script type="text/html" id="Report-View-Synopsis">
+﻿<script type="text/html" id="Report-View-Synopsis">
     <div data-bind="if: CurrentReport() != null">
         <div class="popover-container">
-            <h4 style="display: inline-block" data-bind="text: CurrentReport().Name"></h4>
+            <h4 style="display: inline-block; font-weight: 700;" data-bind="text: CurrentReport().Name"></h4>
             
-            <div data-bind="if:ReportEditorVisible">
+            <div style="display:inline-block;" data-bind="if:ReportEditorVisible">
                 (Editing Report)
             </div>
         </div>
 
-        <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
+        <div style="font-size: 14px; color: #666; line-height: 22px;">
+            <span data-bind="text: CurrentReport().FilterDigest"></span>
+            <br />
             <span data-bind="text: CurrentReport().GroupAndOrderingDigest"></span>
             <br />
-            <span style="font-weight: 400" data-bind="text: CurrentReport().FilterDigest"></span>
         </div>
     </div>
 </script>

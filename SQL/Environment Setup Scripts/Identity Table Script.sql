@@ -3,7 +3,6 @@
 USE profitwise;
 
 
-
 DROP TABLE IF EXISTS `aspnetuserclaims`; 
 DROP TABLE IF EXISTS `aspnetuserlogins`; 
 DROP TABLE IF EXISTS `aspnetuserroles`; 
@@ -111,4 +110,7 @@ ALTER TABLE `aspnetuserlogins`
 ALTER TABLE `aspnetuserroles`
   ADD CONSTRAINT `ApplicationUser_Roles` FOREIGN KEY (`UserId`) REFERENCES `aspnetusers` (`Id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   ADD CONSTRAINT `IdentityRole_Users` FOREIGN KEY (`RoleId`) REFERENCES `aspnetroles` (`Id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+
+
 
