@@ -5,6 +5,10 @@
     <div data-bind="if: CurrentReport() != null">
         <div class="popover-container">
             <h4 style="display: inline-block" data-bind="text: CurrentReport().Name"></h4>
+            
+            <div data-bind="if:ReportEditorVisible">
+                (Editing Report)
+            </div>
         </div>
 
         <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
@@ -116,7 +120,7 @@
                         this);
                 },
                 function (data) {                    
-                    AQ(data.reports)
+                    AQ(data)
                         .each(
                             function(item) {
                                 item.CurrentlySelected =
@@ -129,7 +133,7 @@
                                         });
                             });
 
-                    self.Reports(data.reports);
+                    self.Reports(data);
                     if (callback) {
                         callback();
                     }
@@ -184,23 +188,24 @@
         };
 
         self.EditReport = function () {
-            self.ReportEditorVisible(true);
-
-            var reportId = self.ReportView.CurrentReport().ReportId();
-
-            self.ReportEditorModel.CopyAndLoad(reportId);
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost(
+                        "/ReportService/CopyAndEdit",
+                        { reportId: self.CurrentReport().PwReportId },
+                        this);
+                },
+                function (data) {
+                    self.CurrentReport(data);
+                    self.ReportEditorVisible(true);
+                    self.ReportEditorModel.LoadReport(data.PwReportId);
+                });
         };
 
         self.SaveReport = function () {
             self.ReportEditorVisible(false);
         };
-
-        self.SelectReport = function() {
-            // DO STUFF WITH REPORT
-
-            self.SelectReportCallback();
-        };
-
 
         self.ReportEditorModel.OkCallback = function () {
             // This should trigger an Ok Callback on the parent (Dashboard), I think

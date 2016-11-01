@@ -326,9 +326,7 @@
         };
 
         // *** Bulk Edit interactivity *** //
-        self.StockedDirectlyDialogPopup = function () {
-            console.log("StockedDirectlyDialogPopup");
-
+        self.StockedDirectlyDialogPopup = function () {            
             var url =
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/StockedProductPopup?masterProductId=' + self.MasterProductId();
@@ -341,9 +339,7 @@
             }, self.Refresh);
         }
         
-        self.ExcludedDialogPopup = function () {
-            console.log("ExcludedDialogPopup");
-            
+        self.ExcludedDialogPopup = function () {            
             var url =
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/ExcludedProductPopup?masterProductId=' + self.MasterProductId();

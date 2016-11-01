@@ -45,10 +45,12 @@ namespace ProfitWise.Data.Repositories
         
         public List<PwReport> RetrieveSystemDefinedReports()
         {
-            return new List<PwReport>()
+            var results = new List<PwReport>()
             {
                 PwSystemReportFactory.OverallProfitability(),
             };
+            results.ForEach(x => x.PwShopId = this.PwShopId);
+            return results;
         }
 
 
@@ -78,18 +80,17 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new {PwShopId, reportId});
         }
 
-        public long CopyReport(long reportId)
+        public long CopyReport(PwReport report)
         {
             var query = @"INSERT INTO profitwisereport (
                             PwShopId, Name, Saved, AllProductTypes, AllVendors, AllProducts, AllSkus, 
                             Grouping, CreatedDate, LastAccessedDate ) 
-                        SELECT PwShopId, Name, Saved, AllProductTypes, AllVendors, AllProducts, AllSkus, 
-                            Grouping, CreatedDate, LastAccessedDate
-                        FROM profitwisereport
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
+                        VALUES ( 
+                            @PwShopId, @Name, 0, @AllProductTypes, @AllVendors, @AllProducts, @AllSkus, 
+                            @Grouping, NOW(), NOW() );
                         SELECT LAST_INSERT_ID();";
 
-            return _connection.Query(query, new {PwShopId, reportId}).First();
+            return _connection.Query<long>(query, report).First();
         }
 
         public void UpdateReportSaved(long reportId, bool saved)

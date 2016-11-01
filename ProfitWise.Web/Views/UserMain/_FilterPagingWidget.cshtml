@@ -70,7 +70,7 @@
 
         self.PlaceHolderText = ko.observable(placeholderText || "Search...");
         self.SearchText = ko.observable();
-        console.log(self.PlaceHolderText());
+
 
         self.SearchKeyCallback = function(model, event) {
             if (event.keyCode == 13) {

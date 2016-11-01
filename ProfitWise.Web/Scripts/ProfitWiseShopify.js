@@ -119,8 +119,6 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
             ShopifyApp.Modal.open(
                 settings,
                 function (result) {
-                    //console.log(result);
-
                     if (result === true) {
                         callback();
                     }

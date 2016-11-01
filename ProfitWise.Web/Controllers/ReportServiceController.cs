@@ -29,13 +29,7 @@ namespace ProfitWise.Web.Controllers
             var systemReports = repository.RetrieveSystemDefinedReports();
             userReports.AddRange(systemReports);
 
-            return new JsonNetResult(new { reports = userReports });
-        }
-
-        [HttpGet]
-        public ActionResult OverallProfitability()
-        {
-            return new JsonNetResult(new { report = PwSystemReportFactory.OverallProfitability() });
+            return new JsonNetResult(userReports);
         }
 
         [HttpGet]
@@ -50,7 +44,19 @@ namespace ProfitWise.Web.Controllers
             report.MasterProductIds = repository.RetrieveMasterProducts(reportId);
             report.Skus = repository.RetrieveSkus(reportId);
 
-            return new JsonNetResult(new { report });
+            return new JsonNetResult(report);
+        }
+
+        [HttpPost]
+        public ActionResult CopyAndEdit(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var originalReport = repository.RetrieveReport(reportId);
+            var newReportId = repository.CopyReport(originalReport);
+            var report = repository.RetrieveReport(newReportId);
+            return new JsonNetResult(report);
         }
     }
 }
