@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -24,15 +25,17 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);   
-            var reports = repository.RetrieveReportsAll();
+            var userReports = repository.RetrieveUserDefinedReports();
+            var systemReports = repository.RetrieveSystemDefinedReports();
+            userReports.AddRange(systemReports);
 
-            return new JsonNetResult(new { reports });
+            return new JsonNetResult(new { reports = userReports });
         }
 
         [HttpGet]
         public ActionResult OverallProfitability()
         {
-            return new JsonNetResult(new { report = ReportFactory.OverallProfitability() });
+            return new JsonNetResult(new { report = PwSystemReportFactory.OverallProfitability() });
         }
 
         [HttpGet]
@@ -40,14 +43,14 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            
             var report = repository.RetrieveReport(reportId);
-            var productTypes = repository.RetrieveProductTypes(reportId);
-            var vendors = repository.RetrieveVendors(reportId);
-            var products = repository.RetrieveMasterProducts(reportId);
-            var skus = repository.RetrieveSkus(reportId);
+            report.ProductTypes = repository.RetrieveProductTypes(reportId);
+            report.Vendors = repository.RetrieveVendors(reportId);
+            report.MasterProductIds = repository.RetrieveMasterProducts(reportId);
+            report.Skus = repository.RetrieveSkus(reportId);
 
-            return new JsonNetResult(
-                new { report = report.ToReport(productTypes, vendors, products, skus) });
+            return new JsonNetResult(new { report });
         }
     }
 }

@@ -35,14 +35,32 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<long>(query, report).FirstOrDefault();
         }
 
-        public List<PwReport> RetrieveReportsAll()
+        public List<PwReport> RetrieveUserDefinedReports()
         {
             var query = "SELECT * FROM profitwisereport WHERE PwShopId = @PwShopId AND Saved = 1;";
-            return _connection.Query<PwReport>(query, new {PwShopId}).ToList();
+            var results = _connection.Query<PwReport>(query, new {PwShopId}).ToList();
+            results.ForEach(x => x.UserDefined = true);
+            return results;
         }
+        
+        public List<PwReport> RetrieveSystemDefinedReports()
+        {
+            return new List<PwReport>()
+            {
+                PwSystemReportFactory.OverallProfitability(),
+            };
+        }
+
 
         public PwReport RetrieveReport(long reportId)
         {
+            var systemReports = RetrieveSystemDefinedReports();
+            var systemReport = systemReports.FirstOrDefault(x => x.PwReportId == reportId);
+            if (systemReport != null)
+            {
+                return systemReport;
+            }
+
             var query = @"SELECT * FROM profitwisereport 
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             return _connection

@@ -1,14 +1,16 @@
-﻿
+﻿@using ProfitWise.Data.Model
+@using ProfitWise.Web.Models
+
 <script type="text/html" id="Report-View-Synopsis">
-    <div data-bind="with: CurrentReport">
+    <div data-bind="if: CurrentReport() != null">
         <div class="popover-container">
-            <h4 style="display: inline-block" data-bind="text: Name"></h4>
+            <h4 style="display: inline-block" data-bind="text: CurrentReport().Name"></h4>
         </div>
 
         <div style="font-size: 14px; font-weight: 600; color: #666; line-height: 24px;">
-            <span data-bind="text: GroupAndOrderingDigest"></span>
+            <span data-bind="text: CurrentReport().GroupAndOrderingDigest"></span>
             <br />
-            <span style="font-weight: 400" data-bind="text:FilterDigest"></span>
+            <span style="font-weight: 400" data-bind="text: CurrentReport().FilterDigest"></span>
         </div>
     </div>
 </script>
@@ -20,18 +22,33 @@
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Select Report <span class="caret"></span>
         </a>
-        <ul class="dropdown-menu" style="width:260px;">  
-            <li><a href="#" data-bind="click: OverallProfitabilityClick">Overall Profitability</a></li>
+        <ul class="dropdown-menu" style="width: 260px;">
+            <!-- ko foreach: SystemDefinedReports -->
+            <li>
+                <a href="#" data-bind="click: $parent.ReportClick">
+                    <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                        <i class="glyphicon glyphicon-ok"></i>
+                    </span>
+                    <span data-bind="text: Name"></span>
+                </a>
+            </li>
+            <!-- /ko -->
 
             <li role="separator" class="divider"></li>
-            
-            <!-- ko if: Reports().length == 0 -->
+
+            <!-- ko if: UserDefinedReports().length == 0 -->
             <li><a href="#">(No custom reports defined yet)</a></li>
             <!-- /ko -->
 
-
-            <!-- ko foreach: Reports -->
-            <li><a href="#" data-bind="click: $parent.ReportClick, text: Name"></a></li>
+            <!-- ko foreach: UserDefinedReports -->
+            <li>
+                <a href="#" data-bind="click: $parent.ReportClick">
+                    <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                        <i class="glyphicon glyphicon-ok"></i>
+                    </span>
+                    <span data-bind="text: Name"></span>
+                </a>
+            </li>
             <!-- /ko -->
         </ul>
     </div>
@@ -59,11 +76,10 @@
         </ul>
     </div>
 
-
     <div style="clear: both; height: 10px;"></div>
 
     <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
-        <input type="text" class="form-control" style="width: 100%; font-size: 13px;" id="date-range-picker" />
+        <input type="text" class="form-control" style="width: 100%; font-size: 13px;" id="date-range-picker"/>
         <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
     </div>
 
@@ -73,13 +89,6 @@
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.Report = function () {
-        self.ReportId = ko.observable();
-        self.Name = ko.observable();
-        self.GroupedBy = ko.observable();
-        self.FilterDigest = ko.observable();
-    };
-
     ProfitWiseWidgets.ReportViewModel = function () {
         var self = this;
 
@@ -87,28 +96,59 @@
         self.DateRange = ko.observable();
         self.CurrentReport = ko.observable();
         self.PreviousReport = ko.observable();
-        self.Reports = ko.observable([{
-                Name: 'Test1',
-            }, {
-                Name: 'Test2',
-            }, {
-                Name: 'Test3',
-            }
-        ]);
+        self.Reports = ko.observable([]);
 
-        self.OverallProfitabilityClick = function() {
-            var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpGet(
-                "/ReportService/OverallProfitability",
-                function (data) {
-                    console.log(data);
-                    self.CurrentReport(data.report);
-                    callback();
+
+        self.UserDefinedReports = ko.computed(function() {
+            return AQ(self.Reports()).where(function(item) { return item.UserDefined == true; }).toArray();
+        });
+
+        self.SystemDefinedReports = ko.computed(function() {
+            return AQ(self.Reports()).where(function(item) { return item.UserDefined == false; }).toArray();                
+        });
+        
+        self.LoadReports = function (callback) {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet(
+                        "/ReportService/All",
+                        this);
+                },
+                function (data) {                    
+                    AQ(data.reports)
+                        .each(
+                            function(item) {
+                                item.CurrentlySelected =
+                                    ko.computed(
+                                        function() {
+                                            if (!self.CurrentReport()) {
+                                                return false;
+                                            }
+                                            return self.CurrentReport().PwReportId == item.PwReportId;
+                                        });
+                            });
+
+                    self.Reports(data.reports);
+                    if (callback) {
+                        callback();
+                    }
                 });
         };
 
-        self.ReportClick = function(data) {
-            console.log(data);
+        self.SelectReportCallback = function() {
+        };
+
+        self.SelectReportByReportId = function(id) {
+            var report = AQ(self.Reports()).firstOrDefault(function(item) { return item.PwReportId == id; });
+            if (report != null) {
+                self.ReportClick(report);
+            }
+        };
+
+        self.ReportClick = function (data) {
+            self.CurrentReport(data);
+            self.SelectReportCallback();
         }
 
         self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
@@ -155,29 +195,16 @@
             self.ReportEditorVisible(false);
         };
 
-        self.ReportEditorModel.OkCallback = function () {
-            self.ReportEditorVisible(false);
-        };
-
         self.SelectReport = function() {
             // DO STUFF WITH REPORT
 
             self.SelectReportCallback();
         };
 
-        self.SelectReportCallback = function() {
 
-        };
-
-        self.LoadReports = function (callback) {
-            var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpGet(
-                "/ReportService/All",
-                function (data) {
-                    console.log(data);
-                    self.Reports(data.reports);
-                    callback();
-                });
+        self.ReportEditorModel.OkCallback = function () {
+            // This should trigger an Ok Callback on the parent (Dashboard), I think
+            self.ReportEditorVisible(false);
         };
 
         return self;

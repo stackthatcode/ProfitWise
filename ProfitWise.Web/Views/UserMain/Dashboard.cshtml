@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ProfitWise.Data.Model
+@{
     ViewBag.CommonContext.PageTitle = "ProfitWise Dashboard";
 }
 
@@ -91,6 +92,8 @@
 <script>
     var ProfitWise = ProfitWise || {};
 
+    var OverallProfitabilityReportId = @PwSystemReportFactory.OverallProfitabilityId;
+
     ProfitWise.DashboardModel = function () {
         var self = this;
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
@@ -98,8 +101,8 @@
         self.LoadDashboardData = function () { };
 
         self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel();
-        self.ReportViewModel.SelectReportCallback = function() {
-            alert('need to wire me in!');
+        self.ReportViewModel.SelectReportCallback = function () {
+            alert('TODO - add main dashboard code to load that Report');
         };
         return self;
     };
@@ -112,9 +115,11 @@
             var model = new ProfitWise.DashboardModel();
 
             ko.applyBindings(model);
-            model.ReportViewModel.CreateDateRangePicker();
+            model.ReportViewModel.CreateDateRangePicker(); // Keep this here...?
             model.ReportViewModel.LoadReports(
-                model.ReportViewModel.OverallProfitabilityClick);
+                function () {
+                    model.ReportViewModel.SelectReportByReportId(OverallProfitabilityReportId);
+                });
         });
 </script>
 

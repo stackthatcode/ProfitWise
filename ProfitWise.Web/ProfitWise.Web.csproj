@@ -250,7 +250,6 @@
     <Compile Include="Models\EditProductCogsModel.cs" />
     <Compile Include="Models\FilterEditorModel.cs" />
     <Compile Include="Models\MoneyRange.cs" />
-    <Compile Include="Models\Report.cs" />
     <Compile Include="Models\SearchResultSelection.cs" />
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />

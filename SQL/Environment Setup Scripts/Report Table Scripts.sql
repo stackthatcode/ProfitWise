@@ -23,10 +23,11 @@ CREATE TABLE `profitwisereport` (
     `AllProducts` TINYINT NOT NULL,
     `AllSkus` TINYINT NOT NULL,
     `Grouping`  varchar(25) NULL,
+    `Order`  varchar(25) NULL,
 	`CreatedDate` TIMESTAMP NOT NULL,
 	`LastAccessedDate` TIMESTAMP NOT NULL,
     PRIMARY KEY (`PwReportId`, `PwShopId` )
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=99739;
 
 CREATE TABLE `profitwisereportproducttype` (
 	`PwReportId` BIGINT NOT NULL AUTO_INCREMENT,
