@@ -70,7 +70,8 @@
             <div data-bind="template: { name: 'Dashboard-Body'}" style="position: relative; width: 100%;"></div>
         </div>
 
-        <div data-bind="if: $root.ReportEditorVisible">
+        <div data-bind="if: $root.ReportEditorVisible"
+             style="margin-top:140px;">
             <div data-bind="template: { name: 'Report-Editor-Body', data: $root.ReportEditorModel }"></div>
         </div>
     </div>

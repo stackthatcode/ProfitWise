@@ -1,10 +1,7 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
-using ProfitWise.Web.Models;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -81,5 +78,30 @@ namespace ProfitWise.Web.Controllers
                 SelectedProductTypes = selected
             });
         }
+
+        [HttpPost]
+        public ActionResult SelectProductType(long reportId, string productType)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            repository.SelectProductType(reportId, productType);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult DeselectProductType(long reportId, string productType)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var report = repository.RetrieveReport(reportId);
+            if (report.AllProductTypes)
+            {
+                repository.CopyAllProductTypesToSelection(reportId);
+            }
+            repository.DeselectProductType(reportId, productType);
+            return JsonNetResult.Success();
+        }
+
     }
 }

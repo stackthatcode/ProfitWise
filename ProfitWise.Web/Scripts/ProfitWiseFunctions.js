@@ -63,6 +63,13 @@ ProfitWiseFunctions.BsActivateTab = function(tab) {
 };
 
 
+ProfitWiseFunctions.CaseInsensitiveContains = function (input, substring) {
+    var adjustedInput = (input || "").toUpperCase();
+    var adjustedSubstring = (substring || "").toUpperCase();
+
+    return adjustedInput.indexOf(adjustedSubstring) != -1;
+};
+
 
 // Temporary hard-coding of reference to ProfitWiseShopify.js
 

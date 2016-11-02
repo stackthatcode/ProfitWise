@@ -24,18 +24,20 @@
     </div>
 </script>
 
-
 <script type="text/html" id="Report-Editor-Body-Product-Type">
     <div class="row-fluid">
         <div class="col-xs-8 reduced-padding">
             <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
-                <tbody data-bind="foreach: ProductTypeSummaries">
+                <tbody data-bind="foreach: PageOfProductTypes">
                 <tr style="border-top: 0;">
                     <td>
-                        <input class="form-control" checked type="checkbox" style="height: 15px; width: 15px;" />
+                        <input class="form-control"
+                                type="checkbox" 
+                                style="height: 15px; width: 15px;" 
+                                data-bind="checked: $data.IsChecked, click: $parent.CheckboxClick"  />
                     </td>
 
-                    <td data-bind="text: $data.ProductType"></td>
+                    <td data-bind="text: $data.CorrectedProductType"></td>
                     <td>(<span data-bind="text: $data.Count"></span> Products)</td>
                 </tr>
                 </tbody>
@@ -52,31 +54,130 @@
 
         self.Parent = parent;
         self.ReportId = ko.observable();
-        self.SelectAll = ko.observable(true);
 
-        self.ProductTypeSummaries = ko.observable([]);
+        self.ProductTypes = ko.observableArray();
+        self.FilteredProductTypes = ko.observableArray();
+        self.PageOfProductTypes = ko.observableArray();
 
-        // TODO - how to filter the Product Types that are shown in the grid... practically?
+        // Selections
+        self.SelectAllProductTypes = ko.observable(true);
+        self.ProductTypeSelections = ko.observableArray();
+        
+        self.AddObservables = function(data) {
+            AQ(data)
+                .each(function(item) {
+                    item.IsChecked = ko.computed(function() {
+                        if (self.SelectAllProductTypes()) {
+                            return true;
+                        }
+
+                        if (AQ(self.ProductTypeSelections())
+                            .any(function(productType) {
+                                return item.ProductType == productType;
+                            })) {
+                            return true;
+                        }
+
+                        return false;
+                    });
+
+                    item.CorrectedProductType = ko.computed(function() {
+                        return item.ProductType == "" ? "(No Product Type)" : item.ProductType;
+                    });
+                });
+        };
 
         self.Refresh = function (reportId) {
             self.ReportId(reportId);
-
+            self.FilterModel.SetPageNumber(1);
+            var ajax = new ProfitWiseFunctions.Ajax();
+            
             flow.exec(
                 function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/ProductTypes", this);
                 },
                 function (data) {
-                    console.log(data);
-                    self.ProductTypeSummaries(data);
+                    self.AddObservables(data);
+                    self.ProductTypes(data);
+                    ajax.HttpGet("/ReportService/SelectedProductTypes?reportId=" + self.ReportId(), this);
+                },
+                function(data) {
+                    self.SelectAllProductTypes(data.AllProductTypes);
+                    self.ProductTypeSelections(data.SelectedProductTypes);
+
+                    self.ApplyFiltersAndPaging();
                 }
             );
         }
-        
+
+        self.ApplyFiltersAndPaging = function () {
+            var filterState = self.FilterModel.GetCurrentStateDigest();
+            var searchText = filterState.SearchText || "";
+            var filteredProductTypes = self.ProductTypes();
+
+            if (searchText.trim() != "") {
+                filteredProductTypes = 
+                    AQ(filteredProductTypes)
+                        .where(function (item) {
+                            return ProfitWiseFunctions
+                                .CaseInsensitiveContains(item.ProductType, searchText);
+                        })
+                        .toArray();
+            }
+
+            self.FilterModel.SetRecordCount(filteredProductTypes.length);
+            var skip = (filterState.PageNumber - 1) * filterState.PageSize;
+            var take = filterState.PageSize;
+
+            self.PageOfProductTypes(
+                AQ(filteredProductTypes).skip(skip).take(take).toArray());
+        };
+
+        // Selection business logic
+        self.ProductTypeSelected = function (productType) {
+            return AQ(self.ProductTypeSelections()).contains(productType) || self.SelectAllProductTypes();
+        }
+
+        self.AreAllMinusOneSelected = function () {
+            if (self.SelectAllProductTypes()) {
+                return false;
+            }
+            return self.ProductTypeSelections().length == (self.ProductTypes().length - 1);
+        };
+
+        self.CheckboxClick = function (data) {
+            var allMinusOneSelected = self.AreAllMinusOneSelected();
+            var currentlySelected = self.ProductTypeSelected(data.ProductType);
+
+            console.log(data.ProductType + " Selected: " + currentlySelected + " All Minus One?: " + allMinusOneSelected);
+
+            if (!currentlySelected && allMinusOneSelected) {
+                // SELECT ALL
+            }
+            if (!currentlySelected && !allMinusOneSelected) {
+                // SELECT ONE
+            }
+            if (currentlySelected) {
+                // DESELECT ONE - SERVER SIDE CHECK TO SEE IF ALL ARE SELECTED AND NEED TO BE RECREATED
+            }
+
+            /*var ajax = new ProfitWiseFunctions.Ajax();            
+            flow.exec(
+                function () {
+                    ajax.HttpGet("/ReportService/ProductTypes", this);
+                    */
+        };
+
         self.GotoNextCallback = function () { };
         
         self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
         self.FilterModel.PlaceHolderText("Search for Product Types...");
+        self.FilterModel.RegisterRefreshCallback(function () {
+            self.ApplyFiltersAndPaging();
+        });
+
+        // TODO - remove this temporary hack for making paging functionality 100% visible
+        self.FilterModel.SetPageSize(5);
 
         return self;
     };

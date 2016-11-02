@@ -129,7 +129,8 @@ namespace ProfitWise.Data.Repositories
                 @"SELECT ProductType, COUNT(*) AS Count
                 FROM profitwiseproduct
                 WHERE PwShopId = @PwShopId
-                AND IsPrimary = 1 GROUP BY ProductType;";
+                AND IsPrimary = 1 
+                GROUP BY ProductType;";
             return _connection.Query<PwProductTypeSummary>(query, new {PwShopId}).ToList();
         }
 
@@ -153,6 +154,16 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"UPDATE profitwisereport SET AllProductTypes = 0 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
                 DELETE profitwisereportproducttype WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            _connection.Execute(query, new { PwShopId, reportId });
+        }
+
+        public void CopyAllProductTypesToSelection(long reportId)
+        {
+            var query =
+                @"INSERT INTO profitwisereportproducttype 
+                    SELECT @reportId, @PwShopId, DISTINCT(ProductType)
+                    FROM profitwiseproduct
+                    WHERE PwShopId = @PwShopId;";
             _connection.Execute(query, new { PwShopId, reportId });
         }
 
