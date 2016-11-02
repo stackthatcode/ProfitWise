@@ -27,7 +27,7 @@
         <ul class="dropdown-menu" style="width: 260px;">
             <!-- ko foreach: SystemDefinedReports -->
             <li>
-                <a href="#" data-bind="click: $parent.ReportClick">
+                <a href="#" data-bind="click: $parent.SelectReportClick">
                     <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
                         <i class="glyphicon glyphicon-ok"></i>
                     </span>
@@ -44,7 +44,7 @@
 
             <!-- ko foreach: UserDefinedReports -->
             <li>
-                <a href="#" data-bind="click: $parent.ReportClick">
+                <a href="#" data-bind="click: $parent.SelectReportClick">
                     <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
                         <i class="glyphicon glyphicon-ok"></i>
                     </span>
@@ -57,12 +57,12 @@
 
     <div class="pull-right" style="margin-right: 3px;">
         <div data-bind="ifnot:ReportEditorVisible">
-            <a href="" class="btn btn-sm btn-default" data-bind="click: EditReport">
+            <a href="" class="btn btn-sm btn-default" data-bind="click: EditReportClick">
                 Edit Report <i class="glyphicon glyphicon-pencil"></i>
             </a>
         </div>
         <div data-bind="if:ReportEditorVisible">
-            <a href="" class="btn btn-sm btn-default disabled" data-bind="click: SaveReport">
+            <a href="" class="btn btn-sm btn-default disabled" data-bind="click: SaveReportClick">
                 Edit Report <i class="glyphicon glyphicon-pencil"></i>
             </a>
         </div>
@@ -91,24 +91,33 @@
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.ReportViewModel = function () {
+    // Requires a reference to a ReportEditorVisible observable
+    ProfitWiseWidgets.ReportViewModel = function (reportEditorVisible) {
         var self = this;
 
-        self.ReportEditorVisible = ko.observable(false);
+        self.ReportEditorVisible = reportEditorVisible;
+
         self.DateRange = ko.observable();
         self.CurrentReport = ko.observable();
         self.PreviousReport = ko.observable();
         self.Reports = ko.observable([]);
-
-
-        self.UserDefinedReports = ko.computed(function() {
-            return AQ(self.Reports()).where(function(item) { return item.UserDefined == true; }).toArray();
-        });
-
-        self.SystemDefinedReports = ko.computed(function() {
-            return AQ(self.Reports()).where(function(item) { return item.UserDefined == false; }).toArray();                
-        });
         
+        self.UserDefinedReports = ko.computed(function () {
+            return AQ(self.Reports()).where(function (item) { return item.UserDefined == true; }).toArray();
+        });
+
+        self.SystemDefinedReports = ko.computed(function () {
+            return AQ(self.Reports()).where(function (item) { return item.UserDefined == false; }).toArray();
+        });
+
+        // To be configured by the parent/owner object
+        self.SelectReportCallback = function (reportId) {
+        };
+
+        self.EditReportCallback = function (reportId) {
+        };
+
+
         self.LoadReports = function (callback) {
             flow.exec(
                 function() {
@@ -138,23 +147,37 @@
                 });
         };
 
-        self.SelectReportCallback = function() {
-        };
-
-        self.SelectReportByReportId = function(id) {
+        self.SelectReportByReportId = function (id) {
             var report = AQ(self.Reports()).firstOrDefault(function(item) { return item.PwReportId == id; });
             if (report != null) {
-                self.ReportClick(report);
+                self.SelectReportClick(report);
             }
         };
 
-        self.ReportClick = function (data) {
+        self.SelectReportClick = function (data) {
             self.CurrentReport(data);
-            self.SelectReportCallback();
+            self.SelectReportCallback(data.PwReportId);
         }
 
-        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
+        self.EditReportClick = function () {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost(
+                        "/ReportService/CopyAndEdit",
+                        { reportId: self.CurrentReport().PwReportId },
+                        this);
+                },
+                function (data) {
+                    self.CurrentReport(data);
+                    self.EditReportCallback(data.PwReportId);
+                });
+        };
 
+        self.SaveReportClick = function () {
+            self.ReportEditorVisible(false);
+        };
+        
         self.CreateDateRangePicker = function () {
             $(".date-range-picker-icon").click(function () {
                 $(this).parent().find('input').click();
@@ -183,31 +206,6 @@
                     function (start, end, label) {
                         alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
                     });
-        };
-
-        self.EditReport = function () {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost(
-                        "/ReportService/CopyAndEdit",
-                        { reportId: self.CurrentReport().PwReportId },
-                        this);
-                },
-                function (data) {
-                    self.CurrentReport(data);
-                    self.ReportEditorVisible(true);
-                    self.ReportEditorModel.LoadReport(data.PwReportId);
-                });
-        };
-
-        self.SaveReport = function () {
-            self.ReportEditorVisible(false);
-        };
-
-        self.ReportEditorModel.OkCallback = function () {
-            // This should trigger an Ok Callback on the parent (Dashboard), I think
-            self.ReportEditorVisible(false);
         };
 
         return self;

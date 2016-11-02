@@ -27,19 +27,19 @@
 </style>
 
 <script type="text/html" id="Page-Header">
-    <!-- Bottom Header - Report Header -->
-    <div class="fixed-positioning-container" style="top: 145px;" data-bind="visible: $root.ReportViewModel.ReportEditorVisible">
+    <!-- Bottom Header - Report Editor -->
+    <div class="fixed-positioning-container" style="top: 145px;" data-bind="visible: $root.ReportEditorVisible">
         <!-- Space -->
         <div class="standard-header-sleeve" style="height: 178px;">
             <div class="standard-header standard-padding" style="overflow: visible;">
 
                 <!-- Report Editor component -->
-                <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportViewModel.ReportEditorModel }"></div>
+                <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportEditorModel }"></div>
             </div>
         </div>
     </div>
 
-    <!-- Top Header -->
+    <!-- Top Header - Report Synopsis and Report Interface -->
     <div class="fixed-positioning-container">
         <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
 
@@ -64,25 +64,25 @@
 
 <script type="text/html" id="Page-Body">
     <!-- Will move/transistion when the filters appear -->
-    <div class="page-content" style="margin-top: 150px; min-height: 700px; padding-top: 30px;">
+    <div class="page-content" style="margin-top: 150px; min-height: 700px; padding-top: 30px; overflow: auto;">
 
-        <div data-bind="ifnot: $root.ReportViewModel.ReportEditorVisible">
+        <div data-bind="ifnot: $root.ReportEditorVisible">
             <div data-bind="template: { name: 'Dashboard-Body'}" style="position: relative; width: 100%;"></div>
         </div>
 
-        <div data-bind="if: $root.ReportViewModel.ReportEditorVisible">
-            <div data-bind="template: { name: 'Report-Editor-Body', data: $root.ReportViewModel.ReportEditorModel }"></div>
+        <div data-bind="if: $root.ReportEditorVisible">
+            <div data-bind="template: { name: 'Report-Editor-Body', data: $root.ReportEditorModel }"></div>
         </div>
     </div>
+</script>
+
+<script type="text/html" id="Dashboard-Body">
+    <img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
 </script>
 
 <script type="text/html" id="Main-Template">
     <div data-bind="template: { name: 'Page-Header', data: $data }"></div>
     <div class="container page-content-sleeve" data-bind="template: { name: 'Page-Body' }"></div>
-</script>
-
-<script type="text/html" id="Dashboard-Body">
-    <img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
 </script>
 
 <!-- KnockoutJS Root Element -->
@@ -96,14 +96,30 @@
 
     ProfitWise.DashboardModel = function () {
         var self = this;
-        self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
-        self.LoadDashboardData = function () { };
+        self.ReportEditorVisible = ko.observable(false);
 
-        self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel();
-        self.ReportViewModel.SelectReportCallback = function () {
-            //alert('TODO - add main dashboard code to load that Report');
+        // Report View Model configuration
+        self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel(self.ReportEditorVisible);
+        self.ReportViewModel.SelectReportCallback = function (reportId) {
+            console.log('Selected Report : ' + reportId);
+
+            // TODO - add functionality for this
         };
+        self.ReportViewModel.EditReportCallback = function(reportId) {
+            self.ReportEditorVisible(true);
+            self.ReportEditorModel.LoadReport(reportId);
+        };        
+        
+        // Report Editor Model configuration
+        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
+        self.ReportEditorModel.OkCallback = function () {
+            self.ReportEditorVisible(false);
+        };
+        self.ReportEditorModel.CancelCallback = function () {
+            self.ReportEditorVisible(false);
+        };
+
         return self;
     };
 

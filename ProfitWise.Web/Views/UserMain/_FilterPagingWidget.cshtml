@@ -42,13 +42,21 @@
     ProfitWiseWidgets.FilterPagingWidgetModel = function(placeholderText) {
         var self = this;
 
+        self.SearchText = ko.observable();
+        self.PlaceHolderText = ko.observable(placeholderText || "Search...");
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
-        self.UpdateCallback = function() { };
+
+        // What do we need from this...?
+        // 1.) RefreshCallback -> when the Paging has changed, or the Search Text has changed
+        // 2.) SelectCallback -> when the user has asked to Select All
+        // 3.) 
+
+        self.RefreshCallback = function() { };
         self.SelectAllCallback = function () { };
         
-        self.RegisterUpdateCallback = function(callback) {
-            self.UpdateCallback = callback;
+        self.RegisterRefreshCallback = function(callback) {
+            self.RefreshCallback = callback;
             self.PagingModel.Callback = callback;
         };
 
@@ -56,25 +64,22 @@
             self.SelectAllCallback = callback;
         };
 
+        // Observable attached to the ShowAll controller
         self.ShowFilter = ko.observable("Show All");
 
-        self.ShowAll = ko.computed(function() { return self.ShowFilter() === "Show All"; });
+        self.IsShowAllSelected = ko.computed(function() { return self.ShowFilter() === "Show All"; });
 
         self.ShowFilterChanged = function() {
-            self.UpdateCallback();
+            self.RefreshCallback();
         };
 
         self.SelectAllClick = function () {
             self.SelectAllCallback();
         };
 
-        self.PlaceHolderText = ko.observable(placeholderText || "Search...");
-        self.SearchText = ko.observable();
-
-
         self.SearchKeyCallback = function(model, event) {
             if (event.keyCode == 13) {
-                self.UpdateCallback();
+                self.RefreshCallback();
                 return false;
             } else {
                 return true;
