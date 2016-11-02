@@ -81,6 +81,5 @@ namespace ProfitWise.Web.Controllers
                 SelectedProductTypes = selected
             });
         }
-
     }
 }

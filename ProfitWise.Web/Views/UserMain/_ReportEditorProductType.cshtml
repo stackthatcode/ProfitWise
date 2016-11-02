@@ -52,6 +52,8 @@
 
         self.Parent = parent;
         self.ReportId = ko.observable();
+        self.SelectAll = ko.observable(true);
+
         self.ProductTypeSummaries = ko.observable([]);
 
         // TODO - how to filter the Product Types that are shown in the grid... practically?
