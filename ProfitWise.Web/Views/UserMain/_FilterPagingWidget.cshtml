@@ -39,22 +39,18 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.FilterPagingWidgetModel = function(placeholderText) {
+    ProfitWiseWidgets.FilterPagingWidgetModel = function() {
         var self = this;
-
         self.SearchText = ko.observable();
-        self.PlaceHolderText = ko.observable(placeholderText || "Search...");
+        self.ShowFilter = ko.observable("Show All");     // Hard-coded to template option value
+        self.PlaceHolderText = ko.observable("Search...");
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
-
-
-        // What do we need from this...?
-        // 1.) RefreshCallback -> when the Paging has changed, or the Search Text has changed
-        // 2.) SelectCallback -> when the user has asked to Select All
-        // 3.) 
 
         self.RefreshCallback = function() { };
         self.SelectAllCallback = function () { };
         
+        // "public" interfaces
+        // NOTE: this is not consistent with other widgets... may need to update for consistency
         self.RegisterRefreshCallback = function(callback) {
             self.RefreshCallback = callback;
             self.PagingModel.Callback = callback;
@@ -64,10 +60,27 @@
             self.SelectAllCallback = callback;
         };
 
-        // Observable attached to the ShowAll controller
-        self.ShowFilter = ko.observable("Show All");
+        self.SetPageNumber = function(pageNumber) {
+            self.PagingModel.PageNumber(pageNumber);
+        }
 
-        self.IsShowAllSelected = ko.computed(function() { return self.ShowFilter() === "Show All"; });
+        self.SetRecordCount = function (recordCount) {
+            self.PagingModel.RecordCount(recordCount);
+        }
+
+        self.GetCurrentStateDigest = function() {
+            return {
+                PageNumber: self.PagingModel.PageNumber(),
+                PageSize: self.PagingModel.PageSize(),
+                RecordCount: self.PagingModel.RecordCount(),
+                IsShowAllSelected: self.IsShowAllSelected(),
+                SearchText: self.SearchText(),
+            };
+        }
+
+        // Back-end functions
+        self.IsShowAllSelected =
+            ko.computed(function () { return self.ShowFilter() === "Show All"; });
 
         self.ShowFilterChanged = function() {
             self.RefreshCallback();

@@ -55,7 +55,7 @@
                     Cancel &nbsp;<i class="glyphicon glyphicon-remove"></i>
                 </a>
 
-                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: OkCallback">
+                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: CancelCallback">
                     Ok &nbsp;<i class="glyphicon glyphicon-ok"></i>
                 </a>
             </div>
@@ -187,8 +187,7 @@
 
     ProfitWiseWidgets.ReportEditorModel = function () {
         var self = this;
-        
-        self.ReportId = ko.observable();
+
         self.ReportFilterTypes = {
             ProductType: "ProductType",
             Vendor: "Vendor",
@@ -196,25 +195,16 @@
             Sku: "Skus"
         };
 
-        self.LoadReport = function(reportId) {
-            self.ReportId(reportId);
-            self.ProductTypeClick();
-        };
-        
-        self.ReportProductTypeModel = new ProfitWiseWidgets.ReportProductTypeModel(self);
+        self.ReportId = ko.observable();
+        self.SelectedFilter = ko.observable(self.ReportFilterTypes.ProductType);
 
-        /* TODO - move these
-        self.VendorFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Vendors...");
-        self.ProductFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Products by Title");
-        self.SkuFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for SKU by Title");        
-        self.VendorGrid = ko.observable([]);
-        self.ProductGrid = ko.observable([]);
-        self.SkuGrid = ko.observable([]);
-        */
+        self.CancelCallback = function () { };
+        self.OkCallback = function () { };
 
         self.ProductTypeClick = function () {
             self.ReportProductTypeModel.Refresh(this.ReportId());
 
+            // Show the actual controls..
             self.SelectedFilter(self.ReportFilterTypes.ProductType);
             ProfitWiseFunctions.BsActivateTab("report-filter-product-type");
         };
@@ -242,13 +232,31 @@
             // TODO => build this out
         };
 
-        self.SelectedFilter = ko.observable(self.ReportFilterTypes.ProductType);
-
-        self.OkCallback = function () { };
-
+        self.RegisterCancelCallback = function (callback) {
+            self.CancelCallback = callback;
+        };
         self.RegisterOkCallback = function (callback) {
             self.OkCallback = callback;
         };
+
+        self.LoadReport = function (reportId) {
+            self.ReportId(reportId);
+            self.ProductTypeClick();
+        };
+
+        /* TODO - move these
+        self.VendorFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Vendors...");
+        self.ProductFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Products by Title");
+        self.SkuFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for SKU by Title");        
+        self.VendorGrid = ko.observable([]);
+        self.ProductGrid = ko.observable([]);
+        self.SkuGrid = ko.observable([]);
+        */
+
+
+        // Wire in the individual Report Editor modules
+        self.ReportProductTypeModel = new ProfitWiseWidgets.ReportProductTypeModel(self);
+        self.ReportProductTypeModel.GotoNextCallback = self.VendorClick;
 
         return self;
     };

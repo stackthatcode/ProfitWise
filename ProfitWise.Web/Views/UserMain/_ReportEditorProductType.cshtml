@@ -18,7 +18,7 @@
                 <div style="height:65px;">
                     <p style="font-size:0.95em;">Displayed results will only include data from selected Product Types.</p>
                 </div>
-                <p><a href="#" data-bind="click: $parent.VendorClick" class="btn btn-default">Next &gt;&gt;</a></p>
+                <p><a href="#" data-bind="click: GotoNextCallback" class="btn btn-default">Next &gt;&gt;</a></p>
             </div>
         </div>
     </div>
@@ -50,14 +50,10 @@
     ProfitWiseWidgets.ReportProductTypeModel = function (parent) {
         var self = this;
 
-        self.ReportId = ko.observable();
         self.Parent = parent;
-
-        self.FilterModel =
-            new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Product Types...");
-
+        self.ReportId = ko.observable();
         self.ProductTypeSummaries = ko.observable([]);
-        
+
         // TODO - how to filter the Product Types that are shown in the grid... practically?
 
         self.Refresh = function (reportId) {
@@ -74,6 +70,11 @@
                 }
             );
         }
+        
+        self.GotoNextCallback = function () { };
+        
+        self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
+        self.FilterModel.PlaceHolderText("Search for Product Types...");
 
         return self;
     };
