@@ -23,7 +23,7 @@ CREATE TABLE `profitwisereport` (
     `AllProducts` TINYINT NOT NULL,
     `AllSkus` TINYINT NOT NULL,
     `Grouping`  varchar(25) NULL,
-    `Order`  varchar(25) NULL,
+    `Ordering`  varchar(25) NULL,
 	`CreatedDate` TIMESTAMP NOT NULL,
 	`LastAccessedDate` TIMESTAMP NOT NULL,
     PRIMARY KEY (`PwReportId`, `PwShopId` )

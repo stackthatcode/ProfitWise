@@ -36,7 +36,7 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             
             var report = repository.RetrieveReport(reportId);
-            report.ProductTypes = repository.RetrieveSelectedProductTypes(reportId);
+            report.ProductTypes = repository.RetrieveMarkedProductTypes(reportId);
             report.Vendors = repository.RetrieveSelectedVendors(reportId);
             report.MasterProductIds = repository.RetrieveMasterProducts(reportId);
             report.Skus = repository.RetrieveSkus(reportId);
@@ -56,6 +56,8 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(report);
         }
 
+
+        // Product Types Actions
         [HttpGet]
         public ActionResult ProductTypes()
         {
@@ -70,38 +72,54 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
             var report = repository.RetrieveReport(reportId);
-            var selected = repository.RetrieveSelectedProductTypes(reportId);
+            var markedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
+
             return new JsonNetResult(new
             {
                 AllProductTypes = report.AllProductTypes,
-                SelectedProductTypes = selected
+                MarkedProductTypes = markedProductTypes,
             });
         }
 
         [HttpPost]
-        public ActionResult SelectProductType(long reportId, string productType)
+        public ActionResult SelectAllProductTypes(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            repository.SelectProductType(reportId, productType);
+            repository.ClearProductTypeMarks(reportId);
+            repository.UpdateSelectAllProductTypes(reportId, true);
             return JsonNetResult.Success();
         }
 
         [HttpPost]
-        public ActionResult DeselectProductType(long reportId, string productType)
+        public ActionResult DeselectAllProductTypes(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            var report = repository.RetrieveReport(reportId);
-            if (report.AllProductTypes)
-            {
-                repository.CopyAllProductTypesToSelection(reportId);
-            }
-            repository.DeselectProductType(reportId, productType);
+            repository.ClearProductTypeMarks(reportId);
+            repository.UpdateSelectAllProductTypes(reportId, false);
             return JsonNetResult.Success();
         }
 
+        [HttpPost]
+        public ActionResult MarkProductType(long reportId, string productType)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            repository.MarkProductType(reportId, productType);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult UnmarkProductType(long reportId, string productType)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);            
+            repository.UnmarkProductType(reportId, productType);
+            return JsonNetResult.Success();
+        }
     }
 }
+

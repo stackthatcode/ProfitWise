@@ -134,49 +134,39 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<PwProductTypeSummary>(query, new {PwShopId}).ToList();
         }
 
-        public List<string> RetrieveSelectedProductTypes(long reportId)
+        public void UpdateSelectAllProductTypes(long reportId, bool value)
+        {
+            var query = @"UPDATE profitwisereport SET AllProductTypes = @value 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            _connection.Execute(query, new { PwShopId, reportId, value });
+        }
+
+        public List<string> RetrieveMarkedProductTypes(long reportId)
         {
             var query = @"SELECT ProductType FROM profitwisereportproducttype
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
             return _connection.Query<string>(query, new { PwShopId, reportId }).ToList();
         }
 
-        public void SelectAllProductTypes(long reportId)
+        public void ClearProductTypeMarks(long reportId)
         {
-            var query = 
-                @"UPDATE profitwisereport SET AllProductTypes = 1 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportproducttype WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            var query = @"DELETE FROM profitwisereportproducttype 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             _connection.Execute(query, new { PwShopId, reportId });
-        }
+        }        
 
-        public void DeselectAllProductTypes(long reportId)
-        {
-            var query =
-                @"UPDATE profitwisereport SET AllProductTypes = 0 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportproducttype WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId });
-        }
-
-        public void CopyAllProductTypesToSelection(long reportId)
-        {
-            var query =
-                @"INSERT INTO profitwisereportproducttype 
-                    SELECT @reportId, @PwShopId, DISTINCT(ProductType)
-                    FROM profitwiseproduct
-                    WHERE PwShopId = @PwShopId;";
-            _connection.Execute(query, new { PwShopId, reportId });
-        }
-
-        public void SelectProductType(long reportId, string productType)
+        public void MarkProductType(long reportId, string productType)
         {
             var query = @"INSERT profitwisereportproducttype VALUES ( @PwShopId, @reportId, @productType )";
             _connection.Execute(query, new { PwShopId, reportId, productType });
         }
 
-        public void DeselectProductType(long reportId, string productType)
+        public void UnmarkProductType(long reportId, string productType)
         {
             var query = @"DELETE FROM profitwisereportproducttype 
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId AND ProductType = @productType";
+                        WHERE PwShopId = @PwShopId 
+                        AND PwReportId = @reportId 
+                        AND ProductType = @productType";
             _connection.Execute(query, new { PwShopId, reportId, productType });
         }
 

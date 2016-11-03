@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Web.Mvc;
 using ProfitWise.Web.Attributes;
 
@@ -11,6 +12,11 @@ namespace ProfitWise.Web.Controllers
         public ActionResult ServerFault(string returnUrl)
         {
             var model = new ErrorModel() {ReturnUrl = returnUrl};
+
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            Response.SuppressFormsAuthenticationRedirect = true;
+            Response.TrySkipIisCustomErrors = true;
+
             return View(model);
         }
 
@@ -18,6 +24,10 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult Http404()
         {
+            Response.StatusCode = (int)HttpStatusCode.NotFound;
+            Response.SuppressFormsAuthenticationRedirect = true;
+            Response.TrySkipIisCustomErrors = true;
+
             return View();
         }
 

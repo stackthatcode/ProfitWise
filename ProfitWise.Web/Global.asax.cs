@@ -33,9 +33,10 @@ namespace ProfitWise.Web
 
             Server.ClearError();
 
-            var returnUrl = HttpContext.Current.Request.Url.ToString();
-            var url = $"{GlobalConfig.BaseUrl}/Error/ServerFault?returnUrl={WebUtility.UrlEncode(returnUrl)}";
-            HttpContext.Current.Response.Redirect(url);
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            //var returnUrl = HttpContext.Current.Request.Url.ToString();
+            //var url = $"~/Error/ServerFault?returnUrl={WebUtility.UrlEncode(returnUrl)}";
         }
     }
 }
