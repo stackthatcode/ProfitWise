@@ -33,7 +33,7 @@
     <div class="row-fluid" style="height: 50px; overflow: visible;">
         <div class="col-xs-3 no-side-padding" style="padding-top: 10px;">
         </div>
-        <div class="col-xs-9 no-side-padding">
+        <div class="col-xs-9 no-side-padding" data-bind="if: $data.PagingModel.RecordCount">            
             <div data-bind="template: { name: 'Paging-Widget', data: $data.PagingModel }">
             </div>
         </div>
@@ -67,6 +67,10 @@
         self.SetPageNumber = function(pageNumber) {
             self.PagingModel.PageNumber(pageNumber);
         };
+        
+        self.GetPageNumber = function () {
+            return self.PagingModel.PageNumber();
+        };
 
         self.SetPageSize = function (pageSize) {
             self.PagingModel.PageSize(pageSize);
@@ -74,6 +78,12 @@
 
         self.SetRecordCount = function (recordCount) {
             self.PagingModel.RecordCount(recordCount);
+            if (self.PagingModel.PageNumber() > self.PagingModel.PageCount()) {
+                self.PagingModel.PageNumber(self.PagingModel.PageCount());
+            }
+            if (self.PagingModel.PageNumber() == 0) {
+                self.PagingModel.PageNumber(1);
+            }
         };
         
         self.RemoveSearch = function () {            
@@ -84,6 +94,7 @@
         self.SearchClick = function () {
             self.RefreshCallback();
         };
+
 
         self.GetCurrentStateDigest = function() {
             return {
