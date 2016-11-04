@@ -227,29 +227,50 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public void SelectAllMasterProducts(long reportId)
+        public IList<PwProductSummary> RetrieveMasterProductSummary(long reportId)
         {
             var query =
-                @"UPDATE profitwisereport SET AllProducts = 1 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportmasterproduct WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+                @"SELECT t1.PwMasterProductId, t1.Title, COUNT(*) AS Count
+                FROM profitwiseproduct t1 
+	                INNER JOIN profitwisemastervariant t2
+		                ON t1.PwMasterProductId = t2.PwMasterProductId AND t1.IsPrimary = 1 
+	                INNER JOIN profitwisevariant t3
+		                ON t2.PwMasterVariantId = t3.PwMasterVariantId AND t3.IsPrimary = 1
+                WHERE t1.PwShopId = @PwShopId
+                AND t2.PwShopId = @PwShopId
+                AND t3.PwShopId = @PwShopId
+                GROUP BY t1.PwMasterProductId, t1.Title;";
+            return _connection.Query<PwProductSummary>(query, new { PwShopId, reportId }).ToList();
+        }        
+
+        public void UpdateSelectAllMasterProducts(long reportId, bool value)
+        {
+            var query = @"UPDATE profitwisereport SET AllProducts = @value 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            _connection.Execute(query, new { PwShopId, reportId, value });
+        }
+
+        public List<long> RetrieveMarkedMasterProducts(long reportId)
+        {
+            var query = @"SELECT PwMasterProductId FROM profitwisereportmasterproduct
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            return _connection.Query<long>(query, new { PwShopId, reportId }).ToList();
+        }
+
+        public void ClearMasterProductMarks(long reportId)
+        {
+            var query = @"DELETE FROM profitwisereportmasterproduct 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             _connection.Execute(query, new { PwShopId, reportId });
         }
 
-        public void DeselectAllMasterProducts(long reportId)
+        public void MarkMasterProduct(long reportId, long masterProduct)
         {
-            var query =
-                @"UPDATE profitwisereport SET AllProducts = 0 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportmasterproduct WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId });
+            var query = @"INSERT profitwisereportmasterproduct VALUES ( @reportId, @PwShopId, @masterProduct )";
+            _connection.Execute(query, new { reportId, PwShopId, masterProduct });
         }
 
-        public void InsertMasterProduct(long reportId, long masterProduct)
-        {
-            var query = @"INSERT profitwisereportmasterproduct VALUES ( @PwShopId, @reportId, @masterProduct )";
-            _connection.Execute(query, new { PwShopId, reportId, masterProduct });
-        }
-
-        public void DeleteMasterProduct(long reportId, long masterProductId)
+        public void UnmarkMasterProduct(long reportId, long masterProductId)
         {
             var query =
                 @"DELETE FROM profitwisereportmasterproduct 
@@ -257,13 +278,6 @@ namespace ProfitWise.Data.Repositories
                 AND PwReportId = @reportId 
                 AND PwMasterProductId = @masterProductId;";
             _connection.Execute(query, new { PwShopId, reportId, masterProductId });
-        }
-
-        public List<long> RetrieveMasterProducts(long reportId)
-        {
-            var query = @"SELECT PwMasterProductId FROM profitwisereportmasterproduct
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            return _connection.Query<long>(query, new { PwShopId, reportId }).ToList();
         }
 
 

@@ -112,9 +112,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        // TODO - replace this with the incremental correction
-
-        // Product Types Actions
+        // Vendor Actions
         [HttpGet]
         public ActionResult Vendors(long reportId)
         {
@@ -166,6 +164,74 @@ namespace ProfitWise.Web.Controllers
                     foreach (var vendor in newVendors)
                     {
                         repository.MarkVendor(reportId, vendor);
+                    }
+                }
+
+                transaction.Commit();
+            }
+
+            // TODO - clean-up the Vendor Types
+            // TODO - clean-up the Master Products
+            // TODO - clean-up the SKUs
+
+            return JsonNetResult.Success();
+        }
+
+
+        // Master Product Actions
+        [HttpGet]
+        public ActionResult MasterProducts(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var data = repository.RetrieveMasterProductSummary(reportId);
+            return new JsonNetResult(data);
+        }
+
+        [HttpGet]
+        public ActionResult SelectedMasterProducts(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var report = repository.RetrieveReport(reportId);
+            var markedMasterProducts = repository.RetrieveMarkedMasterProducts(reportId);
+
+            return new JsonNetResult(new
+            {
+                AllMasterProducts = report.AllProducts,
+                MarkedMasterProducts = markedMasterProducts,
+            });
+        }
+
+        [HttpPost]
+        public ActionResult 
+                SelectedMasterProducts(
+                    long reportId, bool selectAll, IList<long> markedMasterProducts)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            using (var transaction = repository.InitiateTransaction())
+            {
+                if (markedMasterProducts == null) // Strange AJAX protocol here...
+                {
+                    repository.ClearVendorMarks(reportId);
+                    repository.UpdateSelectAllVendors(reportId, selectAll);
+                }
+                else
+                {
+                    var storedMarkedProducts = repository.RetrieveMarkedMasterProducts(reportId);
+                    var missingProducts = storedMarkedProducts.Where(x => !markedMasterProducts.Contains(x)).ToList();
+                    var newProducts = markedMasterProducts.Where(x => !storedMarkedProducts.Contains(x)).ToList();
+
+                    foreach (var masterProduct in missingProducts)
+                    {
+                        repository.UnmarkMasterProduct(reportId, masterProduct);
+                    }
+                    foreach (var masterProduct in newProducts)
+                    {
+                        repository.MarkMasterProduct(reportId, masterProduct);
                     }
                 }
 

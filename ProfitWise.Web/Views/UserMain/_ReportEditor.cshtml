@@ -2,6 +2,7 @@
 @Html.Partial("~/Views/UserMain/_SelectionModel.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorProductType.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorVendor.cshtml")
+@Html.Partial("~/Views/UserMain/_ReportEditorMasterProduct.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorEmptyResults.cshtml")
 
 
@@ -44,7 +45,7 @@
                 </li>
                 <li role="presentation">
                     <a href="#report-filter-product"
-                       data-bind="click: ProductClick"
+                       data-bind="click: MasterProductClick"
                        aria-controls="messages" role="tab" data-toggle="tab">Products</a>
                 </li>
                 <li role="presentation">
@@ -75,7 +76,9 @@
         <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
              data-bind="template: { name: 'Report-Editor-Header-Vendor', data: ReportVendorModel }">
         </div>
-
+        <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
+             data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: ReportMasterProductModel }">
+        </div>
     </div>
 </script>
 
@@ -92,7 +95,7 @@
     </div>
 
     <div data-bind="if: SelectedFilter() == ReportFilterTypes.Product">
-        <div data-bind="template: { name: 'Report-Editor-Body-Product' }"></div>
+        <div data-bind="template: { name: 'Report-Editor-Body-Master-Product', data: ReportMasterProductModel }"></div>
     </div>
 
     <div data-bind="if: SelectedFilter() == ReportFilterTypes.Sku">
@@ -165,14 +168,22 @@
             }
 
             self.ExecuteTransition();
-            self.ReportVendorModel.Refresh(self.ReportId());   // TODO change
+            self.ReportVendorModel.Refresh(self.ReportId());
 
-            self.InternalTransistionCallback = self.ReportVendorModel.Save;    // TODO change
+            self.InternalTransistionCallback = self.ReportVendorModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.Vendor);
             ProfitWiseFunctions.BsActivateTab("report-filter-vendor");
         };
 
-        self.ProductClick = function () {
+        self.MasterProductClick = function () {
+            if (self.SelectedFilter() == self.ReportFilterTypes.Product) {
+                return;
+            }
+
+            self.ExecuteTransition();
+            self.ReportMasterProductModel.Refresh(self.ReportId());
+
+            self.InternalTransistionCallback = self.ReportMasterProductModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.Product);
             ProfitWiseFunctions.BsActivateTab("report-filter-product");
         };
@@ -208,10 +219,14 @@
 
         self.ReportVendorModel = new ProfitWiseWidgets.ReportVendorModel(self);
         self.ReportVendorModel.GotoPreviousCallback = self.ProductTypeClick ;
-        self.ReportVendorModel.GotoNextCallback = self.ProductClick;
+        self.ReportVendorModel.GotoNextCallback = self.MasterProductClick;
+
+        self.ReportMasterProductModel = new ProfitWiseWidgets.ReportMasterProductModel(self);
+        self.ReportMasterProductModel.GotoPreviousCallback = self.VendorClick;
+        self.ReportMasterProductModel.GotoNextCallback = function () { alert('TBD'); };
+
 
         /* TODO - move these
-        self.ProductFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for Products by Title");
         self.SkuFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for SKU by Title");        
         */
 
