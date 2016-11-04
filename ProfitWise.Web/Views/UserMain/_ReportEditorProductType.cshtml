@@ -14,13 +14,13 @@
              data-bind="if: $data.PageOfProductTypes().length">
             
             <!-- Move the Select all thingy outside, here -->
-            <div data-bind="ifnot: AllAreSelected">
+            <div data-bind="ifnot: SelectionModel.AllAreSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
-                    data-bind="click: SelectAllClick">Select All</a>
+                    data-bind="click: SelectionModel.SelectAll">Select All</a>
             </div>
-            <div data-bind="if: AllAreSelected">
+            <div data-bind="if: SelectionModel.AllAreSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
-                    data-bind="click: DeselectAllClick">Deselect All</a>
+                    data-bind="click: SelectionModel.DeselectAll">Deselect All</a>
             </div>
         </div>
         <div class="col-xs-1"></div>
@@ -72,6 +72,72 @@
         return self;
     };
 
+    ProfitWiseWidgets.SelectionModel = function() {
+        var self = this;
+        self.AllSelected = ko.observable(true);
+        self.MarkedItems = ko.observableArray();
+        self.Callback = function() {
+        };
+
+        self.IsSelected = function (item) {
+            console.log(item);
+            var isMarked = AQ(self.MarkedItems()).contains(item);
+            return self.AllSelected() ? !isMarked : isMarked;
+        };
+
+        self.MarkItem = function (item) {
+            self.MarkedItems.push(item);
+            self.Callback();
+
+            // Move this to parent
+            //if (self.MarkedItems().length == self.ProductTypes().length && self.AllSelected() == false) {
+            //    self.SelectAll();
+            //}
+        };
+
+        self.UnmarkItem = function (item) {
+            self.MarkedItems.remove(function (n) {
+                return n == item;
+            });
+            self.Callback();
+        };
+
+        self.AllAreSelected = ko.computed(function () {
+            return self.MarkedItems().length == 0 && self.AllSelected();
+        });
+
+        self.SelectAll = function () {
+            self.AllSelected(true);
+            self.MarkedItems.removeAll();
+            self.Callback();
+        }
+
+        self.DeselectAll = function () {
+            self.AllSelected(false);
+            self.MarkedItems.removeAll();
+            self.Callback();
+        }
+
+        // Need to pass item.ProductType to this
+        self.ToggleSelect = function (item) {
+            var currentlySelected = self.IsSelected(item);
+
+            if (self.AllSelected() && currentlySelected) {
+                self.MarkItem(item);
+            }
+            if (!self.AllSelected() && !currentlySelected) {
+                self.MarkItem(item);
+            }
+            if (self.AllSelected() && !currentlySelected) {
+                self.UnmarkItem(item);
+            }
+            if (!self.AllSelected() && currentlySelected) {
+                self.UnmarkItem(item);
+            }
+        };
+        return self;
+    };
+
     ProfitWiseWidgets.ReportProductTypeModel = function (parent) {
         var self = this;
         self.Parent = parent;
@@ -82,16 +148,30 @@
         self.PageOfProductTypes = ko.observableArray();
 
         // Selections
-        self.AllProductTypesSelected = ko.observable(true);
-        self.MarkedProductTypes = ko.observableArray();
-        
+        self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
+        self.SelectionModel.Callback = function() {
+            self.ApplyFiltersAndPaging();
+        }
+
+        // Paging and Filtering model
+        self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
+        self.FilterModel.PlaceHolderText("Search for Product Types...");
+        self.FilterModel.RegisterRefreshCallback(function () {
+            self.ApplyFiltersAndPaging();
+        });
+
+        self.FilterModel.SetPageSize(5);
+
+        self.CheckboxClick = function(data) {
+            self.SelectionModel.ToggleSelect(data.ProductType);
+            return true;
+        };
+
         self.AddObservables = function(data) {
             AQ(data)
-                .each(function(item) {
+                .each(function (item) {
                     item.IsChecked = ko.computed(function () {
-                        var isMarked = AQ(self.MarkedProductTypes()).contains(item.ProductType);
-                        //console.log("IsChecked evaluating for " + item.ProductType + " isMarked: " + isMarked);
-                        return self.AllProductTypesSelected() ? !isMarked : isMarked;
+                        return self.SelectionModel.IsSelected(item.ProductType);
                     });
 
                     item.CorrectedProductType = ko.computed(function() {
@@ -115,8 +195,8 @@
                     ajax.HttpGet("/ReportService/SelectedProductTypes?reportId=" + self.ReportId(), this);
                 },
                 function (data) {
-                    self.AllProductTypesSelected(data.AllProductTypes);
-                    self.MarkedProductTypes(data.MarkedProductTypes);
+                    self.SelectionModel.AllSelected(data.AllProductTypes);
+                    self.SelectionModel.MarkedItems(data.MarkedProductTypes);
                     self.ApplyFiltersAndPaging();
                 }
             );
@@ -128,8 +208,8 @@
                     var ajax = new ProfitWiseFunctions.Ajax();
                     var data = {
                         reportId: self.ReportId(),
-                        selectAll: self.AllProductTypesSelected(),
-                        markedProductTypes: self.MarkedProductTypes(),
+                        selectAll: self.SelectionModel.AllSelected(),
+                        markedProductTypes: self.SelectionModel.MarkedItems(),
                     };
                     ajax.HttpPost("/ReportService/SelectedProductTypes", data, this);
                 },
@@ -140,8 +220,8 @@
         self.ApplyFiltersAndPaging = function () {
             var searchText = self.FilterModel.SearchText() || "";
             var isShowAllSelected = self.FilterModel.IsShowAllSelected();
-            var filteredProductTypes = self.ProductTypes();
 
+            var filteredProductTypes = self.ProductTypes();
             if (searchText.trim() != "") {
                 filteredProductTypes = 
                     AQ(filteredProductTypes)
@@ -173,77 +253,8 @@
                 .toArray());
         };
 
-        // Selection business logic
-        self.ProductTypeCheckboxIsChecked = function (productType) {
-            var isMarked = AQ(self.MarkedProductTypes()).contains(productType);
-            return self.AllProductTypesSelected() ? !isMarked : isMarked;
-        }
-
-        self.MarkProductTypeClientSide = function (productType) {
-            self.MarkedProductTypes.push(productType);
-
-            if (self.MarkedProductTypes().length == self.ProductTypes().length &&
-                self.AllProductTypesSelected() == false) {
-                self.SelectAllClick();
-            } else {
-                self.ApplyFiltersAndPaging();
-            }
-        };
-
-        self.UnmarkProductTypeClientSide = function (productType) {
-            self.MarkedProductTypes.remove(function (item) {
-                return item == productType;
-            });
-
-            self.ApplyFiltersAndPaging();
-        };
-
-        self.AllAreSelected = ko.computed(function() {
-            return self.MarkedProductTypes().length == 0 && self.AllProductTypesSelected();
-        });
-        
-        self.SelectAllClick = function () {
-            self.AllProductTypesSelected(true);
-            self.MarkedProductTypes.removeAll();
-            self.ApplyFiltersAndPaging();
-        }
-
-        self.DeselectAllClick = function() {            
-            self.AllProductTypesSelected(false);
-            self.MarkedProductTypes.removeAll();
-            self.ApplyFiltersAndPaging();
-        }
-
-        self.CheckboxClick = function (item) {
-            var currentlyChecked = item.IsChecked();
-            var productType = item.ProductType;
-            
-            if (self.AllProductTypesSelected() && currentlyChecked) {
-                self.MarkProductTypeClientSide(productType);
-            }
-            if (!self.AllProductTypesSelected() && !currentlyChecked) {
-                self.MarkProductTypeClientSide(productType);
-            }
-            if (self.AllProductTypesSelected() && !currentlyChecked) {
-                self.UnmarkProductTypeClientSide(productType);
-            }
-            if (!self.AllProductTypesSelected() && currentlyChecked) {
-                self.UnmarkProductTypeClientSide(productType);
-            }
-
-            return true;
-        };
-
         self.GotoNextCallback = function () { };
         
-        self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
-        self.FilterModel.PlaceHolderText("Search for Product Types...");
-        self.FilterModel.RegisterRefreshCallback(function () {
-            self.ApplyFiltersAndPaging();
-
-        });
-
-        self.FilterModel.SetPageSize(5);
         return self;
     };
 </script>
