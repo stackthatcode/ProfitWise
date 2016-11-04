@@ -84,7 +84,6 @@
                 .each(function(item) {
                     item.IsChecked = ko.computed(function () {
                         var isMarked = AQ(self.MarkedProductTypes()).contains(item.ProductType);
-                        //console.log("IsChecked evaluating for " + item.ProductType + " isMarked: " + isMarked);
                         return self.AllProductTypesSelected() ? !isMarked : isMarked;
                     });
 
@@ -94,51 +93,49 @@
                 });
         };
 
-        self.Refresh = function (reportId) {
+        self.Refresh = function(reportId) {
             self.ReportId(reportId);
             self.FilterModel.SetPageNumber(1);
             var ajax = new ProfitWiseFunctions.Ajax();
-            
+
             flow.exec(
-                function () {
-                    ajax.HttpGet("/ReportService/ProductTypes", this);
+                function() {
+                    ajax.HttpGet("/ReportService/SelectedProductTypes?reportId=" + self.ReportId(), this);
+                },
+                function(data) {
+                    self.AllProductTypesSelected(data.AllProductTypes);
+                    self.MarkedProductTypes(data.MarkedProductTypes);
+                    self.ApplyFiltersAndPaging();
+                });
+        };
+
+        self.ApplyFiltersAndPaging = function () {
+            var searchText = self.FilterModel.SearchText() || "";
+            var isShowAllSelected = self.FilterModel.IsShowAllSelected();
+
+            var data = {
+                ReportId: self.ReportId(),
+                MarkedProductTypes: self.MarkedProductTypes(),
+                SearchText: searchText,
+                IsShowAllSelected: isShowAllSelected,
+                PageNumber: self.FilterModel.GetPageNumber(),
+                PageSize: self.PageSize(),
+            };
+
+            var ajax = new ProfitWiseFunctions.Ajax();
+            flow.exec(
+                function() {
+                    ajax.HttpGet("/ReportService/ProductTypesSearch", data, this);
                 },
                 function (data) {
                     self.AddObservables(data);
                     self.ProductTypes(data);
-                    ajax.HttpGet("/ReportService/SelectedProductTypes?reportId=" + self.ReportId(), this);
-                },
-                function (data) {
-                    self.AllProductTypesSelected(data.AllProductTypes);
-                    self.MarkedProductTypes(data.MarkedProductTypes);
+                });
 
                     self.ApplyFiltersAndPaging();
-                }
-            );
-        }
 
-        self.ApplyFiltersAndPaging = function () {
-            var filterState = self.FilterModel.GetCurrentStateDigest();
-            var searchText = filterState.SearchText || "";
-            var isShowAllSelected = filterState.IsShowAllSelected;            
+
             var filteredProductTypes = self.ProductTypes();
-
-            if (searchText.trim() != "") {
-                filteredProductTypes = 
-                    AQ(filteredProductTypes)
-                        .where(function (item) {
-                            return ProfitWiseFunctions
-                                .CaseInsensitiveContains(item.ProductType, searchText);
-                        })
-                        .toArray();
-            }
-
-            if (!isShowAllSelected) {
-                filteredProductTypes =
-                    AQ(filteredProductTypes)
-                        .where(function (item) { return item.IsChecked() })
-                        .toArray();
-            }
 
             self.FilterModel.SetRecordCount(filteredProductTypes.length);
 
@@ -173,62 +170,34 @@
         self.AllAreSelected = ko.computed(function() {
             return self.MarkedProductTypes().length == 0 && self.AllProductTypesSelected();
         });
-
+        
         self.SelectAllClick = function () {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost(
-                        "/ReportService/SelectAllProductTypes",
-                        { reportId: self.ReportId() }, this);
-                },
-                function() {
-                    self.AllProductTypesSelected(true);
-                    self.MarkedProductTypes.removeAll();
-                    self.ApplyFiltersAndPaging();
-                });
+            self.AllProductTypesSelected(true);
+            self.MarkedProductTypes.removeAll();
+            self.ApplyFiltersAndPaging();
         }
 
         self.DeselectAllClick = function() {            
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost(
-                        "/ReportService/DeselectAllProductTypes",
-                        { reportId: self.ReportId() }, this);
-                },
-                function() {
-                    self.AllProductTypesSelected(false);
-                    self.MarkedProductTypes.removeAll();
-                    self.ApplyFiltersAndPaging();
-                });
+            self.AllProductTypesSelected(false);
+            self.MarkedProductTypes.removeAll();
+            self.ApplyFiltersAndPaging();
         }
 
         self.CheckboxClick = function (item) {
             var currentlyChecked = item.IsChecked();
-            var ajax = new ProfitWiseFunctions.Ajax();
             var productType = item.ProductType;
-
-            var data = {
-                reportId: self.ReportId(),
-                productType: productType,
-            };
-
+            
             if (self.AllProductTypesSelected() && currentlyChecked) {
                 self.MarkProductTypeClientSide(productType);
-                ajax.HttpPost("/ReportService/MarkProductType", data, self.ApplyFiltersAndPaging);
             }
             if (!self.AllProductTypesSelected() && !currentlyChecked) {
                 self.MarkProductTypeClientSide(productType);
-                ajax.HttpPost("/ReportService/MarkProductType", data, self.ApplyFiltersAndPaging);
             }
             if (self.AllProductTypesSelected() && !currentlyChecked) {
                 self.UnmarkProductTypeClientSide(productType);
-                ajax.HttpPost("/ReportService/UnmarkProductType", data, self.ApplyFiltersAndPaging);
             }
             if (!self.AllProductTypesSelected() && currentlyChecked) {
                 self.UnmarkProductTypeClientSide(productType);
-                ajax.HttpPost("/ReportService/UnmarkProductType", data, self.ApplyFiltersAndPaging);
             }
 
             return true;

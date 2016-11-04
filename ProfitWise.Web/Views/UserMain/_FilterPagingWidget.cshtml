@@ -76,6 +76,10 @@
             self.PagingModel.PageSize(pageSize);
         };
 
+        self.GetPageSize = function() {
+            return self.PagingModel.PageSize();
+        };
+
         self.SetRecordCount = function (recordCount) {
             self.PagingModel.RecordCount(recordCount);
             if (self.PagingModel.PageNumber() > self.PagingModel.PageCount()) {
@@ -85,7 +89,7 @@
                 self.PagingModel.PageNumber(1);
             }
         };
-        
+
         self.RemoveSearch = function () {            
             self.SearchText("");
             self.SearchClick();
@@ -95,16 +99,6 @@
             self.RefreshCallback();
         };
 
-
-        self.GetCurrentStateDigest = function() {
-            return {
-                PageNumber: self.PagingModel.PageNumber(),
-                PageSize: self.PagingModel.PageSize(),
-                RecordCount: self.PagingModel.RecordCount(),
-                IsShowAllSelected: self.IsShowAllSelected(),
-                SearchText: self.SearchText(),
-            };
-        }
 
         // Back-end functions
         self.IsShowAllSelected =

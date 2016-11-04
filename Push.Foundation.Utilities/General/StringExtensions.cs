@@ -14,5 +14,10 @@ namespace Push.Foundation.Utilities.General
         {
             return string.Join(Environment.NewLine, input);
         }
+
+        public static string ToCommaDelimited(this IEnumerable<string> input)
+        {
+            return string.Join(",", input);
+        }
     }
 }

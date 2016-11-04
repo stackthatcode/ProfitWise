@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -56,15 +57,30 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(report);
         }
 
+        
+        public class ProductTypeSearch
+        {
+            public string SearchText { get; set; }
+            public bool IsShowAllSelected { get; set; }
+            public IList<string> MarkedProductTypes { get; set; }
+            public int PageNumber { get; set; }
+            public int PageSize { get; set; }
+        }
 
-        // Product Types Actions
-        [HttpGet]
-        public ActionResult ProductTypes()
+        [HttpPost]
+        public ActionResult ProductTypesSearch(ProductTypeSearch parameters)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var data = repository.RetrieveProductTypeSummary();
-            return new JsonNetResult(data);
+            
+            var results = repository.RetrieveProductTypeSummary(
+                    parameters.SearchText, parameters.IsShowAllSelected, parameters.MarkedProductTypes, 
+                    parameters.PageNumber, parameters.PageSize);
+
+            var count = repository.RetrieveProductTypeCount(
+                parameters.SearchText, parameters.IsShowAllSelected, parameters.MarkedProductTypes);
+
+            return new JsonNetResult(new { results, count, });
         }
 
         [HttpGet]
