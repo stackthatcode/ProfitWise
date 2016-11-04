@@ -1,6 +1,6 @@
 ﻿@Html.Partial("~/Views/UserMain/_FilterPagingWidget.cshtml")
 
-<script type="text/html" id="Report-Editor-Header-Product-Type">
+<script type="text/html" id="Report-Editor-Header-Vendor">
     <div class="row-fluid">
         <div class="col-xs-8 no-side-padding">
             <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
@@ -11,42 +11,44 @@
     <div class="row-fluid">
         <div class="col-xs-8 no-side-padding" 
              style="border-top: 1px dashed #CCC;"
-             data-bind="if: $data.PageOfProductTypes().length">
+             data-bind="if: $data.PageOfVendors().length">
             
             <!-- Move the Select all thingy outside, here -->
             <div data-bind="ifnot: SelectionModel.AllAreSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
-                    data-bind="click: SelectionModel.SelectAll">Select All</a>
+                   data-bind="click: SelectionModel.SelectAll">Select All</a>
             </div>
             <div data-bind="if: SelectionModel.AllAreSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
-                    data-bind="click: SelectionModel.DeselectAll">Deselect All</a>
+                   data-bind="click: SelectionModel.DeselectAll">Deselect All</a>
             </div>
         </div>
+
         <div class="col-xs-1"></div>
         <div class="col-xs-3 no-side-padding" style="top:-120px; height: 250px;">
             <div style="padding:20px;">
+                <p style="font-weight:700; color:#666; font-size:1.2em;">Select the Vendors to include in your Report</p>
 
-                <p style="font-weight:700; color:#666; font-size:1.2em;">Select the Product Types to include in your Report</p>
                 <div style="height:65px;">
-                    <p style="font-size:0.95em;">Displayed results will only include data from selected Product Types.</p>
+                    <p style="font-size:0.95em;">Displayed results will only include data from selected Vendors.</p>
                 </div>
+
                 <p><a href="#" data-bind="click: GotoNextCallback" class="btn btn-default">Next &gt;&gt;</a></p>
             </div>
         </div>
     </div>
 </script>
 
-<script type="text/html" id="Report-Editor-Body-Product-Type">
+<script type="text/html" id="Report-Editor-Body-Vendor">
     <div class="row-fluid">
         <div class="col-xs-8 reduced-padding">
             
-            <div data-bind="if: PageOfProductTypes().length == 0">
-                <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Product Types' } }"></div>               
+            <div data-bind="if: PageOfVendors().length == 0">
+                <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Vendors' } }"></div>               
             </div>
 
             <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
-                <tbody data-bind="foreach: PageOfProductTypes">
+                <tbody data-bind="foreach: PageOfVendors">
                 <tr style="border-top: 0;">
                     <td>
                         <input class="form-control"
@@ -55,7 +57,7 @@
                                 data-bind="checked: $data.IsChecked, click: $parent.CheckboxClick"  />
                     </td>
 
-                    <td data-bind="text: $data.CorrectedProductType"></td>
+                    <td data-bind="text: $data.CorrectedVendor"></td>
                     <td>(<span data-bind="text: $data.Count"></span> Products)</td>
                 </tr>
                 </tbody>
@@ -67,14 +69,14 @@
 </script>
 
 <script>
-    ProfitWiseWidgets.ReportProductTypeModel = function (parent) {
+    ProfitWiseWidgets.ReportVendorModel = function (parent) {
         var self = this;
         self.Parent = parent;
         self.ReportId = ko.observable();
 
         // Data
-        self.ProductTypes = ko.observableArray();
-        self.PageOfProductTypes = ko.observableArray();
+        self.Vendors = ko.observableArray();
+        self.PageOfVendors = ko.observableArray();
 
         // Selections
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
@@ -84,7 +86,7 @@
 
         // Paging and Filtering model
         self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
-        self.FilterModel.PlaceHolderText("Search for Product Types...");
+        self.FilterModel.PlaceHolderText("Search for Vendors...");
         self.FilterModel.RegisterRefreshCallback(function () {
             self.ApplyFiltersAndPaging();
         });
@@ -92,7 +94,7 @@
         self.FilterModel.SetPageSize(5);
 
         self.CheckboxClick = function(data) {
-            self.SelectionModel.ToggleSelect(data.ProductType);
+            self.SelectionModel.ToggleSelect(data.Vendor);
             return true;
         };
 
@@ -100,15 +102,15 @@
             AQ(data)
                 .each(function (item) {
                     item.IsChecked = ko.computed(function () {
-                        return self.SelectionModel.IsSelected(item.ProductType);
+                        return self.SelectionModel.IsSelected(item.Vendor);
                     });
 
-                    item.CorrectedProductType = ko.computed(function() {
-                        return item.ProductType == "" ? "(No Product Type)" : item.ProductType;
+                    item.CorrectedVendor = ko.computed(function () {
+                        return item.Vendor == "" ? "(No Vendor)" : item.Vendor;
                     });
                 });
         };
-
+        
         self.Refresh = function (reportId) {
             self.ReportId(reportId);
             self.FilterModel.SetPageNumber(1);
@@ -116,16 +118,16 @@
             
             flow.exec(
                 function () {
-                    ajax.HttpGet("/ReportService/ProductTypes", this);
+                    ajax.HttpGet("/ReportService/Vendors?reportId=" + self.ReportId(), this);
                 },
                 function (data) {
                     self.AddObservables(data);
-                    self.ProductTypes(data);
-                    ajax.HttpGet("/ReportService/SelectedProductTypes?reportId=" + self.ReportId(), this);
+                    self.Vendors(data);
+                    ajax.HttpGet("/ReportService/SelectedVendors?reportId=" + self.ReportId(), this);
                 },
                 function (data) {
-                    self.SelectionModel.AllSelected(data.AllProductTypes);
-                    self.SelectionModel.MarkedItems(data.MarkedProductTypes);
+                    self.SelectionModel.AllSelected(data.AllVendors);
+                    self.SelectionModel.MarkedItems(data.MarkedVendors);
                     self.ApplyFiltersAndPaging();
                 }
             );
@@ -138,9 +140,9 @@
                     var data = {
                         reportId: self.ReportId(),
                         selectAll: self.SelectionModel.AllSelected(),
-                        markedProductTypes: self.SelectionModel.MarkedItems(),
+                        markedVendors: self.SelectionModel.MarkedItems(),
                     };
-                    ajax.HttpPost("/ReportService/SelectedProductTypes", data, this);
+                    ajax.HttpPost("/ReportService/SelectedVendors", data, this);
                 },
                 function(results) {
                 });
@@ -150,32 +152,32 @@
             var searchText = self.FilterModel.SearchText() || "";
             var isShowAllSelected = self.FilterModel.IsShowAllSelected();
 
-            var filteredProductTypes = self.ProductTypes();
+            var filteredVendors = self.Vendors();
             if (searchText.trim() != "") {
-                filteredProductTypes = 
-                    AQ(filteredProductTypes)
+                filteredVendors =
+                    AQ(filteredVendors)
                     .where(function (item) {
                         return ProfitWiseFunctions
-                            .CaseInsensitiveContains(item.ProductType, searchText);
+                            .CaseInsensitiveContains(item.Vendor, searchText);
                     })
                     .toArray();
             }
 
             if (!isShowAllSelected) {
-                filteredProductTypes =
-                    AQ(filteredProductTypes)
+                filteredVendors =
+                    AQ(filteredVendors)
                     .where(function (item) { return item.IsChecked() })
                     .toArray();
             }
 
-            self.FilterModel.SetRecordCount(filteredProductTypes.length);
+            self.FilterModel.SetRecordCount(filteredVendors.length);
 
             var pageNumber = self.FilterModel.GetPageNumber();
             var skip = (pageNumber - 1) * self.FilterModel.GetPageSize();
             var take = self.FilterModel.GetPageSize();
 
-            self.PageOfProductTypes(
-                AQ(filteredProductTypes)
+            self.PageOfVendors(
+                AQ(filteredVendors)
                 .skip(skip)
                 .take(take)
                 .where(function(n) { return n != null })
@@ -183,7 +185,8 @@
         };
 
         self.GotoNextCallback = function () { };
-        
+        self.GotoPreviousCallback = function () { };
+
         return self;
     };
 </script>

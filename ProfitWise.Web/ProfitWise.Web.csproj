@@ -446,6 +446,12 @@
   <ItemGroup>
     <Content Include="Views\UserMain\_ReportEditorEmptyResults.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\UserMain\_SelectionModel.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\UserMain\_ReportEditorVendor.cshtml" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

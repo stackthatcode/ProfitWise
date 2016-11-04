@@ -97,14 +97,13 @@
 
     ProfitWise.DashboardModel = function () {
         var self = this;
-
         self.ReportEditorVisible = ko.observable(false);
 
         // Report View Model configuration
         self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel(self.ReportEditorVisible);
+        
         self.ReportViewModel.SelectReportCallback = function (reportId) {
             console.log('Selected Report : ' + reportId);
-
             // TODO - add functionality for this
         };
 
@@ -115,9 +114,11 @@
         
         // Report Editor Model configuration
         self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
+        
         self.ReportEditorModel.OkCallback = function () {
             self.ReportEditorVisible(false);
         };
+
         self.ReportEditorModel.CancelCallback = function () {
             self.ReportEditorVisible(false);
         };

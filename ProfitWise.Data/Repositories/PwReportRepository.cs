@@ -177,40 +177,52 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public void SelectAllVendors(long reportId)
+        public IList<PwProductVendorSummary> RetrieveVendorSummary(long reportId)
         {
             var query =
-                @"UPDATE profitwisereport SET AllVendors = 1 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportvendor WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId });
+                @"SELECT Vendor, COUNT(*) AS Count
+                FROM profitwiseproduct
+                WHERE PwShopId = @PwShopId
+                AND IsPrimary = 1 
+                GROUP BY Vendor;";
+            return _connection.Query<PwProductVendorSummary>(query, new {PwShopId, reportId}).ToList();
         }
 
-        public void DeselectAllVendors(long reportId)
+        public void UpdateSelectAllVendors(long reportId, bool value)
         {
-            var query =
-                @"UPDATE profitwisereport SET AllVendors = 0 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportvendor WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId });
+            var query = @"UPDATE profitwisereport SET AllVendors = @value 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            _connection.Execute(query, new { PwShopId, reportId, value });
         }
 
-        public void InsertVendor(long reportId, string vendor)
-        {
-            var query = @"INSERT profitwisereportvendor VALUES ( @PwShopId, @reportId, @vendor )";
-            _connection.Execute(query, new { PwShopId, reportId, vendor });
-        }
-
-        public void DeleteVendor(long reportId, string vendor)
-        {
-            var query = @"DELETE FROM profitwisereportvendor 
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId AND Vendor = @vendor";
-            _connection.Execute(query, new { PwShopId, reportId, vendor });
-        }
-
-        public List<string> RetrieveSelectedVendors(long reportId)
+        public List<string> RetrieveMarkedVendors(long reportId)
         {
             var query = @"SELECT Vendor FROM profitwisereportvendor
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
+                        WHERE PwShopId = @PwShopId 
+                        AND PwReportId = @reportId";
             return _connection.Query<string>(query, new { PwShopId, reportId }).ToList();
+        }
+
+        public void ClearVendorMarks(long reportId)
+        {
+            var query = @"DELETE FROM profitwisereportvendor 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            _connection.Execute(query, new { PwShopId, reportId });
+        }
+        
+        public void MarkVendor(long reportId, string vendor)
+        {
+            var query = @"INSERT profitwisereportvendor VALUES ( @reportId, @PwShopId, @vendor )";
+            _connection.Execute(query, new { reportId, PwShopId, vendor });
+        }
+
+        public void UnmarkVendor(long reportId, string vendor)
+        {
+            var query = @"DELETE FROM profitwisereportvendor 
+                        WHERE PwShopId = @PwShopId
+                        AND PwReportId = @reportId
+                        AND Vendor = @vendor;";
+            _connection.Execute(query, new { PwShopId, reportId, vendor });
         }
 
 
@@ -241,14 +253,16 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"DELETE FROM profitwisereportmasterproduct 
-                WHERE PwShopId = @PwShopId AND PwReportId = @reportId AND PwMasterProductId = @masterProductId";
+                WHERE PwShopId = @PwShopId 
+                AND PwReportId = @reportId 
+                AND PwMasterProductId = @masterProductId;";
             _connection.Execute(query, new { PwShopId, reportId, masterProductId });
         }
 
         public List<long> RetrieveMasterProducts(long reportId)
         {
             var query = @"SELECT PwMasterProductId FROM profitwisereportmasterproduct
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             return _connection.Query<long>(query, new { PwShopId, reportId }).ToList();
         }
 

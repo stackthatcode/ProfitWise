@@ -1,0 +1,68 @@
+﻿<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.SelectionModel = function () {
+        var self = this;
+        self.AllSelected = ko.observable(true);
+        self.MarkedItems = ko.observableArray();
+        self.Callback = function () {
+        };
+
+        self.IsSelected = function (item) {
+            var isMarked = AQ(self.MarkedItems()).contains(item);
+            return self.AllSelected() ? !isMarked : isMarked;
+        };
+
+        self.MarkItem = function (item) {
+            self.MarkedItems.push(item);
+            self.Callback();
+
+            // Move this to parent
+            //if (self.MarkedItems().length == self.ProductTypes().length && self.AllSelected() == false) {
+            //    self.SelectAll();
+            //}
+        };
+
+        self.UnmarkItem = function (item) {
+            self.MarkedItems.remove(function (n) {
+                return n == item;
+            });
+            self.Callback();
+        };
+
+        self.AllAreSelected = ko.computed(function () {
+            return self.MarkedItems().length == 0 && self.AllSelected();
+        });
+
+        self.SelectAll = function () {
+            self.AllSelected(true);
+            self.MarkedItems.removeAll();
+            self.Callback();
+        }
+
+        self.DeselectAll = function () {
+            self.AllSelected(false);
+            self.MarkedItems.removeAll();
+            self.Callback();
+        }
+
+        // Need to pass item.ProductType to this
+        self.ToggleSelect = function (item) {
+            var currentlySelected = self.IsSelected(item);
+
+            if (self.AllSelected() && currentlySelected) {
+                self.MarkItem(item);
+            }
+            if (!self.AllSelected() && !currentlySelected) {
+                self.MarkItem(item);
+            }
+            if (self.AllSelected() && !currentlySelected) {
+                self.UnmarkItem(item);
+            }
+            if (!self.AllSelected() && currentlySelected) {
+                self.UnmarkItem(item);
+            }
+        };
+        return self;
+    };
+</script>
