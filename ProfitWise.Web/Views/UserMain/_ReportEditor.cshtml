@@ -53,11 +53,11 @@
             </ul>
 
             <div style="position: absolute; width: 100%; height: 0px; overflow: visible; text-align: right;">
-                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: OkCallback">
+                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: CancelButtonClick">
                     Cancel &nbsp;<i class="glyphicon glyphicon-remove"></i>
                 </a>
 
-                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: CancelCallback">
+                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: OkButtonClick">
                     Ok &nbsp;<i class="glyphicon glyphicon-ok"></i>
                 </a>
             </div>
@@ -198,20 +198,56 @@
         };
 
         self.ReportId = ko.observable();
-        self.SelectedFilter = ko.observable(self.ReportFilterTypes.ProductType);
-
+        self.SelectedFilter = ko.observable();
+        
         self.CancelCallback = function () { };
         self.OkCallback = function () { };
 
-        self.ProductTypeClick = function () {
-            self.ReportProductTypeModel.Refresh(this.ReportId());
+        // This function will get invoked on the OK button, or tab change
+        self.InternalTransistionCallback = function() {
+        };
 
-            // Show the actual controls..
+        // This is for notifying external subscribers that elect to set it
+        self.ExternalTransistionCallback = function () {
+        };
+
+        self.ExecuteTransition = function() {
+            self.InternalTransistionCallback();
+            self.ExternalTransistionCallback();
+        };
+
+
+        self.OkButtonClick = function () {
+            self.ReportProductTypeModel.Save();
+            self.OkCallback();
+        };
+
+        self.CancelButtonClick = function() {
+            self.CancelCallback();
+        };
+
+        self.ProductTypeClick = function () {
+            if (self.SelectedFilter() == self.ReportFilterTypes.ProductType) {
+                return;
+            }
+
+            self.ExecuteTransition();
+            self.ReportProductTypeModel.Refresh(self.ReportId());
+            
+            self.InternalTransistionCallback = self.ReportProductTypeModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.ProductType);
             ProfitWiseFunctions.BsActivateTab("report-filter-product-type");
         };
 
         self.VendorClick = function () {
+            if (self.SelectedFilter() == self.ReportFilterTypes.Vendor) {
+                return;
+            }
+
+            self.ExecuteTransition();
+            self.ReportProductTypeModel.Refresh(self.ReportId());   // TODO change
+
+            self.InternalTransistionCallback = function () { };   // TODO change
             self.SelectedFilter(self.ReportFilterTypes.Vendor);
             ProfitWiseFunctions.BsActivateTab("report-filter-vendor");
         };

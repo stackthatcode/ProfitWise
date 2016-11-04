@@ -1,0 +1,73 @@
+
+        public string ProductTypeWhereClauseBuilder(
+                string searchText, bool isShowAllSelected, IList<string> markedProductTypes)
+        {
+            var whereClause = "WHERE PwShopId = @PwShopId AND IsPrimary = 1 ";
+            if (searchText.Trim() != "")
+            {
+                whereClause = whereClause + "AND ProductType LIKE @searchText ";
+            }
+            if (isShowAllSelected)
+            {
+                whereClause = whereClause + "AND ProductType IN ( @markedProductTypes ) ";
+            }
+            return whereClause;
+        }
+
+
+        //var countQueryHead = @"SELECT COUNT(DISTINCT ProductType) FROM profitwiseproduct ";
+        //var countQuery = countQueryHead + whereClause;
+
+        public int RetrieveProductTypeCount(string searchText, bool isShowAllSelected, IList<string> markedProductTypes)
+        {
+            var query = @"SELECT ProductType, COUNT(*) AS Count FROM profitwiseproduct " +
+                        ProductTypeWhereClauseBuilder(searchText, isShowAllSelected, markedProductTypes);
+
+            var parameters = new
+            {
+                PwShopId,
+                searchText,
+                markedProductTypes = markedProductTypes.ToCommaDelimited(),
+            };
+
+            return _connection.Query<int>(query, parameters).FirstOrDefault();
+        }
+
+        public List<PwProductTypeSummary> RetrieveProductTypeSummary(
+                    string searchText, bool isShowAllSelected, IList<string> markedProductTypes,
+                    int pageNumber, int pageSize)
+        {
+            var startRecord = (pageNumber - 1) * pageSize;
+            var query = @"SELECT ProductType, COUNT(*) AS Count FROM profitwiseproduct " +
+                        ProductTypeWhereClauseBuilder(searchText, isShowAllSelected, markedProductTypes) +
+                         $"GROUP BY ProductType LIMIT {startRecord}, {pageSize};";
+
+            var parameters = new
+            {
+                PwShopId, searchText, markedProductTypes = markedProductTypes.ToCommaDelimited(),
+                startRecord, pageSize,
+            };
+
+            return _connection.Query<PwProductTypeSummary>(query, parameters).ToList();
+        }
+
+		
+		
+		  [HttpPost]
+        public ActionResult ProductTypesSearch(ProductTypeSearch parameters)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            
+            var results = repository.RetrieveProductTypeSummary(
+                    parameters.SearchText, parameters.IsShowAllSelected, parameters.MarkedProductTypes, 
+                    parameters.PageNumber, parameters.PageSize);
+
+            var count = repository.RetrieveProductTypeCount(
+                parameters.SearchText, parameters.IsShowAllSelected, parameters.MarkedProductTypes);
+
+            return new JsonNetResult(new { results, count, });
+        }
+
+		
+		

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Services;
@@ -57,30 +58,15 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(report);
         }
 
-        
-        public class ProductTypeSearch
-        {
-            public string SearchText { get; set; }
-            public bool IsShowAllSelected { get; set; }
-            public IList<string> MarkedProductTypes { get; set; }
-            public int PageNumber { get; set; }
-            public int PageSize { get; set; }
-        }
 
-        [HttpPost]
-        public ActionResult ProductTypesSearch(ProductTypeSearch parameters)
+        // Product Types Actions
+        [HttpGet]
+        public ActionResult ProductTypes()
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            
-            var results = repository.RetrieveProductTypeSummary(
-                    parameters.SearchText, parameters.IsShowAllSelected, parameters.MarkedProductTypes, 
-                    parameters.PageNumber, parameters.PageSize);
-
-            var count = repository.RetrieveProductTypeCount(
-                parameters.SearchText, parameters.IsShowAllSelected, parameters.MarkedProductTypes);
-
-            return new JsonNetResult(new { results, count, });
+            var data = repository.RetrieveProductTypeSummary();
+            return new JsonNetResult(data);
         }
 
         [HttpGet]
@@ -100,42 +86,48 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult SelectAllProductTypes(long reportId)
+        public ActionResult SelectedProductTypes(long reportId, bool selectAll, IList<string> markedProductTypes)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            repository.ClearProductTypeMarks(reportId);
-            repository.UpdateSelectAllProductTypes(reportId, true);
+
+            using (var transaction = repository.InitiateTransaction())
+            {
+                if (markedProductTypes == null) // Strange AJAX protocol here...
+                {
+                    repository.ClearProductTypeMarks(reportId);
+                    repository.UpdateSelectAllProductTypes(reportId, selectAll);
+                }
+                else
+                {
+                    var storedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
+
+                    var missingProductTypes = storedProductTypes.Where(x => !markedProductTypes.Contains(x)).ToList();
+                    var newProductTypes = markedProductTypes.Where(x => !storedProductTypes.Contains(x)).ToList();
+
+                    foreach (var productType in missingProductTypes)
+                    {
+                        repository.UnmarkProductType(reportId, productType);
+                    }
+                    foreach (var productType in newProductTypes)
+                    {
+                        repository.MarkProductType(reportId, productType);
+                    }
+                }
+
+                transaction.Commit();
+            }
+
+            // TODO - clean-up the Vendor Types
+            // TODO - clean-up the Master Products
+            // TODO - clean-up the SKUs
+
             return JsonNetResult.Success();
         }
 
-        [HttpPost]
-        public ActionResult DeselectAllProductTypes(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            repository.ClearProductTypeMarks(reportId);
-            repository.UpdateSelectAllProductTypes(reportId, false);
-            return JsonNetResult.Success();
-        }
 
-        [HttpPost]
-        public ActionResult MarkProductType(long reportId, string productType)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            repository.MarkProductType(reportId, productType);
-            return JsonNetResult.Success();
-        }
-
-        [HttpPost]
-        public ActionResult UnmarkProductType(long reportId, string productType)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);            
-            repository.UnmarkProductType(reportId, productType);
-            return JsonNetResult.Success();
-        }
+        // TODO - replace this with the incremental correction
+        
     }
 }
 

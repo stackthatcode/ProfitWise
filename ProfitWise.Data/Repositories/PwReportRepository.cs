@@ -6,7 +6,6 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
-using Push.Foundation.Utilities.General;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -20,6 +19,11 @@ namespace ProfitWise.Data.Repositories
         public PwReportRepository(MySqlConnection connection)
         {
             _connection = connection;
+        }
+
+        public MySqlTransaction InitiateTransaction()
+        {
+            return _connection.BeginTransaction();
         }
 
         public long InsertReport(PwReport report)
@@ -124,59 +128,16 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public string ProductTypeWhereClauseBuilder(
-                string searchText, bool isShowAllSelected, IList<string> markedProductTypes)
+        public List<PwProductTypeSummary> RetrieveProductTypeSummary()
         {
-            var whereClause = "WHERE PwShopId = @PwShopId AND IsPrimary = 1 ";
-            if (searchText.Trim() != "")
-            {
-                whereClause = whereClause + "AND ProductType LIKE @searchText ";
-            }
-            if (isShowAllSelected)
-            {
-                whereClause = whereClause + "AND ProductType IN ( @markedProductTypes ) ";
-            }
-            return whereClause;
+            var query =
+                @"SELECT ProductType, COUNT(*) AS Count
+                FROM profitwiseproduct
+                WHERE PwShopId = @PwShopId
+                AND IsPrimary = 1 
+                GROUP BY ProductType;";
+            return _connection.Query<PwProductTypeSummary>(query, new {PwShopId}).ToList();
         }
-
-
-        //var countQueryHead = @"SELECT COUNT(DISTINCT ProductType) FROM profitwiseproduct ";
-        //var countQuery = countQueryHead + whereClause;
-
-        public int RetrieveProductTypeCount(string searchText, bool isShowAllSelected, IList<string> markedProductTypes)
-        {
-            var query = @"SELECT ProductType, COUNT(*) AS Count FROM profitwiseproduct " +
-                        ProductTypeWhereClauseBuilder(searchText, isShowAllSelected, markedProductTypes);
-
-            var parameters = new
-            {
-                PwShopId,
-                searchText,
-                markedProductTypes = markedProductTypes.ToCommaDelimited(),
-            };
-
-            return _connection.Query<int>(query, parameters).FirstOrDefault();
-        }
-
-        public List<PwProductTypeSummary> RetrieveProductTypeSummary(
-                    string searchText, bool isShowAllSelected, IList<string> markedProductTypes,
-                    int pageNumber, int pageSize)
-        {
-            var startRecord = (pageNumber - 1) * pageSize;
-            var query = @"SELECT ProductType, COUNT(*) AS Count FROM profitwiseproduct " +
-                        ProductTypeWhereClauseBuilder(searchText, isShowAllSelected, markedProductTypes) +
-                         $"GROUP BY ProductType LIMIT {startRecord}, {pageSize};";
-
-            var parameters = new
-            {
-                PwShopId, searchText, markedProductTypes = markedProductTypes.ToCommaDelimited(),
-                startRecord, pageSize,
-            };
-
-            return _connection.Query<PwProductTypeSummary>(query, parameters).ToList();
-        }
-
-
 
         public void UpdateSelectAllProductTypes(long reportId, bool value)
         {
@@ -201,7 +162,7 @@ namespace ProfitWise.Data.Repositories
 
         public void MarkProductType(long reportId, string productType)
         {
-            var query = @"INSERT profitwisereportproducttype VALUES ( @reportId, @PwShopId, @productType )";
+            var query = @"INSERT profitwisereportproducttype VALUES ( @reportId, @PwShopId , @productType )";
             _connection.Execute(query, new { reportId, PwShopId, productType });
         }
 

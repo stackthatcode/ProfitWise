@@ -10,8 +10,9 @@
 
     <div class="row-fluid">
         <div class="col-xs-8 no-side-padding" 
-                style="border-top: 1px dashed #CCC;"
-                data-bind="if: $data.PageOfProductTypes().length">
+             style="border-top: 1px dashed #CCC;"
+             data-bind="if: $data.PageOfProductTypes().length">
+            
             <!-- Move the Select all thingy outside, here -->
             <div data-bind="ifnot: AllAreSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
@@ -66,6 +67,11 @@
 </script>
 
 <script>
+    ProfitWiseWidgets.ReportEditorVendorModel = function() {
+        var self = this;
+        return self;
+    };
+
     ProfitWiseWidgets.ReportProductTypeModel = function (parent) {
         var self = this;
         self.Parent = parent;
@@ -84,6 +90,7 @@
                 .each(function(item) {
                     item.IsChecked = ko.computed(function () {
                         var isMarked = AQ(self.MarkedProductTypes()).contains(item.ProductType);
+                        //console.log("IsChecked evaluating for " + item.ProductType + " isMarked: " + isMarked);
                         return self.AllProductTypesSelected() ? !isMarked : isMarked;
                     });
 
@@ -93,62 +100,77 @@
                 });
         };
 
-        self.Refresh = function(reportId) {
+        self.Refresh = function (reportId) {
             self.ReportId(reportId);
             self.FilterModel.SetPageNumber(1);
             var ajax = new ProfitWiseFunctions.Ajax();
-
+            
             flow.exec(
-                function() {
+                function () {
+                    ajax.HttpGet("/ReportService/ProductTypes", this);
+                },
+                function (data) {
+                    self.AddObservables(data);
+                    self.ProductTypes(data);
                     ajax.HttpGet("/ReportService/SelectedProductTypes?reportId=" + self.ReportId(), this);
                 },
-                function(data) {
+                function (data) {
                     self.AllProductTypesSelected(data.AllProductTypes);
                     self.MarkedProductTypes(data.MarkedProductTypes);
                     self.ApplyFiltersAndPaging();
+                }
+            );
+        }
+
+        self.Save = function() {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: self.ReportId(),
+                        selectAll: self.AllProductTypesSelected(),
+                        markedProductTypes: self.MarkedProductTypes(),
+                    };
+                    ajax.HttpPost("/ReportService/SelectedProductTypes", data, this);
+                },
+                function(results) {
                 });
         };
 
         self.ApplyFiltersAndPaging = function () {
             var searchText = self.FilterModel.SearchText() || "";
             var isShowAllSelected = self.FilterModel.IsShowAllSelected();
-
-            var data = {
-                ReportId: self.ReportId(),
-                MarkedProductTypes: self.MarkedProductTypes(),
-                SearchText: searchText,
-                IsShowAllSelected: isShowAllSelected,
-                PageNumber: self.FilterModel.GetPageNumber(),
-                PageSize: self.PageSize(),
-            };
-
-            var ajax = new ProfitWiseFunctions.Ajax();
-            flow.exec(
-                function() {
-                    ajax.HttpGet("/ReportService/ProductTypesSearch", data, this);
-                },
-                function (data) {
-                    self.AddObservables(data);
-                    self.ProductTypes(data);
-                });
-
-                    self.ApplyFiltersAndPaging();
-
-
             var filteredProductTypes = self.ProductTypes();
+
+            if (searchText.trim() != "") {
+                filteredProductTypes = 
+                    AQ(filteredProductTypes)
+                    .where(function (item) {
+                        return ProfitWiseFunctions
+                            .CaseInsensitiveContains(item.ProductType, searchText);
+                    })
+                    .toArray();
+            }
+
+            if (!isShowAllSelected) {
+                filteredProductTypes =
+                    AQ(filteredProductTypes)
+                    .where(function (item) { return item.IsChecked() })
+                    .toArray();
+            }
 
             self.FilterModel.SetRecordCount(filteredProductTypes.length);
 
             var pageNumber = self.FilterModel.GetPageNumber();
-            var skip = (pageNumber - 1) * filterState.PageSize;
-            var take = filterState.PageSize;
+            var skip = (pageNumber - 1) * self.FilterModel.GetPageSize();
+            var take = self.FilterModel.GetPageSize();
 
             self.PageOfProductTypes(
                 AQ(filteredProductTypes)
-                    .skip(skip)
-                    .take(take)
-                    .where(function(n) { return n != null })
-                    .toArray());
+                .skip(skip)
+                .take(take)
+                .where(function(n) { return n != null })
+                .toArray());
         };
 
         // Selection business logic
@@ -159,12 +181,21 @@
 
         self.MarkProductTypeClientSide = function (productType) {
             self.MarkedProductTypes.push(productType);
+
+            if (self.MarkedProductTypes().length == self.ProductTypes().length &&
+                self.AllProductTypesSelected() == false) {
+                self.SelectAllClick();
+            } else {
+                self.ApplyFiltersAndPaging();
+            }
         };
 
-        self.UnmarkProductTypeClientSide = function(productType) {
+        self.UnmarkProductTypeClientSide = function (productType) {
             self.MarkedProductTypes.remove(function (item) {
-                return item.ProductType == productType;
+                return item == productType;
             });
+
+            self.ApplyFiltersAndPaging();
         };
 
         self.AllAreSelected = ko.computed(function() {
@@ -209,6 +240,7 @@
         self.FilterModel.PlaceHolderText("Search for Product Types...");
         self.FilterModel.RegisterRefreshCallback(function () {
             self.ApplyFiltersAndPaging();
+
         });
 
         self.FilterModel.SetPageSize(5);
