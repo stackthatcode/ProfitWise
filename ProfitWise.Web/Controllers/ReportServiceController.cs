@@ -245,6 +245,69 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
+
+
+        // Master Product Actions
+        [HttpGet]
+        public ActionResult Skus(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var data = repository.RetrieveSkuSummary(reportId);
+            return new JsonNetResult(data);
+        }
+
+        [HttpGet]
+        public ActionResult SelectedSkus(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var report = repository.RetrieveReport(reportId);
+            var markedSkus = repository.RetrieveMarkedSkus(reportId);
+
+            return new JsonNetResult(new
+            {
+                AllSkus = report.AllSkus,
+                MarkedSkus = markedSkus,
+            });
+        }
+
+        [HttpPost]
+        public ActionResult SelectedSkus(
+                    long reportId, bool selectAll, IList<long> markedSkus)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            using (var transaction = repository.InitiateTransaction())
+            {
+                if (markedSkus == null) // Strange AJAX protocol here...
+                {
+                    repository.ClearSkuMarks(reportId);
+                    repository.UpdateSelectAllSkus(reportId, selectAll);
+                }
+                else
+                {
+                    var storedMarkedSkus = repository.RetrieveMarkedSkus(reportId);
+                    var missingSkus = storedMarkedSkus.Where(x => !markedSkus.Contains(x)).ToList();
+                    var newSkus = markedSkus.Where(x => !storedMarkedSkus.Contains(x)).ToList();
+
+                    foreach (var masterVariantId in missingSkus)
+                    {
+                        repository.UnmarkSku(reportId, masterVariantId);
+                    }
+                    foreach (var masterVariantId in newSkus)
+                    {
+                        repository.MarkSku(reportId, masterVariantId);
+                    }
+                }
+
+                transaction.Commit();
+            }
+
+            return JsonNetResult.Success();
+        }
     }
 }
 

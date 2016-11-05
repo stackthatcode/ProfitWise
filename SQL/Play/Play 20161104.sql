@@ -48,3 +48,7 @@ SELECT * FROM profitwisemastervariant;
 
 SELECT * FROM profitwisevariant;
 
+SELECT * FROM profitwisereportmasterproduct;
+
+
+

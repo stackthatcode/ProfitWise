@@ -53,8 +53,8 @@ CREATE TABLE `profitwisereportmasterproduct` (
 CREATE TABLE `profitwisereportsku` (
 	`PwReportId` BIGINT NOT NULL AUTO_INCREMENT,
 	`PwShopId` BIGINT NOT NULL,
-	`Sku` varchar(100) NOT NULL,
-    PRIMARY KEY (`PwReportId`, `PwShopId`, `Sku` )
+	`PwMasterVariantId` BIGINT NOT NULL,
+    PRIMARY KEY (`PwReportId`, `PwShopId`, `PwMasterVariantId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

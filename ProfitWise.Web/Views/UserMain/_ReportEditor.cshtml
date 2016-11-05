@@ -3,6 +3,7 @@
 @Html.Partial("~/Views/UserMain/_ReportEditorProductType.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorVendor.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorMasterProduct.cshtml")
+@Html.Partial("~/Views/UserMain/_ReportEditorSku.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorEmptyResults.cshtml")
 
 
@@ -79,9 +80,11 @@
         <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
              data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: ReportMasterProductModel }">
         </div>
+        <div id="report-filter-sku" role="tabpanel" class="tab-pane reduced-padding"
+             data-bind="template: { name: 'Report-Editor-Header-Sku', data: ReportSkuModel }">
+        </div>
     </div>
 </script>
-
 
 
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
@@ -99,13 +102,10 @@
     </div>
 
     <div data-bind="if: SelectedFilter() == ReportFilterTypes.Sku">
-        <div data-bind="template: { name: 'Report-Editor-Body-Sku' }"></div>
+        <div data-bind="template: { name: 'Report-Editor-Body-Sku', data: ReportSkuModel }"></div>
     </div>
 </script>
 
-<script type="text/html" id="Report-Editor-Body-Vendor"></script>
-<script type="text/html" id="Report-Editor-Body-Product"></script>
-<script type="text/html" id="Report-Editor-Body-Sku"></script>
 
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
@@ -141,7 +141,7 @@
 
 
         self.OkButtonClick = function () {
-            self.ReportProductTypeModel.Save();
+            self.ExecuteTransition();
             self.OkCallback();
         };
 
@@ -189,6 +189,14 @@
         };
 
         self.SkuClick = function () {
+            if (self.SelectedFilter() == self.ReportFilterTypes.Sku) {
+                return;
+            }
+
+            self.ExecuteTransition();
+            self.ReportSkuModel.Refresh(self.ReportId());
+
+            self.InternalTransistionCallback = self.ReportSkuModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.Sku);
             ProfitWiseFunctions.BsActivateTab("report-filter-sku");
         };
@@ -223,13 +231,12 @@
 
         self.ReportMasterProductModel = new ProfitWiseWidgets.ReportMasterProductModel(self);
         self.ReportMasterProductModel.GotoPreviousCallback = self.VendorClick;
-        self.ReportMasterProductModel.GotoNextCallback = function () { alert('TBD'); };
+        self.ReportMasterProductModel.GotoNextCallback = self.SkuClick;
 
-
-        /* TODO - move these
-        self.SkuFilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel("Search for SKU by Title");        
-        */
-
+        self.ReportSkuModel = new ProfitWiseWidgets.ReportSkuModel(self);
+        self.ReportSkuModel.GotoPreviousCallback = self.MasterProductClick;
+        self.ReportSkuModel.GotoNextCallback = function () { self.OkButtonClick(); };
+        
         return self;
     };
 </script>

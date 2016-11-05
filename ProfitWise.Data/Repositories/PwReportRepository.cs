@@ -282,41 +282,51 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public void SelectAllSkus(long reportId)
+        public IList<PwProductSkuSummary> RetrieveSkuSummary(long reportId)
         {
             var query =
-                @"UPDATE profitwisereportsku SET AllSkus = 1 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportsku WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+                @"SELECT PwMasterVariantId, Title, Sku
+                FROM profitwisevariant
+                WHERE PwShopId = @PwShopId AND IsPrimary = 1;";
+            return _connection.Query<PwProductSkuSummary>(query, new { PwShopId, reportId }).ToList();
+        }
+        
+        public void UpdateSelectAllSkus(long reportId, bool value)
+        {
+            var query = @"UPDATE profitwisereport SET AllSkus = @value 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            _connection.Execute(query, new { PwShopId, reportId, value });
+        }
+
+        public void ClearSkuMarks(long reportId)
+        {
+            var query = @"DELETE FROM profitwisereportsku 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             _connection.Execute(query, new { PwShopId, reportId });
         }
 
-        public void DeselectAllSkus(long reportId)
+        public void MarkSku(long reportId, long pwMasterVariantId)
         {
-            var query =
-                @"UPDATE profitwisereportsku SET AllSkus = 0 WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                DELETE profitwisereportsku WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId });
+            var query = @"INSERT profitwisereportsku 
+                        VALUES ( @reportId, @PwShopId, @pwMasterVariantId )";
+            _connection.Execute(query, new { reportId, PwShopId, pwMasterVariantId });
         }
 
-        public void InsertSku(long reportId, string sku)
-        {
-            var query = @"INSERT profitwisereportsku VALUES ( @PwShopId, @reportId, @sku )";
-            _connection.Execute(query, new { PwShopId, reportId, sku });
-        }
-
-        public void DeleteSku(long reportId, string sku)
+        public void UnmarkSku(long reportId, long pwMasterVariantId)
         {
             var query =
                 @"DELETE FROM profitwisereportsku 
-                WHERE PwShopId = @PwShopId AND PwReportId = @reportId AND Sku = @sku";
-            _connection.Execute(query, new { PwShopId, reportId, sku });
+                WHERE PwShopId = @PwShopId 
+                AND PwReportId = @reportId 
+                AND PwMasterVariantId = @pwMasterVariantId";
+            _connection.Execute(query, new { PwShopId, reportId, pwMasterVariantId });
         }
 
-        public List<string> RetrieveSkus(long reportId)
+        public List<long> RetrieveMarkedSkus(long reportId)
         {
-            var query = @"SELECT Sku FROM profitwisereportsku
+            var query = @"SELECT PwMasterVariantId FROM profitwisereportsku
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            return _connection.Query<string>(query, new { PwShopId, reportId }).ToList();
+            return _connection.Query<long>(query, new { PwShopId, reportId }).ToList();
         }
     }
 }
