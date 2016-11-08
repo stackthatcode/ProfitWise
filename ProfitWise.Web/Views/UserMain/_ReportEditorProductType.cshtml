@@ -12,11 +12,11 @@
              data-bind="if: $data.PageOfProductTypes().length">
             
             <!-- Move the Select all thingy outside, here -->
-            <div data-bind="ifnot: SelectionModel.AllAreSelected">
+            <div data-bind="ifnot: SelectionModel.AllSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
                     data-bind="click: SelectionModel.SelectAll">Select All</a>
             </div>
-            <div data-bind="if: SelectionModel.AllAreSelected">
+            <div data-bind="if: SelectionModel.AllSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
                     data-bind="click: SelectionModel.DeselectAll">Deselect All</a>
             </div>

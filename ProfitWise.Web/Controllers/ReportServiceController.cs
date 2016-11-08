@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Web.Json;
@@ -79,15 +80,15 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = repository.InitiateTransaction())
             {
-                if (markedProductTypes == null) // Strange AJAX protocol here...
+                repository.UpdateSelectAllProductTypes(reportId, selectAll);
+
+                if (markedProductTypes == null) // Strange AJAX protocol for saying this is empty
                 {
                     repository.ClearProductTypeMarks(reportId);
-                    repository.UpdateSelectAllProductTypes(reportId, selectAll);
                 }
                 else
                 {
                     var storedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
-
                     var missingProductTypes = storedProductTypes.Where(x => !markedProductTypes.Contains(x)).ToList();
                     var newProductTypes = markedProductTypes.Where(x => !storedProductTypes.Contains(x)).ToList();
 
@@ -146,10 +147,11 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = repository.InitiateTransaction())
             {
+                repository.UpdateSelectAllVendors(reportId, selectAll);
+
                 if (markedVendors == null) // Strange AJAX protocol here...
                 {
                     repository.ClearVendorMarks(reportId);
-                    repository.UpdateSelectAllVendors(reportId, selectAll);
                 }
                 else
                 {
@@ -184,7 +186,13 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var data = repository.RetrieveMasterProductSummary(reportId);
+
+            var data = new List<PwProductSummary>();
+            for (int i = 0; i < 5000; i++)
+            {
+                data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
+            }
+            //var data = repository.RetrieveMasterProductSummary(reportId);
             return new JsonNetResult(data);
         }
 
@@ -214,10 +222,11 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = repository.InitiateTransaction())
             {
+                repository.UpdateSelectAllMasterProducts(reportId, selectAll);
+
                 if (markedMasterProducts == null) // Strange AJAX protocol here...
                 {
                     repository.ClearVendorMarks(reportId);
-                    repository.UpdateSelectAllVendors(reportId, selectAll);
                 }
                 else
                 {
@@ -282,10 +291,11 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = repository.InitiateTransaction())
             {
+                repository.UpdateSelectAllSkus(reportId, selectAll);
+
                 if (markedSkus == null) // Strange AJAX protocol here...
                 {
                     repository.ClearSkuMarks(reportId);
-                    repository.UpdateSelectAllSkus(reportId, selectAll);
                 }
                 else
                 {

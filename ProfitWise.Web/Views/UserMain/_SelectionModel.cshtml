@@ -30,8 +30,7 @@
             } else {
                 self.MarkItem(item);
 
-                if (self.AllAreItemsAreMarked()) {
-                    console.log("Selecting all items");
+                if (self.AllItemsAreMarked()) {
                     self.SelectAll();
                 }
             }
@@ -49,9 +48,7 @@
             self.Callback();
         };
 
-        self.AllAreItemsAreMarked = ko.computed(function () {
-            console.log(self.MarkedItems().length + ' ' + self.AllItems().length);
-
+        self.AllItemsAreMarked = ko.computed(function () {
             return self.MarkedItems().length == self.AllItems().length;
         });
 

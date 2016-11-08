@@ -12,11 +12,11 @@
              data-bind="if: $data.PageOfSkus().length">
             
             <!-- Move the Select all thingy outside, here -->
-            <div data-bind="ifnot: SelectionModel.AllAreSelected">
+            <div data-bind="ifnot: SelectionModel.AllSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
                    data-bind="click: SelectionModel.SelectAll">Select All</a>
             </div>
-            <div data-bind="if: SelectionModel.AllAreSelected">
+            <div data-bind="if: SelectionModel.AllSelected">
                 <a href="#" style="position:absolute; top:-40px; font-weight: 700;"
                    data-bind="click: SelectionModel.DeselectAll">Deselect All</a>
             </div>
@@ -125,9 +125,16 @@
                 function (data) {
                     self.AddObservables(data);
                     self.Skus(data);
+
+                    // This loads a copy into the Selection Model for its purposes
+                    self.SelectionModel.AllItems(
+                        AQ(data).select(function (item) { return item.PwMasterVariantId }).toArray());
+
                     ajax.HttpGet("/ReportService/SelectedSkus?reportId=" + self.ReportId(), this);
                 },
                 function (data) {
+                    console.log("Refreshing SKUs");
+                    console.log(data);
                     self.SelectionModel.AllSelected(data.AllSkus);
                     self.SelectionModel.MarkedItems(data.MarkedSkus);
                     self.ApplyFiltersAndPaging();

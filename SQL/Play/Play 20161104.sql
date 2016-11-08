@@ -9,6 +9,9 @@ VALUES
 ( 1, 'Test TESt', 0, 0, 0, 0, 0, 'TEST TEST', '2016-01-01', '2016-01-01' );
 
 
+SELECT * FROM profitwisereport;
+SELECT * FROM profitwisereportproducttype;
+
 
 UPDATE profitwisereport SET Saved = 1;
 
@@ -30,10 +33,13 @@ WHERE IsPrimary = 1 GROUP BY ProductType;
 
 SELECT * FROM profitwisereport;
 
-SELECT * FROM profitwisereportproducttype LIMIT 50000;
+SELECT * FROM profitwisereportproducttype;
+
+DELETE FROM profitwisereportproducttype WHERE PwReportId = 99739 AND PwShopId = 100001;
+DELETE FROM profitwisereportproducttype ;
+
 
 SELECT * FROM profitwisereportvendor;
-
 
 
 SELECT * FROM profitwisereportproducttype;

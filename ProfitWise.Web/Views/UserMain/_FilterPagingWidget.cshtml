@@ -33,7 +33,8 @@
     <div class="row-fluid" style="height: 50px; overflow: visible;">
         <div class="col-xs-3 no-side-padding" style="padding-top: 10px;">
         </div>
-        <div class="col-xs-9 no-side-padding" data-bind="if: $data.PagingModel.RecordCount">            
+        <div class="col-xs-9 no-side-padding" 
+             data-bind="if: $data.PagingModel.RecordCount">            
             <div data-bind="template: { name: 'Paging-Widget', data: $data.PagingModel }">
             </div>
         </div>

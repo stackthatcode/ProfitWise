@@ -29,6 +29,7 @@ CREATE TABLE `profitwisereport` (
     PRIMARY KEY (`PwReportId`, `PwShopId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=99739;
 
+
 CREATE TABLE `profitwisereportproducttype` (
 	`PwReportId` BIGINT NOT NULL AUTO_INCREMENT,
 	`PwShopId` BIGINT NOT NULL,
