@@ -3,25 +3,43 @@
 
     ProfitWiseWidgets.SelectionModel = function () {
         var self = this;
+
         self.AllSelected = ko.observable(true);
+        self.AllItems = ko.observableArray();
         self.MarkedItems = ko.observableArray();
 
         self.Callback = function () {
         };
 
         self.IsSelected = function (item) {
-            var isMarked = AQ(self.MarkedItems()).contains(item);
-            return self.AllSelected() ? !isMarked : isMarked;
+            return AQ(self.MarkedItems()).contains(item) || self.AllSelected();
+        };
+
+        // Need to pass item.ProductType to this
+        self.ToggleSelect = function (item) {
+            var currentlySelected = self.IsSelected(item);
+
+            if (currentlySelected) {
+                if (self.AllSelected()) {
+                    self.MarkedItems.removeAll();
+                    self.MarkedItems(self.AllItems.slice(0));
+                    
+                    self.AllSelected(false);
+                }
+                self.UnmarkItem(item);
+            } else {
+                self.MarkItem(item);
+
+                if (self.AllAreItemsAreMarked()) {
+                    console.log("Selecting all items");
+                    self.SelectAll();
+                }
+            }
         };
 
         self.MarkItem = function (item) {
             self.MarkedItems.push(item);
             self.Callback();
-
-            // Move this to parent
-            //if (self.MarkedItems().length == self.ProductTypes().length && self.AllSelected() == false) {
-            //    self.SelectAll();
-            //}
         };
 
         self.UnmarkItem = function (item) {
@@ -31,8 +49,10 @@
             self.Callback();
         };
 
-        self.AllAreSelected = ko.computed(function () {
-            return self.MarkedItems().length == 0 && self.AllSelected();
+        self.AllAreItemsAreMarked = ko.computed(function () {
+            console.log(self.MarkedItems().length + ' ' + self.AllItems().length);
+
+            return self.MarkedItems().length == self.AllItems().length;
         });
 
         self.SelectAll = function () {
@@ -47,23 +67,6 @@
             self.Callback();
         }
 
-        // Need to pass item.ProductType to this
-        self.ToggleSelect = function (item) {
-            var currentlySelected = self.IsSelected(item);
-
-            if (self.AllSelected() && currentlySelected) {
-                self.MarkItem(item);
-            }
-            if (!self.AllSelected() && !currentlySelected) {
-                self.MarkItem(item);
-            }
-            if (self.AllSelected() && !currentlySelected) {
-                self.UnmarkItem(item);
-            }
-            if (!self.AllSelected() && currentlySelected) {
-                self.UnmarkItem(item);
-            }
-        };
         return self;
     };
 </script>
