@@ -61,28 +61,23 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            var report = repository.RetrieveReport(reportId);
             var checkedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
 
             return new JsonNetResult(new
             {
-                AllProductTypes = report.AllProductTypes,
                 CheckedProductTypes = checkedProductTypes,
             });
         }
 
         [HttpPost]
         public ActionResult SelectedProductTypes(
-                long reportId, bool selectAll, IList<string> checkedProductTypes)
+                long reportId, IList<string> checkedProductTypes)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
             {
-                repository.UpdateSelectAllProductTypes(reportId, selectAll);
-
                 if (checkedProductTypes == null) // Strange AJAX protocol for saying this is empty
                 {
                     repository.ClearProductTypeMarks(reportId);
@@ -114,6 +109,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+
         // Vendor Actions
         [HttpGet]
         public ActionResult Vendors(long reportId)
@@ -130,35 +126,30 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
-            var report = repository.RetrieveReport(reportId);
-            var markedVendors = repository.RetrieveMarkedVendors(reportId);
-
+            var checkedVendors = repository.RetrieveMarkedVendors(reportId);
             return new JsonNetResult(new
             {
-                AllVendors = report.AllVendors,
-                MarkedVendors = markedVendors,
+                CheckedVendors = checkedVendors,
             });
         }
 
         [HttpPost]
-        public ActionResult SelectedVendors(long reportId, bool selectAll, IList<string> markedVendors)
+        public ActionResult SelectedVendors(long reportId, IList<string> checkedVendors)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
             {
-                repository.UpdateSelectAllVendors(reportId, selectAll);
-
-                if (markedVendors == null) // Strange AJAX protocol here...
+                if (checkedVendors == null) // Strange AJAX protocol here...
                 {
                     repository.ClearVendorMarks(reportId);
                 }
                 else
                 {
                     var storedMarkedVendors = repository.RetrieveMarkedVendors(reportId);
-                    var missingVendors = storedMarkedVendors.Where(x => !markedVendors.Contains(x)).ToList();
-                    var newVendors = markedVendors.Where(x => !storedMarkedVendors.Contains(x)).ToList();
+                    var missingVendors = storedMarkedVendors.Where(x => !checkedVendors.Contains(x)).ToList();
+                    var newVendors = checkedVendors.Where(x => !storedMarkedVendors.Contains(x)).ToList();
 
                     foreach (var vendor in missingVendors)
                     {
@@ -179,6 +170,7 @@ namespace ProfitWise.Web.Controllers
 
             return JsonNetResult.Success();
         }
+
 
 
         // Master Product Actions
@@ -203,28 +195,22 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
-            var report = repository.RetrieveReport(reportId);
             var markedMasterProducts = repository.RetrieveMarkedMasterProducts(reportId);
 
             return new JsonNetResult(new
             {
-                AllMasterProducts = report.AllProducts,
                 MarkedMasterProducts = markedMasterProducts,
             });
         }
 
         [HttpPost]
-        public ActionResult 
-                SelectedMasterProducts(
-                    long reportId, bool selectAll, IList<long> markedMasterProducts)
+        public ActionResult SelectedMasterProducts(long reportId, IList<long> markedMasterProducts)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
             {
-                repository.UpdateSelectAllMasterProducts(reportId, selectAll);
-
                 if (markedMasterProducts == null) // Strange AJAX protocol here...
                 {
                     repository.ClearVendorMarks(reportId);
@@ -273,27 +259,19 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
-            var report = repository.RetrieveReport(reportId);
             var markedSkus = repository.RetrieveMarkedSkus(reportId);
 
-            return new JsonNetResult(new
-            {
-                AllSkus = report.AllSkus,
-                MarkedSkus = markedSkus,
-            });
+            return new JsonNetResult(new { MarkedSkus = markedSkus, });
         }
 
         [HttpPost]
-        public ActionResult SelectedSkus(
-                    long reportId, bool selectAll, IList<long> markedSkus)
+        public ActionResult SelectedSkus(long reportId, IList<long> markedSkus)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
             {
-                repository.UpdateSelectAllSkus(reportId, selectAll);
-
                 if (markedSkus == null) // Strange AJAX protocol here...
                 {
                     repository.ClearSkuMarks(reportId);

@@ -1,8 +1,9 @@
-﻿<script type="text/html" id="Report-Editor-Header-Product-Type">
-    
+﻿
+<script type="text/html" id="Report-Editor-Header-Product-Type">
     <div data-bind="if: SelectionModel.ShowSplashPage">
         <div data-bind="template: { name: 'Report-Editor-No-Filters', 
                                 data: { clickCallback:  function() { SelectionModel.ShowSplashPage(false); },
+                                        nextCallback: GotoNextCallback,
                                         plural: 'Product Types', singular: 'Product Type' } }">
         </div>
     </div>
@@ -52,13 +53,13 @@
     <div class="row-fluid" style="min-height: 400px;" data-bind="ifnot: SelectionModel.ShowSplashPage">
 
         <div class="col-xs-8 reduced-padding">            
-            <div data-bind="if: PageOfProductTypes().length == 0">
+            <div data-bind="if: PageOfItems().length == 0">
                 <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Product Types' } }"></div>               
             </div>
             
-            <div data-bind="if: PageOfProductTypes().length > 0">
+            <div data-bind="if: PageOfItems().length > 0">
                 <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
-                    <tbody data-bind="foreach: PageOfProductTypes">
+                    <tbody data-bind="foreach: PageOfItems">
                     <tr style="border-top: 0;">
                         <td>
                             <input class="form-control"
@@ -87,7 +88,7 @@
         self.ReportId = ko.observable();
 
         // Data
-        self.PageOfProductTypes = ko.observableArray();
+        self.PageOfItems = ko.observableArray();
         
         // Paging and Filtering model
         self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
@@ -101,6 +102,7 @@
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
         self.SelectionModel.EmptyDescription("(No Product Type)");
         self.SelectionModel.KeyExtractor = function (item) { return item.ProductType; };
+        self.SelectionModel.DescriptionExtractor = function (item) { return item.ProductType; }
 
 
         self.Refresh = function (reportId) {
@@ -137,7 +139,7 @@
                     searchText, isShowAllSelected, self.FilterModel.GetPageNumber(), self.FilterModel.GetPageSize());
 
             self.FilterModel.SetRecordCount(filterResults.NumberOfFilteredItems);
-            self.PageOfProductTypes(filterResults.PagedItems);
+            self.PageOfItems(filterResults.PagedItems);
         };
 
         self.Save = function() {

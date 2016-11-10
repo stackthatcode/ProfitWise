@@ -127,7 +127,7 @@
         self.OkCallback = function () { };
 
         // This function will get invoked on the OK button, or tab change
-        self.InternalTransistionCallback = function() {
+        self.SaveCurrentTabCallback = function() {
         };
 
         // This is for notifying external subscribers that elect to set it
@@ -135,7 +135,7 @@
         };
         
         self.ExecuteTransition = function() {
-            self.InternalTransistionCallback();
+            self.SaveCurrentTabCallback();
             self.ExternalTransistionCallback();
         };
 
@@ -157,7 +157,7 @@
             self.ExecuteTransition();
             self.ReportProductTypeModel.Refresh(self.ReportId());
             
-            self.InternalTransistionCallback = self.ReportProductTypeModel.Save;
+            self.SaveCurrentTabCallback = self.ReportProductTypeModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.ProductType);
             ProfitWiseFunctions.BsActivateTab("report-filter-product-type");
         };
@@ -170,7 +170,7 @@
             self.ExecuteTransition();
             self.ReportVendorModel.Refresh(self.ReportId());
 
-            self.InternalTransistionCallback = self.ReportVendorModel.Save;
+            self.SaveCurrentTabCallback = self.ReportVendorModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.Vendor);
             ProfitWiseFunctions.BsActivateTab("report-filter-vendor");
         };
@@ -183,7 +183,7 @@
             self.ExecuteTransition();
             self.ReportMasterProductModel.Refresh(self.ReportId());
 
-            self.InternalTransistionCallback = self.ReportMasterProductModel.Save;
+            self.SaveCurrentTabCallback = self.ReportMasterProductModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.Product);
             ProfitWiseFunctions.BsActivateTab("report-filter-product");
         };
@@ -196,7 +196,7 @@
             self.ExecuteTransition();
             self.ReportSkuModel.Refresh(self.ReportId());
 
-            self.InternalTransistionCallback = self.ReportSkuModel.Save;
+            self.SaveCurrentTabCallback = self.ReportSkuModel.Save;
             self.SelectedFilter(self.ReportFilterTypes.Sku);
             ProfitWiseFunctions.BsActivateTab("report-filter-sku");
         };

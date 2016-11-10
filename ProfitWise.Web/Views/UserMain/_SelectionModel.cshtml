@@ -6,7 +6,8 @@
 
         self.EmptyDescription = ko.observable();
         self.KeyExtractor = function(item) { return null };
-        
+        self.DescriptionExtractor = function(item) { return null }; 
+
         self.AllItems = ko.observableArray();
         self.ShowSplashPage = ko.observable(true);
         
@@ -21,9 +22,9 @@
                     item.IsChecked = ko.observable(false);
 
                     item.CorrectedDescription = ko.computed(function () {
-                        return self.KeyExtractor(item) == ""
+                        return self.DescriptionExtractor(item) == ""
                             ? self.EmptyDescription()
-                                : self.KeyExtractor(item);
+                                : self.DescriptionExtractor(item);
                     });
                 });
         };
@@ -46,7 +47,7 @@
                 .toArray();
         };
 
-        self.SetCheckedItems = function(checkedItems) {
+        self.SetCheckedItems = function (checkedItems) {
             AQ(checkedItems)
                 .each(function(selectedItemKey) {
                     var item =
