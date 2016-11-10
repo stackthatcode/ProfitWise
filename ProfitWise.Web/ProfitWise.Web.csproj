@@ -444,7 +444,7 @@
     <Content Include="Views\UserMain\_ReportEditorProductType.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportEditorEmptyResults.cshtml" />
+    <Content Include="Views\UserMain\_ReportEditorCommonTemplates.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\UserMain\_SelectionModel.cshtml" />

@@ -3,6 +3,101 @@
 
     ProfitWiseWidgets.SelectionModel = function () {
         var self = this;
+
+        self.EmptyDescription = ko.observable();
+        self.KeyExtractor = function(item) { return null };
+        
+        self.AllItems = ko.observableArray();
+        self.ShowSplashPage = ko.observable(true);
+        
+        self.LoadItems = function(allItems) {
+            self.AddObservables(allItems);
+            self.AllItems(allItems);
+        };
+
+        self.AddObservables = function (data) {
+            AQ(data)
+                .each(function (item) {
+                    item.IsChecked = ko.observable(false);
+
+                    item.CorrectedDescription = ko.computed(function () {
+                        return self.KeyExtractor(item) == ""
+                            ? self.EmptyDescription()
+                                : self.KeyExtractor(item);
+                    });
+                });
+        };
+
+
+        self.AllItemsAreSelected = function () {
+            var selectedCount = AQ(self.AllItems()).count(function (item) { return item.IsChecked() });
+            return selectedCount == self.AllItems().length;
+        };
+
+        self.DeselectAll = function () {
+            AQ(self.AllItems()).each(function (item) { item.IsChecked(false); });
+            self.ShowSplashPage(true);
+        };
+
+        self.CheckedItems = function () {
+            return AQ(self.AllItems())
+                .where(function (item) { return item.IsChecked(); })
+                .select(function (item) { return self.KeyExtractor(item); })
+                .toArray();
+        };
+
+        self.SetCheckedItems = function(checkedItems) {
+            AQ(checkedItems)
+                .each(function(selectedItemKey) {
+                    var item =
+                        AQ(self.AllItems())
+                            .firstOrDefault(
+                                function(x) { return self.KeyExtractor(x) == selectedItemKey });
+
+                    if (item != null) {
+                        item.IsChecked(true);
+                    }
+                });
+        };
+
+        self.NumberOfCheckedItems = ko.computed(function() {
+            return self.CheckedItems().length;
+        });
+
+        self.ApplyFiltersAndPaging = function (searchText, showAll, pageNumber, pageSize) { 
+            var filteredItems = self.AllItems();
+            if (searchText.trim() != "") {
+                filteredItems =
+                    AQ(filteredItems)
+                        .where(function (item) {
+                            return ProfitWiseFunctions.CaseInsensitiveContains(item.ProductType, searchText);
+                        })
+                        .toArray();
+            }
+
+            if (!showAll) {
+                filteredItems =
+                    AQ(filteredItems)
+                    .where(function (item) { return item.IsChecked() })
+                    .toArray();
+            }
+
+            var skip = (pageNumber - 1) * pageSize;
+            var take = pageSize;
+
+            var pagedResults = 
+                AQ(filteredItems)
+                .skip(skip)
+                .take(take)
+                .where(function (n) { return n != null })
+                .toArray();
+
+            return {
+                NumberOfFilteredItems: filteredItems.length,
+                PagedItems: pagedResults,
+            };
+        };
+
         return self;
     };
 </script>
