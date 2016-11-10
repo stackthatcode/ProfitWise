@@ -63,17 +63,18 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             var report = repository.RetrieveReport(reportId);
-            var markedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
+            var checkedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
 
             return new JsonNetResult(new
             {
                 AllProductTypes = report.AllProductTypes,
-                MarkedProductTypes = markedProductTypes,
+                CheckedProductTypes = checkedProductTypes,
             });
         }
 
         [HttpPost]
-        public ActionResult SelectedProductTypes(long reportId, bool selectAll, IList<string> markedProductTypes)
+        public ActionResult SelectedProductTypes(
+                long reportId, bool selectAll, IList<string> checkedProductTypes)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
@@ -82,15 +83,15 @@ namespace ProfitWise.Web.Controllers
             {
                 repository.UpdateSelectAllProductTypes(reportId, selectAll);
 
-                if (markedProductTypes == null) // Strange AJAX protocol for saying this is empty
+                if (checkedProductTypes == null) // Strange AJAX protocol for saying this is empty
                 {
                     repository.ClearProductTypeMarks(reportId);
                 }
                 else
                 {
                     var storedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
-                    var missingProductTypes = storedProductTypes.Where(x => !markedProductTypes.Contains(x)).ToList();
-                    var newProductTypes = markedProductTypes.Where(x => !storedProductTypes.Contains(x)).ToList();
+                    var missingProductTypes = storedProductTypes.Where(x => !checkedProductTypes.Contains(x)).ToList();
+                    var newProductTypes = checkedProductTypes.Where(x => !storedProductTypes.Contains(x)).ToList();
 
                     foreach (var productType in missingProductTypes)
                     {
