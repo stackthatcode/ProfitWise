@@ -180,12 +180,13 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
-            var data = new List<PwProductSummary>();
-            for (int i = 0; i < 5000; i++)
-            {
-                data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
-            }
-            //var data = repository.RetrieveMasterProductSummary(reportId);
+            //var data = new List<PwProductSummary>();
+            //for (int i = 0; i < 5000; i++)
+            //{
+            //    data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
+            //}
+
+            var data = repository.RetrieveMasterProductSummary(reportId);
             return new JsonNetResult(data);
         }
 
