@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Web.Json;

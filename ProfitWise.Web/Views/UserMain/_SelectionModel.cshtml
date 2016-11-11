@@ -22,7 +22,7 @@
                     item.IsChecked = ko.observable(false);
 
                     item.CorrectedDescription = ko.computed(function () {
-                        return self.DescriptionExtractor(item) == ""
+                        return !self.DescriptionExtractor(item)
                             ? self.EmptyDescription()
                                 : self.DescriptionExtractor(item);
                     });
