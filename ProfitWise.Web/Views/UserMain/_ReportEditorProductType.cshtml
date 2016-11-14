@@ -68,9 +68,9 @@
                                    data-bind="checked: $data.IsChecked, click: $parent.CheckboxClick" />
                         </td>
 
-                        <td data-bind="text: $data.CorrectedDescription"></td>
+                        <td class="overflow-gracefully" data-bind="text: $data.CorrectedDescription"></td>
 
-                        <td>(<span data-bind="text: $data.Count"></span> Products)</td>
+                        <td>(<span data-bind="text: $data.Count"></span> Vendors)</td>
                     </tr>
                     </tbody>
                 </table>
@@ -105,7 +105,7 @@
         self.SelectionModel.DescriptionExtractor = function (item) { return item.ProductType; }
 
 
-        self.Refresh = function (reportId) {
+        self.Refresh = function (reportId, callback) {
             self.ReportId(reportId);
             self.FilterModel.SetPageNumber(1);
             var ajax = new ProfitWiseFunctions.Ajax();
@@ -121,6 +121,7 @@
                 function (selectionData) {
                     self.SelectionModel.SetCheckedItems(selectionData.CheckedProductTypes);
                     self.ApplyFiltersAndPaging();
+                    callback();
                 }
             );
         }
@@ -142,7 +143,7 @@
             self.PageOfItems(filterResults.PagedItems);
         };
 
-        self.Save = function() {
+        self.Save = function(callback) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -152,7 +153,8 @@
                     };
                     ajax.HttpPost("/ReportService/SelectedProductTypes", data, this);
                 },
-                function(results) {
+                function (results) {
+                    callback();
                 });
         };
 

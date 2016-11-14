@@ -95,6 +95,9 @@ namespace ProfitWise.Web.Controllers
                     {
                         repository.MarkProductType(reportId, productType);
                     }
+
+                    // Finally, clean-up any Vendor selections that are no longer relevant
+                    repository.ClearUnassociatedVendorMarks(reportId);
                 }
 
                 transaction.Commit();

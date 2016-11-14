@@ -11,6 +11,10 @@ DROP TABLE IF EXISTS `profitwisereportvendor`;
 DROP TABLE IF EXISTS `profitwisereportmasterproduct`;
 DROP TABLE IF EXISTS `profitwisereportsku`;
 
+DROP VIEW IF EXISTS `vw_reportproducttypetoproduct`;
+DROP VIEW IF EXISTS `vw_reportvendortoproduct`;
+DROP VIEW IF EXISTS `vw_reportmasterproducttomastervariant`;
+
 
 
 CREATE TABLE `profitwisereport` (
@@ -29,14 +33,13 @@ CREATE TABLE `profitwisereport` (
     PRIMARY KEY (`PwReportId`, `PwShopId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=99739;
 
-
 CREATE TABLE `profitwisereportproducttype` (
 	`PwReportId` BIGINT NOT NULL AUTO_INCREMENT,
 	`PwShopId` BIGINT NOT NULL,
 	`ProductType` varchar(100) NOT NULL,
     PRIMARY KEY (`PwReportId`, `PwShopId`, `ProductType` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+		
 CREATE TABLE `profitwisereportvendor` (
 	`PwReportId` BIGINT NOT NULL AUTO_INCREMENT,
 	`PwShopId` BIGINT NOT NULL,
@@ -57,5 +60,39 @@ CREATE TABLE `profitwisereportsku` (
 	`PwMasterVariantId` BIGINT NOT NULL,
     PRIMARY KEY (`PwReportId`, `PwShopId`, `PwMasterVariantId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+CREATE VIEW `vw_reportproducttypetoproduct` 
+AS 
+SELECT t1.PwShopId, t1.PwReportId, t1.ProductType, t2.PwProductId, t2.Vendor
+FROM profitwisereportproducttype t1 
+	INNER JOIN profitwiseproduct t2 
+		ON t1.ProductType = t2.ProductType AND t1.PwShopId = t2.PwShopId;
+
+CREATE VIEW `vw_reportvendortoproduct` 
+AS 
+SELECT t1.PwShopId, t1.PwReportId, t1.Vendor, t2.PwProductId
+FROM profitwisereportvendor t1 
+	INNER JOIN profitwiseproduct t2 
+		ON t1.Vendor = t2.Vendor AND t1.PwShopId = t2.PwShopId;
+
+CREATE VIEW `vw_reportmasterproducttomastervariant`
+AS
+SELECT t1.PwShopId, t1.PwReportId, t1.PwMasterProductId, t2.PwMasterVariantId
+FROM profitwisereportmasterproduct t1
+	INNER JOIN profitwisemastervariant t2
+		ON t1.PwMasterProductId = t2.PwMasterProductId AND t1.PwShopId = t2.PwShopId;
+
+
+/*  
+3 Product Types
+5 Vendors
+12 Master Products
+17 Master Variants
+*/
+
+
 
 

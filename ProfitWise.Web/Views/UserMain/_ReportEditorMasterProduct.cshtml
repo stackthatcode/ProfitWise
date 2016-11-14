@@ -61,18 +61,22 @@
             <div data-bind="if: PageOfItems().length > 0">
                 <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
                     <tbody data-bind="foreach: PageOfItems">
-                        <tr style="border-top: 0;">
-                            <td>
-                                <input class="form-control"
-                                       type="checkbox"
-                                       style="height: 15px; width: 15px;"
-                                       data-bind="checked: $data.IsChecked, click: $parent.CheckboxClick" />
-                            </td>
+                    <tr style="border-top: 0;">
+                        <td style="width:10%">
+                            <input class="form-control"
+                                   type="checkbox"
+                                   style="height: 15px; width: 15px;"
+                                   data-bind="checked: $data.IsChecked, click: $parent.CheckboxClick" />
+                        </td>
 
-                            <td data-bind="text: $data.CorrectedDescription"></td>
+                        <td style="width:60%;" class="overflow-gracefully">
+                            <span data-bind="text: $data.CorrectedDescription, tooltip: { title: $data.CorrectedDescription }"></span>
+                            <br />
+                            <span data-bind="text: $data.Vendor" style="font-size:0.8em; font-weight:700; color:#666;"></span>
+                        </td>
 
-                            <td>(<span data-bind="text: $data.Count"></span> Products)</td>
-                        </tr>
+                        <td style="width:30%;">(<span data-bind="text: $data.Count"></span> Products)</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -105,7 +109,7 @@
         self.SelectionModel.KeyExtractor = function (item) { return item.PwMasterProductId; };
         self.SelectionModel.DescriptionExtractor = function (item) { return item.Title; }
 
-        self.Refresh = function (reportId) {
+        self.Refresh = function (reportId, callback) {
             self.ReportId(reportId);
             self.FilterModel.SetPageNumber(1);
             var ajax = new ProfitWiseFunctions.Ajax();
@@ -121,6 +125,7 @@
                 function (selectionData) {
                     self.SelectionModel.SetCheckedItems(selectionData.MarkedMasterProducts);
                     self.ApplyFiltersAndPaging();
+                    callback();
                 }
             );
         }
@@ -142,7 +147,7 @@
             self.PageOfItems(filterResults.PagedItems);
         };
 
-        self.Save = function() {
+        self.Save = function(callback) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -152,7 +157,8 @@
                     };
                     ajax.HttpPost("/ReportService/SelectedMasterProducts", data, this);
                 },
-                function(results) {
+                function (results) {
+                    callback();
                 });
         };
 

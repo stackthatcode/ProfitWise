@@ -69,9 +69,16 @@
                                    data-bind="checked: $data.IsChecked, click: $parent.CheckboxClick" />
                         </td>
 
-                        <td>
-                            <span data-bind="text: $data.CorrectedDescription"></span><br/>
-                            <span data-bind="text:$data.Sku"></span>
+                        <td style="width:45%" class="overflow-gracefully">
+                            <span data-bind="text: $data.ProductTitle, tooltip: { title: $data.ProductTitle }"></span>
+                            <br />
+                            <span data-bind="text: $data.Vendor" style="font-size:0.8em; font-weight:700; color:#666;"></span>
+                        </td>
+                        
+                        <td style="width:45%"  class="overflow-gracefully">
+                            <span data-bind="text: $data.VariantTitle, tooltip: { title: $data.VariantTitle }"></span>
+                            <br />
+                            <span data-bind="text:$data.Sku" style="font-size:0.8em; font-weight:700; color:#666;"></span>
                         </td>
                     </tr>
                     </tbody>
@@ -104,9 +111,9 @@
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
         self.SelectionModel.EmptyDescription("(No Variant Title)");
         self.SelectionModel.KeyExtractor = function (item) { return item.PwMasterVariantId; };
-        self.SelectionModel.DescriptionExtractor = function (item) { return item.Title; }
+        self.SelectionModel.DescriptionExtractor = function (item) { return item.VariantTitle; }
 
-        self.Refresh = function (reportId) {
+        self.Refresh = function (reportId, callback) {
             self.ReportId(reportId);
             self.FilterModel.SetPageNumber(1);
             var ajax = new ProfitWiseFunctions.Ajax();
@@ -122,6 +129,7 @@
                 function (selectionData) {
                     self.SelectionModel.SetCheckedItems(selectionData.MarkedSkus);
                     self.ApplyFiltersAndPaging();
+                    callback();
                 }
             );
         }
@@ -143,7 +151,7 @@
             self.PageOfItems(filterResults.PagedItems);
         };
 
-        self.Save = function() {
+        self.Save = function (callback) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -153,7 +161,8 @@
                     };
                     ajax.HttpPost("/ReportService/SelectedSkus", data, this);
                 },
-                function(results) {
+                function (results) {
+                    callback();
                 });
         };
 

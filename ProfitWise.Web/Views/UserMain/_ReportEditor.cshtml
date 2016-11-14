@@ -126,22 +126,8 @@
         self.CancelCallback = function () { };
         self.OkCallback = function () { };
 
-        // This function will get invoked on the OK button, or tab change
-        self.SaveCurrentTabCallback = function() {
-        };
-
-        // This is for notifying external subscribers that elect to set it
-        self.ExternalTransistionCallback = function () {
-        };
-        
-        self.ExecuteTransition = function() {
-            self.SaveCurrentTabCallback();
-            self.ExternalTransistionCallback();
-        };
-
-
         self.OkButtonClick = function () {
-            self.ExecuteTransition();
+            self.ClickOnNewFilterTab();
             self.OkCallback();
         };
 
@@ -149,58 +135,78 @@
             self.CancelCallback();
         };
 
-        self.ProductTypeClick = function () {
-            if (self.SelectedFilter() == self.ReportFilterTypes.ProductType) {
-                return;
-            }
-            
-            self.ExecuteTransition();
-            self.ReportProductTypeModel.Refresh(self.ReportId());
-            
-            self.SaveCurrentTabCallback = self.ReportProductTypeModel.Save;
-            self.SelectedFilter(self.ReportFilterTypes.ProductType);
-            ProfitWiseFunctions.BsActivateTab("report-filter-product-type");
+
+        // This function will get invoked on the OK button, or tab change
+        self.SaveCurrentTabCallback = function (callback) {
+            callback();
         };
 
-        self.VendorClick = function () {
-            if (self.SelectedFilter() == self.ReportFilterTypes.Vendor) {
+        // This is for notifying external subscribers that elect to set it
+        self.ExternalTransistionCallback = function (callback) {
+            callback();
+        };
+
+
+        self.ClickOnNewFilterTab = function (newFilter, newSaveCallback, newRefreshFunction, bootstrapTabHref) {
+            if (self.SelectedFilter() == newFilter) {
                 return;
             }
 
-            self.ExecuteTransition();
-            self.ReportVendorModel.Refresh(self.ReportId());
+            flow.exec(
+                function () {
+                    if (self.SaveCurrentTabCallback) {
+                        self.SaveCurrentTabCallback(this);
+                    } else {
+                        this();
+                    }
+                },
+                function() {
+                    console.log("trace 2");
+                    newRefreshFunction(this);
+                },
+                function() {
+                    console.log("trace 3");
+                    self.SaveCurrentTabCallback = newSaveCallback;
+                    self.SelectedFilter(newFilter);
+                    ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
+                }
+            );
+        };
 
-            self.SaveCurrentTabCallback = self.ReportVendorModel.Save;
-            self.SelectedFilter(self.ReportFilterTypes.Vendor);
-            ProfitWiseFunctions.BsActivateTab("report-filter-vendor");
+
+        self.ProductTypeClick = function () {
+            self.ClickOnNewFilterTab(
+                self.ReportFilterTypes.ProductType,
+                function(callback) { self.ReportProductTypeModel.Save(callback); },
+                function(callback) { self.ReportProductTypeModel.Refresh(self.ReportId(), callback); },
+                "report-filter-product-type");
+        };
+
+        self.VendorClick = function() {
+            self.ClickOnNewFilterTab(
+                self.ReportFilterTypes.Vendor,
+                function(callback) { self.ReportVendorModel.Save(callback); },
+                function(callback) { self.ReportVendorModel.Refresh(self.ReportId(), callback); },
+                "report-filter-vendor");
         };
 
         self.MasterProductClick = function () {
-            if (self.SelectedFilter() == self.ReportFilterTypes.Product) {
-                return;
-            }
-
-            self.ExecuteTransition();
-            self.ReportMasterProductModel.Refresh(self.ReportId());
-
-            self.SaveCurrentTabCallback = self.ReportMasterProductModel.Save;
-            self.SelectedFilter(self.ReportFilterTypes.Product);
-            ProfitWiseFunctions.BsActivateTab("report-filter-product");
+            self.ClickOnNewFilterTab(
+                self.ReportFilterTypes.Product,
+                function (callback) { self.ReportMasterProductModel.Save(callback); },
+                function (callback) { self.ReportMasterProductModel.Refresh(self.ReportId(), callback); },
+                "report-filter-product");
         };
 
         self.SkuClick = function () {
-            if (self.SelectedFilter() == self.ReportFilterTypes.Sku) {
-                return;
-            }
-
-            self.ExecuteTransition();
-            self.ReportSkuModel.Refresh(self.ReportId());
-
-            self.SaveCurrentTabCallback = self.ReportSkuModel.Save;
-            self.SelectedFilter(self.ReportFilterTypes.Sku);
-            ProfitWiseFunctions.BsActivateTab("report-filter-sku");
+            self.ClickOnNewFilterTab(
+                self.ReportFilterTypes.Sku,
+                function (callback) { self.ReportSkuModel.Save(callback); },
+                function (callback) { self.ReportSkuModel.Refresh(self.ReportId(), callback); },
+                "report-filter-sku");
         };
         
+
         self.GotoNextTab = function() {
             // TODO => build this out
         };
