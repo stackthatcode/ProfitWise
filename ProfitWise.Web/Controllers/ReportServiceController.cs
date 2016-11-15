@@ -93,218 +93,32 @@ namespace ProfitWise.Web.Controllers
 
 
 
-
-
         [HttpGet]
-        public ActionResult SelectedProductTypes(long reportId)
+        public ActionResult Filters(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var checkedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
-
-            return new JsonNetResult(new
-            {
-                CheckedProductTypes = checkedProductTypes,
-            });
+            var filters = repository.RetrieveFilters(reportId);
+            return new JsonNetResult(filters);
         }
 
         [HttpPost]
-        public ActionResult SelectedProductTypes(
-                long reportId, IList<string> checkedProductTypes)
+        public ActionResult AddFilter(long reportId, string filterType, long numberKey, string stringKey)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            using (var transaction = repository.InitiateTransaction())
-            {
-                if (checkedProductTypes == null) // Strange AJAX protocol for saying this is empty
-                {
-                    repository.ClearProductTypeMarks(reportId);
-                }
-                else
-                {
-                    var storedProductTypes = repository.RetrieveMarkedProductTypes(reportId);
-                    var missingProductTypes = storedProductTypes.Where(x => !checkedProductTypes.Contains(x)).ToList();
-                    var newProductTypes = checkedProductTypes.Where(x => !storedProductTypes.Contains(x)).ToList();
-
-                    foreach (var productType in missingProductTypes)
-                    {
-                        repository.UnmarkProductType(reportId, productType);
-                    }
-                    foreach (var productType in newProductTypes)
-                    {
-                        repository.MarkProductType(reportId, productType);
-                    }
-
-                    // Finally, clean-up any Vendor selections that are no longer relevant
-                    repository.ClearUnassociatedVendorMarks(reportId);
-                    repository.ClearUnassociatedMasterProductMarks(reportId);
-                }
-
-                transaction.Commit();
-            }
-
-            // TODO - clean-up the Vendor Types
-            // TODO - clean-up the Master Products
-            // TODO - clean-up the SKUs
-
-            return JsonNetResult.Success();
-        }
-
-
-
-        [HttpGet]
-        public ActionResult SelectedVendors(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            var checkedVendors = repository.RetrieveMarkedVendors(reportId);
-            return new JsonNetResult(new
-            {
-                CheckedVendors = checkedVendors,
-            });
+            var filter = repository.InsertFilter(reportId, filterType, numberKey, stringKey);
+            return new JsonNetResult(filter);
         }
 
         [HttpPost]
-        public ActionResult SelectedVendors(long reportId, IList<string> checkedVendors)
+        public ActionResult RemoveFilter(long reportId, long filterId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            using (var transaction = repository.InitiateTransaction())
-            {
-                if (checkedVendors == null) // Strange AJAX protocol here...
-                {
-                    repository.ClearVendorMarks(reportId);
-                }
-                else
-                {
-                    var storedMarkedVendors = repository.RetrieveMarkedVendors(reportId);
-                    var missingVendors = storedMarkedVendors.Where(x => !checkedVendors.Contains(x)).ToList();
-                    var newVendors = checkedVendors.Where(x => !storedMarkedVendors.Contains(x)).ToList();
-
-                    foreach (var vendor in missingVendors)
-                    {
-                        repository.UnmarkVendor(reportId, vendor);
-                    }
-                    foreach (var vendor in newVendors)
-                    {
-                        repository.MarkVendor(reportId, vendor);
-                    }
-
-                    repository.ClearUnassociatedMasterProductMarks(reportId);
-                }
-
-                transaction.Commit();
-            }
-
-            // TODO - clean-up the Vendor Types
-            // TODO - clean-up the Master Products
-            // TODO - clean-up the SKUs
-
+            repository.DeleteFilter(reportId, filterId);
             return JsonNetResult.Success();
-        }
-
-
-
-        [HttpGet]
-        public ActionResult SelectedMasterProducts(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            var markedMasterProducts = repository.RetrieveMarkedMasterProducts(reportId);
-
-            return new JsonNetResult(new
-            {
-                MarkedMasterProducts = markedMasterProducts,
-            });
-        }
-
-        [HttpPost]
-        public ActionResult SelectedMasterProducts(long reportId, IList<long> markedMasterProducts)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            using (var transaction = repository.InitiateTransaction())
-            {
-                if (markedMasterProducts == null) // Strange AJAX protocol here...
-                {
-                    repository.ClearMasterProductMarks(reportId);
-                }
-                else
-                {
-                    var storedMarkedProducts = repository.RetrieveMarkedMasterProducts(reportId);
-                    var missingProducts = storedMarkedProducts.Where(x => !markedMasterProducts.Contains(x)).ToList();
-                    var newProducts = markedMasterProducts.Where(x => !storedMarkedProducts.Contains(x)).ToList();
-
-                    foreach (var masterProduct in missingProducts)
-                    {
-                        repository.UnmarkMasterProduct(reportId, masterProduct);
-                    }
-                    foreach (var masterProduct in newProducts)
-                    {
-                        repository.MarkMasterProduct(reportId, masterProduct);
-                    }
-                }
-
-                transaction.Commit();
-            }
-
-            // TODO - clean-up the Vendor Types
-            // TODO - clean-up the Master Products
-            // TODO - clean-up the SKUs
-
-            return JsonNetResult.Success();
-        }
-
-
-        [HttpGet]
-        public ActionResult SelectedSkus(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            var markedSkus = repository.RetrieveMarkedSkus(reportId);
-
-            return new JsonNetResult(new { MarkedSkus = markedSkus, });
-        }
-
-        [HttpPost]
-        public ActionResult SelectedSkus(long reportId, IList<long> markedSkus)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            using (var transaction = repository.InitiateTransaction())
-            {
-                if (markedSkus == null) // Strange AJAX protocol here...
-                {
-                    repository.ClearSkuMarks(reportId);
-                }
-                else
-                {
-                    var storedMarkedSkus = repository.RetrieveMarkedSkus(reportId);
-                    var missingSkus = storedMarkedSkus.Where(x => !markedSkus.Contains(x)).ToList();
-                    var newSkus = markedSkus.Where(x => !storedMarkedSkus.Contains(x)).ToList();
-
-                    foreach (var masterVariantId in missingSkus)
-                    {
-                        repository.UnmarkSku(reportId, masterVariantId);
-                    }
-                    foreach (var masterVariantId in newSkus)
-                    {
-                        repository.MarkSku(reportId, masterVariantId);
-                    }
-                }
-
-                transaction.Commit();
-            }
-
-            return JsonNetResult.Success();
-        }
+        }        
     }
 }
 

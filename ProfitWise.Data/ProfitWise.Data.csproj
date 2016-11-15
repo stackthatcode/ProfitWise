@@ -88,6 +88,7 @@
     <Compile Include="Model\PwProductVendorSummary.cs" />
     <Compile Include="Model\PwProductTypeSummary.cs" />
     <Compile Include="Model\PwReport.cs" />
+    <Compile Include="Model\PwReportFilter.cs" />
     <Compile Include="Model\PwReportMasterProduct.cs" />
     <Compile Include="Model\PwReportProductType.cs" />
     <Compile Include="Model\PwReportSku.cs" />
