@@ -58,4 +58,7 @@ AND PwProductId IN ( SELECT PwProductId FROM vw_reportproducttypetoproduct WHERE
 GROUP BY Vendor;
 
 
+SELECT * FROM vw_reportproducttypetoproduct;
+
+
 
