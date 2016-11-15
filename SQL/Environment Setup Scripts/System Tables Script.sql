@@ -1,24 +1,24 @@
-USE profitwise;
+USE profitwise; # Set active database
 
-SET SQL_SAFE_UPDATES = 0;
+SET SQL_SAFE_UPDATES = 0; # Turn off Safe Updates setting
 
 
 DROP TABLE IF EXISTS `currency`;
 DROP TABLE IF EXISTS `exchangerate`;
 
 CREATE TABLE `currency` (
-	`CurrencyId` int NOT NULL,
-    `Abbreviation` varchar(3) NOT NULL,
-    `Symbol` varchar(3) NOT NULL,
-    `Name` varchar(50) NOT NULL,
+	`CurrencyId` int NOT NULL, # Numeric value of currency
+    `Abbreviation` varchar(3) NOT NULL, # Currency abbreviation
+    `Symbol` varchar(3) NOT NULL, # Currency symbol
+    `Name` varchar(50) NOT NULL, # Currency name
     Primary KEY (`CurrencyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `exchangerate` (
-	`SourceCurrencyId` int NOT NULL,
-	`DestinationCurrencyId` int NOT NULL,
-    `Date` date NOT NULL,
-    `Rate` decimal(9,6) NOT NULL
+	`SourceCurrencyId` int NOT NULL, # Currency to convert from
+	`DestinationCurrencyId` int NOT NULL, # Currency to convert to
+    `Date` date NOT NULL, # Date for currency conversion data
+    `Rate` decimal(9,6) NOT NULL # Multiplier for currency conversion
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `currency` VALUES ( 1, 'USD', '$', 'United States dollars' );
@@ -43,5 +43,4 @@ SELECT * FROM exchangerate;
 
 SELECT * FROM exchangerate;
 
-DELETE FROM exchangerate WHERE Date >= '2016-08-01';
 
