@@ -66,10 +66,11 @@ CREATE TABLE `profitwisereportsku` (
 
 CREATE VIEW `vw_reportproducttypetoproduct` 
 AS 
-SELECT t1.PwShopId, t1.PwReportId, t1.ProductType, t2.PwProductId, t2.Vendor
+SELECT t1.PwShopId, t1.PwReportId, t1.ProductType, t2.PwProductId, t2.Vendor, t2.PwMasterProductId
 FROM profitwisereportproducttype t1 
 	INNER JOIN profitwiseproduct t2 
-		ON t1.ProductType = t2.ProductType AND t1.PwShopId = t2.PwShopId;
+		ON t1.ProductType = t2.ProductType AND t1.PwShopId = t2.PwShopId AND t2.IsPrimary = 1;
+
 
 CREATE VIEW `vw_reportvendortoproduct` 
 AS 

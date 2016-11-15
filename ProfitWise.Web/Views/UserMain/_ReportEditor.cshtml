@@ -161,11 +161,9 @@
                     }
                 },
                 function() {
-                    console.log("trace 2");
                     newRefreshFunction(this);
                 },
                 function() {
-                    console.log("trace 3");
                     self.SaveCurrentTabCallback = newSaveCallback;
                     self.SelectedFilter(newFilter);
                     ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);

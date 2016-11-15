@@ -29,8 +29,7 @@ namespace ProfitWise.Web.Controllers
             userReports.AddRange(systemReports);
 
             return new JsonNetResult(userReports);
-        }
-        
+        }        
 
         [HttpPost]
         public ActionResult CopyAndEdit(long reportId)
@@ -45,6 +44,8 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+
+
         // Product Types Actions
         [HttpGet]
         public ActionResult ProductTypes()
@@ -54,6 +55,45 @@ namespace ProfitWise.Web.Controllers
             var data = repository.RetrieveProductTypeSummary();
             return new JsonNetResult(data);
         }
+
+        [HttpGet]
+        public ActionResult Vendors(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var data = repository.RetrieveVendorSummary(reportId);
+            return new JsonNetResult(data);
+        }
+        
+        [HttpGet]
+        public ActionResult MasterProducts(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            //var data = new List<PwProductSummary>();
+            //for (int i = 0; i < 5000; i++)
+            //{
+            //    data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
+            //}
+
+            var data = repository.RetrieveMasterProductSummary(reportId);
+            return new JsonNetResult(data);
+        }
+
+        [HttpGet]
+        public ActionResult Skus(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var data = repository.RetrieveSkuSummary(reportId);
+            return new JsonNetResult(data);
+        }
+
+
+
+
+
 
         [HttpGet]
         public ActionResult SelectedProductTypes(long reportId)
@@ -98,6 +138,7 @@ namespace ProfitWise.Web.Controllers
 
                     // Finally, clean-up any Vendor selections that are no longer relevant
                     repository.ClearUnassociatedVendorMarks(reportId);
+                    repository.ClearUnassociatedMasterProductMarks(reportId);
                 }
 
                 transaction.Commit();
@@ -111,16 +152,6 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-
-        // Vendor Actions
-        [HttpGet]
-        public ActionResult Vendors(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var data = repository.RetrieveVendorSummary(reportId);
-            return new JsonNetResult(data);
-        }
 
         [HttpGet]
         public ActionResult SelectedVendors(long reportId)
@@ -161,6 +192,8 @@ namespace ProfitWise.Web.Controllers
                     {
                         repository.MarkVendor(reportId, vendor);
                     }
+
+                    repository.ClearUnassociatedMasterProductMarks(reportId);
                 }
 
                 transaction.Commit();
@@ -174,23 +207,6 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-
-        // Master Product Actions
-        [HttpGet]
-        public ActionResult MasterProducts(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            //var data = new List<PwProductSummary>();
-            //for (int i = 0; i < 5000; i++)
-            //{
-            //    data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
-            //}
-
-            var data = repository.RetrieveMasterProductSummary(reportId);
-            return new JsonNetResult(data);
-        }
 
         [HttpGet]
         public ActionResult SelectedMasterProducts(long reportId)
@@ -216,7 +232,7 @@ namespace ProfitWise.Web.Controllers
             {
                 if (markedMasterProducts == null) // Strange AJAX protocol here...
                 {
-                    repository.ClearVendorMarks(reportId);
+                    repository.ClearMasterProductMarks(reportId);
                 }
                 else
                 {
@@ -244,17 +260,6 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
-
-
-        // Master Product Actions
-        [HttpGet]
-        public ActionResult Skus(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var data = repository.RetrieveSkuSummary(reportId);
-            return new JsonNetResult(data);
-        }
 
         [HttpGet]
         public ActionResult SelectedSkus(long reportId)

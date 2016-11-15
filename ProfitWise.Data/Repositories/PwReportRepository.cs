@@ -133,10 +133,83 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT ProductType, COUNT(*) AS Count
                 FROM profitwiseproduct
-                WHERE PwShopId = @PwShopId
-                AND IsPrimary = 1 
+                WHERE PwShopId = @PwShopId AND IsPrimary = 1 
                 GROUP BY ProductType;";
             return _connection.Query<PwProductTypeSummary>(query, new {PwShopId}).ToList();
+        }
+
+        public IList<PwProductVendorSummary> RetrieveVendorSummary(long reportId)
+        {
+            var queryStart =
+                @"SELECT Vendor, COUNT(*) AS Count 
+                FROM profitwiseproduct 
+                WHERE PwShopId = @PwShopId AND IsPrimary = 1";
+
+            var queryMiddle = "";
+
+            if (AreThereProductTypesFilters(reportId))
+            {
+                queryMiddle =
+                    @"AND PwProductId IN ( 
+                    SELECT PwProductId FROM vw_reportproducttypetoproduct 
+                    WHERE PwShopId = @PwShopId AND PwReportId = @reportId ) ";
+            }
+
+            var queryEnd = "";
+
+            var query = queryStart + queryMiddle + queryEnd;
+
+            return _connection.Query<PwProductVendorSummary>(query, new { PwShopId, reportId }).ToList();
+        }
+
+        public IList<PwProductSummary> RetrieveMasterProductSummary(long reportId)
+        {
+            var queryHead =
+                @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title, COUNT(*) AS Count
+                FROM profitwiseproduct t1 
+	                INNER JOIN profitwisemastervariant t2
+		                ON t1.PwMasterProductId = t2.PwMasterProductId AND t1.IsPrimary = 1 
+                WHERE t1.PwShopId = @PwShopId
+                AND t2.PwShopId = @PwShopId ";
+
+            var queryMiddle = "";
+
+            if (AreThereProductTypesFilters(reportId))
+            {
+                queryMiddle +=
+                    @"AND t1.PwProductId IN ( 
+                    SELECT PwProductId FROM vw_reportproducttypetoproduct 
+                    WHERE PwShopId = @PwShopId AND PwReportId = @reportId ) ";
+            }
+
+            if (AreThereVendorsFilters(reportId))
+            {
+                queryMiddle +=
+                    @"AND t1.PwProductId IN ( 
+                    SELECT PwProductId FROM vw_reportvendortoproduct
+                    WHERE PwShopId = @PwShopId AND PwReportId = @reportId ) ";
+            }
+
+            var queryTails =
+                @"GROUP BY t1.PwMasterProductId, t1.Vendor, t1.Title;";
+
+            var query = queryHead + queryMiddle + queryTails;
+            return _connection.Query<PwProductSummary>(query, new { PwShopId, reportId }).ToList();
+        }
+        public IList<PwProductSkuSummary> RetrieveSkuSummary(long reportId)
+        {
+            var query =
+                @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title AS ProductTitle, 
+                            t2.PwMasterVariantId, t3.Title AS VariantTitle, t3.Sku
+                FROM profitwiseproduct t1 
+	                INNER JOIN profitwisemastervariant t2
+		                ON t1.PwMasterProductId = t2.PwMasterProductId AND t1.IsPrimary = 1 
+	                INNER JOIN profitwisevariant t3
+		                ON t2.PwMasterVariantId = t3.PwMasterVariantId AND t3.IsPrimary = 1
+                WHERE t1.PwShopId = @PwShopId
+                AND t2.PwShopId = @PwShopId
+                AND t3.PwShopId = @PwShopId;";
+            return _connection.Query<PwProductSkuSummary>(query, new { PwShopId, reportId }).ToList();
         }
 
         public void UpdateSelectAllProductTypes(long reportId, bool value)
@@ -146,11 +219,11 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId, value });
         }
 
-        public int RetrieveMarkedProductTypesCount(long reportId)
+        public bool AreThereProductTypesFilters(long reportId)
         {
             var query = @"SELECT COUNT(ProductType) FROM profitwisereportproducttype
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            return _connection.Query<int>(query, new { PwShopId, reportId }).First();
+            return _connection.Query<int>(query, new {PwShopId, reportId}).First() > 0;
         }
 
         public List<string> RetrieveMarkedProductTypes(long reportId)
@@ -184,36 +257,18 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public IList<PwProductVendorSummary> RetrieveVendorSummary(long reportId)
-        {
-            var productTypeFilterCount = RetrieveMarkedProductTypesCount(reportId);
-
-            var queryStart =
-                @"SELECT Vendor, COUNT(*) AS Count FROM profitwiseproduct 
-                WHERE PwShopId = @PwShopId AND IsPrimary = 1 ";
-
-            var queryMiddle = "";
-
-            if (productTypeFilterCount > 0)
-            {
-                queryMiddle = 
-                    "AND PwProductId IN ( " +
-                    "SELECT PwProductId FROM vw_reportproducttypetoproduct " +
-                    "WHERE PwShopId = @PwShopId AND PwReportId = @reportId ) ";
-            }
-
-            var queryEnd = "GROUP BY Vendor;";
-
-            var query = queryStart + queryMiddle + queryEnd;
-
-            return _connection.Query<PwProductVendorSummary>(query, new {PwShopId, reportId}).ToList();
-        }
-
         public void UpdateSelectAllVendors(long reportId, bool value)
         {
             var query = @"UPDATE profitwisereport SET AllVendors = @value 
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             _connection.Execute(query, new { PwShopId, reportId, value });
+        }
+
+        public bool AreThereVendorsFilters(long reportId)
+        {
+            var query = @"SELECT COUNT(Vendor) FROM profitwisereportvendor
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
+            return _connection.Query<int>(query, new {PwShopId, reportId}).First() > 0;
         }
 
         public List<string> RetrieveMarkedVendors(long reportId)
@@ -233,6 +288,11 @@ namespace ProfitWise.Data.Repositories
 
         public void ClearUnassociatedVendorMarks(long reportId)
         {
+            if (!AreThereProductTypesFilters(reportId))
+            {
+                return;
+            }
+
             var query =
                 @"DELETE FROM profitwisereportvendor 
                 WHERE PwShopId = @PwShopId 
@@ -261,22 +321,6 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public IList<PwProductSummary> RetrieveMasterProductSummary(long reportId)
-        {
-            var query =
-                @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title, COUNT(*) AS Count
-                FROM profitwiseproduct t1 
-	                INNER JOIN profitwisemastervariant t2
-		                ON t1.PwMasterProductId = t2.PwMasterProductId AND t1.IsPrimary = 1 
-	                INNER JOIN profitwisevariant t3
-		                ON t2.PwMasterVariantId = t3.PwMasterVariantId AND t3.IsPrimary = 1
-                WHERE t1.PwShopId = @PwShopId
-                AND t2.PwShopId = @PwShopId
-                AND t3.PwShopId = @PwShopId
-                GROUP BY t1.PwMasterProductId, t1.Vendor, t1.Title;";
-            return _connection.Query<PwProductSummary>(query, new { PwShopId, reportId }).ToList();
-        }        
-
         public void UpdateSelectAllMasterProducts(long reportId, bool value)
         {
             var query = @"UPDATE profitwisereport SET AllProducts = @value 
@@ -298,6 +342,35 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId });
         }
 
+        public void ClearUnassociatedMasterProductMarks(long reportId)
+        {
+            if (AreThereProductTypesFilters(reportId))
+            {
+                var query1 =
+                    @"DELETE FROM profitwisereportmasterproduct 
+                WHERE PwShopId = @PwShopId 
+                AND PwReportId = @reportId
+                AND PwMasterProductId NOT IN (
+	                SELECT DISTINCT PwMasterProductId FROM vw_reportproducttypetoproduct 
+	                WHERE PwShopId = @PwShopId AND PwReportId = @reportId
+                );";
+                _connection.Execute(query1, new {PwShopId, reportId});
+            }
+
+            if (AreThereVendorsFilters(reportId))
+            {
+                var query2 =
+                    @"DELETE FROM profitwisereportmasterproduct 
+                WHERE PwShopId = @PwShopId 
+                AND PwReportId = @reportId
+                AND PwMasterProductId NOT IN (
+	                SELECT DISTINCT PwMasterProductId FROM vw_reportvendortoproduct 
+	                WHERE PwShopId = @PwShopId AND PwReportId = @reportId
+                );";
+                _connection.Execute(query2, new {PwShopId, reportId});
+            }
+        }
+
         public void MarkMasterProduct(long reportId, long masterProduct)
         {
             var query = @"INSERT profitwisereportmasterproduct VALUES ( @reportId, @PwShopId, @masterProduct )";
@@ -316,21 +389,6 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public IList<PwProductSkuSummary> RetrieveSkuSummary(long reportId)
-        {
-            var query =
-                @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title AS ProductTitle, 
-                            t2.PwMasterVariantId, t3.Title AS VariantTitle, t3.Sku
-                FROM profitwiseproduct t1 
-	                INNER JOIN profitwisemastervariant t2
-		                ON t1.PwMasterProductId = t2.PwMasterProductId AND t1.IsPrimary = 1 
-	                INNER JOIN profitwisevariant t3
-		                ON t2.PwMasterVariantId = t3.PwMasterVariantId AND t3.IsPrimary = 1
-                WHERE t1.PwShopId = @PwShopId
-                AND t2.PwShopId = @PwShopId
-                AND t3.PwShopId = @PwShopId;";
-            return _connection.Query<PwProductSkuSummary>(query, new { PwShopId, reportId }).ToList();
-        }
         
         public void UpdateSelectAllSkus(long reportId, bool value)
         {
@@ -369,6 +427,8 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
             return _connection.Query<long>(query, new { PwShopId, reportId }).ToList();
         }
+
+
     }
 }
 

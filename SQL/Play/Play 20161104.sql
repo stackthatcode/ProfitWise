@@ -16,8 +16,17 @@ SELECT * FROM vw_reportmasterproducttomastervariant;
 
 
 
+SELECT * FROM profitwisereportproducttype;
+
 SELECT * FROM profitwisereportvendor;
 
+SELECT * FROM profitwisereportmasterproduct;
+
+
+
+SELECT * FROM vw_reportvendortoproduct
+                    
+                    
 
 DELETE FROM profitwisereportvendor 
 WHERE PwShopId = 100001 
@@ -28,23 +37,20 @@ AND Vendor NOT IN (
 );
 
 
-	SELECT DISTINCT Vendor FROM vw_reportproducttypetoproduct 
-	WHERE PwShopId = 100001 AND PwReportId = 99739;
+SELECT DISTINCT Vendor FROM vw_reportproducttypetoproduct 
+WHERE PwShopId = 100001 AND PwReportId = 99739;
 
 
-	SELECT DISTINCT Vendor FROM vw_reportproducttypetoproduct 
-	WHERE PwShopId = 100001 AND ProductType IN ( 
-		SELECT ProductType FROM profitwisereportproducttype
-		WHERE PwShopId = 100001 AND PwReportId = 99739
-	);
+SELECT DISTINCT Vendor FROM vw_reportproducttypetoproduct 
+WHERE PwShopId = 100001 AND ProductType IN ( 
+	SELECT ProductType FROM profitwisereportproducttype
+	WHERE PwShopId = 100001 AND PwReportId = 99739
+);
 
 
 SELECT * FROM profitwisereportproducttype;
 
-
 SELECT * FROM profitwisereportvendor;
-
-
 
 SELECT Vendor, COUNT(*) AS Count FROM profitwiseproduct 
 WHERE PwShopId = 100001 AND IsPrimary = 1 
