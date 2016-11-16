@@ -184,7 +184,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query = 
                 @"SELECT * FROM profitwisereportfilter 
-                WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
+                WHERE PwShopId = @PwShopId AND PwReportId = @reportId
+                ORDER BY DisplayOrder;";
             return _connection.Query<PwReportFilter>(query, new { PwShopId, reportId }).ToList();
         }
 
@@ -198,30 +199,25 @@ namespace ProfitWise.Data.Repositories
                     .FirstOrDefault();
         }
 
-        public int RetrieveMaxFilterOrder(long reportId)
+        public int? RetrieveMaxFilterOrder(long reportId)
         {
             var query =
                 @"SELECT MAX(DisplayOrder) FROM profitwisereportfilter 
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            var order = 
-                _connection
+            return _connection
                     .Query<int?>(query, new {PwShopId, reportId})
-                    .FirstOrDefault() ?? (int?)1;
-
-            return order.Value;
+                    .FirstOrDefault();
         }
 
-        public int RetrieveMaxFilterId(long reportId)
+        public int? RetrieveMaxFilterId(long reportId)
         {
             var query =
                 @"SELECT MAX(PwFilterId) FROM profitwisereportfilter 
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            var order =
-                _connection
-                    .Query<int?>(query, new { PwShopId, reportId })
-                    .FirstOrDefault() ?? (int?)1;
 
-            return order.Value;
+            return _connection
+                    .Query<int?>(query, new { PwShopId, reportId })
+                    .FirstOrDefault();
         }
 
         public PwReportFilter InsertFilter(PwReportFilter filter)
@@ -230,8 +226,8 @@ namespace ProfitWise.Data.Repositories
                 @"INSERT INTO profitwisereportfilter VALUES 
                 ( @PwReportId, @PwShopId, @PwFilterId, @FilterType, @NumberKey, @StringKey, @Title, @Description, @DisplayOrder )";
 
-            filter.PwFilterId = RetrieveMaxFilterId(filter.PwReportId) + 1;
-            filter.DisplayOrder = RetrieveMaxFilterOrder(filter.PwReportId) + 1;
+            filter.PwFilterId = (RetrieveMaxFilterId(filter.PwReportId) ?? 0) + 1;
+            filter.DisplayOrder = (RetrieveMaxFilterOrder(filter.PwReportId) ?? 0) + 1;
 
             _connection.Execute(query, filter);
 

@@ -79,7 +79,7 @@
             </div>
         </div>
         
-        <div class="col-xs-5" style="background-color:white; height: 300px; padding-left:45px;">
+        <div class="col-xs-5 no-side-padding" style="background-color:white; height: 300px; padding-left:45px; ">
             <div style="font-size:1.10em; height:40px; padding-top:8px; font-weight: 700;">Select Filters to add to your Report</div>
 
             <p>This Report includes <span style="font-weight: 700; color:#888;">1,485 Products</span>.</p>
@@ -96,22 +96,62 @@
                 </a>
             </div>
             
-            <div data-bind="foreach: FiltersGrid">
-                <div class="filter-tag-container"
-                     style="display:inline-block; margin-bottom:5px;"
-                     data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
+            <div style="overflow-y:auto; height:300px;">
+                <div style="margin-bottom:5px; font-size:0.8em; font-weight:700;">Product Type Filters:</div>
+                <div data-bind="foreach: FiltersGrid">
+                    <div class="filter-tag-container"
+                         style="display:inline-block; margin-bottom:5px;"
+                         data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
 
-                    <div class="filter-description">
-                        <span data-bind="text: $data.Title"></span>
+                        <div class="filter-description">
+                            <span data-bind="text: $data.Title"></span>
+                        </div>
+
+                        <!-- Add a delete method here... -->
+                        <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
+                            &nbsp;
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
                     </div>
+                </div>
 
-                    <!-- Add a delete method here... -->
-                    <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
-                        &nbsp;
-                        <i class="glyphicon glyphicon-remove"></i>
-                    </a>
+                <div style="margin-top:10px; margin-bottom:5px; font-size:0.8em; font-weight:700;">Vendor Filters:</div>
+                <div data-bind="foreach: FiltersGrid">
+                    <div class="filter-tag-container"
+                         style="display:inline-block; margin-bottom:5px;"
+                         data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
+
+                        <div class="filter-description">
+                            <span data-bind="text: $data.Title"></span>
+                        </div>
+
+                        <!-- Add a delete method here... -->
+                        <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
+                            &nbsp;
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div style="margin-top:10px; margin-bottom:5px; font-size:0.8em; font-weight:700;">Product Filters:</div>
+                <div data-bind="foreach: FiltersGrid">
+                    <div class="filter-tag-container"
+                         style="display:inline-block; margin-bottom:5px;"
+                         data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
+
+                        <div class="filter-description">
+                            <span data-bind="text: $data.Title"></span>
+                        </div>
+
+                        <!-- Add a delete method here... -->
+                        <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
+                            &nbsp;
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>  
 </script>

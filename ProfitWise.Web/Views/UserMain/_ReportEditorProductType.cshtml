@@ -49,7 +49,7 @@
                         </td>
 
                         <td class="overflow-gracefully">
-                            <a href="#" data-bind="text: $data.CorrectedDescription"></a>
+                            <span data-bind="text: $data.CorrectedDescription"></span>
                         </td>
 
                         <td>(<span data-bind="text: $data.Count"></span> Products)</td>
@@ -86,7 +86,6 @@
         self.SelectionModel.KeyExtractor = function (item) { return item.ProductType; };
         self.SelectionModel.DescriptionExtractor = function (item) { return item.ProductType; }
 
-
         self.UpdateCallback = function (key, selected, callback) {
             flow.exec(
                 function() {
@@ -111,9 +110,7 @@
                     self.ParentReportModel.RefreshFilterSummary();
                 });
         };
-
         self.SelectionModel.RegisterUpdateCallback(self.UpdateCallback);
-
 
         self.Refresh = function (reportId, callback) {
             self.ReportId(reportId);
