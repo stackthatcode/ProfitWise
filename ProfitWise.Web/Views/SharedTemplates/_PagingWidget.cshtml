@@ -59,7 +59,7 @@
         </nav>
     </div>
 
-    <div style="float: right;">
+    <div style="float: right;" data-bind="if: ShowPageSizeSelector">
         <div class="pull-right;" style="width: 140px;">
             <select class="form-control" style="height:35px;"
                     data-bind="value: PageSize, event:{ change: PageSizeChanged}">
@@ -81,8 +81,10 @@
 
         self.RecordCount = ko.observable(0);
         self.PageNumber = ko.observable(0);
-        self.PageSize = ko.observable(25);
-        
+        self.PageSize = ko.observable(50);
+
+        self.ShowPageSizeSelector = ko.observable(false);
+
         self.PageSizeChanged = function() {
             if (self.PageNumber() > self.PageCount()) {
                 self.PageNumber(self.PageCount());

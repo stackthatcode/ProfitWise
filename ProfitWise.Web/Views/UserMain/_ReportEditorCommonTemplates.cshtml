@@ -10,7 +10,7 @@
 
 <script type="text/html" id="Report-Editor-No-Filters">
     <div style="text-align: center; padding-top: 100px; padding-bottom: 150px;">
-        <i style="font-size: 5.0em; color: #428bca;" class="glyphicon glyphicon-ok"></i>
+        <i style="font-size: 5.0em; color: #CCC;" class="glyphicon glyphicon-ok"></i>
         <h4 style="color: #777; font-weight: 700;">
             All <span data-bind="text: plural"></span> are included in your Report
         </h4>
@@ -18,11 +18,10 @@
         <div style="color: #555;">There are currently no <span data-bind="text: singular"></span> filters</div>
 
         <div style="padding-top:30px;">
-            <a href="#" style="width:120px;"
-               class="btn btn-primary" data-bind="click: clickCallback">
-                <i class="glyphicon glyphicon-ok"></i> Add Filters
+            <a href="#" style="width:200px; color:#555;"
+               class="btn btn-default" data-bind="click: clickCallback">
+                <i class="glyphicon glyphicon-plus"></i> Add <span data-bind="text: $data. singular"></span> Filters
             </a>
-            <a style="width:120px;" href="#" class="btn btn-default" data-bind="click: nextCallback">Next &gt;&gt;</a>
         </div>
     </div>
 </script>

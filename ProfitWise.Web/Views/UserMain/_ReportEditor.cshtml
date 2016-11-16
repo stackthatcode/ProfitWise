@@ -1,4 +1,5 @@
-﻿@Html.Partial("~/Views/UserMain/_FilterPagingWidget.cshtml")
+﻿@using ProfitWise.Data.Model
+@Html.Partial("~/Views/UserMain/_FilterPagingWidget.cshtml")
 @Html.Partial("~/Views/UserMain/_SelectionModel.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorCommonTemplates.cshtml")
 @Html.Partial("~/Views/UserMain/_ReportEditorProductType.cshtml")
@@ -25,6 +26,8 @@
     }
 </style>
 
+
+
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
 <script type="text/html" id="Report-Editor-Header">
     <!-- Spacer - 15px -->
@@ -32,31 +35,58 @@
 
     <!-- Nav tabs - 43px -->
     <div class="row-fluid" style="height: 43px;">
-        <div class="col-xs-12 no-side-padding">
-            <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
-                <li role="presentation" class="active">
-                    <a href="#report-filter-product-type"
-                       data-bind="click: ProductTypeClick"
-                       aria-controls="home" role="tab" data-toggle="tab">Product Types</a>
-                </li>
-                <li role="presentation">
-                    <a href="#report-filter-vendor"
-                       data-bind="click: VendorClick"
-                       aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
-                </li>
-                <li role="presentation">
-                    <a href="#report-filter-product"
-                       data-bind="click: MasterProductClick"
-                       aria-controls="messages" role="tab" data-toggle="tab">Products</a>
-                </li>
-                <li role="presentation">
-                    <a href="#report-filter-sku"
-                       data-bind="click: SkuClick"
-                       aria-controls="settings" role="tab" data-toggle="tab">SKUs</a>
-                </li>
-            </ul>
+        <div class="col-xs-7 no-side-padding">
+            <div style="overflow:auto; height:40px;">
+                <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
+                    <li role="presentation" class="active">
+                        <a href="#report-filter-product-type"
+                           data-bind="click: ProductTypeClick"
+                           aria-controls="home" role="tab" data-toggle="tab">Product Types</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#report-filter-vendor"
+                           data-bind="click: VendorClick"
+                           aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#report-filter-product"
+                           data-bind="click: MasterProductClick"
+                           aria-controls="messages" role="tab" data-toggle="tab">Products</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#report-filter-sku"
+                           data-bind="click: SkuClick"
+                           aria-controls="settings" role="tab" data-toggle="tab">SKUs</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Tab panes -->
+            <div class="tab-content" style="clear: both;">
+                <!-- Height - 120px -->
+                <div id="report-filter-product-type" role="tabpanel" class="tab-pane active reduced-padding"
+                     data-bind="template: { name: 'Report-Editor-Header-Product-Type', data: ReportProductTypeModel }">
+                </div>
+                <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
+                     data-bind="template: { name: 'Report-Editor-Header-Vendor', data: ReportVendorModel }">
+                </div>
+                <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
+                     data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: ReportMasterProductModel }">
+                </div>
+                <div id="report-filter-sku" role="tabpanel" class="tab-pane reduced-padding"
+                     data-bind="template: { name: 'Report-Editor-Header-Sku', data: ReportSkuModel }">
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xs-5" style="background-color:white; height: 300px; padding-left:45px;">
+            <div style="font-size:1.10em; height:40px; padding-top:8px; font-weight: 700;">Select Filters to add to your Report</div>
 
-            <div style="position: absolute; width: 100%; height: 0px; overflow: visible; text-align: right;">
+            <p>This Report includes <span style="font-weight: 700; color:#888;">1,485 Products</span>.</p>
+            
+            <p>Select Filters to add to Report, then hit "Ok" when you're done.</p>
+            
+            <div style="margin-bottom:20px;">
                 <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: CancelButtonClick">
                     Cancel &nbsp;<i class="glyphicon glyphicon-remove"></i>
                 </a>
@@ -65,43 +95,43 @@
                     Ok &nbsp;<i class="glyphicon glyphicon-ok"></i>
                 </a>
             </div>
-        </div>
-    </div>
+            
+            <div data-bind="foreach: FiltersGrid">
+                <div class="filter-tag-container"
+                     style="display:inline-block; margin-bottom:5px;"
+                     data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
 
-    <!-- Tab panes -->
-    <div class="tab-content" style="clear: both;">
-        <!-- Height - 120px -->
-        <div id="report-filter-product-type" role="tabpanel" class="tab-pane active reduced-padding"
-             data-bind="template: { name: 'Report-Editor-Header-Product-Type', data: ReportProductTypeModel }">
-        </div>        
-        <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
-             data-bind="template: { name: 'Report-Editor-Header-Vendor', data: ReportVendorModel }">
+                    <div class="filter-description">
+                        <span data-bind="text: $data.Title"></span>
+                    </div>
+
+                    <!-- Add a delete method here... -->
+                    <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
+                        &nbsp;
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-        <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
-             data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: ReportMasterProductModel }">
-        </div>
-        <div id="report-filter-sku" role="tabpanel" class="tab-pane reduced-padding"
-             data-bind="template: { name: 'Report-Editor-Header-Sku', data: ReportSkuModel }">
-        </div>
-    </div>
+    </div>  
 </script>
 
 
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
 <script type="text/html" id="Report-Editor-Body">
-    <div data-bind="if: SelectedFilter() == ReportFilterTypes.ProductType">
+    <div data-bind="if: SelectedFilterModel() == ReportProductTypeModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Product-Type', data: ReportProductTypeModel }"></div>
     </div>
 
-    <div data-bind="if: SelectedFilter() == ReportFilterTypes.Vendor">
+    <div data-bind="if: SelectedFilterModel() == ReportVendorModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Vendor', data: ReportVendorModel }"></div>
     </div>
 
-    <div data-bind="if: SelectedFilter() == ReportFilterTypes.Product">
+    <div data-bind="if: SelectedFilterModel() == ReportMasterProductModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Master-Product', data: ReportMasterProductModel }"></div>
     </div>
 
-    <div data-bind="if: SelectedFilter() == ReportFilterTypes.Sku">
+    <div data-bind="if: SelectedFilterModel() == ReportSkuModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Sku', data: ReportSkuModel }"></div>
     </div>
 </script>
@@ -113,17 +143,19 @@
     ProfitWiseWidgets.ReportEditorModel = function () {
         var self = this;
 
-        self.ReportFilterTypes = {
-            ProductType: "ProductType",
-            Vendor: "Vendor",
-            Product: "Product",
-            Sku: "Skus"
-        };
+        // Bind the C# internal name
+        self.ProductTypeFilter = "@PwReportFilter.ProductType";
+        self.VendorFilter = "@PwReportFilter.Vendor";
+        self.ProductFilter = "@PwReportFilter.Product";
+        self.SkuFilter = "@PwReportFilter.Sku";
 
         self.ReportId = ko.observable();
-        self.SelectedFilter = ko.observable();
-        
+        self.SelectedFilterModel = ko.observable();
+
+        self.FiltersGrid = ko.observableArray([]);
+
         self.CancelCallback = function () { };
+
         self.OkCallback = function () { };
 
         self.OkButtonClick = function () {
@@ -135,83 +167,89 @@
             self.CancelCallback();
         };
 
-
-        // This function will get invoked on the OK button, or tab change
-        self.SaveCurrentTabCallback = function (callback) {
-            callback();
+        self.RefreshFilterSummary = function (callback) {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
+                },
+                function (filters) {
+                    self.FiltersGrid(filters);
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
         };
 
-        // This is for notifying external subscribers that elect to set it
-        self.ExternalTransistionCallback = function (callback) {
-            callback();
-        };
-
-
-        self.ClickOnNewFilterTab = function (newFilter, newSaveCallback, newRefreshFunction, bootstrapTabHref) {
-            if (self.SelectedFilter() == newFilter) {
-                return;
-            }
-
+        self.RemoveFilter = function(item) {
             flow.exec(
                 function () {
-                    if (self.SaveCurrentTabCallback) {
-                        self.SaveCurrentTabCallback(this);
-                    } else {
-                        this();
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: self.ReportId(),
+                        filterId: item.PwFilterId,
+                    };
+                    ajax.HttpPost(
+                        "/ReportService/RemoveFilterById",
+                        data, this);
+                },
+                function () {
+                    var selectionModel = self.SelectionModelByFilterType(item.FilterType);
+                    if (selectionModel) {
+                        selectionModel.SetCheckedItemByKey(item.Key, false);
                     }
-                },
-                function() {
-                    newRefreshFunction(this);
-                },
-                function() {
-                    self.SaveCurrentTabCallback = newSaveCallback;
-                    self.SelectedFilter(newFilter);
-                    ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
+                    //self.RefreshFilterSummary();
+                    self.FiltersGrid.remove(item);
                 }
             );
         };
 
 
+
+        self.ClickOnNewFilterTab = function (newFilterModel, newTabRefreshFunction, bootstrapTabHref) {
+            flow.exec(
+                function() {
+                    if (self.SelectedFilterModel() == newFilterModel) {
+                        return;
+                    }
+                    newTabRefreshFunction(this);
+                },
+                function() {
+                    self.SelectedFilterModel(newFilterModel);
+                    ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
+                }
+            );
+        };
+
         self.ProductTypeClick = function () {
             self.ClickOnNewFilterTab(
-                self.ReportFilterTypes.ProductType,
-                function(callback) { self.ReportProductTypeModel.Save(callback); },
+                self.ReportProductTypeModel,
                 function(callback) { self.ReportProductTypeModel.Refresh(self.ReportId(), callback); },
                 "report-filter-product-type");
         };
 
         self.VendorClick = function() {
             self.ClickOnNewFilterTab(
-                self.ReportFilterTypes.Vendor,
-                function(callback) { self.ReportVendorModel.Save(callback); },
+                self.ReportVendorModel,
                 function(callback) { self.ReportVendorModel.Refresh(self.ReportId(), callback); },
                 "report-filter-vendor");
         };
 
         self.MasterProductClick = function () {
             self.ClickOnNewFilterTab(
-                self.ReportFilterTypes.Product,
-                function (callback) { self.ReportMasterProductModel.Save(callback); },
+                self.ReportMasterProductModel,
                 function (callback) { self.ReportMasterProductModel.Refresh(self.ReportId(), callback); },
                 "report-filter-product");
         };
 
         self.SkuClick = function () {
             self.ClickOnNewFilterTab(
-                self.ReportFilterTypes.Sku,
-                function (callback) { self.ReportSkuModel.Save(callback); },
+                self.ReportSkuModel,
                 function (callback) { self.ReportSkuModel.Refresh(self.ReportId(), callback); },
                 "report-filter-sku");
         };
-        
 
-        self.GotoNextTab = function() {
-            // TODO => build this out
-        };
-
-        self.GotoPreviousTab = function() {
-            // TODO => build this out
-        };
 
         self.RegisterCancelCallback = function (callback) {
             self.CancelCallback = callback;
@@ -227,20 +265,28 @@
 
         // Wire in the individual Report Editor modules
         self.ReportProductTypeModel = new ProfitWiseWidgets.ReportProductTypeModel(self);
-        self.ReportProductTypeModel.GotoNextCallback = self.VendorClick;
-
         self.ReportVendorModel = new ProfitWiseWidgets.ReportVendorModel(self);
-        self.ReportVendorModel.GotoPreviousCallback = self.ProductTypeClick ;
-        self.ReportVendorModel.GotoNextCallback = self.MasterProductClick;
-
         self.ReportMasterProductModel = new ProfitWiseWidgets.ReportMasterProductModel(self);
-        self.ReportMasterProductModel.GotoPreviousCallback = self.VendorClick;
-        self.ReportMasterProductModel.GotoNextCallback = self.SkuClick;
-
         self.ReportSkuModel = new ProfitWiseWidgets.ReportSkuModel(self);
-        self.ReportSkuModel.GotoPreviousCallback = self.MasterProductClick;
-        self.ReportSkuModel.GotoNextCallback = function () { self.OkButtonClick(); };
-        
+
+
+        self.SelectionModelByFilterType = function(filterType) {
+            if (filterType == self.ProductTypeFilter) {
+                return self.ReportProductTypeModel.SelectionModel;
+            }
+            if (filterType == self.VendorFilter) {
+                return self.ReportVendorModel.SelectionModel;
+            }
+            if (filterType == self.ProductFilter) {
+                return self.ReportMasterProductModel.SelectionModel;
+            }
+            if (filterType == self.SkuFilter) {
+                return self.ReportSkuModel.SelectionModel;
+            }
+
+        };
+
+
         return self;
     };
 </script>

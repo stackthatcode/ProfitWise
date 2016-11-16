@@ -4,7 +4,12 @@
     {
         public static bool IsNullOrEmpty(this string input)
         {
-            return input == null || input == "";
+            return string.IsNullOrEmpty(input);
+        }
+
+        public static string IsNullOrEmptyAlt(this string input, string alternative)
+        {
+            return string.IsNullOrEmpty(input) ? alternative : input;
         }
     }
 }

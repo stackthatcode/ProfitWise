@@ -21,6 +21,13 @@
                 .each(function (item) {
                     item.IsChecked = ko.observable(false);
 
+                    item.SelectChange = function () {
+                        var selected = !item.IsChecked();
+                        var key = self.KeyExtractor(item);
+                        item.IsChecked(selected);
+                        self.UpdateCallback(key, selected);
+                    };
+
                     item.CorrectedDescription = ko.computed(function () {
                         return !self.DescriptionExtractor(item)
                             ? self.EmptyDescription()
@@ -29,6 +36,11 @@
                 });
         };
 
+        self.UpdateCallback = function(key, selected) { };
+
+        self.RegisterUpdateCallback = function(callback) {
+            self.UpdateCallback = callback;
+        };
 
         self.AllItemsAreSelected = function () {
             var selectedCount = AQ(self.AllItems()).count(function (item) { return item.IsChecked() });
@@ -40,6 +52,18 @@
             self.ShowSplashPage(true);
         };
 
+        self.FindItemByKey = function (key) {
+            return AQ(self.AllItems())
+                    .firstOrDefault(function (item) { return self.KeyExtractor(item) == key });
+        };
+
+        self.SetCheckedItemByKey = function (key, selected) {
+            var item = self.FindItemByKey(key);
+            if (item) {
+                item.IsChecked(selected);
+            };
+        };
+
         self.CheckedItems = function () {
             return AQ(self.AllItems())
                 .where(function (item) { return item.IsChecked(); })
@@ -49,15 +73,8 @@
 
         self.SetCheckedItems = function (checkedItems) {
             AQ(checkedItems)
-                .each(function(selectedItemKey) {
-                    var item =
-                        AQ(self.AllItems())
-                            .firstOrDefault(
-                                function(x) { return self.KeyExtractor(x) == selectedItemKey });
-
-                    if (item != null) {
-                        item.IsChecked(true);
-                    }
+                .each(function (key) {
+                    self.SetCheckedItemsByKey(key, true);
                 });
         };
 
@@ -75,7 +92,7 @@
                         })
                         .toArray();
             }
-
+            
             if (!showAll) {
                 filteredItems =
                     AQ(filteredItems)
