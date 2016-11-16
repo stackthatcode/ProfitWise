@@ -39,12 +39,10 @@ namespace ProfitWise.Data.Model
 
         public bool UsesNumberKey => FilterTypeUsesNumberKey(FilterType);
 
-
         public static bool FilterTypeUsesNumberKey(string filterType)
         {
             return filterType == Product || filterType == Sku;
         }
-
 
         public string DescriptionBuilder()
         {

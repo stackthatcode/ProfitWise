@@ -194,6 +194,18 @@
 
         self.FiltersGrid = ko.observableArray([]);
 
+        self.ProductTypesGrid = ko.computed(function() {
+            return AQ(self.FiltersGrid)
+                .where(function(item) { return item.FilterType == self.ProductTypeFilter; })
+                .toArray();
+        });
+        
+        self.VendorsGrid = ko.computed(function() {
+            return AQ(self.FiltersGrid)
+                .where(function(item) { return item.FilterType == self.VendorFilter; })
+                .toArray();
+        });
+
         self.CancelCallback = function () { };
 
         self.OkCallback = function () { };
@@ -222,6 +234,28 @@
             );
         };
 
+        self.UpdateFilter = function (key, selected, filterType) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: self.ReportId(),
+                        filterType: filterType,
+                        key: key,
+                        title: key || self.Empty,
+                    };
+
+                    if (selected) {
+                        ajax.HttpPost("/ReportService/AddFilter", data, this);
+                    } else {
+                        ajax.HttpPost("/ReportService/RemoveFilter", data, this);
+                    }
+                },
+                function () {
+                    self.RefreshFilterSummary();
+                });
+        };
+
         self.RemoveFilter = function(item) {
             flow.exec(
                 function () {
@@ -244,7 +278,6 @@
                 }
             );
         };
-
 
 
         self.ClickOnNewFilterTab = function (newFilterModel, newTabRefreshFunction, bootstrapTabHref) {

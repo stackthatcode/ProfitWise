@@ -76,7 +76,7 @@
         self.FilterModel.RegisterRefreshCallback(function () {
             self.ApplyFiltersAndPaging();
         });
-        self.FilterModel.SetPageSize(10);
+        self.FilterModel.SetPageSize(50);
 
         // Selection Model
         self.Empty = "(No Product Type)";
@@ -86,30 +86,11 @@
         self.SelectionModel.KeyExtractor = function (item) { return item.ProductType; };
         self.SelectionModel.DescriptionExtractor = function (item) { return item.ProductType; }
 
-        self.UpdateCallback = function (key, selected, callback) {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-
-                    var filterType = self.ParentReportModel.ProductTypeFilter;
-
-                    var data = {
-                        reportId: self.ReportId(),
-                        filterType: filterType,
-                        key: key,
-                        title: key || self.Empty,
-                    };
-
-                    if (selected) {
-                        ajax.HttpPost("/ReportService/AddFilter", data, this);
-                    } else {
-                        ajax.HttpPost("/ReportService/RemoveFilter", data, this);
-                    }
-                },
-                function() {
-                    self.ParentReportModel.RefreshFilterSummary();
-                });
+        self.UpdateCallback = function (key, selected) {
+            self.ParentReportModel
+                    .UpdateFilter(key, selected, self.ParentReportModel.ProductTypeFilter);
         };
+
         self.SelectionModel.RegisterUpdateCallback(self.UpdateCallback);
 
         self.Refresh = function (reportId, callback) {
