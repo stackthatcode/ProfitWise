@@ -21,7 +21,7 @@
                 
                 <div data-bind="if: SelectionModel.NumberOfCheckedItems() > 0">
                     <a href="#" style="position: absolute; top: -40px; font-weight: 700;"
-                       data-bind="click: SelectionModel.DeselectAll">Remove All</a>
+                       data-bind="click: DeselectAll">Remove All</a>
                 </div>
             </div>
         </div>
@@ -49,10 +49,10 @@
                         </td>
 
                         <td class="overflow-gracefully">
-                            <span data-bind="text: $data.CorrectedDescription"></span>
+                            <span data-bind="text: $data.Title"></span>
                         </td>
 
-                        <td>(<span data-bind="text: $data.Count"></span> Products)</td>
+                        <td>(<span data-bind="text: $data.ProductCount"></span> Products)</td>
                     </tr>
                     </tbody>
                 </table>
@@ -79,19 +79,18 @@
         self.FilterModel.SetPageSize(50);
 
         // Selection Model
-        self.Empty = "(No Product Type)";
-
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
-        self.SelectionModel.EmptyDescription(self.Empty);
-        self.SelectionModel.KeyExtractor = function (item) { return item.ProductType; };
-        self.SelectionModel.DescriptionExtractor = function (item) { return item.ProductType; }
 
-        self.UpdateCallback = function (key, selected) {
-            self.ParentReportModel
-                    .UpdateFilter(key, selected, self.ParentReportModel.ProductTypeFilter);
-        };
-
-        self.SelectionModel.RegisterUpdateCallback(self.UpdateCallback);
+        self.SelectionModel.RegisterUpdateCallback(
+            function (item, selected) {                    
+                self.ParentReportModel.UpdateFilter(
+                    item.Key, selected, self.ParentReportModel.ProductTypeFilter, item.Title);
+            }
+        );
+        
+        self.DeselectAll = function() {
+            self.ParentReportModel.RemoveFilterType(self.ParentReportModel.ProductTypeFilter);
+        }
 
         self.Refresh = function (reportId, callback) {
             self.ReportId(reportId);

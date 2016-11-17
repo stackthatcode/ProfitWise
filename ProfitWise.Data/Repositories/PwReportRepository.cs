@@ -74,18 +74,7 @@ namespace ProfitWise.Data.Repositories
                     .Query<PwReport>(query, new { PwShopId, reportId })
                     .FirstOrDefault();
         }
-
-        [Obsolete]
-        public void DeleteReport(long reportId)
-        {
-            var query = @"DELETE FROM profitwisereport WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                          DELETE FROM profitwisereportproducttype WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                          DELETE FROM profitwisereportvendor WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                          DELETE FROM profitwisereportmasterproduct WHERE PwShopId = @PwShopId AND PwReportId = @reportId;
-                          DELETE FROM profitwisereportsku WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new {PwShopId, reportId});
-        }
-
+        
         public long CopyReport(PwReport report)
         {
             var query = @"INSERT INTO profitwisereport (
@@ -151,7 +140,7 @@ namespace ProfitWise.Data.Repositories
         public IList<PwProductSummary> RetrieveMasterProductSummary()
         {
             var query =
-                @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title, COUNT(*) AS Count
+                @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title, COUNT(*) AS VariantCount
                 FROM profitwiseproduct t1 
 	                INNER JOIN profitwisemastervariant t2
 		                ON t1.PwMasterProductId = t2.PwMasterProductId AND t1.IsPrimary = 1 
@@ -262,6 +251,16 @@ namespace ProfitWise.Data.Repositories
                         AND PwFilterId = @filterId";
             
             _connection.Execute(query, new { reportId, this.PwShopId, filterId });
+        }
+
+        public void DeleteFilters(long reportId, string filterType)
+        {
+            var query = @"DELETE FROM profitwisereportfilter 
+                        WHERE PwShopId = @PwShopId 
+                        AND PwReportId = @reportId 
+                        AND FilterType = @filterType";
+
+            _connection.Execute(query, new { reportId, this.PwShopId, filterType });
         }
     }
 }

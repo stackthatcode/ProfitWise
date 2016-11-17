@@ -5,6 +5,6 @@
         public long PwMasterProductId { get; set; }
         public string Vendor { get; set; }
         public string Title { get; set; }
-        public int Count { get; set; }
+        public int VariantCount { get; set; }
     }
 }

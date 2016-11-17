@@ -28,6 +28,28 @@
 
 
 
+<script type="text/html" id="Report-Editor-Filter-Grid">
+    <div style="margin-bottom:5px; font-size:0.8em; font-weight:700;">
+        <span data-bind="text: label"></span>: <span data-bind="if: grid().length == 0"><span style="font-weight:400;">(none)</span></span>
+    </div>
+    <div data-bind="foreach: grid">
+        <div class="filter-tag-container"
+             style="display:inline-block; margin-bottom:5px;"
+             data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
+
+            <div class="filter-description">
+                <span data-bind="text: $data.Title"></span>
+            </div>
+
+            <!-- Add a delete method here... -->
+            <a class="filter-remove" href="#" data-bind="click: RemoveClick">
+                &nbsp;
+                <i class="glyphicon glyphicon-remove"></i>
+            </a>
+        </div>
+    </div>
+</script>
+
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
 <script type="text/html" id="Report-Editor-Header">
     <!-- Spacer - 15px -->
@@ -96,62 +118,23 @@
                 </a>
             </div>
             
-            <div style="overflow-y:auto; height:300px;">
-                <div style="margin-bottom:5px; font-size:0.8em; font-weight:700;">Product Type Filters:</div>
-                <div data-bind="foreach: FiltersGrid">
-                    <div class="filter-tag-container"
-                         style="display:inline-block; margin-bottom:5px;"
-                         data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
+            <div style="overflow-y:auto; height:300px;">                
+                <div style="height:10px;"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Grid', 
+                                            data: { label: 'Product Types Filters', grid: ProductTypesGrid } }"></div>
+                
+                <div style="height:10px;"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                            data: { label: 'Vendor Filters', grid: VendorsGrid } }"></div>
 
-                        <div class="filter-description">
-                            <span data-bind="text: $data.Title"></span>
-                        </div>
-
-                        <!-- Add a delete method here... -->
-                        <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
-                            &nbsp;
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div style="margin-top:10px; margin-bottom:5px; font-size:0.8em; font-weight:700;">Vendor Filters:</div>
-                <div data-bind="foreach: FiltersGrid">
-                    <div class="filter-tag-container"
-                         style="display:inline-block; margin-bottom:5px;"
-                         data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
-
-                        <div class="filter-description">
-                            <span data-bind="text: $data.Title"></span>
-                        </div>
-
-                        <!-- Add a delete method here... -->
-                        <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
-                            &nbsp;
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div style="margin-top:10px; margin-bottom:5px; font-size:0.8em; font-weight:700;">Product Filters:</div>
-                <div data-bind="foreach: FiltersGrid">
-                    <div class="filter-tag-container"
-                         style="display:inline-block; margin-bottom:5px;"
-                         data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
-
-                        <div class="filter-description">
-                            <span data-bind="text: $data.Title"></span>
-                        </div>
-
-                        <!-- Add a delete method here... -->
-                        <a class="filter-remove" href="#" data-bind="click: $parent.RemoveFilter">
-                            &nbsp;
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </a>
-                    </div>
-                </div>
+                <div style="height:10px;"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                            data: { label: 'Product Filters', grid: ProductsGrid } }"></div>
+                
+                <div style="height:10px;"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                            data: { label: 'Variant Filters', grid: SkuGrid } }"></div>
             </div>
-
         </div>
     </div>  
 </script>
@@ -191,20 +174,18 @@
 
         self.ReportId = ko.observable();
         self.SelectedFilterModel = ko.observable();
+        
+        self.FilterByType = function(filterType) {
+            return AQ(self.FiltersGrid())
+                .where(function (item) { return item.FilterType == filterType; })
+                .toArray();
+        }
 
         self.FiltersGrid = ko.observableArray([]);
-
-        self.ProductTypesGrid = ko.computed(function() {
-            return AQ(self.FiltersGrid)
-                .where(function(item) { return item.FilterType == self.ProductTypeFilter; })
-                .toArray();
-        });
-        
-        self.VendorsGrid = ko.computed(function() {
-            return AQ(self.FiltersGrid)
-                .where(function(item) { return item.FilterType == self.VendorFilter; })
-                .toArray();
-        });
+        self.ProductTypesGrid = ko.computed(function() { return self.FilterByType(self.ProductTypeFilter); });        
+        self.VendorsGrid = ko.computed(function () { return self.FilterByType(self.VendorFilter); });
+        self.ProductsGrid = ko.computed(function () { return self.FilterByType(self.ProductFilter); });
+        self.SkuGrid = ko.computed(function () { return self.FilterByType(self.SkuFilter); });
 
         self.CancelCallback = function () { };
 
@@ -226,6 +207,13 @@
                     ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
                 },
                 function (filters) {
+                    AQ(filters)
+                        .each(function(item) {
+                            item.RemoveClick = function() {
+                                self.RemoveFilter(item);
+                            }
+                        });
+
                     self.FiltersGrid(filters);
                     if (callback) {
                         callback();
@@ -234,7 +222,7 @@
             );
         };
 
-        self.UpdateFilter = function (key, selected, filterType) {
+        self.UpdateFilter = function (key, selected, filterType, title) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -242,7 +230,7 @@
                         reportId: self.ReportId(),
                         filterType: filterType,
                         key: key,
-                        title: key || self.Empty,
+                        title: title,
                     };
 
                     if (selected) {
@@ -256,7 +244,7 @@
                 });
         };
 
-        self.RemoveFilter = function(item) {
+        self.RemoveFilter = function (item) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -278,7 +266,28 @@
                 }
             );
         };
-
+        
+        self.RemoveFilterType = function(filterType) {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: self.ReportId(),
+                        filterType: filterType,
+                    };
+                    ajax.HttpPost(
+                        "/ReportService/RemoveFilterByType",
+                        data, this);
+                },
+                function () {
+                    var selectionModel = self.SelectionModelByFilterType(filterType);
+                    if (selectionModel) {
+                        selectionModel.UncheckAllItems();
+                    }
+                    self.RefreshFilterSummary();
+                }
+            );
+        }
 
         self.ClickOnNewFilterTab = function (newFilterModel, newTabRefreshFunction, bootstrapTabHref) {
             flow.exec(
@@ -327,6 +336,7 @@
         self.RegisterCancelCallback = function (callback) {
             self.CancelCallback = callback;
         };
+
         self.RegisterOkCallback = function (callback) {
             self.OkCallback = callback;
         };
@@ -335,13 +345,12 @@
             self.ReportId(reportId);
             self.ProductTypeClick();
         };
-
+        
         // Wire in the individual Report Editor modules
         self.ReportProductTypeModel = new ProfitWiseWidgets.ReportProductTypeModel(self);
         self.ReportVendorModel = new ProfitWiseWidgets.ReportVendorModel(self);
         self.ReportMasterProductModel = new ProfitWiseWidgets.ReportMasterProductModel(self);
         self.ReportSkuModel = new ProfitWiseWidgets.ReportSkuModel(self);
-
 
         self.SelectionModelByFilterType = function(filterType) {
             if (filterType == self.ProductTypeFilter) {
@@ -356,9 +365,7 @@
             if (filterType == self.SkuFilter) {
                 return self.ReportSkuModel.SelectionModel;
             }
-
         };
-
 
         return self;
     };

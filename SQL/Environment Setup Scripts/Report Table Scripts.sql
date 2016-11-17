@@ -29,7 +29,7 @@ CREATE TABLE `profitwisereportfilter` (
 	`FilterType` VARCHAR(25) NOT NULL,
 	`NumberKey` BIGINT NULL,
 	`StringKey` VARCHAR(100) NULL,
-    `Title` VARCHAR(25) NULL,
+    `Title` VARCHAR(100) NULL,
     `Description` VARCHAR(150) NULL,
     `DisplayOrder` INT NOT NULL,
     PRIMARY KEY (`PwReportId`, `PwShopId`, `PwFilterId` )

@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -53,7 +55,16 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var data = repository.RetrieveProductTypeSummary();
-            return new JsonNetResult(data);
+
+            // NOTE: this is domain logic living on the controller...
+            var output = data.Select(x => new
+            {
+                Key = x.ProductType,
+                Title = x.ProductType.IsNullOrEmptyAlt("(No Product Type)"),
+                ProductCount = x.Count,
+            }).ToList();
+
+            return new JsonNetResult(output);
         }
 
         [HttpGet]
@@ -62,7 +73,16 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var data = repository.RetrieveVendorSummary();
-            return new JsonNetResult(data);
+
+            // NOTE: this is domain logic living on the controller...
+            var output = data.Select(x => new
+            {
+                Key = x.Vendor,
+                Title = x.Vendor.IsNullOrEmptyAlt("(No Vendor)"),
+                ProductCount = x.Count,
+            }).ToList();
+
+            return new JsonNetResult(output);
         }
         
         [HttpGet]
@@ -78,7 +98,16 @@ namespace ProfitWise.Web.Controllers
             //}
 
             var data = repository.RetrieveMasterProductSummary();
-            return new JsonNetResult(data);
+
+            var output = data.Select(x => new
+            {
+                Key = x.PwMasterProductId,
+                Title = x.Title.IsNullOrEmptyAlt("(No Product Title)"),
+                Vendor = x.Vendor,
+                VariantCount = x.VariantCount,
+            }).ToList();
+
+            return new JsonNetResult(output);
         }
 
         [HttpGet]
@@ -87,9 +116,19 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var data = repository.RetrieveSkuSummary();
-            return new JsonNetResult(data);
-        }
 
+            var output = data.Select(x => new
+            {
+                Key = x.PwMasterProductId,
+                x.VariantTitle,
+                x.ProductTitle,
+                x.Sku,
+                Title = x.VariantTitle.IsNullOrEmptyAlt("(No Variant Title)"),
+                Vendor = x.Vendor,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
 
 
 
@@ -124,7 +163,7 @@ namespace ProfitWise.Web.Controllers
                 PwShopId = userBrief.PwShop.PwShopId,
                 PwReportId = reportId,
                 FilterType = filterType,
-                Title = title,
+                Title = title.Truncate(100),
             };
 
             filter.Description = filter.DescriptionBuilder();
@@ -150,6 +189,16 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             repository.DeleteFilterById(reportId, filterId);
             return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult RemoveFilterByType(long reportId, string filterType)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            repository.DeleteFilters(reportId, filterType);
+            return JsonNetResult.Success();
+
         }
     }
 }

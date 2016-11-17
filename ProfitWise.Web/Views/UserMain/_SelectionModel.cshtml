@@ -5,9 +5,6 @@
         var self = this;
 
         self.EmptyDescription = ko.observable();
-        self.KeyExtractor = function(item) { return null };
-        self.DescriptionExtractor = function(item) { return null }; 
-
         self.AllItems = ko.observableArray();
         self.ShowSplashPage = ko.observable(true);
         
@@ -16,28 +13,22 @@
             self.AllItems(allItems);
         };
 
+        // Stubbed out to demonstrate the method signature...
+        self.UpdateCallback = function (item, selected) { };
+
         self.AddObservables = function (data) {
             AQ(data)
                 .each(function (item) {
                     item.IsChecked = ko.observable(false);
 
                     item.SelectChange = function () {
-                        var selected = !item.IsChecked();
-                        var key = self.KeyExtractor(item);
+                        var selected = !item.IsChecked();                        
                         item.IsChecked(selected);
-                        self.UpdateCallback(key, selected);
+                        self.UpdateCallback(item, selected);
                     };
-
-                    item.CorrectedDescription = ko.computed(function () {
-                        return !self.DescriptionExtractor(item)
-                            ? self.EmptyDescription()
-                                : self.DescriptionExtractor(item);
-                    });
                 });
         };
-
-        self.UpdateCallback = function(key, selected) { };
-
+        
         self.RegisterUpdateCallback = function(callback) {
             self.UpdateCallback = callback;
         };
@@ -54,11 +45,13 @@
 
         self.FindItemByKey = function (key) {
             return AQ(self.AllItems())
-                    .firstOrDefault(function (item) { return self.KeyExtractor(item) == key });
+                    .firstOrDefault(function (item) { return item.Key == key });
         };
 
         self.SetCheckedItemByKey = function (key, selected) {
             var item = self.FindItemByKey(key);
+            console.log("SetCheckedItemByKey");
+            console.log(item);
             if (item) {
                 item.IsChecked(selected);
             };
@@ -67,8 +60,12 @@
         self.CheckedItems = function () {
             return AQ(self.AllItems())
                 .where(function (item) { return item.IsChecked(); })
-                .select(function (item) { return self.KeyExtractor(item); })
+                .select(function (item) { return item.Key; })
                 .toArray();
+        };
+
+        self.UncheckAllItems = function() {
+            AQ(self.AllItems()).each(function(item) { item.IsChecked(false); });
         };
 
         self.SetCheckedItems = function (checkedItems) {
