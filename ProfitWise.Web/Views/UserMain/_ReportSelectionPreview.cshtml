@@ -1,47 +1,5 @@
 ﻿@using ProfitWise.Web.Models
 
-<style>
-    .selection-preview-listing-container {
-         margin-top:10px; margin-bottom:10px; width: 275px; max-height: 325px; overflow-y: auto;
-     }
-    .select-preview-listing {
-        font-size: 0.9em; margin-bottom: 4px;
-    }
-    .selection-preview-listing-overflow-top {
-        font-size: 0.9em; font-weight: 600; padding-top: 10px;
-    }
-    .selection-preview-listing-overflow-bottom {
-        font-size: 0.9em; padding-top: 3px; padding-bottom: 15px;        
-    }
-</style>
-<script type="text/html" id="Report-Selected-Products">    
-    <div data-bind="foreach: ProductSelections" class="selection-preview-listing-container">
-        <div class="select-preview-listing overflow-gracefully" data-bind="text: Title"></div>
-    </div>
-    <div data-bind="if: ProductCount() > MaximumNumberOfProducts">
-        <div class="selection-preview-listing-overflow-top">
-            You have over <span data-bind="text: MaximumNumberOfProducts"></span> Products selected.
-        </div>
-        <div class="selection-preview-listing-overflow-bottom">
-            <a href="#">Click here to view all.</a>
-        </div>
-    </div>
-</script>
-
-<script type="text/html" id="Report-Selected-Variants">
-    <div data-bind="foreach: VariantSelections" class="selection-preview-listing-container">
-        <div class="select-preview-listing overflow-gracefully" data-bind="text: Title"></div>
-    </div>
-    <div data-bind="if: VariantCount() > MaximumNumberOfVariants">
-        <div class="selection-preview-listing-overflow-top">
-            You have over <span data-bind="text: MaximumNumberOfVariants"></span> Variants selected.
-        </div>
-        <div class="selection-preview-listing-overflow-bottom">
-            <a href="#">Click here to view all.</a>
-        </div>
-    </div>
-</script>
-
 <script type="text/html" id="Report-Selection-Preview">
     <style>
         #product-variant-count-container .popover {
@@ -59,17 +17,48 @@
                                             template: 'Report-Selected-Products', data: $data }">
                     <span data-bind="text: ProductCount"></span> Products
                 </a>
-            </div>
-
+            </div>&nbsp;
             <div class="popover-container" style="display: inline-block">
                 (<a href="#" rel="popover" class="popover-launcher"
                     data-bind="click: RefreshVariantSelections,
                                         popover: {  options: { placement: 'bottom', trigger: 'click',  },
-                                                    template: 'Report-Selected-Variants', data: $data }">
-                    <span data-bind="text: VariantCount"></span> Variants)
-                </a>.
+                                                    template: 'Report-Selected-Variants', data: $data }"><span data-bind="text: VariantCount"></span> Variants)</a>.
             </div>
         </p>
+    </div>
+</script>
+
+<script type="text/html" id="Report-Selected-Products">
+    <div data-bind="foreach: ProductSelections" class="selection-preview-listing-container">
+        <div class="select-preview-listing overflow-gracefully" data-bind="text: Title"></div>
+    </div>
+    <div data-bind="if: ProductCount() > MaximumNumberOfProducts">
+        <div class="selection-preview-listing-overflow-top">
+            You have over <span data-bind="text: MaximumNumberOfProducts"></span> Products selected.
+        </div>
+        <div class="selection-preview-listing-overflow-bottom">
+            <a href="#" data-bind="click: LaunchProductSelectionPopup">Click here to view all.</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="Report-Selected-Variants">
+    <div data-bind="foreach: VariantSelections" class="selection-preview-listing-container">
+        <div class="select-preview-listing overflow-gracefully" style="color:#333;" data-bind="text: ProductTitle"></div>
+        
+        <div data-bind="foreach: Variants">
+            <div class="select-preview-listing-indented">
+                <span data-bind="text: VariantTitle"></span> - <span style="color:#888;" data-bind="text: Sku"></span>
+            </div>
+        </div>
+    </div>
+    <div data-bind="if: VariantCount() > MaximumNumberOfVariants">
+        <div class="selection-preview-listing-overflow-top">
+            You have over <span data-bind="text: MaximumNumberOfVariants"></span> Variants selected.
+        </div>
+        <div class="selection-preview-listing-overflow-bottom">
+            <a href="#">Click here to view all.</a>
+        </div>
     </div>
 </script>
 
@@ -122,9 +111,44 @@
                 ajax.HttpGet("/ReportService/VariantSelections?reportId=" + self.ReportId(), this);
             },
             function (data) {
-                self.VariantSelections(data);
+                var products =
+                    AQ(data)
+                        .select(function(item) {
+                            return {
+                                PwMasterProductId: item.PwMasterProductId,
+                                ProductTitle: item.ProductTitle,
+                            };
+                        })
+                        .distinct(function(a, b) { return a.PwMasterProductId == b.PwMasterProductId; })
+                        .toArray();
+
+                AQ(products)
+                    .each(function(product) {
+                        product.Variants =
+                            AQ(data)
+                                .where(function(item) {
+                                    return item.PwMasterProductId == product.PwMasterProductId;
+                                })
+                                .toArray();
+                    });
+
+                console.log(products);
+                self.VariantSelections(products);
             });
         };
+
+        self.LaunchProductSelectionPopup = function() {
+            var url =
+                ProfitWiseConfig.BaseUrl +
+                    '/UserMain/ProductSelections?reportId=' + self.ReportId();
+
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'View All Product Selections for Report',
+                width: 'small',
+                height: 250,
+            });
+        }
 
         return self;
     };

@@ -261,3 +261,20 @@ a.no-underline:hover, a.no-underline:active {
     text-decoration: none;
 }
 
+
+
+.selection-preview-listing-container {
+        margin-top:10px; margin-bottom:10px; width: 275px; max-height: 325px; overflow-y: auto;
+    }
+.select-preview-listing {
+    font-size: 0.9em; margin-bottom: 4px;
+}
+.select-preview-listing-indented {
+    font-size: 0.9em; margin-bottom: 4px;padding-left: 20px;
+}
+.selection-preview-listing-overflow-top {
+    font-size: 0.9em; font-weight: 600; padding-top: 10px;
+}
+.selection-preview-listing-overflow-bottom {
+    font-size: 0.9em; padding-top: 3px; padding-bottom: 15px;        
+}

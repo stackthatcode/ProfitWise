@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -28,6 +25,31 @@ namespace ProfitWise.Web.Controllers
             this.LoadCommonContextIntoViewBag();
             return View();
         }
+
+        [HttpGet]
+        public ActionResult ProductSelections(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
+            var output = repository.RetrieveProductSelections(reportId, limit);
+
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult VariantSelections(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
+            var output = repository.RetrieveVariantSelections(reportId, limit);
+
+            return View();
+        }
+
 
         public ActionResult Reports()
         {

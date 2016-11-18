@@ -307,7 +307,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE t1.PwShopId = @PwShopId AND t2.PwShopId = @PwShopId AND t3.PwShopId = @PwShopId
                 AND t1.IsPrimary = 1 AND t3.IsPrimary = 1 ";
             query += ReportFilterClauseGenerator(reportId);
-            query += @" ORDER BY t1.Title LIMIT @limit;";
+            query += @" ORDER BY t1.Title, t3.Title LIMIT @limit;";
 
             return _connection
                 .Query<PwReportMasterVariantSelection>(query, new { PwShopId, PwReportId = reportId, limit })
