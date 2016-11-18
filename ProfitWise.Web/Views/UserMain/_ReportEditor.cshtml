@@ -104,7 +104,10 @@
         <div class="col-xs-5 no-side-padding" style="background-color:white; height: 300px; padding-left:45px; ">
             <div style="font-size:1.10em; height:40px; padding-top:8px; font-weight: 700;">Select Filters to add to your Report</div>
 
-            <p>This Report includes <span style="font-weight: 700; color:#888;">1,485 Products</span>.</p>
+            <p>This Report includes 
+                <span style="font-weight: 700; color:#888;">
+                    <span data-bind="text: ProductCount"></span> Products 
+                    (<span data-bind="text: VariantCount"></span> Variants)</span>.</p>
             
             <p>Select Filters to add to Report, then hit "Ok" when you're done.</p>
             
@@ -173,6 +176,9 @@
         self.SkuFilter = "@PwReportFilter.Sku";
 
         self.ReportId = ko.observable();
+        self.ProductCount = ko.observable(0);
+        self.VariantCount = ko.observable(0);
+
         self.SelectedFilterModel = ko.observable();
         
         self.FilterByType = function(filterType) {
@@ -215,6 +221,11 @@
                         });
 
                     self.FiltersGrid(filters);
+
+                    ajax.HttpGet("/ReportService/RecordCounts?reportId=" + self.ReportId(), this);
+                }, 
+                function (data) {
+                    console.log(data);
                     if (callback) {
                         callback();
                     }
@@ -289,20 +300,28 @@
             );
         }
 
-        self.ClickOnNewFilterTab = function (newFilterModel, newTabRefreshFunction, bootstrapTabHref) {
-            flow.exec(
-                function() {
-                    if (self.SelectedFilterModel() == newFilterModel) {
-                        return;
+        self.ClickOnNewFilterTab =
+            function (newFilterModel, newTabRefreshFunction, bootstrapTabHref) {
+                flow.exec(
+                    function() {
+                        if (self.SelectedFilterModel() == newFilterModel) {
+                            return;
+                        }
+                        newTabRefreshFunction(this);
+                    },
+                    function () {
+                        var filterKeys =
+                            AQ(self.FilterByType(newFilterModel.FilterType))
+                                .select(function(item) { return item.Key })
+                                .toArray();
+
+                        newFilterModel.SelectionModel.SetCheckItemsByKeyArray(filterKeys, true);
+                        self.SelectedFilterModel(newFilterModel);
+                        ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
+                        $('html,body').animate({ scrollTop: 0 });
                     }
-                    newTabRefreshFunction(this);
-                },
-                function() {
-                    self.SelectedFilterModel(newFilterModel);
-                    ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
-                }
-            );
-        };
+                );
+            };
 
         self.ProductTypeClick = function () {
             self.ClickOnNewFilterTab(
@@ -330,13 +349,12 @@
                 self.ReportSkuModel,
                 function (callback) { self.ReportSkuModel.Refresh(self.ReportId(), callback); },
                 "report-filter-sku");
-        };
-
+        };        
 
         self.RegisterCancelCallback = function (callback) {
             self.CancelCallback = callback;
         };
-
+        
         self.RegisterOkCallback = function (callback) {
             self.OkCallback = callback;
         };

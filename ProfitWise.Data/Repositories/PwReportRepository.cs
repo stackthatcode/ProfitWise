@@ -176,7 +176,8 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId
                 ORDER BY DisplayOrder;";
             return _connection.Query<PwReportFilter>(query, new { PwShopId, reportId }).ToList();
-        }
+        }        
+
 
         public PwReportFilter RetrieveFilter(long reportId, long filterId)
         {
@@ -261,6 +262,45 @@ namespace ProfitWise.Data.Repositories
                         AND FilterType = @filterType";
 
             _connection.Execute(query, new { reportId, this.PwShopId, filterType });
+        }
+
+
+        public PwReportRecordCount RetrieveReportRecordCount(long reportId)
+        {
+            var filters = RetrieveFilters(reportId);
+
+            var query =
+                @"SELECT COUNT(DISTINCT(t1.PwProductId)) AS ProductCount, COUNT(t3.PwVariantId) AS VariantCount
+                FROM profitwiseproduct t1 
+	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
+                    INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId    
+                WHERE t1.PwShopId = @PwShopId AND t2.PwShopId = @PwShopId AND t3.PwShopId = @PwShopId
+                AND t1.IsPrimary = 1 AND t3.IsPrimary = 1 ";
+
+            if (filters.Count(x => x.FilterType == PwReportFilter.ProductType) > 0)
+            {
+                query += @"AND t1.ProductType IN ( SELECT StringKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = 'Product Type' ) ";
+            }
+            if (filters.Count(x => x.FilterType == PwReportFilter.Vendor) > 0)
+            {
+                query += @"AND t1.Vendor IN ( SELECT StringKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = 'Vendor' ) ";
+            }
+            if (filters.Count(x => x.FilterType == PwReportFilter.Product) > 0)
+            {
+                query += @"AND t1.PwMasterProductId IN ( SELECT NumberKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = 'Product' ) ";
+            }
+            if (filters.Count(x => x.FilterType == PwReportFilter.ProductType) > 0)
+            {
+                query += @"AND t1.ProductType IN ( SELECT StringKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = 'Sku' ) ";
+            }
+
+            return _connection
+                .Query<PwReportRecordCount>(query, new {PwShopId, PwReportId = reportId})
+                .FirstOrDefault();
         }
     }
 }

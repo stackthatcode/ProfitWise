@@ -1,5 +1,4 @@
 ﻿using System;
-using Castle.Core.Internal;
 using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model
@@ -12,7 +11,6 @@ namespace ProfitWise.Data.Model
         public const string Sku = "Sku";
 
         public const string Empty = "(Empty)";
-
 
         public long PwReportId { get; set; }
         public long PwShopId { get; set; }

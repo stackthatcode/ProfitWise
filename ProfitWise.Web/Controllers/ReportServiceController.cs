@@ -123,13 +123,23 @@ namespace ProfitWise.Web.Controllers
                 x.VariantTitle,
                 x.ProductTitle,
                 x.Sku,
-                Title = x.VariantTitle.IsNullOrEmptyAlt("(No Variant Title)"),
+                Title =  x.Sku.IsNullOrEmptyAlt("(No Sku)") + 
+                            " - " + x.VariantTitle.IsNullOrEmptyAlt("(No Variant Title)"),
                 Vendor = x.Vendor,
             }).ToList();
 
             return new JsonNetResult(output);
         }
 
+
+        [HttpGet]
+        public ActionResult RecordCounts(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var output = repository.RetrieveReportRecordCount(reportId);            
+            return new JsonNetResult(output);
+        }
 
 
         [HttpGet]

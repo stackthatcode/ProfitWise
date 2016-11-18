@@ -91,6 +91,7 @@
     <Compile Include="Model\PwReportFilter.cs" />
     <Compile Include="Model\PwReportMasterProduct.cs" />
     <Compile Include="Model\PwReportProductType.cs" />
+    <Compile Include="Model\PwReportRecordCount.cs" />
     <Compile Include="Model\PwReportSku.cs" />
     <Compile Include="Model\PwReportVendor.cs" />
     <Compile Include="Model\PwVariant.cs" />

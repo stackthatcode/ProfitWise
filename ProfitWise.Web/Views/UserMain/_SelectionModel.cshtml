@@ -48,6 +48,13 @@
                     .firstOrDefault(function (item) { return item.Key == key });
         };
 
+        self.SetCheckItemsByKeyArray = function(keyArray, selected) {
+            AQ(keyArray)
+                .each(function(key) {
+                    self.SetCheckedItemByKey(key, selected);
+                });
+        };
+
         self.SetCheckedItemByKey = function (key, selected) {
             var item = self.FindItemByKey(key);
             console.log("SetCheckedItemByKey");

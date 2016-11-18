@@ -62,6 +62,7 @@
         var self = this;
         self.ParentReportModel = parent;
         self.ReportId = ko.observable();
+        self.FilterType = self.ParentReportModel.VendorFilter;
 
         // Data
         self.PageOfItems = ko.observableArray();
@@ -98,12 +99,7 @@
                     ajax.HttpGet("/ReportService/Vendors", this);
                 },
                 function (allItemsFromServer) {
-                    self.SelectionModel.LoadItems(allItemsFromServer);
-                    //ajax.HttpGet("/ReportService/SelectedProductTypes?reportId=" + self.ReportId(), this);
-                    this();
-                },
-                function (selectionData) {
-                    //self.SelectionModel.SetCheckedItems(selectionData.CheckedProductTypes);
+                    self.SelectionModel.LoadItems(allItemsFromServer);                    
                     self.ApplyFiltersAndPaging();
                     callback();
                 }

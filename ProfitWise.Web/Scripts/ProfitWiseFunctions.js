@@ -72,7 +72,6 @@ ProfitWiseFunctions.CaseInsensitiveContains = function (input, substring) {
 
 
 // Temporary hard-coding of reference to ProfitWiseShopify.js
-
 ProfitWiseFunctions.AjaxSettings = function (modal) {
     var errorCallback;
     if (modal) {
