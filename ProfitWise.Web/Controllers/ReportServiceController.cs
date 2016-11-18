@@ -119,7 +119,7 @@ namespace ProfitWise.Web.Controllers
 
             var output = data.Select(x => new
             {
-                Key = x.PwMasterProductId,
+                Key = x.PwMasterVariantId,
                 x.VariantTitle,
                 x.ProductTitle,
                 x.Sku,
@@ -163,7 +163,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddFilter(long reportId, string filterType, string key, string title)
+        public ActionResult AddFilter(long reportId, int filterType, string key, string title)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
@@ -184,7 +184,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult RemoveFilter(long reportId, string filterType, string key)
+        public ActionResult RemoveFilter(long reportId, int filterType, string key)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
@@ -202,7 +202,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult RemoveFilterByType(long reportId, string filterType)
+        public ActionResult RemoveFilterByType(long reportId, int filterType)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);

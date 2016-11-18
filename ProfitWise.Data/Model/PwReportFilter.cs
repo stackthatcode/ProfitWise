@@ -5,17 +5,17 @@ namespace ProfitWise.Data.Model
 {
     public class PwReportFilter
     {
-        public const string ProductType = "Product Type";
-        public const string Vendor = "Vendor";
-        public const string Product = "Product";
-        public const string Sku = "Sku";
-
+        public const int ProductType = 1;
+        public const int Vendor = 2;
+        public const int Product = 3;
+        public const int Sku = 4;
+        
         public const string Empty = "(Empty)";
 
         public long PwReportId { get; set; }
         public long PwShopId { get; set; }
         public long PwFilterId { get; set; }
-        public string FilterType { get; set; }
+        public int FilterType { get; set; }
         public long? NumberKey { get; set; }
         public string StringKey { get; set; }
         public string Title { get; set; }
@@ -37,7 +37,7 @@ namespace ProfitWise.Data.Model
 
         public bool UsesNumberKey => FilterTypeUsesNumberKey(FilterType);
 
-        public static bool FilterTypeUsesNumberKey(string filterType)
+        public static bool FilterTypeUsesNumberKey(int filterType)
         {
             return filterType == Product || filterType == Sku;
         }

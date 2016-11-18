@@ -26,7 +26,7 @@ CREATE TABLE `profitwisereportfilter` (
 	`PwReportId` BIGINT NOT NULL AUTO_INCREMENT,
 	`PwShopId` BIGINT NOT NULL,
     `PwFilterId` BIGINT NOT NULL,
-	`FilterType` VARCHAR(25) NOT NULL,
+	`FilterType` SMALLINT NOT NULL,
 	`NumberKey` BIGINT NULL,
 	`StringKey` VARCHAR(100) NULL,
     `Title` VARCHAR(100) NULL,

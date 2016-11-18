@@ -17,7 +17,7 @@
             <div class="col-xs-12 no-side-padding">
                 <div style="width: 100%; border-top: 1px dashed #CCC;"></div>
                 <a href="#" style="position: absolute; top: -40px; font-weight: 700;"
-                   data-bind="click: DeselectAll">Remove All</a>
+                   data-bind="click: DeselectAll">Remove Variant Filters</a>
             </div>
         </div>
     </div>
@@ -73,7 +73,7 @@
 
         // Paging and Filtering model
         self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
-        self.FilterModel.PlaceHolderText("Search for Variants...");
+        self.FilterModel.PlaceHolderText("Search for Variants by Title, Vendor, and SKU...");
         self.FilterModel.RegisterRefreshCallback(function () {
             self.ApplyFiltersAndPaging();
         });
@@ -87,6 +87,14 @@
 
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
         self.SelectionModel.RegisterUpdateCallback(self.UpdateCallback);
+
+        self.SelectionModel.SearchTextFunction = function (item, searchText) {
+            return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
+                ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
+                ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
+        };
+
 
         self.DeselectAll = function () {
             self.ParentReportModel.RemoveFilterType(self.ParentReportModel.SkuFilter);

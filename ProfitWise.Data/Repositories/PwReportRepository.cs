@@ -224,7 +224,7 @@ namespace ProfitWise.Data.Repositories
             return RetrieveFilter(filter.PwReportId, filter.PwFilterId);
         }
 
-        public void DeleteFilter(long reportId, string filterType, string key)
+        public void DeleteFilter(long reportId, int filterType, string key)
         {
             var query = @"DELETE FROM profitwisereportfilter 
                         WHERE PwShopId = @PwShopId 
@@ -254,7 +254,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { reportId, this.PwShopId, filterId });
         }
 
-        public void DeleteFilters(long reportId, string filterType)
+        public void DeleteFilters(long reportId, int filterType)
         {
             var query = @"DELETE FROM profitwisereportfilter 
                         WHERE PwShopId = @PwShopId 
@@ -279,23 +279,23 @@ namespace ProfitWise.Data.Repositories
 
             if (filters.Count(x => x.FilterType == PwReportFilter.ProductType) > 0)
             {
-                query += @"AND t1.ProductType IN ( SELECT StringKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = 'Product Type' ) ";
+                query += $@"AND t1.ProductType IN ( SELECT StringKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.ProductType} ) ";
             }
             if (filters.Count(x => x.FilterType == PwReportFilter.Vendor) > 0)
             {
-                query += @"AND t1.Vendor IN ( SELECT StringKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = 'Vendor' ) ";
+                query += $@"AND t1.Vendor IN ( SELECT StringKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Vendor} ) ";
             }
             if (filters.Count(x => x.FilterType == PwReportFilter.Product) > 0)
             {
-                query += @"AND t1.PwMasterProductId IN ( SELECT NumberKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = 'Product' ) ";
+                query += $@"AND t1.PwMasterProductId IN ( SELECT NumberKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Product} ) ";
             }
             if (filters.Count(x => x.FilterType == PwReportFilter.Sku) > 0)
             {
-                query += @"AND t1.ProductType IN ( SELECT StringKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = 'Sku' ) ";
+                query += $@"AND t3.PwMasterVariantId IN ( SELECT NumberKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Sku} ) ";
             }
 
             return _connection

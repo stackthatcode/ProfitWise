@@ -57,8 +57,6 @@
 
         self.SetCheckedItemByKey = function (key, selected) {
             var item = self.FindItemByKey(key);
-            console.log("SetCheckedItemByKey");
-            console.log(item);
             if (item) {
                 item.IsChecked(selected);
             };
