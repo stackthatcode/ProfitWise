@@ -292,7 +292,7 @@ namespace ProfitWise.Data.Repositories
                 query += @"AND t1.PwMasterProductId IN ( SELECT NumberKey FROM profitwisereportfilter 
                             WHERE PwReportId = @PwReportId AND FilterType = 'Product' ) ";
             }
-            if (filters.Count(x => x.FilterType == PwReportFilter.ProductType) > 0)
+            if (filters.Count(x => x.FilterType == PwReportFilter.Sku) > 0)
             {
                 query += @"AND t1.ProductType IN ( SELECT StringKey FROM profitwisereportfilter 
                             WHERE PwReportId = @PwReportId AND FilterType = 'Sku' ) ";

@@ -176,6 +176,7 @@
         self.SkuFilter = "@PwReportFilter.Sku";
 
         self.ReportId = ko.observable();
+
         self.ProductCount = ko.observable(0);
         self.VariantCount = ko.observable(0);
 
@@ -222,10 +223,13 @@
 
                     self.FiltersGrid(filters);
 
+                    var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/RecordCounts?reportId=" + self.ReportId(), this);
                 }, 
                 function (data) {
-                    console.log(data);
+                    self.ProductCount(data.ProductCount);
+                    self.VariantCount(data.VariantCount);
+
                     if (callback) {
                         callback();
                     }
