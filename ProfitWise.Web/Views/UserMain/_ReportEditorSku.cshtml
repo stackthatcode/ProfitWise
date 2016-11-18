@@ -2,9 +2,7 @@
 <script type="text/html" id="Report-Editor-Header-Sku">
     <div data-bind="if: SelectionModel.ShowSplashPage">
         <div data-bind="template: { name: 'Report-Editor-No-Filters',
-                                data: { clickCallback:  function() { SelectionModel.ShowSplashPage(false); },
-                                        plural: 'Variants', 
-                                        singular: 'Variant' } }">
+                    data: { clickCallback:  HideSplashPage, plural: 'Variants', singular: 'Variant' } }">
         </div>
     </div>
 
@@ -84,7 +82,7 @@
         // Selection Model
         self.UpdateCallback = function (item, selected) {
             self.ParentReportModel.UpdateFilter(
-                item.Key, selected, self.ParentReportModel.SkuFilter, item.Title);
+                item.Key, selected, self.FilterType, item.Title);
         };
 
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
@@ -92,6 +90,7 @@
 
         self.DeselectAll = function () {
             self.ParentReportModel.RemoveFilterType(self.ParentReportModel.SkuFilter);
+            self.SelectionModel.ShowSplashPage(true);
         }
 
         self.Refresh = function (reportId, callback) {
@@ -111,18 +110,22 @@
             );
         }
 
-        self.ApplyFiltersAndPaging = function () {
-            var searchText = self.FilterModel.SearchText() || "";
-            var isShowAllSelected = self.FilterModel.IsShowAllSelected();
+        // Common functions should be same across all Report Editor Models
+        self.HideSplashPage = function () {
+            self.SelectionModel.ShowSplashPage(false);
+            self.FilterModel.SearchText("");
+            self.FilterModel.SearchClick();
+        };
 
+        self.ApplyFiltersAndPaging = function () {
             var filterResults =
                 self.SelectionModel.ApplyFiltersAndPaging(
-                    searchText, isShowAllSelected, self.FilterModel.GetPageNumber(), self.FilterModel.GetPageSize());
+                    self.FilterModel.SearchText(), self.FilterModel.GetPageNumber(), self.FilterModel.GetPageSize());
 
             self.FilterModel.SetRecordCount(filterResults.NumberOfFilteredItems);
             self.PageOfItems(filterResults.PagedItems);
         };
-
+        
         return self;
     };
 </script>

@@ -222,7 +222,14 @@
                         });
 
                     self.FiltersGrid(filters);
+                    self.RefreshProductAndVariantCounts();
+                }
+            );
+        };
 
+        self.RefreshProductAndVariantCounts = function (callback) {
+            flow.exec(
+                function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/RecordCounts?reportId=" + self.ReportId(), this);
                 }, 
@@ -276,8 +283,8 @@
                     if (selectionModel) {
                         selectionModel.SetCheckedItemByKey(item.Key, false);
                     }
-                    //self.RefreshFilterSummary();
                     self.FiltersGrid.remove(item);
+                    self.RefreshProductAndVariantCounts();
                 }
             );
         };

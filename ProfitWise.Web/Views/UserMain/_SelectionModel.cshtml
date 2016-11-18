@@ -86,27 +86,22 @@
             return self.CheckedItems().length;
         });
 
-        self.ApplyFiltersAndPaging = function (searchText, showAll, pageNumber, pageSize) { 
+        self.SearchTextFunction = function(item, searchText) {
+            return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText);
+        };
+        
+        self.ApplyFiltersAndPaging = function (searchText, pageNumber, pageSize) {
+            searchText = searchText || "";
             var filteredItems = self.AllItems();
             if (searchText.trim() != "") {
                 filteredItems =
                     AQ(filteredItems)
-                        .where(function (item) {
-                            return ProfitWiseFunctions.CaseInsensitiveContains(item.ProductType, searchText);
-                        })
+                        .where(function (item) { return self.SearchTextFunction(item, searchText); })
                         .toArray();
             }
             
-            if (!showAll) {
-                filteredItems =
-                    AQ(filteredItems)
-                    .where(function (item) { return item.IsChecked() })
-                    .toArray();
-            }
-
             var skip = (pageNumber - 1) * pageSize;
             var take = pageSize;
-
             var pagedResults = 
                 AQ(filteredItems)
                 .skip(skip)
@@ -119,7 +114,7 @@
                 PagedItems: pagedResults,
             };
         };
-
+        
         return self;
     };
 </script>

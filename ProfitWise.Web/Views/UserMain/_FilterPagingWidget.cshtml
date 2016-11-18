@@ -87,6 +87,7 @@
         };
 
         self.SearchClick = function () {
+            $('html,body').animate({ scrollTop: 0 });
             self.RefreshCallback();
         };
 
@@ -95,21 +96,21 @@
         self.IsShowAllSelected =
             ko.computed(function () { return self.ShowFilter() === "Show All"; });
 
-        self.ShowFilterChanged = function() {
-            self.RefreshCallback();
-        };
-
         self.SelectAllClick = function () {
             self.SelectAllCallback();
         };
 
         self.SearchKeyCallback = function(model, event) {
-            if (event.keyCode == 13) {
-                self.RefreshCallback();
+            if (event.keyCode == 27) {
+                self.SearchText("");
+                self.SearchText.valueHasMutated();
                 return false;
-            } else {
-                return true;
             }
+            if (event.keyCode == 13) {
+                self.SearchClick();
+                return false;
+            }            
+            return true;
         };
 
         return self;

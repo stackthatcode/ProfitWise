@@ -1,9 +1,7 @@
 ﻿<script type="text/html" id="Report-Editor-Header-Vendor">
     <div data-bind="if: SelectionModel.ShowSplashPage">
         <div data-bind="template: { name: 'Report-Editor-No-Filters',
-                                data: { clickCallback:  function() { SelectionModel.ShowSplashPage(false); },
-                                        plural: 'Vendors', 
-                                        singular: 'Vendor' } }">
+                        data: { clickCallback:  HideSplashPage, plural: 'Vendors', singular: 'Vendor' } }">
         </div>
     </div>
 
@@ -18,7 +16,7 @@
             <div class="col-xs-12 no-side-padding">
                 <div style="width: 100%; border-top: 1px dashed #CCC;"></div>
                 <a href="#" style="position: absolute; top: -40px; font-weight: 700;"
-                   data-bind="click: DeselectAll">Remove All</a>
+                   data-bind="click: DeselectAll">Remove Vendor Filters</a>
             </div>
         </div>
     </div>
@@ -27,7 +25,7 @@
 <script type="text/html" id="Report-Editor-Body-Vendor">
     <div class="row-fluid" style="min-height: 400px;" data-bind="ifnot: SelectionModel.ShowSplashPage">
 
-        <div class="col-xs-8 reduced-padding">
+        <div class="col-xs-7 reduced-padding">
             <div data-bind="if: PageOfItems().length == 0">
                 <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Vendors' } }"></div>
             </div>
@@ -78,15 +76,15 @@
         // Selection Model        
         self.UpdateCallback = function (item, selected) {                    
             self.ParentReportModel.UpdateFilter(
-                item.Key, selected, self.ParentReportModel.VendorFilter, item.Title);
+                item.Key, selected, self.FilterType, item.Title);
         };
 
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
-        self.SelectionModel.RegisterUpdateCallback(self.UpdateCallback);
-
+        self.SelectionModel.RegisterUpdateCallback(self.UpdateCallback);        
 
         self.DeselectAll = function () {
             self.ParentReportModel.RemoveFilterType(self.ParentReportModel.VendorFilter);
+            self.SelectionModel.ShowSplashPage(true);
         }
 
         self.Refresh = function (reportId, callback) {
@@ -105,22 +103,22 @@
                 }
             );
         }
-
-
+        
+        // Common functions should be same across all Report Editor Models
+        self.HideSplashPage = function () {
+            self.SelectionModel.ShowSplashPage(false);
+            self.FilterModel.SearchText("");
+            self.FilterModel.SearchClick();
+        };
 
         self.ApplyFiltersAndPaging = function () {
-            var searchText = self.FilterModel.SearchText() || "";
-            var isShowAllSelected = self.FilterModel.IsShowAllSelected();
-
             var filterResults =
                 self.SelectionModel.ApplyFiltersAndPaging(
-                    searchText, isShowAllSelected, self.FilterModel.GetPageNumber(), self.FilterModel.GetPageSize());
+                    self.FilterModel.SearchText(), self.FilterModel.GetPageNumber(), self.FilterModel.GetPageSize());
 
             self.FilterModel.SetRecordCount(filterResults.NumberOfFilteredItems);
             self.PageOfItems(filterResults.PagedItems);
         };
-
-
 
         return self;
     };
