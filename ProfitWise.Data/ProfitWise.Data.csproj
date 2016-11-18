@@ -90,6 +90,7 @@
     <Compile Include="Model\PwReport.cs" />
     <Compile Include="Model\PwReportFilter.cs" />
     <Compile Include="Model\PwReportMasterProduct.cs" />
+    <Compile Include="Model\PwReportMasterVariantSelection.cs" />
     <Compile Include="Model\PwReportProductType.cs" />
     <Compile Include="Model\PwReportRecordCount.cs" />
     <Compile Include="Model\PwReportSku.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Model\PwBatchState.cs" />
     <Compile Include="Model\PwPreferences.cs" />
     <Compile Include="Model\PwProduct.cs" />
+    <Compile Include="Model\PwReportMasterProductSelection.cs" />
     <Compile Include="Model\ShopifyOrder.cs" />
     <Compile Include="Model\ShopifyOrderExtensions.cs" />
     <Compile Include="Model\ShopifyOrderLineItem.cs" />

@@ -26,8 +26,6 @@
     }
 </style>
 
-
-
 <script type="text/html" id="Report-Editor-Filter-Grid">
     <div style="margin-bottom:5px; font-size:0.8em; font-weight:700;">
         <span data-bind="text: label"></span>: <span data-bind="if: grid().length == 0"><span style="font-weight:400;">(none)</span></span>
@@ -82,7 +80,7 @@
                     </li>
                 </ul>
             </div>
-            
+
             <!-- Tab panes -->
             <div class="tab-content" style="clear: both;">
                 <!-- Height - 120px -->
@@ -100,17 +98,15 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-xs-5 no-side-padding" style="background-color:white; height: 300px; padding-left:45px; ">
             <div style="font-size:1.10em; height:40px; padding-top:8px; font-weight: 700;">Select Filters to add to your Report</div>
+            
+            <!-- Template for Product and Variant Count -->
+            <div data-bind="template: { name: 'Report-Selection-Preview', data: ReportSelectionPreviewModel }"></div>
 
-            <p>This Report includes 
-                <span style="font-weight: 700; color:#888;">
-                    <span data-bind="text: ProductCount"></span> Products 
-                    (<span data-bind="text: VariantCount"></span> Variants)</span>.</p>
-            
             <p>Select Filters to add to Report, then hit "Ok" when you're done.</p>
-            
+
             <div style="margin-bottom:20px;">
                 <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: CancelButtonClick">
                     Cancel &nbsp;<i class="glyphicon glyphicon-remove"></i>
@@ -120,28 +116,27 @@
                     Ok &nbsp;<i class="glyphicon glyphicon-ok"></i>
                 </a>
             </div>
-            
-            <div style="overflow-y:auto; height:300px;">                
-                <div style="height:10px;"></div>
-                <div data-bind="template: { name: 'Report-Editor-Filter-Grid', 
-                                            data: { label: 'Product Types Filters', grid: ProductTypesGrid } }"></div>
-                
+
+            <div style="overflow-y:auto; height:300px;">
                 <div style="height:10px;"></div>
                 <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
-                                            data: { label: 'Vendor Filters', grid: VendorsGrid } }"></div>
+                                        data: { label: 'Product Types Filters', grid: ProductTypesGrid } }"></div>
 
                 <div style="height:10px;"></div>
                 <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
-                                            data: { label: 'Product Filters', grid: ProductsGrid } }"></div>
-                
+                                        data: { label: 'Vendor Filters', grid: VendorsGrid } }"></div>
+
                 <div style="height:10px;"></div>
                 <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
-                                            data: { label: 'Variant Filters', grid: SkuGrid } }"></div>
+                                        data: { label: 'Product Filters', grid: ProductsGrid } }"></div>
+
+                <div style="height:10px;"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                        data: { label: 'Variant Filters', grid: SkuGrid } }"></div>
             </div>
         </div>
-    </div>  
+    </div>
 </script>
-
 
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
 <script type="text/html" id="Report-Editor-Body">
@@ -162,7 +157,6 @@
     </div>
 </script>
 
-
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -177,19 +171,16 @@
 
         self.ReportId = ko.observable();
 
-        self.ProductCount = ko.observable(0);
-        self.VariantCount = ko.observable(0);
-
         self.SelectedFilterModel = ko.observable();
-        
-        self.FilterByType = function(filterType) {
+
+        self.FilterByType = function (filterType) {
             return AQ(self.FiltersGrid())
                 .where(function (item) { return item.FilterType == filterType; })
                 .toArray();
         }
 
         self.FiltersGrid = ko.observableArray([]);
-        self.ProductTypesGrid = ko.computed(function() { return self.FilterByType(self.ProductTypeFilter); });        
+        self.ProductTypesGrid = ko.computed(function () { return self.FilterByType(self.ProductTypeFilter); });
         self.VendorsGrid = ko.computed(function () { return self.FilterByType(self.VendorFilter); });
         self.ProductsGrid = ko.computed(function () { return self.FilterByType(self.ProductFilter); });
         self.SkuGrid = ko.computed(function () { return self.FilterByType(self.SkuFilter); });
@@ -203,47 +194,12 @@
             self.OkCallback();
         };
 
-        self.CancelButtonClick = function() {
+        self.CancelButtonClick = function () {
             self.CancelCallback();
         };
 
-        self.RefreshFilterSummary = function (callback) {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
-                },
-                function (filters) {
-                    AQ(filters)
-                        .each(function(item) {
-                            item.RemoveClick = function() {
-                                self.RemoveFilter(item);
-                            }
-                        });
 
-                    self.FiltersGrid(filters);
-                    self.RefreshProductAndVariantCounts();
-                }
-            );
-        };
-
-        self.RefreshProductAndVariantCounts = function (callback) {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/RecordCounts?reportId=" + self.ReportId(), this);
-                }, 
-                function (data) {
-                    self.ProductCount(data.ProductCount);
-                    self.VariantCount(data.VariantCount);
-
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-
+        // When these methods are invoked, the underlying data has changed...
         self.UpdateFilter = function (key, selected, filterType, title) {
             flow.exec(
                 function () {
@@ -288,10 +244,10 @@
                 }
             );
         };
-        
-        self.RemoveFilterType = function(filterType) {
+
+        self.RemoveFilterType = function (filterType) {
             flow.exec(
-                function() {
+                function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     var data = {
                         reportId: self.ReportId(),
@@ -311,10 +267,39 @@
             );
         }
 
+        // Product and Variant selections
+        self.ProductSelections = ko.observableArray([]);
+        
+        self.RefreshFilterSummary = function (callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
+                },
+                function (filters) {
+                    AQ(filters)
+                        .each(function (item) {
+                            item.RemoveClick = function () {
+                                self.RemoveFilter(item);
+                            }
+                        });
+
+                    self.FiltersGrid(filters);
+                    self.ReportSelectionPreviewModel.RefreshProductAndVariantCounts(callback);
+                }
+            );
+        };
+
+
+        // Selection Preview model
+        self.ReportSelectionPreviewModel = new ProfitWiseWidgets.ReportSelectionPreviewModel();
+        
+
+        // Filter Tab mechanics
         self.ClickOnNewFilterTab =
             function (newFilterModel, newTabRefreshFunction, bootstrapTabHref) {
                 flow.exec(
-                    function() {
+                    function () {
                         if (self.SelectedFilterModel() == newFilterModel) {
                             return;
                         }
@@ -323,7 +308,7 @@
                     function () {
                         var filterKeys =
                             AQ(self.FilterByType(newFilterModel.FilterType))
-                                .select(function(item) { return item.Key })
+                                .select(function (item) { return item.Key })
                                 .toArray();
 
                         newFilterModel.SelectionModel.SetCheckItemsByKeyArray(filterKeys, true);
@@ -337,14 +322,14 @@
         self.ProductTypeClick = function () {
             self.ClickOnNewFilterTab(
                 self.ReportProductTypeModel,
-                function(callback) { self.ReportProductTypeModel.Refresh(self.ReportId(), callback); },
+                function (callback) { self.ReportProductTypeModel.Refresh(self.ReportId(), callback); },
                 "report-filter-product-type");
         };
 
-        self.VendorClick = function() {
+        self.VendorClick = function () {
             self.ClickOnNewFilterTab(
                 self.ReportVendorModel,
-                function(callback) { self.ReportVendorModel.Refresh(self.ReportId(), callback); },
+                function (callback) { self.ReportVendorModel.Refresh(self.ReportId(), callback); },
                 "report-filter-vendor");
         };
 
@@ -360,28 +345,31 @@
                 self.ReportSkuModel,
                 function (callback) { self.ReportSkuModel.Refresh(self.ReportId(), callback); },
                 "report-filter-sku");
-        };        
+        };
 
         self.RegisterCancelCallback = function (callback) {
             self.CancelCallback = callback;
         };
-        
+
         self.RegisterOkCallback = function (callback) {
             self.OkCallback = callback;
         };
 
         self.LoadReport = function (reportId) {
             self.ReportId(reportId);
-            self.ProductTypeClick();
+            self.ReportSelectionPreviewModel.ReportId(reportId);
+            self.RefreshFilterSummary(function () {
+                self.ProductTypeClick();
+            });
         };
-        
+
         // Wire in the individual Report Editor modules
         self.ReportProductTypeModel = new ProfitWiseWidgets.ReportProductTypeModel(self);
         self.ReportVendorModel = new ProfitWiseWidgets.ReportVendorModel(self);
         self.ReportMasterProductModel = new ProfitWiseWidgets.ReportMasterProductModel(self);
         self.ReportSkuModel = new ProfitWiseWidgets.ReportSkuModel(self);
 
-        self.SelectionModelByFilterType = function(filterType) {
+        self.SelectionModelByFilterType = function (filterType) {
             if (filterType == self.ProductTypeFilter) {
                 return self.ReportProductTypeModel.SelectionModel;
             }

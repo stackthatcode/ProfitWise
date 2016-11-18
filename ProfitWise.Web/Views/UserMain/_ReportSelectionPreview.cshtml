@@ -1,0 +1,131 @@
+﻿@using ProfitWise.Web.Models
+
+<style>
+    .selection-preview-listing-container {
+         margin-top:10px; margin-bottom:10px; width: 275px; max-height: 325px; overflow-y: auto;
+     }
+    .select-preview-listing {
+        font-size: 0.9em; margin-bottom: 4px;
+    }
+    .selection-preview-listing-overflow-top {
+        font-size: 0.9em; font-weight: 600; padding-top: 10px;
+    }
+    .selection-preview-listing-overflow-bottom {
+        font-size: 0.9em; padding-top: 3px; padding-bottom: 15px;        
+    }
+</style>
+<script type="text/html" id="Report-Selected-Products">    
+    <div data-bind="foreach: ProductSelections" class="selection-preview-listing-container">
+        <div class="select-preview-listing overflow-gracefully" data-bind="text: Title"></div>
+    </div>
+    <div data-bind="if: ProductCount() > MaximumNumberOfProducts">
+        <div class="selection-preview-listing-overflow-top">
+            You have over <span data-bind="text: MaximumNumberOfProducts"></span> Products selected.
+        </div>
+        <div class="selection-preview-listing-overflow-bottom">
+            <a href="#">Click here to view all.</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="Report-Selected-Variants">
+    <div data-bind="foreach: VariantSelections" class="selection-preview-listing-container">
+        <div class="select-preview-listing overflow-gracefully" data-bind="text: Title"></div>
+    </div>
+    <div data-bind="if: VariantCount() > MaximumNumberOfVariants">
+        <div class="selection-preview-listing-overflow-top">
+            You have over <span data-bind="text: MaximumNumberOfVariants"></span> Variants selected.
+        </div>
+        <div class="selection-preview-listing-overflow-bottom">
+            <a href="#">Click here to view all.</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="Report-Selection-Preview">
+    <style>
+        #product-variant-count-container .popover {
+            max-width: 300px;
+        }
+    </style>
+
+    <div id="product-variant-count-container">
+        <p>
+            This Report includes
+            <div class="popover-container" style="display: inline-block">
+                <a href="#" rel="popover" class="popover-launcher"
+                   data-bind="click: RefreshProductSelections,
+                                popover: {  options: { placement: 'bottom', trigger: 'click',  },
+                                            template: 'Report-Selected-Products', data: $data }">
+                    <span data-bind="text: ProductCount"></span> Products
+                </a>
+            </div>
+
+            <div class="popover-container" style="display: inline-block">
+                (<a href="#" rel="popover" class="popover-launcher"
+                    data-bind="click: RefreshVariantSelections,
+                                        popover: {  options: { placement: 'bottom', trigger: 'click',  },
+                                                    template: 'Report-Selected-Variants', data: $data }">
+                    <span data-bind="text: VariantCount"></span> Variants)
+                </a>.
+            </div>
+        </p>
+    </div>
+</script>
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.ReportSelectionPreviewModel = function () {
+        var self = this;
+
+        self.MaximumNumberOfProducts = @PreviewSelectionLimit.MaximumNumberOfProducts;
+        self.MaximumNumberOfVariants = @PreviewSelectionLimit.MaximumNumberOfVariants;
+
+        self.ReportId = ko.observable();
+        self.ProductCount = ko.observable(0);
+        self.VariantCount = ko.observable(0);
+
+        self.ProductSelections = ko.observableArray([]);
+        self.VariantSelections = ko.observableArray([]);
+
+        self.RefreshProductAndVariantCounts = function (callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/RecordCounts?reportId=" + self.ReportId(), this);
+                },
+                function (data) {
+                    self.ProductCount(data.ProductCount);
+                    self.VariantCount(data.VariantCount);
+
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+        self.RefreshProductSelections = function () {
+            flow.exec(function () {
+                var ajax = new ProfitWiseFunctions.Ajax();
+                ajax.HttpGet("/ReportService/ProductSelections?reportId=" + self.ReportId(), this);
+            },
+            function (data) {
+                self.ProductSelections(data);
+            });
+        };
+        
+        self.RefreshVariantSelections = function () {
+            flow.exec(function () {
+                var ajax = new ProfitWiseFunctions.Ajax();
+                ajax.HttpGet("/ReportService/VariantSelections?reportId=" + self.ReportId(), this);
+            },
+            function (data) {
+                self.VariantSelections(data);
+            });
+        };
+
+        return self;
+    };
+</script>

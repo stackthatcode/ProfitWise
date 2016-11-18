@@ -1,10 +1,11 @@
-﻿using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
+using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
@@ -138,6 +139,31 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var output = repository.RetrieveReportRecordCount(reportId);            
+            return new JsonNetResult(output);
+        }
+
+
+        [HttpGet]
+        public ActionResult ProductSelections(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
+            var output = repository.RetrieveProductSelections(reportId, limit);
+
+            return new JsonNetResult(output);
+        }
+
+        [HttpGet]
+        public ActionResult VariantSelections(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
+            var output = repository.RetrieveVariantSelections(reportId, limit);
+
             return new JsonNetResult(output);
         }
 
