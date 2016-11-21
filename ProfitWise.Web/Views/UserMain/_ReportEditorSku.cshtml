@@ -1,12 +1,12 @@
 ﻿
 <script type="text/html" id="Report-Editor-Header-Sku">
-    <div data-bind="if: SelectionModel.ShowSplashPage">
+    <!--<div data-bind="if: SelectionModel.ShowSplashPage">
         <div data-bind="template: { name: 'Report-Editor-No-Filters',
                     data: { clickCallback:  HideSplashPage, plural: 'Variants', singular: 'Variant' } }">
         </div>
-    </div>
+    </div>-->
 
-    <div data-bind="ifnot: SelectionModel.ShowSplashPage">
+    <div>
         <div class="row-fluid">
             <div class="col-xs-12 no-side-padding" style="height: 120px;">
                 <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
@@ -24,7 +24,7 @@
 </script>
 
 <script type="text/html" id="Report-Editor-Body-Sku">
-    <div class="row-fluid" style="min-height: 400px;" data-bind="ifnot: SelectionModel.ShowSplashPage">
+    <div class="row-fluid" style="min-height: 400px;">
         <div class="col-xs-7 reduced-padding">
             <div data-bind="if: PageOfItems().length == 0">
                 <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Variants' } }"></div>
