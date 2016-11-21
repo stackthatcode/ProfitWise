@@ -154,7 +154,7 @@
         self.LaunchProductSelectionPopup = function() {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/UserMain/ProductSelectionsByPage?reportId=' + self.ReportId();
+                    '/UserMain/ProductSelections?reportId=' + self.ReportId();
 
             ProfitWiseFunctions.PopOverCloseAll();
             ProfitWiseShopify.LaunchModal({

@@ -62,7 +62,6 @@ ProfitWiseFunctions.BsActivateTab = function(tab) {
     $('.nav-tabs a[href="#' + tab + '"]').tab('show');
 };
 
-
 ProfitWiseFunctions.CaseInsensitiveContains = function (input, substring) {
     var adjustedInput = (input || "").toUpperCase();
     var adjustedSubstring = (substring || "").toUpperCase();

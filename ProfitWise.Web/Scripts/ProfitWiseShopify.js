@@ -120,7 +120,9 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
                 settings,
                 function (result) {
                     if (result === true) {
-                        callback();
+                        if (callback) {
+                            callback();
+                        }
                     }
                     if (result === "error") {
                         ProfitWiseShopify.ErrorPopup();
