@@ -255,6 +255,7 @@
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />
     <Compile Include="Models\CommonContextModel.cs" />
+    <Compile Include="Models\SimpleReport.cs" />
     <Compile Include="Plumbing\GlobalConfig.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />
     <Compile Include="Controllers\AdminAuthController.cs" />

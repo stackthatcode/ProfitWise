@@ -29,25 +29,13 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult ProductSelections(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
-            var output = repository.RetrieveProductSelections(reportId, limit);
-
-            return View();
+            return View(new SimpleReport() { Id = reportId });
         }
 
         [HttpGet]
         public ActionResult VariantSelections(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
-            var output = repository.RetrieveVariantSelections(reportId, limit);
-
-            return View();
+            return View(new SimpleReport() { Id = reportId });
         }
 
 

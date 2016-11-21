@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -141,31 +140,37 @@ namespace ProfitWise.Web.Controllers
             var output = repository.RetrieveReportRecordCount(reportId);            
             return new JsonNetResult(output);
         }
+        
 
 
         [HttpGet]
-        public ActionResult ProductSelections(long reportId)
+        public ActionResult ProductSelectionsByPage(long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
-            var output = repository.RetrieveProductSelections(reportId, limit);
+            var selections = repository.RetrieveProductSelections(reportId, pageNumber, pageSize);
+            var counts = repository.RetrieveReportRecordCount(reportId);
 
-            return new JsonNetResult(output);
+            return new JsonNetResult(new { Selections = selections, RecordCounts = counts });
         }
 
+
         [HttpGet]
-        public ActionResult VariantSelections(long reportId)
+        public ActionResult VariantSelectionsByPage(long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
-            var output = repository.RetrieveVariantSelections(reportId, limit);
+            var selections = repository.RetrieveVariantSelections(reportId, pageNumber, pageSize);
+            var counts = repository.RetrieveReportRecordCount(reportId);
 
-            return new JsonNetResult(output);
+            return new JsonNetResult(new { Selections = selections, RecordCounts = counts });
         }
+
+
 
 
         [HttpGet]

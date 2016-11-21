@@ -113,21 +113,21 @@
         self.RefreshProductSelections = function () {
             flow.exec(function () {
                 var ajax = new ProfitWiseFunctions.Ajax();
-                ajax.HttpGet("/ReportService/ProductSelections?reportId=" + self.ReportId(), this);
+                ajax.HttpGet("/ReportService/ProductSelectionsByPage?reportId=" + self.ReportId(), this);
             },
             function (data) {
-                self.ProductSelections(data);
+                self.ProductSelections(data.Selections);
             });
         };
         
         self.RefreshVariantSelections = function () {
             flow.exec(function () {
                 var ajax = new ProfitWiseFunctions.Ajax();
-                ajax.HttpGet("/ReportService/VariantSelections?reportId=" + self.ReportId(), this);
+                ajax.HttpGet("/ReportService/VariantSelectionsByPage?reportId=" + self.ReportId(), this);
             },
             function (data) {
                 var products =
-                    AQ(data)
+                    AQ(data.Selections)
                         .select(function(item) {
                             return {
                                 PwMasterProductId: item.PwMasterProductId,
@@ -147,7 +147,6 @@
                                 .toArray();
                     });
 
-                console.log(products);
                 self.VariantSelections(products);
             });
         };
@@ -155,8 +154,9 @@
         self.LaunchProductSelectionPopup = function() {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/UserMain/ProductSelections?reportId=' + self.ReportId();
+                    '/UserMain/ProductSelectionsByPage?reportId=' + self.ReportId();
 
+            ProfitWiseFunctions.PopOverCloseAll();
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'View All Product Selections for Report',

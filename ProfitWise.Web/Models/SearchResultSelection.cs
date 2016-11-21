@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ProfitWise.Web.Models
+﻿namespace ProfitWise.Web.Models
 {
     public class SearchResultSelection
     {

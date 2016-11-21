@@ -339,7 +339,7 @@ namespace ProfitWise.Data.Repositories
                 .FirstOrDefault();
         }
 
-        public List<PwReportMasterProductSelection> RetrieveProductSelections(long reportId, int limit)
+        public List<PwReportMasterProductSelection> RetrieveProductSelections(long reportId, int pageNumber, int pageSize)
         {
             var query =
                 @"SELECT t1.PwShopId, t1.PwMasterProductId, t1.Title, t1.Vendor, t1.ProductType
@@ -350,14 +350,16 @@ namespace ProfitWise.Data.Repositories
                 AND t1.IsPrimary = 1 AND t3.IsPrimary = 1 ";
             query += ReportFilterClauseGenerator(reportId);
             query += @" GROUP BY t1.PwMasterProductId, t1.Title, t1.Vendor, t1.ProductType 
-                        ORDER BY t1.Title LIMIT @limit";
+                        ORDER BY t1.Title LIMIT @startRecord, @pageSize";
+
+            var startRecord = (pageNumber - 1) * pageSize;
 
             return _connection
-                .Query<PwReportMasterProductSelection>(query, new { PwShopId, PwReportId = reportId, limit })
+                .Query<PwReportMasterProductSelection>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize, })
                 .ToList();
         }
 
-        public List<PwReportMasterVariantSelection> RetrieveVariantSelections(long reportId, int limit)
+        public List<PwReportMasterVariantSelection> RetrieveVariantSelections(long reportId, int pageNumber, int pageSize)
         {
             var query = 
                 @"SELECT t1.PwShopId, t1.PwMasterProductId, t1.Title AS ProductTitle, 
@@ -370,8 +372,10 @@ namespace ProfitWise.Data.Repositories
             query += ReportFilterClauseGenerator(reportId);
             query += @" ORDER BY t1.Title, t3.Title LIMIT @limit;";
 
+            var startRecord = (pageNumber - 1) * pageSize;
+
             return _connection
-                .Query<PwReportMasterVariantSelection>(query, new { PwShopId, PwReportId = reportId, limit })
+                .Query<PwReportMasterVariantSelection>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize })
                 .ToList();
         }
 

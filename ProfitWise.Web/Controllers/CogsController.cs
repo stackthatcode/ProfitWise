@@ -24,7 +24,6 @@ namespace ProfitWise.Web.Controllers
             _currencyService = currencyService;
         }
 
-
         public ActionResult Products()
         {
             this.LoadCommonContextIntoViewBag();
@@ -44,7 +43,6 @@ namespace ProfitWise.Web.Controllers
         {            
             return View(RetrieveProduct(masterProductId));
         }
-
 
 
         public ActionResult StockedPicklistPopup(int pickListId)

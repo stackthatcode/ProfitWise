@@ -80,7 +80,8 @@
         <div class="col-lg-6">
             <div style="height: 20px;" class="visible-lg"></div>
             <div data-bind="visible: $root.CurrentGrid().length > 0">
-                <div style="min-width: 500px;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                <div style="min-width: 500px;" class="pull-right" 
+                     data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                 </div>
             </div>
         </div>
