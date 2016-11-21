@@ -15,7 +15,8 @@ namespace ProfitWise.Web
             AuthConfig.Configure(app, autofacContainer);
 
             // Maybe we'll create a separate bootstrapping app for this...?
-            DefaultSecurityDataConfig.Execute(autofacContainer);
+            // DefaultSecurityDataConfig.Execute(autofacContainer);
+
 
             // Hangfire Configuration - TODO - move this into the ContainerBuilder
             //var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;

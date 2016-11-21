@@ -9,7 +9,7 @@
 
     <div id="product-variant-count-container">
         <p>
-            This Report includes
+            <div style="display:inline-block;">This Report includes</div>
             <div class="popover-container" style="display: inline-block">
                 <a href="#" rel="popover" class="popover-launcher"
                    data-bind="click: RefreshProductSelections,
@@ -24,8 +24,23 @@
                                         popover: {  options: { placement: 'bottom', trigger: 'click',  },
                                                     template: 'Report-Selected-Variants', data: $data }"><span data-bind="text: VariantCount"></span> Variants)</a>.
             </div>
+            
+            <div style="display: inline-block;" data-bind="if: ProductCount() == 0 && VariantCount() == 0">
+                <div style="display: inline-block; position: absolute;">
+                    <div style="position:relative; color:red; left:4px; top:-20px; font-size:22px;"
+                         data-bind="popover : { options: { placement: 'bottom', trigger: 'hover' },
+                                        template: 'Report-No-Products-Or-Variants' }">
+                        <i class="glyphicon glyphicon-alert"></i>
+                    </div>
+                </div>
+            </div>
         </p>
     </div>
+</script>
+
+<script type="text/html" id="Report-No-Products-Or-Variants">
+    <p style="width:200px;">Your selected Report Filters currently result in zero Products or Variants. 
+        Please try removing filters. For help with using filters, <a href="#">watch this video</a>.</p>
 </script>
 
 <script type="text/html" id="Report-Selected-Products">
@@ -146,7 +161,7 @@
                 src: url,
                 title: 'View All Product Selections for Report',
                 width: 'small',
-                height: 250,
+                height: 350,
             });
         }
 

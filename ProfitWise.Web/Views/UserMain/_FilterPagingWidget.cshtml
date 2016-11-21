@@ -37,7 +37,6 @@
     ProfitWiseWidgets.FilterPagingWidgetModel = function() {
         var self = this;
         self.SearchText = ko.observable();
-        self.ShowFilter = ko.observable("Show All");     // Hard-coded to template option value
         self.PlaceHolderText = ko.observable("Search...");
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
 
@@ -51,10 +50,6 @@
             self.PagingModel.Callback = callback;
         };
         
-        self.RegisterSelectAllCallback = function(callback) {
-            self.SelectAllCallback = callback;
-        };
-
         self.SetPageNumber = function(pageNumber) {
             self.PagingModel.PageNumber(pageNumber);
         };
@@ -93,13 +88,6 @@
 
 
         // Back-end functions
-        self.IsShowAllSelected =
-            ko.computed(function () { return self.ShowFilter() === "Show All"; });
-
-        self.SelectAllClick = function () {
-            self.SelectAllCallback();
-        };
-
         self.SearchKeyCallback = function(model, event) {
             if (event.keyCode == 27) {
                 self.SearchText("");

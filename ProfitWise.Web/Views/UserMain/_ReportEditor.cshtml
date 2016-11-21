@@ -103,7 +103,7 @@
             <div style="font-size:1.10em; height:40px; padding-top:8px; font-weight: 700;">Select Filters to add to your Report</div>
             
             <!-- Template for Product and Variant Count -->
-            <div data-bind="template: { name: 'Report-Selection-Preview', data: ReportSelectionPreviewModel }"></div>
+            <span data-bind="template: { name: 'Report-Selection-Preview', data: ReportSelectionPreviewModel }"></span>
 
             <p>Select Filters to add to Report, then hit "Ok" when you're done.</p>
 
@@ -240,7 +240,7 @@
                         selectionModel.SetCheckedItemByKey(item.Key, false);
                     }
                     self.FiltersGrid.remove(item);
-                    self.RefreshProductAndVariantCounts();
+                    self.ReportSelectionPreviewModel.RefreshProductAndVariantCounts();
                 }
             );
         };

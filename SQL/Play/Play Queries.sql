@@ -4,6 +4,8 @@ SET SQL_SAFE_UPDATES = 0;
 
 SELECT * FROM profitwisereportfilter;
 
+SELECT * FROM profitwisevariant;
+
 
 SELECT ProductType AS Key, COUNT(*) AS Count
 FROM profitwiseproduct

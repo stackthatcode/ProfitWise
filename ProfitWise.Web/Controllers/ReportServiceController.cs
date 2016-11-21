@@ -69,11 +69,11 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Vendors()
+        public ActionResult Vendors(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var data = repository.RetrieveVendorSummary();
+            var data = repository.RetrieveVendorSummary(reportId);
 
             // NOTE: this is domain logic living on the controller...
             var output = data.Select(x => new
@@ -87,7 +87,7 @@ namespace ProfitWise.Web.Controllers
         }
         
         [HttpGet]
-        public ActionResult MasterProducts()
+        public ActionResult MasterProducts(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
@@ -98,7 +98,7 @@ namespace ProfitWise.Web.Controllers
             //    data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
             //}
 
-            var data = repository.RetrieveMasterProductSummary();
+            var data = repository.RetrieveMasterProductSummary(reportId);
 
             var output = data.Select(x => new
             {
@@ -112,11 +112,11 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Skus()
+        public ActionResult Skus(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var data = repository.RetrieveSkuSummary();
+            var data = repository.RetrieveSkuSummary(reportId);
 
             var output = data.Select(x => new
             {

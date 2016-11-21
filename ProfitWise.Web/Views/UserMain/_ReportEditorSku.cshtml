@@ -108,7 +108,7 @@
 
             flow.exec(
                 function () {
-                    ajax.HttpGet("/ReportService/Skus", this);
+                    ajax.HttpGet("/ReportService/Skus?reportId=" + self.ReportId(), this);
                 },
                 function (allItemsFromServer) {
                     self.SelectionModel.LoadItems(allItemsFromServer);                    
