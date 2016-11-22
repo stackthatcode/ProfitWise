@@ -363,14 +363,14 @@ namespace ProfitWise.Data.Repositories
         {
             var query = 
                 @"SELECT t1.PwShopId, t1.PwMasterProductId, t1.Title AS ProductTitle, 
-                        t3.PwMasterVariantId, t3.Title AS VariantTitle, t3.Sku
+                        t3.PwMasterVariantId, t3.Title AS VariantTitle, t3.Sku, t1.Vendor
                 FROM profitwiseproduct t1 
 	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
                     INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId    
                 WHERE t1.PwShopId = @PwShopId AND t2.PwShopId = @PwShopId AND t3.PwShopId = @PwShopId
                 AND t1.IsPrimary = 1 AND t3.IsPrimary = 1 ";
             query += ReportFilterClauseGenerator(reportId);
-            query += @" ORDER BY t1.Title, t3.Title LIMIT @limit;";
+            query += @" ORDER BY t1.Title, t3.Title LIMIT @startRecord, @pageSize";
 
             var startRecord = (pageNumber - 1) * pageSize;
 

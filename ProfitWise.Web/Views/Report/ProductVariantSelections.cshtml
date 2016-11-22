@@ -1,12 +1,13 @@
-﻿@model ProfitWise.Web.Models.SimpleReport
+﻿@using ProfitWise.Web.Models
+@model ProductVariantSelectionModel
 @{
-    ViewBag.CommonContext.PageTitle = "Product Selections";
+    ViewBag.CommonContext.PageTitle = @Model.SelectionType + " Selections";
     Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
 
-<script type="text/html" id="Product-Selections-Body">
+<script type="text/html" id="Product-Variant-Selections-Body">
     <div class="fixed-positioning-container" style="padding-left: 0px; padding-right: 0px;">
         <div class="standard-header-sleeve" style="height: 75px;">
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
@@ -27,12 +28,26 @@
         <div style="width:100%; background-color:#FFF; overflow:auto; padding-top:0px; padding-left:30px; padding-right: 30px;">
             <table class="table table-striped" >
                 <tbody data-bind="foreach: SelectionsGrid">
-                    <tr>
-                        <td>
-                            <div data-bind="text: Title"></div>
-                            <div data-bind="text: Vendor" style="font-size:0.8em;"></div>
-                        </td>
-                    </tr>
+                <!-- ko if: $parent.IsProductSelection() -->
+                <tr>
+                    <td>
+                        <div data-bind="text: Title"></div>
+                        <div data-bind="text: Vendor" style="font-size:0.8em;"></div>
+                    </td>
+                </tr>
+                <!-- /ko -->
+                <!-- ko ifnot: $parent.IsProductSelection() -->
+                <tr>
+                    <td style="width:50%;" class="overflow-gracefully">
+                        <div data-bind="text: ProductTitle"></div>
+                        <div data-bind="text: Vendor" style="font-size:0.8em;"></div>
+                    </td>
+                    <td style="width:50%;" class="overflow-gracefully">
+                        <div data-bind="text: VariantTitle"></div>
+                        <div data-bind="text: Sku" style="font-size:0.8em;"></div>
+                    </td>
+                </tr>
+                <!-- /ko -->
                 </tbody>
             </table>
         </div>
@@ -40,7 +55,7 @@
 </script>
 
 <!-- KnockoutJS Root Element -->
-<div data-bind="template: { name: 'Product-Selections-Body' }"></div>
+<div data-bind="template: { name: 'Product-Variant-Selections-Body' }"></div>
 
 <style>
     body {
@@ -52,10 +67,16 @@
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.ProductSelections = function () {
+    ProfitWiseWidgets.ProductVariantSelections = function () {
         var self = this;
         
-        self.ReportId =  ko.observable(@Model.Id);
+        self.ReportId = ko.observable(@Model.Id);
+        self.SelectionType = ko.observable('@Model.SelectionType');
+
+        self.IsProductSelection = ko.computed(function() {
+            return self.SelectionType() == '@ProductVariantSelectionModel.ProductType';
+        });
+
         self.SelectionsGrid = ko.observableArray();
         
         self.LoadDataForCurrentPage = function () {
@@ -63,7 +84,11 @@
                 function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
 
-                    ajax.HttpGet("/ReportService/ProductSelectionsByPage" +
+                    var urlBase = self.IsProductSelection()
+                        ? "/ReportService/ProductSelectionsByPage"
+                        : "/ReportService/VariantSelectionsByPage";
+
+                    ajax.HttpGet(urlBase +
                         "?reportId=" + self.ReportId() +
                         "&pageNumber=" + self.PagingModel.PageNumber() +
                         "&pageSize=" + self.PagingModel.PageSize(),
@@ -71,7 +96,12 @@
                 },
                 function (data) {
                     self.SelectionsGrid(data.Selections);
-                    self.PagingModel.RecordCount(data.RecordCounts.ProductCount);
+
+                    if (self.IsProductSelection()) {
+                        self.PagingModel.RecordCount(data.RecordCounts.ProductCount);
+                    } else {
+                        self.PagingModel.RecordCount(data.RecordCounts.VariantCount);
+                    }
                 });
         };
 
@@ -86,7 +116,7 @@
         return self;
     };
 
-    var model = new ProfitWiseWidgets.ProductSelections();
+    var model = new ProfitWiseWidgets.ProductVariantSelections();
     model.LoadDataForCurrentPage();
     ko.applyBindings(model);
 </script>

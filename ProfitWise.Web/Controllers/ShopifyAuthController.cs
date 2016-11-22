@@ -273,7 +273,7 @@ namespace ProfitWise.Web.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Dashboard", "UserMain");
+            return RedirectToAction("Dashboard", "Report");
         }
 
     }

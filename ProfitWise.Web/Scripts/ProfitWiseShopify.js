@@ -35,12 +35,12 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             },
                             {
                                 label: "Reports",
-                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Reports",
+                                href: ProfitWiseConfig.BaseUrl + "/Report/Reports",
                                 target: "app"
                             },
                             {
                                 label: "Edit Preferences",
-                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Preferences",
+                                href: ProfitWiseConfig.BaseUrl + "/Report/Preferences",
                                 target: "app"
                             },
                             {
@@ -55,17 +55,17 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             },
                             {
                                 label: "Manage Purchase Orders",
-                                href: ProfitWiseConfig.BaseUrl + "/UserMain/ManagePurchaseOrders",
+                                href: ProfitWiseConfig.BaseUrl + "/Report/ManagePurchaseOrders",
                                 target: "app"
                             },
                             {
                                 label: "Edit Goals",
-                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Goals",
+                                href: ProfitWiseConfig.BaseUrl + "/Report/Goals",
                                 target: "app"
                             },
                             {
                                 label: "Product Consolidation",
-                                href: ProfitWiseConfig.BaseUrl + "/UserMain/Products",
+                                href: ProfitWiseConfig.BaseUrl + "/Report/Products",
                                 target: "app"
                             },
                             {
@@ -113,7 +113,7 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
     flow.exec(
         function () {
             var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpGet("/UserMain/Ping", this);
+            ajax.HttpGet("/Report/Ping", this);
         },
         function () {            
             ShopifyApp.Modal.open(

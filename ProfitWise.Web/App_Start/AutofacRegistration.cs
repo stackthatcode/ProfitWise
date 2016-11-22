@@ -62,7 +62,7 @@ namespace ProfitWise.Web
             //registry.Add(typeof(ErrorForensics));
 
             // Controller registration            
-            builder.RegisterType<UserMainController>()
+            builder.RegisterType<ReportController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<AdminHomeController>()

@@ -1,8 +1,8 @@
 ﻿
-<script type="text/html" id="Report-Editor-Header-Master-Product">
+<script type="text/html" id="Report-Editor-Header-Sku">
     <!--<div data-bind="if: SelectionModel.ShowSplashPage">
         <div data-bind="template: { name: 'Report-Editor-No-Filters',
-                        data: { clickCallback:  HideSplashPage, plural: 'Products', singular: 'Product' } }">
+                    data: { clickCallback:  HideSplashPage, plural: 'Variants', singular: 'Variant' } }">
         </div>
     </div>-->
 
@@ -17,21 +17,21 @@
             <div class="col-xs-12 no-side-padding">
                 <div style="width: 100%; border-top: 1px dashed #CCC;"></div>
                 <a href="#" style="position: absolute; top: -40px; font-weight: 700;"
-                   data-bind="click: DeselectAll">Remove Product Filters</a>
+                   data-bind="click: DeselectAll">Remove Variant Filters</a>
             </div>
         </div>
     </div>
 </script>
 
-<script type="text/html" id="Report-Editor-Body-Master-Product">
+<script type="text/html" id="Report-Editor-Body-Sku">
     <div class="row-fluid" style="min-height: 400px;">
         <div class="col-xs-7 reduced-padding">
             <div data-bind="if: PageOfItems().length == 0">
-                <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Products' } }"></div>
+                <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Variants' } }"></div>
             </div>
 
             <div data-bind="if: PageOfItems().length > 0">
-                <table id="product-types" class="table table-hover" style="width: 100%; height: 100%; margin: 0;">
+                <table id="product-types" class="table" style="width: 100%; height: 100%; margin: 0;">
                     <tbody data-bind="foreach: PageOfItems">
                         <tr style="border-top: 0;" data-bind="click: $data.SelectChange">
                             <td style="color:#777;">
@@ -42,36 +42,38 @@
                                 </div>
                             </td>
 
-                            <td style="width:60%;" class="overflow-gracefully">
-                                <span data-bind="text: $data.Title, tooltip: { title: $data.Title }"></span>
+                            <td style="width:45%" class="overflow-gracefully">
+                                <span data-bind="text: $data.ProductTitle, tooltip: { title: $data.ProductTitle }"></span>
                                 <br />
                                 <span data-bind="text: $data.Vendor" style="font-size:0.8em; font-weight:700; color:#666;"></span>
                             </td>
 
-                            <td style="width:30%;">(<span data-bind="text: $data.VariantCount"></span> Variants)</td>
+                            <td style="width:45%" class="overflow-gracefully">
+                                <span data-bind="text: $data.VariantTitle, tooltip: { title: $data.VariantTitle }"></span>
+                                <br />
+                                <span data-bind="text:$data.Sku" style="font-size:0.8em; font-weight:700; color:#666;"></span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="col-xs-4">
-        </div>
     </div>
 </script>
 
 <script>
-    ProfitWiseWidgets.ReportMasterProductModel = function (parent) {
+    ProfitWiseWidgets.SkuFilterModel = function (parent) {
         var self = this;
         self.ReportId = ko.observable();
         self.ParentReportModel = parent;
-        self.FilterType = self.ParentReportModel.ProductFilter;
+        self.FilterType = self.ParentReportModel.SkuFilter;
 
         // Data
         self.PageOfItems = ko.observableArray();
 
         // Paging and Filtering model
         self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
-        self.FilterModel.PlaceHolderText("Search for Products by Title or Vendor...");
+        self.FilterModel.PlaceHolderText("Search for Variants by Title, Vendor, and SKU...");
         self.FilterModel.RegisterRefreshCallback(function () {
             self.ApplyFiltersAndPaging();
         });
@@ -85,15 +87,17 @@
 
         self.SelectionModel = new ProfitWiseWidgets.SelectionModel();
         self.SelectionModel.RegisterUpdateCallback(self.UpdateCallback);
-        
+
         self.SelectionModel.SearchTextFunction = function (item, searchText) {
             return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
-                ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
+                ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
+                ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
+                ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
         };
 
 
         self.DeselectAll = function () {
-            self.ParentReportModel.RemoveFilterType(self.ParentReportModel.ProductFilter);
+            self.ParentReportModel.RemoveFilterType(self.ParentReportModel.SkuFilter);
             self.SelectionModel.ShowSplashPage(true);
         }
 
@@ -104,10 +108,10 @@
 
             flow.exec(
                 function () {
-                    ajax.HttpGet("/ReportService/MasterProducts?reportId=" + self.ReportId(), this);
+                    ajax.HttpGet("/ReportService/Skus?reportId=" + self.ReportId(), this);
                 },
                 function (allItemsFromServer) {
-                    self.SelectionModel.LoadItems(allItemsFromServer);                   
+                    self.SelectionModel.LoadItems(allItemsFromServer);                    
                     self.ApplyFiltersAndPaging();
                     callback();
                 }
@@ -129,7 +133,7 @@
             self.FilterModel.SetRecordCount(filterResults.NumberOfFilteredItems);
             self.PageOfItems(filterResults.PagedItems);
         };
-
+        
         return self;
     };
 </script>

@@ -1,11 +1,12 @@
 ﻿@using ProfitWise.Data.Model
-@Html.Partial("~/Views/UserMain/_FilterPagingWidget.cshtml")
-@Html.Partial("~/Views/UserMain/_SelectionModel.cshtml")
-@Html.Partial("~/Views/UserMain/_ReportEditorCommonTemplates.cshtml")
-@Html.Partial("~/Views/UserMain/_ReportEditorProductType.cshtml")
-@Html.Partial("~/Views/UserMain/_ReportEditorVendor.cshtml")
-@Html.Partial("~/Views/UserMain/_ReportEditorMasterProduct.cshtml")
-@Html.Partial("~/Views/UserMain/_ReportEditorSku.cshtml")
+@Html.Partial("~/Views/Report/_FilterPagingWidget.cshtml")
+@Html.Partial("~/Views/Report/_SelectionModel.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorCommonTemplates.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorProductType.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorVendor.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorMasterProduct.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorSku.cshtml")
+@Html.Partial("~/Views/Report/_SelectionCountPreview.cshtml")
 
 
 <style>
@@ -85,16 +86,16 @@
             <div class="tab-content" style="clear: both;">
                 <!-- Height - 120px -->
                 <div id="report-filter-product-type" role="tabpanel" class="tab-pane active reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Product-Type', data: ReportProductTypeModel }">
+                     data-bind="template: { name: 'Report-Editor-Header-Product-Type', data: ProductTypeFilterModel }">
                 </div>
                 <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Vendor', data: ReportVendorModel }">
+                     data-bind="template: { name: 'Report-Editor-Header-Vendor', data: VendorFilterModel }">
                 </div>
                 <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: ReportMasterProductModel }">
+                     data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: MasterProductFilterModel }">
                 </div>
                 <div id="report-filter-sku" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Sku', data: ReportSkuModel }">
+                     data-bind="template: { name: 'Report-Editor-Header-Sku', data: SkuFilterModel }">
                 </div>
             </div>
         </div>
@@ -103,7 +104,7 @@
             <div style="font-size:1.10em; height:40px; padding-top:8px; font-weight: 700;">Select Filters to add to your Report</div>
             
             <!-- Template for Product and Variant Count -->
-            <span data-bind="template: { name: 'Report-Selection-Preview', data: ReportSelectionPreviewModel }"></span>
+            <span data-bind="template: { name: 'Report-Selection-Preview', data: SelectionCountPreviewModel }"></span>
 
             <p>Select Filters to add to Report, then hit "Ok" when you're done.</p>
 
@@ -140,20 +141,20 @@
 
 <!-- Requires a ReportEditorWidget passed in KO template "data" parameter -->
 <script type="text/html" id="Report-Editor-Body">
-    <div data-bind="if: SelectedFilterModel() == ReportProductTypeModel">
-        <div data-bind="template: { name: 'Report-Editor-Body-Product-Type', data: ReportProductTypeModel }"></div>
+    <div data-bind="if: SelectedFilterModel() == ProductTypeFilterModel">
+        <div data-bind="template: { name: 'Report-Editor-Body-Product-Type', data: ProductTypeFilterModel }"></div>
     </div>
 
-    <div data-bind="if: SelectedFilterModel() == ReportVendorModel">
-        <div data-bind="template: { name: 'Report-Editor-Body-Vendor', data: ReportVendorModel }"></div>
+    <div data-bind="if: SelectedFilterModel() == VendorFilterModel">
+        <div data-bind="template: { name: 'Report-Editor-Body-Vendor', data: VendorFilterModel }"></div>
     </div>
 
-    <div data-bind="if: SelectedFilterModel() == ReportMasterProductModel">
-        <div data-bind="template: { name: 'Report-Editor-Body-Master-Product', data: ReportMasterProductModel }"></div>
+    <div data-bind="if: SelectedFilterModel() == MasterProductFilterModel">
+        <div data-bind="template: { name: 'Report-Editor-Body-Master-Product', data: MasterProductFilterModel }"></div>
     </div>
 
-    <div data-bind="if: SelectedFilterModel() == ReportSkuModel">
-        <div data-bind="template: { name: 'Report-Editor-Body-Sku', data: ReportSkuModel }"></div>
+    <div data-bind="if: SelectedFilterModel() == SkuFilterModel">
+        <div data-bind="template: { name: 'Report-Editor-Body-Sku', data: SkuFilterModel }"></div>
     </div>
 </script>
 
@@ -168,36 +169,38 @@
         self.VendorFilter = "@PwReportFilter.Vendor";
         self.ProductFilter = "@PwReportFilter.Product";
         self.SkuFilter = "@PwReportFilter.Sku";
-
+        
         self.ReportId = ko.observable();
 
+        // Which ever of the Product Type, Vendor, Master Product or Sku models is active will be here
         self.SelectedFilterModel = ko.observable();
 
-        self.FilterByType = function (filterType) {
+        // Selection Preview model
+        self.SelectionCountPreviewModel = new ProfitWiseWidgets.SelectionCountPreviewModel();
+
+        self.GetFiltersByType = function (filterType) {
             return AQ(self.FiltersGrid())
                 .where(function (item) { return item.FilterType == filterType; })
                 .toArray();
         }
 
         self.FiltersGrid = ko.observableArray([]);
-        self.ProductTypesGrid = ko.computed(function () { return self.FilterByType(self.ProductTypeFilter); });
-        self.VendorsGrid = ko.computed(function () { return self.FilterByType(self.VendorFilter); });
-        self.ProductsGrid = ko.computed(function () { return self.FilterByType(self.ProductFilter); });
-        self.SkuGrid = ko.computed(function () { return self.FilterByType(self.SkuFilter); });
+        self.ProductTypesGrid = ko.computed(function () { return self.GetFiltersByType(self.ProductTypeFilter); });
+        self.VendorsGrid = ko.computed(function () { return self.GetFiltersByType(self.VendorFilter); });
+        self.ProductsGrid = ko.computed(function () { return self.GetFiltersByType(self.ProductFilter); });
+        self.SkuGrid = ko.computed(function () { return self.GetFiltersByType(self.SkuFilter); });
 
         self.CancelCallback = function () { };
-
         self.OkCallback = function () { };
-
-        self.OkButtonClick = function () {
-            self.ClickOnNewFilterTab();
-            self.OkCallback();
-        };
 
         self.CancelButtonClick = function () {
             self.CancelCallback();
         };
 
+        self.OkButtonClick = function () {
+            self.ClickOnNewFilterTab();
+            self.OkCallback();
+        };
 
         // When these methods are invoked, the underlying data has changed...
         self.UpdateFilter = function (key, selected, filterType, title) {
@@ -235,12 +238,11 @@
                         data, this);
                 },
                 function () {
-                    var selectionModel = self.SelectionModelByFilterType(item.FilterType);
-                    if (selectionModel) {
-                        selectionModel.SetCheckedItemByKey(item.Key, false);
-                    }
                     self.FiltersGrid.remove(item);
-                    self.ReportSelectionPreviewModel.RefreshProductAndVariantCounts();
+                    self.SelectionCountPreviewModel.RefreshProductAndVariantCounts();
+                    self.SetCheckItemsFromFilters(self.SelectedFilterModel.FilterType());
+
+                    self.SelectedFilterModel().Refresh(self.ReportId(), this);
                 }
             );
         };
@@ -258,18 +260,13 @@
                         data, this);
                 },
                 function () {
-                    var selectionModel = self.SelectionModelByFilterType(filterType);
-                    if (selectionModel) {
-                        selectionModel.UncheckAllItems();
-                    }
+                    var reportModel = self.FilterModelByFilterType(filterType);
+                    reportModel.SelectionModel.UncheckAllItems();
                     self.RefreshFilterSummary();
                 }
             );
         }
 
-        // Product and Variant selections
-        self.ProductSelections = ko.observableArray([]);
-        
         self.RefreshFilterSummary = function (callback) {
             flow.exec(
                 function () {
@@ -283,68 +280,53 @@
                                 self.RemoveFilter(item);
                             }
                         });
-
                     self.FiltersGrid(filters);
-                    self.ReportSelectionPreviewModel.RefreshProductAndVariantCounts(callback);
+
+                    // Also refresh the Product and Variant counts
+                    self.SelectionCountPreviewModel.RefreshProductAndVariantCounts(callback);
                 }
             );
         };
 
+        // Assumes the following interfaces: Refresh(reportId, callback), FilterType
+        self.ClickOnNewFilterTab = function (newFilterModel, bootstrapTabHref) {
+            flow.exec(
+                function () {
+                    if (self.SelectedFilterModel() == newFilterModel) {
+                        return;
+                    }
+                    newFilterModel.Refresh(self.ReportId(), this);
+                },
+                function () {
+                    self.SetCheckItemsFromFilters(newFilterModel.FilterType, newFilterModel);
+                    ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
+                    $('html,body').animate({ scrollTop: 0 });
+                }
+            );
+        };
 
-        // Selection Preview model
-        self.ReportSelectionPreviewModel = new ProfitWiseWidgets.ReportSelectionPreviewModel();
-        
-
-        // Filter Tab mechanics
-        self.ClickOnNewFilterTab =
-            function (newFilterModel, newTabRefreshFunction, bootstrapTabHref) {
-                flow.exec(
-                    function () {
-                        if (self.SelectedFilterModel() == newFilterModel) {
-                            return;
-                        }
-                        newTabRefreshFunction(this);
-                    },
-                    function () {
-                        var filterKeys =
-                            AQ(self.FilterByType(newFilterModel.FilterType))
+        self.SetCheckItemsFromFilters = function(filterType, reportModel) {
+            var filterKeys = AQ(self.GetFiltersByType(filterType))
                                 .select(function (item) { return item.Key })
                                 .toArray();
 
-                        newFilterModel.SelectionModel.SetCheckItemsByKeyArray(filterKeys, true);
-                        self.SelectedFilterModel(newFilterModel);
-                        ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
-                        $('html,body').animate({ scrollTop: 0 });
-                    }
-                );
-            };
+            reportModel.SelectionModel.SetCheckItemsByKeyArray(filterKeys, true);
+        };
 
         self.ProductTypeClick = function () {
-            self.ClickOnNewFilterTab(
-                self.ReportProductTypeModel,
-                function (callback) { self.ReportProductTypeModel.Refresh(self.ReportId(), callback); },
-                "report-filter-product-type");
+            self.ClickOnNewFilterTab(self.ProductTypeFilterModel, "report-filter-product-type");
         };
 
         self.VendorClick = function () {
-            self.ClickOnNewFilterTab(
-                self.ReportVendorModel,
-                function (callback) { self.ReportVendorModel.Refresh(self.ReportId(), callback); },
-                "report-filter-vendor");
+            self.ClickOnNewFilterTab(self.VendorFilterModel, "report-filter-vendor");
         };
 
         self.MasterProductClick = function () {
-            self.ClickOnNewFilterTab(
-                self.ReportMasterProductModel,
-                function (callback) { self.ReportMasterProductModel.Refresh(self.ReportId(), callback); },
-                "report-filter-product");
+            self.ClickOnNewFilterTab(self.MasterProductFilterModel, "report-filter-product");
         };
 
         self.SkuClick = function () {
-            self.ClickOnNewFilterTab(
-                self.ReportSkuModel,
-                function (callback) { self.ReportSkuModel.Refresh(self.ReportId(), callback); },
-                "report-filter-sku");
+            self.ClickOnNewFilterTab(self.SkuFilterModel, "report-filter-sku");
         };
 
         self.RegisterCancelCallback = function (callback) {
@@ -357,30 +339,30 @@
 
         self.LoadReport = function (reportId) {
             self.ReportId(reportId);
-            self.ReportSelectionPreviewModel.ReportId(reportId);
+            self.SelectionCountPreviewModel.ReportId(reportId);
             self.RefreshFilterSummary(function () {
                 self.ProductTypeClick();
             });
         };
 
         // Wire in the individual Report Editor modules
-        self.ReportProductTypeModel = new ProfitWiseWidgets.ReportProductTypeModel(self);
-        self.ReportVendorModel = new ProfitWiseWidgets.ReportVendorModel(self);
-        self.ReportMasterProductModel = new ProfitWiseWidgets.ReportMasterProductModel(self);
-        self.ReportSkuModel = new ProfitWiseWidgets.ReportSkuModel(self);
+        self.ProductTypeFilterModel = new ProfitWiseWidgets.ProductTypeFilterModel(self);
+        self.VendorFilterModel = new ProfitWiseWidgets.VendorFilterModel(self);
+        self.MasterProductFilterModel = new ProfitWiseWidgets.MasterProductFilterModel(self);
+        self.SkuFilterModel = new ProfitWiseWidgets.SkuFilterModel(self);
 
-        self.SelectionModelByFilterType = function (filterType) {
+        self.FilterModelByFilterType = function (filterType) {
             if (filterType == self.ProductTypeFilter) {
-                return self.ReportProductTypeModel.SelectionModel;
+                return self.ProductTypeFilterModel;
             }
             if (filterType == self.VendorFilter) {
-                return self.ReportVendorModel.SelectionModel;
+                return self.VendorFilterModel;
             }
             if (filterType == self.ProductFilter) {
-                return self.ReportMasterProductModel.SelectionModel;
+                return self.MasterProductFilterModel;                
             }
             if (filterType == self.SkuFilter) {
-                return self.ReportSkuModel.SelectionModel;
+                return self.SkuFilterModel;
             }
         };
 

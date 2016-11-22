@@ -255,12 +255,12 @@
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />
     <Compile Include="Models\CommonContextModel.cs" />
-    <Compile Include="Models\SimpleReport.cs" />
+    <Compile Include="Models\ProductVariantSelectionModel.cs" />
     <Compile Include="Plumbing\GlobalConfig.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />
     <Compile Include="Controllers\AdminAuthController.cs" />
     <Compile Include="Controllers\AdminHomeController.cs" />
-    <Compile Include="Controllers\UserMainController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\ShopifyAuthController.cs" />
     <Compile Include="Controllers\ShopifyChallengeResult.cs" />
     <Compile Include="Global.asax.cs">
@@ -325,14 +325,6 @@
     <Content Include="Scripts\ProfitWiseShopify.js" />
     <Content Include="Scripts\ProfitWiseFunctions.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Static\CoGS.html" />
-    <Content Include="Static\CoGSProduct.html" />
-    <Content Include="Static\EditVariantCogsDetail.html" />
-    <Content Include="Static\POAddLineItemAddVariants.html" />
-    <Content Include="Static\POAddLineItemProductSearch.html" />
-    <Content Include="Static\PurchaseOrderEditor.html" />
-    <Content Include="Static\PurchaseOrderManager.html" />
-    <Content Include="Static\SimpleCogsEditor.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -341,7 +333,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
-    <Content Include="Views\UserMain\_ViewStart.cshtml" />
+    <Content Include="Views\Report\_ViewStart.cshtml" />
     <Content Include="Views\Error\ServerFault.cshtml" />
     <Content Include="Views\Shared\_UserLayout.cshtml" />
     <Content Include="Views\UserAuxiliary\About.cshtml" />
@@ -363,7 +355,7 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\UserMain\Dashboard.cshtml" />
+    <Content Include="Views\Report\Dashboard.cshtml" />
     <Content Include="Views\ShopifyAuth\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_AnonymousLayout.cshtml" />
     <Content Include="Views\AdminHome\Index.cshtml" />
@@ -434,37 +426,37 @@
     <Content Include="Views\Cogs\_EditMasterProduct.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportEditor.cshtml" />
+    <Content Include="Views\Report\_ReportEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_FilterPagingWidget.cshtml" />
+    <Content Include="Views\Report\_FilterPagingWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportView.cshtml" />
+    <Content Include="Views\Report\_ReportView.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportEditorProductType.cshtml" />
+    <Content Include="Views\Report\_ReportEditorProductType.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportEditorCommonTemplates.cshtml" />
+    <Content Include="Views\Report\_ReportEditorCommonTemplates.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_SelectionModel.cshtml" />
+    <Content Include="Views\Report\_SelectionModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportEditorVendor.cshtml" />
+    <Content Include="Views\Report\_ReportEditorVendor.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportEditorMasterProduct.cshtml" />
+    <Content Include="Views\Report\_ReportEditorMasterProduct.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportEditorSku.cshtml" />
+    <Content Include="Views\Report\_ReportEditorSku.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\_ReportSelectionPreview.cshtml" />
+    <Content Include="Views\Report\_SelectionCountPreview.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\UserMain\ProductSelections.cshtml" />
+    <Content Include="Views\Report\ProductVariantSelections.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

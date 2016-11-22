@@ -72,7 +72,7 @@
             You have over <span data-bind="text: MaximumNumberOfVariants"></span> Variants selected.
         </div>
         <div class="selection-preview-listing-overflow-bottom">
-            <a href="#">Click here to view all.</a>
+            <a href="#" data-bind="click: LaunchVariantSelectionPopup">Click here to view all.</a>
         </div>
     </div>
 </script>
@@ -80,7 +80,7 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.ReportSelectionPreviewModel = function () {
+    ProfitWiseWidgets.SelectionCountPreviewModel = function () {
         var self = this;
 
         self.MaximumNumberOfProducts = @PreviewSelectionLimit.MaximumNumberOfProducts;
@@ -121,49 +121,59 @@
         };
         
         self.RefreshVariantSelections = function () {
-            flow.exec(function () {
-                var ajax = new ProfitWiseFunctions.Ajax();
-                ajax.HttpGet("/ReportService/VariantSelectionsByPage?reportId=" + self.ReportId(), this);
-            },
-            function (data) {
-                var products =
-                    AQ(data.Selections)
-                        .select(function(item) {
-                            return {
-                                PwMasterProductId: item.PwMasterProductId,
-                                ProductTitle: item.ProductTitle,
-                            };
-                        })
-                        .distinct(function(a, b) { return a.PwMasterProductId == b.PwMasterProductId; })
-                        .toArray();
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/VariantSelectionsByPage?reportId=" + self.ReportId(), this);
+                },
+                function (data) {
+                    var products =
+                        AQ(data.Selections)
+                            .select(function(item) {
+                                return {
+                                    PwMasterProductId: item.PwMasterProductId,
+                                    ProductTitle: item.ProductTitle,
+                                };
+                            })
+                            .distinct(function(a, b) { return a.PwMasterProductId == b.PwMasterProductId; })
+                            .toArray();
 
-                AQ(products)
-                    .each(function(product) {
-                        product.Variants =
-                            AQ(data)
-                                .where(function(item) {
-                                    return item.PwMasterProductId == product.PwMasterProductId;
-                                })
-                                .toArray();
-                    });
+                    AQ(products)
+                        .each(function(product) {
+                            product.Variants =
+                                AQ(data.Selections)
+                                    .where(function(item) {
+                                        return item.PwMasterProductId == product.PwMasterProductId;
+                                    })
+                                    .toArray();
+                        });
 
-                self.VariantSelections(products);
-            });
+                    self.VariantSelections(products);
+                });
         };
 
         self.LaunchProductSelectionPopup = function() {
-            var url =
-                ProfitWiseConfig.BaseUrl +
-                    '/UserMain/ProductSelections?reportId=' + self.ReportId();
+            self.LaunchSelectionPopup('@ProductVariantSelectionModel.ProductType');
+        }
+
+        self.LaunchVariantSelectionPopup = function() {
+            self.LaunchSelectionPopup('@ProductVariantSelectionModel.VariantType');
+        }
+
+        self.LaunchSelectionPopup = function(selectionType) {
+            var url = ProfitWiseConfig.BaseUrl +
+                              '/Report/ProductVariantSelections' +
+                              '?reportId=' + self.ReportId() + 
+                              '&selectionType=' + selectionType;
 
             ProfitWiseFunctions.PopOverCloseAll();
             ProfitWiseShopify.LaunchModal({
                 src: url,
-                title: 'View All Product Selections for Report',
+                title: 'View All ' + selectionType + ' Selections for Report',
                 width: 'small',
                 height: 350,
             });
-        }
+        };
 
         return self;
     };

@@ -44,8 +44,7 @@ namespace ProfitWise.Web.Controllers
             var newReportId = repository.CopyReport(originalReport);
             var report = repository.RetrieveReport(newReportId);
             return new JsonNetResult(report);
-        }
-        
+        }        
 
 
         // Product Types Actions
@@ -131,7 +130,6 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(output);
         }
 
-
         [HttpGet]
         public ActionResult RecordCounts(long reportId)
         {
@@ -140,7 +138,7 @@ namespace ProfitWise.Web.Controllers
             var output = repository.RetrieveReportRecordCount(reportId);            
             return new JsonNetResult(output);
         }
-        
+
 
 
         [HttpGet]
@@ -156,7 +154,6 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { Selections = selections, RecordCounts = counts });
         }
 
-
         [HttpGet]
         public ActionResult VariantSelectionsByPage(long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
         {
@@ -169,8 +166,6 @@ namespace ProfitWise.Web.Controllers
 
             return new JsonNetResult(new { Selections = selections, RecordCounts = counts });
         }
-
-
 
 
         [HttpGet]
