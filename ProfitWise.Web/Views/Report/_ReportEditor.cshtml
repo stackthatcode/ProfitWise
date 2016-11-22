@@ -163,6 +163,7 @@
 
     ProfitWiseWidgets.ReportEditorModel = function () {
         var self = this;
+        self.ReportId = ko.observable();
 
         // Bind the C# internal name
         self.ProductTypeFilter = "@PwReportFilter.ProductType";
@@ -170,13 +171,63 @@
         self.ProductFilter = "@PwReportFilter.Product";
         self.SkuFilter = "@PwReportFilter.Sku";
         
-        self.ReportId = ko.observable();
+        // Wire in the individual Report Editor modules
+        self.ProductTypeFilterModel = new ProfitWiseWidgets.ProductTypeFilterModel(self);
+        self.VendorFilterModel = new ProfitWiseWidgets.VendorFilterModel(self);
+        self.MasterProductFilterModel = new ProfitWiseWidgets.MasterProductFilterModel(self);
+        self.SkuFilterModel = new ProfitWiseWidgets.SkuFilterModel(self);
+
+        self.FilterModelByFilterType = function (filterType) {
+            if (filterType == self.ProductTypeFilter) {
+                return self.ProductTypeFilterModel;
+            }
+            if (filterType == self.VendorFilter) {
+                return self.VendorFilterModel;
+            }
+            if (filterType == self.ProductFilter) {
+                return self.MasterProductFilterModel;
+            }
+            if (filterType == self.SkuFilter) {
+                return self.SkuFilterModel;
+            }
+        };
+
+        self.SetAllFilterModelsReportId = function(reportId) {
+            self.ProductTypeFilterModel.ReportId(reportId);
+            self.VendorFilterModel.ReportId(reportId);
+            self.MasterProductFilterModel.ReportId(reportId);
+            self.SkuFilterModel.ReportId(reportId);
+        };
 
         // Which ever of the Product Type, Vendor, Master Product or Sku models is active will be here
         self.SelectedFilterModel = ko.observable();
 
+        self.RefreshSelectedFilterModel = function(callback) {
+            flow.exec(
+                function () {
+                    self.SelectedFilterModel().Refresh(this);
+                },
+                function () {
+                    var filterType = self.SelectionModel().FilterType;
+                    var filterKeys = AQ(self.GetFiltersByType(filterType))
+                                        .select(function (item) { return item.Key })
+                                        .toArray();
+
+                    self.SelectionModel().SetCheckItemsByKeyArray(filterKeys, true);
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+
         // Selection Preview model
         self.SelectionCountPreviewModel = new ProfitWiseWidgets.SelectionCountPreviewModel();
+
+        
+        // Filter Grid Model
+        self.FiltersGrid = ko.observableArray([]);
 
         self.GetFiltersByType = function (filterType) {
             return AQ(self.FiltersGrid())
@@ -184,25 +235,14 @@
                 .toArray();
         }
 
-        self.FiltersGrid = ko.observableArray([]);
         self.ProductTypesGrid = ko.computed(function () { return self.GetFiltersByType(self.ProductTypeFilter); });
         self.VendorsGrid = ko.computed(function () { return self.GetFiltersByType(self.VendorFilter); });
         self.ProductsGrid = ko.computed(function () { return self.GetFiltersByType(self.ProductFilter); });
         self.SkuGrid = ko.computed(function () { return self.GetFiltersByType(self.SkuFilter); });
 
-        self.CancelCallback = function () { };
-        self.OkCallback = function () { };
 
-        self.CancelButtonClick = function () {
-            self.CancelCallback();
-        };
 
-        self.OkButtonClick = function () {
-            self.ClickOnNewFilterTab();
-            self.OkCallback();
-        };
-
-        // When these methods are invoked, the underlying data has changed...
+        // AJAX / server-side interfacing methods
         self.UpdateFilter = function (key, selected, filterType, title) {
             flow.exec(
                 function () {
@@ -239,10 +279,10 @@
                 },
                 function () {
                     self.FiltersGrid.remove(item);
-                    self.SelectionCountPreviewModel.RefreshProductAndVariantCounts();
-                    self.SetCheckItemsFromFilters(self.SelectedFilterModel.FilterType());
-
-                    self.SelectedFilterModel().Refresh(self.ReportId(), this);
+                    self.SelectionCountPreviewModel.Refresh(this);
+                },
+                function () {
+                    self.RefreshSelectedFilterModel();
                 }
             );
         };
@@ -283,10 +323,11 @@
                     self.FiltersGrid(filters);
 
                     // Also refresh the Product and Variant counts
-                    self.SelectionCountPreviewModel.RefreshProductAndVariantCounts(callback);
+                    self.SelectionCountPreviewModel.Refresh(callback);
                 }
             );
         };
+
 
         // Assumes the following interfaces: Refresh(reportId, callback), FilterType
         self.ClickOnNewFilterTab = function (newFilterModel, bootstrapTabHref) {
@@ -295,22 +336,14 @@
                     if (self.SelectedFilterModel() == newFilterModel) {
                         return;
                     }
-                    newFilterModel.Refresh(self.ReportId(), this);
+                    self.SelectedFilterModel(newFilterModel);
+                    self.RefreshSelectedFilterModel(this);
                 },
                 function () {
-                    self.SetCheckItemsFromFilters(newFilterModel.FilterType, newFilterModel);
                     ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
                     $('html,body').animate({ scrollTop: 0 });
                 }
             );
-        };
-
-        self.SetCheckItemsFromFilters = function(filterType, reportModel) {
-            var filterKeys = AQ(self.GetFiltersByType(filterType))
-                                .select(function (item) { return item.Key })
-                                .toArray();
-
-            reportModel.SelectionModel.SetCheckItemsByKeyArray(filterKeys, true);
         };
 
         self.ProductTypeClick = function () {
@@ -329,6 +362,12 @@
             self.ClickOnNewFilterTab(self.SkuFilterModel, "report-filter-sku");
         };
 
+
+        // OK & Cancel Callbacks
+        self.CancelCallback = function () { };
+
+        self.OkCallback = function () { };
+
         self.RegisterCancelCallback = function (callback) {
             self.CancelCallback = callback;
         };
@@ -337,33 +376,29 @@
             self.OkCallback = callback;
         };
 
-        self.LoadReport = function (reportId) {
-            self.ReportId(reportId);
-            self.SelectionCountPreviewModel.ReportId(reportId);
-            self.RefreshFilterSummary(function () {
-                self.ProductTypeClick();
-            });
+        self.CancelButtonClick = function () {
+            self.CancelCallback();
         };
 
-        // Wire in the individual Report Editor modules
-        self.ProductTypeFilterModel = new ProfitWiseWidgets.ProductTypeFilterModel(self);
-        self.VendorFilterModel = new ProfitWiseWidgets.VendorFilterModel(self);
-        self.MasterProductFilterModel = new ProfitWiseWidgets.MasterProductFilterModel(self);
-        self.SkuFilterModel = new ProfitWiseWidgets.SkuFilterModel(self);
+        self.OkButtonClick = function () {
+            self.ClickOnNewFilterTab();
+            self.OkCallback();
+        };
 
-        self.FilterModelByFilterType = function (filterType) {
-            if (filterType == self.ProductTypeFilter) {
-                return self.ProductTypeFilterModel;
-            }
-            if (filterType == self.VendorFilter) {
-                return self.VendorFilterModel;
-            }
-            if (filterType == self.ProductFilter) {
-                return self.MasterProductFilterModel;                
-            }
-            if (filterType == self.SkuFilter) {
-                return self.SkuFilterModel;
-            }
+
+        // Report data bootstrapping function
+        self.LoadReport = function (reportId) {
+            flow.exec(
+                function() {
+                    self.ReportId(reportId);
+                    self.SetAllFilterModelsReportId(reportId);
+                    self.SelectionCountPreviewModel.ReportId(reportId);
+
+                    self.RefreshFilterSummary(this);
+                },
+                function() {
+                    self.ProductTypeClick();
+                });
         };
 
         return self;

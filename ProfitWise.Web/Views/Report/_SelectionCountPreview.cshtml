@@ -85,7 +85,7 @@
 
         self.MaximumNumberOfProducts = @PreviewSelectionLimit.MaximumNumberOfProducts;
         self.MaximumNumberOfVariants = @PreviewSelectionLimit.MaximumNumberOfVariants;
-
+        
         self.ReportId = ko.observable();
         self.ProductCount = ko.observable(0);
         self.VariantCount = ko.observable(0);
@@ -93,7 +93,7 @@
         self.ProductSelections = ko.observableArray([]);
         self.VariantSelections = ko.observableArray([]);
 
-        self.RefreshProductAndVariantCounts = function (callback) {
+        self.Refresh = function (callback) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();

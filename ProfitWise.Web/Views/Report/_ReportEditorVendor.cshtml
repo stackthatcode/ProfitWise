@@ -86,8 +86,7 @@
             self.SelectionModel.ShowSplashPage(true);
         }
 
-        self.Refresh = function (reportId, callback) {
-            self.ReportId(reportId);
+        self.Refresh = function (callback) {
             self.FilterModel.SetPageNumber(1);
             var ajax = new ProfitWiseFunctions.Ajax();
 
