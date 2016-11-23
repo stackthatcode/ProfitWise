@@ -46,21 +46,26 @@
                 </div>
             </div>
 
-            <div style="font-size: 14px; color: #666; line-height: 22px;">
-                <span data-bind="text: CurrentReport().FilterDigest"></span>
+            <div style="font-size: 0.9em; color: #666; line-height: 22px;">
+                <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
                 <br />
-                <span data-bind="text: CurrentReport().GroupAndOrderingDigest"></span>
+                <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
+                <!--<span data-bind="text: CurrentReport().FilterDigest"></span>-->
+                <br />
+                <span>Grouped by Vendor, Ordered by Profitability</span>
+                <!--<span data-bind="text: CurrentReport().GroupAndOrderingDigest"></span>-->
                 <br />
             </div>
         </div>
     </div>
 
-    <div class="col-xs-6 no-side-padding">
+    <div class="col-xs-6 no-side-padding" style="padding-top:10px;">
         <div class="btn-group pull-right">
-            <a href="#" class="btn btn-sm btn-default dropdown-toggle"
+            <a href="#" class="btn btn-default dropdown-toggle"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Select Report <span class="caret"></span>
             </a>
+
             <ul class="dropdown-menu" style="width: 260px;">
                 <!-- ko foreach: SystemDefinedReports -->
                 <li>
@@ -92,13 +97,13 @@
         </div>
 
         <div class="pull-right" style="margin-right: 3px;">
-            <a href="" class="btn btn-sm btn-default" data-bind="click: EditReportClick">
+            <a href="" class="btn btn-default" data-bind="click: EditReportClick">
                 Edit Report <i class="glyphicon glyphicon-pencil"></i>
             </a>
         </div>
 
         <div class="pull-right btn-group" style="margin-right: 3px;">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
 
             <ul class="dropdown-menu">
                 <li><a href="#">Save As</a></li>
@@ -110,7 +115,7 @@
         <div style="clear: both; height: 10px;"></div>
 
         <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
-            <input type="text" class="form-control" style="width: 100%; font-size: 13px;" id="date-range-picker" />
+            <input type="text" class="form-control" style="width: 100%; font-size: 1.0em;" id="date-range-picker" />
             <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
         </div>
 
