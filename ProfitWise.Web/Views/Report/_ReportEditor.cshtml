@@ -106,17 +106,7 @@
             <!-- Template for Product and Variant Count -->
             <span data-bind="template: { name: 'Report-Selection-Preview', data: SelectionCountPreviewModel }"></span>
 
-            <p>Select Filters to add to Report, then hit "Ok" when you're done.</p>
-
-            <div style="margin-bottom:20px;">
-                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: CancelButtonClick">
-                    Cancel &nbsp;<i class="glyphicon glyphicon-remove"></i>
-                </a>
-
-                <a href="#" class="btn btn-primary btn-sm" style="width: 95px;" data-bind="click: OkButtonClick">
-                    Ok &nbsp;<i class="glyphicon glyphicon-ok"></i>
-                </a>
-            </div>
+            <p>Add or remove filters from Report, then hit "Ok" to view the updated results.</p>
 
             <div style="overflow-y:auto; height:300px;">
                 <div style="height:10px;"></div>
@@ -208,12 +198,15 @@
                     self.SelectedFilterModel().Refresh(this);
                 },
                 function () {
-                    var filterType = self.SelectionModel().FilterType;
+                    var filterType = self.SelectedFilterModel().FilterType;
                     var filterKeys = AQ(self.GetFiltersByType(filterType))
                                         .select(function (item) { return item.Key })
                                         .toArray();
 
-                    self.SelectionModel().SetCheckItemsByKeyArray(filterKeys, true);
+                    self.SelectedFilterModel()
+                        .SelectionModel
+                        .SetCheckItemsByKeyArray(filterKeys, true);
+
                     if (callback) {
                         callback();
                     }
@@ -362,28 +355,6 @@
             self.ClickOnNewFilterTab(self.SkuFilterModel, "report-filter-sku");
         };
 
-
-        // OK & Cancel Callbacks
-        self.CancelCallback = function () { };
-
-        self.OkCallback = function () { };
-
-        self.RegisterCancelCallback = function (callback) {
-            self.CancelCallback = callback;
-        };
-
-        self.RegisterOkCallback = function (callback) {
-            self.OkCallback = callback;
-        };
-
-        self.CancelButtonClick = function () {
-            self.CancelCallback();
-        };
-
-        self.OkButtonClick = function () {
-            self.ClickOnNewFilterTab();
-            self.OkCallback();
-        };
 
 
         // Report data bootstrapping function

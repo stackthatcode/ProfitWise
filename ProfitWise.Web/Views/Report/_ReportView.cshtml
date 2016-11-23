@@ -1,107 +1,140 @@
-﻿<script type="text/html" id="Report-View-Synopsis">
-    <div data-bind="if: CurrentReport() != null">
+﻿
+<script type="text/html" id="Report-View-Header">
+    <div data-bind="if: $data.InEditMode">
+        <div data-bind="template: { name: 'Report-View-Edit-Mode-On' }"></div>    
+    </div>
+    
+    <div data-bind="ifnot: $data.InEditMode">
+        <div data-bind="template: { name: 'Report-View-Edit-Mode-Off', afterRender: AfterRenderDateRangePicker }"></div>
+    </div>
+</script>
+
+<script type="text/html" id="Report-View-Edit-Mode-On">
+    <div class="col-xs-6 no-side-padding">
         <div class="popover-container">
-            <h4 style="display: inline-block; font-weight: 700;" data-bind="text: CurrentReport().Name"></h4>
-            
-            <div style="display:inline-block;" data-bind="if:ReportEditorVisible">
-                (Editing Report)
+            <div data-bind="if: CurrentReport()">
+                <h4 style="display: inline-block; font-weight: 700;" 
+                    data-bind="text: $data.CurrentReport().Name"></h4>
+
+                <div style="margin-left:7px; display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING REPORT)</div>
             </div>
         </div>
+    </div>
 
-        <div style="font-size: 14px; color: #666; line-height: 22px;">
-            <span data-bind="text: CurrentReport().FilterDigest"></span>
-            <br />
-            <span data-bind="text: CurrentReport().GroupAndOrderingDigest"></span>
-            <br />
+    <div class="col-xs-6 no-side-padding">
+        <div class="pull-right" style="padding-top: 10px;">
+            <a href="#" class="btn btn-primary" style="width:100px;" 
+               data-bind="click: CancelButtonClick">
+                Cancel <i class="glyphicon glyphicon-remove"></i>
+            </a>
+            <a href="#" class="btn btn-primary" style="width:100px; margin-left:10px;"
+               data-bind="click: OkButtonClick">                
+                OK <i class="glyphicon glyphicon-ok"></i>
+            </a>
         </div>
     </div>
 </script>
 
-<script type="text/html" id="Report-View-Interface">
+<script type="text/html" id="Report-View-Edit-Mode-Off">
+    <div class="col-xs-6 no-side-padding">
+        <div data-bind="if: CurrentReport()">
+            <div class="popover-container">
+                <h4 style="display: inline-block; font-weight: 700;" data-bind="text: CurrentReport().Name"></h4>
 
-    <div class="btn-group pull-right">
-        <a href="#" class="btn btn-sm btn-default dropdown-toggle"
-           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Select Report <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu" style="width: 260px;">
-            <!-- ko foreach: SystemDefinedReports -->
-            <li>
-                <a href="#" data-bind="click: $parent.SelectReportClick">
-                    <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
-                        <i class="glyphicon glyphicon-ok"></i>
-                    </span>
-                    <span data-bind="text: Name"></span>
-                </a>
-            </li>
-            <!-- /ko -->
+                <div style="display:inline-block;" data-bind="if:InEditMode">
+                    (Editing Report)
+                </div>
+            </div>
 
-            <li role="separator" class="divider"></li>
-
-            <!-- ko if: UserDefinedReports().length == 0 -->
-            <li><a href="#">(No custom reports defined yet)</a></li>
-            <!-- /ko -->
-
-            <!-- ko foreach: UserDefinedReports -->
-            <li>
-                <a href="#" data-bind="click: $parent.SelectReportClick">
-                    <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
-                        <i class="glyphicon glyphicon-ok"></i>
-                    </span>
-                    <span data-bind="text: Name"></span>
-                </a>
-            </li>
-            <!-- /ko -->
-        </ul>
+            <div style="font-size: 14px; color: #666; line-height: 22px;">
+                <span data-bind="text: CurrentReport().FilterDigest"></span>
+                <br />
+                <span data-bind="text: CurrentReport().GroupAndOrderingDigest"></span>
+                <br />
+            </div>
+        </div>
     </div>
 
-    <div class="pull-right" style="margin-right: 3px;">
-        <div data-bind="ifnot:ReportEditorVisible">
+    <div class="col-xs-6 no-side-padding">
+        <div class="btn-group pull-right">
+            <a href="#" class="btn btn-sm btn-default dropdown-toggle"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Select Report <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" style="width: 260px;">
+                <!-- ko foreach: SystemDefinedReports -->
+                <li>
+                    <a href="#" data-bind="click: $parent.SelectReportClick">
+                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                            <i class="glyphicon glyphicon-ok"></i>
+                        </span>
+                        <span data-bind="text: Name"></span>
+                    </a>
+                </li>
+                <!-- /ko -->
+
+                <li role="separator" class="divider"></li>
+
+                <!-- ko if: UserDefinedReports().length == 0 -->
+                <li><a href="#">(No custom reports defined yet)</a></li>
+                <!-- /ko -->
+                <!-- ko foreach: UserDefinedReports -->
+                <li>
+                    <a href="#" data-bind="click: $parent.SelectReportClick">
+                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                            <i class="glyphicon glyphicon-ok"></i>
+                        </span>
+                        <span data-bind="text: Name"></span>
+                    </a>
+                </li>
+                <!-- /ko -->
+            </ul>
+        </div>
+
+        <div class="pull-right" style="margin-right: 3px;">
             <a href="" class="btn btn-sm btn-default" data-bind="click: EditReportClick">
                 Edit Report <i class="glyphicon glyphicon-pencil"></i>
             </a>
         </div>
-        <div data-bind="if:ReportEditorVisible">
-            <a href="" class="btn btn-sm btn-default disabled" data-bind="click: SaveReportClick">
-                Edit Report <i class="glyphicon glyphicon-pencil"></i>
-            </a>
+
+        <div class="pull-right btn-group" style="margin-right: 3px;">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+
+            <ul class="dropdown-menu">
+                <li><a href="#">Save As</a></li>
+                <li><a href="#">Rename</a></li>
+                <li><a href="#">Delete</a></li>
+            </ul>
         </div>
+
+        <div style="clear: both; height: 10px;"></div>
+
+        <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
+            <input type="text" class="form-control" style="width: 100%; font-size: 13px;" id="date-range-picker" />
+            <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
+        </div>
+
+        <div style="clear: both; height: 10px;"></div>
     </div>
-
-    <div class="pull-right btn-group" style="margin-right: 3px;">
-        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
-
-        <ul class="dropdown-menu">
-            <li><a href="#">Save As</a></li>
-            <li><a href="#">Rename</a></li>
-            <li><a href="#">Delete</a></li>
-        </ul>
-    </div>
-
-    <div style="clear: both; height: 10px;"></div>
-
-    <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
-        <input type="text" class="form-control" style="width: 100%; font-size: 13px;" id="date-range-picker"/>
-        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
-    </div>
-
-    <div style="clear: both; height: 10px;"></div>
 </script>
+
 
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    // Requires a reference to a ReportEditorVisible observable
-    ProfitWiseWidgets.ReportViewModel = function (reportEditorVisible) {
+    // Requires a reference to a InEditMode observable
+    ProfitWiseWidgets.ReportViewModel = function () {
         var self = this;
 
-        self.ReportEditorVisible = reportEditorVisible;
-
+        self.InEditMode = ko.observable(false);
+        
         self.DateRange = ko.observable();
+
         self.CurrentReport = ko.observable();
+
         self.PreviousReport = ko.observable();
         self.Reports = ko.observable([]);
-        
+
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.Reports()).where(function (item) { return item.UserDefined == true; }).toArray();
         });
@@ -114,25 +147,84 @@
         self.SelectReportCallback = function (reportId) {
         };
 
+        self.SelectReportByReportId = function (id) {
+            var report = AQ(self.Reports()).firstOrDefault(function (item) { return item.PwReportId == id; });
+            if (report != null) {
+                self.SelectReportClick(report);
+            }
+        };
+
+        self.SelectReportClick = function (data) {
+            self.CurrentReport(data);
+            self.SelectReportCallback(data.PwReportId);
+        }
+
+
         self.EditReportCallback = function (reportId) {
+        };        
+        
+        self.EditReportClick = function () {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost(
+                        "/ReportService/CopyAndEdit",
+                        { reportId: self.CurrentReport().PwReportId },
+                        this);
+                },
+                function (data) {
+                    self.CurrentReport(data);
+                    self.InEditMode(true);
+                    self.EditReportCallback(data.PwReportId);
+                });
+        };
+
+
+        self.SaveReportClick = function () {
+            self.InEditMode(false);
+            // TODO - add Save function
+        };
+
+
+        // OK & Cancel Callbacks
+        self.CancelCallback = function () { };
+
+        self.OkCallback = function () { };
+
+        self.RegisterCancelCallback = function (callback) {
+            self.CancelCallback = callback;
+        };
+
+        self.RegisterOkCallback = function (callback) {
+            self.OkCallback = callback;
+        };
+
+        self.CancelButtonClick = function () {
+            self.InEditMode(false);
+            self.CancelCallback();
+        };
+
+        self.OkButtonClick = function () {
+            self.InEditMode(false);
+            self.OkCallback();
         };
 
 
         self.LoadReports = function (callback) {
             flow.exec(
-                function() {
+                function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet(
                         "/ReportService/All",
                         this);
                 },
-                function (data) {                    
+                function (data) {
                     AQ(data)
                         .each(
-                            function(item) {
+                            function (item) {
                                 item.CurrentlySelected =
                                     ko.computed(
-                                        function() {
+                                        function () {
                                             if (!self.CurrentReport()) {
                                                 return false;
                                             }
@@ -146,43 +238,14 @@
                     }
                 });
         };
-
-        self.SelectReportByReportId = function (id) {
-            var report = AQ(self.Reports()).firstOrDefault(function(item) { return item.PwReportId == id; });
-            if (report != null) {
-                self.SelectReportClick(report);
-            }
-        };
-
-        self.SelectReportClick = function (data) {
-            self.CurrentReport(data);
-            self.SelectReportCallback(data.PwReportId);
-        }
-
-        self.EditReportClick = function () {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost(
-                        "/ReportService/CopyAndEdit",
-                        { reportId: self.CurrentReport().PwReportId },
-                        this);
-                },
-                function (data) {
-                    self.CurrentReport(data);
-                    self.EditReportCallback(data.PwReportId);
-                });
-        };
-
-        self.SaveReportClick = function () {
-            self.ReportEditorVisible(false);
-        };
+                
         
-        self.CreateDateRangePicker = function () {
+        self.AfterRenderDateRangePicker = function () {
+
             $(".date-range-picker-icon").click(function () {
                 $(this).parent().find('input').click();
             });
-
+            
             $('#date-range-picker')
                 .daterangepicker({
                     "parentEl": "#date-range-picker-parent",

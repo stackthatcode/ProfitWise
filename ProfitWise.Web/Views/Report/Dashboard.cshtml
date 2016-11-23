@@ -28,13 +28,15 @@
 
 <script type="text/html" id="Page-Header">
     <!-- Bottom Header - Report Editor -->
-    <div class="fixed-positioning-container" style="top: 145px;" data-bind="visible: $root.ReportEditorVisible">
-        <!-- Space -->
-        <div class="standard-header-sleeve" style="height: 178px;">
-            <div class="standard-header standard-padding" style="overflow: visible;">
+    <div data-bind="visible: $root.ReportViewModel.InEditMode">
+        <div class="fixed-positioning-container" style="top: 145px;">
+            <!-- Space -->
+            <div class="standard-header-sleeve" style="height: 178px;">
+                <div class="standard-header standard-padding" style="overflow: visible;">
 
-                <!-- Report Editor component -->
-                <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportEditorModel }"></div>
+                    <!-- Report Editor component -->
+                    <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportEditorModel }"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -44,19 +46,8 @@
         <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header standard-padding top-border-facade" style="overflow: visible;">
-
-                <!-- Non-"filter editor" segment -->
-                <div class="row-fluid" style="padding-top: 20px;">
-                    <div class="col-xs-5 no-side-padding"
-                         data-bind="template: { name: 'Report-View-Synopsis', data: $root.ReportViewModel }">                        
-                    </div>
-
-                    <div class="col-xs-7 no-side-padding"
-                         data-bind="template: { name: 'Report-View-Interface', data: $root.ReportViewModel }">
-                        
-                    </div>
-                </div>
+            <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">                
+                <div data-bind="template: { name: 'Report-View-Header', data: $root.ReportViewModel }"></div>
             </div>
         </div>
     </div>
@@ -66,11 +57,11 @@
     <!-- Will move/transistion when the filters appear -->
     <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
 
-        <div data-bind="ifnot: $root.ReportEditorVisible">
+        <div data-bind="ifnot: $root.ReportViewModel.InEditMode">
             <div data-bind="template: { name: 'Dashboard-Body'}" style="position: relative; width: 100%;"></div>
         </div>
 
-        <div data-bind="if: $root.ReportEditorVisible"
+        <div data-bind="if: $root.ReportViewModel.InEditMode"
              style="margin-top:140px;">
             <div data-bind="template: { name: 'Report-Editor-Body', data: $root.ReportEditorModel }"></div>
         </div>
@@ -97,31 +88,20 @@
 
     ProfitWise.DashboardModel = function () {
         var self = this;
-        self.ReportEditorVisible = ko.observable(false);
 
         // Report View Model configuration
-        self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel(self.ReportEditorVisible);
-        
+        self.ReportViewModel = new ProfitWiseWidgets.ReportViewModel();        
         self.ReportViewModel.SelectReportCallback = function (reportId) {
             console.log('Selected Report : ' + reportId);
             // TODO - add functionality for this
         };
-
         self.ReportViewModel.EditReportCallback = function(reportId) {
-            self.ReportEditorVisible(true);
+            self.ReportViewModel.InEditMode(true);
             self.ReportEditorModel.LoadReport(reportId);
         };        
         
         // Report Editor Model configuration
-        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
-        
-        self.ReportEditorModel.OkCallback = function () {
-            self.ReportEditorVisible(false);
-        };
-
-        self.ReportEditorModel.CancelCallback = function () {
-            self.ReportEditorVisible(false);
-        };
+        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();        
 
         return self;
     };
@@ -132,13 +112,16 @@
             ProfitWiseFunctions.PopOverAutoCloseInit();
 
             var model = new ProfitWise.DashboardModel();
-
             ko.applyBindings(model);
-            model.ReportViewModel.CreateDateRangePicker(); // Keep this here...?
-            model.ReportViewModel.LoadReports(
+
+            flow.exec(
+                function() {
+                    model.ReportViewModel.LoadReports(this);
+                },
                 function () {
                     model.ReportViewModel.SelectReportByReportId(OverallProfitabilityReportId);
-                });
+                }
+            );
         });
 </script>
 
