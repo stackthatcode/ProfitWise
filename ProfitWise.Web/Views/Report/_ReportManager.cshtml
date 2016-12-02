@@ -1,4 +1,55 @@
-﻿
+﻿@Html.Partial("~/Views/Report/_ReportEditor.cshtml")
+
+
+
+<script type="text/html" id="Report-Manager-Top-Level">
+    <div data-bind="template: { name: 'Report-Manager-Header' }"></div>
+
+    <div class="container page-content-sleeve">
+        <!-- Will move/transistion when the filters appear -->
+        <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
+
+            <!-- TODO : allow injection of external template -->
+            <div data-bind="ifnot: $data.InEditMode">
+                <div data-bind="template: { name: 'Body-Template-That-You-Configured'}" style="position: relative; width: 100%;"></div>
+            </div>
+
+            <div data-bind="if: $data.InEditMode" style="margin-top:140px;">
+                <div data-bind="template: { name: 'Report-Editor-Body' }"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/html" id="Report-Manager-Header">
+    <!-- Bottom Header - Report Editor -->
+    <div data-bind="visible: $data.InEditMode">
+        <div class="fixed-positioning-container" style="top: 145px;">
+            <!-- Space -->
+            <div class="standard-header-sleeve" style="height: 178px;">
+                <div class="standard-header standard-padding" style="overflow: visible;">
+
+                    <!-- Report Editor component -->
+                    <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportEditorModel }"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Header - Report Synopsis and Report Interface -->
+    <div class="fixed-positioning-container">
+        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
+
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
+                <div data-bind="template: { name: 'Report-View-Header', data: $root.ReportManagerModel }"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
 <script type="text/html" id="Report-View-Header">
     <div data-bind="if: $data.InEditMode">
         <div data-bind="template: { name: 'Report-View-Edit-Mode-On' }"></div>    
@@ -12,9 +63,9 @@
 <script type="text/html" id="Report-View-Edit-Mode-On">
     <div class="col-xs-6 no-side-padding">
         <div class="popover-container">
-            <div data-bind="if: CurrentReport()">
+            <div data-bind="if: EditingReport()">
                 <h4 style="display: inline-block; font-weight: 700;" 
-                    data-bind="text: $data.CurrentReport().Name"></h4>
+                    data-bind="text: $data.EditingReport().Name"></h4>
 
                 <div style="margin-left:7px; display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING REPORT)</div>
             </div>
@@ -128,17 +179,18 @@
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
     // Requires a reference to a InEditMode observable
-    ProfitWiseWidgets.ReportViewModel = function () {
+    ProfitWiseWidgets.ReportManagerModel = function () {
         var self = this;
-
-        self.InEditMode = ko.observable(false);
         
         self.DateRange = ko.observable();
 
+        self.Reports = ko.observable([]);
         self.CurrentReport = ko.observable();
 
-        self.PreviousReport = ko.observable();
-        self.Reports = ko.observable([]);
+        self.InEditMode = ko.observable(false);
+        self.EditingReport = ko.observable();
+
+        self.ReportEditorModel = 
 
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.Reports()).where(function (item) { return item.UserDefined == true; }).toArray();
@@ -151,7 +203,7 @@
         // To be configured by the parent/owner object
         self.SelectReportCallback = function (reportId) {
         };
-
+        
         self.SelectReportByReportId = function (id) {
             var report = AQ(self.Reports()).firstOrDefault(function (item) { return item.PwReportId == id; });
             if (report != null) {
@@ -164,23 +216,17 @@
             self.SelectReportCallback(data.PwReportId);
         }
 
-
-        self.EditReportCallback = function (reportId) {
-        };        
-        
         self.EditReportClick = function () {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpPost(
-                        "/ReportService/CopyAndEdit",
-                        { reportId: self.CurrentReport().PwReportId },
-                        this);
+                        "/ReportService/CopyAndEdit", { reportId: self.CurrentReport().PwReportId }, this);
                 },
                 function (data) {
-                    self.CurrentReport(data);
+                    self.EditingReport(data);
                     self.InEditMode(true);
-                    self.EditReportCallback(data.PwReportId);
+                    self.ReportEditorModel.LoadReport(reportId);
                 });
         };
 
@@ -191,27 +237,15 @@
         };
 
 
-        // OK & Cancel Callbacks
-        self.CancelCallback = function () { };
-
-        self.OkCallback = function () { };
-
-        self.RegisterCancelCallback = function (callback) {
-            self.CancelCallback = callback;
-        };
-
-        self.RegisterOkCallback = function (callback) {
-            self.OkCallback = callback;
-        };
-
+        // OK & Cancel buttons
         self.CancelButtonClick = function () {
             self.InEditMode(false);
-            self.CancelCallback();
         };
 
         self.OkButtonClick = function () {
             self.InEditMode(false);
-            self.OkCallback();
+
+            alert('alright, load the Report that was just edited')
         };
 
 
