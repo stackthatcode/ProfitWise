@@ -68,7 +68,7 @@
 
         // Data
         self.PageOfItems = ko.observableArray();
-
+        
         // Paging and Filtering model
         self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
         self.FilterModel.PlaceHolderText("Search for Products by Title or Vendor...");
@@ -91,9 +91,8 @@
                 ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
         };
 
-
         self.DeselectAll = function () {
-            self.ParentReportModel.RemoveFilterType(self.ParentReportModel.ProductFilter);
+            self.ParentReportModel.RemoveFilterType(self.FilterType);
             self.SelectionModel.ShowSplashPage(true);
         }
 

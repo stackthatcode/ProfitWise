@@ -3,175 +3,12 @@
 
 
 <script type="text/html" id="Report-Manager-Top-Level">
-    <div data-bind="template: { name: 'Report-Manager-Header' }"></div>
-
-
-    <div class="container page-content-sleeve">
-        <!-- Will move/transistion when the filters appear -->
-        <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
-
-            <!-- TODO : allow injection of external template -->
-            <div data-bind="ifnot: $data.InEditMode">
-                <div data-bind="template: { name: 'Body-Template-That-You-Configured'}" style="position: relative; width: 100%;"></div>
-            </div>
-
-            <div data-bind="if: $data.InEditMode" style="margin-top:140px;">
-                <div data-bind="template: { name: 'Report-Editor-Body' }"></div>
-            </div>
-        </div>
-    </div>
-</script>
-
-
-<script type="text/html" id="Report-Manager-Header">
-    <!-- Bottom Header - Report Editor -->
-    <div data-bind="visible: $data.InEditMode">
-        <div class="fixed-positioning-container" style="top: 145px;">
-            <!-- Space -->
-            <div class="standard-header-sleeve" style="height: 178px;">
-                <div class="standard-header standard-padding" style="overflow: visible;">
-
-                    <!-- Report Editor component -->
-                    <div data-bind="template: { name: 'Report-Editor-Header', data: $root.ReportEditorModel }"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Top Header - Report Synopsis and Report Interface -->
-    <div class="fixed-positioning-container">
-        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
-
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
-                <div data-bind="template: { name: 'Report-View-Header', data: $root.ReportManagerModel }"></div>
-            </div>
-        </div>
-    </div>
-</script>
-
-
-<script type="text/html" id="Report-View-Header">
     <div data-bind="if: $data.InEditMode">
-        <div data-bind="template: { name: 'Report-View-Edit-Mode-On' }"></div>    
+        <div data-bind="template: { name: 'Report-Editor-Top-Level'}"></div>
     </div>
-    
+
     <div data-bind="ifnot: $data.InEditMode">
-        <div data-bind="template: { name: 'Report-View-Edit-Mode-Off', afterRender: AfterRenderDateRangePicker }"></div>
-    </div>
-</script>
-
-<script type="text/html" id="Report-View-Edit-Mode-On">
-    <div class="col-xs-6 no-side-padding">
-        <div class="popover-container">
-            <div data-bind="if: EditingReport()">
-                <h4 style="display: inline-block; font-weight: 700;" 
-                    data-bind="text: $data.EditingReport().Name"></h4>
-
-                <div style="margin-left:7px; display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING REPORT)</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xs-6 no-side-padding">
-        <div class="pull-right" style="padding-top: 10px;">
-            <a href="#" class="btn btn-primary" style="width:100px;" 
-               data-bind="click: CancelButtonClick">
-                Cancel <i class="glyphicon glyphicon-remove"></i>
-            </a>
-            <a href="#" class="btn btn-primary" style="width:100px; margin-left:10px;"
-               data-bind="click: OkButtonClick">                
-                OK <i class="glyphicon glyphicon-ok"></i>
-            </a>
-        </div>
-    </div>
-</script>
-
-<script type="text/html" id="Report-View-Edit-Mode-Off">
-    <div class="col-xs-6 no-side-padding">
-        <div data-bind="if: CurrentReport()">
-            <div class="popover-container">
-                <h4 style="display: inline-block; font-weight: 700;" data-bind="text: CurrentReport().Name"></h4>
-
-                <div style="display:inline-block;" data-bind="if:InEditMode">
-                    (Editing Report)
-                </div>
-            </div>
-
-            <div style="font-size: 0.9em; color: #666; line-height: 22px;">
-                <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
-                <br />
-                <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
-                <!--<span data-bind="text: CurrentReport().FilterDigest"></span>-->
-                <br />
-                <span>Grouped by Vendor, Ordered by Profitability</span>
-                <!--<span data-bind="text: CurrentReport().GroupAndOrderingDigest"></span>-->
-                <br />
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xs-6 no-side-padding" style="padding-top:10px;">
-        <div class="btn-group pull-right">
-            <a href="#" class="btn btn-default dropdown-toggle"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Select Report <span class="caret"></span>
-            </a>
-
-            <ul class="dropdown-menu" style="width: 260px;">
-                <!-- ko foreach: SystemDefinedReports -->
-                <li>
-                    <a href="#" data-bind="click: $parent.SelectReportClick">
-                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
-                            <i class="glyphicon glyphicon-ok"></i>
-                        </span>
-                        <span data-bind="text: Name"></span>
-                    </a>
-                </li>
-                <!-- /ko -->
-
-                <li role="separator" class="divider"></li>
-
-                <!-- ko if: UserDefinedReports().length == 0 -->
-                <li><a href="#">(No custom reports defined yet)</a></li>
-                <!-- /ko -->
-                <!-- ko foreach: UserDefinedReports -->
-                <li>
-                    <a href="#" data-bind="click: $parent.SelectReportClick">
-                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
-                            <i class="glyphicon glyphicon-ok"></i>
-                        </span>
-                        <span data-bind="text: Name"></span>
-                    </a>
-                </li>
-                <!-- /ko -->
-            </ul>
-        </div>
-
-        <div class="pull-right" style="margin-right: 3px;">
-            <a href="" class="btn btn-default" data-bind="click: EditReportClick">
-                Edit Report <i class="glyphicon glyphicon-pencil"></i>
-            </a>
-        </div>
-
-        <div class="pull-right btn-group" style="margin-right: 3px;">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
-
-            <ul class="dropdown-menu">
-                <li><a href="#">Save As</a></li>
-                <li><a href="#">Rename</a></li>
-                <li><a href="#">Delete</a></li>
-            </ul>
-        </div>
-
-        <div style="clear: both; height: 10px;"></div>
-
-        <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
-            <input type="text" class="form-control" style="width: 100%; font-size: 1.0em;" id="date-range-picker" />
-            <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
-        </div>
-
-        <div style="clear: both; height: 10px;"></div>
+        <div data-bind="template: { name: 'Report-Viewer-Top-Level'}"></div>
     </div>
 </script>
 
@@ -182,40 +19,19 @@
     // Requires a reference to a InEditMode observable
     ProfitWiseWidgets.ReportManagerModel = function () {
         var self = this;
-        
-        self.DateRange = ko.observable();
 
-        self.Reports = ko.observable([]);
+        self.DateRange = ko.observable();
         self.CurrentReport = ko.observable();
 
         self.InEditMode = ko.observable(false);
-        self.EditingReport = ko.observable();
 
-        self.ReportEditorModel = 
+        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
+        self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel();
 
-        self.UserDefinedReports = ko.computed(function () {
-            return AQ(self.Reports()).where(function (item) { return item.UserDefined == true; }).toArray();
-        });
-
-        self.SystemDefinedReports = ko.computed(function () {
-            return AQ(self.Reports()).where(function (item) { return item.UserDefined == false; }).toArray();
-        });
 
         // To be configured by the parent/owner object
         self.SelectReportCallback = function (reportId) {
         };
-        
-        self.SelectReportByReportId = function (id) {
-            var report = AQ(self.Reports()).firstOrDefault(function (item) { return item.PwReportId == id; });
-            if (report != null) {
-                self.SelectReportClick(report);
-            }
-        };
-
-        self.SelectReportClick = function (data) {
-            self.CurrentReport(data);
-            self.SelectReportCallback(data.PwReportId);
-        }
 
         self.EditReportClick = function () {
             flow.exec(
@@ -231,23 +47,6 @@
                 });
         };
 
-
-        self.SaveReportClick = function () {
-            self.InEditMode(false);
-            // TODO - add Save function
-        };
-
-
-        // OK & Cancel buttons
-        self.CancelButtonClick = function () {
-            self.InEditMode(false);
-        };
-
-        self.OkButtonClick = function () {
-            self.InEditMode(false);
-
-            alert('alright, load the Report that was just edited')
-        };
 
 
         self.LoadReports = function (callback) {
@@ -278,14 +77,13 @@
                     }
                 });
         };
-                
-        
+
         self.AfterRenderDateRangePicker = function () {
 
             $(".date-range-picker-icon").click(function () {
                 $(this).parent().find('input').click();
             });
-            
+
             $('#date-range-picker')
                 .daterangepicker({
                     "parentEl": "#date-range-picker-parent",

@@ -27,10 +27,69 @@
     }
 </style>
 
+<script type="text/html" id="Report-Editor-Top-Level">
+    <div id="report-editor-header-bottom">
+        <!-- Move this to the Report Editor...? -->
+        <div class="fixed-positioning-container" style="top: 145px;">
+            <!-- Space -->
+            <div class="standard-header-sleeve" style="height: 178px;">
+                <div class="standard-header standard-padding" style="overflow: visible;">
+
+                    <!-- Report Editor component -->
+                    <div data-bind="template: { name: 'Report-Editor-Header' }"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="report-editor-header-top" class="fixed-positioning-container">
+        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
+
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
+                <div class="col-xs-6 no-side-padding">
+                    <div class="popover-container">
+                        <div data-bind="if: EditingReport()">
+                            <h4 style="display:inline-block; font-weight:700;" `data-bind="text: $data.EditingReport().Name"></h4>
+
+                            <div style="margin-left:7px; display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING REPORT)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6 no-side-padding">
+                    <div class="pull-right" style="padding-top: 10px;">
+                        <a href="#" class="btn btn-primary" style="width:100px;"
+                           data-bind="click: CancelButtonClick">
+                            Cancel <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                        <a href="#" class="btn btn-primary" style="width:100px; margin-left:10px;"
+                           data-bind="click: OkButtonClick">
+                            OK <i class="glyphicon glyphicon-ok"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="report-editor-body" class="container page-content-sleeve">
+        <!-- Will move/transistion when the filters appear -->
+        <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
+            <div data-bind="template: { name: 'Report-Editor-Body' }" style="margin-top:140px;">
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/html" id="Report-Editor-Filter-Grid">
     <div style="margin-bottom:5px; font-size:0.8em; font-weight:700;">
-        <span data-bind="text: label"></span>: <span data-bind="if: grid().length == 0"><span style="font-weight:400;">(none)</span></span>
+        <span data-bind="text: label"></span>: 
+        <span data-bind="if: grid().length == 0">
+            <span style="font-weight:400;">(none)</span>
+        </span>
     </div>
+
     <div data-bind="foreach: grid">
         <div class="filter-tag-container"
              style="display:inline-block; margin-bottom:5px;"
@@ -148,46 +207,29 @@
     </div>
 </script>
 
+
+
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
+    // Bind the C# internal name
+    ProfitWiseWidgets.ProductTypeFilter = "@PwReportFilter.ProductType";
+    ProfitWiseWidgets.VendorFilter = "@PwReportFilter.Vendor";
+    ProfitWiseWidgets.ProductFilter = "@PwReportFilter.Product";
+    ProfitWiseWidgets.SkuFilter = "@PwReportFilter.Sku";
+
     ProfitWiseWidgets.ReportEditorModel = function () {
         var self = this;
-        self.ReportId = ko.observable();
 
-        // Bind the C# internal name
-        self.ProductTypeFilter = "@PwReportFilter.ProductType";
-        self.VendorFilter = "@PwReportFilter.Vendor";
-        self.ProductFilter = "@PwReportFilter.Product";
-        self.SkuFilter = "@PwReportFilter.Sku";
-        
+        self.ReportId = ko.observable();
+        self.ReportContext = ko.observable();
+                
         // Wire in the individual Report Editor modules
         self.ProductTypeFilterModel = new ProfitWiseWidgets.ProductTypeFilterModel(self);
         self.VendorFilterModel = new ProfitWiseWidgets.VendorFilterModel(self);
         self.MasterProductFilterModel = new ProfitWiseWidgets.MasterProductFilterModel(self);
         self.SkuFilterModel = new ProfitWiseWidgets.SkuFilterModel(self);
 
-        self.FilterModelByFilterType = function (filterType) {
-            if (filterType == self.ProductTypeFilter) {
-                return self.ProductTypeFilterModel;
-            }
-            if (filterType == self.VendorFilter) {
-                return self.VendorFilterModel;
-            }
-            if (filterType == self.ProductFilter) {
-                return self.MasterProductFilterModel;
-            }
-            if (filterType == self.SkuFilter) {
-                return self.SkuFilterModel;
-            }
-        };
-
-        self.SetAllFilterModelsReportId = function(reportId) {
-            self.ProductTypeFilterModel.ReportId(reportId);
-            self.VendorFilterModel.ReportId(reportId);
-            self.MasterProductFilterModel.ReportId(reportId);
-            self.SkuFilterModel.ReportId(reportId);
-        };
 
         // Which ever of the Product Type, Vendor, Master Product or Sku models is active will be here
         self.SelectedFilterModel = ko.observable();
@@ -222,16 +264,16 @@
         // Filter Grid Model
         self.FiltersGrid = ko.observableArray([]);
 
-        self.GetFiltersByType = function (filterType) {
+        var filtersByType = function (filterType) {
             return AQ(self.FiltersGrid())
                 .where(function (item) { return item.FilterType == filterType; })
                 .toArray();
         }
 
-        self.ProductTypesGrid = ko.computed(function () { return self.GetFiltersByType(self.ProductTypeFilter); });
-        self.VendorsGrid = ko.computed(function () { return self.GetFiltersByType(self.VendorFilter); });
-        self.ProductsGrid = ko.computed(function () { return self.GetFiltersByType(self.ProductFilter); });
-        self.SkuGrid = ko.computed(function () { return self.GetFiltersByType(self.SkuFilter); });
+        self.ProductTypesGrid = ko.computed(function () { return filtersByType(self.ProductTypeFilter); });
+        self.VendorsGrid = ko.computed(function () { return filtersByType(self.VendorFilter); });
+        self.ProductsGrid = ko.computed(function () { return filtersByType(self.ProductFilter); });
+        self.SkuGrid = ko.computed(function () { return filtersByType(self.SkuFilter); });
 
 
 
@@ -266,18 +308,32 @@
                         reportId: self.ReportId(),
                         filterId: item.PwFilterId,
                     };
-                    ajax.HttpPost(
-                        "/ReportService/RemoveFilterById",
-                        data, this);
+
+                    ajax.HttpPost("/ReportService/RemoveFilterById", data, this);
                 },
                 function () {
-                    self.FiltersGrid.remove(item);
+                    self.RefreshFilterSummary();
                     self.SelectionCountPreviewModel.Refresh(this);
                 },
                 function () {
                     self.RefreshSelectedFilterModel();
                 }
             );
+        };
+
+        var filterModelByFilterType = function (filterType) {
+            if (filterType == self.ProductTypeFilter) {
+                return self.ProductTypeFilterModel;
+            }
+            if (filterType == self.VendorFilter) {
+                return self.VendorFilterModel;
+            }
+            if (filterType == self.ProductFilter) {
+                return self.MasterProductFilterModel;
+            }
+            if (filterType == self.SkuFilter) {
+                return self.SkuFilterModel;
+            }
         };
 
         self.RemoveFilterType = function (filterType) {
@@ -288,12 +344,10 @@
                         reportId: self.ReportId(),
                         filterType: filterType,
                     };
-                    ajax.HttpPost(
-                        "/ReportService/RemoveFilterByType",
-                        data, this);
+                    ajax.HttpPost("/ReportService/RemoveFilterByType", data, this);
                 },
                 function () {
-                    var reportModel = self.FilterModelByFilterType(filterType);
+                    var reportModel = filterModelByFilterType(filterType);
                     reportModel.SelectionModel.UncheckAllItems();
                     self.RefreshFilterSummary();
                 }
@@ -362,7 +416,11 @@
             flow.exec(
                 function() {
                     self.ReportId(reportId);
-                    self.SetAllFilterModelsReportId(reportId);
+
+                    self.ProductTypeFilterModel.ReportId(reportId);
+                    self.VendorFilterModel.ReportId(reportId);
+                    self.MasterProductFilterModel.ReportId(reportId);
+                    self.SkuFilterModel.ReportId(reportId);
                     self.SelectionCountPreviewModel.ReportId(reportId);
 
                     self.RefreshFilterSummary(this);
@@ -370,6 +428,19 @@
                 function() {
                     self.ProductTypeClick();
                 });
+        };
+
+        // OK & Cancel buttons
+        self.CancelCallback = function () { };
+
+        self.OkCallback = function () { };
+
+        self.CancelButtonClick = function () {
+            self.CancelCallback();
+        };
+
+        self.OkButtonClick = function () {
+            self.OkCallback();
         };
 
         return self;

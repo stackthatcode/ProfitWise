@@ -60,9 +60,12 @@
 <script>
     ProfitWiseWidgets.ProductTypeFilterModel = function (parent) {
         var self = this;
+
+
         self.ParentReportModel = parent;
         self.ReportId = ko.observable();
         self.FilterType = self.ParentReportModel.ProductTypeFilter;
+
 
         // Data
         self.PageOfItems = ko.observableArray();

@@ -1,0 +1,185 @@
+﻿@using ProfitWise.Data.Model
+@Html.Partial("~/Views/Report/_FilterPagingWidget.cshtml")
+@Html.Partial("~/Views/Report/_SelectionModel.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorCommonTemplates.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorProductType.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorVendor.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorMasterProduct.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorSku.cshtml")
+@Html.Partial("~/Views/Report/_SelectionCountPreview.cshtml")
+
+
+<style>
+    table#product-types td {
+        height: 70px !important;
+        font-size: 14px;
+        vertical-align: middle !important;
+    }
+
+    table#product-types tr td:nth-child(1) {
+        width: 10%;
+    }
+    table#product-types tr td:nth-child(2) {
+        width: 45%;
+    }
+    table#product-types tr td:nth-child(3) {
+        width: 45%;
+    }
+</style>
+
+<script id="Report-Viewer-Top-Level" type="text/html">
+    <div id="report-viewer-header" class="fixed-positioning-container">
+        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
+
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div class="standard-header standard-padding top-border-facade" 
+                 style="overflow: visible; padding-top:20px;">
+                    <div class="col-xs-6 no-side-padding">
+                        <div data-bind="if: CurrentReport()">
+                            <div class="popover-container">
+                                <h4 style="display: inline-block; font-weight: 700;" 
+                                    data-bind="text: CurrentReport().Name"></h4>
+
+                                <div style="display:inline-block;">(Editing Report)</div>
+                            </div>
+
+                            <div style="font-size: 0.9em; color: #666; line-height: 22px;">
+                                <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
+                                <br />
+                                <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
+                                <br />
+                                <span>Grouped by Vendor, Ordered by Profitability</span>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 no-side-padding" style="padding-top:10px;">
+                        <div class="btn-group pull-right">
+                            <a href="#" class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Select Report <span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" style="width: 260px;">
+                                <!-- ko foreach: SystemDefinedReports -->
+                                <li>
+                                    <a href="#" data-bind="click: $parent.SelectReportClick">
+                                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                                            <i class="glyphicon glyphicon-ok"></i>
+                                        </span>
+                                        <span data-bind="text: Name"></span>
+                                    </a>
+                                </li>
+                                <!-- /ko -->
+
+                                <li role="separator" class="divider"></li>
+
+                                <!-- ko if: UserDefinedReports().length == 0 -->
+                                <li><a href="#">(No custom reports defined yet)</a></li>
+                                <!-- /ko -->
+                                <!-- ko foreach: UserDefinedReports -->
+                                <li>
+                                    <a href="#" data-bind="click: $parent.SelectReportClick">
+                                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                                            <i class="glyphicon glyphicon-ok"></i>
+                                        </span>
+                                        <span data-bind="text: Name"></span>
+                                    </a>
+                                </li>
+                                <!-- /ko -->
+                            </ul>
+                        </div>
+
+                        <div class="pull-right" style="margin-right: 3px;">
+                            <a href="" class="btn btn-default" data-bind="click: EditReportClick">
+                                Edit Report <i class="glyphicon glyphicon-pencil"></i>
+                            </a>
+                        </div>
+
+                        <div class="pull-right btn-group" style="margin-right: 3px;">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Save As</a></li>
+                                <li><a href="#">Rename</a></li>
+                                <li><a href="#">Delete</a></li>
+                            </ul>
+                        </div>
+
+                        <div style="clear: both; height: 10px;"></div>
+
+                        <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
+                            <input type="text" class="form-control" style="width: 100%; font-size: 1.0em;" id="date-range-picker" />
+                            <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
+                        </div>
+
+                        <div style="clear: both; height: 10px;"></div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <div id="report-viewer-body" class="container page-content-sleeve">
+        <!-- Will move/transistion when the filters appear -->
+        <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
+            <!-- TODO : allow injection of external template -->
+            <div style="position: relative; width: 100%;">
+                <div data-bind="template: { name: 'Body-Template-That-You-Configured'}"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.ReportViewerModel = function () {
+        var self = this;
+        self.ReportId = ko.observable();
+        self.CurrentReport(data);
+
+        self.Reports = ko.observable([]);
+
+        self.UserDefinedReports = ko.computed(function () {
+            return AQ(self.Reports()).where(function (item) { return item.UserDefined == true; }).toArray();
+        });
+
+        self.SystemDefinedReports = ko.computed(function () {
+            return AQ(self.Reports()).where(function (item) { return item.UserDefined == false; }).toArray();
+        });
+
+
+        self.SelectReportByReportId = function (id) {
+            var report = AQ(self.Reports()).firstOrDefault(function (item) { return item.PwReportId == id; });
+            if (report != null) {
+                self.SelectReportClick(report);
+            }
+        };
+
+        self.SelectReportClick = function (data) {
+            self.SelectReportCallback(data.PwReportId);
+        }
+
+ 
+
+
+        // Report data bootstrapping function
+        self.LoadReport = function (reportId) {
+            flow.exec(
+                function() {
+                    self.ReportId(reportId);
+                    self.SetAllFilterModelsReportId(reportId);
+                    self.SelectionCountPreviewModel.ReportId(reportId);
+
+                    self.RefreshFilterSummary(this);
+                },
+                function() {
+                    self.ProductTypeClick();
+                });
+        };
+
+        return self;
+    };
+</script>
+
