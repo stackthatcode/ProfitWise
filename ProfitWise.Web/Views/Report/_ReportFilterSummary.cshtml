@@ -1,0 +1,112 @@
+﻿<script type="text/html" id="Report-Editor-Filter-Summary">
+    <div style="height:10px;"></div>
+    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                        data: { label: 'Product Types Filters', grid: ProductTypesGrid } }"></div>
+
+    <div style="height:10px;"></div>
+    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                        data: { label: 'Vendor Filters', grid: VendorsGrid } }"></div>
+
+    <div style="height:10px;"></div>
+    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                        data: { label: 'Product Filters', grid: ProductsGrid } }"></div>
+
+    <div style="height:10px;"></div>
+    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+                                        data: { label: 'Variant Filters', grid: SkuGrid } }"></div>
+</script>
+
+<script type="text/html" id="Report-Editor-Filter-Grid">
+    <div style="margin-bottom:5px; font-size:0.8em; font-weight:700;">
+        <span data-bind="text: label"></span><span>:</span>
+        <span data-bind="if: grid().length == 0">
+            <span style="font-weight:400;">(none)</span>
+        </span>
+    </div>
+
+    <div data-bind="foreach: grid">
+        <div class="filter-tag-container"
+                 style="display:inline-block; margin-bottom:5px;"
+                 data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
+
+            <div class="filter-description">
+                <span data-bind="text: $data.Title"></span>
+            </div>
+
+            <!-- Add a delete method here... -->
+            <a class="filter-remove" href="#" data-bind="click: RemoveClick">
+                &nbsp; <i class="glyphicon glyphicon-remove"></i>
+            </a>
+        </div>
+    </div>
+</script>
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.ReportFilterSummaryModel = function () {
+        self.ReportId = ko.observable();
+        self.FiltersGrid = ko.observableArray([]);
+
+        self.FiltersByType = function (filterType) {
+            return AQ(self.FiltersGrid())
+                .where(function (item) { return item.FilterType == filterType; })
+                .toArray();
+        };
+
+        self.ProductTypesGrid = ko.computed(function () { return filtersByType(self.ProductTypeFilter); });
+        self.VendorsGrid = ko.computed(function () { return filtersByType(self.VendorFilter); });
+        self.ProductsGrid = ko.computed(function () { return filtersByType(self.ProductFilter); });
+        self.SkuGrid = ko.computed(function () { return filtersByType(self.SkuFilter); });
+
+        // Triggered whenever there's a change to the filters
+        self.NotifyCallback = function () { };
+
+        self.RegisterNotifyCallback = function (callback) {
+            self.NotifyCallback = callback;
+        };
+        
+        // AJAX / server-side interfacing methods
+        self.
+
+        self.RefreshFilterSummary = function (callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
+                },
+                function (filters) {
+                    AQ(filters)
+                        .each(function (item) {
+                            item.RemoveClick = function () {
+                                self.RemoveFilter(item);
+                            }
+                        });
+                    self.FiltersGrid(filters);
+                    callback();
+                }
+            );
+        };
+
+        self.RemoveFilter = function (item) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: self.ReportId(),
+                        filterId: item.PwFilterId,
+                    };
+
+                    ajax.HttpPost("/ReportService/RemoveFilterById", data, this);
+                },
+                function () {
+                    // TODO *** replace this with premature optimization to remove directly from grid
+                    self.RefreshFilterSummary(this);
+                },
+                function () {
+                    self.NotifyCallback();
+                }
+            );
+        };
+    };
+</script>

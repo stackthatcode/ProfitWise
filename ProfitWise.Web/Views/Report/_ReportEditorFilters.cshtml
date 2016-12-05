@@ -1,4 +1,24 @@
-﻿<script type="text/html" id="Report-Editor-Empty-Results">
+﻿<style>
+    table#product-types td {
+        height: 70px !important;
+        font-size: 14px;
+        vertical-align: middle !important;
+    }
+
+    table#product-types tr td:nth-child(1) {
+        width: 10%;
+    }
+
+    table#product-types tr td:nth-child(2) {
+        width: 45%;
+    }
+
+    table#product-types tr td:nth-child(3) {
+        width: 45%;
+    }
+</style>
+
+<script type="text/html" id="Report-Editor-Empty-Results">
     <div style="text-align: center; padding-top: 50px; padding-bottom: 100px;">
         <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
         <h3 style="color: #777; font-weight: 700;">No <span data-bind="text: $data.ItemDescription"></span> match your search</h3>
@@ -213,7 +233,6 @@
     </div>
 </script>
 
-
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -332,8 +351,8 @@
         self.CurrentPageOfItems = ko.observableArray();
 
         // Triggered whenever there's a change to the filters
-        self.NotifyCallback = function () {
-        };
+        self.NotifyCallback = function () { };
+
         self.RegisterNotifyCallback = function (callback) {
             self.NotifyCallback = callback;
         };
@@ -345,7 +364,6 @@
                 self.UpdateFilter(item.Key, item.Title, selected);
             }
         );
-
 
         // Why is the title not being handled by the server ** TODO 
         self.UpdateFilter = function (key, title, selected) {
@@ -387,7 +405,7 @@
                     self.NotifyCallback();
                 }
             );
-        }
+        };
 
         self.Refresh = function (callback) {
             self.FilterModel.SetPageNumber(1);
@@ -403,7 +421,7 @@
                     callback();
                 }
             );
-        }
+        };
 
         self.ApplyFiltersAndPaging = function () {
             var filterResults =
@@ -417,4 +435,3 @@
         return self;
     };    
 </script>
-

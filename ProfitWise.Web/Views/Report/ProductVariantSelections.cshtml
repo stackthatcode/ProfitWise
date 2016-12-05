@@ -87,7 +87,7 @@
                     var urlBase = self.IsProductSelection()
                         ? "/ReportService/ProductSelectionsByPage"
                         : "/ReportService/VariantSelectionsByPage";
-
+                    
                     ajax.HttpGet(urlBase +
                         "?reportId=" + self.ReportId() +
                         "&pageNumber=" + self.PagingModel.PageNumber() +
