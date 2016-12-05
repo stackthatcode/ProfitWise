@@ -1,15 +1,4 @@
-﻿@using ProfitWise.Data.Model
-@Html.Partial("~/Views/Report/_FilterPagingWidget.cshtml")
-@Html.Partial("~/Views/Report/_SelectionModel.cshtml")
-@Html.Partial("~/Views/Report/_ReportEditorCommonTemplates.cshtml")
-@Html.Partial("~/Views/Report/_ReportEditorProductType.cshtml")
-@Html.Partial("~/Views/Report/_ReportEditorVendor.cshtml")
-@Html.Partial("~/Views/Report/_ReportEditorMasterProduct.cshtml")
-@Html.Partial("~/Views/Report/_ReportEditorSku.cshtml")
-@Html.Partial("~/Views/Report/_SelectionCountPreview.cshtml")
-
-
-<style>
+﻿<style>
     table#product-types td {
         height: 70px !important;
         font-size: 14px;
@@ -35,25 +24,25 @@
             <div class="standard-header standard-padding top-border-facade" 
                  style="overflow: visible; padding-top:20px;">
                     <div class="col-xs-6 no-side-padding">
-                        <div data-bind="if: CurrentReport()">
-                            <div class="popover-container">
-                                <h4 style="display: inline-block; font-weight: 700;" 
-                                    data-bind="text: CurrentReport().Name"></h4>
+                        <div data-bind="if: CurrentReportSelection">
+                            <div data-bind="with: CurrentReportSelection()">
+                                <div class="popover-container">
+                                    <h4 style="display: inline-block; font-weight: 700;"
+                                        data-bind="text: Name"></h4>
+                                </div>
 
-                                <div style="display:inline-block;">(Editing Report)</div>
-                            </div>
-
-                            <div style="font-size: 0.9em; color: #666; line-height: 22px;">
-                                <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
-                                <br />
-                                <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
-                                <br />
-                                <span>Grouped by Vendor, Ordered by Profitability</span>
-                                <br />
+                                <div style="font-size: 0.9em; color: #666; line-height: 22px;">
+                                    <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
+                                    <br />
+                                    <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
+                                    <br />
+                                    <span>Grouped by Vendor, Ordered by Profitability</span>
+                                    <br />
+                                </div>
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="col-xs-6 no-side-padding" style="padding-top:10px;">
                         <div class="btn-group pull-right">
                             <a href="#" class="btn btn-default dropdown-toggle"
@@ -123,9 +112,11 @@
     <div id="report-viewer-body" class="container page-content-sleeve">
         <!-- Will move/transistion when the filters appear -->
         <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
+
             <!-- TODO : allow injection of external template -->
             <div style="position: relative; width: 100%;">
-                <div data-bind="template: { name: 'Body-Template-That-You-Configured'}"></div>
+                <img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
+                <!--<div data-bind="template: { name: 'Body-Template-That-You-Configured'}"></div> -->
             </div>
         </div>
     </div>
@@ -136,48 +127,97 @@
 
     ProfitWiseWidgets.ReportViewerModel = function () {
         var self = this;
-        self.ReportId = ko.observable();
-        self.CurrentReport(data);
 
-        self.Reports = ko.observable([]);
-
+        self.ReportList = ko.observable([]);
+        self.CurrentReportSelection = ko.observable();
+        self.DateRange = ko.observable();
+        
         self.UserDefinedReports = ko.computed(function () {
-            return AQ(self.Reports()).where(function (item) { return item.UserDefined == true; }).toArray();
+            return AQ(self.ReportList()).where(function (item) { return item.UserDefined == true; }).toArray();
         });
 
         self.SystemDefinedReports = ko.computed(function () {
-            return AQ(self.Reports()).where(function (item) { return item.UserDefined == false; }).toArray();
+            return AQ(self.ReportList()).where(function (item) { return item.UserDefined == false; }).toArray();
         });
+
+        self.RefreshReportList = function (callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/All", this);
+                },
+                function (data) {
+                    AQ(data)
+                        .each(
+                            function (item) {
+                                item.CurrentlySelected =
+                                    ko.computed(
+                                        function () {
+                                            if (!self.CurrentReport()) {
+                                                return false;
+                                            }
+                                            return self.CurrentReport().PwReportId == item.PwReportId;
+                                        });
+                            });
+
+                    self.ReportList(data);
+                    if (callback) {
+                        callback();
+                    }
+                });
+        };
+
+        self.AfterRenderDateRangePicker = function () {
+            $(".date-range-picker-icon").click(function () {
+                $(this).parent().find('input').click();
+            });
+
+            $('#date-range-picker')
+                .daterangepicker({
+                    "parentEl": "#date-range-picker-parent",
+                    "startDate": "10/01/2016",
+                    "endDate": "10/07/2016",
+                    "alwaysShowCalendars": true,
+                    "linkedCalendars": false,
+                    "applyClass": "btn-primary",
+                    "ranges": {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                        'This Year': [moment().startOf('year'), moment().endOf('year')],
+                        'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                    },
+                    "opens": "left",
+                },
+                    function (start, end, label) {
+                        alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                    });
+        };
 
 
         self.SelectReportByReportId = function (id) {
-            var report = AQ(self.Reports()).firstOrDefault(function (item) { return item.PwReportId == id; });
+            var report = AQ(self.ReportList()).firstOrDefault(function (item) { return item.PwReportId == id; });
             if (report != null) {
                 self.SelectReportClick(report);
             }
         };
 
         self.SelectReportClick = function (data) {
+            // TODO: hit the database to load this Report's Header information
+            self.CurrentReportSelection(data);
             self.SelectReportCallback(data.PwReportId);
-        }
-
- 
-
-
-        // Report data bootstrapping function
-        self.LoadReport = function (reportId) {
-            flow.exec(
-                function() {
-                    self.ReportId(reportId);
-                    self.SetAllFilterModelsReportId(reportId);
-                    self.SelectionCountPreviewModel.ReportId(reportId);
-
-                    self.RefreshFilterSummary(this);
-                },
-                function() {
-                    self.ProductTypeClick();
-                });
         };
+
+        self.SelectReportCallback = function (reportId) { };
+
+        self.EditReportClick = function (data) {
+            self.EditReportCallback(data.PwReportId);
+        };
+
+        self.EditReportCallback = function (reportId) { };
 
         return self;
     };

@@ -1,4 +1,4 @@
-﻿@using ProfitWise.Data.Model
+﻿
 @{
     ViewBag.CommonContext.PageTitle = "ProfitWise Dashboard";
 }
@@ -25,43 +25,28 @@
     }
 </style>
 
-<script type="text/html" id="Page-Header">
-   
-</script>
-
-
-<!-- TODO: configure Report Manager to use this -->
-<script type="text/html" id="Dashboard-Body">
-    <img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
-</script>
-
 <!-- KnockoutJS Root Element -->
 <div data-bind="template: { name: 'Report-Manager-Top-Level' }"></div>
-
 
 <!-- KnockoutJS Model -->
 <script>
     var ProfitWise = ProfitWise || {};
-
-    var OverallProfitabilityReportId = @PwSystemReportFactory.OverallProfitabilityId;
-
+    
     ProfitWise.DashboardModel = function () {
         var self = this;
 
         // Report View Model configuration
         self.ReportManagerModel = new ProfitWiseWidgets.ReportManagerModel();   
         
-        self.ReportManagerModel.SelectReportCallback = function (reportId) {
-            console.log('Selected Report : ' + reportId);
-            // TODO - add functionality for this
-        };
+        self.ReportManagerModel.RegisterSelectReportCallback(            
+            function (reportId) {
+                alert("Ok, as the Dashboard, somebody selected Report Id: " + reportId);
 
-        self.ReportManagerModel.EditReportCallback = function(reportId) {
-        };
-        
-        // Report Editor Model configuration
-        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();        
+                // TODO - call ajax function to get data and return to Report Viewer, which
+                // ... then pass it on to the View Template we specified
+            });
 
+        self.ReportManagerModel.Initialize();
         return self;
     };
 

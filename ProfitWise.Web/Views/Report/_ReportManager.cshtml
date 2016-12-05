@@ -1,112 +1,68 @@
-﻿@Html.Partial("~/Views/Report/_ReportEditor.cshtml")
-
+﻿@using ProfitWise.Data.Model
+@Html.Partial("~/Views/Report/_ReportEditor.cshtml")
 
 
 <script type="text/html" id="Report-Manager-Top-Level">
     <div data-bind="if: $data.InEditMode">
-        <div data-bind="template: { name: 'Report-Editor-Top-Level'}"></div>
+        <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
     </div>
 
     <div data-bind="ifnot: $data.InEditMode">
-        <div data-bind="template: { name: 'Report-Viewer-Top-Level'}"></div>
+        <div data-bind="template: { name: 'Report-Viewer-Top-Level', data: ReportViewerModel }"></div>
     </div>
 </script>
 
 
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
+    var OverallProfitabilityReportId = @PwSystemReportFactory.OverallProfitabilityId;
 
     // Requires a reference to a InEditMode observable
     ProfitWiseWidgets.ReportManagerModel = function () {
         var self = this;
-
-        self.DateRange = ko.observable();
-        self.CurrentReport = ko.observable();
-
         self.InEditMode = ko.observable(false);
 
-        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
         self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel();
-
+        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
 
         // To be configured by the parent/owner object
-        self.SelectReportCallback = function (reportId) {
-        };
-
-        self.EditReportClick = function () {
+        self.ReportViewerModel.EditReportCallback = function (reportId) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost(
-                        "/ReportService/CopyAndEdit", { reportId: self.CurrentReport().PwReportId }, this);
+
+                    // TODO ** copy for editing
+                    ajax.HttpPost("/ReportService/CopyAndEdit", { reportId: reportId }, this);
                 },
                 function (data) {
-                    self.EditingReport(data);
                     self.InEditMode(true);
                     self.ReportEditorModel.LoadReport(reportId);
                 });
         };
 
-
-
-        self.LoadReports = function (callback) {
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet(
-                        "/ReportService/All",
-                        this);
-                },
-                function (data) {
-                    AQ(data)
-                        .each(
-                            function (item) {
-                                item.CurrentlySelected =
-                                    ko.computed(
-                                        function () {
-                                            if (!self.CurrentReport()) {
-                                                return false;
-                                            }
-                                            return self.CurrentReport().PwReportId == item.PwReportId;
-                                        });
-                            });
-
-                    self.Reports(data);
-                    if (callback) {
-                        callback();
-                    }
-                });
+        // TODO - wire in the Edit Completion stuff
+        self.ReportViewerModel.OkCallback = function () {
+            alert('Ok, time to do something');
         };
 
-        self.AfterRenderDateRangePicker = function () {
+        self.ReportViewerModel.CancelCallback = function () {
+            alert('Cancelled!');
+        };
 
-            $(".date-range-picker-icon").click(function () {
-                $(this).parent().find('input').click();
-            });
+        self.RegisterSelectReportCallback = function (callback) {
+            ReportViewerModel.SelectReportCallback = callback;
+        }
 
-            $('#date-range-picker')
-                .daterangepicker({
-                    "parentEl": "#date-range-picker-parent",
-                    "startDate": "10/01/2016",
-                    "endDate": "10/07/2016",
-                    "alwaysShowCalendars": true,
-                    "linkedCalendars": false,
-                    "applyClass": "btn-primary",
-                    "ranges": {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                        'This Year': [moment().startOf('year'), moment().endOf('year')],
-                        'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-                    },
-                    "opens": "left",
-                },
-                    function (start, end, label) {
-                        alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-                    });
+
+        self.Initialize = function () {
+            self.InEditMode(false);
+            flow.exec(
+                function() {
+                    self.ReportViewerModel.RefreshReportList(this);
+                }, 
+                function() {
+                    self.ReportViewerModel.SelectReportByReportId(OverallProfitabilityReportId);
+                });
         };
 
         return self;
