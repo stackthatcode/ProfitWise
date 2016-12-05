@@ -249,9 +249,17 @@
         // Stubbed out to demonstrate the method signature...
         self.UpdateCallback = function (item, selected) { };
 
+        self.SearchTextFunction = function (item, searchText) {
+            return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText);
+        };
+
         self.RegisterUpdateCallback = function (callback) {
             self.UpdateCallback = callback;
         };
+
+        self.RegisterSearchTextFunction = function (callback) {
+            self.SearchTextFunction = callback;
+        }
 
         self.AddObservables = function (data) {
             AQ(data)
@@ -300,10 +308,6 @@
                 });
         };
 
-        self.SearchTextFunction = function(item, searchText) {
-            return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText);
-        };
-        
         self.ApplyFiltersAndPaging = function (searchText, pageNumber, pageSize) {
             searchText = searchText || "";
             var filteredItems = self.AllItems();
@@ -332,9 +336,10 @@
         return self;
     };
 
-    ProfitWiseWidgets.ReportFilterModel = function (filterType, placeHolderText, filterAjaxUrl) {
+    ProfitWiseWidgets.ReportFilterModel =
+            function (filterType, placeHolderText, filterAjaxUrl, searchTextFunction) {
         var self = this;
-
+        
         self.ReportId = ko.observable();
         self.FilterType = ko.observable(filterType);
         self.FilterAjaxUrl = filterAjaxUrl;
@@ -364,6 +369,10 @@
                 self.UpdateFilter(item.Key, item.Title, selected);
             }
         );
+        
+        self.RegisterSearchTextFunction = function(searchTextFunction) {
+            self.SelectionModel = searchTextFunction;
+        };
 
         // Why is the title not being handled by the server ** TODO 
         self.UpdateFilter = function (key, title, selected) {

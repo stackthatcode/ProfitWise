@@ -155,24 +155,42 @@
         self.ReportId = ko.observable();
         self.ReportContext = ko.observable();
         
-
-        // TODO - new to allow for 
         // Wire in the individual Report Editor modules
         self.ProductTypeFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.ProductTypeFilter, );
+                    ProfitWiseWidgets.ProductTypeFilter, 
+                    "Search by Product Type...",
+                    "/ReportService/ProductTypes");
 
         self.VendorFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.VendorFilter, );
+                    ProfitWiseWidgets.VendorFilter,
+                    "Search by Vendor...",
+                    "/ReportService/Vendor");
 
         self.MasterProductFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.ProductFilter, );
+                    ProfitWiseWidgets.ProductFilter, 
+                    "Search by Title and Vendor",
+                    "/ReportService/Vendor");
+        self.MasterProductFilterModel.RegisterSearchTextFunction(
+            function (item, searchText) {
+                    return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
+                });
 
         self.SkuFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.SkuFilter, );
+                    ProfitWiseWidgets.SkuFilter, 
+                    "Search by Title, Vendor or SKU",
+                    "/ReportService/Vendor");
+        self.SkuFilterModel.RegisterSearchTextFunction(
+            function (item, searchText) {
+                return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                                ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
+                                ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
+                                ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
+            });
 
         var filterModelByFilterType = function (filterType) {
             if (filterType == self.ProductTypeFilter) {
@@ -191,36 +209,9 @@
 
         // Which ever of the Product Type, Vendor, Master Product or Sku models is active will be here
         self.SelectedFilterModel = ko.observable();
-
-        // TODO - split the key selection *** NEED TO RETHINK THIS ONE
-        self.RefreshSelectedFilterModel = function(callback) {
-            var filterModel = self.SelectedFilterModel();
-            var filterType = filterModel.FilterType();
-
-            flow.exec(
-                function () {
-                    filterModel.Refresh(this);
-                },
-                function () {
-                    // Use Filter Keys from the ReportFilterSummary
-                    var filtersByType =
-                        self.ReportFilterSummaryModel.GetFiltersByType(filterType);
-
-                    var filterKeys =
-                        AQ(filtersByType)
-                            .select(function (item) { return item.Key })
-                            .toArray();
-
-                    self.SelectedFilterModel()
-                        .SelectionModel
-                        .SetCheckedItemsByKeyArray(filterKeys, true);
-
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
+        self.SelectedFilterModelType = ko.computed(function () {
+            self.SelectedFilterModel().FilterType();
+        });
 
         // Selection Preview model
         self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
@@ -237,9 +228,10 @@
                         return;
                     }
                     self.SelectedFilterModel(newFilterModel);
-                    self.RefreshSelectedFilterModel(this);
+                    self.SelectedFilterModel.Refresh(this);
                 },
                 function () {
+                    self.RefreshFilterModelSelectionsFromSummary(self.SelectedFilterModelType());
                     ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
                     $('html,body').animate({ scrollTop: 0 });
                 }
@@ -262,17 +254,37 @@
             self.ClickOnNewFilterTab(self.SkuFilterModel, "report-filter-sku");
         };
 
-        self.Refresh = function () {
+
+        // Report data bootstrapping function
+        self.RefreshFilterSummaryAndCount = function (callback) {
             flow.exec(
                 function () {
-
+                    self.SelectedFilterModel().Refresh(this);
                 },
                 function () {
-
+                    self.ReportSelectionCountPreviewModel.Refresh(this);
+                },
+                function () {
+                    if (callback) {
+                        callback();
+                    }
                 });
         };
 
-        // Report data bootstrapping function
+        self.RefreshFilterModelSelectionsFromSummary = function (filterType) {
+            var filtersByType =
+                self.ReportFilterSummaryModel.GetFiltersByType(filterType);
+
+            var filterKeys =
+                AQ(filtersByType)
+                    .select(function (item) { return item.Key })
+                    .toArray();
+
+            self.SelectedFilterModel()
+                .SelectionModel
+                .SetCheckedItemsByKeyArray(filterKeys, true);
+        };
+
         self.LoadReport = function (reportId) {
             flow.exec(
                 function() {
@@ -284,8 +296,7 @@
                     self.SkuFilterModel.ReportId(reportId);
 
                     self.ReportSelectionCountPreviewModel.ReportId(reportId);
-
-                    self.RefreshFilterSummary(this);
+                    self.ReportFilterSummaryModel.ReportId(reportId);                
                 },
                 function() {
                     self.ProductTypeClick();

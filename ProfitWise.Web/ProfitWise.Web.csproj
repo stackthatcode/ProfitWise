@@ -435,31 +435,19 @@
     <Content Include="Views\Report\_ReportManager.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_ReportEditorProductType.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Report\_ReportEditorCommonTemplates.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Report\_ReportEditorFilters.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_ReportEditorVendor.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Report\_ReportEditorMasterProduct.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Report\_ReportEditorSku.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Report\_SelectionCountPreview.cshtml" />
+    <Content Include="Views\Report\_ReportSelectionCountPreview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\ProductVariantSelections.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\_ReportViewer.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Report\_ReportFilterSummary.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
