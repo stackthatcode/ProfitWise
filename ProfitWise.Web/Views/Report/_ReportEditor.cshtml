@@ -218,6 +218,8 @@
     ProfitWiseWidgets.ProductFilter = "@PwReportFilter.Product";
     ProfitWiseWidgets.SkuFilter = "@PwReportFilter.Sku";
 
+
+
     ProfitWiseWidgets.ReportEditorModel = function () {
         var self = this;
 
@@ -234,20 +236,22 @@
         // Which ever of the Product Type, Vendor, Master Product or Sku models is active will be here
         self.SelectedFilterModel = ko.observable();
 
+
+        // TODO - split the key selection
         self.RefreshSelectedFilterModel = function(callback) {
             flow.exec(
                 function () {
                     self.SelectedFilterModel().Refresh(this);
                 },
                 function () {
-                    var filterType = self.SelectedFilterModel().FilterType;
+                    var filterType = self.SelectedFilterModel().FilterType();
                     var filterKeys = AQ(self.GetFiltersByType(filterType))
                                         .select(function (item) { return item.Key })
                                         .toArray();
 
                     self.SelectedFilterModel()
                         .SelectionModel
-                        .SetCheckItemsByKeyArray(filterKeys, true);
+                        .SetCheckedItemsByKeyArray(filterKeys, true);
 
                     if (callback) {
                         callback();
@@ -278,28 +282,6 @@
 
 
         // AJAX / server-side interfacing methods
-        self.UpdateFilter = function (key, selected, filterType, title) {
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    var data = {
-                        reportId: self.ReportId(),
-                        filterType: filterType,
-                        key: key,
-                        title: title,
-                    };
-
-                    if (selected) {
-                        ajax.HttpPost("/ReportService/AddFilter", data, this);
-                    } else {
-                        ajax.HttpPost("/ReportService/RemoveFilter", data, this);
-                    }
-                },
-                function () {
-                    self.RefreshFilterSummary();
-                });
-        };
-
         self.RemoveFilter = function (item) {
             flow.exec(
                 function () {
@@ -335,24 +317,6 @@
                 return self.SkuFilterModel;
             }
         };
-
-        self.RemoveFilterType = function (filterType) {
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    var data = {
-                        reportId: self.ReportId(),
-                        filterType: filterType,
-                    };
-                    ajax.HttpPost("/ReportService/RemoveFilterByType", data, this);
-                },
-                function () {
-                    var reportModel = filterModelByFilterType(filterType);
-                    reportModel.SelectionModel.UncheckAllItems();
-                    self.RefreshFilterSummary();
-                }
-            );
-        }
 
         self.RefreshFilterSummary = function (callback) {
             flow.exec(
@@ -410,7 +374,6 @@
         };
 
 
-
         // Report data bootstrapping function
         self.LoadReport = function (reportId) {
             flow.exec(
@@ -421,6 +384,7 @@
                     self.VendorFilterModel.ReportId(reportId);
                     self.MasterProductFilterModel.ReportId(reportId);
                     self.SkuFilterModel.ReportId(reportId);
+
                     self.SelectionCountPreviewModel.ReportId(reportId);
 
                     self.RefreshFilterSummary(this);

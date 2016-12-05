@@ -25,13 +25,13 @@
 <script type="text/html" id="Report-Editor-Body-Vendor">
     <div class="row-fluid" style="min-height: 400px;">
         <div class="col-xs-7 reduced-padding">
-            <div data-bind="if: PageOfItems().length == 0">
+            <div data-bind="if: CurrentPageOfItems().length == 0">
                 <div data-bind="template: { name: 'Report-Editor-Empty-Results', data: { ItemDescription: 'Vendors' } }"></div>
             </div>
 
-            <div data-bind="if: PageOfItems().length > 0">
+            <div data-bind="if: CurrentPageOfItems().length > 0">
                 <table id="product-types" class="table table-hover" style="width: 100%; height: 100%; margin: 0;">
-                    <tbody data-bind="foreach: PageOfItems">
+                    <tbody data-bind="foreach: CurrentPageOfItems">
                         <tr style="border-top: 0;" data-bind="click: $data.SelectChange">
                             <td style="color:#777;">
                                 <div data-bind="if: $data.IsChecked">
@@ -62,7 +62,7 @@
         self.FilterType = self.ParentReportModel.VendorFilter;
 
         // Data
-        self.PageOfItems = ko.observableArray();
+        self.CurrentPageOfItems = ko.observableArray();
 
         // Paging and Filtering model
         self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
@@ -115,7 +115,7 @@
                     self.FilterModel.SearchText(), self.FilterModel.GetPageNumber(), self.FilterModel.GetPageSize());
 
             self.FilterModel.SetRecordCount(filterResults.NumberOfFilteredItems);
-            self.PageOfItems(filterResults.PagedItems);
+            self.CurrentPageOfItems(filterResults.PagedItems);
         };
 
         return self;
