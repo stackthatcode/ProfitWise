@@ -45,20 +45,25 @@
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
     ProfitWiseWidgets.ReportFilterSummaryModel = function () {
+        var self = this;
         self.ReportId = ko.observable();
         self.FiltersGrid = ko.observableArray([]);
 
-        self.FiltersByType = function (filterType) {
+        self.GetFiltersByType = function (filterType) {
             return AQ(self.FiltersGrid())
                 .where(function (item) { return item.FilterType == filterType; })
                 .toArray();
         };
 
-        self.ProductTypesGrid = ko.computed(function () { return filtersByType(self.ProductTypeFilter); });
-        self.VendorsGrid = ko.computed(function () { return filtersByType(self.VendorFilter); });
-        self.ProductsGrid = ko.computed(function () { return filtersByType(self.ProductFilter); });
-        self.SkuGrid = ko.computed(function () { return filtersByType(self.SkuFilter); });
-
+        self.ProductTypesGrid = ko.computed(
+            function () { return self.GetFiltersByType(ProfitWiseWidgets.ProductTypeFilter); });
+        self.VendorsGrid = ko.computed(
+            function () { return self.GetFiltersByType(ProfitWiseWidgets.VendorFilter); });
+        self.ProductsGrid = ko.computed(
+            function () { return self.GetFiltersByType(ProfitWiseWidgets.ProductFilter); });
+        self.SkuGrid = ko.computed(
+            function () { return self.GetFiltersByType(ProfitWiseWidgets.SkuFilter); });
+        
         // Triggered whenever there's a change to the filters
         self.NotifyCallback = function () { };
 
@@ -67,9 +72,7 @@
         };
         
         // AJAX / server-side interfacing methods
-        self.
-
-        self.RefreshFilterSummary = function (callback) {
+        self.Refresh = function (callback) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -82,8 +85,11 @@
                                 self.RemoveFilter(item);
                             }
                         });
+
                     self.FiltersGrid(filters);
-                    callback();
+                    if (callback) {
+                        callback();
+                    }
                 }
             );
         };
@@ -108,5 +114,7 @@
                 }
             );
         };
+
+        return self;
     };
 </script>

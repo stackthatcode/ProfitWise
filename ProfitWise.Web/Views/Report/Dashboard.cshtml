@@ -1,11 +1,8 @@
-﻿
+﻿@Html.Partial("~/Views/Report/_ReportManager.cshtml")
+
 @{
     ViewBag.CommonContext.PageTitle = "ProfitWise Dashboard";
 }
-
-<!-- KnockoutJS Templates -->
-@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
-@Html.Partial("~/Views/Report/_ReportManager.cshtml")
 
 
 <style>
@@ -26,7 +23,7 @@
 </style>
 
 <!-- KnockoutJS Root Element -->
-<div data-bind="template: { name: 'Report-Manager-Top-Level' }"></div>
+<div data-bind="template: { name: 'Report-Manager-Top-Level', data: ReportManagerModel }"></div>
 
 <!-- KnockoutJS Model -->
 <script>
@@ -36,17 +33,15 @@
         var self = this;
 
         // Report View Model configuration
-        self.ReportManagerModel = new ProfitWiseWidgets.ReportManagerModel();   
-        
+        self.ReportManagerModel = new ProfitWiseWidgets.ReportManagerModel();           
         self.ReportManagerModel.RegisterSelectReportCallback(            
             function (reportId) {
-                alert("Ok, as the Dashboard, somebody selected Report Id: " + reportId);
+                console.log("Ok, as the Dashboard, somebody selected Report Id: " + reportId);
 
                 // TODO - call ajax function to get data and return to Report Viewer, which
                 // ... then pass it on to the View Template we specified
             });
 
-        self.ReportManagerModel.Initialize();
         return self;
     };
 
@@ -57,15 +52,7 @@
 
             var model = new ProfitWise.DashboardModel();
             ko.applyBindings(model);
-
-            flow.exec(
-                function() {
-                    model.ReportManagerModel.LoadReports(this);
-                },
-                function () {
-                    model.ReportManagerModel.SelectReportByReportId(OverallProfitabilityReportId);
-                }
-            );
+            model.ReportManagerModel.Initialize();
         });
 </script>
 

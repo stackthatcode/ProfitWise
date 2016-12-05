@@ -1,7 +1,10 @@
 ﻿@using ProfitWise.Data.Model
+
+@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
 @Html.Partial("~/Views/Report/_FilterPagingWidget.cshtml")
-@Html.Partial("~/Views/Report/_SelectionModel.cshtml")
 @Html.Partial("~/Views/Report/_ReportSelectionCountPreview.cshtml")
+@Html.Partial("~/Views/Report/_ReportFilterSummary.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorFilters.cshtml")
 
 
 <script type="text/html" id="Report-Editor-Top-Level">
@@ -25,8 +28,9 @@
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
                 <div class="col-xs-6 no-side-padding">
-                    <div class="popover-container">
-                        <h4 style="display:inline-block; font-weight:700;" `data-bind="text: $data.EditingReport().Name"></h4>
+                    <div class="popover-container" data-bind="if: ReportContext">
+                        <h4 style="display:inline-block; font-weight:700;" 
+                            data-bind="text: ReportContext().Name"></h4>
 
                         <div style="margin-left:7px; display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING REPORT)</div>
                     </div>
@@ -160,62 +164,61 @@
                     ProfitWiseWidgets.ProductTypeFilter, 
                     "Search by Product Type...",
                     "/ReportService/ProductTypes");
+        self.ProductTypeFilterModel.RegisterNotifyCallback(
+                function() {
+                    self.RefreshFilterSummaryAndCount();
+                });
 
         self.VendorFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.VendorFilter,
                     "Search by Vendor...",
-                    "/ReportService/Vendor");
+                    "/ReportService/Vendors");
+        self.VendorFilterModel.RegisterNotifyCallback(
+                function () {
+                    self.RefreshFilterSummaryAndCount();
+                });
 
         self.MasterProductFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.ProductFilter, 
                     "Search by Title and Vendor",
-                    "/ReportService/Vendor");
-        self.MasterProductFilterModel.RegisterSearchTextFunction(
-            function (item, searchText) {
-                    return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
-                        ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
+                    "/ReportService/MasterProducts");
+        self.MasterProductFilterModel.RegisterNotifyCallback(
+                function () {
+                    self.RefreshFilterSummaryAndCount();
                 });
-
+        self.MasterProductFilterModel.RegisterSearchTextFunction(
+                function (item, searchText) {
+                        return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                            ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
+                    });
+        
         self.SkuFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.SkuFilter, 
                     "Search by Title, Vendor or SKU",
-                    "/ReportService/Vendor");
+                    "/ReportService/Skus");
+        self.SkuFilterModel.RegisterNotifyCallback(
+                function () {
+                    self.RefreshFilterSummaryAndCount();
+                });
         self.SkuFilterModel.RegisterSearchTextFunction(
-            function (item, searchText) {
-                return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
-                                ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
-                                ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
-                                ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
-            });
-
-        var filterModelByFilterType = function (filterType) {
-            if (filterType == self.ProductTypeFilter) {
-                return self.ProductTypeFilterModel;
-            }
-            if (filterType == self.VendorFilter) {
-                return self.VendorFilterModel;
-            }
-            if (filterType == self.ProductFilter) {
-                return self.MasterProductFilterModel;
-            }
-            if (filterType == self.SkuFilter) {
-                return self.SkuFilterModel;
-            }
-        };
+                function (item, searchText) {
+                    return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                                    ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
+                                    ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
+                                    ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
+                });        
 
         // Which ever of the Product Type, Vendor, Master Product or Sku models is active will be here
         self.SelectedFilterModel = ko.observable();
         self.SelectedFilterModelType = ko.computed(function () {
-            self.SelectedFilterModel().FilterType();
+            return self.SelectedFilterModel() ? self.SelectedFilterModel().FilterType() : "";
         });
 
-        // Selection Preview model
-        self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
-        
-        // Filter Grid Model
+        // Filter Summary and Selection Preview models...
+        self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();        
         self.ReportFilterSummaryModel = new ProfitWiseWidgets.ReportFilterSummaryModel();
 
 
@@ -227,7 +230,7 @@
                         return;
                     }
                     self.SelectedFilterModel(newFilterModel);
-                    self.SelectedFilterModel.Refresh(this);
+                    self.SelectedFilterModel().Refresh(this);
                 },
                 function () {
                     self.RefreshFilterModelSelectionsFromSummary(self.SelectedFilterModelType());
@@ -258,7 +261,7 @@
         self.RefreshFilterSummaryAndCount = function (callback) {
             flow.exec(
                 function () {
-                    self.SelectedFilterModel().Refresh(this);
+                    self.ReportFilterSummaryModel.Refresh(this);
                 },
                 function () {
                     self.ReportSelectionCountPreviewModel.Refresh(this);
@@ -288,20 +291,26 @@
             flow.exec(
                 function() {
                     self.ReportId(reportId);
-
                     self.ProductTypeFilterModel.ReportId(reportId);
                     self.VendorFilterModel.ReportId(reportId);
                     self.MasterProductFilterModel.ReportId(reportId);
                     self.SkuFilterModel.ReportId(reportId);
 
                     self.ReportSelectionCountPreviewModel.ReportId(reportId);
-                    self.ReportFilterSummaryModel.ReportId(reportId);                
+                    self.ReportFilterSummaryModel.ReportId(reportId);
+
+                    self.RefreshFilterSummaryAndCount(this);
                 },
                 function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
+                },
+                function (report) {
+                    self.ReportContext(report);
                     self.ProductTypeClick();
                 });
         };
-
+        
         // OK & Cancel buttons
         self.CancelCallback = function () { };
 

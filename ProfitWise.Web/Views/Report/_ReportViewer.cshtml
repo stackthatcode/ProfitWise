@@ -1,4 +1,5 @@
-﻿<style>
+﻿
+<style>
     table#product-types td {
         height: 70px !important;
         font-size: 14px;
@@ -15,6 +16,15 @@
         width: 45%;
     }
 </style>
+
+<script id="Date-Picker" type="text/html">
+    <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
+        <input type="text" 
+               class="form-control" 
+               style="width: 100%; font-size: 1.0em;" id="date-range-picker" />
+        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
+    </div>
+</script>
 
 <script id="Report-Viewer-Top-Level" type="text/html">
     <div id="report-viewer-header" class="fixed-positioning-container">
@@ -98,10 +108,7 @@
 
                         <div style="clear: both; height: 10px;"></div>
 
-                        <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
-                            <input type="text" class="form-control" style="width: 100%; font-size: 1.0em;" id="date-range-picker" />
-                            <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
-                        </div>
+                        <div data-bind="template: { name: 'Date-Picker', afterRender: AfterRenderDateRangePicker }"></div>
 
                         <div style="clear: both; height: 10px;"></div>
                     </div>
@@ -153,10 +160,10 @@
                                 item.CurrentlySelected =
                                     ko.computed(
                                         function () {
-                                            if (!self.CurrentReport()) {
+                                            if (!self.CurrentReportSelection()) {
                                                 return false;
                                             }
-                                            return self.CurrentReport().PwReportId == item.PwReportId;
+                                            return self.CurrentReportSelection().PwReportId == item.PwReportId;
                                         });
                             });
 
@@ -207,14 +214,17 @@
 
         self.SelectReportClick = function (data) {
             // TODO: hit the database to load this Report's Header information
+
             self.CurrentReportSelection(data);
             self.SelectReportCallback(data.PwReportId);
         };
 
         self.SelectReportCallback = function (reportId) { };
 
-        self.EditReportClick = function (data) {
-            self.EditReportCallback(data.PwReportId);
+        self.EditReportClick = function () {
+            if (self.CurrentReportSelection()) {
+                self.EditReportCallback(self.CurrentReportSelection().PwReportId);
+            }
         };
 
         self.EditReportCallback = function (reportId) { };

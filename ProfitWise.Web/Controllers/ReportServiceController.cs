@@ -32,7 +32,16 @@ namespace ProfitWise.Web.Controllers
             userReports.AddRange(systemReports);
 
             return new JsonNetResult(userReports);
-        }        
+        }
+        [HttpGet]
+        public ActionResult Report(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            
+            return new JsonNetResult(repository.RetrieveReport(reportId));
+        }
+
 
         [HttpPost]
         public ActionResult CopyAndEdit(long reportId)

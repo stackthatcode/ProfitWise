@@ -356,8 +356,7 @@
         self.CurrentPageOfItems = ko.observableArray();
 
         // Triggered whenever there's a change to the filters
-        self.NotifyCallback = function () { };
-
+        self.NotifyCallback = function () { };        
         self.RegisterNotifyCallback = function (callback) {
             self.NotifyCallback = callback;
         };
@@ -371,7 +370,7 @@
         );
         
         self.RegisterSearchTextFunction = function(searchTextFunction) {
-            self.SelectionModel = searchTextFunction;
+            self.SelectionModel.RegisterSearchTextFunction(searchTextFunction);
         };
 
         // Why is the title not being handled by the server ** TODO 
@@ -396,7 +395,7 @@
                     self.NotifyCallback();
                 });
         };
-
+        
         self.DeselectAll = function () {
             flow.exec(
                 function () {
@@ -422,7 +421,7 @@
 
             flow.exec(
                 function () {
-                    ajax.HttpGet(self.FilterAjaxUrl, this);
+                    ajax.HttpGet(self.FilterAjaxUrl + "?reportId=" + self.ReportId(), this);
                 },
                 function (allItemsFromServer) {
                     self.SelectionModel.LoadItems(allItemsFromServer);
