@@ -95,6 +95,12 @@
                         this);
                 },
                 function (data) {
+                    AQ(data.Selections)
+                        .each(function(item) {
+                            item.Vendor = item.Vendor || "(No Vendor)";
+                            item.Sku = item.Sku || "(No Sku)";
+                        });
+
                     self.SelectionsGrid(data.Selections);
 
                     if (self.IsProductSelection()) {

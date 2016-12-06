@@ -211,6 +211,21 @@
                                     ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
                 });        
 
+        var filterModelByFilterType = function (filterType) {
+            if (filterType == ProfitWiseWidgets.ProductTypeFilter) {
+                return self.ProductTypeFilterModel;
+            }
+            if (filterType == ProfitWiseWidgets.VendorFilter) {
+                return self.VendorFilterModel;
+            }
+            if (filterType == ProfitWiseWidgets.ProductFilter) {
+                return self.MasterProductFilterModel;
+            }
+            if (filterType == ProfitWiseWidgets.SkuFilter) {
+                return self.SkuFilterModel;
+            }
+        };
+
         // Which ever of the Product Type, Vendor, Master Product or Sku models is active will be here
         self.SelectedFilterModel = ko.observable();
         self.SelectedFilterModelType = ko.computed(function () {
@@ -220,7 +235,13 @@
         // Filter Summary and Selection Preview models...
         self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();        
         self.ReportFilterSummaryModel = new ProfitWiseWidgets.ReportFilterSummaryModel();
-
+        self.ReportFilterSummaryModel.RegisterRemoveCallback(function (filterType, key) {
+            var filterModel = filterModelByFilterType(filterType);
+            filterModel
+                .SelectionModel
+                .SetCheckedItemByKey(key, false);
+            self.ReportSelectionCountPreviewModel.Refresh();
+        });
 
         // Assumes the following interfaces: Refresh(reportId, callback), FilterType
         self.ClickOnNewFilterTab = function (newFilterModel, bootstrapTabHref) {

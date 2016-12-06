@@ -1,19 +1,28 @@
 ﻿<script type="text/html" id="Report-Editor-Filter-Summary">
-    <div style="height:10px;"></div>
-    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+    <style>
+        .report-editor-filter-summary .tooltip-inner {
+            margin-top:-1px;
+        }
+    </style>
+    
+    <div class="report-editor-filter-summary">
+        <div style="height: 10px;"></div>
+        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
                                         data: { label: 'Product Types Filters', grid: ProductTypesGrid } }"></div>
 
-    <div style="height:10px;"></div>
-    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+        <div style="height: 10px;"></div>
+        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
                                         data: { label: 'Vendor Filters', grid: VendorsGrid } }"></div>
 
-    <div style="height:10px;"></div>
-    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+        <div style="height: 10px;"></div>
+        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
                                         data: { label: 'Product Filters', grid: ProductsGrid } }"></div>
 
-    <div style="height:10px;"></div>
-    <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+        <div style="height: 10px;"></div>
+        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
                                         data: { label: 'Variant Filters', grid: SkuGrid } }"></div>
+
+    </div>
 </script>
 
 <script type="text/html" id="Report-Editor-Filter-Grid">
@@ -29,7 +38,7 @@
                  style="display:inline-block; margin-bottom:5px;"
                  data-bind="tooltip: { title: $data.Description, placement: 'bottom' }">
 
-            <div class="filter-description">
+            <div class="filter-description" style="max-width:125px !important;">
                 <span data-bind="text: $data.Title"></span>
             </div>
 
@@ -65,10 +74,10 @@
             function () { return self.GetFiltersByType(ProfitWiseWidgets.SkuFilter); });
         
         // Triggered whenever there's a change to the filters
-        self.NotifyCallback = function () { };
+        self.RemoveCallback = function (filterType, key) { };
 
-        self.RegisterNotifyCallback = function (callback) {
-            self.NotifyCallback = callback;
+        self.RegisterRemoveCallback = function (callback) {
+            self.RemoveCallback = callback;
         };
         
         // AJAX / server-side interfacing methods
@@ -107,10 +116,10 @@
                 },
                 function () {
                     // TODO *** replace this with premature optimization to remove directly from grid
-                    self.RefreshFilterSummary(this);
+                    self.Refresh(this);
                 },
                 function () {
-                    self.NotifyCallback();
+                    self.RemoveCallback(item.FilterType, item.Key);
                 }
             );
         };

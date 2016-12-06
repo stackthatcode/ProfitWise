@@ -16,7 +16,6 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
 
-
         public ReportServiceController(MultitenantFactory factory, CurrencyService currencyService)
         {
             _factory = factory;
@@ -33,6 +32,7 @@ namespace ProfitWise.Web.Controllers
 
             return new JsonNetResult(userReports);
         }
+
         [HttpGet]
         public ActionResult Report(long reportId)
         {
@@ -41,7 +41,6 @@ namespace ProfitWise.Web.Controllers
             
             return new JsonNetResult(repository.RetrieveReport(reportId));
         }
-
 
         [HttpPost]
         public ActionResult CopyAndEdit(long reportId)
@@ -147,8 +146,6 @@ namespace ProfitWise.Web.Controllers
             var output = repository.RetrieveReportRecordCount(reportId);            
             return new JsonNetResult(output);
         }
-
-
 
         [HttpGet]
         public ActionResult ProductSelectionsByPage(long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
