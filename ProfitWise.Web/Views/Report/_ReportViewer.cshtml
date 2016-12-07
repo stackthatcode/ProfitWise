@@ -1,6 +1,8 @@
 ﻿@using ProfitWise.Data.Model
 @using Push.Foundation.Web.Json
 
+@Html.Partial("~/Views/SharedTemplates/_SelectorPopoverWidget.cshtml")
+
 <style>
     table#product-types td {
         height: 70px !important;
@@ -45,11 +47,9 @@
                                     <span>Grouped by </span>
                                     <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
                                     </span>
-
                                     <span>/</span>
-
-                                    <span class="popover-container">
-                                        Ordered by <a href="#">Profitability (most-to-least)</a>
+                                    <span>Ordered by </span>
+                                    <span data-bind="template: { name: 'Selector-Popover-Widget', data: OrderingPopoverModel }">
                                     </span>
                                 </div>
                             </div>
@@ -81,11 +81,11 @@
                         </ul>
                     </div>
 
-                    <div style="clear: both; height: 20px;"></div>
-
-                    <div id="report-date-picker" class="pull-right"
-                         data-bind="template: { name: 'Date-Picker-Widget', afterRender: AfterRenderDateRangePicker }"></div>
+                    <div style="clear: both; height: 20px;"></div>                    
                     
+                    <div id="report-date-picker" class="pull-right" data-bind="with: ReportViewerContext">
+                        <div data-bind="template: { name: 'Date-Picker-Widget', afterRender: AfterRenderDateRangePicker }"></div>
+                    </div>
 
                     <div class="pull-right">
                         <a href="#" style="margin-right: 7px;"
@@ -109,70 +109,6 @@
             </div>
         </div>
     </div>
-</script>
-
-<!-- Expects $data.options, $data.selection, $data.okcallback and $data.popovercallback -->
-<script type="text/html" id="Selector-Popover-Widget">
-    <span class="popover-container">
-        <a href="#" class="popover-launcher"
-           data-bind="click: PopOverLaunchCallback,
-                    popover: { options: { placement: 'bottom', trigger: 'click', },
-                    template: 'Selector-Popover-Widget-Popover-Layer', data: $data }">
-            <span data-bind="text: ElementText"></span>
-        </a>
-    </span>
-</script>
-<script type="text/html" id="Selector-Popover-Widget-Popover-Layer">
-    <div class="input-group" style="width:250px;">
-        <div style="height:30px;" data-bind="text:PromptText"></div>   
-        
-        <div class="input-group" style="width:100%;">
-            <!-- Data-Bind to KO stuff -->
-            <select class="form-control" 
-                    data-bind="options: Options,
-                        optionsText: OptionsText(),
-                        value: Selection,
-                        optionsValue: OptionsValue()">
-            </select>
-
-            <span class="input-group-btn">
-                <a href="#" data-bind="click: OkButtonClick"
-                   class="btn btn-primary" type="button">Ok</a>
-            </span>
-        </div>
-    </div>
-</script>
-<script>
-    ProfitWiseWidgets = ProfitWiseWidgets || {};
-
-    ProfitWiseWidgets.SelectorPopoverWidgetModel = function () {
-        var self = this;
-
-        self.OptionsText = ko.observable();
-        self.OptionsValue = ko.observable();
-        self.Options = ko.observableArray([]);
-        self.Selection = ko.observable();
-        self.PromptText = ko.observable();
-
-        self.SelectedOption = ko.computed(function () {
-            return AQ(self.Options())
-                    .firstOrDefault(function (item) { return item[self.OptionsValue()] == self.Selection(); });
-        });
-
-        self.ElementText = ko.computed(function() {
-            var option = self.SelectedOption();
-            var output = option ? option[self.OptionsText()] : "(No Selection)";
-            return output;
-        });
-
-        self.PopOverLaunchCallback = function() {};
-        self.OkCallback = function() {};
-
-        self.OkButtonClick = function() {
-            ProfitWiseFunctions.PopOverCloseAll();
-            self.OkCallback();
-        };
-    };
 </script>
 
 
@@ -219,51 +155,64 @@
         return @Html.Raw(@PwReportExtensions.AllGroupingToNamedObject().SerializeToJson());
     };
 
+    ProfitWiseWidgets.ReportOrderingOptionsFactory = function() {
+        return @Html.Raw(@PwReportExtensions.AllOrderingToNamedObject().SerializeToJson());
+    };
+
     ProfitWiseWidgets.ReportViewerContext = function() {
         var self = this;
 
-        // Reference data        
+        // Reference data
         self.ReportId = ko.observable();
         self.Name = ko.observable();
         self.StartDate = ko.observable();
         self.EndDate = ko.observable();
 
+        self.CopyForEditing = ko.observable(false);
+        self.SystemReport = ko.observable(false);
+
         self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
         self.GroupingPopoverModel.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
         self.GroupingPopoverModel.PromptText("Select a method for grouping data");
-        self.GroupingPopoverModel.OptionsValue("ReportGroupingId");
+        self.GroupingPopoverModel.OptionsValue("GroupingId");
         self.GroupingPopoverModel.OptionsText("Description");
-        self.GroupingPopoverModel.PopOverLaunchCallback = function () { alert('popover open!'); };
         self.GroupingPopoverModel.OkCallback = function () { alert('ok') };
-        
-        self.Ordering = ko.observable();
+
+        self.OrderingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
+        self.OrderingPopoverModel.Options(ProfitWiseWidgets.ReportOrderingOptionsFactory());
+        self.OrderingPopoverModel.PromptText("Select a method for ordering data");
+        self.OrderingPopoverModel.OptionsValue("OrderingId");
+        self.OrderingPopoverModel.OptionsText("Description");
+        self.OrderingPopoverModel.OkCallback = function () { alert('ok') };
 
         self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
 
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
         });
-        
+
+        // TODO - transfer Start and End Date from ReportContext
+        self.AfterRenderDateRangePicker = function () {
+
+            ProfitWiseWidgets.CreateDatePicker("#report-date-picker");
+        };
+
         self.LoadReport = function(reportId, callback) {
             self.ReportId(reportId);
-            
+
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
                 function (data) {
-                    // console.log(data);
-
                     // Load data into model...
                     self.Name(data.Name);
                     self.StartDate(data.StartDate);
                     self.EndDate(data.EndDate);
-
                     self.GroupingPopoverModel.Selection(data.GroupingId);
-                    //self.Grouping(data.Grouping);
-                    //self.Ordering(data.Ordering);
-
+                    self.OrderingPopoverModel.Selection(data.OrderingId);
+                    
                     self.ReportSelectionCountPreviewModel.ReportId(reportId);
                     self.ReportSelectionCountPreviewModel.Refresh(this);
                 },
@@ -275,9 +224,6 @@
             );
         };
 
-        self.GroupingChange = function() {
-            console.log('ok!!!');
-        };
 
         return self;
     };
@@ -324,11 +270,6 @@
                 });
         };
 
-        self.AfterRenderDateRangePicker = function () {
-            // TODO - transfer Start and End Date from ReportContext
-
-            ProfitWiseWidgets.CreateDatePicker("#report-date-picker");
-        };
 
         self.SelectReportByReportId = function (id) {
             var report =

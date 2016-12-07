@@ -70,25 +70,25 @@ namespace ProfitWise.Data.Model
                             { ReportOrdering.NameAscending, "Name (A-to-Z)" },
                             { ReportOrdering.NameDescending, "Name (Z-to-A)" },
                             { ReportOrdering.ProfitabilityAscending , "Profitability (least to most)" },
-                            { ReportOrdering.ProfitabilityDescending, "Variant (most to least)" },
+                            { ReportOrdering.ProfitabilityDescending, "Profitability (most to least)" },
                 };
 
         public static object AllGroupingToNamedObject()
         {
-            return _groupingDescriptions.Select(x => new {ReportGroupingId = x.Key, Description = x.Value}).ToList();
+            return _groupingDescriptions.Select(x => new { GroupingId = x.Key, Description = x.Value}).ToList();
         }
 
-        public static Dictionary<ReportOrdering, string> AllReportOrdering()
+        public static object AllOrderingToNamedObject()
         {
-            return _orderingDescriptions;
+            return _orderingDescriptions.Select(x => new { OrderingId = x.Key, Description = x.Value }).ToList(); ;
         }
 
-        public static string ReportGroupingDescription(this ReportGrouping input)
+        public static string Description(this ReportGrouping input)
         {
             return _groupingDescriptions[input];
         }
 
-        public static string ReportOrderingDescription(this ReportOrdering input)
+        public static string Description(this ReportOrdering input)
         {
             return _orderingDescriptions[input];
         }

@@ -429,3 +429,66 @@
 2016-12-07 14:37:01.7452|Debug|6580ad91-1b6d-45b0-aebd-f96b71ec5e01|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-07 14:37:03.7309|Debug|646c7035-ffc4-49be-9c16-b49edc41693b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-07 14:37:03.8308|Debug|c84ca2f0-982c-469d-a439-5bc2eba0bc43|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 14:39:17.3580|Debug|1ed1fbff-efa0-4ebf-9c3e-b3eac328e0bb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 14:39:18.2405|Debug|910e1f37-664e-4284-b562-a6af2fe556f2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 14:39:19.3612|Debug|de13a129-49fa-44b5-90ef-7201a38eaf17|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 14:39:19.4022|Debug|5b2c8ac7-506e-4a11-948a-a726d54d0e18|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:05:47.3300|Debug|0a11b3fa-fef8-4655-8bb7-fff33c04130e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:05:57.0655|Error|0a11b3fa-fef8-4655-8bb7-fff33c04130e|URL:https://gracie2/ProfitWise/?hmac=c48c2257435002c5fdcca819adc4cc72895a7549e60d798c3d392e072de6780b&protocol=https:%2F%2F&shop=3duniverse.myshopify.com&timestamp=1481143155 - IsAjaxRequest: False
+2016-12-07 16:05:57.1215|Error|0a11b3fa-fef8-4655-8bb7-fff33c04130e|System.Web.HttpCompileException:C:\DEV\ProfitWise\ProfitWise.Web\Views\Report\_ReportViewer.cshtml(223): error CS0117: 'PwReportExtensions' does not contain a definition for 'AllOrderingToNamedObject'
+   at System.Web.Compilation.AssemblyBuilder.Compile()
+   at System.Web.Compilation.BuildProvidersCompiler.PerformBuild()
+   at System.Web.Compilation.BuildManager.CompileWebFile(VirtualPath virtualPath)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultInternal(VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultWithNoAssert(HttpContext context, VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVirtualPathObjectFactory(VirtualPath virtualPath, HttpContext context, Boolean allowCrossApp, Boolean throwIfNotFound)
+   at System.Web.Compilation.BuildManager.GetCompiledType(VirtualPath virtualPath)
+   at System.Web.Mvc.BuildManagerCompiledView.Render(ViewContext viewContext, TextWriter writer)
+   at System.Web.Mvc.Html.PartialExtensions.Partial(HtmlHelper htmlHelper, String partialViewName, Object model, ViewDataDictionary viewData)
+   at ASP._Page_Views_Report__ReportManager_cshtml.Execute() in C:\DEV\ProfitWise\ProfitWise.Web\Views\Report\_ReportManager.cshtml:line 3
+   at System.Web.WebPages.WebPageBase.ExecutePageHierarchy()
+   at System.Web.Mvc.WebViewPage.ExecutePageHierarchy()
+   at System.Web.WebPages.WebPageBase.ExecutePageHierarchy(WebPageContext pageContext, TextWriter writer, WebPageRenderingBase startPage)
+   at System.Web.Mvc.Html.PartialExtensions.Partial(HtmlHelper htmlHelper, String partialViewName, Object model, ViewDataDictionary viewData)
+   at ASP._Page_Views_Report_Dashboard_cshtml.Execute() in C:\DEV\ProfitWise\ProfitWise.Web\Views\Report\Dashboard.cshtml:line 1
+   at System.Web.WebPages.WebPageBase.ExecutePageHierarchy()
+   at System.Web.Mvc.WebViewPage.ExecutePageHierarchy()
+   at System.Web.WebPages.StartPage.ExecutePageHierarchy()
+   at System.Web.WebPages.WebPageBase.ExecutePageHierarchy(WebPageContext pageContext, TextWriter writer, WebPageRenderingBase startPage)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-07 16:07:30.9173|Debug|e7d76adb-c0f1-4e73-b89b-cdfdd4b3458d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:07:34.9713|Debug|50b79c40-bc02-4fc9-9942-784dd0b72c76|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:07:35.4398|Debug|a0de4d29-3c85-4917-84dd-f62ab23f6ee0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:07:35.5278|Debug|20b1b453-4de7-4b8f-9d0b-3a8970ac217c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:13:22.4674|Debug|4cac6fdd-0ab2-4aa9-9edc-ea8679d1e0b3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:13:23.4734|Debug|243b9ae0-6f7c-4af5-99ec-b209efe65762|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:13:49.0639|Debug|b9cf8949-9297-4de2-b1a6-2367a4b16dde|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:14:05.3890|Debug|4403c9a8-2b1b-415f-b3dd-79c3a1b3aaea|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:14:07.7300|Debug|702b7050-4197-4371-bbff-ee6afe0523bb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:14:44.1339|Debug|622b9cf3-1821-4a7e-8ea7-6cfc7ff2e0af|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:15:01.8614|Debug|16d74199-6bc3-4bbf-b420-d275b08d4f36|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:15:02.5549|Debug|787fb8fe-9469-4588-8e2c-24277835a5b1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:15:02.6919|Debug|f6218351-2fea-4e43-9f78-ea48cb1b4122|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:27:09.5178|Debug|b4fcc070-fccd-4871-9871-475d2d0552ee|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:31:11.7833|Debug|7589cbe9-2a32-415d-967a-8b63c997af02|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:31:40.7616|Debug|eb9a1f21-ea02-414b-9560-a71edb6502c8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:01.5368|Debug|1e0e2a6e-d05d-41dd-960c-f561e67e1ecc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:07.3223|Debug|26cc073a-d3d8-42d8-8649-8104c647f1e3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:07.7073|Debug|1e52f290-19c2-4ace-8983-50e945f09f15|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:07.7468|Debug|3288ca4e-1baa-4ca7-a52e-15741e975d95|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:55.4540|Debug|f30a7efd-26e6-4e5e-8aa2-d773368201ab|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:55.6630|Debug|dd0dca53-16b8-449e-918a-36cf46152eb0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:55.6930|Debug|8ecbe799-92f1-44cc-84f0-4e63b80b1426|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:55.7165|Debug|bc54166b-2730-4ec7-8074-df9046d4061c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:32:55.8375|Debug|ae063ca7-6d72-49a2-84a7-cd91622099a5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:33:02.7912|Debug|33cda7f4-c498-4889-9537-bbf052118d9f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:33:02.9047|Debug|af657f9c-6037-43a7-b575-543872f0bc8e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:33:04.7106|Debug|70971a28-d285-4020-a9c2-f7d3c6404f0a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:33:04.7996|Debug|89fbf0e0-7f7a-4408-8142-e5e07b36ed3e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:33:04.8256|Debug|65d44aae-e656-4ce3-a51b-1f37c71200ed|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 16:33:04.8481|Debug|16d8e41e-2284-4332-9ec7-0b97be32d8ac|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext

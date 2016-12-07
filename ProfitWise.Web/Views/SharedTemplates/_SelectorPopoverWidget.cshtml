@@ -1,0 +1,66 @@
+﻿<!-- Expects $data.options, $data.selection, $data.okcallback and $data.popovercallback -->
+<script type="text/html" id="Selector-Popover-Widget">
+    <span class="popover-container">
+        <a href="#" class="popover-launcher"
+           data-bind="click: PopOverLaunch,
+                    popover: { options: { placement: 'bottom', trigger: 'click', },
+                    template: 'Selector-Popover-Widget-Popover-Layer', data: $data }"><span data-bind="text: ElementText"></span></a>
+    </span>
+</script>
+<script type="text/html" id="Selector-Popover-Widget-Popover-Layer">
+    <div class="input-group" style="width:250px;">
+        <div style="height:30px;" data-bind="text:PromptText"></div>
+
+        <div class="input-group" style="width:100%;">
+            <!-- Data-Bind to KO stuff -->
+            <select class="form-control"
+                    data-bind="options: Options,
+                        optionsText: OptionsText(),
+                        value: EditSelection,
+                        optionsValue: OptionsValue()"></select>
+
+            <span class="input-group-btn">
+                <a href="#" data-bind="click: OkButtonClick"
+                   class="btn btn-primary" type="button">Ok</a>
+            </span>
+        </div>
+    </div>
+</script>
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.SelectorPopoverWidgetModel = function () {
+        var self = this;
+
+        self.OptionsText = ko.observable();
+        self.OptionsValue = ko.observable();
+        self.Options = ko.observableArray([]);
+        self.Selection = ko.observable();
+        self.EditSelection = ko.observable();
+        self.PromptText = ko.observable();
+
+        self.SelectedOption = ko.computed(function () {
+            return AQ(self.Options())
+                    .firstOrDefault(function (item) { return item[self.OptionsValue()] == self.Selection(); });
+        });
+
+        self.ElementText = ko.computed(function() {
+            var option = self.SelectedOption();
+            var output = option ? option[self.OptionsText()] : "(No Selection)";
+            return output;
+        });
+
+        self.PopOverLaunch = function() {
+            self.EditSelection(self.Selection());
+        };
+
+        self.OkCallback = function() {};
+
+        self.OkButtonClick = function () {
+            self.Selection(self.EditSelection());
+            ProfitWiseFunctions.PopOverCloseAll();
+            self.OkCallback();
+        };
+    };
+</script>
