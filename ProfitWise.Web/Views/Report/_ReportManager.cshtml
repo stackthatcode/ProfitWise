@@ -39,15 +39,15 @@
                 });
         };
 
-        // TODO - wire in the Edit Completion stuff
         self.ReportEditorModel.OkCallback = function () {
             self.InEditMode(false);
-            alert('Ok, time to do something');
+            self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
+
+            console.log('OK click - time to load report');
         };
 
         self.ReportEditorModel.CancelCallback = function () {
             self.InEditMode(false);
-            alert('Cancelled!');
         };
 
         self.RegisterSelectReportCallback = function (callback) {

@@ -277,3 +277,4 @@
 2016-12-06 19:04:18.7422|Debug|c1d8762e-a26e-48a1-b672-5f607019a0f6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-06 19:04:21.8062|Debug|21757bfe-a9f3-4394-8df0-7a9881da89ef|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-06 19:04:23.7542|Debug|b954e24f-7981-424d-89cd-281fec5f42b0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-06 19:09:39.2265|Debug|6203ad8f-96c3-40b6-88f3-b6108acdb800|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext

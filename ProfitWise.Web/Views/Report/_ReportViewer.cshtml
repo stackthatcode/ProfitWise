@@ -32,12 +32,12 @@
                                 <h4 style="display: inline-block; font-weight: 700;"
                                     data-bind="text: Name"></h4>
                             </div>
-
+                            
                             <div style="font-size: 1.0em; color: #666; line-height: 22px;">
-                                <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
-                                <br />
+                                <div data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
+                                
                                 <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
-                                <br />
+                                                                <br />
                                 <span>Grouped by Vendor, Ordered by Profitability</span>
                                 <br />
                             </div>
@@ -147,6 +147,9 @@
         self.StartDate = ko.observable();
         self.EndDate = ko.observable();
 
+        self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
+
+
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
         });
@@ -160,11 +163,17 @@
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
                 function (data) {
+                    console.log(data);
+
                     self.Name(data.Name);
                     self.StartDate(data.StartDate);
                     self.EndDate(data.EndDate);
 
-                    if (callback) {
+                    self.ReportSelectionCountPreviewModel.ReportId(reportId);
+                    self.ReportSelectionCountPreviewModel.Refresh(this);
+                }, 
+                function() {
+                   if (callback) {
                         callback();
                     }
                 }
@@ -222,22 +231,29 @@
         };
 
         self.SelectReportByReportId = function (id) {
-            var report = AQ(self.ReportList()).firstOrDefault(function (item) { return item.PwReportId == id; });
+            var report =
+                AQ(self.ReportList())
+                    .firstOrDefault(function (item) { return item.PwReportId == id; });
+            
             if (report != null) {
                 self.SelectReportClick(report);
             }
         };
 
         self.SelectReportClick = function (data) {
+            var reportId = data.PwReportId;
+            self.SelectReport(reportId);
+        };
+
+        self.SelectReport = function(reportId) {
             flow.exec(
-                function () {
-                    var reportId = data.PwReportId;
+                function () {                    
                     self.ReportViewerContext.LoadReport(reportId, this);
                 },
                 function () {
                     self.SelectReportCallback();
                 }
-            );            
+            );
         };
 
         // This is where something that renders the Report body is wired in
