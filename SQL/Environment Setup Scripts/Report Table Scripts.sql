@@ -19,8 +19,8 @@ CREATE TABLE `profitwisereport` (
     `SystemReport` TINYINT NOT NULL,
     `StartDate` DATE NOT NULL,
     `EndDate` DATE NOT NULL,
-    `Grouping`  VARCHAR(25) NULL,
-    `Ordering`  VARCHAR(25) NULL,
+    `GroupingId`  SMALLINT NULL,
+    `OrderingId`  SMALLINT NULL,
     
 	`CreatedDate` TIMESTAMP NOT NULL,
 	`LastAccessedDate` TIMESTAMP NOT NULL,

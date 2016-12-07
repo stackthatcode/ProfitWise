@@ -1,4 +1,6 @@
-﻿<style>
+﻿@using ProfitWise.Data.Model
+@using Push.Foundation.Web.Json
+<style>
     table#product-types td {
         height: 70px !important;
         font-size: 14px;
@@ -32,14 +34,25 @@
                                 <h4 style="display: inline-block; font-weight: 700;"
                                     data-bind="text: Name"></h4>
                             </div>
-                            
-                            <div style="font-size: 1.0em; color: #666; line-height: 22px;">
-                                <div data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
-                                
-                                <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
-                                                                <br />
-                                <span>Grouped by Vendor, Ordered by Profitability</span>
-                                <br />
+
+                            <div style="font-size: 1.0em; color: #666;">
+                                <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
+
+                                <div style="height: 25px;">Filtered by <a href="#">Product Types, Vendors, and Variants</a></div>
+
+                                <div style="height: 25px;">
+                                    <span data-bind="template: { name: 'Report-Grouping-Widget', 
+                                                        data: { popovercallback: function() { alert('hello?'); },
+                                                                options: ReportGroupingOptions, 
+                                                                selection: Grouping,
+                                                                okcallback: GroupingChange } }"></span>
+
+                                    <span>/</span>
+
+                                    <span class="popover-container">
+                                        Ordered by <a href="#">Profitability (most-to-least)</a>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -77,7 +90,7 @@
 
                     <div class="pull-right">
                         <a href="#" style="margin-right: 7px;"
-                            class="btn btn-default report-viewer-top-button" data-bind="click: EditReportClick">
+                           class="btn btn-default report-viewer-top-button" data-bind="click: EditReportClick">
                             Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
                         </a>
                     </div>
@@ -85,6 +98,8 @@
             </div>
         </div>
     </div>
+
+    
 
     <div id="report-viewer-body" class="container page-content-sleeve">
         <!-- Will move/transistion when the filters appear -->
@@ -95,6 +110,79 @@
                 <img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
                 <!--<div data-bind="template: { name: 'Body-Template-That-You-Configured'}"></div> -->
             </div>
+        </div>
+    </div>
+</script>
+
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.SelectorPopoverWidgetModel = function () {
+        var self = this;
+
+        self.OptionsText = ko.observable();
+        self.OptionsValue = ko.observable();
+        self.Options = ko.observableArray([]);
+        self.Selection = ko.observable();
+
+        self.SelectedOption = ko.computed(function () {
+            return AQ(self.Options)
+                    .firstOrDefault(function (item) { return item[self.OptionsValue] == self.Selection(); });
+        });
+
+        self.ElementText = ko.computed(function() {
+            var option = self.SelectedOption();
+            return option ? option[self.OptionsText()] : "(No Selection)";
+        });
+
+        self.PromptText = ko.observable();
+
+        self.PopOverLaunchCallback = function() {};
+        self.OkCallback = function() {};
+
+        self.OkButtonClick = function() {
+            ProfitWiseFunctions.PopOverCloseAll();
+            self.OkCallback();
+        };
+    };
+
+    var model = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
+    model.OptionsText("ReportGroupingId");
+    model.OptionsValue("Description");
+    model.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
+    model.PopOverLaunchCallback(function () { alert('hey man!'); });
+    model.ElementText
+
+</script>
+
+<!-- Expects $data.options, $data.selection, $data.okcallback and $data.popovercallback -->
+<script type="text/html" id="Selector-Popover-Widget">
+    <span class="popover-container">
+        <a href="#" class="popover-launcher"
+                      data-bind="text: ElementText,
+                                click: PopOverLaunchCallback,
+                                popover: { options: { placement: 'bottom', trigger: 'click', },
+                                template: 'Selector-Popover-Widget-Popover-Layer', data: $data }"></a>
+    </span>
+</script>
+<script type="text/html" id="Selector-Popover-Widget-Popover-Layer">
+    <div class="report-grouping-popver input-group">
+        <div style="height:30px;" data-bind="text:PromptText"></div>   
+        
+        <div class="input-group" style="width:100%;">
+            <!-- Data-Bind to KO stuff -->
+            <select class="form-control" 
+                    data-bind="options: options,
+                        optionsText: OptionsText,
+                        value: selection,
+                        optionsValue: OptionsValue">
+            </select>
+
+            <span class="input-group-btn">
+                <a href="#" data-bind="click: okcallback"
+                   class="btn btn-primary" type="button">Ok</a>
+            </span>
         </div>
     </div>
 </script>
@@ -139,16 +227,22 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
+    ProfitWiseWidgets.ReportGroupingOptionsFactory = function() {
+        return @Html.Raw(@PwReportExtensions.AllGroupingToNamedObject().SerializeToJson());
+    };
+
     ProfitWiseWidgets.ReportViewerContext = function() {
         var self = this;
 
+        // Reference data        
         self.ReportId = ko.observable();
         self.Name = ko.observable();
         self.StartDate = ko.observable();
         self.EndDate = ko.observable();
+        self.Grouping = ko.observable();
+        self.Ordering = ko.observable();
 
         self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
-
 
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
@@ -165,30 +259,38 @@
                 function (data) {
                     console.log(data);
 
+                    // Load data into model...
                     self.Name(data.Name);
                     self.StartDate(data.StartDate);
                     self.EndDate(data.EndDate);
+                    self.Grouping(data.Grouping);
+                    self.Ordering(data.Ordering);
 
                     self.ReportSelectionCountPreviewModel.ReportId(reportId);
                     self.ReportSelectionCountPreviewModel.Refresh(this);
-                }, 
+                },
                 function() {
-                   if (callback) {
+                    if (callback) {
                         callback();
                     }
                 }
             );
         };
 
+        self.GroupingChange = function() {
+            console.log('ok!!!');
+        };
+
         return self;
     };
+
 
     ProfitWiseWidgets.ReportViewerModel = function () {
         var self = this;
 
         self.ReportList = ko.observable([]);
         self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
-        
+
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.ReportList()).where(function (item) { return item.SystemReport == false; }).toArray();
         });
@@ -234,7 +336,7 @@
             var report =
                 AQ(self.ReportList())
                     .firstOrDefault(function (item) { return item.PwReportId == id; });
-            
+
             if (report != null) {
                 self.SelectReportClick(report);
             }
@@ -247,7 +349,7 @@
 
         self.SelectReport = function(reportId) {
             flow.exec(
-                function () {                    
+                function () {
                     self.ReportViewerContext.LoadReport(reportId, this);
                 },
                 function () {

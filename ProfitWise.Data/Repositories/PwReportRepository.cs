@@ -31,10 +31,10 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"INSERT INTO profitwisereport (
                             PwShopId, Name, Saved, AllProductTypes, AllVendors, AllProducts, AllSkus, 
-                            Grouping, CreatedDate, LastAccessedDate ) 
+                            GroupingId, CreatedDate, LastAccessedDate ) 
                         VALUES (
                             @PwShopId, @Name, @Saved, @AllProductTypes, @AllVendors, @AllProducts, @AllSkus, 
-                            @Grouping, @CreatedDate, @LastAccessedDate );
+                            @GroupingId, @CreatedDate, @LastAccessedDate );
                         SELECT LAST_INSERT_ID();";
 
             report.PwShopId = this.PwShop.PwShopId;
@@ -83,9 +83,9 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"INSERT INTO profitwisereport (
-                    PwShopId, Name, CopyForEditing, SystemReport, StartDate, EndDate, Grouping, Ordering, CreatedDate, LastAccessedDate ) 
+                    PwShopId, Name, CopyForEditing, SystemReport, StartDate, EndDate, GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
                 VALUES ( 
-                    @PwShopId, @Name, @CopyForEditing, @SystemReport, @StartDate, @EndDate,  @Grouping, @Ordering, NOW(), NOW() );
+                    @PwShopId, @Name, @CopyForEditing, @SystemReport, @StartDate, @EndDate,  @GroupingId, @OrderingId, NOW(), NOW() );
                 SELECT LAST_INSERT_ID();";
 
             return _connection.Query<long>(query, report).First();
@@ -99,20 +99,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId, lastAccessedDate });
         }
         
-
-        public void UpdateReportName(long reportId, string reportName)
-        {
-            var query = @"UPDATE profitwisereport SET ReportName = @reportName 
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId, reportName });
-        }
-
-        public void UpdateReportGrouping(long reportId, string grouping)
-        {
-            var query = @"UPDATE profitwisereport SET Grouping = @grouping 
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId, grouping });
-        }
+        
 
 
         public List<PwProductTypeSummary> RetrieveProductTypeSummary()
