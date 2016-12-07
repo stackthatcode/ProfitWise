@@ -26,8 +26,8 @@
             <div class="standard-header standard-padding top-border-facade"
                  style="overflow: visible; padding-top:20px;">
                 <div class="col-xs-6 no-side-padding">
-                    <div data-bind="if: CurrentReportSelection">
-                        <div data-bind="with: CurrentReportSelection()">
+                    <div data-bind="if: ReportViewerContext.ReportLoaded()">
+                        <div data-bind="with: ReportViewerContext">
                             <div class="popover-container">
                                 <h4 style="display: inline-block; font-weight: 700;"
                                     data-bind="text: Name"></h4>
@@ -49,7 +49,8 @@
                     <div class="btn-group pull-right" 
                          data-bind="template: { name: 'Report-Viewer-Report-Selector', 
                                                     data: { SystemDefinedReports: $data.SystemDefinedReports,
-                                                            UserDefinedReports: $data.UserDefinedReports } }">
+                                                            UserDefinedReports: $data.UserDefinedReports,
+                                                            SelectReportClick: $data.SelectReportClick} }">
                     </div>
 
                     <div class="pull-right" style="margin-right: 7px;">
@@ -138,15 +139,47 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
+    ProfitWiseWidgets.ReportViewerContext = function() {
+        var self = this;
+
+        self.ReportId = ko.observable();
+        self.Name = ko.observable();
+        self.StartDate = ko.observable();
+        self.EndDate = ko.observable();
+
+        self.ReportLoaded = ko.computed(function() {
+            return self.ReportId() != null;
+        });
+
+        self.LoadReport = function(reportId, callback) {
+            self.ReportId(reportId);
+
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
+                },
+                function (data) {
+                    self.Name(data.Name);
+                    self.StartDate(data.StartDate);
+                    self.EndDate(data.EndDate);
+
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+        return self;
+    };
+
     ProfitWiseWidgets.ReportViewerModel = function () {
         var self = this;
 
         self.ReportList = ko.observable([]);
-        self.CurrentReportSelection = ko.observable();
+        self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
         
-        self.StartDate = ko.observable();
-        self.EndDate = ko.observable();
-
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.ReportList()).where(function (item) { return item.SystemReport == false; }).toArray();
         });
@@ -168,10 +201,10 @@
                                 item.CurrentlySelected =
                                     ko.computed(
                                         function () {
-                                            if (!self.CurrentReportSelection()) {
+                                            if (!self.ReportViewerContext.ReportLoaded()) {
                                                 return false;
                                             }
-                                            return self.CurrentReportSelection().PwReportId == item.PwReportId;
+                                            return self.ReportViewerContext.ReportId()  == item.PwReportId;
                                         });
                             });
 
@@ -183,6 +216,8 @@
         };
 
         self.AfterRenderDateRangePicker = function () {
+            // TODO - transfer Start and End Date from ReportContext
+
             ProfitWiseWidgets.CreateDatePicker("#report-date-picker");
         };
 
@@ -197,37 +232,20 @@
             flow.exec(
                 function () {
                     var reportId = data.PwReportId;
-                    self.LoadReport(reportId);
-                }, 
+                    self.ReportViewerContext.LoadReport(reportId, this);
+                },
                 function () {
                     self.SelectReportCallback();
                 }
             );            
         };
 
-        self.LoadReport = function(reportId, callback) {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
-                },
-                function(data) {
-                    self.CurrentReportSelection(data);
-
-                },
-                function() {
-                    if (callback) {
-                        callback();
-                    }
-                });
-        };
-
         // This is where something that renders the Report body is wired in
         self.SelectReportCallback = function (reportId) { };
 
         self.EditReportClick = function () {
-            if (self.CurrentReportSelection()) {
-                self.EditReportCallback(self.CurrentReportSelection().PwReportId);
+            if (self.ReportViewerContext.ReportLoaded()) {
+                self.EditReportCallback(self.ReportViewerContext.ReportId());
             }
         };
 
