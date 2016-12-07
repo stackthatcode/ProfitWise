@@ -13,10 +13,15 @@ DROP TABLE IF EXISTS `profitwisereportfilter`;
 CREATE TABLE `profitwisereport` (
 	`PwReportId` BIGINT NOT NULL AUTO_INCREMENT,
 	`PwShopId` BIGINT NOT NULL,
-	`Name` varchar(50) NULL,
-    `Saved` TINYINT NOT NULL,
-    `Grouping`  varchar(25) NULL,
-    `Ordering`  varchar(25) NULL,
+	
+    `Name` varchar(50) NULL,
+    `CopyForEditing` TINYINT NOT NULL,
+    `SystemReport` TINYINT NOT NULL,
+    `StartDate` DATE NOT NULL,
+    `EndDate` DATE NOT NULL,
+    `Grouping`  VARCHAR(25) NULL,
+    `Ordering`  VARCHAR(25) NULL,
+    
 	`CreatedDate` TIMESTAMP NOT NULL,
 	`LastAccessedDate` TIMESTAMP NOT NULL,
     PRIMARY KEY (`PwReportId`, `PwShopId` )

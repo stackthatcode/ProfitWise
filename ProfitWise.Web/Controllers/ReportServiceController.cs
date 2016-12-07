@@ -25,9 +25,10 @@ namespace ProfitWise.Web.Controllers
         public ActionResult All()
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);   
-            var userReports = repository.RetrieveUserDefinedReports();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
             var systemReports = repository.RetrieveSystemDefinedReports();
+            var userReports = repository.RetrieveUserDefinedReports();
             userReports.AddRange(systemReports);
 
             return new JsonNetResult(userReports);
@@ -43,13 +44,38 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult CopyAndEdit(long reportId)
+        public ActionResult Save(PwReport report)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            
+            // Name provisioning sequence
+            var reports = repository.RetrieveUserDefinedReports();
+            var reportNumber = 1;
+            var reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
+            while (true)
+            {
+                if (reports.Any(x => x.Name == reportName))
+                {
+                    reportNumber++;
+                    reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
+                }
+                break;
+            }
+            return new JsonNetResult(report);
+        }
 
-            var originalReport = repository.RetrieveReport(reportId);
-            var newReportId = repository.CopyReport(originalReport);
+
+        [HttpPost]
+        public ActionResult CopyForEditing(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            
+            var reportToCopy = repository.RetrieveReport(reportId);
+            reportToCopy.SystemReport = false;
+            reportToCopy.CopyForEditing = true;
+            var newReportId = repository.CopyReport(reportToCopy);
             var report = repository.RetrieveReport(newReportId);
             return new JsonNetResult(report);
         }        

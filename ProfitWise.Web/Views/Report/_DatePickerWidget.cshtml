@@ -1,0 +1,45 @@
+﻿
+<script id="Date-Picker-Widget" type="text/html">
+    <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">        
+        <input type="text"
+               class="date-ranger-picker form-control"
+               style="width: 100%; font-size: 1.0em;" 
+               data-bind="attr : { id: $data.Identifier }" />
+
+        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>        
+    </div>
+</script>
+
+<script>
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.CreateDatePicker = function(rootIdentifier, startDate, endDate) {
+        $(".date-range-picker-icon").click(function () {
+            $(this).parent().find('input').click();
+        });
+        
+        $(rootIdentifier + " .date-ranger-picker")
+            .daterangepicker({
+                "parentEl": rootIdentifier + " .date-ranger-picker-parent",
+                "startDate": startDate || moment().subtract(6, 'days'),
+                "endDate": endDate || moment(),
+                "alwaysShowCalendars": true,
+                "linkedCalendars": false,
+                "applyClass": "btn-primary",
+                "ranges": {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'This Year': [moment().startOf('year'), moment().endOf('year')],
+                    'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                },
+                "opens": "left",
+            },
+            function (start, end, label) {
+                alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            });
+    };
+</script>

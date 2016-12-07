@@ -26,6 +26,7 @@ namespace ProfitWise.Data.Repositories
             return _connection.BeginTransaction();
         }
 
+        // TODO - fix this, er if at all
         public long InsertReport(PwReport report)
         {
             var query = @"INSERT INTO profitwisereport (
@@ -40,11 +41,14 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<long>(query, report).FirstOrDefault();
         }
 
+        // NOTE *** excludes copies made for editing purposes
         public List<PwReport> RetrieveUserDefinedReports()
         {
-            var query = "SELECT * FROM profitwisereport WHERE PwShopId = @PwShopId AND Saved = 1;";
+            var query = 
+                    @"SELECT * FROM profitwisereport 
+                    WHERE PwShopId = @PwShopId 
+                    AND SystemReport = 0 AND CopyForEditing = 0;";
             var results = _connection.Query<PwReport>(query, new {PwShopId}).ToList();
-            results.ForEach(x => x.UserDefined = true);
             return results;
         }
         
@@ -53,6 +57,7 @@ namespace ProfitWise.Data.Repositories
             var results = new List<PwReport>()
             {
                 PwSystemReportFactory.OverallProfitability(),
+                PwSystemReportFactory.TestReport(),
             };
             results.ForEach(x => x.PwShopId = this.PwShopId);
             return results;
@@ -76,21 +81,16 @@ namespace ProfitWise.Data.Repositories
         
         public long CopyReport(PwReport report)
         {
-            var query = @"INSERT INTO profitwisereport (
-                            PwShopId, Name, Saved, Grouping, Ordering, CreatedDate, LastAccessedDate ) 
-                        VALUES ( 
-                            @PwShopId, @Name, 0, @Grouping, @Ordering, NOW(), NOW() );
-                        SELECT LAST_INSERT_ID();";
+            var query =
+                @"INSERT INTO profitwisereport (
+                    PwShopId, Name, CopyForEditing, SystemReport, StartDate, EndDate, Grouping, Ordering, CreatedDate, LastAccessedDate ) 
+                VALUES ( 
+                    @PwShopId, @Name, @CopyForEditing, @SystemReport, @StartDate, @EndDate,  @Grouping, @Ordering, NOW(), NOW() );
+                SELECT LAST_INSERT_ID();";
 
             return _connection.Query<long>(query, report).First();
         }
-
-        public void UpdateReportSaved(long reportId, bool saved)
-        {
-            var query = @"UPDATE profitwisereport SET Saved = @saved 
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId, saved });
-        }
+        
 
         public void UpdateLastAccessedDate(long reportId, DateTime lastAccessedDate)
         {
@@ -98,6 +98,7 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             _connection.Execute(query, new { PwShopId, reportId, lastAccessedDate });
         }
+        
 
         public void UpdateReportName(long reportId, string reportName)
         {
@@ -112,7 +113,6 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
             _connection.Execute(query, new { PwShopId, reportId, grouping });
         }
-
 
 
         public List<PwProductTypeSummary> RetrieveProductTypeSummary()

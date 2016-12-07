@@ -1,11 +1,9 @@
-﻿
-<style>
+﻿<style>
     table#product-types td {
         height: 70px !important;
         font-size: 14px;
         vertical-align: middle !important;
     }
-
     table#product-types tr td:nth-child(1) {
         width: 10%;
     }
@@ -15,104 +13,75 @@
     table#product-types tr td:nth-child(3) {
         width: 45%;
     }
+    .report-viewer-top-button {
+        width: 130px;
+    }
 </style>
-
-<script id="Date-Picker" type="text/html">
-    <div id="date-range-picker-parent" class="pull-right" style="width: 219px; position: relative;">
-        <input type="text" 
-               class="form-control" 
-               style="width: 100%; font-size: 1.0em;" id="date-range-picker" />
-        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
-    </div>
-</script>
 
 <script id="Report-Viewer-Top-Level" type="text/html">
     <div id="report-viewer-header" class="fixed-positioning-container">
         <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header standard-padding top-border-facade" 
+            <div class="standard-header standard-padding top-border-facade"
                  style="overflow: visible; padding-top:20px;">
-                    <div class="col-xs-6 no-side-padding">
-                        <div data-bind="if: CurrentReportSelection">
-                            <div data-bind="with: CurrentReportSelection()">
-                                <div class="popover-container">
-                                    <h4 style="display: inline-block; font-weight: 700;"
-                                        data-bind="text: Name"></h4>
-                                </div>
+                <div class="col-xs-6 no-side-padding">
+                    <div data-bind="if: CurrentReportSelection">
+                        <div data-bind="with: CurrentReportSelection()">
+                            <div class="popover-container">
+                                <h4 style="display: inline-block; font-weight: 700;"
+                                    data-bind="text: Name"></h4>
+                            </div>
 
-                                <div style="font-size: 0.9em; color: #666; line-height: 22px;">
-                                    <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
-                                    <br />
-                                    <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
-                                    <br />
-                                    <span>Grouped by Vendor, Ordered by Profitability</span>
-                                    <br />
-                                </div>
+                            <div style="font-size: 1.0em; color: #666; line-height: 22px;">
+                                <span>This Report includes <a href="#">92 Products (435 Variants)</a>.</span>
+                                <br />
+                                <span>Filtered by <a href="#">Product Types, Vendors, and Variants</a></span>
+                                <br />
+                                <span>Grouped by Vendor, Ordered by Profitability</span>
+                                <br />
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="col-xs-6 no-side-padding" style="padding-top:10px;">
-                        <div class="btn-group pull-right">
-                            <a href="#" class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Select Report <span class="caret"></span>
-                            </a>
-
-                            <ul class="dropdown-menu" style="width: 260px;">
-                                <!-- ko foreach: SystemDefinedReports -->
-                                <li>
-                                    <a href="#" data-bind="click: $parent.SelectReportClick">
-                                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
-                                            <i class="glyphicon glyphicon-ok"></i>
-                                        </span>
-                                        <span data-bind="text: Name"></span>
-                                    </a>
-                                </li>
-                                <!-- /ko -->
-
-                                <li role="separator" class="divider"></li>
-
-                                <!-- ko if: UserDefinedReports().length == 0 -->
-                                <li><a href="#">(No custom reports defined yet)</a></li>
-                                <!-- /ko -->
-                                <!-- ko foreach: UserDefinedReports -->
-                                <li>
-                                    <a href="#" data-bind="click: $parent.SelectReportClick">
-                                        <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
-                                            <i class="glyphicon glyphicon-ok"></i>
-                                        </span>
-                                        <span data-bind="text: Name"></span>
-                                    </a>
-                                </li>
-                                <!-- /ko -->
-                            </ul>
-                        </div>
-
-                        <div class="pull-right" style="margin-right: 3px;">
-                            <a href="" class="btn btn-default" data-bind="click: EditReportClick">
-                                Edit Report <i class="glyphicon glyphicon-pencil"></i>
-                            </a>
-                        </div>
-
-                        <div class="pull-right btn-group" style="margin-right: 3px;">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
-
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Save As</a></li>
-                                <li><a href="#">Rename</a></li>
-                                <li><a href="#">Delete</a></li>
-                            </ul>
-                        </div>
-
-                        <div style="clear: both; height: 10px;"></div>
-
-                        <div data-bind="template: { name: 'Date-Picker', afterRender: AfterRenderDateRangePicker }"></div>
-
-                        <div style="clear: both; height: 10px;"></div>
-                    </div>
                 </div>
+
+                <div class="col-xs-6 no-side-padding" style="padding-top:10px; min-width:500px;">
+                    <div class="btn-group pull-right" 
+                         data-bind="template: { name: 'Report-Viewer-Report-Selector', 
+                                                    data: { SystemDefinedReports: $data.SystemDefinedReports,
+                                                            UserDefinedReports: $data.UserDefinedReports } }">
+                    </div>
+
+                    <div class="pull-right" style="margin-right: 7px;">
+                        <a href="#" class="btn btn-primary report-viewer-top-button">
+                            Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                        </a>
+                    </div>
+
+                    <div class="pull-right btn-group" style="margin-right: 7px;">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Save As</a></li>
+                            <li><a href="#">Rename</a></li>
+                            <li><a href="#">Delete</a></li>
+                        </ul>
+                    </div>
+
+                    <div style="clear: both; height: 20px;"></div>
+
+                    <div id="report-date-picker" class="pull-right"
+                         data-bind="template: { name: 'Date-Picker-Widget', afterRender: AfterRenderDateRangePicker }"></div>
+                    
+
+                    <div class="pull-right">
+                        <a href="#" style="margin-right: 7px;"
+                            class="btn btn-default report-viewer-top-button" data-bind="click: EditReportClick">
+                            Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
+                        </a>
+                    </div>
+                </div>                   
+            </div>
         </div>
     </div>
 
@@ -129,6 +98,43 @@
     </div>
 </script>
 
+
+<script type="text/html" id="Report-Viewer-Report-Selector">
+    <a href="#" class="btn btn-primary dropdown-toggle report-viewer-top-button"
+   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Select Report &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+    </a>
+
+    <ul class="dropdown-menu" style="width: 260px;">
+        <!-- ko foreach: SystemDefinedReports -->
+        <li>
+            <a href="#" data-bind="click: $parent.SelectReportClick">
+                <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                    <i class="glyphicon glyphicon-ok"></i>
+                </span>
+                <span data-bind="text: Name"></span>
+            </a>
+        </li>
+        <!-- /ko -->
+
+        <li role="separator" class="divider"></li>
+
+        <!-- ko if: UserDefinedReports().length == 0 -->
+        <li><a href="#">(No custom reports defined yet)</a></li>
+        <!-- /ko -->
+        <!-- ko foreach: UserDefinedReports -->
+        <li>
+            <a href="#" data-bind="click: $parent.SelectReportClick">
+                <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
+                    <i class="glyphicon glyphicon-ok"></i>
+                </span>
+                <span data-bind="text: Name"></span>
+            </a>
+        </li>
+        <!-- /ko -->
+    </ul>
+</script>
+
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -137,14 +143,16 @@
 
         self.ReportList = ko.observable([]);
         self.CurrentReportSelection = ko.observable();
-        self.DateRange = ko.observable();
         
+        self.StartDate = ko.observable();
+        self.EndDate = ko.observable();
+
         self.UserDefinedReports = ko.computed(function () {
-            return AQ(self.ReportList()).where(function (item) { return item.UserDefined == true; }).toArray();
+            return AQ(self.ReportList()).where(function (item) { return item.SystemReport == false; }).toArray();
         });
 
         self.SystemDefinedReports = ko.computed(function () {
-            return AQ(self.ReportList()).where(function (item) { return item.UserDefined == false; }).toArray();
+            return AQ(self.ReportList()).where(function (item) { return item.SystemReport == true; }).toArray();
         });
 
         self.RefreshReportList = function (callback) {
@@ -175,35 +183,8 @@
         };
 
         self.AfterRenderDateRangePicker = function () {
-            $(".date-range-picker-icon").click(function () {
-                $(this).parent().find('input').click();
-            });
-
-            $('#date-range-picker')
-                .daterangepicker({
-                    "parentEl": "#date-range-picker-parent",
-                    "startDate": "10/01/2016",
-                    "endDate": "10/07/2016",
-                    "alwaysShowCalendars": true,
-                    "linkedCalendars": false,
-                    "applyClass": "btn-primary",
-                    "ranges": {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                        'This Year': [moment().startOf('year'), moment().endOf('year')],
-                        'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-                    },
-                    "opens": "left",
-                },
-                    function (start, end, label) {
-                        alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-                    });
+            ProfitWiseWidgets.CreateDatePicker("#report-date-picker");
         };
-
 
         self.SelectReportByReportId = function (id) {
             var report = AQ(self.ReportList()).firstOrDefault(function (item) { return item.PwReportId == id; });
@@ -213,12 +194,35 @@
         };
 
         self.SelectReportClick = function (data) {
-            // TODO: hit the database to load this Report's Header information
-
-            self.CurrentReportSelection(data);
-            self.SelectReportCallback(data.PwReportId);
+            flow.exec(
+                function () {
+                    var reportId = data.PwReportId;
+                    self.LoadReport(reportId);
+                }, 
+                function () {
+                    self.SelectReportCallback();
+                }
+            );            
         };
 
+        self.LoadReport = function(reportId, callback) {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
+                },
+                function(data) {
+                    self.CurrentReportSelection(data);
+
+                },
+                function() {
+                    if (callback) {
+                        callback();
+                    }
+                });
+        };
+
+        // This is where something that renders the Report body is wired in
         self.SelectReportCallback = function (reportId) { };
 
         self.EditReportClick = function () {

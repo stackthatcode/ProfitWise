@@ -1,6 +1,7 @@
 ﻿@using ProfitWise.Data.Model
 @Html.Partial("~/Views/Report/_ReportEditor.cshtml")
 @Html.Partial("~/Views/Report/_ReportViewer.cshtml")
+@Html.Partial("~/Views/Report/_DatePickerWidget.cshtml")
 
 
 <script type="text/html" id="Report-Manager-Top-Level">
@@ -12,7 +13,6 @@
         <div data-bind="template: { name: 'Report-Viewer-Top-Level', data: ReportViewerModel }"></div>
     </div>
 </script>
-
 
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
@@ -31,9 +31,7 @@
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
-
-                    // TODO ** rename CopyForEditing
-                    ajax.HttpPost("/ReportService/CopyAndEdit", { reportId: reportId }, this);
+                    ajax.HttpPost("/ReportService/CopyForEditing", { reportId: reportId }, this);
                 },
                 function (data) {
                     self.InEditMode(true);
