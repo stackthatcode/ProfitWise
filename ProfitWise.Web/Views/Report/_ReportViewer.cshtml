@@ -1,5 +1,6 @@
 ﻿@using ProfitWise.Data.Model
 @using Push.Foundation.Web.Json
+
 <style>
     table#product-types td {
         height: 70px !important;
@@ -41,11 +42,9 @@
                                 <div style="height: 25px;">Filtered by <a href="#">Product Types, Vendors, and Variants</a></div>
 
                                 <div style="height: 25px;">
-                                    <span data-bind="template: { name: 'Report-Grouping-Widget', 
-                                                        data: { popovercallback: function() { alert('hello?'); },
-                                                                options: ReportGroupingOptions, 
-                                                                selection: Grouping,
-                                                                okcallback: GroupingChange } }"></span>
+                                    <span>Grouped by </span>
+                                    <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
+                                    </span>
 
                                     <span>/</span>
 
@@ -99,8 +98,6 @@
         </div>
     </div>
 
-    
-
     <div id="report-viewer-body" class="container page-content-sleeve">
         <!-- Will move/transistion when the filters appear -->
         <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
@@ -114,7 +111,37 @@
     </div>
 </script>
 
+<!-- Expects $data.options, $data.selection, $data.okcallback and $data.popovercallback -->
+<script type="text/html" id="Selector-Popover-Widget">
+    <span class="popover-container">
+        <a href="#" class="popover-launcher"
+           data-bind="click: PopOverLaunchCallback,
+                    popover: { options: { placement: 'bottom', trigger: 'click', },
+                    template: 'Selector-Popover-Widget-Popover-Layer', data: $data }">
+            <span data-bind="text: ElementText"></span>
+        </a>
+    </span>
+</script>
+<script type="text/html" id="Selector-Popover-Widget-Popover-Layer">
+    <div class="input-group" style="width:250px;">
+        <div style="height:30px;" data-bind="text:PromptText"></div>   
+        
+        <div class="input-group" style="width:100%;">
+            <!-- Data-Bind to KO stuff -->
+            <select class="form-control" 
+                    data-bind="options: Options,
+                        optionsText: OptionsText(),
+                        value: Selection,
+                        optionsValue: OptionsValue()">
+            </select>
 
+            <span class="input-group-btn">
+                <a href="#" data-bind="click: OkButtonClick"
+                   class="btn btn-primary" type="button">Ok</a>
+            </span>
+        </div>
+    </div>
+</script>
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -125,18 +152,18 @@
         self.OptionsValue = ko.observable();
         self.Options = ko.observableArray([]);
         self.Selection = ko.observable();
+        self.PromptText = ko.observable();
 
         self.SelectedOption = ko.computed(function () {
-            return AQ(self.Options)
-                    .firstOrDefault(function (item) { return item[self.OptionsValue] == self.Selection(); });
+            return AQ(self.Options())
+                    .firstOrDefault(function (item) { return item[self.OptionsValue()] == self.Selection(); });
         });
 
         self.ElementText = ko.computed(function() {
             var option = self.SelectedOption();
-            return option ? option[self.OptionsText()] : "(No Selection)";
+            var output = option ? option[self.OptionsText()] : "(No Selection)";
+            return output;
         });
-
-        self.PromptText = ko.observable();
 
         self.PopOverLaunchCallback = function() {};
         self.OkCallback = function() {};
@@ -146,55 +173,16 @@
             self.OkCallback();
         };
     };
-
-    var model = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
-    model.OptionsText("ReportGroupingId");
-    model.OptionsValue("Description");
-    model.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
-    model.PopOverLaunchCallback(function () { alert('hey man!'); });
-    model.ElementText
-
-</script>
-
-<!-- Expects $data.options, $data.selection, $data.okcallback and $data.popovercallback -->
-<script type="text/html" id="Selector-Popover-Widget">
-    <span class="popover-container">
-        <a href="#" class="popover-launcher"
-                      data-bind="text: ElementText,
-                                click: PopOverLaunchCallback,
-                                popover: { options: { placement: 'bottom', trigger: 'click', },
-                                template: 'Selector-Popover-Widget-Popover-Layer', data: $data }"></a>
-    </span>
-</script>
-<script type="text/html" id="Selector-Popover-Widget-Popover-Layer">
-    <div class="report-grouping-popver input-group">
-        <div style="height:30px;" data-bind="text:PromptText"></div>   
-        
-        <div class="input-group" style="width:100%;">
-            <!-- Data-Bind to KO stuff -->
-            <select class="form-control" 
-                    data-bind="options: options,
-                        optionsText: OptionsText,
-                        value: selection,
-                        optionsValue: OptionsValue">
-            </select>
-
-            <span class="input-group-btn">
-                <a href="#" data-bind="click: okcallback"
-                   class="btn btn-primary" type="button">Ok</a>
-            </span>
-        </div>
-    </div>
 </script>
 
 
 <script type="text/html" id="Report-Viewer-Report-Selector">
     <a href="#" class="btn btn-primary dropdown-toggle report-viewer-top-button"
-   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Select Report &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Select Report &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
     </a>
 
-    <ul class="dropdown-menu" style="width: 260px;">
+    <ul class="dropdown-menu" style="width: 300px;">
         <!-- ko foreach: SystemDefinedReports -->
         <li>
             <a href="#" data-bind="click: $parent.SelectReportClick">
@@ -239,7 +227,15 @@
         self.Name = ko.observable();
         self.StartDate = ko.observable();
         self.EndDate = ko.observable();
-        self.Grouping = ko.observable();
+
+        self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
+        self.GroupingPopoverModel.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
+        self.GroupingPopoverModel.PromptText("Select a method for grouping data");
+        self.GroupingPopoverModel.OptionsValue("ReportGroupingId");
+        self.GroupingPopoverModel.OptionsText("Description");
+        self.GroupingPopoverModel.PopOverLaunchCallback = function () { alert('popover open!'); };
+        self.GroupingPopoverModel.OkCallback = function () { alert('ok') };
+        
         self.Ordering = ko.observable();
 
         self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
@@ -247,24 +243,26 @@
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
         });
-
+        
         self.LoadReport = function(reportId, callback) {
             self.ReportId(reportId);
-
+            
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
                 function (data) {
-                    console.log(data);
+                    // console.log(data);
 
                     // Load data into model...
                     self.Name(data.Name);
                     self.StartDate(data.StartDate);
                     self.EndDate(data.EndDate);
-                    self.Grouping(data.Grouping);
-                    self.Ordering(data.Ordering);
+
+                    self.GroupingPopoverModel.Selection(data.GroupingId);
+                    //self.Grouping(data.Grouping);
+                    //self.Ordering(data.Ordering);
 
                     self.ReportSelectionCountPreviewModel.ReportId(reportId);
                     self.ReportSelectionCountPreviewModel.Refresh(this);
@@ -353,7 +351,7 @@
                     self.ReportViewerContext.LoadReport(reportId, this);
                 },
                 function () {
-                    self.SelectReportCallback();
+                    self.SelectReportCallback(reportId);
                 }
             );
         };

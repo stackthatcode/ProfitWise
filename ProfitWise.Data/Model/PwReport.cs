@@ -22,8 +22,8 @@ namespace ProfitWise.Data.Model
         public bool SystemReport { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }    
-        public ReportGrouping Grouping { get; set; }
-        public ReportOrdering Ordering { get; set; }
+        public ReportGrouping GroupingId { get; set; }
+        public ReportOrdering OrderingId { get; set; }
 
         public DateTime CreatedDate { get; set; }
         public DateTime LastAccessedDate { get; set; }
@@ -114,8 +114,8 @@ namespace ProfitWise.Data.Model
                 SystemReport = true,
                 StartDate = DateTime.Today.AddDays(-7),
                 EndDate = DateTime.Today,
-                Grouping = ReportGrouping.Product,
-                Ordering = ReportOrdering.ProfitabilityDescending,
+                GroupingId = ReportGrouping.ProductType,
+                OrderingId = ReportOrdering.ProfitabilityDescending,
             };
         }
 
@@ -129,8 +129,8 @@ namespace ProfitWise.Data.Model
                 SystemReport = true,
                 StartDate = DateTime.Today.AddDays(-14),
                 EndDate = DateTime.Today.AddDays(-7),
-                Grouping = ReportGrouping.Product,
-                Ordering = ReportOrdering.ProfitabilityDescending,
+                GroupingId = ReportGrouping.Product,
+                OrderingId = ReportOrdering.ProfitabilityDescending,
             };
         }
     }
