@@ -34,8 +34,11 @@
                     <div data-bind="if: ReportViewerContext.ReportLoaded()">
                         <div data-bind="with: ReportViewerContext">
                             <div class="popover-container">
-                                <h4 style="display: inline-block; font-weight: 700;"
-                                    data-bind="text: Name"></h4>
+                                <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
+                                
+                                <div style="display:inline-block; " data-bind="if: CopyForEditing">
+                                    <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)</div>
+                                </div>
                             </div>
 
                             <div style="font-size: 1.0em; color: #666;">
@@ -176,44 +179,79 @@
         self.GroupingPopoverModel.PromptText("Select a method for grouping data");
         self.GroupingPopoverModel.OptionsValue("GroupingId");
         self.GroupingPopoverModel.OptionsText("Description");
-        self.GroupingPopoverModel.OkCallback = function () { alert('ok') };
+        self.GroupingPopoverModel.OkCallback = function() {
+            alert('OK: update server, then reload data');
+        };
+        self.GroupingPopoverModel.PopOverLaunchCallback = function() {
+            self.PrepareCopyForEditing();
+        };
 
         self.OrderingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
         self.OrderingPopoverModel.Options(ProfitWiseWidgets.ReportOrderingOptionsFactory());
         self.OrderingPopoverModel.PromptText("Select a method for ordering data");
         self.OrderingPopoverModel.OptionsValue("OrderingId");
         self.OrderingPopoverModel.OptionsText("Description");
-        self.OrderingPopoverModel.OkCallback = function () { alert('ok') };
+        self.OrderingPopoverModel.OkCallback = function() {
+            alert('OK: update server, then reload data');
+        };
+        self.OrderingPopoverModel.PopOverLaunchCallback = function () {
+            self.PrepareCopyForEditing();
+        };
 
         self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
 
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
         });
-
-        // TODO - transfer Start and End Date from ReportContext
+        
         self.AfterRenderDateRangePicker = function () {
 
             ProfitWiseWidgets.CreateDatePicker("#report-date-picker");
         };
 
-        self.LoadReport = function(reportId, callback) {
-            self.ReportId(reportId);
+        self.PrepareCopyForEditing = function(callback) {            
+            flow.exec(
+                function () {
+                    if (self.CopyForEditing()) {
+                        if (callback) {
+                            callback();
+                        }
+                        return;
+                    }
 
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ReportService/CopyForEditing", { reportId: self.ReportId() }, this);
+                },
+                function (data) {
+                    self.PopulateModel(data);
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+        self.PopulateModel = function(data) {
+            self.ReportId(data.PwReportId);
+            self.Name(data.Name);
+            self.StartDate(data.StartDate);
+            self.EndDate(data.EndDate);
+            self.CopyForEditing = ko.observable(data.CopyForEditing);
+            self.SystemReport = ko.observable(data.SystemReport);
+
+            self.GroupingPopoverModel.Selection(data.GroupingId);
+            self.OrderingPopoverModel.Selection(data.OrderingId);
+            self.ReportSelectionCountPreviewModel.ReportId(data.PwReportId);
+        };
+
+        self.LoadReport = function(reportId, callback) {
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
                 function (data) {
-                    // Load data into model...
-                    self.Name(data.Name);
-                    self.StartDate(data.StartDate);
-                    self.EndDate(data.EndDate);
-                    self.GroupingPopoverModel.Selection(data.GroupingId);
-                    self.OrderingPopoverModel.Selection(data.OrderingId);
-                    
-                    self.ReportSelectionCountPreviewModel.ReportId(reportId);
+                    self.PopulateModel(data);                    
                     self.ReportSelectionCountPreviewModel.Refresh(this);
                 },
                 function() {
@@ -223,8 +261,7 @@
                 }
             );
         };
-
-
+        
         return self;
     };
 

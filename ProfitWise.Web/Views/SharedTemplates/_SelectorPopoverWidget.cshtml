@@ -51,8 +51,11 @@
             return output;
         });
 
-        self.PopOverLaunch = function() {
+        self.PopOverLaunchCallback = function() { };
+
+        self.PopOverLaunch = function () {
             self.EditSelection(self.Selection());
+            self.PopOverLaunchCallback(this);
         };
 
         self.OkCallback = function() {};

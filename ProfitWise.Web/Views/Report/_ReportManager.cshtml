@@ -5,11 +5,11 @@
 
 
 <script type="text/html" id="Report-Manager-Top-Level">
-    <div data-bind="if: $data.InEditMode">
+    <div data-bind="if: $data.InFilterEditMode">
         <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
     </div>
 
-    <div data-bind="ifnot: $data.InEditMode">
+    <div data-bind="ifnot: $data.InFilterEditMode">
         <div data-bind="template: { name: 'Report-Viewer-Top-Level', data: ReportViewerModel }"></div>
     </div>
 </script>
@@ -18,10 +18,10 @@
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
     var OverallProfitabilityReportId = @PwSystemReportFactory.OverallProfitabilityId;
 
-    // Requires a reference to a InEditMode observable
+    // Requires a reference to a InFilterEditMode observable
     ProfitWiseWidgets.ReportManagerModel = function () {
         var self = this;
-        self.InEditMode = ko.observable(false);
+        self.InFilterEditMode = ko.observable(false);
 
         self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel();
         self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
@@ -34,20 +34,21 @@
                     ajax.HttpPost("/ReportService/CopyForEditing", { reportId: reportId }, this);
                 },
                 function (data) {
-                    self.InEditMode(true);
+                    self.InFilterEditMode(true);
                     self.ReportEditorModel.LoadReport(data.PwReportId);
-                });
+                }
+            );
         };
 
         self.ReportEditorModel.OkCallback = function () {
-            self.InEditMode(false);
+            self.InFilterEditMode(false);
             self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
 
             console.log('OK click - time to load report');
         };
 
         self.ReportEditorModel.CancelCallback = function () {
-            self.InEditMode(false);
+            self.InFilterEditMode(false);
         };
 
         self.RegisterSelectReportCallback = function (callback) {
@@ -55,7 +56,7 @@
         };
 
         self.Initialize = function (callback) {
-            self.InEditMode(false);
+            self.InFilterEditMode(false);
             flow.exec(
                 function() {
                     self.ReportViewerModel.RefreshReportList(this);

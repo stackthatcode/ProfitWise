@@ -492,3 +492,169 @@
 2016-12-07 16:33:04.7996|Debug|89fbf0e0-7f7a-4408-8142-e5e07b36ed3e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-07 16:33:04.8256|Debug|65d44aae-e656-4ce3-a51b-1f37c71200ed|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-07 16:33:04.8481|Debug|16d8e41e-2284-4332-9ec7-0b97be32d8ac|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:11:59.8606|Debug|1f9c187b-ae3f-45db-95b5-fc7c0a1dc293|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:12:08.1447|Debug|03913343-e8e1-4897-89b3-c10a90e16a38|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:12:08.7467|Debug|47657840-f336-4f4e-a86f-c9d780362047|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:12:57.1163|Debug|f6fb0c31-ee26-409c-bd2e-e63a1ebe0f28|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:14:11.1244|Debug|8dd375f4-38a9-4fe9-8e06-ab4a9e737482|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:14:12.1904|Debug|5dc48b43-257f-49d1-995b-a14455148a24|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:14:12.7604|Debug|70c30bfc-c374-45a6-9d28-6038409b08a4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:14:12.8854|Debug|b12dab7a-1424-4b30-85ba-96e0d8edd78d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:15:09.2585|Debug|dd061b6e-102c-4537-b492-7feda44cb29b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:15:16.3505|Debug|4e52e6c0-4da0-4c8a-a754-f7abeadcacf2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:15:16.7845|Debug|b1da5ca9-8cc0-4084-966f-49545c8cd781|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:15:16.9945|Debug|3b614e6e-68e6-4c0f-831a-35b37291d4a0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:15:54.5012|Debug|4000a2e7-1637-4400-8333-1ae15c0a96d4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:15:54.5557|Error|4000a2e7-1637-4400-8333-1ae15c0a96d4|URL:https://gracie2/ProfitWise/ReportService/CopyForEditing - IsAjaxRequest: True
+2016-12-07 17:15:54.6742|Error|4000a2e7-1637-4400-8333-1ae15c0a96d4|System.ArgumentException:The parameters dictionary contains a null entry for parameter 'reportId' of non-nullable type 'System.Int64' for method 'System.Web.Mvc.ActionResult CopyForEditing(Int64)' in 'ProfitWise.Web.Controllers.ReportServiceController'. An optional parameter must be a reference type, a nullable type, or be declared as an optional parameter.
+Parameter name: parameters
+   at System.Web.Mvc.ActionDescriptor.ExtractParameterFromDictionary(ParameterInfo parameterInfo, IDictionary`2 parameters, MethodInfo methodInfo)
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-07 17:15:59.1529|Debug|3c5941f6-e475-4b14-a568-217f39e06a8b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:00.4329|Debug|0934aaf7-9334-456c-8e02-7b0b6288b4ec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:00.9479|Debug|b0749a42-f88b-4fb3-ae8f-028ef00de450|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:01.0284|Debug|9da557fc-5289-480e-870e-410f7310f3c2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:04.9205|Debug|904211a5-b850-4e84-91c2-729346b7ab43|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:04.9715|Error|904211a5-b850-4e84-91c2-729346b7ab43|URL:https://gracie2/ProfitWise/ReportService/CopyForEditing - IsAjaxRequest: True
+2016-12-07 17:16:05.0235|Error|904211a5-b850-4e84-91c2-729346b7ab43|System.ArgumentException:The parameters dictionary contains a null entry for parameter 'reportId' of non-nullable type 'System.Int64' for method 'System.Web.Mvc.ActionResult CopyForEditing(Int64)' in 'ProfitWise.Web.Controllers.ReportServiceController'. An optional parameter must be a reference type, a nullable type, or be declared as an optional parameter.
+Parameter name: parameters
+   at System.Web.Mvc.ActionDescriptor.ExtractParameterFromDictionary(ParameterInfo parameterInfo, IDictionary`2 parameters, MethodInfo methodInfo)
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-07 17:16:06.8746|Debug|246f66b3-0f6a-4db7-8fbb-8d5687f99d73|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:07.8866|Debug|04e82009-0c32-4b92-a70e-067d45e75962|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:08.0441|Debug|bfb9e7bc-efa1-42cc-9bbc-9f1ba16fd847|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:16:08.3266|Debug|7566c146-d4b6-43cc-9d82-41de7b9cf9ea|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:18:15.4592|Debug|06614e99-7487-4cac-b31c-ed91c0d80e8d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:18:15.5262|Error|06614e99-7487-4cac-b31c-ed91c0d80e8d|URL:https://gracie2/ProfitWise/ReportService/CopyForEditing - IsAjaxRequest: True
+2016-12-07 17:18:15.7102|Error|06614e99-7487-4cac-b31c-ed91c0d80e8d|System.ArgumentException:The parameters dictionary contains a null entry for parameter 'reportId' of non-nullable type 'System.Int64' for method 'System.Web.Mvc.ActionResult CopyForEditing(Int64)' in 'ProfitWise.Web.Controllers.ReportServiceController'. An optional parameter must be a reference type, a nullable type, or be declared as an optional parameter.
+Parameter name: parameters
+   at System.Web.Mvc.ActionDescriptor.ExtractParameterFromDictionary(ParameterInfo parameterInfo, IDictionary`2 parameters, MethodInfo methodInfo)
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-07 17:19:23.5488|Debug|1fec07ee-9ef2-44cb-97eb-0903c92038c3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:19:29.2559|Debug|65fd6578-ce49-451a-bd34-4a2bb26bead9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:19:30.2774|Debug|3fe2fc1a-3e53-45d1-91fe-372ce417094b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:19:30.3359|Debug|be8e6773-feb3-4d13-8909-221dfe374740|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:19:30.4509|Debug|7ca468e3-4bd7-42a9-9a53-dab4a32a5ad5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:19:32.8601|Debug|e0a645a6-2891-4ada-849c-7617c7f97272|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:10.0363|Debug|fe6fe830-e9de-40b4-9d04-52e48062a4b7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:11.3568|Debug|ce4a2773-9dbb-43e7-b2db-d0fdb0a723df|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:11.4918|Debug|d915fead-ebcf-418b-ad06-11a6d5239c36|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:11.8153|Debug|028dcb9c-1eb7-4652-a739-90b42600b196|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:35.6164|Debug|1eb98931-3f5f-4504-9bf0-57b6e5a90295|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:35.7884|Debug|c6b65563-a064-4496-9707-9dcd2f967dec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:35.9439|Error|c6b65563-a064-4496-9707-9dcd2f967dec|URL:https://gracie2/ProfitWise/ReportService/Filters?reportId=99740 - IsAjaxRequest: True
+2016-12-07 17:22:35.9709|Error|c6b65563-a064-4496-9707-9dcd2f967dec|MySql.Data.MySqlClient.MySqlException:Table 'profitwise.profitwisereportfilter' doesn't exist
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1589
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1479
+   at ProfitWise.Data.Repositories.PwReportRepository.RetrieveFilters(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportRepository.cs:line 222
+   at ProfitWise.Web.Controllers.ReportServiceController.Filters(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\ReportServiceController.cs:line 208
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-07 17:22:38.4121|Debug|cce54997-3330-4174-8257-5400d11717f5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:39.8376|Debug|2935382a-b64d-4e63-b1a8-1fdf6ea4065d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:40.0421|Debug|1b4b3a35-9c2b-400f-8380-733bfff37b42|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:40.1186|Debug|108d8310-e5b3-407c-9907-809311664fc2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:22:40.1186|Error|108d8310-e5b3-407c-9907-809311664fc2|URL:https://gracie2/ProfitWise/ReportService/RecordCounts?reportId=1 - IsAjaxRequest: True
+2016-12-07 17:22:40.1186|Error|108d8310-e5b3-407c-9907-809311664fc2|MySql.Data.MySqlClient.MySqlException:Table 'profitwise.profitwisereportfilter' doesn't exist
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1589
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1479
+   at ProfitWise.Data.Repositories.PwReportRepository.RetrieveFilters(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportRepository.cs:line 222
+   at ProfitWise.Data.Repositories.PwReportRepository.ReportFilterClauseGenerator(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportRepository.cs:line 372
+   at ProfitWise.Data.Repositories.PwReportRepository.RetrieveReportRecordCount(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportRepository.cs:line 322
+   at ProfitWise.Web.Controllers.ReportServiceController.RecordCounts(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\ReportServiceController.cs:line 172
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-07 17:23:05.2242|Debug|1aab6398-f48d-43ba-b301-5f7b05c5fb20|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:23:06.0321|Debug|41de274a-d74b-4110-9960-c27fe3702536|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:23:06.4911|Debug|c2f1d20b-8904-44ed-803e-bc3593a6e443|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:23:06.5231|Debug|1b53f8de-c058-4176-a077-4a518604c8e4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:23:26.5337|Debug|6896785f-48e0-4a41-a1a3-fdc5c84bc7ec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:20.7747|Debug|78d59340-d9a9-45ff-b405-2e791b01e3b2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:22.1222|Debug|88f29246-6a7d-41f2-8249-231affcb241d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:22.3742|Debug|b2687172-6705-44f9-98a6-58d2c65b7f7a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:22.4142|Debug|b5d2479a-d512-487f-aca3-b8dbe136964e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:31.2221|Debug|8b66bb18-25f1-4a29-a81f-ba825810f3a0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:31.3670|Debug|23478a45-2efe-4556-a33e-d3521d7186af|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:31.4171|Debug|d76ff1b8-1495-4342-b3e9-9a2d476cab6b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:31.5021|Debug|38f8bad6-0377-4fee-a780-8e4f492c7518|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:31.6616|Debug|96baa18b-07c8-4b39-92b0-f57f121c334e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:52.8093|Debug|ca9d3987-e5bc-4c4b-bf4a-4bcfdcf21765|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:52.9608|Debug|7c3ac955-6b1b-41eb-82bc-bfa244d55fc9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:52.9888|Debug|31f61024-66db-4d37-aef5-ef78e30333f2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:53.7572|Debug|697adcc5-c161-4b23-91d7-19a4e2f8fd19|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:53.7952|Debug|d019ab83-f9f9-49b6-a406-fd496d79930b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:53.8362|Debug|a072c652-a75f-48af-9a97-a43f78b4ae6d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:54.7447|Debug|bfa15ecf-a928-45fb-9ac3-d3bdaaf492f7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:54.7747|Debug|1d6ab02b-54db-45f5-8063-f1ab552935f7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:54.8167|Debug|bb7e981d-d0fa-48c9-84e8-34011f3015d7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:57.0962|Debug|e762da14-386e-48ed-9872-09a4d422708e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:24:57.2383|Debug|426da848-e97a-4ab4-9741-6c9bf4a5474c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:25:12.4257|Debug|c4c5032b-2c36-4e01-87cb-19c7b507493c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:25:13.8652|Debug|6320e44f-5ded-4ab7-b318-50375bfe9b3c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:25:14.2317|Debug|0776f349-a6b8-4641-a658-d9a56625ecad|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:25:14.3857|Debug|3cb88e28-f71b-464a-a116-238ba518ff99|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-07 17:25:21.2040|Debug|6252b300-f2a0-482c-9542-256f76d76550|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
