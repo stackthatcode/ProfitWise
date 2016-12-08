@@ -64,8 +64,8 @@
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
 
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">Save As</a></li>
-                                    <li><a href="#">Delete</a></li>
+                                    <li><a href="#" data-bind="click: SaveAs">Save As</a></li>
+                                    <li><a href="#" data-bind="click: Delete">Delete</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -75,6 +75,7 @@
                     <div style="clear: both; height: 20px;"></div>                    
                     
                     <div id="report-date-picker" class="pull-right" data-bind="with: ReportViewerContext">
+                        <input type="hidden" data-bind="value: StartDate"/>
                         <div data-bind="template: { name: 'Date-Picker-Widget', afterRender: AfterRenderDateRangePicker }"></div>
                     </div>
 
@@ -199,7 +200,7 @@
         self.GroupingPopoverModel.OptionsValue("GroupingId");
         self.GroupingPopoverModel.OptionsText("Description");
         self.GroupingPopoverModel.OkCallback = function() {
-            alert('OK: update server, then reload data');
+            self.Update();
         };
         self.GroupingPopoverModel.PopOverLaunchCallback = function() {
             self.PrepareCopyForEditing();
@@ -211,7 +212,7 @@
         self.OrderingPopoverModel.OptionsValue("OrderingId");
         self.OrderingPopoverModel.OptionsText("Description");
         self.OrderingPopoverModel.OkCallback = function() {
-            alert('OK: update server, then reload data');
+            self.Update();
         };
 
         self.OrderingPopoverModel.PopOverLaunchCallback = function () {
@@ -229,8 +230,33 @@
         });
         
         self.AfterRenderDateRangePicker = function () {
+            ProfitWiseWidgets.CreateDatePicker(".date-ranger-picker", self.UpdateDate);
+        };
 
-            ProfitWiseWidgets.CreateDatePicker("#report-date-picker");
+        self.PushDatesFromModel = function() {
+            var dateRangePickerData = $('.date-ranger-picker').data('daterangepicker');
+            if (dateRangePickerData) {
+                dateRangePickerData.setStartDate(new Date(self.StartDate().substring(0, 10)));
+                dateRangePickerData.setEndDate(new Date(self.EndDate().substring(0, 10)));
+            }
+        };
+
+        self.UpdateDate = function(startDate, endDate, label) {
+            flow.exec(
+                function() {
+                    self.PrepareCopyForEditing(this);
+                },
+                function () {
+                    self.StartDate(startDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
+                    self.EndDate(endDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
+
+                    //console.log(startDate);
+                    //console.log(endDate);
+
+                    self.PushDatesFromModel();
+                    self.Update();
+                }
+            );
         };
 
         self.PrepareCopyForEditing = function(callback) {            
@@ -256,17 +282,39 @@
         };
 
         self.PopulateModel = function (data) {
-            //console.log(data);
             self.ReportId(data.PwReportId);
             self.Name(data.Name);
             self.StartDate(data.StartDate);
             self.EndDate(data.EndDate);
+            self.PushDatesFromModel();
+            
             self.CopyForEditing(data.CopyForEditing);
             self.CopyOfSystemReport(data.CopyOfSystemReport);
             self.IsSystemReport(data.IsSystemReport);
             self.GroupingPopoverModel.Selection(data.GroupingId);
             self.OrderingPopoverModel.Selection(data.OrderingId);
             self.ReportSelectionCountPreviewModel.ReportId(data.PwReportId);
+        };
+
+        self.Update = function(callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: self.ReportId(),
+                        groupingId: self.GroupingPopoverModel.Selection(),
+                        orderingId: self.OrderingPopoverModel.Selection(),
+                        startDate: self.StartDate(),
+                        endDate: self.EndDate()
+                    };
+                    ajax.HttpPost("/ReportService/Update", data, this);
+                },
+                function () {
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
         };
 
         self.LoadReport = function(reportId, callback) {
@@ -294,7 +342,6 @@
                     ajax.HttpPost("/ReportService/Save?reportId=" + self.ReportId(), null, this);
                 },
                 function (data) {
-                    console.log(data);
                     self.LoadReport(data.reportId, this);
                 }, 
                 function() {
@@ -304,15 +351,18 @@
         };
 
         self.SaveAs = function () {
-            var url = ProfitWiseConfig.BaseUrl + '/Report/SaveAs?reportId=' + self.ReportId();
-
-            ProfitWiseShopify.LaunchModal({
-                    src: url,
-                    title: 'Report Save As...',
-                    width: 'small',
-                    height: 250,
+            flow.exec(
+                function() {
+                    var url = ProfitWiseConfig.BaseUrl + '/Report/SaveAs?reportId=' + self.ReportId();
+                    ProfitWiseShopify.LaunchModal({
+                            src: url,
+                            title: 'Report Save As...',
+                            width: 'small',
+                            height: 250,
+                        },
+                        this);
                 },
-                function (data) {
+                function(data) {
                     self.ReportId(data.reportId);
                     self.LoadReport(self.ReportId(), this);
                 },
@@ -320,8 +370,29 @@
                     self.TriggerReportListRefresh();
                 });
         };
+        
+        self.Delete = function() {
+            flow.exec(
+                function () {
+                    ShopifyApp.Modal.confirm("Are you sure you want to delete this Report?", this);
+                },
+                function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ReportService/Delete?reportId=" + self.ReportId(), null, this);
+                },
+                function () {
+                    self.TriggerReportListRefresh(this);
+                },
+                function () {
+                    self.LoadReport(OverallProfitabilityReportId, this);
+                }
+            );
+        }
 
-        self.TriggerReportListRefresh = function() {};
+        self.TriggerReportListRefresh = function(callback) {};
 
         return self;
     };
@@ -332,8 +403,8 @@
 
         self.ReportList = ko.observable([]);
         self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
-        self.ReportViewerContext.TriggerReportListRefresh = function() {
-            self.RefreshReportList();
+        self.ReportViewerContext.TriggerReportListRefresh = function(callback) {
+            self.RefreshReportList(callback);
         };
 
         self.UserDefinedReports = ko.computed(function () {

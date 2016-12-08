@@ -81,9 +81,9 @@ namespace ProfitWise.Web.Controllers
             }
 
             // Is not a copy of a 
-            if (deleteOriginal)
+            if (deleteOriginal && sourceReport.OriginalReportId.HasValue)
             {
-                repository.DeleteReport(sourceReport.OriginalReportId);
+                repository.DeleteReport(sourceReport.OriginalReportId.Value);
                 sourceReport.CopyForEditing = false;
                 sourceReport.LastAccessedDate = DateTime.Now;
                 sourceReport.Name = name;
@@ -122,7 +122,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var originalReport = repository.RetrieveReport(reportEditCopy.OriginalReportId);
+            var originalReport = repository.RetrieveReport(reportEditCopy.OriginalReportId.Value);
             originalReport.Name = reportEditCopy.Name;
             originalReport.StartDate = reportEditCopy.StartDate;
             originalReport.EndDate = reportEditCopy.EndDate;
@@ -147,9 +147,40 @@ namespace ProfitWise.Web.Controllers
             var newReportId = repository.InsertReport(reportToCopy);
             var report = repository.RetrieveReport(newReportId);
             return new JsonNetResult(report);
-        }       
-        
-         
+        }
+
+        [HttpPost]
+        public ActionResult Update(
+                long reportId, ReportGrouping groupingId, ReportOrdering orderingId, DateTime startDate, DateTime endDate)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var report = repository.RetrieveReport(reportId);
+            report.GroupingId = groupingId;
+            report.OrderingId = orderingId;
+            report.StartDate = startDate;
+            report.EndDate = endDate;
+            report.LastAccessedDate = DateTime.Now;
+            
+            repository.UpdateReport(report);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult Delete(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var report = repository.RetrieveReport(reportId);
+
+            repository.DeleteReport(report.PwReportId);
+            if (!report.CopyOfSystemReport && report.OriginalReportId != null)
+            {
+                repository.DeleteReport(report.OriginalReportId.Value);
+            }
+            return JsonNetResult.Success();
+        }
 
 
         // Product Types Actions

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
@@ -136,7 +135,7 @@ namespace ProfitWise.Data.Repositories
             this.DeleteFilters(reportId);
             var query = @"DELETE FROM profitwisereport            
                         WHERE PwShopId = @PwShopId 
-                        AND PwReportId = @PwReportId;";
+                        AND PwReportId = @reportId;";
             _connection.Execute(query, new { PwShopId, reportId });
         }
 

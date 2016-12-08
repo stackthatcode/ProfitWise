@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Model
         public string Name { get; set; }        
         public bool CopyForEditing { get; set; }
         public bool CopyOfSystemReport { get; set; }
-        public long OriginalReportId { get; set; }
+        public long? OriginalReportId { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }    

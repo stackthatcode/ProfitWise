@@ -1,10 +1,10 @@
 ﻿
+<!-- TODO - unforunately eliminate. Save the function, though! -->
 <script id="Date-Picker-Widget" type="text/html">
     <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">        
         <input type="text"
                class="date-ranger-picker form-control"
-               style="width: 100%; font-size: 1.0em;" 
-               data-bind="attr : { id: $data.Identifier }" />
+               style="width: 100%; font-size: 1.0em;" />
 
         <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>        
     </div>
@@ -13,14 +13,14 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.CreateDatePicker = function(rootIdentifier, startDate, endDate) {
+    ProfitWiseWidgets.CreateDatePicker = function(rootIdentifier, callback, startDate, endDate) {
         $(".date-range-picker-icon").click(function () {
             $(this).parent().find('input').click();
         });
         
-        $(rootIdentifier + " .date-ranger-picker")
+        $(".date-ranger-picker")
             .daterangepicker({
-                "parentEl": rootIdentifier + " .date-ranger-picker-parent",
+                "parentEl": ".date-ranger-picker-parent",
                 "startDate": startDate || moment().subtract(6, 'days'),
                 "endDate": endDate || moment(),
                 "alwaysShowCalendars": true,
@@ -39,7 +39,9 @@
                 "opens": "left",
             },
             function (start, end, label) {
-                alert(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                if (callback) {
+                    callback(start, end, label);
+                }
             });
     };
 </script>
