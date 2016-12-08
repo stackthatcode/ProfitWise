@@ -40,26 +40,12 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
             var report = repository.RetrieveReport(reportId);
 
-            if (report.SystemReport)
+            if (report.CopyOfSystemReport)
             {
-                var reports = repository.RetrieveUserDefinedReports();
-                var reportNumber = 1;
-                var reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
-                while (true)
-                {
-                    if (reports.Any(x => x.Name == reportName))
-                    {
-                        reportNumber++;
-                        reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
-                    }
-                    break;
-                }
-                report.Name = reportName;
+                report.Name = repository.RetrieveAvailableDefaultName();
             }
-
             return View(report);
         }
 

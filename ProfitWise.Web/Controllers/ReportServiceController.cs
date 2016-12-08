@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -51,32 +52,60 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
-            var nameCollision = repository.ReportNameCollision(reportId, name);
-            if (nameCollision == null)
-            {
-                return new JsonNetResult(new { success = true, message = "Report successfully saved" });
-            }
-            else
+            var nameCollision = repository.ReportNameCollision(reportId, name) != null;
+            if (nameCollision)
             {
                 return new JsonNetResult(new { success = false, message = "Report with same name exists already" });
             }
+
+            var reportEditCopy = repository.RetrieveReport(reportId);                
+            
+            if (reportEditCopy.CopyOfSystemReport)
+            {
+                // Simple case, nothing to do but update
+                reportEditCopy.CopyForEditing = false;
+                reportEditCopy.CopyOfSystemReport = false;
+                reportEditCopy.LastAccessedDate = DateTime.Now;
+                reportEditCopy.Name = name;
+                repository.UpdateReport(reportEditCopy);
+            }
+            else
+            {
+                if (deleteOriginal)
+                {
+                    repository.DeleteReport(reportEditCopy.OriginalReportId);
+
+                    reportEditCopy.CopyForEditing = false;
+                    reportEditCopy.LastAccessedDate = DateTime.Now;
+                    reportEditCopy.Name = name;
+                    repository.UpdateReport(reportEditCopy);
+                }
+                else
+                {
+                    var originalReport = repository.RetrieveReport(reportEditCopy.OriginalReportId);
+                    originalReport.Name = name;
+                    originalReport.StartDate = reportEditCopy.StartDate;
+                    originalReport.EndDate = reportEditCopy.EndDate;
+                    originalReport.GroupingId = reportEditCopy.GroupingId;
+                    originalReport.OrderingId = reportEditCopy.OrderingId;
+                    repository.UpdateReport(reportEditCopy);
+
+                    repository.CloneFilters(reportEditCopy.PwReportId, originalReport.PwReportId);
+                }
+            }
+
+            return new JsonNetResult(new { success = true, message = "Report successfully saved" });
         }
 
-
-        // TODO - Report Save As
-
+        
         [HttpPost]
         public ActionResult Save(PwReport report)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             
-            // Name provisioning sequence
-            
             return new JsonNetResult(report);
         }
-
-        // TODO - Report Save As
 
 
         [HttpPost]
@@ -88,7 +117,7 @@ namespace ProfitWise.Web.Controllers
             var reportToCopy = repository.RetrieveReport(reportId);
             reportToCopy.CopyForEditing = true;
             reportToCopy.OriginalReportId = reportId;
-            var newReportId = repository.CopyReport(reportToCopy);
+            var newReportId = repository.InsertReport(reportToCopy);
             var report = repository.RetrieveReport(newReportId);
             return new JsonNetResult(report);
         }        

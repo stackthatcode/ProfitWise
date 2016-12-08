@@ -12,6 +12,9 @@ namespace ProfitWise.Data.Model
             Vendors = new List<string>();
             MasterProductIds = new List<long>();
             Skus = new List<string>();
+            CopyForEditing = false;
+            CopyOfSystemReport = false;
+            IsSystemReport = false;
         }
 
         public long PwReportId { get; set; }
@@ -19,7 +22,7 @@ namespace ProfitWise.Data.Model
 
         public string Name { get; set; }        
         public bool CopyForEditing { get; set; }
-        public bool SystemReport { get; set; }
+        public bool CopyOfSystemReport { get; set; }
         public long OriginalReportId { get; set; }
 
         public DateTime StartDate { get; set; }
@@ -34,7 +37,9 @@ namespace ProfitWise.Data.Model
         public IList<string> ProductTypes { get; set; }
         public IList<string> Vendors { get; set; }
         public IList<long> MasterProductIds { get; set; }
-        public IList<string> Skus { get; set; }        
+        public IList<string> Skus { get; set; }  
+        
+        public bool IsSystemReport { get; set; }    
     }
 
     public enum ReportGrouping
@@ -112,12 +117,11 @@ namespace ProfitWise.Data.Model
             {
                 PwReportId = OverallProfitabilityId,
                 Name = "Overall Profitability",
-                CopyForEditing = false,
-                SystemReport = true,
                 StartDate = DateTime.Today.AddDays(-7),
                 EndDate = DateTime.Today,
                 GroupingId = ReportGrouping.ProductType,
                 OrderingId = ReportOrdering.ProfitabilityDescending,
+                IsSystemReport = true,
             };
         }
 
@@ -127,12 +131,11 @@ namespace ProfitWise.Data.Model
             {
                 PwReportId = TestReportId,
                 Name = "Test Report",
-                CopyForEditing = false,
-                SystemReport = true,
                 StartDate = DateTime.Today.AddDays(-14),
                 EndDate = DateTime.Today.AddDays(-7),
                 GroupingId = ReportGrouping.Product,
                 OrderingId = ReportOrdering.ProfitabilityDescending,
+                IsSystemReport = true,
             };
         }
     }

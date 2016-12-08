@@ -23,7 +23,7 @@
                 
             </div>
             <div class="col-xs-9" style="padding-top:10px;">
-                <div class="checkbox">
+                <div class="checkbox" data-bind="ifnot: CopyOfSystemReport">
                     <label>
                         <input type="checkbox" data-bind="checked: DeleteOriginal">
                         <span style="font-weight:700;">Delete the original Report</span>
@@ -70,22 +70,25 @@
                 self.Name = ko.observable();
                 self.DeleteOriginal = ko.observable(false);
                 self.ValidationMessage = ko.observable();
+                self.CopyOfSystemReport = ko.observable(true);
 
                 self.SaveButtonClick = function() {
                     flow.exec(
                         function() {
                             var data = {
                                 reportId: self.ReportId(),
+                                deleteOriginal: self.DeleteOriginal(),
                                 name: self.Name(),
                             };
 
                             var settings = new ProfitWiseFunctions.AjaxSettings(true);
                             var ajax = new ProfitWiseFunctions.Ajax(settings);
-
+                            
                             ajax.HttpPost("/ReportService/SaveAs", data, this);
                         }, 
                         function(response) {
-                            ShopifyApp.Modal.close(true);
+                            console.log(response);
+                            //ShopifyApp.Modal.close(true);
                         }
                     );
                 };
@@ -111,6 +114,7 @@
             var model = new ProfitWise.ReportSaveAsModel();
             model.ReportId(modelData.PwReportId);
             model.Name(modelData.Name);
+            model.CopyOfSystemReport(modelData.CopyOfSystemReport);
 
             console.log(model.Name());
 

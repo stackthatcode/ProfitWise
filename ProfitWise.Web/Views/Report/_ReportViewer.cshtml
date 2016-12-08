@@ -185,7 +185,7 @@
         self.EndDate = ko.observable();
 
         self.CopyForEditing = ko.observable(false);
-        self.SystemReport = ko.observable(false);
+        self.CopyOfSystemReport = ko.observable(false);
 
         self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
         self.GroupingPopoverModel.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
@@ -218,7 +218,7 @@
         });
 
         self.OnlySaveAsAllowed = ko.computed(function() {
-            return self.SystemReport();
+            return self.CopyOfSystemReport();
         });
         
         self.AfterRenderDateRangePicker = function () {
@@ -255,7 +255,7 @@
             self.StartDate(data.StartDate);
             self.EndDate(data.EndDate);
             self.CopyForEditing(data.CopyForEditing);
-            self.SystemReport(data.SystemReport);
+            self.CopyOfSystemReport(data.CopyOfSystemReport);
 
             self.GroupingPopoverModel.Selection(data.GroupingId);
             self.OrderingPopoverModel.Selection(data.OrderingId);
@@ -276,6 +276,19 @@
                     if (callback) {
                         callback();
                     }
+                }
+            );
+        };
+
+        self.Save = function() {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/Report/Save?reportId=" + self.ReportId(), this);
+                },
+                function() {
+                    // Need the original Report Id
+                    // Need to Refresh
                 }
             );
         };
@@ -305,11 +318,11 @@
         self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
 
         self.UserDefinedReports = ko.computed(function () {
-            return AQ(self.ReportList()).where(function (item) { return item.SystemReport == false; }).toArray();
+            return AQ(self.ReportList()).where(function (item) { return item.IsSystemReport == false; }).toArray();
         });
 
         self.SystemDefinedReports = ko.computed(function () {
-            return AQ(self.ReportList()).where(function (item) { return item.SystemReport == true; }).toArray();
+            return AQ(self.ReportList()).where(function (item) { return item.IsSystemReport == true; }).toArray();
         });
 
         self.RefreshReportList = function (callback) {
