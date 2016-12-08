@@ -44,10 +44,11 @@ namespace ProfitWise.Data.Model
 
     public enum ReportGrouping
     {
-        ProductType = 1,
-        Vendor = 2,
-        Product = 3,
-        Variant = 4
+        Overall = 1,
+        ProductType = 2,
+        Vendor = 3,
+        Product = 4,
+        Variant = 5
     }
 
     public enum ReportOrdering
@@ -64,6 +65,7 @@ namespace ProfitWise.Data.Model
             Dictionary<ReportGrouping, string> _groupingDescriptions =
                 new Dictionary<ReportGrouping, string>()
                 {
+                    { ReportGrouping.Overall, "Overall (no grouping)" },
                     { ReportGrouping.ProductType, "Product Type" },
                     { ReportGrouping.Vendor, "Vendor" },
                     { ReportGrouping.Product, "Product" },
@@ -111,6 +113,11 @@ namespace ProfitWise.Data.Model
             return $"Untitled Report-{reportNumber}";
         }
 
+        public static bool IsSystemReport(this long reportId)
+        {
+            return reportId == OverallProfitabilityId || reportId == TestReportId;
+        }
+
         public static PwReport OverallProfitability()
         {
             return new PwReport
@@ -119,7 +126,7 @@ namespace ProfitWise.Data.Model
                 Name = "Overall Profitability",
                 StartDate = DateTime.Today.AddDays(-7),
                 EndDate = DateTime.Today,
-                GroupingId = ReportGrouping.ProductType,
+                GroupingId = ReportGrouping.Overall,
                 OrderingId = ReportOrdering.ProfitabilityDescending,
                 IsSystemReport = true,
             };

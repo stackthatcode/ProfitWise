@@ -18,7 +18,7 @@ CREATE TABLE `profitwisereport` (
     
     `CopyOfSystemReport` TINYINT NOT NULL,
     `CopyForEditing` TINYINT NOT NULL,
-    `OriginalReportId` TINYINT NULL,    
+    `OriginalReportId` BIGINT NULL,    
     
     `StartDate` DATE NOT NULL,
     `EndDate` DATE NOT NULL,

@@ -23,7 +23,7 @@
                 
             </div>
             <div class="col-xs-9" style="padding-top:10px;">
-                <div class="checkbox" data-bind="ifnot: CopyOfSystemReport">
+                <div class="checkbox" data-bind="if: ShowDeleteOriginal">
                     <label>
                         <input type="checkbox" data-bind="checked: DeleteOriginal">
                         <span style="font-weight:700;">Delete the original Report</span>
@@ -70,7 +70,14 @@
                 self.Name = ko.observable();
                 self.DeleteOriginal = ko.observable(false);
                 self.ValidationMessage = ko.observable();
-                self.CopyOfSystemReport = ko.observable(true);
+                self.CopyOfSystemReport = ko.observable(false);
+                self.IsSystemReport = ko.observable(false);
+
+                self.ShowDeleteOriginal = ko.computed(
+                    function() {
+                        return !self.CopyOfSystemReport() && !self.IsSystemReport();
+                    }
+                );
 
                 self.SaveButtonClick = function() {
                     flow.exec(
@@ -87,19 +94,18 @@
                             ajax.HttpPost("/ReportService/SaveAs", data, this);
                         }, 
                         function(response) {
-                            console.log(response);
-                            //ShopifyApp.Modal.close(true);
+                            ShopifyApp.Modal.close({ result: true, reportId: response.reportId });
                         }
                     );
                 };
                 
                 self.CancelButtonClick = function() {
-                    ShopifyApp.Modal.close(false);
+                    ShopifyApp.Modal.close({ result: false });
                 };
 
                 self.InvokeKeyCallback = function (model, event) {
                     if (event.keyCode == 27) {
-                        ShopifyApp.Modal.close(false);
+                        ShopifyApp.Modal.close({ result: false });
                         return false;
                     }
                     if (event.keyCode == 13) {
@@ -115,9 +121,9 @@
             model.ReportId(modelData.PwReportId);
             model.Name(modelData.Name);
             model.CopyOfSystemReport(modelData.CopyOfSystemReport);
+            model.IsSystemReport(modelData.IsSystemReport);
 
-            console.log(model.Name());
-
+            
             // Load Product data into the model
             ko.applyBindings(model);
         });

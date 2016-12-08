@@ -56,7 +56,7 @@
 
                         <div data-bind="ifnot: OnlySaveAsAllowed">
                             <div class="pull-right" style="margin-right: 7px;">
-                                <a href="#" class="btn btn-primary report-viewer-top-button">
+                                <a href="#" data-bind="click: Save" class="btn btn-primary report-viewer-top-button">
                                     Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
                                 </a>
                             </div>
@@ -104,12 +104,17 @@
 
 <script type="text/html" id="Report-Viewer-Context-Summary">
     <div class="context-summary-name">
-        <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
+    <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
 
-        <div style="display:inline-block; " data-bind="if: CopyForEditing">
-            <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)</div>
+    <div style="display:inline-block; " data-bind="if: CopyForEditing">
+        <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)
+                
         </div>
     </div>
+        
+    <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
+          Report Id: <span data-bind="text: ReportId"></span>
+        </div>
 
     <div class="context-summary-details"  style="font-size: 1.0em; color: #666;">
         <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
@@ -186,6 +191,7 @@
 
         self.CopyForEditing = ko.observable(false);
         self.CopyOfSystemReport = ko.observable(false);
+        self.IsSystemReport = ko.observable(false);
 
         self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
         self.GroupingPopoverModel.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
@@ -207,6 +213,7 @@
         self.OrderingPopoverModel.OkCallback = function() {
             alert('OK: update server, then reload data');
         };
+
         self.OrderingPopoverModel.PopOverLaunchCallback = function () {
             self.PrepareCopyForEditing();
         };
@@ -218,7 +225,7 @@
         });
 
         self.OnlySaveAsAllowed = ko.computed(function() {
-            return self.CopyOfSystemReport();
+            return self.IsSystemReport() || self.CopyOfSystemReport();
         });
         
         self.AfterRenderDateRangePicker = function () {
@@ -249,14 +256,14 @@
         };
 
         self.PopulateModel = function (data) {
-            console.log(data);
+            //console.log(data);
             self.ReportId(data.PwReportId);
             self.Name(data.Name);
             self.StartDate(data.StartDate);
             self.EndDate(data.EndDate);
             self.CopyForEditing(data.CopyForEditing);
             self.CopyOfSystemReport(data.CopyOfSystemReport);
-
+            self.IsSystemReport(data.IsSystemReport);
             self.GroupingPopoverModel.Selection(data.GroupingId);
             self.OrderingPopoverModel.Selection(data.OrderingId);
             self.ReportSelectionCountPreviewModel.ReportId(data.PwReportId);
@@ -284,11 +291,14 @@
             flow.exec(
                 function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/Report/Save?reportId=" + self.ReportId(), this);
+                    ajax.HttpPost("/ReportService/Save?reportId=" + self.ReportId(), null, this);
                 },
+                function (data) {
+                    console.log(data);
+                    self.LoadReport(data.reportId, this);
+                }, 
                 function() {
-                    // Need the original Report Id
-                    // Need to Refresh
+                    self.TriggerReportListRefresh();
                 }
             );
         };
@@ -302,10 +312,16 @@
                     width: 'small',
                     height: 250,
                 },
+                function (data) {
+                    self.ReportId(data.reportId);
+                    self.LoadReport(self.ReportId(), this);
+                },
                 function() {
-                    self.LoadReport(self.ReportId());
+                    self.TriggerReportListRefresh();
                 });
         };
+
+        self.TriggerReportListRefresh = function() {};
 
         return self;
     };
@@ -316,6 +332,9 @@
 
         self.ReportList = ko.observable([]);
         self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
+        self.ReportViewerContext.TriggerReportListRefresh = function() {
+            self.RefreshReportList();
+        };
 
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.ReportList()).where(function (item) { return item.IsSystemReport == false; }).toArray();

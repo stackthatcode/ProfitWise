@@ -118,13 +118,13 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
         function () {            
             ShopifyApp.Modal.open(
                 settings,
-                function (result) {
-                    if (result === true) {
+                function (data) {
+                    if (data.result === true) {
                         if (callback) {
-                            callback();
+                            callback(data);
                         }
                     }
-                    if (result === "error") {
+                    if (data.result === "error") {
                         ProfitWiseShopify.ErrorPopup();
                     }
                 });
@@ -132,12 +132,13 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
     );
 };
 
+ProfitWiseShopify.ErrorMessage = "We're sorry for the inconvenience, but the System has encountered an error. " +
+    "Please try reloading the page. If the problem persists, reach out to our Support Team!";
+
 ProfitWiseShopify.ErrorPopup = function () {
     ShopifyApp.Modal.alert({
         title: "System Error",
-        message: "We're sorry for the inconvenience, but the System has encountered an error. " +
-                "We'll reload the page. If the problem persists, reach out to our Support Team!",
-        okButton: "Ok, Thanks"
+        message: ProfitWiseShopify.ErrorMessage,
     }, function (result) {
         window.location.reload();
     });

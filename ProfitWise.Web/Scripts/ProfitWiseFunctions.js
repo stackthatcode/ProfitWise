@@ -75,7 +75,8 @@ ProfitWiseFunctions.AjaxSettings = function (modal) {
     var errorCallback;
     if (modal) {
         errorCallback = function () {
-            ShopifyApp.Modal.close("error");
+            alert(ProfitWiseShopify.ErrorMessage);
+            window.reload();
         }
     } else {
         errorCallback = function () {
@@ -97,7 +98,7 @@ ProfitWiseFunctions.Ajax = function (settings) {
 
     self.ErrorCallback = function (jqXHR, textStatus, errorThrown) {
         // TODO: decide what to do here...
-        console.log(errorThrown);
+        //console.log(errorThrown);
 
         if (jqXHR.status != 0 || textStatus == "timeout") {
             self.HideLoading();

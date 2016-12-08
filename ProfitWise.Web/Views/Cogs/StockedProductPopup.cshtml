@@ -59,7 +59,7 @@
 
                     ajax.HttpPost("/CogsService/StockedDirectlyByMasterProductId", data,
                         function() {
-                            ShopifyApp.Modal.close(true);
+                            ShopifyApp.Modal.close({ result: true });
                         });
                 }
             };

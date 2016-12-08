@@ -69,15 +69,18 @@ namespace ProfitWise.Data.Repositories
         {
             var reports = RetrieveUserDefinedReports();
             var reportNumber = 1;
-            var reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
+            var reportName = "";
             while (true)
             {
+                reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
                 if (reports.Any(x => x.Name == reportName))
                 {
                     reportNumber++;
-                    reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
                 }
-                break;
+                else
+                {
+                    break;
+                }
             }
             return reportName;
         }

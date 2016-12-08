@@ -42,7 +42,7 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var report = repository.RetrieveReport(reportId);
 
-            if (report.CopyOfSystemReport)
+            if (report.CopyOfSystemReport || report.IsSystemReport)
             {
                 report.Name = repository.RetrieveAvailableDefaultName();
             }
