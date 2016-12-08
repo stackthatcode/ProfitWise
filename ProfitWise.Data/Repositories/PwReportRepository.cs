@@ -78,14 +78,30 @@ namespace ProfitWise.Data.Repositories
                     .Query<PwReport>(query, new { PwShopId, reportId })
                     .FirstOrDefault();
         }
-        
+
+        public PwReport ReportNameCollision(long reportId, string name)
+        {
+            var query = @"SELECT * FROM profitwisereport 
+                        WHERE PwShopId = @PwShopId 
+                        AND PwReportId <> @reportId
+                        AND CopyForEditing = 0
+                        AND Name = @name;";
+            return _connection
+                    .Query<PwReport>(query, new { PwShopId, name })
+                    .FirstOrDefault();
+        }
+
+
         public long CopyReport(PwReport report)
         {
             var query =
                 @"INSERT INTO profitwisereport (
-                    PwShopId, Name, CopyForEditing, SystemReport, StartDate, EndDate, GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
+                    PwShopId, Name, CopyForEditing, SystemReport, OriginalReportId, StartDate, EndDate, 
+                    GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
                 VALUES ( 
-                    @PwShopId, @Name, @CopyForEditing, @SystemReport, @StartDate, @EndDate,  @GroupingId, @OrderingId, NOW(), NOW() );
+                    @PwShopId, @Name, @CopyForEditing, @SystemReport, @OriginalReportId, @StartDate, @EndDate,
+                    @GroupingId, @OrderingId, NOW(), NOW() );
+                
                 SELECT LAST_INSERT_ID();";
 
             return _connection.Query<long>(query, report).First();

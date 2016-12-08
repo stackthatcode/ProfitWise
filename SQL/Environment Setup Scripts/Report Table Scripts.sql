@@ -15,8 +15,12 @@ CREATE TABLE `profitwisereport` (
 	`PwShopId` BIGINT NOT NULL,
 	
     `Name` varchar(50) NULL,
-    `CopyForEditing` TINYINT NOT NULL,
+    
     `SystemReport` TINYINT NOT NULL,
+    `CopyForEditing` TINYINT NOT NULL,
+    `OriginalReportId` TINYINT NULL,
+    
+    
     `StartDate` DATE NOT NULL,
     `EndDate` DATE NOT NULL,
     `GroupingId`  SMALLINT NULL,

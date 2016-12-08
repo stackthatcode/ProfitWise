@@ -1,5 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -31,29 +33,36 @@ namespace ProfitWise.Web.Controllers
             return View(
                 new ProductVariantSelectionModel
                     { Id = reportId, SelectionType = selectionType});
-        }        
-
-        public ActionResult Reports()
-        {
-            return View();
         }
 
-        public ActionResult Preferences()
+        [HttpGet]
+        public ActionResult SaveAs(long reportId)
         {
-            return View();
-        }
-        
-        
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
-        public ActionResult Goals()
-        {
-            return View();
+            var report = repository.RetrieveReport(reportId);
+
+            if (report.SystemReport)
+            {
+                var reports = repository.RetrieveUserDefinedReports();
+                var reportNumber = 1;
+                var reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
+                while (true)
+                {
+                    if (reports.Any(x => x.Name == reportName))
+                    {
+                        reportNumber++;
+                        reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
+                    }
+                    break;
+                }
+                report.Name = reportName;
+            }
+
+            return View(report);
         }
 
-        public ActionResult Products()
-        {
-            return View();
-        }
 
         [HttpGet]
         public ActionResult Ping()

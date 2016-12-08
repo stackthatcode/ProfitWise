@@ -28,16 +28,8 @@
 
         // To be configured by the parent/owner object
         self.ReportViewerModel.EditReportCallback = function (reportId) {
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/ReportService/CopyForEditing", { reportId: reportId }, this);
-                },
-                function (data) {
-                    self.InFilterEditMode(true);
-                    self.ReportEditorModel.LoadReport(data.PwReportId);
-                }
-            );
+            self.InFilterEditMode(true);
+            self.ReportEditorModel.LoadReport(reportId);        
         };
 
         self.ReportEditorModel.OkCallback = function () {

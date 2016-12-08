@@ -43,6 +43,28 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(repository.RetrieveReport(reportId));
         }
 
+
+
+        [HttpPost]
+        public ActionResult SaveAs(long reportId, string name, bool deleteOriginal)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            var nameCollision = repository.ReportNameCollision(reportId, name);
+            if (nameCollision == null)
+            {
+                return new JsonNetResult(new { success = true, message = "Report successfully saved" });
+            }
+            else
+            {
+                return new JsonNetResult(new { success = false, message = "Report with same name exists already" });
+            }
+        }
+
+
+        // TODO - Report Save As
+
         [HttpPost]
         public ActionResult Save(PwReport report)
         {
@@ -50,20 +72,11 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             
             // Name provisioning sequence
-            var reports = repository.RetrieveUserDefinedReports();
-            var reportNumber = 1;
-            var reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
-            while (true)
-            {
-                if (reports.Any(x => x.Name == reportName))
-                {
-                    reportNumber++;
-                    reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
-                }
-                break;
-            }
+            
             return new JsonNetResult(report);
         }
+
+        // TODO - Report Save As
 
 
         [HttpPost]
@@ -73,8 +86,8 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             
             var reportToCopy = repository.RetrieveReport(reportId);
-            reportToCopy.SystemReport = false;
             reportToCopy.CopyForEditing = true;
+            reportToCopy.OriginalReportId = reportId;
             var newReportId = repository.CopyReport(reportToCopy);
             var report = repository.RetrieveReport(newReportId);
             return new JsonNetResult(report);

@@ -28,34 +28,10 @@
         <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header standard-padding top-border-facade"
-                 style="overflow: visible; padding-top:20px;">
+            <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
                 <div class="col-xs-6 no-side-padding">
                     <div data-bind="if: ReportViewerContext.ReportLoaded()">
-                        <div data-bind="with: ReportViewerContext">
-                            <div class="popover-container">
-                                <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
-                                
-                                <div style="display:inline-block; " data-bind="if: CopyForEditing">
-                                    <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)</div>
-                                </div>
-                            </div>
-
-                            <div style="font-size: 1.0em; color: #666;">
-                                <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
-
-                                <div style="height: 25px;">Filtered by <a href="#">Product Types, Vendors, and Variants</a></div>
-
-                                <div style="height: 25px;">
-                                    <span>Grouped by </span>
-                                    <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
-                                    </span>
-                                    <span>/</span>
-                                    <span>Ordered by </span>
-                                    <span data-bind="template: { name: 'Selector-Popover-Widget', data: OrderingPopoverModel }">
-                                    </span>
-                                </div>
-                            </div>
+                        <div data-bind="template: { name: 'Report-Viewer-Context-Summary', data: $data.ReportViewerContext }">
                         </div>
                     </div>
                 </div>
@@ -67,22 +43,34 @@
                                                             UserDefinedReports: $data.UserDefinedReports,
                                                             SelectReportClick: $data.SelectReportClick} }">
                     </div>
+                    
+                    <div class="pull-right" data-bind="with: ReportViewerContext">
+                        <div data-bind="if: OnlySaveAsAllowed">
 
-                    <div class="pull-right" style="margin-right: 7px;">
-                        <a href="#" class="btn btn-primary report-viewer-top-button">
-                            Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
-                        </a>
+                            <div class="pull-right" style="margin-right: 7px;">
+                                <a href="#" data-bind="click: SaveAs" class="btn btn-primary report-viewer-top-button">
+                                    Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div data-bind="ifnot: OnlySaveAsAllowed">
+                            <div class="pull-right" style="margin-right: 7px;">
+                                <a href="#" class="btn btn-primary report-viewer-top-button">
+                                    Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                                </a>
+                            </div>
+                            <div class="pull-right btn-group" style="margin-right: 7px;">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Save As</a></li>
+                                    <li><a href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="pull-right btn-group" style="margin-right: 7px;">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
-
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Save As</a></li>
-                            <li><a href="#">Rename</a></li>
-                            <li><a href="#">Delete</a></li>
-                        </ul>
-                    </div>
+                    
 
                     <div style="clear: both; height: 20px;"></div>                    
                     
@@ -114,6 +102,31 @@
     </div>
 </script>
 
+<script type="text/html" id="Report-Viewer-Context-Summary">
+    <div class="context-summary-name">
+        <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
+
+        <div style="display:inline-block; " data-bind="if: CopyForEditing">
+            <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)</div>
+        </div>
+    </div>
+
+    <div class="context-summary-details"  style="font-size: 1.0em; color: #666;">
+        <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
+
+        <div style="height: 25px;">Filtered by <a href="#">Product Types, Vendors, and Variants</a></div>
+
+        <div style="height: 25px;">
+            <span>Grouped by </span>
+            <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
+            </span>
+            <span>/</span>
+            <span>Ordered by </span>
+            <span data-bind="template: { name: 'Selector-Popover-Widget', data: OrderingPopoverModel }">
+            </span>
+        </div>
+    </div>
+</script>
 
 <script type="text/html" id="Report-Viewer-Report-Selector">
     <a href="#" class="btn btn-primary dropdown-toggle report-viewer-top-button"
@@ -203,6 +216,10 @@
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
         });
+
+        self.OnlySaveAsAllowed = ko.computed(function() {
+            return self.SystemReport();
+        });
         
         self.AfterRenderDateRangePicker = function () {
 
@@ -231,13 +248,14 @@
             );
         };
 
-        self.PopulateModel = function(data) {
+        self.PopulateModel = function (data) {
+            console.log(data);
             self.ReportId(data.PwReportId);
             self.Name(data.Name);
             self.StartDate(data.StartDate);
             self.EndDate(data.EndDate);
-            self.CopyForEditing = ko.observable(data.CopyForEditing);
-            self.SystemReport = ko.observable(data.SystemReport);
+            self.CopyForEditing(data.CopyForEditing);
+            self.SystemReport(data.SystemReport);
 
             self.GroupingPopoverModel.Selection(data.GroupingId);
             self.OrderingPopoverModel.Selection(data.OrderingId);
@@ -261,7 +279,21 @@
                 }
             );
         };
-        
+
+        self.SaveAs = function () {
+            var url = ProfitWiseConfig.BaseUrl + '/Report/SaveAs?reportId=' + self.ReportId();
+
+            ProfitWiseShopify.LaunchModal({
+                    src: url,
+                    title: 'Report Save As...',
+                    width: 'small',
+                    height: 250,
+                },
+                function() {
+                    self.LoadReport(self.ReportId());
+                });
+        };
+
         return self;
     };
 
@@ -307,7 +339,6 @@
                 });
         };
 
-
         self.SelectReportByReportId = function (id) {
             var report =
                 AQ(self.ReportList())
@@ -338,9 +369,13 @@
         self.SelectReportCallback = function (reportId) { };
 
         self.EditReportClick = function () {
-            if (self.ReportViewerContext.ReportLoaded()) {
-                self.EditReportCallback(self.ReportViewerContext.ReportId());
-            }
+            flow.exec(
+                function() {
+                    self.ReportViewerContext.PrepareCopyForEditing(this);
+                },
+                function() {
+                    self.EditReportCallback(self.ReportViewerContext.ReportId());
+                });
         };
 
         self.EditReportCallback = function (reportId) { };

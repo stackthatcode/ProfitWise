@@ -37,13 +37,9 @@
 
                 <div class="col-xs-6 no-side-padding">
                     <div class="pull-right" style="padding-top: 10px;">
-                        <a href="#" class="btn btn-primary" style="width:100px;"
-                           data-bind="click: CancelButtonClick">
-                            Cancel <i class="glyphicon glyphicon-remove"></i>
-                        </a>
                         <a href="#" class="btn btn-primary" style="width:100px; margin-left:10px;"
                            data-bind="click: OkButtonClick">
-                            OK <i class="glyphicon glyphicon-ok"></i>
+                            Ok <i class="glyphicon glyphicon-ok"></i>
                         </a>
                     </div>
                 </div>
@@ -331,15 +327,7 @@
                 });
         };
         
-        // OK & Cancel buttons
-        self.CancelCallback = function () { };
-
         self.OkCallback = function () { };
-
-
-        self.CancelButtonClick = function () {
-            self.CancelCallback();
-        };
 
         self.OkButtonClick = function () {
             self.OkCallback();
