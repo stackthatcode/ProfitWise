@@ -88,6 +88,8 @@
                     ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
                 },
                 function (filters) {
+                    console.log(filters);
+
                     AQ(filters)
                         .each(function (item) {
                             item.RemoveClick = function () {
