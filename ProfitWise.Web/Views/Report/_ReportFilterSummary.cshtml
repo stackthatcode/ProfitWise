@@ -1,31 +1,35 @@
-﻿<script type="text/html" id="Report-Editor-Filter-Summary">
+﻿<script type="text/html" id="Report-Filter-Summary-Widget">
+    <a href="#" data-bind="text: SummaryText, click: SummaryClickCallback"></a>
+</script>
+
+<script type="text/html" id="Report-Editor-Filter-Bullpen">
     <style>
-        .report-editor-filter-summary .tooltip-inner {
+        .Report-Editor-Filter-Bullpen .tooltip-inner {
             margin-top:-1px;
         }
     </style>
     
-    <div class="report-editor-filter-summary">
+    <div class="Report-Editor-Filter-Bullpen">
         <div style="height: 10px;"></div>
-        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+        <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
                                         data: { label: 'Product Types Filters', grid: ProductTypesGrid } }"></div>
 
         <div style="height: 10px;"></div>
-        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+        <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
                                         data: { label: 'Vendor Filters', grid: VendorsGrid } }"></div>
 
         <div style="height: 10px;"></div>
-        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+        <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
                                         data: { label: 'Product Filters', grid: ProductsGrid } }"></div>
 
         <div style="height: 10px;"></div>
-        <div data-bind="template: { name: 'Report-Editor-Filter-Grid',
+        <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
                                         data: { label: 'Variant Filters', grid: SkuGrid } }"></div>
 
     </div>
 </script>
 
-<script type="text/html" id="Report-Editor-Filter-Grid">
+<script type="text/html" id="Report-Editor-Filter-Bullpen-Group">
     <div style="margin-bottom:5px; font-size:0.8em; font-weight:700;">
         <span data-bind="text: label"></span><span>:</span>
         <span data-bind="if: grid().length == 0">
@@ -72,7 +76,34 @@
             function () { return self.GetFiltersByType(ProfitWiseWidgets.ProductFilter); });
         self.SkuGrid = ko.computed(
             function () { return self.GetFiltersByType(ProfitWiseWidgets.SkuFilter); });
-        
+
+        self.SummaryText = ko.computed(
+            function() {
+                var output = [];
+                if (self.ProductTypesGrid().length > 0) {
+                    output.push("Product Type");
+                }
+                if (self.VendorsGrid().length > 0) {
+                    output.push("Vendor");
+                }
+                if (self.ProductsGrid().length > 0) {
+                    output.push("Product");
+                }
+                if (self.SkuGrid().length > 0) {
+                    output.push("Sku");
+                }
+
+                if (output.length == 0) {
+                    return "(No filters selected for this Report)";
+                }
+
+                var outputString = output.join(", ");
+                return outputString;
+            }
+        );
+
+        self.SummaryClickCallback = function() { }
+
         // Triggered whenever there's a change to the filters
         self.RemoveCallback = function (filterType, key) { };
 

@@ -297,7 +297,7 @@
                 .toArray();
         };
         
-        self.UncheckAllItems = function() {
+        self.UncheckAllItems = function () {            
             AQ(self.AllItems()).each(function(item) { item.IsChecked(false); });
         };
 
@@ -425,6 +425,7 @@
                 },
                 function (allItemsFromServer) {
                     self.SelectionModel.LoadItems(allItemsFromServer);
+                    self.SelectionModel.UncheckAllItems();
                     self.ApplyFiltersAndPaging();
                     callback();
                 }

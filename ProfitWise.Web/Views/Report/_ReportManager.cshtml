@@ -35,8 +35,6 @@
         self.ReportEditorModel.OkCallback = function () {
             self.InFilterEditMode(false);
             self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
-
-            console.log('Done Editing Filters - time to load report');
         };
 
         self.ReportEditorModel.CancelCallback = function () {

@@ -114,7 +114,7 @@
             <p>Add or remove filters from Report, then hit "Ok" to view the updated results.</p>
 
             <div style="overflow-y:auto; height:300px;">
-                <div data-bind="template: { name: 'Report-Editor-Filter-Summary', data: ReportFilterSummaryModel }"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen', data: ReportFilterSummaryModel }"></div>
             </div>
         </div>
     </div>
@@ -242,9 +242,6 @@
         self.ClickOnNewFilterTab = function (newFilterModel, bootstrapTabHref) {
             flow.exec(
                 function () {
-                    if (self.SelectedFilterModel() == newFilterModel) {
-                        return;
-                    }
                     self.SelectedFilterModel(newFilterModel);
                     self.SelectedFilterModel().Refresh(this);
                 },
@@ -298,9 +295,6 @@
                     .select(function (item) { return item.Key })
                     .toArray();
 
-            console.log("RefreshSelectionsFromSummary");
-            console.log(filterKeys);
-
             self.SelectedFilterModel()
                 .SelectionModel
                 .SetCheckedItemsByKeyArray(filterKeys, true);
@@ -317,7 +311,7 @@
 
                     self.ReportSelectionCountPreviewModel.ReportId(reportId);
                     self.ReportFilterSummaryModel.ReportId(reportId);
-
+                    
                     self.RefreshFilterSummaryAndCount(this);
                 },
                 function() {
@@ -333,6 +327,7 @@
         self.OkCallback = function () { };
 
         self.OkButtonClick = function () {
+            self.SelectedFilterModel().SelectionModel.UncheckAllItems();
             self.OkCallback();
         };
 

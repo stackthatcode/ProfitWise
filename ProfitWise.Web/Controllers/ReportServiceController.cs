@@ -58,15 +58,11 @@ namespace ProfitWise.Web.Controllers
 
             var successMessage = "Report successfully saved";
             var reportToCopy = repository.RetrieveReport(reportId);
-            reportToCopy.CopyOfSystemReport = false;
-            reportToCopy.CopyForEditing = false;
-            reportToCopy.Name = name;
-            reportToCopy.LastAccessedDate = DateTime.Now;
-            reportToCopy.OriginalReportId = reportId;
-
+            
             if (reportToCopy.IsSystemReport)
             {
                 // Looks like the User hit Save As directly from the System Report
+                reportToCopy.PrepareToSavePermanent(name);
                 var newReportId = repository.InsertReport(reportToCopy);
                 return new JsonNetResult(new
                 {
@@ -77,12 +73,14 @@ namespace ProfitWise.Web.Controllers
             var finalReportId = (long?) null;
             if (reportToCopy.CopyForEditing)
             {
+                reportToCopy.PrepareToSavePermanent(name);
                 finalReportId = reportToCopy.PwReportId;
                 repository.UpdateReport(reportToCopy);
             }
             else
             {
                 // The User has not yet made edits to the Report
+                reportToCopy.PrepareToSavePermanent(name);
                 finalReportId = repository.InsertReport(reportToCopy);
             }
 

@@ -39,7 +39,16 @@ namespace ProfitWise.Data.Model
         public IList<long> MasterProductIds { get; set; }
         public IList<string> Skus { get; set; }  
         
-        public bool IsSystemReport { get; set; }    
+        public bool IsSystemReport { get; set; }
+
+
+        public void PrepareToSavePermanent(string name)
+        {
+            CopyOfSystemReport = false;
+            CopyForEditing = false;
+            Name = name;
+            LastAccessedDate = DateTime.Now;
+        }
     }
 
     public enum ReportGrouping

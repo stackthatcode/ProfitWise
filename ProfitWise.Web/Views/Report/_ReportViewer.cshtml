@@ -25,7 +25,7 @@
 
 <script id="Report-Viewer-Top-Level" type="text/html">
     <div id="report-viewer-header" class="fixed-positioning-container">
-        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
+        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
@@ -114,13 +114,16 @@
     </div>
         
     <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
-          Report Id: <span data-bind="text: ReportId"></span>
-        </div>
+        Report Id: <span data-bind="text: ReportId"></span>
+    </div>
 
     <div class="context-summary-details"  style="font-size: 1.0em; color: #666;">
         <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
 
-        <div style="height: 25px;">Filtered by <a href="#">Product Types, Vendors, and Variants</a></div>
+        <div style="height: 25px;">
+            <span>Filtered by</span>
+            <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: ReportFilterSummaryModel }"></span>
+        </div>
 
         <div style="height: 25px;">
             <span>Grouped by </span>
@@ -194,6 +197,12 @@
         self.CopyOfSystemReport = ko.observable(false);
         self.IsSystemReport = ko.observable(false);
 
+        self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
+        self.ReportFilterSummaryModel = new ProfitWiseWidgets.ReportFilterSummaryModel();
+        self.ReportFilterSummaryModel.SummaryClickCallback = function() {
+            self.EditFilterClickCallback();
+        }
+
         self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
         self.GroupingPopoverModel.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
         self.GroupingPopoverModel.PromptText("Select a method for grouping data");
@@ -219,7 +228,6 @@
             self.PrepareCopyForEditing();
         };
 
-        self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
 
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
@@ -291,9 +299,12 @@
             self.CopyForEditing(data.CopyForEditing);
             self.CopyOfSystemReport(data.CopyOfSystemReport);
             self.IsSystemReport(data.IsSystemReport);
+
             self.GroupingPopoverModel.Selection(data.GroupingId);
             self.OrderingPopoverModel.Selection(data.OrderingId);
+
             self.ReportSelectionCountPreviewModel.ReportId(data.PwReportId);
+            self.ReportFilterSummaryModel.ReportId(data.PwReportId);            
         };
 
         self.Update = function(callback) {
@@ -324,10 +335,14 @@
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
                 function (data) {
-                    self.PopulateModel(data);                    
+                    self.PopulateModel(data);
+
                     self.ReportSelectionCountPreviewModel.Refresh(this);
                 },
-                function() {
+                function () {
+                    self.ReportFilterSummaryModel.Refresh(this);
+                },
+                function () {
                     if (callback) {
                         callback();
                     }
@@ -374,7 +389,8 @@
         self.Delete = function() {
             flow.exec(
                 function () {
-                    ShopifyApp.Modal.confirm("Are you sure you want to delete this Report?", this);
+                    ShopifyApp.Modal.confirm(
+                        "Are you sure you want to delete the Report named '" + self.Name() + "'?", this);
                 },
                 function (result) {
                     if (!result) {
@@ -394,6 +410,8 @@
 
         self.TriggerReportListRefresh = function(callback) {};
 
+        self.EditFilterClickCallback = function() {};
+
         return self;
     };
 
@@ -406,7 +424,10 @@
         self.ReportViewerContext.TriggerReportListRefresh = function(callback) {
             self.RefreshReportList(callback);
         };
-
+        self.ReportViewerContext.EditFilterClickCallback = function() {
+            self.EditReportClick();
+        };
+        
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.ReportList()).where(function (item) { return item.IsSystemReport == false; }).toArray();
         });
