@@ -88,8 +88,6 @@
                     ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
                 },
                 function (filters) {
-                    console.log(filters);
-
                     AQ(filters)
                         .each(function (item) {
                             item.RemoveClick = function () {
@@ -117,7 +115,6 @@
                     ajax.HttpPost("/ReportService/RemoveFilterById", data, this);
                 },
                 function () {
-                    // TODO *** replace this with premature optimization to remove directly from grid
                     self.Refresh(this);
                 },
                 function () {

@@ -36,7 +36,7 @@
             self.InFilterEditMode(false);
             self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
 
-            console.log('OK click - time to load report');
+            console.log('Done Editing Filters - time to load report');
         };
 
         self.ReportEditorModel.CancelCallback = function () {
@@ -46,7 +46,7 @@
         self.RegisterSelectReportCallback = function (callback) {
             self.ReportViewerModel.SelectReportCallback = callback;
         };
-
+        
         self.Initialize = function (callback) {
             self.InFilterEditMode(false);
             flow.exec(

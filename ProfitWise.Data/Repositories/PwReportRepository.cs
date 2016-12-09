@@ -36,16 +36,19 @@ namespace ProfitWise.Data.Repositories
             var results = _connection.Query<PwReport>(query, new {PwShopId}).ToList();
             return results;
         }
+
+
         
         public List<PwReport> RetrieveSystemDefinedReports()
         {
-            var results = new List<PwReport>()
+            List<PwReport>
+            systemDefinedReports = new List<PwReport>()
             {
                 PwSystemReportFactory.OverallProfitability(),
                 PwSystemReportFactory.TestReport(),
             };
-            results.ForEach(x => x.PwShopId = this.PwShopId);
-            return results;
+            systemDefinedReports.ForEach(x => x.PwShopId = this.PwShopId);
+            return systemDefinedReports;
         }
 
         public PwReport RetrieveReport(long reportId)
@@ -84,16 +87,20 @@ namespace ProfitWise.Data.Repositories
             return reportName;
         }
 
-        public PwReport ReportNameCollision(long reportId, string name)
+        public bool ReportNameCollision(long reportId, string name)
         {
+            if (RetrieveSystemDefinedReports().Any(x => x.Name == name))
+            {
+                return true;
+            }
+
             var query = @"SELECT * FROM profitwisereport 
                         WHERE PwShopId = @PwShopId 
-                        AND PwReportId <> @reportId
                         AND CopyForEditing = 0
                         AND Name = @name;";
             return _connection
                     .Query<PwReport>(query, new { PwShopId, reportId, name })
-                    .FirstOrDefault();
+                    .Any();
         }
 
 
@@ -140,6 +147,7 @@ namespace ProfitWise.Data.Repositories
         }
 
 
+        // Store data for Report Filter selections
         public List<PwProductTypeSummary> RetrieveProductTypeSummary()
         {
             var query =

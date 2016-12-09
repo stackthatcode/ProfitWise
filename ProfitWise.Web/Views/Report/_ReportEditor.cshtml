@@ -249,7 +249,7 @@
                     self.SelectedFilterModel().Refresh(this);
                 },
                 function () {
-                    self.RefreshFilterModelSelectionsFromSummary(self.SelectedFilterModelType());
+                    self.RefreshSelectionsFromSummary(self.SelectedFilterModelType());
                     ProfitWiseFunctions.BsActivateTab(bootstrapTabHref);
                     $('html,body').animate({ scrollTop: 0 });
                 }
@@ -289,7 +289,7 @@
                 });
         };
 
-        self.RefreshFilterModelSelectionsFromSummary = function (filterType) {
+        self.RefreshSelectionsFromSummary = function (filterType) {
             var filtersByType =
                 self.ReportFilterSummaryModel.GetFiltersByType(filterType);
 
@@ -297,6 +297,9 @@
                 AQ(filtersByType)
                     .select(function (item) { return item.Key })
                     .toArray();
+
+            console.log("RefreshSelectionsFromSummary");
+            console.log(filterKeys);
 
             self.SelectedFilterModel()
                 .SelectionModel
