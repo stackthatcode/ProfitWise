@@ -15,6 +15,8 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwCogsRepository> _cogsRepositoryFactory;
         private readonly Func<PwPickListRepository> _pickListRepositoryFactory;
         private readonly Func<PwReportRepository> _reportRepositoryFactory;
+        private readonly Func<PwReportFilterRepository> _filterRepositoryFactory;
+        private readonly Func<PwReportQueryRepository> _reportQueryRepositoryFactory;
 
         public MultitenantFactory(
             Func<ShopifyOrderRepository> orderRepositoryFactory,
@@ -24,8 +26,7 @@ namespace ProfitWise.Data.Factories
             Func<CatalogBuilderService> productVariantServiceFactory,
             Func<PwCogsRepository> cogsRepositoryFactory, 
             Func<PwPickListRepository> pickListRepositoryFactory,
-            Func<PwReportRepository> reportRepositoryFactory 
-            )
+            Func<PwReportRepository> reportRepositoryFactory, Func<PwReportFilterRepository> filterRepositoryFactory, Func<PwReportQueryRepository> reportQueryRepositoryFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -35,6 +36,8 @@ namespace ProfitWise.Data.Factories
             _cogsRepositoryFactory = cogsRepositoryFactory;
             _pickListRepositoryFactory = pickListRepositoryFactory;
             _reportRepositoryFactory = reportRepositoryFactory;
+            _filterRepositoryFactory = filterRepositoryFactory;
+            _reportQueryRepositoryFactory = reportQueryRepositoryFactory;
         }
 
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
@@ -85,10 +88,23 @@ namespace ProfitWise.Data.Factories
             return repository;
         }
         
-
         public virtual PwReportRepository MakeReportRepository(PwShop shop)
         {
             var repository = _reportRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual PwReportFilterRepository MakeReportFilterRepository(PwShop shop)
+        {
+            var repository = _filterRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual PwReportQueryRepository MakeReportQueryRepository(PwShop shop)
+        {
+            var repository = _reportQueryRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }

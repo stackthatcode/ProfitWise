@@ -15,7 +15,7 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
-
+        
         public ReportController(MultitenantFactory factory, CurrencyService currencyService)
         {
             _factory = factory;
