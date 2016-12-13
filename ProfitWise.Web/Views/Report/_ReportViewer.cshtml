@@ -145,17 +145,26 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6" 
-                     data-bind="template: { name: 'Report-Profit-Widget', 
-                                    data: { ProfitData: ProductsByMostProfitable, 
+                <div class="col-xs-6" >
+                    <div id="products-pie-chart" 
+                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                    </div>
+                    <div data-bind="template: { name: 'Report-Profit-Widget',
+                                    data: { ProfitData: ProductsByMostProfitable,
                                             HeadingLabel: 'Top Products',
                                             CurrencyId: CurrencyId } }">
+                    </div>
                 </div>
-                <div class="col-xs-6"
-                     data-bind="template: { name: 'Report-Profit-Widget',
+
+                <div class="col-xs-6">
+                    <div id="vendors-pie-chart"
+                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                    </div>
+                    <div data-bind="template: { name: 'Report-Profit-Widget',
                                     data: { ProfitData: VendorsByMostProfitable,
                                             HeadingLabel: 'Top Vendor',
                                             CurrencyId: CurrencyId } }">
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -165,6 +174,7 @@
                                             HeadingLabel: 'Top Variants',
                                             CurrencyId: CurrencyId } }">
                 </div>
+
                 <div class="col-xs-6"
                      data-bind="template: { name: 'Report-Profit-Widget',
                                     data: { ProfitData: ProductTypeByMostProfitable,
@@ -226,8 +236,6 @@
         </table>
     </div>
 </script>
-
-
 
 <script type="text/html" id="Report-Viewer-Context-Summary">
     <div class="context-summary-name">
@@ -561,7 +569,6 @@
         });
 
         self.LoadDataset = function (reportId, callback) {
-
             flow.exec(
                 function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -569,12 +576,70 @@
                 }, 
                 function (data) {
                     self.Dataset(data);
-                    console.log(data);
+                    self.LoadPieChart('products-pie-chart', 'Top Products');
+                    self.LoadPieChart('vendors-pie-chart', 'Top Vendors');
+
+                    //console.log(data);
                     if (callback) {
                         callback();
                     }
                 }
             );
+        };
+
+        self.LoadPieChart = function(id, title) {
+            Highcharts.chart(id, {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: title
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Brands',
+                    colorByPoint: true,
+                    data: [{
+                        name: 'Microsoft Internet Explorer',
+                        y: 56.33
+                    }, {
+                        name: 'Chrome',
+                        y: 24.03,
+                        sliced: true,
+                        selected: true
+                    }, {
+                        name: 'Firefox',
+                        y: 10.38
+                    }, {
+                        name: 'Safari',
+                        y: 4.77
+                    }, {
+                        name: 'Opera',
+                        y: 0.91
+                    }, {
+                        name: 'Proprietary or Undetectable',
+                        y: 0.2
+                    }]
+                }]
+            });
         };
 
         return self;
