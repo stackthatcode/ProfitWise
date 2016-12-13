@@ -25,18 +25,18 @@
 
 <script id="Report-Viewer-Top-Level" type="text/html">
     <div id="report-viewer-header" class="fixed-positioning-container">
-        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF;">
+        <div class="standard-header-sleeve" style="height: 190px; border-bottom: 1px solid #FFF;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
-                <div class="col-xs-6 no-side-padding">
+                <div class="col-xs-6">
                     <div data-bind="if: ReportViewerContext.ReportLoaded()">
                         <div data-bind="template: { name: 'Report-Viewer-Context-Summary', data: $data.ReportViewerContext }">
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xs-6 no-side-padding" style="padding-top:10px; min-width:500px;">
+                <div class="col-xs-6" style="padding-top:10px; min-width:500px;">
                     <div class="btn-group pull-right" 
                          data-bind="template: { name: 'Report-Viewer-Report-Selector', 
                                                     data: { SystemDefinedReports: $data.SystemDefinedReports,
@@ -92,16 +92,55 @@
 
     <div id="report-viewer-body" class="container page-content-sleeve">
         <!-- Will move/transistion when the filters appear -->
-        <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
+        <div class="page-content" style="margin-top: 190px; padding-top: 30px; overflow: auto;">
 
             <!-- TODO : allow injection of external template -->
             <div style="position: relative; width: 100%;">
-                <img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" />
-                <!--<div data-bind="template: { name: 'Body-Template-That-You-Configured'}"></div> -->
+                <div data-bind="template: { name: 'Report-Viewer-Dashboard', data: $data.ReportDatasetContext  }"></div>
             </div>
         </div>
     </div>
 </script>
+
+<script id="Report-Viewer-Dashboard" type="text/html">
+    <div data-bind="ifnot: DatasetLoaded">
+        <div style="min-height: 600px;">
+            <h1>
+                Not Yet Loaded...
+            </h1>
+        </div>
+    </div>
+
+    <div data-bind="if: DatasetLoaded">
+        <div style="min-height: 600px" data-bind="with: Dataset">
+            <!--<img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" /> -->
+            
+            <div class="row-fluid" data-bind="with: $data.ExecutiveSummary">
+                <div class="col-xs-3">
+                    <div style="font-weight:800;">Number of Orders</div>
+                    <h1 data-bind="text: NumberOfOrders"></h1>
+                </div>
+                <div class="col-xs-3">
+                    <div style="font-weight:800;">Revenue</div>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(GrossRevenue, $parent.CurrencyId)"></h1>
+                </div>
+                <div class="col-xs-3">
+                    <div style="font-weight:800;">Cost of Goods Sold</div>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(CostOfGoodsSold, $parent.CurrencyId)"></h1>
+                </div>
+                <div class="col-xs-3">
+                    <div style="font-weight:800;">Profit</div>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Profit, $parent.CurrencyId)"></h1>
+                </div>
+            </div>
+
+            <h1>Let's do this!!!</h1>            
+
+        </div>
+    </div>
+
+</script>
+
 
 <script type="text/html" id="Report-Viewer-Context-Summary">
     <div class="context-summary-name">
@@ -112,7 +151,7 @@
                 
         </div>
     </div>
-        
+    
     <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
         Report Id: <span data-bind="text: ReportId"></span>
     </div>
@@ -428,6 +467,12 @@
     ProfitWiseWidgets.ReportDatasetContext = function() {
         var self = this;
 
+        self.Dataset = ko.observable();
+
+        self.DatasetLoaded = ko.computed(function() {
+            return self.Dataset() != null;
+        });
+
         self.LoadDataset = function (reportId, callback) {
 
             flow.exec(
@@ -436,6 +481,7 @@
                     ajax.HttpPost("/QueryService/Dataset", { reportId: reportId }, this);
                 }, 
                 function (data) {
+                    self.Dataset(data);
                     console.log(data);
                     if (callback) {
                         callback();

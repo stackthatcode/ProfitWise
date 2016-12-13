@@ -79,17 +79,36 @@ namespace ProfitWise.Web.Controllers
             var orderLineProfits = queryRepository.RetrieveOrderLineProfits(reportId, report.StartDate, report.EndDate);
 
             // The Search Stubs for later report output
-            var searchStubs = queryRepository.RetrieveSearchStubs(reportId);
+            var searchStubs =
+                queryRepository
+                    .RetrieveSearchStubs(reportId)
+                    .ToDictionary(x => x.PwMasterVariantId);
 
             // CoGS data for this Report
-            var cogs = queryRepository.RetrieveCogsData(reportId);
+            var cogs = 
+                queryRepository
+                    .RetrieveCogsData(reportId)
+                    .ToDictionary(x => x.PwMasterVariantId);
 
+            // Add the CoGs data...
+            PopulateCogs(orderLineProfits, searchStubs, cogs, shopCurrencyId);
+
+            var output = orderLineProfits.BuildReportOutput(shopCurrencyId);
+            return new JsonNetResult(output);
+        }
+
+        private void 
+            PopulateCogs(
+                    IList<PwReportOrderLineProfit> orderLineProfits, 
+                    Dictionary<long, PwReportSearchStub> searchStubs, 
+                    Dictionary<long, PwReportMasterVariantCogs> cogs, 
+                    int shopCurrencyId)
+        {
             foreach (var line in orderLineProfits)
             {
-                var stub = searchStubs.First(x => x.PwMasterVariantId == line.PwMasterVariantId);
-                line.SearchStub = stub;                  
+                line.SearchStub = searchStubs[line.PwMasterVariantId];
+                var cogsEntry = cogs[line.PwMasterVariantId];
 
-                var cogsEntry = cogs.First(x => x.PwMasterVariantId == line.PwMasterVariantId);
                 var normalizedCogsAmount =
                     cogsEntry.HasData
                         ? _currencyService.Convert(
@@ -98,79 +117,8 @@ namespace ProfitWise.Web.Controllers
 
                 line.PerUnitCogs = normalizedCogsAmount;
             }
-
-            var executiveSummary = BuildExecutiveSummary(orderLineProfits);
-            var productSummary = 
-                BuildKeyedSummary(
-                        orderLineProfits, 
-                        x => x.SearchStub.PwMasterProductId, 
-                        x => x.SearchStub.ProductTitle);
-            var orderedProductSummary = BuildTopOrdereredSummary(productSummary, 10);
-
-            return new JsonNetResult(new { shopCurrencyId, executiveSummary, orderedProductSummary });
         }
 
-        // Temporary holding place for helper functions
-        public PwReportExecutiveSummary BuildExecutiveSummary(IList<PwReportOrderLineProfit> profitLines)
-        {
-            return new PwReportExecutiveSummary()
-            {
-                NumberOfOrders = profitLines.Select(x => x.ShopifyOrderId).Distinct().Count(),
-                CostOfGoodsSold = profitLines.Sum(x => x.TotalCogs),
-                GrossRevenue = profitLines.Sum(x => x.GrossRevenue),
-                Profit = profitLines.Sum(x => x.Profit)
-            };
-        }
-
-
-        public IList<PwReportKeyedSummaryTotal<T1>> BuildKeyedSummary<T1>(
-                    IList<PwReportOrderLineProfit> profitLines,
-                    Func<PwReportOrderLineProfit, T1> keySelector,
-                    Func<PwReportOrderLineProfit, string> titleSelector)
-        {
-            var output = 
-                profitLines
-                    .GroupBy(keySelector)
-                    .Select(xg => new PwReportKeyedSummaryTotal<T1>()
-                    {
-                        TotalRevenue = xg.Sum(line => line.GrossRevenue),
-                        TotalCogs = xg.Sum(line => line.TotalCogs),
-                        GroupingKey = xg.Key,
-                        GroupingName = titleSelector(xg.First())
-                    })
-                    .ToList();
-
-            // TODO - weave in the order by selection here
-            return output;
-        }
-
-
-        public IList<PwReportKeyedSummaryTotal<T1>> 
-                BuildTopOrdereredSummary<T1>(IList<PwReportKeyedSummaryTotal<T1>> input, int numberOfElements = 10)
-        {
-            // For now we order by Total Profit...
-            var topResults =
-                input
-                    .OrderByDescending(x => x.TotalProfit)
-                    .Take(numberOfElements - 1)
-                    .ToList();
-
-            
-            var remainingResults =
-                input
-                    .OrderByDescending(x => x.TotalProfit)
-                    .TakeAfter(numberOfElements - 1)
-                    .ToList();
-
-            topResults.Add(new PwReportKeyedSummaryTotal<T1>()
-            {
-                GroupingName = "All others",
-                TotalRevenue = remainingResults.Sum(x => x.TotalRevenue),
-                TotalCogs = remainingResults.Sum(x => x.TotalCogs),                               
-            });
-
-            return topResults;
-        }
     }
 }
 

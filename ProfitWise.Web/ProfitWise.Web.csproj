@@ -311,6 +311,9 @@
     <Content Include="Content\daterangepicker.css" />
     <Content Include="Scripts\daterangepicker.js" />
     <Content Include="Scripts\flow.js" />
+    <Content Include="Scripts\highcharts\js\highcharts.js" />
+    <Content Include="Scripts\highcharts\js\modules\data.js" />
+    <Content Include="Scripts\highcharts\js\modules\drilldown.js" />
     <Content Include="Scripts\knockout-2.3.0.debug.js" />
     <Content Include="Scripts\knockout-2.3.0.js" />
     <Content Include="Scripts\knockstrap.js" />

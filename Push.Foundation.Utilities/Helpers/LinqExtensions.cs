@@ -19,5 +19,15 @@ namespace Push.Foundation.Utilities.Helpers
         {
             return source.Skip(Math.Max(0, source.Count() - N));
         }
+
+        public static Dictionary<K,V> ToDictionary<K, V>(this IList<V> input, Func<V, K> keyExtractor)
+        {
+            var output = new Dictionary<K, V>();
+            foreach (var item in input)
+            {
+                output.Add(keyExtractor(item), item);
+            }
+            return output;
+        }
     }
 }

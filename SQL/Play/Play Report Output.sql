@@ -3,6 +3,46 @@ USE ProfitWise;
 SET SQL_SAFE_UPDATES = 0;
 
 
+
+
+SELECT * FROM vw_ReportOrderset WHERE PwReportId = 99739;
+
+SELECT t1.PwReportId, t1.PwShopId, t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, 
+
+
+SELECT * FROM profitwisereportquerystub;
+
+
+SELECT t1.PwReportId, t1.PwShopId, t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, 
+		t3.OrderDate, t3.ShopifyOrderId, t3.ShopifyOrderLineId, t3.Quantity, t3.TotalRestockedQuantity, t3.UnitPrice, t3.GrossRevenue,
+        t4.OrderNumber
+FROM profitwisereportquerystub t1
+	INNER JOIN profitwisevariant t2
+		ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+			AND t1.PwShopId = t2.PwShopId
+	INNER JOIN shopifyorderlineitem t3
+		ON t2.PwProductId = t3.PwProductId 
+			AND t2.PwVariantId = t3.PwVariantId
+            AND t2.PwShopID = t3.PwShopId
+	INNER JOIN shopifyorder t4
+		ON t3.ShopifyOrderId = t4.ShopifyOrderId
+            AND t3.PwShopID = t4.PwShopId
+WHERE t1.PwReportID = 99740
+AND t1.PwShopId = 1
+AND t3.OrderDate >= '2016-01-01'
+AND t3.OrderDate <= '2016-12-31';
+
+
+
+SELECT * FROM vw_ReportOrderset;
+
+
+SELECT * FROM shopifyorderlineitem;
+
+
+
+# OLD STUFF vvvvvvv
+
 SELECT * FROM profitwisereport;
 
 SELECT * FROM profitwisereportfilter;
@@ -84,15 +124,23 @@ SELECT GroupingKey, GroupingName, OrderDate, TotalNormalizedGrossRevenue, TotalN
 SELECT * FROM vw_ReportOrderset;
 
 SELECT * FROM vw_ReportOrderset WHERE OrderDate > '2016-03-01';
-
-
 WHERE PwShopId = @PwShopId AND PWReportId = @reportId
 
 SELECT * FROM shopifyorderlineitem;
-SELECT * FROM shopifyorder;
+SELECT MAX(OrderDate) FROM shopifyorderlineitem;
+
 SELECT * FROM profitwisevariant;
 
 SELECT * FROM profitwiseproduct WHERE ProductType IS NULL;
+
+
+SELECT * FROM vw_MasterProductAndVariantSearch;
+
+SELECT t2.*
+FROM profitwisereportquerystub t1 
+	INNER JOIN vw_MasterProductAndVariantSearch t2
+		ON t1.PwMasterVariantId = t2.PwMasterVariantId;
+
 
 
 

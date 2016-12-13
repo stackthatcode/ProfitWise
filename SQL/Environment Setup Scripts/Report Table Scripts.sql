@@ -10,8 +10,6 @@ DROP TABLE IF EXISTS `profitwisereport`;
 DROP TABLE IF EXISTS `profitwisereportfilter`;
 DROP TABLE IF EXISTS `profitwisereportquerystub`;
 
-DROP VIEW IF EXISTS `vw_ReportOrderset`;
-
 
 CREATE VIEW vw_MasterProductAndVariantSearch 
 AS
@@ -74,19 +72,5 @@ CREATE TABLE `profitwisereportquerystub` (
         
     PRIMARY KEY (`PwReportId`, `PwShopId`, `PwMasterVariantId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-CREATE VIEW vw_ReportOrderset
-AS
-SELECT t1.PwReportId, t1.PwShopId, t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, 
-		t4.OrderNumber, t3.OrderDate, t3.ShopifyOrderId, t3.ShopifyOrderLineId, 
-		t3.Quantity, t3.TotalRestockedQuantity, t3.UnitPrice, t3.GrossRevenue
-FROM profitwisereportquerystub t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwMasterVariantId = t2.PwMasterVariantId
-	INNER JOIN shopifyorderlineitem t3
-		ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-	INNER JOIN shopifyorder t4
-		ON t3.ShopifyOrderId = t4.ShopifyOrderId;
 
 

@@ -7,5 +7,6 @@
         public decimal TotalCogs { get; set; }
         public decimal TotalRevenue { get; set; }
         public decimal TotalProfit => TotalRevenue - TotalCogs;
+        public int TotalNumberSold { get; set; }
     }
 }

@@ -145,10 +145,24 @@ namespace ProfitWise.Data.Repositories
             endDate = endDate.AddDays(1);
 
             var query =
-                @"SELECT * FROM vw_ReportOrderset 
-                WHERE PwShopId = @PwShopId AND PWReportId = @reportId
-                AND OrderDate >= @startDate
-                AND OrderDate < @endDate";
+                @"SELECT t1.PwReportId, t1.PwShopId, t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, 
+		        t3.OrderDate, t3.ShopifyOrderId, t3.ShopifyOrderLineId, t3.Quantity, t3.TotalRestockedQuantity, t3.UnitPrice, t3.GrossRevenue,
+                t4.OrderNumber
+                FROM profitwisereportquerystub t1
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+			                AND t1.PwShopId = t2.PwShopId
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t2.PwProductId = t3.PwProductId 
+			                AND t2.PwVariantId = t3.PwVariantId
+                            AND t2.PwShopID = t3.PwShopId
+	                INNER JOIN shopifyorder t4
+		                ON t3.ShopifyOrderId = t4.ShopifyOrderId
+                            AND t3.PwShopID = t4.PwShopId
+                WHERE t1.PwReportID = @reportId
+                AND t1.PwShopId = @PwShopId
+                AND t3.OrderDate >= @startDate
+                AND t3.OrderDate <= @endDate;";
             
             var results = 
                 _connection
