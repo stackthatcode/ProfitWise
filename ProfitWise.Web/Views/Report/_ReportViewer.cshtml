@@ -110,36 +110,123 @@
             </h1>
         </div>
     </div>
+    
+    <style>
+        .report-widget-label {
+            font-weight:800;
+        }
+    </style>
 
     <div data-bind="if: DatasetLoaded">
         <div style="min-height: 600px" data-bind="with: Dataset">
             <!--<img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" /> -->
             
-            <div class="row-fluid" data-bind="with: $data.ExecutiveSummary">
+            <div class="row" data-bind="with: $data.ExecutiveSummary">
                 <div class="col-xs-3">
-                    <div style="font-weight:800;">Number of Orders</div>
+                    <div class="report-widget-label">Number of Orders</div>
                     <h1 data-bind="text: NumberOfOrders"></h1>
                 </div>
                 <div class="col-xs-3">
-                    <div style="font-weight:800;">Revenue</div>
+                    <div class="report-widget-label">Revenue</div>
                     <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(GrossRevenue, $parent.CurrencyId)"></h1>
                 </div>
                 <div class="col-xs-3">
-                    <div style="font-weight:800;">Cost of Goods Sold</div>
+                    <div class="report-widget-label">Cost of Goods Sold</div>
                     <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(CostOfGoodsSold, $parent.CurrencyId)"></h1>
                 </div>
                 <div class="col-xs-3">
-                    <div style="font-weight:800;">Profit</div>
+                    <div class="report-widget-label">Profit</div>
                     <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Profit, $parent.CurrencyId)"></h1>
                 </div>
             </div>
-
-            <h1>Let's do this!!!</h1>            
-
+            
+            <div class="row">
+                <div class="col-xs-12" style="height:20px; overflow:auto;">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6" 
+                     data-bind="template: { name: 'Report-Profit-Widget', 
+                                    data: { ProfitData: ProductsByMostProfitable, 
+                                            HeadingLabel: 'Top Products',
+                                            CurrencyId: CurrencyId } }">
+                </div>
+                <div class="col-xs-6"
+                     data-bind="template: { name: 'Report-Profit-Widget',
+                                    data: { ProfitData: VendorsByMostProfitable,
+                                            HeadingLabel: 'Top Vendor',
+                                            CurrencyId: CurrencyId } }">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6"
+                     data-bind="template: { name: 'Report-Profit-Widget',
+                                    data: { ProfitData: VariantByMostProfitable,
+                                            HeadingLabel: 'Top Variants',
+                                            CurrencyId: CurrencyId } }">
+                </div>
+                <div class="col-xs-6"
+                     data-bind="template: { name: 'Report-Profit-Widget',
+                                    data: { ProfitData: ProductTypeByMostProfitable,
+                                            HeadingLabel: 'Top Product Types',
+                                            CurrencyId: CurrencyId } }">
+                </div>
+            </div>        
         </div>
     </div>
-
 </script>
+
+<!-- Expects to bind to: ProfitData, HeadingLabel, CurrencyId -->
+<script id="Report-Profit-Widget" type="text/html">
+    <style>
+        .profit-table tr td:nth-child(1), .profit-table tr th:nth-child(1)  {
+            width:20%;
+            text-align:left;
+        }
+        .profit-table tr td:nth-child(2), .profit-table tr th:nth-child(2)  {
+            width:20%;
+            text-align:right;
+        }
+        .profit-table tr td:nth-child(3), .profit-table tr th:nth-child(3)  {
+            width:20%;
+            text-align:right;
+        }
+        .profit-table tr td:nth-child(4), .profit-table tr th:nth-child(4)  {
+            width:20%;
+            text-align:right;
+        }
+        .profit-table tr td:nth-child(5), .profit-table tr th:nth-child(5)  {
+            width:20%;
+            text-align:right;
+        }
+    </style>    
+
+    <div data-bind="if: ProfitData.length > 0">
+        <div class="report-widget-label" data-bind="text: HeadingLabel"></div>
+
+        <table class="table profit-table">
+            <thead>
+            <th></th>
+            <th>Profit</th>
+            <th>Gross Sales</th>
+            <th>Cogs</th>
+            <th># Sold</th>
+            </thead>
+            <tbody data-bind="foreach: ProfitData">
+            <tr>
+                <td class="overflow-gracefully">
+                    <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span>
+                </td>
+                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
+                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId) "></td>
+                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId) "></td>
+                    <td data-bind="text: TotalNumberSold"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
 
 
 <script type="text/html" id="Report-Viewer-Context-Summary">
