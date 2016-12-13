@@ -20,7 +20,7 @@ namespace ProfitWise.Data.Model
         public decimal HighPrice { get; set; }
         public int? Inventory { get; set; }
 
-        // This needs to be manually populated, thus leveraging the Currency Service
+        // This needs to be manually populated, by leveraging the Currency Service
         public decimal? NormalizedCogsAmount { get; set; }
 
         	

@@ -82,13 +82,12 @@ namespace ProfitWise.Web
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             
-            builder.RegisterType<FilterController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<FilterServiceController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
-
+            builder.RegisterType<QueryServiceController>()
+                .InstancePerDependency()
+                .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ReportServiceController>()
                  .InstancePerDependency()
                  .EnableClassInterceptorsWithRegistry(registry);

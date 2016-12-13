@@ -78,8 +78,9 @@ CREATE TABLE `profitwisereportquerystub` (
 
 CREATE VIEW vw_ReportOrderset
 AS
-SELECT t1.PwReportId, t1.PwShopId, t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, t4.OrderNumber, t3.ShopifyOrderId, t3.ShopifyOrderLineId, t3.OrderDate, 
-		                t3.Quantity, t3.TotalRestockedQuantity, t3.UnitPrice, t3.GrossRevenue
+SELECT t1.PwReportId, t1.PwShopId, t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, 
+		t4.OrderNumber, t3.OrderDate, t3.ShopifyOrderId, t3.ShopifyOrderLineId, 
+		t3.Quantity, t3.TotalRestockedQuantity, t3.UnitPrice, t3.GrossRevenue
 FROM profitwisereportquerystub t1
 	INNER JOIN profitwisevariant t2
 		ON t1.PwMasterVariantId = t2.PwMasterVariantId

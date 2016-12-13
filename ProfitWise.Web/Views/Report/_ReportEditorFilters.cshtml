@@ -386,9 +386,9 @@
                     };
 
                     if (selected) {
-                        ajax.HttpPost("/ReportService/AddFilter", data, this);
+                        ajax.HttpPost("/FilterService/AddFilter", data, this);
                     } else {
-                        ajax.HttpPost("/ReportService/RemoveFilter", data, this);
+                        ajax.HttpPost("/FilterService/RemoveFilter", data, this);
                     }
                 },
                 function () {
@@ -404,7 +404,7 @@
                         reportId: self.ReportId(),
                         filterType: self.FilterType(),
                     };
-                    ajax.HttpPost("/ReportService/RemoveFilterByType", data, this);
+                    ajax.HttpPost("/FilterService/RemoveFilterByType", data, this);
                 },
                 function () {
                     self.SelectionModel.UncheckAllItems();

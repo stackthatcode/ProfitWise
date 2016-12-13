@@ -158,7 +158,7 @@
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.ProductTypeFilter, 
                     "Search by Product Type...",
-                    "/ReportService/ProductTypes");
+                    "/FilterService/ProductTypes");
         self.ProductTypeFilterModel.RegisterNotifyCallback(
                 function() {
                     self.RefreshFilterSummaryAndCount();
@@ -168,7 +168,7 @@
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.VendorFilter,
                     "Search by Vendor...",
-                    "/ReportService/Vendors");
+                    "/FilterService/Vendors");
         self.VendorFilterModel.RegisterNotifyCallback(
                 function () {
                     self.RefreshFilterSummaryAndCount();
@@ -178,7 +178,7 @@
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.ProductFilter, 
                     "Search by Title and Vendor",
-                    "/ReportService/MasterProducts");
+                    "/FilterService/MasterProducts");
         self.MasterProductFilterModel.RegisterNotifyCallback(
                 function () {
                     self.RefreshFilterSummaryAndCount();
@@ -193,7 +193,7 @@
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.SkuFilter, 
                     "Search by Title, Vendor or SKU",
-                    "/ReportService/Skus");
+                    "/FilterService/Skus");
         self.SkuFilterModel.RegisterNotifyCallback(
                 function () {
                     self.RefreshFilterSummaryAndCount();

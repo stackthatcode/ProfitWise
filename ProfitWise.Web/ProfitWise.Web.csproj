@@ -237,8 +237,8 @@
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
+    <Compile Include="Controllers\QueryServiceController.cs" />
     <Compile Include="Controllers\FilterServiceController.cs" />
-    <Compile Include="Controllers\FilterController.cs" />
     <Compile Include="Controllers\CogsServiceController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\CogsController.cs" />

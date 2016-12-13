@@ -320,7 +320,7 @@
                     ajax.HttpPost("/ReportService/Update", data, this);
                 },
                 function() {
-                    self.TriggerReportDataRefresh(this);
+                    self.TriggerReportDataRefresh(self.ReportId(), this);
                 },
                 function () {
                     if (callback) {
@@ -428,11 +428,12 @@
     ProfitWiseWidgets.ReportDatasetContext = function() {
         var self = this;
 
-        self.LoadDataset = function(reportId, callback) {
+        self.LoadDataset = function (reportId, callback) {
+
             flow.exec(
                 function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/ReportService/Dataset", { reportId: reportId }, this);
+                    ajax.HttpPost("/QueryService/Dataset", { reportId: reportId }, this);
                 }, 
                 function (data) {
                     console.log(data);

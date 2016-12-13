@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -20,7 +21,6 @@ namespace ProfitWise.Data.Repositories
             _factory = factory;
         }
 
-        // Product-Variant reference data for creating Filters
 
         // Product & Variant selections
         public PwReportRecordCount RetrieveReportRecordCount(long reportId)
@@ -115,29 +115,50 @@ namespace ProfitWise.Data.Repositories
                 @"INSERT INTO profitwisereportquerystub
                 SELECT @reportId, @PwShopId, PwMasterVariantId
                 FROM vw_MasterProductAndVariantSearch 
-                WHERE PwShopId = @PwShopId AND PwReportId = @reportId " +
+                WHERE PwShopId = @PwShopId " +
                 ReportFilterClauseGenerator(reportId) + 
                 " GROUP BY PwMasterVariantId;";
             _connection.Execute(createQuery, new { PwShopId, reportId });
         }
 
-        public IList<PwReportOrderLineProfit> RetrieveQueryOrders(long reportId)
+        public IList<PwReportSearchStub> RetrieveSearch(long reportId)
         {
+            throw new NotImplementedException();
+        }
+
+
+        public IList<PwReportOrderLineProfit> 
+                RetrieveOrderLineProfits(long reportId, DateTime startDate, DateTime endDate)
+        {
+            endDate = endDate.AddDays(1);
+
             var query =
                 @"SELECT * FROM vw_ReportOrderset 
-                WHERE PwShopId = @PwShopId AND PWReportId = @reportId";
-
-            var results = _connection.Query<PwReportOrderLineProfit>(query, new { PwShopId }).ToList();
+                WHERE PwShopId = @PwShopId AND PWReportId = @reportId
+                AND OrderDate >= @startDate
+                AND OrderDate < @endDate";
+            
+            var results = 
+                _connection
+                    .Query<PwReportOrderLineProfit>(
+                        query, new { PwShopId, reportId, startDate, endDate }).ToList();
             return results;
         }
 
-        public IList<PwReportOrderLineProfit> RetrieveCogsData(long reportId)
+        public IList<PwReportMasterVariantCogs> RetrieveCogsData(long reportId)
         {
             var query =
-                @"SELECT * FROM vw_ReportOrderset 
-                WHERE PwShopId = @PwShopId AND PWReportId = @reportId";
+                @"SELECT t2.PwMasterVariantId, t1.CogsCurrencyId, t1.CogsAmount
+                FROM profitwisemastervariant t1 
+	                INNER JOIN profitwisereportquerystub t2 
+                        ON t1.PwMasterVariantId = t2.PwMasterVariantId
+                WHERE t1.PwShopId = @PwShopId 
+                AND t1.PwShopId = @PwShopId 
+                AND t2.PwReportId = @reportId;";
 
-            var results = _connection.Query<PwReportOrderLineProfit>(query, new { PwShopId }).ToList();
+            var results = 
+                _connection.Query<PwReportMasterVariantCogs>(
+                    query, new { PwShopId, reportId }).ToList();
             return results;
         }
 

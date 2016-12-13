@@ -43,4 +43,6 @@ SELECT * FROM exchangerate;
 
 SELECT * FROM exchangerate;
 
+SELECT * FROM currency;
+
 

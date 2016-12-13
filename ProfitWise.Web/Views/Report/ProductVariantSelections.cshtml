@@ -85,8 +85,8 @@
                     var ajax = new ProfitWiseFunctions.Ajax();
 
                     var urlBase = self.IsProductSelection()
-                        ? "/ReportService/ProductSelectionsByPage"
-                        : "/ReportService/VariantSelectionsByPage";
+                        ? "/QueryService/ProductSelectionsByPage"
+                        : "/QueryService/VariantSelectionsByPage";
                     
                     ajax.HttpGet(urlBase +
                         "?reportId=" + self.ReportId() +

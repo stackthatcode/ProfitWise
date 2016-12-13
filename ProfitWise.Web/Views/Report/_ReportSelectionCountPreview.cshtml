@@ -97,7 +97,7 @@
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/RecordCounts?reportId=" + self.ReportId(), this);
+                    ajax.HttpGet("/QueryService/RecordCounts?reportId=" + self.ReportId(), this);
                 },
                 function (data) {
                     self.ProductCount(data.ProductCount);
@@ -113,7 +113,7 @@
         self.RefreshProductSelections = function () {
             flow.exec(function () {
                 var ajax = new ProfitWiseFunctions.Ajax();
-                ajax.HttpGet("/ReportService/ProductSelectionsByPage?reportId=" + self.ReportId(), this);
+                ajax.HttpGet("/QueryService/ProductSelectionsByPage?reportId=" + self.ReportId(), this);
             },
             function (data) {
                 self.ProductSelections(data.Selections);
@@ -124,7 +124,7 @@
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/VariantSelectionsByPage?reportId=" + self.ReportId(), this);
+                    ajax.HttpGet("/QueryService/VariantSelectionsByPage?reportId=" + self.ReportId(), this);
                 },
                 function (data) {
                     var products =

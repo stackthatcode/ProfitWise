@@ -116,7 +116,7 @@
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/Filters?reportId=" + self.ReportId(), this);
+                    ajax.HttpGet("/FilterService/Filters?reportId=" + self.ReportId(), this);
                 },
                 function (filters) {
                     AQ(filters)
@@ -143,7 +143,7 @@
                         filterId: item.PwFilterId,
                     };
 
-                    ajax.HttpPost("/ReportService/RemoveFilterById", data, this);
+                    ajax.HttpPost("/FilterService/RemoveFilterById", data, this);
                 },
                 function () {
                     self.Refresh(this);

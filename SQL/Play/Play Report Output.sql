@@ -18,6 +18,7 @@ SELECT * FROM profitwiseshop;
 
 
 
+SELECT * FROM vw_MasterProductAndVariantSearch;
 
 # STAGE 1
 DELETE FROM profitwisereportquerystub;
@@ -46,6 +47,8 @@ FROM profitwisereportquerystub t1
 		ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
 	INNER JOIN shopifyorder t4
 		ON t3.ShopifyOrderId = t4.ShopifyOrderId
+
+        
 WHERE t2.PwMasterVariantId = 427;
 
 SELECT * FROM profitwisevariant WHERE PwMasterVariantId = 427;
@@ -59,6 +62,8 @@ FROM profitwisemastervariant t1
 
 
 
+SELECT * FROM profitwisemastervariant;
+
 
 # STAGE 4 - pre-grouped output
 
@@ -67,17 +72,25 @@ SELECT PwMasterProductId, ProductType, Vendor, PwMasterVariantId, OrderDate, Nor
 # TODO - how to join up to get Product Title and Variant Title...?
 
 
+SELECT * FROM vw_MasterProductAndVariantSearch;
+
+
+
+
 # JSON-ready output
 SELECT GroupingKey, GroupingName, OrderDate, TotalNormalizedGrossRevenue, TotalNormalizedCostOfGoods
 
 
+SELECT * FROM vw_ReportOrderset;
 
+SELECT * FROM vw_ReportOrderset WHERE OrderDate > '2016-03-01';
+
+
+WHERE PwShopId = @PwShopId AND PWReportId = @reportId
 
 SELECT * FROM shopifyorderlineitem;
 SELECT * FROM shopifyorder;
 SELECT * FROM profitwisevariant;
-
-
 
 SELECT * FROM profitwiseproduct WHERE ProductType IS NULL;
 

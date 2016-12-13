@@ -6,6 +6,7 @@ using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -15,55 +16,166 @@ namespace ProfitWise.Web.Controllers
     public class FilterServiceController : Controller
     {
         private readonly MultitenantFactory _factory;
-        private readonly CurrencyService _currencyService;
 
         public FilterServiceController(MultitenantFactory factory, CurrencyService currencyService)
         {
             _factory = factory;
-            _currencyService = currencyService;
         }
 
 
-        public ActionResult Products()
+        // Product Types Actions
+        [HttpGet]
+        public ActionResult ProductTypes()
         {
-            this.LoadCommonContextIntoViewBag();
             var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-            
-            var model = new EditProductCogsModel()
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var data = repository.RetrieveProductTypeSummary();
+
+            // NOTE: this is domain logic living on the controller...
+            var output = data.Select(x => new
             {
-                ProductTypes = cogsRepository.RetrieveProductType().ToList(),
-                Vendors = cogsRepository.RetrieveVendors().ToList(),
+                Key = x.ProductType,
+                Title = x.ProductType.IsNullOrEmptyAlt("(No Product Type)"),
+                ProductCount = x.Count,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
+
+        [HttpGet]
+        public ActionResult Vendors(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var data = repository.RetrieveVendorSummary(reportId);
+
+            // NOTE: this is domain logic living on the controller...
+            var output = data.Select(x => new
+            {
+                Key = x.Vendor,
+                Title = x.Vendor.IsNullOrEmptyAlt("(No Vendor)"),
+                ProductCount = x.Count,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
+
+        [HttpGet]
+        public ActionResult MasterProducts(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+
+            //var data = new List<PwProductSummary>();
+            //for (int i = 0; i < 5000; i++)
+            //{
+            //    data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
+            //}
+
+            var data = repository.RetrieveMasterProductSummary(reportId);
+
+            var output = data.Select(x => new
+            {
+                Key = x.PwMasterProductId,
+                Title = x.Title.IsNullOrEmptyAlt("(No Product Title)"),
+                Vendor = x.Vendor,
+                VariantCount = x.VariantCount,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
+
+        [HttpGet]
+        public ActionResult Skus(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var data = repository.RetrieveSkuSummary(reportId);
+
+            var output = data.Select(x => new
+            {
+                Key = x.PwMasterVariantId,
+                x.VariantTitle,
+                x.ProductTitle,
+                x.Sku,
+                Title = x.Sku.IsNullOrEmptyAlt("(No Sku)") +
+                            " - " + x.VariantTitle.IsNullOrEmptyAlt("(No Variant Title)"),
+                Vendor = x.Vendor,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
+
+
+
+        [HttpGet]
+        public ActionResult Filters(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var filters = repository.RetrieveFilters(reportId);
+
+            var output = filters.Select(x => new
+            {
+                PwReportId = x.PwReportId,
+                PwFilterId = x.PwFilterId,
+                Title = x.Title,
+                Key = x.UsesNumberKey ? x.NumberKey.ToString() : x.StringKey,
+                Description = x.Description,
+                FilterType = x.FilterType,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
+
+        [HttpPost]
+        public ActionResult AddFilter(long reportId, int filterType, string key, string title)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+
+            var filter = new PwReportFilter()
+            {
+                PwShopId = userBrief.PwShop.PwShopId,
+                PwReportId = reportId,
+                FilterType = filterType,
+                Title = title.Truncate(100),
             };
 
-            return View(model);
+            filter.Description = filter.DescriptionBuilder();
+            filter.SetKeyFromExternal(key);
+
+            var savedFilter = repository.InsertFilter(filter);
+            return new JsonNetResult(savedFilter);
         }
 
-        public ActionResult BulkEditCogs(int masterProductId)
-        {            
-            return View(RetrieveProduct(masterProductId));
-        }
-
-
-        
-        [HttpGet]
-        public ActionResult Ping()
-        {
-            return new JsonNetResult(new { Success = true });
-        }
-
-
-        private PwCogsProductSummary RetrieveProduct(int masterProductId)
+        [HttpPost]
+        public ActionResult RemoveFilter(long reportId, int filterType, string key)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
-
-            var product = cogsRepository.RetrieveProduct(masterProductId);
-            product.Variants = cogsRepository.RetrieveVariants(new List<long> { masterProductId });
-            product.PopulateNormalizedCogsAmount(_currencyService, userBrief.PwShop.CurrencyId);
-
-            return product;
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            repository.DeleteFilter(reportId, filterType, key);
+            return JsonNetResult.Success();
         }
+
+        [HttpPost]
+        public ActionResult RemoveFilterById(long reportId, long filterId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            repository.DeleteFilterById(reportId, filterId);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult RemoveFilterByType(long reportId, int filterType)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            repository.DeleteFilters(reportId, filterType);
+            return JsonNetResult.Success();
+        }
+
     }
 }
 
