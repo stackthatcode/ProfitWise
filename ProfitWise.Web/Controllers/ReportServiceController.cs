@@ -379,6 +379,21 @@ namespace ProfitWise.Web.Controllers
             repository.DeleteFilters(reportId, filterType);
             return JsonNetResult.Success();
         }
+
+
+        [HttpPost]
+        public ActionResult Dataset(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+            repository.GenerateQueryStub(reportId);
+
+            var orders = repository.RetrieveQueryOrders(reportId);
+
+            var cogs = repository
+
+            return JsonNetResult.Success();
+        }
     }
 }
 

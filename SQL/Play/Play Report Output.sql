@@ -14,16 +14,18 @@ SELECT * FROM profitwisereportfilter;
 SELECT * FROM vw_MasterProductAndVariantSearch;
 SELECT * FROM profitwisereportquerystub;
 SELECT * FROM profitwisereportfilter;
-
 SELECT * FROM profitwiseshop;
 
 
-DELETE FROM profitwisereportquerystub;
 
+
+# STAGE 1
+DELETE FROM profitwisereportquerystub;
 
 INSERT INTO profitwisereportquerystub
 SELECT 99739, 1, PwMasterVariantId
 FROM vw_MasterProductAndVariantSearch
+
 GROUP BY PwMasterVariantId;
 
 
@@ -33,19 +35,44 @@ SELECT * FROM vw_MasterProductAndVariantSearch t1
 		ON t1.PwMasterVariantId	= t2.PwMasterVariantId;
 
 
+
 # STAGE 2 - pull the order data
 SELECT t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, t4.OrderNumber, t3.ShopifyOrderId, t3.ShopifyOrderLineId, t3.OrderDate, 
-		t3.Quantity, t3.UnitPrice
+		t3.Quantity, t3.TotalRestockedQuantity, t3.UnitPrice, t3.GrossRevenue
 FROM profitwisereportquerystub t1
 	INNER JOIN profitwisevariant t2
     	ON t1.PwMasterVariantId = t2.PwMasterVariantId
 	INNER JOIN shopifyorderlineitem t3
 		ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
 	INNER JOIN shopifyorder t4
-		ON t3.ShopifyOrderId = t4.ShopifyOrderId;
+		ON t3.ShopifyOrderId = t4.ShopifyOrderId
+WHERE t2.PwMasterVariantId = 427;
+
+SELECT * FROM profitwisevariant WHERE PwMasterVariantId = 427;
 
 
-        
+
+# STAGE 3 - pull the CoGS data (version 1)
+SELECT t1.PwMasterVariantId, t1.CogsCurrencyId, t1.CogsAmount
+FROM profitwisemastervariant t1 
+	INNER JOIN profitwisereportquerystub t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId;
+
+
+
+
+# STAGE 4 - pre-grouped output
+
+SELECT PwMasterProductId, ProductType, Vendor, PwMasterVariantId, OrderDate, NormalizedGrossRevenue, NormalizedCostOfGoodsSold
+
+# TODO - how to join up to get Product Title and Variant Title...?
+
+
+# JSON-ready output
+SELECT GroupingKey, GroupingName, OrderDate, TotalNormalizedGrossRevenue, TotalNormalizedCostOfGoods
+
+
+
+
 SELECT * FROM shopifyorderlineitem;
 SELECT * FROM shopifyorder;
 SELECT * FROM profitwisevariant;
@@ -71,8 +98,11 @@ CREATE VIEW vw_MasterVariantToVariant AS
 
 
 
-### Milestone - this is the basic CoGS query (!!!)
 
+
+
+### Milestone - this is the basic CoGS query (!!!)
+### OLD STUFF
 SELECT t4.*, t3.*, t2.*, t1.*
 FROM shopifyorderlineitem t1
 	INNER JOIN profitwisevariant t2 ON t1.PwVariantId = t2.PwVariantId

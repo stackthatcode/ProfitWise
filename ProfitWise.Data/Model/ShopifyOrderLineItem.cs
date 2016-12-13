@@ -18,26 +18,27 @@ namespace ProfitWise.Data.Model
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal TotalDiscount { get; set; } // Store
-        public decimal TotalAfterLineItemDiscount => Quantity * UnitPrice - TotalDiscount;
+        public decimal TotalMinusLineItemDiscount => Quantity * UnitPrice - TotalDiscount;
 
         // Hey! Our computation is like Shopify's!
-        public decimal OrderDiscountAppliedToLineItem
+        public decimal ProportionOfOrderDiscount
         {
             get
             {
-                if (this.ParentOrder.LineItems.Sum(x => x.TotalAfterLineItemDiscount) == 0)
+                if (this.ParentOrder.LineItems.Sum(x => x.TotalMinusLineItemDiscount) == 0)
                 {
                     return 0m;
                 }
                 else
                 {
-                    return this.ParentOrder.OrderLevelDiscount * this.TotalAfterLineItemDiscount /
-                           this.ParentOrder.LineItems.Sum(x => x.TotalAfterLineItemDiscount);
+                    return this.ParentOrder.OrderLevelDiscount * this.TotalMinusLineItemDiscount /
+                           this.ParentOrder.LineItems.Sum(x => x.TotalMinusLineItemDiscount);
                 }
             }
         }
 
-        public decimal NetTotal => TotalAfterLineItemDiscount - OrderDiscountAppliedToLineItem;
+        // Why is this NetTotal 
+        public decimal NetTotal => TotalMinusLineItemDiscount - ProportionOfOrderDiscount;
 
         public decimal NetUnitPrice => NetTotal / Quantity;
 
@@ -110,8 +111,8 @@ namespace ProfitWise.Data.Model
                 $"Quantity = {Quantity}" + Environment.NewLine +
                 $"UnitPrice = {UnitPrice}" + Environment.NewLine +
                 $"TotalDiscount = {TotalDiscount}" + Environment.NewLine +
-                $"TotalAfterLineItemDiscount = {TotalAfterLineItemDiscount}" + Environment.NewLine +
-                $"OrderDiscountAppliedToLineItem = {OrderDiscountAppliedToLineItem}" + Environment.NewLine +
+                $"TotalMinusLineItemDiscount = {TotalMinusLineItemDiscount}" + Environment.NewLine +
+                $"ProportionOfOrderDiscount = {ProportionOfOrderDiscount}" + Environment.NewLine +
                 $"NetTotal = {NetTotal}" + Environment.NewLine +
                 $"NetUnitPrice = {NetUnitPrice}" + Environment.NewLine +
 

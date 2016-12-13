@@ -143,9 +143,6 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId, reportId });
         }
 
-
-
-
     }
 }
 

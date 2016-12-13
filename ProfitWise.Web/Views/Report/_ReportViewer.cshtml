@@ -228,7 +228,6 @@
             self.PrepareCopyForEditing();
         };
 
-
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
         });
@@ -320,6 +319,9 @@
                     };
                     ajax.HttpPost("/ReportService/Update", data, this);
                 },
+                function() {
+                    self.TriggerReportDataRefresh(this);
+                },
                 function () {
                     if (callback) {
                         callback();
@@ -360,7 +362,10 @@
                     self.LoadReport(data.reportId, this);
                 }, 
                 function() {
-                    self.TriggerReportListRefresh();
+                    self.TriggerReportListRefresh(this);
+                },
+                function() {
+                    self.TriggerReportDataRefresh();
                 }
             );
         };
@@ -382,7 +387,10 @@
                     self.LoadReport(self.ReportId(), this);
                 },
                 function() {
-                    self.TriggerReportListRefresh();
+                    self.TriggerReportListRefresh(this);
+                },
+                function () {
+                    self.TriggerReportDataRefresh();
                 });
         };
         
@@ -408,18 +416,43 @@
             );
         }
 
-        self.TriggerReportListRefresh = function(callback) {};
+        self.TriggerReportListRefresh = function(callback) { };
 
-        self.EditFilterClickCallback = function() {};
+        self.EditFilterClickCallback = function() { };
+
+        self.TriggerReportDataRefresh = function() { };
 
         return self;
     };
 
+    ProfitWiseWidgets.ReportDatasetContext = function() {
+        var self = this;
+
+        self.LoadDataset = function(reportId, callback) {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ReportService/Dataset", { reportId: reportId }, this);
+                }, 
+                function (data) {
+                    console.log(data);
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+        return self;
+    };
 
     ProfitWiseWidgets.ReportViewerModel = function () {
         var self = this;
 
         self.ReportList = ko.observable([]);
+
+        self.ReportDatasetContext = new ProfitWiseWidgets.ReportDatasetContext();
+
         self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
         self.ReportViewerContext.TriggerReportListRefresh = function(callback) {
             self.RefreshReportList(callback);
@@ -427,7 +460,11 @@
         self.ReportViewerContext.EditFilterClickCallback = function() {
             self.EditReportClick();
         };
-        
+        self.ReportViewerContext.TriggerReportDataRefresh = function(reportId, callback) {
+            self.ReportDatasetContext.LoadDataset(reportId, callback);
+        };
+
+
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.ReportList()).where(function (item) { return item.IsSystemReport == false; }).toArray();
         });
@@ -469,7 +506,7 @@
                     .firstOrDefault(function (item) { return item.PwReportId == id; });
 
             if (report != null) {
-                self.SelectReportClick(report);
+                self.SelectReport(report.PwReportId);
             }
         };
 
@@ -484,13 +521,10 @@
                     self.ReportViewerContext.LoadReport(reportId, this);
                 },
                 function () {
-                    self.SelectReportCallback(reportId);
+                    self.ReportDatasetContext.LoadDataset(reportId);
                 }
             );
         };
-
-        // This is where something that renders the Report body is wired in
-        self.SelectReportCallback = function (reportId) { };
 
         self.EditReportClick = function () {
             flow.exec(
@@ -506,5 +540,6 @@
 
         return self;
     };
+
 </script>
 
