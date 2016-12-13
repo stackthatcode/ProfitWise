@@ -103,7 +103,6 @@ namespace ProfitWise.Data.Repositories
             return query;
         }
 
-
         public void GenerateQueryStub(long reportId)
         {
             var deleteQuery = 
@@ -121,14 +120,27 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(createQuery, new { PwShopId, reportId });
         }
 
-        public IList<PwReportSearchStub> RetrieveSearch(long reportId)
+        public IList<PwReportSearchStub> RetrieveSearchStubs(long reportId)
         {
-            throw new NotImplementedException();
+            var query =
+                @"SELECT t2.*
+                FROM profitwisereportquerystub t1 
+	                INNER JOIN vw_MasterProductAndVariantSearch t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
+                WHERE t1.PwShopId = @PwShopId
+                AND t1.PwReportId = @reportId
+                AND t2.PwShopId = @PwShopId";
+
+            var results =
+                _connection
+                    .Query<PwReportSearchStub>(
+                        query, new { PwShopId, reportId }).ToList();
+            return results;
         }
 
 
         public IList<PwReportOrderLineProfit> 
-                RetrieveOrderLineProfits(long reportId, DateTime startDate, DateTime endDate)
+                    RetrieveOrderLineProfits(long reportId, DateTime startDate, DateTime endDate)
         {
             endDate = endDate.AddDays(1);
 

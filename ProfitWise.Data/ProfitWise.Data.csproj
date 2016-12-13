@@ -75,6 +75,7 @@
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
     <Compile Include="Model\PwReportExecutiveSummary.cs" />
+    <Compile Include="Model\PwReportKeyedSummaryTotal.cs" />
     <Compile Include="Model\PwReportMasterVariantCogs.cs" />
     <Compile Include="Model\PwReportSearchStub.cs" />
     <Compile Include="Model\PwReportOrderLineProfit.cs" />

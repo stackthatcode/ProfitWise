@@ -84,6 +84,7 @@
     <Compile Include="Helpers\DpApiEncryption.cs" />
     <Compile Include="Helpers\ExpressionHelpers.cs" />
     <Compile Include="Helpers\HelperMethods.cs" />
+    <Compile Include="Helpers\LinqExtensions.cs" />
     <Compile Include="Helpers\NameValueCollectionExtensions.cs" />
     <Compile Include="Helpers\PagingFunctions.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />

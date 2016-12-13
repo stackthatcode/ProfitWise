@@ -6,6 +6,8 @@ namespace ProfitWise.Data.Model
     {
         public long PwMasterVariantId { get; set; }
 
+        public PwReportSearchStub SearchStub { get; set; }
+
         public long PwShopId { get; set; }
         public long PwProductId { get; set; }   // These technically are not needed
         public long PwVariantId { get; set; }    // These technically are not needed
