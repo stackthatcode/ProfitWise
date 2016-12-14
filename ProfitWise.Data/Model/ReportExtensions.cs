@@ -37,12 +37,12 @@ namespace ProfitWise.Data.Model
                         x => x.SearchStub.PwMasterProductId,
                         x => x.SearchStub.ProductTitle);
 
-            output.ProductsByUserSelection
-                    = BuildKeyedSummary(
-                        orderLineProfits,
-                        x => x.SearchStub.PwMasterProductId,
-                        x => x.SearchStub.ProductTitle,
-                        ReportColumnOrdering.ProfitDescending);
+            //output.ProductsByUserSelection
+            //        = BuildKeyedSummary(
+            //            orderLineProfits,
+            //            x => x.SearchStub.PwMasterProductId,
+            //            x => x.SearchStub.ProductTitle,
+            //            ReportColumnOrdering.ProfitDescending);
 
             output.VendorsByMostProfitable
                     = BuildKeyedSummary(
@@ -50,12 +50,12 @@ namespace ProfitWise.Data.Model
                         x => x.SearchStub.Vendor,
                         x => x.SearchStub.Vendor);
 
-            output.VendorsByUserSelection
-                    = BuildKeyedSummary(
-                        orderLineProfits,
-                        x => x.SearchStub.Vendor,
-                        x => x.SearchStub.Vendor,
-                        ReportColumnOrdering.ProfitDescending);
+            //output.VendorsByUserSelection
+            //        = BuildKeyedSummary(
+            //            orderLineProfits,
+            //            x => x.SearchStub.Vendor,
+            //            x => x.SearchStub.Vendor,
+            //            ReportColumnOrdering.ProfitDescending);
 
             output.VariantByMostProfitable
                     = BuildKeyedSummary(
@@ -63,12 +63,12 @@ namespace ProfitWise.Data.Model
                         x => x.SearchStub.PwMasterVariantId,
                         x => x.SearchStub.Sku);
 
-            output.VariantByUserSelection
-                    = BuildKeyedSummary(
-                        orderLineProfits,
-                        x => x.SearchStub.PwMasterVariantId,
-                        x => x.SearchStub.Sku,
-                        ReportColumnOrdering.ProfitDescending);
+            //output.VariantByUserSelection
+            //        = BuildKeyedSummary(
+            //            orderLineProfits,
+            //            x => x.SearchStub.PwMasterVariantId,
+            //            x => x.SearchStub.Sku,
+            //            ReportColumnOrdering.ProfitDescending);
 
             output.ProductTypeByMostProfitable
                     = BuildKeyedSummary(
@@ -76,12 +76,12 @@ namespace ProfitWise.Data.Model
                         x => x.SearchStub.ProductType,
                         x => x.SearchStub.ProductType);
 
-            output.ProductTypeByUserSelection
-                    = BuildKeyedSummary(
-                        orderLineProfits,
-                        x => x.SearchStub.ProductType,
-                        x => x.SearchStub.ProductType,
-                        ReportColumnOrdering.ProfitDescending);
+            //output.ProductTypeByUserSelection
+            //        = BuildKeyedSummary(
+            //            orderLineProfits,
+            //            x => x.SearchStub.ProductType,
+            //            x => x.SearchStub.ProductType,
+            //            ReportColumnOrdering.ProfitDescending);
 
             return output;
         }

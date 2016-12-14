@@ -105,19 +105,19 @@ namespace ProfitWise.Data.Repositories
 
         public void GenerateQueryStub(long reportId)
         {
-            var deleteQuery = 
+            var deleteQuery =
                 @"DELETE FROM profitwisereportquerystub
-                WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            _connection.Execute(deleteQuery, new { PwShopId, reportId });
+                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
+            _connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
 
             var createQuery =
                 @"INSERT INTO profitwisereportquerystub
-                SELECT @reportId, @PwShopId, PwMasterVariantId
+                SELECT @PwReportId, @PwShopId, PwMasterVariantId
                 FROM vw_MasterProductAndVariantSearch 
                 WHERE PwShopId = @PwShopId " +
                 ReportFilterClauseGenerator(reportId) + 
                 " GROUP BY PwMasterVariantId;";
-            _connection.Execute(createQuery, new { PwShopId, reportId });
+            _connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
         }
 
         public IList<PwReportSearchStub> RetrieveSearchStubs(long reportId)

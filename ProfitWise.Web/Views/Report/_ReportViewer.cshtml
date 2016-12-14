@@ -168,18 +168,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6"
-                     data-bind="template: { name: 'Report-Profit-Widget',
-                                    data: { ProfitData: VariantByMostProfitable,
-                                            HeadingLabel: 'Top Variants',
-                                            CurrencyId: CurrencyId } }">
+                <div class="col-xs-6">
+                    <div id="variants-pie-chart"
+                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                    </div>
+                    <div data-bind="template: { name: 'Report-Profit-Widget',
+                                        data: { ProfitData: VariantByMostProfitable,
+                                                HeadingLabel: 'Top Variants',
+                                                CurrencyId: CurrencyId } }"></div>
                 </div>
 
-                <div class="col-xs-6"
-                     data-bind="template: { name: 'Report-Profit-Widget',
+                <div class="col-xs-6">
+                    <div id="product-types-pie-chart"
+                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                    </div>
+                    <div data-bind="template: { name: 'Report-Profit-Widget',
                                     data: { ProfitData: ProductTypeByMostProfitable,
                                             HeadingLabel: 'Top Product Types',
-                                            CurrencyId: CurrencyId } }">
+                                            CurrencyId: CurrencyId } }"></div>
                 </div>
             </div>        
         </div>
@@ -212,26 +218,33 @@
     </style>    
 
     <div data-bind="if: ProfitData.length > 0">
-        <div class="report-widget-label" data-bind="text: HeadingLabel"></div>
+        <div>
+            <span class="report-widget-label" data-bind="text: HeadingLabel"></span>
+            
+            <a href="#" class="btn btn-primary pull-right">
+                <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Detail</a>
+        </div>
 
         <table class="table profit-table">
             <thead>
-            <th></th>
-            <th>Profit</th>
-            <th>Gross Sales</th>
-            <th>Cogs</th>
-            <th># Sold</th>
+            <tr>
+                <th></th>
+                <th>Profit</th>
+                <th>Gross Sales</th>
+                <th>Cogs</th>
+                <th># Sold</th>
+            </tr>
             </thead>
             <tbody data-bind="foreach: ProfitData">
             <tr>
                 <td class="overflow-gracefully">
                     <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span>
                 </td>
-                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
-                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId) "></td>
-                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId) "></td>
-                    <td data-bind="text: TotalNumberSold"></td>
-                </tr>
+                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
+                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId) "></td>
+                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId) "></td>
+                <td data-bind="text: TotalNumberSold"></td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -576,10 +589,13 @@
                 }, 
                 function (data) {
                     self.Dataset(data);
-                    self.LoadPieChart('products-pie-chart', 'Top Products');
-                    self.LoadPieChart('vendors-pie-chart', 'Top Vendors');
+                    console.log(data);
+                                        
+                    self.LoadPieChart('products-pie-chart', 'Top Products', data.ProductsByMostProfitable, data.CurrencyId);
+                    self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.VendorsByMostProfitable, data.CurrencyId);
+                    self.LoadPieChart('variants-pie-chart', 'Top Variants', data.VariantByMostProfitable, data.CurrencyId);
+                    self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.ProductTypeByMostProfitable, data.CurrencyId);
 
-                    //console.log(data);
                     if (callback) {
                         callback();
                     }
@@ -587,7 +603,17 @@
             );
         };
 
-        self.LoadPieChart = function(id, title) {
+        String.prototype.trunc = String.prototype.trunc ||
+        function (n) {
+            return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
+        };
+
+        self.LoadPieChart = function (id, title, keyedDataset, currencyId) {
+            var pieChartData =
+                AQ(keyedDataset)
+                    .select(function (item) { return { name: item.GroupingName, y: item.TotalProfit } })
+                    .toArray();
+
             Highcharts.chart(id, {
                 chart: {
                     plotBackgroundColor: null,
@@ -596,10 +622,13 @@
                     type: 'pie'
                 },
                 title: {
-                    text: title
+                    text: ''
                 },
                 tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    formatter: function() {
+                        return this.point.name +
+                                ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
+                    }
                 },
                 plotOptions: {
                     pie: {
@@ -607,7 +636,10 @@
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            formatter: function() {
+                                return this.point.name.trunc(15) +
+                                    ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
+                            },
                             style: {
                                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                             }
@@ -615,29 +647,9 @@
                     }
                 },
                 series: [{
-                    name: 'Brands',
+                    name: 'Profits',
                     colorByPoint: true,
-                    data: [{
-                        name: 'Microsoft Internet Explorer',
-                        y: 56.33
-                    }, {
-                        name: 'Chrome',
-                        y: 24.03,
-                        sliced: true,
-                        selected: true
-                    }, {
-                        name: 'Firefox',
-                        y: 10.38
-                    }, {
-                        name: 'Safari',
-                        y: 4.77
-                    }, {
-                        name: 'Opera',
-                        y: 0.91
-                    }, {
-                        name: 'Proprietary or Undetectable',
-                        y: 0.2
-                    }]
+                    data: pieChartData,                    
                 }]
             });
         };

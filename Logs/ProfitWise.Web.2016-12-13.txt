@@ -954,3 +954,7 @@ Parameter name: parameters
 2016-12-13 17:36:39.0888|Debug|a958c1e8-9bb0-4498-a1ed-102128fd9fdd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-13 17:36:39.2183|Debug|1af5247d-4abf-4cb3-a767-186e5ad5c996|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-13 17:36:39.2438|Debug|657e3a49-97da-4532-803d-f2541d712ba9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-13 17:39:36.0735|Debug|b81ffa5f-a88d-4431-984b-f1fa0b4715a1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-13 17:39:36.1715|Debug|10a8f709-2697-4303-a4ec-083b93c8332b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-13 17:39:39.8151|Debug|f31b44c0-b910-46d7-bdcb-9f674b8367f3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-13 17:39:39.9161|Debug|ddd8ee6f-b384-4da0-b363-c443e015d3a4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
