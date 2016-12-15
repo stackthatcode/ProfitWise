@@ -129,7 +129,7 @@
                 <div class="col-xs-3">
                     <div class="report-widget-label">Revenue</div>
                     <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(GrossRevenue, $parent.CurrencyId)"></h1>
-                </div>
+                </div>S
                 <div class="col-xs-3">
                     <div class="report-widget-label">Cost of Goods Sold</div>
                     <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(CostOfGoodsSold, $parent.CurrencyId)"></h1>
@@ -144,6 +144,13 @@
                 <div class="col-xs-12" style="height:20px; overflow:auto;">
                 </div>
             </div>
+            
+            <div class="row">
+                <div class="col-xs-12" style="overflow:auto;">
+                    <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-xs-6" >
                     <div id="products-pie-chart" 
@@ -402,7 +409,7 @@
                 function () {
                     self.StartDate(startDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
                     self.EndDate(endDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
-
+                    
                     //console.log(startDate);
                     //console.log(endDate);
 
@@ -596,6 +603,8 @@
                     self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.Summary.ProductTypeByMostProfitable, data.CurrencyId);
 
+                    self.LoadColumnChart('#column-chart', 'Profitability', data.DrillDown);
+                    
                     if (callback) {
                         callback();
                     }
@@ -604,9 +613,9 @@
         };
 
         String.prototype.trunc = String.prototype.trunc ||
-        function (n) {
-            return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
-        };
+            function (n) {
+                return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
+            };
 
         self.LoadPieChart = function (id, title, keyedDataset, currencyId) {
             var pieChartData =
@@ -651,6 +660,64 @@
                     colorByPoint: true,
                     data: pieChartData,                    
                 }]
+            });
+        };
+
+        self.LoadColumnChart = function (id, title, seriesData) {
+
+            var chartData =
+                AQ(seriesData)
+                    .select(function (item) {
+                        return {
+                            name: item.GroupingKey,
+                            data: AQ(item.Data).select(function(element) {
+                                return {
+                                    name: element.Start,
+                                    y: element.Value,
+                                };
+                            }).toArray()
+                        };
+                    })
+                    .toArray();
+
+            console.log(chartData);
+
+            $(id).highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: title
+                },
+                subtitle: {
+                    text: 'Click the columns to see time detail.'
+                },
+                xAxis: {
+                    type: 'category'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Total profits'
+                    }
+                },
+                legend: {
+                    enabled: true
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: false,
+                            format: '${point.y:.2f}',
+                        }
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat:
+                        '<span style="color:{point.color}">{point.name}</span>: <b>${point.y:,.2f}</b> total profit<br/>'
+                },
+                series: chartData,
             });
         };
 
