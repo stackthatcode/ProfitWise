@@ -255,8 +255,7 @@
     <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
 
     <div style="display:inline-block; " data-bind="if: CopyForEditing">
-        <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)
-                
+        <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)                
         </div>
     </div>
     
@@ -588,13 +587,14 @@
                     ajax.HttpPost("/QueryService/Dataset", { reportId: reportId }, this);
                 }, 
                 function (data) {
-                    self.Dataset(data);
+                    // Rename to Summary Dataset
+                    self.Dataset(data.Summary);
                     console.log(data);
                                         
-                    self.LoadPieChart('products-pie-chart', 'Top Products', data.ProductsByMostProfitable, data.CurrencyId);
-                    self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.VendorsByMostProfitable, data.CurrencyId);
-                    self.LoadPieChart('variants-pie-chart', 'Top Variants', data.VariantByMostProfitable, data.CurrencyId);
-                    self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.ProductTypeByMostProfitable, data.CurrencyId);
+                    self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
+                    self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
+                    self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);
+                    self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.Summary.ProductTypeByMostProfitable, data.CurrencyId);
 
                     if (callback) {
                         callback();

@@ -77,7 +77,6 @@
     <Compile Include="Model\PwReportExecutiveSummary.cs" />
     <Compile Include="Model\PwReportKeyedSummaryTotal.cs" />
     <Compile Include="Model\PwReportMasterVariantCogs.cs" />
-    <Compile Include="Model\PwReportOutput.cs" />
     <Compile Include="Model\PwReportSearchStub.cs" />
     <Compile Include="Model\PwReportOrderLineProfit.cs" />
     <Compile Include="Model\ExchangeRate.cs" />
@@ -100,6 +99,7 @@
     <Compile Include="Model\PwReportProductType.cs" />
     <Compile Include="Model\PwReportRecordCount.cs" />
     <Compile Include="Model\PwReportSku.cs" />
+    <Compile Include="Model\PwReportSummaryOutput.cs" />
     <Compile Include="Model\PwReportVendor.cs" />
     <Compile Include="Model\PwVariant.cs" />
     <Compile Include="Model\PwBatchState.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Model\PwProduct.cs" />
     <Compile Include="Model\PwReportMasterProductSelection.cs" />
     <Compile Include="Model\ReportExtensions.cs" />
+    <Compile Include="Model\ReportSeries.cs" />
     <Compile Include="Model\ShopifyOrder.cs" />
     <Compile Include="Model\ShopifyOrderExtensions.cs" />
     <Compile Include="Model\ShopifyOrderLineItem.cs" />

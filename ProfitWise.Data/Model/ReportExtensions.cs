@@ -20,12 +20,17 @@ namespace ProfitWise.Data.Model
 
     public static class ReportExtensions
     {
-        public static PwReportOutput BuildReportOutput(
-                    this IList<PwReportOrderLineProfit> orderLineProfits, int currencyId)
+        public static ReportSeries BuildDrillDownSeries(
+                this IList<PwReportOrderLineProfit> orderLineProfits,
+                    Func<PwReportOrderLineProfit, bool> searchLambda)
         {
-            var output = new PwReportOutput();
+            throw new NotImplementedException();
+        }
 
-            // TODO - add User Selection of Ordering
+        public static PwReportSummaryOutput BuildSummaryReportOutput(
+                    this IList<PwReportOrderLineProfit> orderLineProfits, int currencyId)
+        { 
+            var output = new PwReportSummaryOutput();
 
             output.CurrencyId = currencyId;
 
@@ -36,52 +41,25 @@ namespace ProfitWise.Data.Model
                         orderLineProfits,
                         x => x.SearchStub.PwMasterProductId,
                         x => x.SearchStub.ProductTitle);
-
-            //output.ProductsByUserSelection
-            //        = BuildKeyedSummary(
-            //            orderLineProfits,
-            //            x => x.SearchStub.PwMasterProductId,
-            //            x => x.SearchStub.ProductTitle,
-            //            ReportColumnOrdering.ProfitDescending);
-
+            
             output.VendorsByMostProfitable
                     = BuildKeyedSummary(
                         orderLineProfits,
                         x => x.SearchStub.Vendor,
                         x => x.SearchStub.Vendor);
-
-            //output.VendorsByUserSelection
-            //        = BuildKeyedSummary(
-            //            orderLineProfits,
-            //            x => x.SearchStub.Vendor,
-            //            x => x.SearchStub.Vendor,
-            //            ReportColumnOrdering.ProfitDescending);
-
+            
             output.VariantByMostProfitable
                     = BuildKeyedSummary(
                         orderLineProfits,
                         x => x.SearchStub.PwMasterVariantId,
                         x => x.SearchStub.Sku);
-
-            //output.VariantByUserSelection
-            //        = BuildKeyedSummary(
-            //            orderLineProfits,
-            //            x => x.SearchStub.PwMasterVariantId,
-            //            x => x.SearchStub.Sku,
-            //            ReportColumnOrdering.ProfitDescending);
-
+            
             output.ProductTypeByMostProfitable
                     = BuildKeyedSummary(
                         orderLineProfits,
                         x => x.SearchStub.ProductType,
                         x => x.SearchStub.ProductType);
 
-            //output.ProductTypeByUserSelection
-            //        = BuildKeyedSummary(
-            //            orderLineProfits,
-            //            x => x.SearchStub.ProductType,
-            //            x => x.SearchStub.ProductType,
-            //            ReportColumnOrdering.ProfitDescending);
 
             return output;
         }

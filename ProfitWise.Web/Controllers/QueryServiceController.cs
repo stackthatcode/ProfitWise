@@ -93,12 +93,40 @@ namespace ProfitWise.Web.Controllers
             // Add the CoGs data...
             PopulateCogs(orderLineProfits, searchStubs, cogs, shopCurrencyId);
 
-            var output = orderLineProfits.BuildReportOutput(shopCurrencyId);
-            return new JsonNetResult(output);
+            var summaries = orderLineProfits.BuildSummaryReportOutput(shopCurrencyId);
+
+            var drilldown = new List<ReportSeries>();
+
+            foreach (var summary in summaries.VendorsByMostProfitable.Take(5).ToList())
+            {
+                var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, report.StartDate, report.EndDate);
+
+                PopulateOrderLines(series.Data, orderLineProfits, x => x.SearchStub.Vendor, summary.GroupingKey);
+
+                drilldown.Add(series);
+            }                    
+
+            return new JsonNetResult(new { CurrencyId = shopCurrencyId, Summary = summaries, DrillDown = drilldown});
         }
 
-        private void 
-            PopulateCogs(
+        private void PopulateOrderLines(
+                    IList<ReportSeriesElement> elements, 
+                    IList<PwReportOrderLineProfit> orderLineProfits,
+                    Func<PwReportOrderLineProfit, string> keyExtractor,
+                    string groupingKey)
+        {
+            foreach (var element in elements)
+            {
+                element.Value =
+                    orderLineProfits
+                        .Where(x => x.OrderDate >= element.Start &&
+                                    x.OrderDate <= element.End &&
+                                    keyExtractor(x) == groupingKey)
+                        .Sum(x => x.TotalCogs);
+            }
+        }
+
+        private void PopulateCogs(
                     IList<PwReportOrderLineProfit> orderLineProfits, 
                     Dictionary<long, PwReportSearchStub> searchStubs, 
                     Dictionary<long, PwReportMasterVariantCogs> cogs, 
@@ -121,4 +149,6 @@ namespace ProfitWise.Web.Controllers
 
     }
 }
+
+
 
