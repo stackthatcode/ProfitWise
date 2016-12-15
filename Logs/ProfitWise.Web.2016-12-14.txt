@@ -647,3 +647,5 @@ Parameter name: parameters
 2016-12-14 21:34:09.0905|Debug|8a9f234b-4a8d-4fdf-a59d-3a8a129d286a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-14 21:34:09.1805|Debug|e727e524-b5ee-40c9-befb-9472f7f562b2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-14 21:34:09.2105|Debug|3b706875-6126-4474-9f70-69200ef0048d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-14 21:36:04.3080|Debug|ce32665f-eb80-4025-8d34-9ed91aa6feef|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-14 21:36:04.3775|Debug|fcbc533f-c29d-4015-a563-693c9881719b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext

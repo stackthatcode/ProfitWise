@@ -620,7 +620,12 @@
         self.LoadPieChart = function (id, title, keyedDataset, currencyId) {
             var pieChartData =
                 AQ(keyedDataset)
-                    .select(function (item) { return { name: item.GroupingName, y: item.TotalProfit } })
+                    .select(function (item) {
+                        return {
+                            name: item.GroupingName,
+                            y: item.TotalProfit,
+                        }
+                    })
                     .toArray();
 
             Highcharts.chart(id, {
@@ -674,6 +679,8 @@
                                 return {
                                     name: element.Start,
                                     y: element.Value,
+                                    drilldown: true,
+                                    testdata: 'Testing 123'
                                 };
                             }).toArray()
                         };
@@ -684,7 +691,13 @@
 
             $(id).highcharts({
                 chart: {
-                    type: 'column'
+                    type: 'column',
+                    events: {
+                        drilldown: function (e) {
+                            console.log(this);
+                            console.log(e);
+                        }
+                    },
                 },
                 title: {
                     text: title
@@ -703,6 +716,7 @@
                 legend: {
                     enabled: true
                 },
+
                 plotOptions: {
                     series: {
                         borderWidth: 0,
@@ -712,12 +726,18 @@
                         }
                     }
                 },
+
                 tooltip: {
                     headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
                     pointFormat:
                         '<span style="color:{point.color}">{point.name}</span>: <b>${point.y:,.2f}</b> total profit<br/>'
                 },
+
                 series: chartData,
+
+                drilldown: {
+                    series: []
+                }
             });
         };
 

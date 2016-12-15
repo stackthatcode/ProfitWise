@@ -119,6 +119,7 @@ namespace ProfitWise.Data.Model
             return GenerateSeries(groupingKey, start, end, level);
         }
 
+
         public static ReportSeries GenerateSeries(
                  string groupingKey, DateTime start, DateTime end, ReportDrillDownLevel level)
         {

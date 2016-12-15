@@ -75,7 +75,7 @@
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
     <Compile Include="Model\PwReportExecutiveSummary.cs" />
-    <Compile Include="Model\PwReportKeyedSummaryTotal.cs" />
+    <Compile Include="Model\ReportGroupedTotal.cs" />
     <Compile Include="Model\PwReportMasterVariantCogs.cs" />
     <Compile Include="Model\PwReportSearchStub.cs" />
     <Compile Include="Model\PwReportOrderLineProfit.cs" />
@@ -99,7 +99,7 @@
     <Compile Include="Model\PwReportProductType.cs" />
     <Compile Include="Model\PwReportRecordCount.cs" />
     <Compile Include="Model\PwReportSku.cs" />
-    <Compile Include="Model\PwReportSummaryOutput.cs" />
+    <Compile Include="Model\PwReportSummary.cs" />
     <Compile Include="Model\PwReportVendor.cs" />
     <Compile Include="Model\PwVariant.cs" />
     <Compile Include="Model\PwBatchState.cs" />
