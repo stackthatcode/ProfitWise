@@ -2,7 +2,7 @@
 
 namespace ProfitWise.Data.Model
 {
-    public class PwReportOrderLineProfit
+    public class OrderLineProfit
     {
         public long PwMasterVariantId { get; set; }
 

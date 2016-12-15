@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -77,10 +78,12 @@ namespace ProfitWise.Web.Controllers
             var report = reportRepository.RetrieveReport(reportId);
 
             // Transforms Report Filters into Master Variants
-            queryRepository.GenerateQueryStub(reportId);
+            queryRepository.PopulateQueryStub(reportId);
 
             // Retrieve by Date Range and assign CoGS to all the Order Lines to compute Profits
-            var orderLineProfits = queryRepository.RetrieveOrderLineProfits(reportId, report.StartDate, report.EndDate);
+            var orderLineProfits = 
+                queryRepository.RetrieveOrderLineProfits(
+                    reportId, report.StartDate, report.EndDate);
 
             // The Search Stubs for later report output
             var searchStubs =
@@ -97,21 +100,22 @@ namespace ProfitWise.Web.Controllers
             // Add the CoGs data...
             PopulateCogs(orderLineProfits, searchStubs, cogs, shopCurrencyId);
 
-            var summaries = orderLineProfits.BuildReportSummary(shopCurrencyId);
+            // Summar
+            var summaries = orderLineProfits.BuildGroupedSummary(shopCurrencyId);
 
             // Generate Series for Drill Down
             List<ReportSeries> drilldown = new List<ReportSeries>();
-
-            var drillDownLevel = (report.StartDate - report.EndDate).DefaultTopDrillDownLevel();
+            var drillDownLevel = 
+                (report.StartDate - report.EndDate)
+                    .DefaultTopDrillDownLevel();
 
             // A list of functions we'll use to filter Order Line Profit objects
 
-            if (report.GroupingId == ReportGrouping.Overall)
-            {
-                var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
-                PopulateSeries(series, orderLineProfits, x => x.SearchStub.PwMasterProductId == summary.GroupingKey);
-
-            }
+            //if (report.GroupingId == ReportGrouping.Overall)
+            //{
+            //    var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
+            //    PopulateSeries(series, orderLineProfits, x => x.SearchStub.PwMasterProductId == summary.GroupingKey);
+            //}
 
             return new JsonNetResult(new { CurrencyId = shopCurrencyId, Summary = summaries, DrillDown = drilldown});
         }
@@ -119,76 +123,76 @@ namespace ProfitWise.Web.Controllers
 
 
 
-        private List<ReportSeries> ReportSeriesByTopVendor(
-                ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
-                List<Func<PwReportOrderLineProfit, bool>> filters, IList<PwReportOrderLineProfit> orderLineProfits)
-        {
-            var drilldown = new List<ReportSeries>();
+        //private List<ReportSeries> ReportSeriesByTopVendor(
+        //        ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
+        //        List<Func<OrderLineProfit, bool>> filters, IList<OrderLineProfit> orderLineProfits)
+        //{
+        //    var drilldown = new List<ReportSeries>();
             
-            foreach (var filter in filters)
-            {
-                var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
-                PopulateSeries(series, orderLineProfits, x => x.SearchStub.Vendor == summary.GroupingKey);
+        //    foreach (var filter in filters)
+        //    {
+        //        var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
+        //        PopulateSeries(series, orderLineProfits, x => x.SearchStub.Vendor == summary.GroupingKey);
 
-                drilldown.Add(series);
-            }
-            return drilldown;
-        }
+        //        drilldown.Add(series);
+        //    }
+        //    return drilldown;
+        //}
 
-        private List<ReportSeries> ReportSeriesByTopProduct(
-                ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
-                PwReportSummary summaries, IList<PwReportOrderLineProfit> orderLineProfits)
-        {
-            var drilldown = new List<ReportSeries>();
+        //private List<ReportSeries> ReportSeriesByTopProduct(
+        //        ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
+        //        Summary summaries, IList<OrderLineProfit> orderLineProfits)
+        //{
+        //    var drilldown = new List<ReportSeries>();
 
-            foreach (var summary in summaries.ProductsByMostProfitable.Take(limit).ToList())
-            {
-                var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
-                PopulateSeries(series, orderLineProfits, x => x.SearchStub.PwMasterProductId == summary.GroupingKey);
+        //    foreach (var summary in summaries.ProductsByMostProfitable.Take(limit).ToList())
+        //    {
+        //        var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
+        //        PopulateSeries(series, orderLineProfits, x => x.SearchStub.PwMasterProductId == summary.GroupingKey);
 
-                drilldown.Add(series);
-            }
-            return drilldown;
-        }
+        //        drilldown.Add(series);
+        //    }
+        //    return drilldown;
+        //}
 
-        private List<ReportSeries> ReportSeriesByTopProductType(
-                ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
-                PwReportSummary summaries, IList<PwReportOrderLineProfit> orderLineProfits)
-        {
-            var drilldown = new List<ReportSeries>();
+        //private List<ReportSeries> ReportSeriesByTopProductType(
+        //        ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
+        //        Summary summaries, IList<OrderLineProfit> orderLineProfits)
+        //{
+        //    var drilldown = new List<ReportSeries>();
 
-            foreach (var summary in summaries.ProductTypeByMostProfitable.Take(limit).ToList())
-            {
-                var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
-                PopulateSeries(series, orderLineProfits, x => x.SearchStub.ProductType == summary.GroupingKey);
+        //    foreach (var summary in summaries.ProductTypeByMostProfitable.Take(limit).ToList())
+        //    {
+        //        var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
+        //        PopulateSeries(series, orderLineProfits, x => x.SearchStub.ProductType == summary.GroupingKey);
 
-                drilldown.Add(series);
-            }
-            return drilldown;
-        }
+        //        drilldown.Add(series);
+        //    }
+        //    return drilldown;
+        //}
 
-        private List<ReportSeries> ReportSeriesByTopVariant(
-                ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
-                PwReportSummary summaries, IList<PwReportOrderLineProfit> orderLineProfits)
-        {
-            var drilldown = new List<ReportSeries>();
+        //private List<ReportSeries> ReportSeriesByTopVariant(
+        //        ReportDrillDownLevel drillDownLevel, DateTime start, DateTime end, int limit,
+        //        Summary summaries, IList<OrderLineProfit> orderLineProfits)
+        //{
+        //    var drilldown = new List<ReportSeries>();
 
-            foreach (var summary in summaries.VariantByMostProfitable.Take(limit).ToList())
-            {
-                var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
-                PopulateSeries(series, orderLineProfits, x => x.SearchStub.PwMasterVariantId == summary.GroupingKey);
+        //    foreach (var summary in summaries.VariantByMostProfitable.Take(limit).ToList())
+        //    {
+        //        var series = ReportSeriesFactory.GenerateSeries(summary.GroupingName, start, end, drillDownLevel);
+        //        PopulateSeries(series, orderLineProfits, x => x.SearchStub.PwMasterVariantId == summary.GroupingKey);
 
-                drilldown.Add(series);
-            }
-            return drilldown;
-        }
+        //        drilldown.Add(series);
+        //    }
+        //    return drilldown;
+        //}
 
         
         // Takes all Order Line Profits...
         private void PopulateSeries(
                     ReportSeries series, 
-                    IList<PwReportOrderLineProfit> orderLineProfits,
-                    Func<PwReportOrderLineProfit, bool> orderLineFilter)
+                    IList<OrderLineProfit> orderLineProfits,
+                    Func<OrderLineProfit, bool> orderLineFilter)
         {
             foreach (var element in series.Data)
             {
@@ -202,7 +206,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         private void PopulateCogs(
-                    IList<PwReportOrderLineProfit> orderLineProfits, 
+                    IList<OrderLineProfit> orderLineProfits, 
                     Dictionary<long, PwReportSearchStub> searchStubs, 
                     Dictionary<long, PwReportMasterVariantCogs> cogs, 
                     int shopCurrencyId)

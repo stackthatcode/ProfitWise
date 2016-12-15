@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Push.Foundation.Utilities.Helpers;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Profit
 {
-    public static class ReportGroupedDataExtensions
+    public static class GroupedDataExtensions
     {
-        public static 
-                PwReportSummary BuildReportSummary(
-                    this IList<PwReportOrderLineProfit> orderLineProfits, int currencyId)
+        public static Summary BuildGroupedSummary(
+                    this IList<OrderLineProfit> orderLineProfits, int currencyId)
         {
-            var output = new PwReportSummary
+            var output = new Summary
             {
                 CurrencyId = currencyId,
                 ExecutiveSummary = orderLineProfits.BuildExecutiveSummary(),
@@ -26,10 +25,10 @@ namespace ProfitWise.Data.Model
         }
 
         // Sums everything without an grouping
-        public static PwReportExecutiveSummary 
-                BuildExecutiveSummary(this IList<PwReportOrderLineProfit> profitLines)
+        public static ExecutiveSummary 
+            BuildExecutiveSummary(this IList<OrderLineProfit> profitLines)
         {
-            return new PwReportExecutiveSummary()
+            return new ExecutiveSummary()
             {
                 NumberOfOrders = profitLines.Select(x => x.ShopifyOrderId).Distinct().Count(),
                 CostOfGoodsSold = profitLines.Sum(x => x.TotalCogs),
@@ -39,21 +38,21 @@ namespace ProfitWise.Data.Model
         }
 
         // Overload for grouping by Search Stub properties that are long numbers
-        public static IList<ReportGroupedTotal> 
-                BuildSummaryByGrouping(
-                    this IList<PwReportOrderLineProfit> profitLines,
+        public static IList<GroupedTotal> BuildSummaryByGrouping(
+                    this IList<OrderLineProfit> profitLines,
                     ReportGrouping reportGrouping,
-                    ReportColumnOrdering ordering = ReportColumnOrdering.ProfitDescending)
+                    ColumnOrdering ordering = ColumnOrdering.ProfitDescending)
         {
-            var output = new List<ReportGroupedTotal>();
+            var output = new List<GroupedTotal>();
 
             if (reportGrouping == ReportGrouping.Product)
             {
                 output =
                     profitLines
                         .GroupBy(x => x.SearchStub.PwMasterProductId)
-                        .Select(xg => new ReportGroupedTotal()
+                        .Select(xg => new GroupedTotal()
                         {
+                            ReportGrouping = ReportGrouping.Product,
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
@@ -68,8 +67,9 @@ namespace ProfitWise.Data.Model
                 output =
                     profitLines
                         .GroupBy(x => x.SearchStub.Vendor)
-                        .Select(xg => new ReportGroupedTotal()
+                        .Select(xg => new GroupedTotal()
                         {
+                            ReportGrouping = ReportGrouping.Vendor,
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
@@ -84,8 +84,9 @@ namespace ProfitWise.Data.Model
                 output =
                     profitLines
                         .GroupBy(x => x.SearchStub.ProductType)
-                        .Select(xg => new ReportGroupedTotal()
+                        .Select(xg => new GroupedTotal()
                         {
+                            ReportGrouping = ReportGrouping.ProductType,
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
@@ -100,8 +101,9 @@ namespace ProfitWise.Data.Model
                 output =
                     profitLines
                         .GroupBy(x => x.SearchStub.PwMasterVariantId)
-                        .Select(xg => new ReportGroupedTotal()
+                        .Select(xg => new GroupedTotal()
                         {
+                            ReportGrouping = ReportGrouping.Variant,
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
@@ -111,77 +113,80 @@ namespace ProfitWise.Data.Model
                         .ToList();
             }
 
-            return output.BuildOrdereredWithLeftovers();
+            return output.TruncateAndAppendRemainingTotal();
         }
         
-        public static IList<ReportGroupedTotal> 
-                    BuildOrdereredWithLeftovers(
-                        this IList<ReportGroupedTotal> input, 
-                        ReportColumnOrdering ordering = ReportColumnOrdering.ProfitDescending,
-                        int numberOfElements = 10,
-                        string leftoversDescription = "All others")
+        public static 
+                IList<GroupedTotal> TruncateAndAppendRemainingTotal(
+                    this IList<GroupedTotal> input, 
+                    ColumnOrdering ordering = ColumnOrdering.ProfitDescending,
+                    int maximumRowCount = 10,
+                    string leftoversDescription = "All others")
         {
             var orderedInput = input.OrderBy(ordering).ToList();
 
+            var numberOfElements = 
+                orderedInput.Count() == maximumRowCount 
+                    ? maximumRowCount 
+                    : maximumRowCount - 1;
+
             var topResults =
                 orderedInput
-                    .Take(numberOfElements - 1)
+                    .Take(numberOfElements)
                     .ToList();
 
             var remainingResults =
                 orderedInput
-                    .TakeAfter(numberOfElements - 1)
+                    .TakeAfter(numberOfElements)
                     .ToList();
 
-            if (topResults.Count() <= numberOfElements - 1)
-            topResults.Add(
-                new ReportGroupedTotal()
-                {
-                    GroupingName = leftoversDescription,
-                    TotalRevenue = remainingResults.Sum(x => x.TotalRevenue),
-                    TotalCogs = remainingResults.Sum(x => x.TotalCogs),
-                });
+            if (remainingResults.Any())
+                topResults.Add(
+                    new GroupedTotal()
+                    {
+                        GroupingName = leftoversDescription,
+                        TotalRevenue = remainingResults.Sum(x => x.TotalRevenue),
+                        TotalCogs = remainingResults.Sum(x => x.TotalCogs),
+                    });
 
             return topResults;
         }
 
-        public static 
-                IEnumerable<ReportGroupedTotal> OrderBy(
-                    this IList<ReportGroupedTotal> input,
-                    ReportColumnOrdering ordering)
+        public static IEnumerable<GroupedTotal> OrderBy(
+            this IList<GroupedTotal> input, ColumnOrdering ordering)
         {
-            if (ordering == ReportColumnOrdering.ProfitDescending)
+            if (ordering == ColumnOrdering.ProfitDescending)
             {
                 return input.OrderByDescending(x => x.TotalProfit);
             }
-            if (ordering == ReportColumnOrdering.ProfitAscending)
+            if (ordering == ColumnOrdering.ProfitAscending)
             {
                 return input.OrderBy(x => x.TotalProfit);
             }
 
-            if (ordering == ReportColumnOrdering.CogsDescending)
+            if (ordering == ColumnOrdering.CogsDescending)
             {
                 return input.OrderByDescending(x => x.TotalCogs);
             }
-            if (ordering == ReportColumnOrdering.CogsAscending)
+            if (ordering == ColumnOrdering.CogsAscending)
             {
                 return input.OrderBy(x => x.TotalCogs);
             }
 
-            if (ordering == ReportColumnOrdering.NetSalesDescending)
+            if (ordering == ColumnOrdering.NetSalesDescending)
             {
                 return input.OrderByDescending(x => x.TotalRevenue);
             }
-            if (ordering == ReportColumnOrdering.NetSalesAscending)
+            if (ordering == ColumnOrdering.NetSalesAscending)
             {
                 return input.OrderBy(x => x.TotalRevenue);
             }
 
-            if (ordering == ReportColumnOrdering.QuantitySoldDescending)
+            if (ordering == ColumnOrdering.QuantitySoldDescending)
             {
                 return input.OrderByDescending(x => x.TotalRevenue);
             }
-            if (ordering == ReportColumnOrdering.QuantitySoldDescending)
+            if (ordering == ColumnOrdering.QuantitySoldDescending)
             {
                 return input.OrderBy(x => x.TotalRevenue);
             }

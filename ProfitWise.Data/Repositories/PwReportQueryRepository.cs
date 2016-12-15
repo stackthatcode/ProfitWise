@@ -22,8 +22,8 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        // Product & Variant selections
-        public PwReportRecordCount RetrieveReportRecordCount(long reportId)
+        // Product & Variant counts and selection details
+        public ProductAndVariantCount RetrieveReportRecordCount(long reportId)
         {
             var query =
                 @"SELECT COUNT(DISTINCT(t1.PwProductId)) AS ProductCount, COUNT(t3.PwVariantId) AS VariantCount
@@ -36,11 +36,11 @@ namespace ProfitWise.Data.Repositories
             query += ReportFilterClauseGenerator(reportId);
 
             return _connection
-                .Query<PwReportRecordCount>(query, new { PwShopId, PwReportId = reportId })
+                .Query<ProductAndVariantCount>(query, new { PwShopId, PwReportId = reportId })
                 .FirstOrDefault();
         }
 
-        public List<PwReportMasterProductSelection> RetrieveProductSelections(long reportId, int pageNumber, int pageSize)
+        public List<PwReportSelectionMasterProduct> RetrieveProductSelections(long reportId, int pageNumber, int pageSize)
         {
             var query =
                 @"SELECT PwShopId, PwMasterProductId, ProductTitle AS Title, Vendor, ProductType
@@ -53,11 +53,11 @@ namespace ProfitWise.Data.Repositories
             var startRecord = (pageNumber - 1) * pageSize;
 
             return _connection
-                .Query<PwReportMasterProductSelection>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize, })
+                .Query<PwReportSelectionMasterProduct>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize, })
                 .ToList();
         }
 
-        public List<PwReportMasterVariantSelection> RetrieveVariantSelections(long reportId, int pageNumber, int pageSize)
+        public List<PwReportSelectionMasterVariant> RetrieveVariantSelections(long reportId, int pageNumber, int pageSize)
         {
             var query =
                 @"SELECT PwShopId, PwMasterProductId, ProductTitle, PwMasterVariantId, VariantTitle, Sku, Vendor
@@ -69,7 +69,7 @@ namespace ProfitWise.Data.Repositories
             var startRecord = (pageNumber - 1) * pageSize;
 
             return _connection
-                .Query<PwReportMasterVariantSelection>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize })
+                .Query<PwReportSelectionMasterVariant>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize })
                 .ToList();
         }
 
@@ -103,7 +103,9 @@ namespace ProfitWise.Data.Repositories
             return query;
         }
 
-        public void GenerateQueryStub(long reportId)
+
+        // Profit Query output
+        public void PopulateQueryStub(long reportId)
         {
             var deleteQuery =
                 @"DELETE FROM profitwisereportquerystub
@@ -138,8 +140,7 @@ namespace ProfitWise.Data.Repositories
             return results;
         }
 
-
-        public IList<PwReportOrderLineProfit> 
+        public IList<OrderLineProfit> 
                     RetrieveOrderLineProfits(long reportId, DateTime startDate, DateTime endDate)
         {
             endDate = endDate.AddDays(1);
@@ -166,7 +167,7 @@ namespace ProfitWise.Data.Repositories
             
             var results = 
                 _connection
-                    .Query<PwReportOrderLineProfit>(
+                    .Query<OrderLineProfit>(
                         query, new { PwShopId, reportId, startDate, endDate }).ToList();
             return results;
         }

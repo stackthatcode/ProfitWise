@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Profit
 {
-    public class ReportGroupedTotal
+    public class GroupedTotal
     {
         public ReportGrouping ReportGrouping { get; set; }
 

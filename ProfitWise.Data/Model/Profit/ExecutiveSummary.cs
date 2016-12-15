@@ -1,7 +1,7 @@
 ﻿
 namespace ProfitWise.Data.Model
 {
-    public class PwReportExecutiveSummary
+    public class ExecutiveSummary
     {
         //public int CurrencyId { get; set; }
         public int NumberOfOrders { get; set; }

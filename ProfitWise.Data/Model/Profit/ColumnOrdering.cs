@@ -1,6 +1,6 @@
-﻿namespace ProfitWise.Data.Model.ReportOutput
+﻿namespace ProfitWise.Data.Model.Profit
 {
-    public enum ReportColumnOrdering
+    public enum ColumnOrdering
     {
         ProfitDescending = 1,
         ProfitAscending = 2,
