@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProfitWise.Data.Model
+﻿namespace ProfitWise.Data.Model.Profit
 {
     public class PwReportMasterVariantCogs
     {

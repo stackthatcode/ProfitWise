@@ -7,7 +7,7 @@ namespace ProfitWise.Data.Model.Profit
 {
     public static class GroupedDataExtensions
     {
-        public static Summary BuildGroupedSummary(
+        public static Summary BuildCompleteGroupedSummary(
                     this IList<OrderLineProfit> orderLineProfits, int currencyId)
         {
             var output = new Summary

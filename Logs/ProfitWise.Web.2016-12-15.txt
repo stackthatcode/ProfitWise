@@ -146,3 +146,27 @@
 2016-12-15 16:34:16.2667|Info|ffaf7753-556b-461d-90d1-3013a14ab61e|Loading Exchange Rates cache 
 2016-12-15 16:34:16.6280|Info|ffaf7753-556b-461d-90d1-3013a14ab61e|Exchange Rates cached from 1/1/2006 12:00:00 AM through 10/31/2016 12:00:00 AM
 2016-12-15 16:34:16.6280|Info|ffaf7753-556b-461d-90d1-3013a14ab61e|CacheRefreshAllowed set to 12/15/2016 4:49:16 PM
+2016-12-15 17:01:03.0977|Debug|bfd3e6ec-ec85-412b-a3da-198e0c2e080a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:06.0112|Debug|f617ab20-5d30-42a2-bdee-482a43535a4e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:06.2667|Debug|524d7fab-33e0-4c4b-a00e-b0c24908e0b5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:06.3227|Debug|c9149705-8bc6-4749-8f83-9b4851416c43|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:06.4712|Debug|951006ef-95fc-428b-a9a7-9d11f2cc87d8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:06.5207|Debug|b570d6c1-4faf-4d54-8ba4-95f5412330de|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:10.9906|Debug|bed6dda5-2b3c-4c61-a948-934a448b31d1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:11.1496|Debug|74f89d94-56da-4c91-a96a-23616fd7be73|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:11.1976|Debug|26639720-109c-49b5-bcde-cf1e92c9ff57|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:11.4566|Info|26639720-109c-49b5-bcde-cf1e92c9ff57|Loading Exchange Rates cache 
+2016-12-15 17:01:11.5916|Info|26639720-109c-49b5-bcde-cf1e92c9ff57|Exchange Rates cached from 1/1/2006 12:00:00 AM through 10/31/2016 12:00:00 AM
+2016-12-15 17:01:11.5916|Info|26639720-109c-49b5-bcde-cf1e92c9ff57|CacheRefreshAllowed set to 12/15/2016 5:16:11 PM
+2016-12-15 17:01:15.2869|Debug|0229470b-b30c-438d-89ad-f5ec6b8ae4fa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:19.3185|Debug|d7bd55bc-d2e8-492c-8e49-0cec2b8c871b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:19.4165|Debug|8f28bd66-4624-42e2-a54d-24f07c286809|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:19.4740|Debug|f1d87bf6-4ea2-4b1b-8217-ef9c54382f97|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:19.5475|Debug|d266d8d0-ba90-424d-99a4-5a3ef0ea379e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:21.8128|Debug|cab98fa9-7dcf-4384-b0eb-30216fe73cec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:21.8983|Debug|54dc5fa7-c7a9-4182-af77-281bc73d4c79|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:21.9293|Debug|1143f956-f980-47b1-b56a-1d25f1bd3d99|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:23.1252|Debug|d509c613-0727-4d7a-867d-2ea9777908bd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:23.2042|Debug|167dcaf5-c4e0-478c-b193-90b976267c22|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:23.2597|Debug|10965160-0077-46c0-bf26-3af1a9003461|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-15 17:01:23.2937|Debug|f2270791-2835-49d7-8af2-2bae04ab1c45|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext

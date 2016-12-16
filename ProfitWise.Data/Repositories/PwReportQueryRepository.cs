@@ -5,6 +5,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Profit;
 
 namespace ProfitWise.Data.Repositories
 {

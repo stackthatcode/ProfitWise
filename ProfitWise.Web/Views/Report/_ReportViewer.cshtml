@@ -603,7 +603,7 @@
                     self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.Summary.ProductTypeByMostProfitable, data.CurrencyId);
 
-                    self.LoadColumnChart('#column-chart', 'Profitability', data.DrillDown);
+                    self.LoadColumnChart('#column-chart', 'Profitability', data.Series);
                     
                     if (callback) {
                         callback();

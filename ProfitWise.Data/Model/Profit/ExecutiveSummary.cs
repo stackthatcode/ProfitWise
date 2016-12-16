@@ -1,5 +1,5 @@
 ﻿
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Profit
 {
     public class ExecutiveSummary
     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ProfitWise.Data.Model.Profit
 {
@@ -11,5 +12,6 @@ namespace ProfitWise.Data.Model.Profit
         public IList<GroupedTotal> VendorsByMostProfitable { get; set; }
         public IList<GroupedTotal> VariantByMostProfitable { get; set; }
         public IList<GroupedTotal> ProductTypeByMostProfitable { get; set; }
+
     }
 }
