@@ -4,6 +4,11 @@ namespace ProfitWise.Data.Model.Profit
 {
     public class GroupingKey
     {
+        public GroupingKey()
+        {
+            ReportGrouping = ReportGrouping.Overall;
+        }
+
         public GroupingKey(ReportGrouping grouping, string key)
 
         {
@@ -18,6 +23,7 @@ namespace ProfitWise.Data.Model.Profit
                 Vendor = key;
                 return;
             }
+
             throw new ArgumentException("Inappropiate match with grouping");
         }
 
@@ -38,6 +44,21 @@ namespace ProfitWise.Data.Model.Profit
             throw new ArgumentException("Inappropiate match with grouping");
         }
 
+        public static GroupingKey Factory(ReportGrouping grouping, string groupKey)
+        {
+            if (grouping == ReportGrouping.ProductType || grouping == ReportGrouping.Vendor)
+            {
+                return new GroupingKey(grouping, groupKey);
+            }
+            else if (grouping == ReportGrouping.Product || grouping == ReportGrouping.Variant)
+            {
+                return new GroupingKey(grouping, Int64.Parse(groupKey));
+            }
+            else
+            {
+                return new GroupingKey();
+            }
+        }
 
         public ReportGrouping ReportGrouping { get; set; }
 

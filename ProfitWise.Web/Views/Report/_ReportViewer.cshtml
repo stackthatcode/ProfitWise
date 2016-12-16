@@ -668,6 +668,19 @@
             });
         };
 
+        self.InvokeDrilldownService = function (url, chart) {
+            console.log("Drilldown Service...");
+            console.log(this);
+
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost(url, { }, this);
+                }, function(data) {
+                    console.log(data);
+                });
+        }
+
         self.LoadColumnChart = function (id, title, seriesData) {
 
             var chartData =
@@ -680,22 +693,22 @@
                                     name: element.Name,
                                     y: element.Value,
                                     drilldown: true,
-                                    testdata: element.DrilldownQueryString,
+                                    drilldownAjaxUrl: element.Drilldown,
                                 };
                             }).toArray()
                         };
                     })
                     .toArray();
 
-            console.log(chartData);
+            //console.log(chartData);
 
             $(id).highcharts({
                 chart: {
                     type: 'column',
                     events: {
                         drilldown: function (e) {
-                            console.log(this);
-                            console.log(e);
+                            var url = e.point.drilldownAjaxUrl;
+                            self.InvokeDrilldownService(url, chart);
                         }
                     },
                 },
@@ -726,7 +739,7 @@
                         }
                     }
                 },
-
+                
                 tooltip: {
                     headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
                     pointFormat:

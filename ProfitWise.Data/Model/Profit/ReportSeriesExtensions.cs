@@ -8,8 +8,7 @@ namespace ProfitWise.Data.Model.Profit
     public static class ReportSeriesFactory
     {        
         public static ReportSeries GenerateSeries(
-                string seriesKey, string seriesName, ReportGrouping grouping,
-                DateTime start, DateTime end, DataGranularity level)
+                string seriesName, ReportGrouping grouping, DateTime start, DateTime end, DataGranularity level)
         {
             var correctedStart = start.StartOfPeriod(level);
             var correctedEnd = end.EndOfPeriod(level);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -10,6 +11,7 @@ using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Helpers;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -20,14 +22,19 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
+        private readonly IPushLogger _logger;
 
         public const int NumberOfColumnGroups = 5;
 
 
-        public QueryServiceController(MultitenantFactory factory, CurrencyService currencyService)
+        public QueryServiceController(
+                MultitenantFactory factory, 
+                CurrencyService currencyService,
+                IPushLogger logger)
         {
             _factory = factory;
             _currencyService = currencyService;
+            _logger = logger;
         }
 
 
@@ -75,8 +82,7 @@ namespace ProfitWise.Web.Controllers
             // Retreive Report
             var reportRepository = _factory.MakeReportRepository(userBrief.PwShop);
             var report = reportRepository.RetrieveReport(reportId);
-
-            var orderLineProfits = BuildProfitabilityDataset(reportId, userBrief, report);
+            var orderLineProfits = BuildProfitabilityDataset(reportId, userBrief, report.StartDate, report.EndDate);
 
             // Summary for consumption by pie chart
             var shopCurrencyId = userBrief.PwShop.CurrencyId;
@@ -89,7 +95,7 @@ namespace ProfitWise.Web.Controllers
             if (report.GroupingId == ReportGrouping.Overall)
             {
                 var series = ReportSeriesFactory.GenerateSeries(
-                        "All", "All", ReportGrouping.Overall, report.StartDate, report.EndDate, granularity);
+                        "All", ReportGrouping.Overall, report.StartDate, report.EndDate, granularity);
                 series.Populate(orderLineProfits, x => true);
                 seriesDataset = new List<ReportSeries> {series};
             }
@@ -109,58 +115,48 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { CurrencyId = shopCurrencyId, Summary = summary, Series = seriesDataset });
         }
 
-
-        private List<ReportSeries>
-                    BuildSeriesDatasetFromOrderedTotals(
-                        IList<OrderLineProfit> orderLines, 
-                        IList<GroupedTotal> orderedTotals, 
-                        PwReport report,
-                        DataGranularity granularity)
+        [HttpPost]
+        public ActionResult Drilldown(long reportId, ReportGrouping grouping,
+                string groupKey, string groupName, DateTime startDate, DateTime endDate)
         {
-            var output = new List<ReportSeries>();
-            foreach (var groupedTotal in orderedTotals)
+            _logger.Info($"Drilldown! {reportId}, {grouping}, {groupKey}, {groupName}, {startDate}, {endDate}");
+
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var orderLineProfits = BuildProfitabilityDataset(reportId, userBrief, startDate, endDate);
+            var granularity = (endDate - startDate).SuggestedDataGranularity();
+
+            var groupingKey = GroupingKey.Factory(grouping, groupKey);
+
+            var series = ReportSeriesFactory.GenerateSeries(groupName, grouping, startDate, endDate, granularity);
+            series.Populate(orderLineProfits, x => groupingKey.MatchWithOrderLine(x));
+            var seriesDataset = new List<ReportSeries> { series };
+
+            return new JsonNetResult(seriesDataset);
+        }
+
+        private void PopulateCogs(
+                    IList<OrderLineProfit> orderLineProfits,
+                    Dictionary<long, PwReportSearchStub> searchStubs,
+                    Dictionary<long, PwReportMasterVariantCogs> cogs,
+                    int shopCurrencyId)
+        {
+            foreach (var line in orderLineProfits)
             {
-                var series = 
-                    ReportSeriesFactory.GenerateSeries(
-                        groupedTotal.GroupingKey.KeyValue,
-                        groupedTotal.GroupingName,
-                        groupedTotal.GroupingKey.ReportGrouping,
-                        report.StartDate, 
-                        report.EndDate, 
-                        granularity);
+                line.SearchStub = searchStubs[line.PwMasterVariantId];
+                var cogsEntry = cogs[line.PwMasterVariantId];
 
-                var groupingKey = groupedTotal.GroupingKey;
-                series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
+                var normalizedCogsAmount =
+                    cogsEntry.HasData
+                        ? _currencyService.Convert(
+                            cogsEntry.CogsAmount.Value, cogsEntry.CogsCurrencyId.Value, shopCurrencyId, line.OrderDate)
+                        : 0m;
 
-                series.Data
-                    .ForEach(x => x.Drilldown
-                        = DrilldownUrl(
-                            report.PwReportId,
-                            groupedTotal.GroupingKey.ReportGrouping,
-                            report.StartDate,
-                            report.EndDate,
-                            granularity));
-
-                output.Add(series);
+                line.PerUnitCogs = normalizedCogsAmount;
             }
-
-            return output;
         }
-
-        private string DrilldownUrl(long reportId, ReportGrouping grouping, 
-                DateTime startDate, DateTime endDate, DataGranularity granularity)
-        {
-            return $"/QueryService/Drilldown?" +
-                        $"reportId={reportId}&" +
-                        $"grouping={grouping}&" +
-                        $"startDate={startDate}&" +
-                        $"endDate={endDate}&" +
-                        $"granularity={granularity}";
-        }
-
 
         private IList<OrderLineProfit> BuildProfitabilityDataset(
-                    long reportId, IdentitySnapshot userBrief, PwReport report)
+                    long reportId, IdentitySnapshot userBrief, DateTime startDate, DateTime endDate)
         {
             var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
             var shopCurrencyId = userBrief.PwShop.CurrencyId;
@@ -169,8 +165,7 @@ namespace ProfitWise.Web.Controllers
             queryRepository.PopulateQueryStub(reportId);
 
             // Retrieve by Date Range and assign CoGS to all the Order Lines to compute Profits
-            var orderLineProfits = queryRepository.RetrieveOrderLineProfits(
-                reportId, report.StartDate, report.EndDate);
+            var orderLineProfits = queryRepository.RetrieveOrderLineProfits(reportId, startDate, endDate);
 
             // The Search Stubs for later report output
             var searchStubs =
@@ -188,26 +183,49 @@ namespace ProfitWise.Web.Controllers
             PopulateCogs(orderLineProfits, searchStubs, cogs, shopCurrencyId);
             return orderLineProfits;
         }
-        
-        private void PopulateCogs(
-                    IList<OrderLineProfit> orderLineProfits, 
-                    Dictionary<long, PwReportSearchStub> searchStubs, 
-                    Dictionary<long, PwReportMasterVariantCogs> cogs, 
-                    int shopCurrencyId)
+
+        private List<ReportSeries>
+                    BuildSeriesDatasetFromOrderedTotals(
+                        IList<OrderLineProfit> orderLines,
+                        IList<GroupedTotal> orderedTotals,
+                        PwReport report,
+                        DataGranularity granularity)
         {
-            foreach (var line in orderLineProfits)
+            var output = new List<ReportSeries>();
+            foreach (var groupedTotal in orderedTotals)
             {
-                line.SearchStub = searchStubs[line.PwMasterVariantId];
-                var cogsEntry = cogs[line.PwMasterVariantId];
+                var series =
+                    ReportSeriesFactory.GenerateSeries(
+                        groupedTotal.GroupingName,
+                        groupedTotal.GroupingKey.ReportGrouping,
+                        report.StartDate,
+                        report.EndDate,
+                        granularity);
 
-                var normalizedCogsAmount =
-                    cogsEntry.HasData
-                        ? _currencyService.Convert(
-                            cogsEntry.CogsAmount.Value, cogsEntry.CogsCurrencyId.Value, shopCurrencyId, line.OrderDate)
-                        : 0m;
+                var groupingKey = groupedTotal.GroupingKey;
+                series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
 
-                line.PerUnitCogs = normalizedCogsAmount;
+                series.Data
+                    .ForEach(x => x.Drilldown
+                        = DrilldownUrl(
+                            report.PwReportId, groupedTotal.GroupingKey, groupedTotal.GroupingName, x.Start, x.End));
+
+                output.Add(series);
             }
+
+            return output;
+        }
+
+        private string DrilldownUrl(
+                    long reportId, GroupingKey groupingKey, string groupingName, DateTime startDate, DateTime endDate)
+        {
+            return $"/QueryService/Drilldown?" +
+                   $"reportId={reportId}&" +
+                   $"grouping={groupingKey.ReportGrouping}&" +
+                   $"groupKey={groupingKey.KeyValue}&" +
+                   $"groupName={groupingName}&" +
+                   $"startDate={HttpUtility.UrlEncode(startDate.ToString("yyyy-MM-dd"))}&" +
+                   $"endDate={HttpUtility.UrlEncode(endDate.ToString("yyyy-MM-dd"))}";
         }
     }
 }
