@@ -8,6 +8,7 @@ using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
@@ -81,15 +82,15 @@ namespace ProfitWise.Web.Controllers
             var shopCurrencyId = userBrief.PwShop.CurrencyId;
             var summary = orderLineProfits.BuildCompleteGroupedSummary(shopCurrencyId);
 
-
             // Generate Series for Drill Down
             var granularity = (report.EndDate - report.StartDate).SuggestedDataGranularity();
             List<ReportSeries> seriesDataset;
 
             if (report.GroupingId == ReportGrouping.Overall)
             {
-                var series = ReportSeriesFactory.GenerateSeries(report.StartDate, report.EndDate, granularity);
-                series.PopulateWithTotals(orderLineProfits, x => true);
+                var series = ReportSeriesFactory.GenerateSeries(
+                        "All", "All", ReportGrouping.Overall, report.StartDate, report.EndDate, granularity);
+                series.Populate(orderLineProfits, x => true);
                 seriesDataset = new List<ReportSeries> {series};
             }
             else
@@ -102,30 +103,63 @@ namespace ProfitWise.Web.Controllers
 
                 seriesDataset =
                     BuildSeriesDatasetFromOrderedTotals(
-                        orderLineProfits, orderedTotalsByGroup, report.StartDate, report.EndDate, granularity);
+                        orderLineProfits, orderedTotalsByGroup, report, granularity);
             }
 
             return new JsonNetResult(new { CurrencyId = shopCurrencyId, Summary = summary, Series = seriesDataset });
         }
 
-        private static List<ReportSeries>
+
+        private List<ReportSeries>
                     BuildSeriesDatasetFromOrderedTotals(
-                        IList<OrderLineProfit> orderLines, IList<GroupedTotal> orderedTotals, 
-                        DateTime startDate, DateTime endDate, DataGranularity granularity)
+                        IList<OrderLineProfit> orderLines, 
+                        IList<GroupedTotal> orderedTotals, 
+                        PwReport report,
+                        DataGranularity granularity)
         {
             var output = new List<ReportSeries>();
             foreach (var groupedTotal in orderedTotals)
             {
-                var series = ReportSeriesFactory.GenerateSeries(startDate, endDate, granularity);
+                var series = 
+                    ReportSeriesFactory.GenerateSeries(
+                        groupedTotal.GroupingKey.KeyValue,
+                        groupedTotal.GroupingName,
+                        groupedTotal.GroupingKey.ReportGrouping,
+                        report.StartDate, 
+                        report.EndDate, 
+                        granularity);
+
                 var groupingKey = groupedTotal.GroupingKey;
-                series.PopulateWithTotals(orderLines, x => groupingKey.MatchWithOrderLine(x));
+                series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
+
+                series.Data
+                    .ForEach(x => x.Drilldown
+                        = DrilldownUrl(
+                            report.PwReportId,
+                            groupedTotal.GroupingKey.ReportGrouping,
+                            report.StartDate,
+                            report.EndDate,
+                            granularity));
+
                 output.Add(series);
             }
+
             return output;
         }
 
-        private IList<OrderLineProfit> 
-                BuildProfitabilityDataset(
+        private string DrilldownUrl(long reportId, ReportGrouping grouping, 
+                DateTime startDate, DateTime endDate, DataGranularity granularity)
+        {
+            return $"/QueryService/Drilldown?" +
+                        $"reportId={reportId}&" +
+                        $"grouping={grouping}&" +
+                        $"startDate={startDate}&" +
+                        $"endDate={endDate}&" +
+                        $"granularity={granularity}";
+        }
+
+
+        private IList<OrderLineProfit> BuildProfitabilityDataset(
                     long reportId, IdentitySnapshot userBrief, PwReport report)
         {
             var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
@@ -155,7 +189,6 @@ namespace ProfitWise.Web.Controllers
             return orderLineProfits;
         }
         
-
         private void PopulateCogs(
                     IList<OrderLineProfit> orderLineProfits, 
                     Dictionary<long, PwReportSearchStub> searchStubs, 
@@ -176,7 +209,6 @@ namespace ProfitWise.Web.Controllers
                 line.PerUnitCogs = normalizedCogsAmount;
             }
         }
-
     }
 }
 

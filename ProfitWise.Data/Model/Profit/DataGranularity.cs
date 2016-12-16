@@ -11,7 +11,6 @@ namespace ProfitWise.Data.Model.Profit
         Day = 4,
     }
 
-
     public static class DataGranularityExtensions
     {
         public static DateTime AddTime(this DateTime input, DataGranularity level)
@@ -78,10 +77,12 @@ namespace ProfitWise.Data.Model.Profit
             {
                 return DataGranularity.Month;
             }
-            return DataGranularity.Week;
+            if (lengthOfReportingPeriod.Days > 7)
+            {
+                return DataGranularity.Week;
+            }
 
-
-            // NOTE - Jeremy, showing 30 days of data seemed a bit infeasible. We can discuss.
+            return DataGranularity.Day;
         }
     }
 

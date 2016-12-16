@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 
 namespace ProfitWise.Data.Model.Profit
 {
     public class ReportSeries
     {
-        public DataGranularity SeriesGranularity { get; set; }
         public string Name { get; set; }    // Should be the Product Type, Vendor, Product, etc.
         public IList<ReportSeriesElement> Data { get; set; }
     }
@@ -20,8 +19,7 @@ namespace ProfitWise.Data.Model.Profit
 
         public decimal Value { get; set; }
 
-
-        public string DrilldownIdentifier { get; set; } // ...?
+        public string Drilldown { get; set; }
 
         public override string ToString()
         {

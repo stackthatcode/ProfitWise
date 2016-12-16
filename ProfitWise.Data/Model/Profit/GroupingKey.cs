@@ -7,6 +7,7 @@ namespace ProfitWise.Data.Model.Profit
         public GroupingKey(ReportGrouping grouping, string key)
 
         {
+            ReportGrouping = grouping;
             if (grouping == ReportGrouping.ProductType)
             {
                 ProductType = key;
@@ -23,6 +24,7 @@ namespace ProfitWise.Data.Model.Profit
         public GroupingKey(ReportGrouping grouping, long key)
 
         {
+            ReportGrouping = grouping;
             if (grouping == ReportGrouping.Product)
             {
                 PwMasterProductId = key;

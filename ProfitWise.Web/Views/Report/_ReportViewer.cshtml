@@ -674,13 +674,13 @@
                 AQ(seriesData)
                     .select(function (item) {
                         return {
-                            name: item.GroupingKey,
+                            name: item.Name,
                             data: AQ(item.Data).select(function(element) {
                                 return {
-                                    name: element.Start,
+                                    name: element.Name,
                                     y: element.Value,
                                     drilldown: true,
-                                    testdata: 'Testing 123'
+                                    testdata: element.DrilldownQueryString,
                                 };
                             }).toArray()
                         };
