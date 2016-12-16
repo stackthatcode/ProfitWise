@@ -7,7 +7,7 @@ namespace ProfitWise.Data.Model.Profit
     public class ReportSeries
     {
         public DataGranularity SeriesGranularity { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; }    // Should be the Product Type, Vendor, Product, etc.
         public IList<ReportSeriesElement> Data { get; set; }
     }
 

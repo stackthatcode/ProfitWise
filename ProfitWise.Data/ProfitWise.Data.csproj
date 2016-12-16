@@ -78,6 +78,7 @@
     <Compile Include="Model\Profit\ExecutiveSummary.cs" />
     <Compile Include="Model\Profit\ColumnOrdering.cs" />
     <Compile Include="Model\Profit\GroupedTotal.cs" />
+    <Compile Include="Model\Profit\GroupingKey.cs" />
     <Compile Include="Model\Profit\ReportSeriesExtensions.cs" />
     <Compile Include="Model\Profit\SimpleCogs.cs" />
     <Compile Include="Model\Profit\ReportSearchStub.cs" />

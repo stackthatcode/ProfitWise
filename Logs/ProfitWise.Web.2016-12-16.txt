@@ -86,3 +86,67 @@
 2016-12-16 09:49:41.5981|Info|08c7e652-571b-4086-810f-267daca7f370|Loading Exchange Rates cache 
 2016-12-16 09:49:41.7181|Info|08c7e652-571b-4086-810f-267daca7f370|Exchange Rates cached from 1/1/2006 12:00:00 AM through 10/31/2016 12:00:00 AM
 2016-12-16 09:49:41.7181|Info|08c7e652-571b-4086-810f-267daca7f370|CacheRefreshAllowed set to 12/16/2016 10:04:41 AM
+2016-12-16 09:50:28.3395|Debug|d5f93f2f-8821-4aa5-999e-dbfc537f47cc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:26:13.2298|Debug|c3c2953f-bef1-49b7-b5a2-f33a32b75d48|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:26:16.9690|Debug|eee27a6c-1359-4cac-8fb2-9050bf1c86b5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:26:17.3845|Debug|c038ef6b-7dca-4a0f-b096-d6f38b1eb1d1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:26:17.4305|Debug|114580ce-d49a-47ef-999b-3090fbb38fde|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:26:17.5595|Debug|33c8cc0d-e04c-42f7-b32a-33d35e51bf30|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:26:17.6245|Debug|fb811c8d-1835-46f0-8e71-c21284421e8c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:26:17.9621|Error|fb811c8d-1835-46f0-8e71-c21284421e8c|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-16 11:26:17.9806|Error|fb811c8d-1835-46f0-8e71-c21284421e8c|System.ArgumentException:Value does not fall within the expected range.
+   at ProfitWise.Data.Model.Profit.Summary.TotalsByGroupedId(ReportGrouping groupingId) in C:\DEV\ProfitWise\ProfitWise.Data\Model\Profit\Summary.cs:line 35
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 87
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-16 11:34:45.0118|Debug|bde4765e-1431-432f-bcca-a11ad5b6bb97|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:49.1890|Debug|1bd9afeb-86cc-4b8e-94db-9308c64da83a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:49.5250|Debug|147d115a-ed91-4cf1-8c7e-84ac8df3be04|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:49.5700|Debug|bb8fab40-4ebd-4414-9dff-c0fe6cbb667d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:49.6580|Debug|dc4c4f3d-0ad7-4d08-a020-01dd603628e0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:49.7175|Debug|95e98cce-5535-4b2c-93c3-e3ab9cede994|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:54.2705|Debug|40f266cf-e117-4c52-83f7-0d5b8a1a5525|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:54.3225|Debug|5de7f0c3-3733-4b70-83d9-c2f86d3fda7a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:54.3465|Debug|6490ec2a-1a52-4d06-bee1-f0a623698e57|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:54.3941|Debug|1bbc281b-53a5-4da9-9724-e27bcd8632b8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:34:54.6953|Info|1bbc281b-53a5-4da9-9724-e27bcd8632b8|Loading Exchange Rates cache 
+2016-12-16 11:34:54.8193|Info|1bbc281b-53a5-4da9-9724-e27bcd8632b8|Exchange Rates cached from 1/1/2006 12:00:00 AM through 10/31/2016 12:00:00 AM
+2016-12-16 11:34:54.8193|Info|1bbc281b-53a5-4da9-9724-e27bcd8632b8|CacheRefreshAllowed set to 12/16/2016 11:49:54 AM
+2016-12-16 11:34:55.6854|Error|1bbc281b-53a5-4da9-9724-e27bcd8632b8|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-16 11:34:55.7054|Error|1bbc281b-53a5-4da9-9724-e27bcd8632b8|System.ArgumentException:Inappropiate match with grouping
+   at ProfitWise.Data.Model.Profit.GroupingKey..ctor(ReportGrouping grouping, Int64 key) in C:\DEV\ProfitWise\ProfitWise.Data\Model\Profit\GroupingKey.cs:line 32
+   at ProfitWise.Data.Model.Profit.GroupedDataExtensions.<>c.<BuildSummaryByGrouping>b__2_1(IGrouping`2 xg) in C:\DEV\ProfitWise\ProfitWise.Data\Model\Profit\GroupedDataExtensions.cs:line 53
+   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at ProfitWise.Data.Model.Profit.GroupedDataExtensions.BuildSummaryByGrouping(IList`1 profitLines, ReportGrouping reportGrouping, ColumnOrdering ordering) in C:\DEV\ProfitWise\ProfitWise.Data\Model\Profit\GroupedDataExtensions.cs:line 50
+   at ProfitWise.Data.Model.Profit.GroupedDataExtensions.BuildCompleteGroupedSummary(IList`1 orderLineProfits, Int32 currencyId) in C:\DEV\ProfitWise\ProfitWise.Data\Model\Profit\GroupedDataExtensions.cs:line 13
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 82
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-16 11:34:59.8077|Debug|81d8a779-27e9-4b6f-ab10-07db69e8dda3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:35:00.5222|Debug|fe64cb10-da45-4b08-9042-113abb544c2a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:35:00.6812|Debug|736d6bd1-a963-4dd9-97b0-66eb95771f11|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:35:00.7277|Debug|17e93a38-a719-4f7f-a334-579ad52b7184|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:35:00.7792|Debug|e5c1adbe-ba45-4ab0-a66d-be052885f473|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-16 11:35:00.8112|Debug|dec89bd2-9a41-4283-9945-62ae760cc3fa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext

@@ -25,8 +25,7 @@ namespace ProfitWise.Data.Model.Profit
         }
 
         // Sums everything without an grouping
-        public static ExecutiveSummary 
-            BuildExecutiveSummary(this IList<OrderLineProfit> profitLines)
+        public static ExecutiveSummary BuildExecutiveSummary(this IList<OrderLineProfit> profitLines)
         {
             return new ExecutiveSummary()
             {
@@ -36,9 +35,10 @@ namespace ProfitWise.Data.Model.Profit
                 Profit = profitLines.Sum(x => x.Profit)
             };
         }
-
+        
         // Overload for grouping by Search Stub properties that are long numbers
-        public static IList<GroupedTotal> BuildSummaryByGrouping(
+        public static IList<GroupedTotal> 
+                BuildSummaryByGrouping(
                     this IList<OrderLineProfit> profitLines,
                     ReportGrouping reportGrouping,
                     ColumnOrdering ordering = ColumnOrdering.ProfitDescending)
@@ -52,16 +52,14 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.PwMasterProductId)
                         .Select(xg => new GroupedTotal()
                         {
-                            ReportGrouping = ReportGrouping.Product,
+                            GroupingKey = new GroupingKey(ReportGrouping.Product, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
-                            GroupingKeyNumeric = xg.Key,
                             GroupingName = xg.First().SearchStub.ProductTitle
                         })
                         .ToList();
             }
-
             if (reportGrouping == ReportGrouping.Vendor)
             {
                 output =
@@ -69,16 +67,14 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.Vendor)
                         .Select(xg => new GroupedTotal()
                         {
-                            ReportGrouping = ReportGrouping.Vendor,
+                            GroupingKey = new GroupingKey(ReportGrouping.Vendor, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
-                            GroupingKeyString = xg.Key, // ... which will be Vendor
                             GroupingName = xg.First().SearchStub.Vendor
                         })
                         .ToList();
             }
-
             if (reportGrouping == ReportGrouping.ProductType)
             {
                 output =
@@ -86,11 +82,10 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.ProductType)
                         .Select(xg => new GroupedTotal()
                         {
-                            ReportGrouping = ReportGrouping.ProductType,
+                            GroupingKey = new GroupingKey(ReportGrouping.ProductType, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
-                            GroupingKeyString = xg.Key, // ... which will be Vendor
                             GroupingName = xg.First().SearchStub.ProductType,
                         })
                         .ToList();
@@ -103,12 +98,11 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.PwMasterVariantId)
                         .Select(xg => new GroupedTotal()
                         {
-                            ReportGrouping = ReportGrouping.Variant,
+                            GroupingKey = new GroupingKey(ReportGrouping.Variant, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
-                            GroupingKeyNumeric = xg.Key, // ... which will be Vendor
-                            GroupingName = xg.First().SearchStub.Vendor
+                            GroupingName = xg.First().SearchStub.VariantTitle
                         })
                         .ToList();
             }
@@ -116,8 +110,8 @@ namespace ProfitWise.Data.Model.Profit
             return output.TruncateAndAppendRemainingTotal();
         }
         
-        public static 
-                IList<GroupedTotal> TruncateAndAppendRemainingTotal(
+        public static IList<GroupedTotal> 
+                TruncateAndAppendRemainingTotal(
                     this IList<GroupedTotal> input, 
                     ColumnOrdering ordering = ColumnOrdering.ProfitDescending,
                     int maximumRowCount = 10,
@@ -152,8 +146,8 @@ namespace ProfitWise.Data.Model.Profit
             return topResults;
         }
 
-        public static IEnumerable<GroupedTotal> OrderBy(
-            this IList<GroupedTotal> input, ColumnOrdering ordering)
+        public static IEnumerable<GroupedTotal> 
+                OrderBy(this IList<GroupedTotal> input, ColumnOrdering ordering)
         {
             if (ordering == ColumnOrdering.ProfitDescending)
             {

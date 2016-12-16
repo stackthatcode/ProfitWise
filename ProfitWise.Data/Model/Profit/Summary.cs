@@ -13,5 +13,25 @@ namespace ProfitWise.Data.Model.Profit
         public IList<GroupedTotal> VariantByMostProfitable { get; set; }
         public IList<GroupedTotal> ProductTypeByMostProfitable { get; set; }
 
+        public IList<GroupedTotal> TotalsByGroupedId(ReportGrouping groupingId)
+        {
+            if (groupingId == ReportGrouping.Product)
+            {
+                return ProductsByMostProfitable;
+            }
+            if (groupingId == ReportGrouping.Variant)
+            {
+                return VariantByMostProfitable;
+            }
+            if (groupingId == ReportGrouping.ProductType)
+            {
+                return ProductTypeByMostProfitable;
+            }
+            if (groupingId == ReportGrouping.Vendor)
+            {
+                return VendorsByMostProfitable;
+            }
+            throw new ArgumentException();
+        }
     }
 }

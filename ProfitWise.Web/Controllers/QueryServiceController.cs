@@ -20,6 +20,9 @@ namespace ProfitWise.Web.Controllers
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
 
+        public const int NumberOfColumnGroups = 5;
+
+
         public QueryServiceController(MultitenantFactory factory, CurrencyService currencyService)
         {
             _factory = factory;
@@ -63,9 +66,6 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        public const int NumberOfColumnGroups = 5;
-
-
         [HttpPost]
         public ActionResult Dataset(long reportId)
         {
@@ -79,25 +79,49 @@ namespace ProfitWise.Web.Controllers
 
             // Summary for consumption by pie chart
             var shopCurrencyId = userBrief.PwShop.CurrencyId;
-            var summaries = orderLineProfits.BuildCompleteGroupedSummary(shopCurrencyId);
+            var summary = orderLineProfits.BuildCompleteGroupedSummary(shopCurrencyId);
 
 
             // Generate Series for Drill Down
             var granularity = (report.EndDate - report.StartDate).SuggestedDataGranularity();
-            var seriesLimit = 5;
+            List<ReportSeries> seriesDataset;
 
+            if (report.GroupingId == ReportGrouping.Overall)
+            {
+                var series = ReportSeriesFactory.GenerateSeries(report.StartDate, report.EndDate, granularity);
+                series.PopulateWithTotals(orderLineProfits, x => true);
+                seriesDataset = new List<ReportSeries> {series};
+            }
+            else
+            { 
+                var orderedTotalsByGroup =
+                        summary
+                            .TotalsByGroupedId(report.GroupingId)
+                            .Take(NumberOfColumnGroups)
+                            .ToList();
 
-            var productTypes =
-                summaries.ProductTypeByMostProfitable
-                    .Take(seriesLimit)
-                    .Select(x => x.GroupingKeyString)
-                    .ToList();
+                seriesDataset =
+                    BuildSeriesDatasetFromOrderedTotals(
+                        orderLineProfits, orderedTotalsByGroup, report.StartDate, report.EndDate, granularity);
+            }
 
-            var seriesDatset = 
-                orderLineProfits.BuildSeriesByProductTypes(
-                    productTypes, report.StartDate, report.EndDate, granularity);
+            return new JsonNetResult(new { CurrencyId = shopCurrencyId, Summary = summary, Series = seriesDataset });
+        }
 
-            return new JsonNetResult(new { CurrencyId = shopCurrencyId, Summary = summaries, Series = seriesDatset });
+        private static List<ReportSeries>
+                    BuildSeriesDatasetFromOrderedTotals(
+                        IList<OrderLineProfit> orderLines, IList<GroupedTotal> orderedTotals, 
+                        DateTime startDate, DateTime endDate, DataGranularity granularity)
+        {
+            var output = new List<ReportSeries>();
+            foreach (var groupedTotal in orderedTotals)
+            {
+                var series = ReportSeriesFactory.GenerateSeries(startDate, endDate, granularity);
+                var groupingKey = groupedTotal.GroupingKey;
+                series.PopulateWithTotals(orderLines, x => groupingKey.MatchWithOrderLine(x));
+                output.Add(series);
+            }
+            return output;
         }
 
         private IList<OrderLineProfit> 
@@ -130,6 +154,7 @@ namespace ProfitWise.Web.Controllers
             PopulateCogs(orderLineProfits, searchStubs, cogs, shopCurrencyId);
             return orderLineProfits;
         }
+        
 
         private void PopulateCogs(
                     IList<OrderLineProfit> orderLineProfits, 

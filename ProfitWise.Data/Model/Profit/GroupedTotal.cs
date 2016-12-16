@@ -1,29 +1,8 @@
-﻿using Newtonsoft.Json;
-
-namespace ProfitWise.Data.Model.Profit
+﻿namespace ProfitWise.Data.Model.Profit
 {
     public class GroupedTotal
     {
-        public ReportGrouping ReportGrouping { get; set; }
-
-        [JsonIgnore]
-        public long? GroupingKeyNumeric { get; set; }
-
-        [JsonIgnore]
-        public string GroupingKeyString { get; set; }
-
-        public string GroupingKey
-        {
-            get
-            {
-                if (GroupingKeyNumeric != null)
-                {
-                    return GroupingKeyNumeric.ToString();
-                }
-                return GroupingKeyString;
-            }
-        }
-
+        public GroupingKey GroupingKey { get; set; }
         public string GroupingName { get; set; }
 
         public decimal TotalCogs { get; set; }

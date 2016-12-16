@@ -5,23 +5,7 @@ using System.Linq;
 namespace ProfitWise.Data.Model.Profit
 {
     public static class ReportSeriesFactory
-    {
-        public static IList<ReportSeries>
-                BuildSeriesByProductTypes(
-                    this IList<OrderLineProfit> orderLineProfits,
-                    IList<string> productTypes,
-                    DateTime startDate, DateTime endDate, DataGranularity granularity)
-        {
-            var output = new List<ReportSeries>();
-            foreach (var productType in productTypes)
-            {
-                var series = GenerateSeries(startDate, endDate, granularity);
-                series.PopulateWithTotals(orderLineProfits, x => x.SearchStub.ProductType == productType);
-                output.Add(series);
-            }
-            return output;
-        }
-
+    {        
         public static ReportSeries GenerateSeries(DateTime start, DateTime end, DataGranularity level)
         {
             var correctedStart = start.StartOfPeriod(level);
@@ -48,7 +32,7 @@ namespace ProfitWise.Data.Model.Profit
         }
 
         // Takes all Order Line Profits...
-        private static void PopulateWithTotals(
+        public static void PopulateWithTotals(
                     this ReportSeries series,
                     IList<OrderLineProfit> orderLineProfits,
                     Func<OrderLineProfit, bool> orderLineFilter)
@@ -64,5 +48,4 @@ namespace ProfitWise.Data.Model.Profit
             }
         }
     }
-
 }
