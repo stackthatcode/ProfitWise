@@ -123,7 +123,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
         }
 
-        public IList<PwReportSearchStub> RetrieveSearchStubs(long reportId)
+        public List<PwReportSearchStub> RetrieveSearchStubs(long reportId)
         {
             var query =
                 @"SELECT t2.*
@@ -141,7 +141,7 @@ namespace ProfitWise.Data.Repositories
             return results;
         }
 
-        public IList<OrderLineProfit> 
+        public List<OrderLineProfit> 
                     RetrieveOrderLineProfits(long reportId, DateTime startDate, DateTime endDate)
         {
             endDate = endDate.AddDays(1);
@@ -173,7 +173,7 @@ namespace ProfitWise.Data.Repositories
             return results;
         }
 
-        public IList<PwReportMasterVariantCogs> RetrieveCogsData(long reportId)
+        public List<PwReportMasterVariantCogs> RetrieveCogsData(long reportId)
         {
             var query =
                 @"SELECT t2.PwMasterVariantId, t1.CogsCurrencyId, t1.CogsAmount

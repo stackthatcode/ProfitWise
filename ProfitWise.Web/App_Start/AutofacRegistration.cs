@@ -53,7 +53,8 @@ namespace ProfitWise.Web
                 })
                 .AsSelf()
                 .As<DbConnection>()
-                .As<IDbConnection>();
+                .As<IDbConnection>()
+                .InstancePerLifetimeScope();
 
 
             // Error forensics interceptors

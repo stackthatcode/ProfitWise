@@ -8,25 +8,29 @@ namespace ProfitWise.Data.Model.Profit
     public static class ReportSeriesFactory
     {        
         public static ReportSeries GenerateSeries(
-                string seriesName, ReportGrouping grouping, DateTime start, DateTime end, DataGranularity level)
+                string seriesName, GroupingKey groupingKey, DateTime start, DateTime end, DataGranularity level)
         {
             var correctedStart = start.StartOfPeriod(level);
             var correctedEnd = end.EndOfPeriod(level);
 
             var current = correctedStart;
             var output = new ReportSeries();
-            
-            output.Name = seriesName;
-            output.Data = new List<ReportSeriesElement>();
 
+            output.GroupingKey = groupingKey;
+            output.name = seriesName;
+            output.data = new List<ReportSeriesElement>();
+            
             while (current <= correctedEnd)
             {
-                output.Data.Add(
+                output.data.Add(
                     new ReportSeriesElement()
                     {
-                        Name = current.DateLabel(level),
+                        name = current.DateLabel(level),
+                        y = 0,
+
                         Start = current.StartOfPeriod(level),
                         End = current.EndOfPeriod(level),
+                        Parent = output,
                     });
 
                 current = current.AddTime(level);
@@ -59,12 +63,12 @@ namespace ProfitWise.Data.Model.Profit
                     IList<OrderLineProfit> orderLineProfits,
                     Func<OrderLineProfit, bool> orderLineFilter)
         {
-            foreach (var element in series.Data)
+            foreach (var element in series.data)
             {
-                element.Value =
+                element.y =
                     orderLineProfits
                         .Where(x => x.OrderDate >= element.Start &&
-                                    x.OrderDate <= element.End &&
+                                    x.OrderDate <= element.End.AddDays(1).AddSeconds(-1) &&
                                     orderLineFilter(x))
                         .Sum(x => x.TotalCogs);
             }

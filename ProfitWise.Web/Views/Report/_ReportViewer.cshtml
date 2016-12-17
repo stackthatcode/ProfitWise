@@ -410,9 +410,6 @@
                     self.StartDate(startDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
                     self.EndDate(endDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
                     
-                    //console.log(startDate);
-                    //console.log(endDate);
-
                     self.PushDatesFromModel();
                     self.Update();
                 }
@@ -596,14 +593,14 @@
                 function (data) {
                     // Rename to Summary Dataset
                     self.Dataset(data.Summary);
-                    console.log(data);
+                    //console.log(data);
                                         
                     self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.Summary.ProductTypeByMostProfitable, data.CurrencyId);
 
-                    self.LoadColumnChart('#column-chart', 'Profitability', data.Series);
+                    self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown);
                     
                     if (callback) {
                         callback();
@@ -668,49 +665,15 @@
             });
         };
 
-        self.InvokeDrilldownService = function (url, chart) {
-            console.log("Drilldown Service...");
-            console.log(this);
 
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost(url, { }, this);
-                }, function(data) {
-                    console.log(data);
-                });
-        }
+        self.LoadColumnChart = function (id, title, seriesData, drilldownData) {
 
-        self.LoadColumnChart = function (id, title, seriesData) {
-
-            var chartData =
-                AQ(seriesData)
-                    .select(function (item) {
-                        return {
-                            name: item.Name,
-                            data: AQ(item.Data).select(function(element) {
-                                return {
-                                    name: element.Name,
-                                    y: element.Value,
-                                    drilldown: true,
-                                    drilldownAjaxUrl: element.Drilldown,
-                                };
-                            }).toArray()
-                        };
-                    })
-                    .toArray();
-
-            //console.log(chartData);
+            console.log(seriesData);
+            console.log(drilldownData);
 
             $(id).highcharts({
                 chart: {
                     type: 'column',
-                    events: {
-                        drilldown: function (e) {
-                            var url = e.point.drilldownAjaxUrl;
-                            self.InvokeDrilldownService(url, chart);
-                        }
-                    },
                 },
                 title: {
                     text: title
@@ -746,10 +709,10 @@
                         '<span style="color:{point.color}">{point.name}</span>: <b>${point.y:,.2f}</b> total profit<br/>'
                 },
 
-                series: chartData,
+                series: seriesData,
 
                 drilldown: {
-                    series: []
+                    series: drilldownData,
                 }
             });
         };
