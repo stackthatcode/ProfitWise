@@ -104,6 +104,8 @@ FROM profitwisemastervariant t1
 
 SELECT * FROM profitwisemastervariant;
 
+SELECT * FROM shopifyorderlineitem;'
+
 
 # STAGE 4 - pre-grouped output
 

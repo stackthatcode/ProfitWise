@@ -27,12 +27,10 @@ namespace ProfitWise.Data.Repositories
         public ProductAndVariantCount RetrieveReportRecordCount(long reportId)
         {
             var query =
-                @"SELECT COUNT(DISTINCT(t1.PwProductId)) AS ProductCount, COUNT(t3.PwVariantId) AS VariantCount
-                FROM profitwiseproduct t1 
-	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
-                    INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId    
-                WHERE t1.PwShopId = @PwShopId AND t2.PwShopId = @PwShopId AND t3.PwShopId = @PwShopId
-                AND t1.IsPrimary = 1 AND t3.IsPrimary = 1 ";
+                @"SELECT COUNT(PwMasterProductId) AS ProductCount, 
+                        COUNT(PwMasterVariantId) AS VariantCount
+                FROM vw_MasterProductAndVariantSearch 
+                WHERE PwShopId = @PwShopId ";
 
             query += ReportFilterClauseGenerator(reportId);
 
