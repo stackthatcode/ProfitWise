@@ -17,6 +17,8 @@ namespace ProfitWise.Data.Model.Profit
             var output = new ReportSeries();
 
             output.GroupingKey = groupingKey;
+            output.Granularity = level;
+
             output.name = seriesName;
             output.data = new List<ReportSeriesElement>();
             

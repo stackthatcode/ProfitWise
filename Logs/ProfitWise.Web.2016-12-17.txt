@@ -179,3 +179,25 @@
 2016-12-17 09:43:41.0352|Debug|eb9a9617-80e9-419e-b308-ea44066fe2b9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-17 09:43:47.9486|Debug|e1c454a8-b351-4373-a246-2f2763b2579d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-17 09:43:48.0025|Debug|4b7c761a-e93a-417d-9511-63b5ac039168|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:47.4829|Debug|b082f27b-eea6-4b94-8cae-679686af7cfe|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:48.1479|Debug|d26da1b8-98eb-47b5-a29b-0176d4db7477|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:48.2059|Debug|79b38ec6-f665-4497-9cf0-a0390036dcdc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:48.2540|Debug|03f0536e-7369-400a-88bc-c53d41417a0c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:48.3580|Debug|ed762a66-2267-421b-83bf-e78ee28e9090|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:48.4520|Debug|58869836-638e-4a94-b8b9-85d03b5ed186|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:58.8946|Debug|10ad7da6-b2a2-4989-b61d-90dd9030442c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-17 17:35:58.8946|Error|10ad7da6-b2a2-4989-b61d-90dd9030442c|URL:https://gracie2/ProfitWise/Error/ThrowAuthenticatedError - IsAjaxRequest: False
+2016-12-17 17:35:58.9066|Error|10ad7da6-b2a2-4989-b61d-90dd9030442c|System.Exception:This is simulation of a server fault for an authenticated User
+   at ProfitWise.Web.Controllers.ErrorController.ThrowAuthenticatedError() in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\ErrorController.cs:line 45
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
