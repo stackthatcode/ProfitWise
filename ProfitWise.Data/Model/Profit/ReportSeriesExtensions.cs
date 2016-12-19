@@ -48,6 +48,23 @@ namespace ProfitWise.Data.Model.Profit
             {
                 return input.Year.ToString();
             }
+            if (DataGranularity.Quarter == level)
+            {
+                if (input.Month == 1)
+                {
+                    return "Q1, " + input.Year.ToString();
+                }
+                if (input.Month == 4)
+                {
+                    return "Q2, " + input.Year.ToString();
+                }
+                if (input.Month == 7)
+                {
+                    return "Q3, " + input.Year.ToString();
+                }
+    
+                return "Q4, " + input.Year.ToString();
+            }
             if (DataGranularity.Month == level)
             {
                 return input.ToShortMonthName() + " " + input.Year.ToString();

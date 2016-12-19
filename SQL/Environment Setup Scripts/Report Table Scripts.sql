@@ -74,3 +74,5 @@ CREATE TABLE `profitwisereportquerystub` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+
