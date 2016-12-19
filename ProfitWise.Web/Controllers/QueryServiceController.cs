@@ -87,7 +87,7 @@ namespace ProfitWise.Web.Controllers
 
                 var report = reportRepository.RetrieveReport(reportId);
                 var shopCurrencyId = userBrief.PwShop.CurrencyId;
-                var orderLineProfits = BuildOrderLineProfoits(reportId, userBrief, report.StartDate, report.EndDate);
+                var orderLineProfits = BuildOrderLineProfits(reportId, userBrief, report.StartDate, report.EndDate);
 
                 // Summary for consumption by pie chart
                 var summary = orderLineProfits.BuildCompleteGroupedSummary(shopCurrencyId);
@@ -96,7 +96,8 @@ namespace ProfitWise.Web.Controllers
                 var seriesDataset = BuildSeriesTopLevel(report, orderLineProfits, summary);
 
                 // Create the Series drill-down data
-                var drilldown = BuildSeriesDrilldown(seriesDataset, orderLineProfits);
+                var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
+                var drilldown = BuildSeriesDrilldown(seriesDataset, orderLineProfits, completeDrillDown);
 
                 _logger.Debug("End - Dataset method");
 
@@ -110,7 +111,7 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
-        private List<OrderLineProfit> BuildOrderLineProfoits(
+        private List<OrderLineProfit> BuildOrderLineProfits(
             long reportId, IdentitySnapshot userBrief, DateTime startDate, DateTime endDate)
         {
             var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
@@ -221,7 +222,10 @@ namespace ProfitWise.Web.Controllers
             return output;
         }
 
-        private List<ReportSeries> BuildSeriesDrilldown(List<ReportSeries> seriesDataset, List<OrderLineProfit> orderLineProfits)
+        private List<ReportSeries> BuildSeriesDrilldown(
+                    List<ReportSeries> seriesDataset, 
+                    List<OrderLineProfit> orderLineProfits, 
+                    bool completeDrillDown)
         {
             var output = new List<ReportSeries>();
             foreach (var series in seriesDataset)
@@ -230,10 +234,10 @@ namespace ProfitWise.Web.Controllers
                 output.AddRange(drilldownSeries);
 
                 // Note: there's no need to drilldown past Week
-                if (series.Granularity != DataGranularity.Week && series.Granularity != DataGranularity.Day)
+                if (completeDrillDown && series.Granularity != DataGranularity.Week && series.Granularity != DataGranularity.Day)
                 {
                     // Recursive invocation
-                    output.AddRange(BuildSeriesDrilldown(drilldownSeries, orderLineProfits));
+                    output.AddRange(BuildSeriesDrilldown(drilldownSeries, orderLineProfits, true));
                 }
             }
             return output;

@@ -43,7 +43,5 @@ namespace ProfitWise.Data.Model.Profit
             return $"Start: {Start}, End: {End}";
         }
     }
-
 }
-
 

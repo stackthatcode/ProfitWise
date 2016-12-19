@@ -55,7 +55,7 @@ namespace ProfitWise.Data.Model.Profit
                 {
                     month = 7;
                 }
-                else month = 12;
+                else month = 10;
 
                 return new DateTime(input.Year, month, 1);
             }
@@ -76,20 +76,7 @@ namespace ProfitWise.Data.Model.Profit
 
         public static DateTime EndOfPeriod(this DateTime input, DataGranularity level)
         {
-            if (level == DataGranularity.Day)
-            {
-                return input;
-            }
-            if (level == DataGranularity.Month)
-            {
-                var nextMonth = input.AddMonths(1);
-                return new DateTime(nextMonth.Year, nextMonth.Month, 1).AddDays(-1);
-            }
-            if (level == DataGranularity.Week)
-            {
-                return input.StartOfWeek(DayOfWeek.Sunday).AddDays(6);
-            }
-            return new DateTime(input.Year + 1, 1, 1).AddDays(-1);
+            return input.StartOfPeriod(level).AddTime(level).AddDays(-1);
         }
 
         public static DataGranularity SuggestedDataGranularity(this TimeSpan lengthOfReportingPeriod)
