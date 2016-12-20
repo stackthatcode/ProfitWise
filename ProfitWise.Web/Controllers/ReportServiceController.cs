@@ -14,7 +14,7 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
 
-        public const int MaximumUserDefinedReports = 2;
+        public const int MaximumUserDefinedReports = 20;
 
 
         public ReportServiceController(MultitenantFactory factory, CurrencyService currencyService)
