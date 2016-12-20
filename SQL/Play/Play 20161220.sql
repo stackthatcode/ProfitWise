@@ -29,16 +29,28 @@ WHERE t1.PwReportID = 99739;
 
 ### CoGS Update query...
 
-SELECT 	t1.PwMasterVariantId, SUM(t3.GrossRevenue), t1.CogsCurrencyId, t4.DestinationCurrencyId, t4.Rate
-FROM profitwisemastervariant t1
+### 
+
+SELECT 	t0.CurrencyId, t1.PwMasterVariantId, t3.ShopifyOrderLineId, t3.OrderDate, t1.CogsCurrencyId, t1.CogsAmount, t4.Rate
+FROM profitwiseshop t0
+    INNER JOIN profitwisemastervariant t1 
+		ON t0.PwShopId = t1.PwShopId
 	INNER JOIN profitwisevariant t2
 		ON t1.PwMasterVariantId = t2.PwMasterVariantId AND t1.PwShopId = t2.PwShopId
 	INNER JOIN shopifyorderlineitem t3
-		ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId AND t2.PwShopID = t3.PwShopId
-	INNER JOIN exchangerate t4
-		ON t3.OrderDate = t4.`Date` AND t1.CogsCurrencyId = t4.DestinationCurrencyId
-GROUP BY t1.PwMasterVariantId;
+		ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId AND t2.PwShopID = t3.PwShopId        
+	LEFT JOIN exchangerate t4
+		ON Date(t3.OrderDate) = t4.`Date` 
+			AND t4.SourceCurrencyId = t1.CogsCurrencyId
+			AND t4.DestinationCurrencyId = t0.CurrencyId;
 
+
+
+SELECT * FROM profitwiseshop;
+
+SELECT * FROM profitwisemastervariant;
+
+UPDATE profitwisemastervariant SET CogsCurrencyId = 1, CogsAmount = 20;
 
 
 SELECT * FROM profitwisemastervariant;

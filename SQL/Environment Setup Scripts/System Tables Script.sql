@@ -56,6 +56,8 @@ SELECT * FROM exchangerate;
 SELECT * FROM systemstate;
 
 SELECT * FROM exchangerate;
+# WHERE Date = '2014-01-01';
 
 SELECT * FROM currency;
+
 

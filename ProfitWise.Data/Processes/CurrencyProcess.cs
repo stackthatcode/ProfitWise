@@ -76,7 +76,15 @@ namespace ProfitWise.Data.Processes
             _pushLogger.Info($"Inserting Exchange Rate padding from {endDate} through {endDatePadding}");
             while (paddingDate <= endDatePadding)
             {
-                WriteRatesForDate(paddingDate, lastRates);
+                _pushLogger.Debug($"Projecting Exchange Rates from {endDate} for {paddingDate}");
+
+                _currencyRepository.DeleteForDate(paddingDate);
+
+                foreach (var rate in lastRates)
+                {
+                    rate.Date = paddingDate;
+                    _currencyRepository.InsertExchangeRate(rate);
+                }
                 paddingDate = paddingDate.AddDays(1);
             }
         }
@@ -87,7 +95,7 @@ namespace ProfitWise.Data.Processes
             {
                 // Clear out the date
                 _currencyRepository.DeleteForDate(date);
-                _pushLogger.Debug($"Writing Exchange Rates for {date}");
+                _pushLogger.Info($"Writing Exchange Rates for {date}");
 
                 foreach (var rate in ExtrapolateFullSetOfExchangeRate(date, rates))
                 {
@@ -101,6 +109,7 @@ namespace ProfitWise.Data.Processes
                         });
                 }
                 
+                _systemStateRepository.UpdateExchangeRateLastDate(date);
                 trans.Commit();
             }
         }

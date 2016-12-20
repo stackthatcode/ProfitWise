@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -27,7 +27,7 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<SystemState>(query).First();
         }
 
-        public void ExchangeRateLastDate(DateTime date)
+        public void UpdateExchangeRateLastDate(DateTime date)
         {
             var query = @"UPDATE systemstate SET ExchangeRateLastDate = @date;";
             _connection.Execute(query, new { date });
