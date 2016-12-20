@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Model.Reports;
 using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model.Profit

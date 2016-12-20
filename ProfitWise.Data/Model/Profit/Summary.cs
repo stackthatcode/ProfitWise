@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ProfitWise.Data.Model.Reports;
 
 namespace ProfitWise.Data.Model.Profit
 {

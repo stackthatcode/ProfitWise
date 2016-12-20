@@ -2,28 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Reports
 {
     public class PwReport
     {
         public PwReport()
         {
-            ProductTypes = new List<string>();
-            Vendors = new List<string>();
-            MasterProductIds = new List<long>();
-            Skus = new List<string>();
             CopyForEditing = false;
-            CopyOfSystemReport = false;
             IsSystemReport = false;
         }
 
         public long PwReportId { get; set; }
         public long PwShopId { get; set; }
 
-        public string Name { get; set; }        
+        public string Name { get; set; }
+
+        public bool IsSystemReport { get; set; }
         public bool CopyForEditing { get; set; }
-        public bool CopyOfSystemReport { get; set; }
-        public long? OriginalReportId { get; set; }
+        public long OriginalReportId { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }    
@@ -34,17 +30,26 @@ namespace ProfitWise.Data.Model
         public DateTime LastAccessedDate { get; set; }
 
 
-        public IList<string> ProductTypes { get; set; }
-        public IList<string> Vendors { get; set; }
-        public IList<long> MasterProductIds { get; set; }
-        public IList<string> Skus { get; set; }  
-        
-        public bool IsSystemReport { get; set; }
-
+        public PwReport MakeCopyForEditing()
+        {
+            return new PwReport()
+            {
+                PwShopId = this.PwShopId,
+                Name = this.Name,
+                IsSystemReport = false,
+                CopyForEditing = true,
+                OriginalReportId = this.PwReportId,
+                StartDate = this.StartDate,
+                EndDate = this.EndDate,
+                GroupingId = this.GroupingId,
+                OrderingId = this.OrderingId,
+                CreatedDate = DateTime.Now,
+                LastAccessedDate = DateTime.Now,
+            };
+        }
 
         public void PrepareToSavePermanent(string name)
         {
-            CopyOfSystemReport = false;
             CopyForEditing = false;
             Name = name;
             LastAccessedDate = DateTime.Now;
@@ -132,6 +137,7 @@ namespace ProfitWise.Data.Model
             return new PwReport
             {
                 PwReportId = OverallProfitabilityId,
+                OriginalReportId = OverallProfitabilityId,
                 Name = "Overall Profitability",
                 StartDate = DateTime.Today.AddDays(-7),
                 EndDate = DateTime.Today,
@@ -146,6 +152,7 @@ namespace ProfitWise.Data.Model
             return new PwReport
             {
                 PwReportId = TestReportId,
+                OriginalReportId = TestReportId,
                 Name = "Test Report",
                 StartDate = DateTime.Today.AddDays(-14),
                 EndDate = DateTime.Today.AddDays(-7),

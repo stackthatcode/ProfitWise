@@ -1,4 +1,5 @@
 ﻿using System;
+using ProfitWise.Data.Model.Reports;
 
 namespace ProfitWise.Data.Model.Profit
 {

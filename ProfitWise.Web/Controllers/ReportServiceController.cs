@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
-using ProfitWise.Web.Models;
-using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -16,6 +13,9 @@ namespace ProfitWise.Web.Controllers
     public class ReportServiceController : Controller
     {
         private readonly MultitenantFactory _factory;
+
+        public const int MaximumUserDefinedReports = 2;
+
 
         public ReportServiceController(MultitenantFactory factory, CurrencyService currencyService)
         {
@@ -40,8 +40,10 @@ namespace ProfitWise.Web.Controllers
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            
-            return new JsonNetResult(repository.RetrieveReport(reportId));
+
+            var current = repository.RetrieveReport(reportId);
+            var original = repository.RetrieveReport(current.OriginalReportId);
+            return new JsonNetResult(new { current = current, original = original ?? current });
         }
 
         [HttpPost]
@@ -54,42 +56,53 @@ namespace ProfitWise.Web.Controllers
             var nameCollision = repository.ReportNameCollision(reportId, name);
             if (nameCollision)
             {
-                return new JsonNetResult(new { success = false, message = "Report with same name exists already" });
+                return new JsonNetResult(
+                    new { success = false, message = "Report with same name exists already" });
             }
+
+            var numberOfCustomerReports = repository.RetrieveUserDefinedReportCount();
+            if (deleteOriginal == false && numberOfCustomerReports >= MaximumUserDefinedReports)
+            {
+                return new JsonNetResult(
+                    new {success = false, message = "Maximum number of custom reports exceeded"});
+            }
+
 
             var successMessage = "Report successfully saved";
-            var reportToCopy = repository.RetrieveReport(reportId);
-            
-            if (reportToCopy.IsSystemReport)
-            {
-                // Looks like the User hit Save As directly from the System Report
-                reportToCopy.PrepareToSavePermanent(name);
-                var newReportId = repository.InsertReport(reportToCopy);
-                return new JsonNetResult(new
-                {
-                    success = true, message = successMessage, reportId = newReportId
-                });
-            }
+            var sourceReport = repository.RetrieveReport(reportId);            
 
             var finalReportId = (long?) null;
-            if (reportToCopy.CopyForEditing)
+            if (sourceReport.CopyForEditing)
             {
-                reportToCopy.PrepareToSavePermanent(name);
-                finalReportId = reportToCopy.PwReportId;
-                repository.UpdateReport(reportToCopy);
+                sourceReport.PrepareToSavePermanent(name);
+                finalReportId = sourceReport.PwReportId;
+                repository.UpdateReport(sourceReport);
+
+                if (deleteOriginal)
+                {
+                    var originalReport = repository.RetrieveReport(sourceReport.OriginalReportId);
+                    if (!originalReport.IsSystemReport)
+                    {
+                        repository.DeleteReport(originalReport.PwReportId);
+                        filterRepository.DeleteFilters(originalReport.PwReportId);
+                    }
+                }
             }
             else
             {
-                // The User has not yet made edits to the Report
-                reportToCopy.PrepareToSavePermanent(name);
-                finalReportId = repository.InsertReport(reportToCopy);
-            }
+                // This is not an edit copy, therefore, we'll make a copy of it
+                var copy = sourceReport.MakeCopyForEditing();
+                copy.PrepareToSavePermanent(name);
+                finalReportId = repository.InsertReport(copy);
 
-            if (deleteOriginal && reportToCopy.OriginalReportId.HasValue)
-            {
-                // Did they opt to delete the original Report?
-                repository.DeleteReport(reportToCopy.OriginalReportId.Value);
-                filterRepository.DeleteFilters(reportToCopy.OriginalReportId.Value);
+                filterRepository.CloneFilters(sourceReport.PwReportId, finalReportId.Value);
+
+                if (deleteOriginal && !sourceReport.IsSystemReport)
+                {
+                    repository.DeleteReport(sourceReport.PwReportId);
+                    filterRepository.DeleteFilters(sourceReport.PwReportId);
+
+                }
             }
             
             return new JsonNetResult(new
@@ -104,6 +117,7 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var filterRepository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+
             var reportToSave = repository.RetrieveReport(reportId);
 
             if (!reportToSave.CopyForEditing)
@@ -117,7 +131,7 @@ namespace ProfitWise.Web.Controllers
                         });
             }
 
-            var originalReport = repository.RetrieveReport(reportToSave.OriginalReportId.Value);
+            var originalReport = repository.RetrieveReport(reportToSave.OriginalReportId);
             originalReport.Name = reportToSave.Name;
             originalReport.StartDate = reportToSave.StartDate;
             originalReport.EndDate = reportToSave.EndDate;
@@ -126,7 +140,9 @@ namespace ProfitWise.Web.Controllers
 
             repository.UpdateReport(originalReport);
             filterRepository.CloneFilters(reportToSave.PwReportId, originalReport.PwReportId);
+
             repository.DeleteReport(reportToSave.PwReportId);
+            filterRepository.DeleteFilters(reportToSave.PwReportId);
 
             return new JsonNetResult(
                 new
@@ -143,17 +159,14 @@ namespace ProfitWise.Web.Controllers
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var filterRepository = _factory.MakeReportFilterRepository(userBrief.PwShop);
-            var reportToCopy = repository.RetrieveReport(reportId);
 
-            reportToCopy.CopyOfSystemReport = reportId.IsSystemReport();
-            reportToCopy.CopyForEditing = true;
-            reportToCopy.OriginalReportId = reportId;
-            var newReportId = repository.InsertReport(reportToCopy);
-            filterRepository.CloneFilters(reportId, newReportId);
-            filterRepository.CloneFilters(reportId, newReportId);
+            var sourceReport = repository.RetrieveReport(reportId);
+            var copyReport = sourceReport.MakeCopyForEditing();
+            copyReport.PwReportId = repository.InsertReport(copyReport);
+            
+            filterRepository.CloneFilters(reportId, copyReport.PwReportId);
 
-            var report = repository.RetrieveReport(newReportId);
-            return new JsonNetResult(report);
+            return new JsonNetResult(new { current = copyReport, original = sourceReport});
         }
 
         [HttpPost]
@@ -184,15 +197,19 @@ namespace ProfitWise.Web.Controllers
             var report = repository.RetrieveReport(reportId);
             repository.DeleteReport(report.PwReportId);
             filterRepository.DeleteFilters(report.PwReportId);
-            if (!report.CopyOfSystemReport && report.OriginalReportId != null)
+
+            if (report.CopyForEditing)
             {
-                repository.DeleteReport(report.OriginalReportId.Value);
-                filterRepository.DeleteFilters(report.OriginalReportId.Value);
+                var originalReport = repository.RetrieveReport(report.OriginalReportId);
+                if (!originalReport.IsSystemReport)
+                {
+                    repository.DeleteReport(originalReport.PwReportId);
+                    filterRepository.DeleteFilters(originalReport.PwReportId);
+                }
             }
+
             return JsonNetResult.Success();
         }
-
-
     }
 }
 

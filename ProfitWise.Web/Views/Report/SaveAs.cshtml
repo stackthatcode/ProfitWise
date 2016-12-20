@@ -1,5 +1,5 @@
 ﻿@using Push.Foundation.Web.Json
-@model ProfitWise.Data.Model.PwReport
+@model ProfitWise.Web.Models.SaveAsModel
 @{
     ViewBag.CommonContext.PageTitle = "Report Save As";
     Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
@@ -72,13 +72,14 @@
                 self.ValidationMessage = ko.observable();
 
                 self.CopyForEditing = ko.observable(false);
-                self.CopyOfSystemReport = ko.observable(false);
                 self.IsSystemReport = ko.observable(false);
+                
+                self.CopyOfSystemReport = ko.observable(false);
 
+                // Need to add "IsCopyOfOriginal" - or actually Original Report object
                 self.ShowDeleteOriginal = ko.computed(
                     function() {
-                        return !self.CopyOfSystemReport() 
-                                && !self.IsSystemReport();
+                        return !self.IsSystemReport() && !self.CopyOfSystemReport();
                     }
                 );
 
@@ -126,10 +127,12 @@
             };
 
             var model = new ProfitWise.ReportSaveAsModel();
-            model.ReportId(modelData.PwReportId);
-            model.Name(modelData.Name);
-            model.CopyOfSystemReport(modelData.CopyOfSystemReport);
-            model.IsSystemReport(modelData.IsSystemReport);
+            model.ReportId(modelData.Current.PwReportId);
+            model.Name(modelData.Current.Name);
+            model.IsSystemReport(modelData.Current.IsSystemReport);
+
+            model.CopyOfSystemReport(
+                modelData.Current.CopyForEditing && modelData.Original.IsSystemReport);
             
             // Load Product data into the model
             ko.applyBindings(model);

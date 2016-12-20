@@ -319,7 +319,7 @@
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
                 function (report) {
-                    self.ReportContext(report);
+                    self.ReportContext(report.current);
                     self.ProductTypeClick();
                 });
         };

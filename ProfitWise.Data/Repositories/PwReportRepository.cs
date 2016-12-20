@@ -5,6 +5,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Reports;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -31,22 +32,31 @@ namespace ProfitWise.Data.Repositories
             var query = 
                     @"SELECT * FROM profitwisereport 
                     WHERE PwShopId = @PwShopId 
-                    AND CopyOfSystemReport = 0
                     AND CopyForEditing = 0;";
             var results = _connection.Query<PwReport>(query, new {PwShopId}).ToList();
-            return results;
+            return results.OrderBy(x => x.Name).ToList();
         }
+
+        public int RetrieveUserDefinedReportCount()
+        {
+            var query =
+                    @"SELECT COUNT(*) FROM profitwisereport 
+                    WHERE PwShopId = @PwShopId 
+                    AND CopyForEditing = 0;";
+            var results = _connection.Query<int>(query, new { PwShopId });
+            return results.First();
+        }
+
 
         public List<PwReport> RetrieveSystemDefinedReports()
         {
-            List<PwReport>
-            systemDefinedReports = new List<PwReport>()
+            List<PwReport> systemDefinedReports = new List<PwReport>()
             {
                 PwSystemReportFactory.OverallProfitability(),
                 PwSystemReportFactory.TestReport(),
             };
             systemDefinedReports.ForEach(x => x.PwShopId = this.PwShopId);
-            return systemDefinedReports;
+            return systemDefinedReports.OrderBy(x => x.Name).ToList();
         }
 
         public PwReport RetrieveReport(long reportId)
@@ -106,10 +116,10 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"INSERT INTO profitwisereport (
-                    PwShopId, Name, CopyForEditing, CopyOfSystemReport, OriginalReportId, StartDate, EndDate, 
+                    PwShopId, Name, IsSystemReport, CopyForEditing, OriginalReportId, StartDate, EndDate, 
                     GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
                 VALUES ( 
-                    @PwShopId, @Name, @CopyForEditing, @CopyOfSystemReport, @OriginalReportId, @StartDate, @EndDate,
+                    @PwShopId, @Name, @IsSystemReport, @CopyForEditing, @OriginalReportId, @StartDate, @EndDate,
                     @GroupingId, @OrderingId, NOW(), NOW() );
                 
                 SELECT LAST_INSERT_ID();";
@@ -121,9 +131,9 @@ namespace ProfitWise.Data.Repositories
         {
             report.PwShopId = PwShopId;
 
-            var query = @"UPDATE profitwisereport 
-                        SET Name = @Name,
-                        CopyOfSystemReport = @CopyOfSystemReport,
+            var query = @"UPDATE profitwisereport SET 
+                        Name = @Name,
+                        IsSystemReport = @IsSystemReport,
                         CopyForEditing = @CopyForEditing,
                         OriginalReportId = @OriginalReportId,
                         StartDate = @StartDate,

@@ -38,9 +38,9 @@ CREATE TABLE `profitwisereport` (
 	
     `Name` varchar(50) NULL,
     
-    `CopyOfSystemReport` TINYINT NOT NULL,
+    `IsSystemReport` TINYINT NOT NULL,
     `CopyForEditing` TINYINT NOT NULL,
-    `OriginalReportId` BIGINT NULL,    
+    `OriginalReportId` BIGINT NOT NULL,    
     
     `StartDate` DATE NOT NULL,
     `EndDate` DATE NOT NULL,

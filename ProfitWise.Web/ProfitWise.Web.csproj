@@ -251,6 +251,7 @@
     <Compile Include="Models\FilterEditorModel.cs" />
     <Compile Include="Models\MoneyRange.cs" />
     <Compile Include="Models\PreviewSelectionLimit.cs" />
+    <Compile Include="Models\SaveAsModel.cs" />
     <Compile Include="Models\SearchResultSelection.cs" />
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />
