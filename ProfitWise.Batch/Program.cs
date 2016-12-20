@@ -14,31 +14,42 @@ namespace ProfitWise.Batch
             Bootstrap.ConfigureApp();
             using (var container = AutofacRegistration.Build())
             {
+                //ExchangeRateProcess(container);
+
                 RefreshServiceForSingleUser(container, args);
 
                 Console.Write("Please hit enter...");
                 Console.ReadLine();
             }
         }
-
-
-
+        
         private static void RefreshServiceForSingleUser(IContainer container, string[] args)
         {
             using (var scope = container.BeginLifetimeScope())
             {
-                var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
-                //var userId = "57f0da58-6e74-41d5-90a9-736d09aa3b2f";
+                //var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
+                var userId = "57f0da58-6e74-41d5-90a9-736d09aa3b2f";
 
 
-                //var currencyProcess = scope.Resolve<CurrencyProcess>();
-                //currencyProcess.Execute();
+                var currencyProcess = scope.Resolve<CurrencyProcess>();
+                currencyProcess.Execute();
 
-                var refreshProcess = scope.Resolve<RefreshProcess>();
-                refreshProcess.Execute(userId);
+                //var refreshProcess = scope.Resolve<RefreshProcess>();
+                //refreshProcess.Execute(userId);
 
             }
+
         }
+
+        private static void ExchangeRateProcess(IContainer container)
+        {
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var exchangeRateProcess = scope.Resolve<CurrencyProcess>();
+                exchangeRateProcess.Execute();
+            }
+        }
+
 
 
         private static void InvokeRefreshServices(IContainer container, string[] args)
@@ -71,10 +82,7 @@ namespace ProfitWise.Batch
                 artificialUserId++;
             }
         }
-
-
-
-
+        
         private static void TestTimeZoneTranslation(IContainer container)
         {
             var translator = container.Resolve<TimeZoneTranslator>();

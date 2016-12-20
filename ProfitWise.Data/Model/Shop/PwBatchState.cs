@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Shop
 {
     public class PwBatchState
     {
@@ -8,6 +8,7 @@ namespace ProfitWise.Data.Model
         public DateTime? ProductsLastUpdated { get; set; }
         public DateTime? OrderDatasetStart { get; set; }
         public DateTime? OrderDatasetEnd { get; set; }
+
 
         public override string ToString()
         {

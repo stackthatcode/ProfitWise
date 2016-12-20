@@ -10,6 +10,7 @@ namespace ProfitWise.Data.Model
         public long ShopifyOrderId { get; set; }
 
         public ShopifyOrder ParentOrder { get; set; }
+        public DateTime OrderDateTimestamp { get; set; }
         public DateTime OrderDate { get; set; }
 
         public long? PwProductId { get; set; }

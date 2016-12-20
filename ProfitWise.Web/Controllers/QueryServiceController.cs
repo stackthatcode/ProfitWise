@@ -189,40 +189,46 @@ namespace ProfitWise.Web.Controllers
                         .Take(NumberOfColumnGroups)
                         .ToList();
 
-                seriesDataset =
-                    BuildSeriesFromOrderedTotals(
-                        orderLineProfits, orderedTotalsBySelectedGroup, report, granularity);
+                seriesDataset = new List<ReportSeries>();
+
+                foreach (var groupedTotal in orderedTotalsBySelectedGroup)
+                {
+                    seriesDataset.Add(
+                            BuildSeriesFromGroupKeyInclusive(
+                                    orderLineProfits, 
+                                    groupedTotal.GroupingName,
+                                    groupedTotal.GroupingKey,
+                                    report.StartDate,
+                                    report.EndDate,
+                                    granularity));
+                }
             }
             return seriesDataset;
         }
 
-        private List<ReportSeries>
-                    BuildSeriesFromOrderedTotals(
+        private ReportSeries
+                    BuildSeriesFromGroupKeyInclusive(
                         IList<OrderLineProfit> orderLines,
-                        IList<GroupedTotal> orderedTotals,
-                        PwReport report,
+                        string groupingName,
+                        GroupingKey groupingKey,
+                        DateTime start,
+                        DateTime end,
                         DataGranularity granularity)
         {
-            var output = new List<ReportSeries>();
-            foreach (var groupedTotal in orderedTotals)
-            {
-                var series =
-                    ReportSeriesFactory.GenerateSeries(
-                        groupedTotal.GroupingName,  // Ultimaker 2, 3D Printers, 3DU285PLARED, etc.
-                        groupedTotal.GroupingKey,
-                        report.StartDate,
-                        report.EndDate,
-                        granularity);
+            var series =
+                ReportSeriesFactory.GenerateSeries(
+                    groupingName,  // Ultimaker 2, 3D Printers, 3DU285PLARED, etc.
+                    groupingKey,
+                    start,
+                    end,
+                    granularity);
 
-                series.id = groupedTotal.GroupingName;
-                var groupingKey = groupedTotal.GroupingKey;
-                series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
-                output.Add(series);
-            }
-
-            return output;
+            series.id = groupingName;
+            series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
+            return series;
         }
 
+        
         private List<ReportSeries> BuildSeriesDrilldown(
                     List<ReportSeries> seriesDataset, 
                     List<OrderLineProfit> orderLineProfits, 

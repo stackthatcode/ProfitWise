@@ -67,7 +67,6 @@ namespace ProfitWise.Web.Controllers
                     new {success = false, message = "Maximum number of custom reports exceeded"});
             }
 
-
             var successMessage = "Report successfully saved";
             var sourceReport = repository.RetrieveReport(reportId);            
 

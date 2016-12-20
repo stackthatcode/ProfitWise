@@ -49,7 +49,8 @@ namespace ProfitWise.Data.Model
             shopifyOrderLineItem.PwShopId = pwShopId;
 
             shopifyOrderLineItem.ParentOrder = parentOrder;
-            shopifyOrderLineItem.OrderDate = parentOrder.CreatedAt;
+            shopifyOrderLineItem.OrderDate = parentOrder.CreatedAt.Date;
+            shopifyOrderLineItem.OrderDateTimestamp = parentOrder.CreatedAt;
             shopifyOrderLineItem.ShopifyOrderId = parentOrder.ShopifyOrderId;
             shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
 

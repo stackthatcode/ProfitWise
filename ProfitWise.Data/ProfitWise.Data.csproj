@@ -83,8 +83,8 @@
     <Compile Include="Model\Profit\SimpleCogs.cs" />
     <Compile Include="Model\Profit\ReportSearchStub.cs" />
     <Compile Include="Model\Profit\OrderLineProfit.cs" />
-    <Compile Include="Model\Exchange\ExchangeRate.cs" />
-    <Compile Include="Model\Exchange\Currency.cs" />
+    <Compile Include="Model\System\ExchangeRate.cs" />
+    <Compile Include="Model\System\Currency.cs" />
     <Compile Include="Model\Shopify\OrderLineItemSubset.cs" />
     <Compile Include="Model\Cogs\ProductSearchFilter.cs" />
     <Compile Include="Model\Cogs\PwCogsVariant.cs" />
@@ -112,6 +112,8 @@
     <Compile Include="Model\Shopify\ShopifyOrderExtensions.cs" />
     <Compile Include="Model\Shopify\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\Shop\PwShop.cs" />
+    <Compile Include="Model\System\SystemState.cs" />
+    <Compile Include="Repositories\SystemStateRepository.cs" />
     <Compile Include="Repositories\PwReportQueryRepository.cs" />
     <Compile Include="Repositories\PwReportFilterRepository.cs" />
     <Compile Include="Repositories\PwPickListRepository.cs" />

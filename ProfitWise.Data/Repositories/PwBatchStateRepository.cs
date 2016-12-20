@@ -4,6 +4,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -38,7 +39,8 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwisebatchstate SET 
                             ProductsLastUpdated = @ProductsLastUpdated, 
                             OrderDatasetStart = @OrderDatasetStart, 
-                            OrderDatasetEnd = @OrderDatasetEnd
+                            OrderDatasetEnd = @OrderDatasetEnd,
+                            ExchangeRateLastDate = @ExchangeRateLastDate
                             WHERE PwShopId = @PwShopId";
             _connection.Execute(query, state);
         }

@@ -1620,3 +1620,165 @@ MySql.Data.MySqlClient.MySqlException:Parameter '@CopyOfSystemReport' must be de
 2016-12-20 11:49:03.1220|Debug|ed89c387-0aea-4003-83f4-25e52e9bcb6c|Start database queries - query stub creation/retrieval and order line profits
 2016-12-20 11:49:03.3414|Debug|ed89c387-0aea-4003-83f4-25e52e9bcb6c|End database queries - query stub creation/retrieval and order line profits
 2016-12-20 11:49:03.3414|Debug|ed89c387-0aea-4003-83f4-25e52e9bcb6c|End - Dataset method
+2016-12-20 12:47:55.0921|Debug|c2ae369d-1ac5-46eb-a7ca-372bfa4ae938|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:47:58.3431|Debug|f1d49e87-255b-44d1-85c8-d6fa8169162e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:47:58.5381|Debug|0e4922c2-fc16-4889-8d08-57eb52d85597|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:47:58.5891|Debug|f3030f8b-2ff2-41ba-bd65-1a367634706f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:47:58.6561|Debug|adc5714d-6b0c-45e0-908e-59642e1e3175|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:47:58.6916|Debug|ac493d7a-a0e1-4a1a-b8c5-7624a7a4becf|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:47:58.6961|Debug|ac493d7a-a0e1-4a1a-b8c5-7624a7a4becf|Start - Dataset method
+2016-12-20 12:47:58.6961|Debug|ac493d7a-a0e1-4a1a-b8c5-7624a7a4becf|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:47:58.9866|Debug|ac493d7a-a0e1-4a1a-b8c5-7624a7a4becf|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:47:59.0106|Debug|ac493d7a-a0e1-4a1a-b8c5-7624a7a4becf|End - Dataset method
+2016-12-20 12:48:02.6034|Debug|3c2eb0ba-be9c-460a-9225-32612e6a779e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:02.7469|Debug|cd204fe6-8bf5-4dc4-a6c3-90fb45379035|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:02.7689|Debug|36ae1e83-1d99-4a17-a9db-5dfdde4e7f17|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:02.7839|Debug|d6e5a85f-e469-404e-86b5-b7b4328571ba|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:02.7839|Debug|d6e5a85f-e469-404e-86b5-b7b4328571ba|Start - Dataset method
+2016-12-20 12:48:02.7839|Debug|d6e5a85f-e469-404e-86b5-b7b4328571ba|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:48:02.9829|Debug|d6e5a85f-e469-404e-86b5-b7b4328571ba|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:48:02.9829|Debug|d6e5a85f-e469-404e-86b5-b7b4328571ba|End - Dataset method
+2016-12-20 12:48:05.4459|Debug|dab2c697-cbd7-474c-b495-ef2076f6a440|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:05.6049|Debug|674dfb0b-8438-4d5a-8d29-10d325f7457b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:05.6384|Debug|0802f476-d25a-4464-a00d-9df222726730|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:05.6384|Debug|0802f476-d25a-4464-a00d-9df222726730|Start - Dataset method
+2016-12-20 12:48:05.6384|Debug|0802f476-d25a-4464-a00d-9df222726730|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:48:05.8899|Debug|0802f476-d25a-4464-a00d-9df222726730|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:48:05.8974|Info|0802f476-d25a-4464-a00d-9df222726730|Loading Exchange Rates cache 
+2016-12-20 12:48:05.9869|Info|0802f476-d25a-4464-a00d-9df222726730|Exchange Rates cached from 1/1/2006 12:00:00 AM through 10/31/2016 12:00:00 AM
+2016-12-20 12:48:05.9869|Info|0802f476-d25a-4464-a00d-9df222726730|CacheRefreshAllowed set to 12/20/2016 1:03:05 PM
+2016-12-20 12:48:06.8919|Debug|0802f476-d25a-4464-a00d-9df222726730|End - Dataset method
+2016-12-20 12:48:12.1062|Debug|df467e00-12fb-4065-a1ca-9904cac37453|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:12.1947|Debug|33fd6fe5-a4bc-4538-b036-cff290bb9480|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:48:12.1947|Debug|33fd6fe5-a4bc-4538-b036-cff290bb9480|Start - Dataset method
+2016-12-20 12:48:12.1947|Debug|33fd6fe5-a4bc-4538-b036-cff290bb9480|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:48:12.4317|Debug|33fd6fe5-a4bc-4538-b036-cff290bb9480|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:48:13.3977|Debug|33fd6fe5-a4bc-4538-b036-cff290bb9480|End - Dataset method
+2016-12-20 12:50:05.1781|Debug|84b5e646-c558-4ea1-b8a6-906366a3a70c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:05.7956|Debug|4599ce5b-a82e-4546-b4c2-1da58a275177|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:05.8426|Debug|d407f401-6b4f-451e-ace2-122329cf2cf5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:05.9537|Debug|6bf74deb-c9cf-49a1-97fa-3a52ba458db1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:06.1347|Debug|e6ac066e-3f36-4dab-b20c-1ad4281fcd94|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:06.1527|Debug|642d6450-307c-4e0b-ade7-4bb5747e570a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:06.1527|Debug|642d6450-307c-4e0b-ade7-4bb5747e570a|Start - Dataset method
+2016-12-20 12:50:06.1527|Debug|642d6450-307c-4e0b-ade7-4bb5747e570a|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:50:06.4048|Debug|642d6450-307c-4e0b-ade7-4bb5747e570a|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:50:06.4048|Debug|642d6450-307c-4e0b-ade7-4bb5747e570a|End - Dataset method
+2016-12-20 12:50:13.7878|Debug|c904d722-1980-4337-8495-f4798137a0e8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:17.0389|Debug|d9b9c144-3c1d-455a-bbab-e08142cb8b93|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:17.1689|Debug|32071d8e-9133-475a-9f84-a64e6690ba2d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:17.1689|Debug|32071d8e-9133-475a-9f84-a64e6690ba2d|Start - Dataset method
+2016-12-20 12:50:17.1689|Debug|32071d8e-9133-475a-9f84-a64e6690ba2d|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:50:17.3822|Debug|32071d8e-9133-475a-9f84-a64e6690ba2d|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:50:17.3822|Debug|32071d8e-9133-475a-9f84-a64e6690ba2d|End - Dataset method
+2016-12-20 12:50:20.6957|Debug|1d9752cb-b333-478a-b686-ef1359baab5c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:20.8477|Debug|b4727435-dc6c-453b-9c28-abfbcdd6a41e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:30.6121|Debug|8829d776-41f3-4b68-b9c9-3200a522ef12|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:30.7981|Debug|5c776da1-e177-455c-8f2c-381357607577|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:30.8281|Debug|2529bdfd-b44a-4139-a36f-957daaa315b0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:30.8636|Debug|12f51098-6bbc-4aa4-9e8f-e541458e6e79|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:30.8901|Debug|3e482d8f-10cb-424c-a3bc-ccd780ecbbf5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:30.9141|Debug|bf307eeb-f3da-4967-8473-751d376380ee|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 12:50:30.9141|Debug|bf307eeb-f3da-4967-8473-751d376380ee|Start - Dataset method
+2016-12-20 12:50:30.9141|Debug|bf307eeb-f3da-4967-8473-751d376380ee|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:50:31.1688|Debug|bf307eeb-f3da-4967-8473-751d376380ee|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 12:50:31.1688|Debug|bf307eeb-f3da-4967-8473-751d376380ee|End - Dataset method
+2016-12-20 16:09:22.4456|Error|77732ba0-9ee4-4903-bc67-d406aec9a420|Shop does not exist for User 57f0da58-6e74-41d5-90a9-736d09aa3b2f: '' - aborting IdentityProcessing
+2016-12-20 16:09:32.8834|Info|0c3b74cd-9889-4d42-ba53-38b1059374cc|Existing User 3duniverse has just authenticated
+2016-12-20 16:09:33.2715|Info|0c3b74cd-9889-4d42-ba53-38b1059374cc|Loading Currency cache
+2016-12-20 16:09:33.2915|Info|0c3b74cd-9889-4d42-ba53-38b1059374cc|Created new Shop - UserId: 57f0da58-6e74-41d5-90a9-736d09aa3b2f, CurrencyId: 1, ShopifyShopId: 3805149, StartingDateForOrders: 8/1/2016 12:00:00 AM
+2016-12-20 16:09:33.2915|Info|0c3b74cd-9889-4d42-ba53-38b1059374cc|Successfully refreshed Identity Claims for User 3duniverse
+2016-12-20 16:09:33.3316|Debug|21e2f829-b630-4808-bde5-a7fcb59f587b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 16:09:34.7691|Debug|90e77eaa-8182-4171-b79e-351adfc6c0f4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 16:09:34.8266|Debug|51250e7e-50ed-4e32-894b-d09f5920c2de|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 16:09:34.8861|Debug|e02590db-4dbc-4a61-9909-e3b54bd43550|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 16:09:35.0266|Debug|88414b80-d886-4f8d-ae9e-cfdbf522f15a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 16:09:35.0926|Debug|cfb07bc1-844d-49fa-82e9-e37f92d3c1b0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 16:09:35.0926|Debug|cfb07bc1-844d-49fa-82e9-e37f92d3c1b0|Start - Dataset method
+2016-12-20 16:09:35.0996|Debug|cfb07bc1-844d-49fa-82e9-e37f92d3c1b0|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 16:09:35.1311|Debug|cfb07bc1-844d-49fa-82e9-e37f92d3c1b0|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 16:09:35.1691|Debug|cfb07bc1-844d-49fa-82e9-e37f92d3c1b0|End - Dataset method
+2016-12-20 17:14:09.3005|Debug|54dd94fd-5f3e-43d9-8991-7921296472cd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:13.3051|Debug|5d844c62-5f95-492c-a6be-707c4c2e63a7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:13.4971|Debug|3aaf5e0a-b9d7-4a2d-99b5-9825f72c27b6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:13.5571|Debug|46b58d45-bafe-46b5-8d2f-4b0897e6279b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:13.7381|Debug|3da735eb-7f49-4dc4-9979-b44935fd2434|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:13.8296|Debug|4924a74d-db18-47fb-9391-747789e3c1b4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:13.8361|Debug|4924a74d-db18-47fb-9391-747789e3c1b4|Start - Dataset method
+2016-12-20 17:14:13.8361|Debug|4924a74d-db18-47fb-9391-747789e3c1b4|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 17:14:14.1326|Debug|4924a74d-db18-47fb-9391-747789e3c1b4|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 17:14:14.1601|Error|4924a74d-db18-47fb-9391-747789e3c1b4|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-20 17:14:14.1601|Error|4924a74d-db18-47fb-9391-747789e3c1b4|System.ArgumentException:An item with the same key has already been added.
+   at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
+   at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
+   at Push.Foundation.Utilities.Helpers.LinqExtensions.ToDictionary[K,V](IList`1 input, Func`2 keyExtractor) in C:\DEV\ProfitWise\Push.Foundation.Utilities\Helpers\LinqExtensions.cs:line 28
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildOrderLineProfits(Int64 reportId, IdentitySnapshot userBrief, DateTime startDate, DateTime endDate) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 140
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 91
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-20 17:14:15.6414|Debug|6962c28e-6e86-4d58-bda9-dea1b7c05fc4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:16.1565|Debug|198abe36-5a9f-4e0e-94ac-2c9cddb7d26d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:16.1920|Debug|5b16aa34-da9b-45c5-bffe-49b41eaab336|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:16.2415|Debug|680f770f-92d8-4b34-8024-fc69d1ea4dba|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:16.2705|Debug|7af131ff-9bce-4b91-a14b-579e48fe2e8c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:16.3075|Debug|119847c8-85e0-4266-a7e0-e08eb194b294|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:16.3075|Debug|119847c8-85e0-4266-a7e0-e08eb194b294|Start - Dataset method
+2016-12-20 17:14:16.3075|Debug|119847c8-85e0-4266-a7e0-e08eb194b294|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 17:14:16.5590|Debug|119847c8-85e0-4266-a7e0-e08eb194b294|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 17:14:16.5735|Error|119847c8-85e0-4266-a7e0-e08eb194b294|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-20 17:14:16.5735|Error|119847c8-85e0-4266-a7e0-e08eb194b294|System.ArgumentException:An item with the same key has already been added.
+   at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
+   at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
+   at Push.Foundation.Utilities.Helpers.LinqExtensions.ToDictionary[K,V](IList`1 input, Func`2 keyExtractor) in C:\DEV\ProfitWise\Push.Foundation.Utilities\Helpers\LinqExtensions.cs:line 28
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildOrderLineProfits(Int64 reportId, IdentitySnapshot userBrief, DateTime startDate, DateTime endDate) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 140
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 91
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-20 17:14:18.4248|Debug|62e3142f-50d5-4dd5-83be-f778b123cfa7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:18.9486|Debug|21ca9ca9-cb1f-4092-9680-736fbc25ef68|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:19.0107|Debug|da524c38-1ac2-4479-b23e-301d6ad92a8a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:19.0596|Debug|6ac7b246-357a-4c74-93be-d3eb51af50b3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:19.0931|Debug|1d3fdf6e-0ee1-448b-ace4-9cd1cfe96c21|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:19.1256|Debug|52a7104b-99f1-47f3-a977-4ddfd97af774|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-20 17:14:19.1256|Debug|52a7104b-99f1-47f3-a977-4ddfd97af774|Start - Dataset method
+2016-12-20 17:14:19.1287|Debug|52a7104b-99f1-47f3-a977-4ddfd97af774|Start database queries - query stub creation/retrieval and order line profits
+2016-12-20 17:14:19.3702|Debug|52a7104b-99f1-47f3-a977-4ddfd97af774|End database queries - query stub creation/retrieval and order line profits
+2016-12-20 17:14:19.3872|Error|52a7104b-99f1-47f3-a977-4ddfd97af774|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-20 17:14:19.3872|Error|52a7104b-99f1-47f3-a977-4ddfd97af774|System.ArgumentException:An item with the same key has already been added.
+   at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
+   at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
+   at Push.Foundation.Utilities.Helpers.LinqExtensions.ToDictionary[K,V](IList`1 input, Func`2 keyExtractor) in C:\DEV\ProfitWise\Push.Foundation.Utilities\Helpers\LinqExtensions.cs:line 28
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildOrderLineProfits(Int64 reportId, IdentitySnapshot userBrief, DateTime startDate, DateTime endDate) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 140
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 91
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)

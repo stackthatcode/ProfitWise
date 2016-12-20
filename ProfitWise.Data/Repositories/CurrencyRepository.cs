@@ -28,15 +28,21 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<Currency>(query).ToList();
         }
 
-        public IList<ExchangeRate> RetrieveExchangeRates()
+        public List<ExchangeRate> RetrieveExchangeRates()
         {
             var query = @"SELECT * FROM exchangerate 
                         ORDER BY Date, SourceCurrencyId ASC;";
             return _connection.Query<ExchangeRate>(query).ToList();
         }
 
-
-        public IList<ExchangeRate> RetrieveExchangeRates(DateTime minimumDate)
+        public List<ExchangeRate> RetrieveExchangeRateByDate(DateTime date)
+        {
+            var query = @"SELECT * FROM exchangerate 
+                        WHERE Date = @date
+                        ORDER BY Date, SourceCurrencyId ASC;";
+            return _connection.Query<ExchangeRate>(query, new { date }).ToList();
+        }
+        public List<ExchangeRate> RetrieveExchangeRateFromDate(DateTime minimumDate)
         {
             var query = @"SELECT * FROM exchangerate 
                         WHERE Date >= @minimumDate
@@ -44,12 +50,17 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<ExchangeRate>(query, new { minimumDate }).ToList();
         }
 
-        public void InsertExchangeRate(ExchangeRate rate)
+        public void InsertExchangeRate(ExchangeRate exchangeRate)
         {
             var query = @"INSERT INTO exchangerate
                         VALUES ( @SourceCurrencyId, @DestinationCurrencyId, @Date, @Rate )";
-            _connection.Execute(query, rate);
+            _connection.Execute(query, exchangeRate);
         }
 
+        public void DeleteForDate(DateTime date)
+        {
+            var query = @"DELETE FROM exchangerate WHERE Date = @date;";
+            _connection.Execute(query, new { @date });
+        }
     }
 }

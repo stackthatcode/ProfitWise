@@ -70,6 +70,7 @@ CREATE TABLE `profitwisemastervariant` (
   `PwMasterProductId` BIGINT NOT NULL, # ProfitWise's unique identifier for each product (can contain multiple "linked" Shopify products)
   `Exclude` TINYINT NOT NULL, # Should this variant be excluded from ProfitWise reporting?
   `StockedDirectly` TINYINT NOT NULL, # Is this variant stocked directly (as opposed to drop-shipped)?
+  
   `CogsCurrencyId` INT NULL, # Numeric value representing the currency for the CoGS data for this variant
   `CogsAmount` DECIMAL(15, 2) NULL, # CoGS value for this variant
   `CogsDetail` TINYINT NULL, # Is there detailed CoGS data (weighted average entries) for this variant?
@@ -101,10 +102,10 @@ CREATE TABLE `profitwisevariant` (
 
 
 CREATE TABLE `profitwisebatchstate` (
-  `PwShopId` BIGINT unsigned NOT NULL, # ProfitWise's shop identifier
+  `PwShopId` BIGINT unsigned NOT NULL, 	# ProfitWise's shop identifier
   `ProductsLastUpdated` TIMESTAMP NULL, # When did ProfitWise last update products from Shopify's catalog?
-  `OrderDatasetStart` TIMESTAMP NULL, # Start date for the current order data set to be loaded from Shopify
-  `OrderDatasetEnd` TIMESTAMP NULL, # End date for the current order data set to be loaded from Shopify
+  `OrderDatasetStart` TIMESTAMP NULL, 	# Start date for the current order data set to be loaded from Shopify
+  `OrderDatasetEnd` TIMESTAMP NULL, 	# End date for the current order data set to be loaded from Shopify
    PRIMARY KEY (`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -133,7 +134,8 @@ CREATE TABLE `shopifyorderlineitem` (
   `PwShopId` int(6) unsigned NOT NULL, # ProfitWise's shop identifier
   `ShopifyOrderId` BIGINT NOT NULL, # Shopify identifier for associated order
   `ShopifyOrderLineId` BIGINT NOT NULL, # Shopify identifier for order line item
-  `OrderDate` timestamp NOT NULL, # Date-time for associated order
+  `OrderDateTimestamp` timestamp NOT NULL, # Date-time for associated order
+  `OrderDate` DATE NOT NULL, # Date-time simplified to Date-only for easy joins
   `PwProductId` BIGINT NOT NULL, # Product (PwProductId) for this line item
   `PwVariantId` BIGINT NOT NULL, # Variant (PwVariantId) for this line item
   `Quantity` int(6) unsigned NOT NULL, # Quantity for this line item
@@ -141,6 +143,9 @@ CREATE TABLE `shopifyorderlineitem` (
   `TotalDiscount` decimal(15,2) DEFAULT NULL, # Total discount applied to this line item
   `TotalRestockedQuantity` int(6) unsigned NOT NULL, # Total quantity restocked from this line item
   `GrossRevenue` decimal(15,2) DEFAULT NULL, # Gross revenue for this line item (after discounts and refunds)
+  
+  `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit
+  
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

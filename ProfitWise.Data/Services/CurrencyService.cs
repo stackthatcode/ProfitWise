@@ -67,7 +67,7 @@ namespace ProfitWise.Data.Services
 
             var rates =
                 minimumDate.HasValue
-                    ? _repository.RetrieveExchangeRates(minimumDate.Value)
+                    ? _repository.RetrieveExchangeRateFromDate(minimumDate.Value)
                     : _repository.RetrieveExchangeRates();
 
             foreach (var rate in rates)
