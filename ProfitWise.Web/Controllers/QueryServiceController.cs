@@ -73,8 +73,52 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+
         [HttpPost]
         public ActionResult Dataset(long reportId)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var reportRepository = _factory.MakeReportRepository(userBrief.PwShop);
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+
+            using (var transaction = repository.InitiateTransaction())
+            {
+                _logger.Debug("Start - Dataset method");
+
+                var report = reportRepository.RetrieveReport(reportId);
+                var shopCurrencyId = userBrief.PwShop.CurrencyId;
+                
+                var orderLineProfits = BuildOrderLineProfits(reportId, userBrief, report.StartDate, report.EndDate);
+
+                // Summary for consumption by pie chart
+                var summary = orderLineProfits.BuildCompleteGroupedSummary(shopCurrencyId);
+
+                // Build top-level Series for the column chart
+                var seriesDataset = BuildSeriesTopLevel(report, orderLineProfits, summary);
+
+                // Create the Series drill-down data
+                var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
+                var drilldown = BuildSeriesDrilldown(seriesDataset, orderLineProfits, completeDrillDown);
+
+                _logger.Debug("End - Dataset method");
+
+                transaction.Commit();
+
+                return new JsonNetResult(
+                    new
+                    {
+                        CurrencyId = shopCurrencyId,
+                        Summary = summary,
+                        Series = seriesDataset,
+                        Drilldown = drilldown
+                    });
+            }
+        }
+
+
+
+        [HttpPost]
+        public ActionResult Dataset2(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var reportRepository = _factory.MakeReportRepository(userBrief.PwShop);
@@ -225,12 +269,12 @@ namespace ProfitWise.Web.Controllers
             series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
             return series;
         }
-
         
-        private List<ReportSeries> BuildSeriesDrilldown(
-                    List<ReportSeries> seriesDataset, 
-                    List<OrderLineProfit> orderLineProfits, 
-                    bool completeDrillDown)
+        private List<ReportSeries> 
+                BuildSeriesDrilldown(
+                        List<ReportSeries> seriesDataset, 
+                        List<OrderLineProfit> orderLineProfits, 
+                        bool completeDrillDown)
         {
             var output = new List<ReportSeries>();
             foreach (var series in seriesDataset)

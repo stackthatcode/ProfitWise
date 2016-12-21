@@ -91,7 +91,6 @@ namespace ProfitWise.Data.Model.Profit
                         })
                         .ToList();
             }
-
             if (reportGrouping == ReportGrouping.Variant)
             {
                 output =

@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
+using ProfitWise.Data.Model.Reports;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -113,7 +114,8 @@ namespace ProfitWise.Data.Repositories
 
             var createQuery =
                 @"INSERT INTO profitwisereportquerystub
-                SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, Vendor, ProductType
+                SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, 
+                        Vendor, ProductType, ProductTitle, VariantTitle
                 FROM vw_MasterProductAndVariantSearch 
                 WHERE PwShopId = @PwShopId " +
                 ReportFilterClauseGenerator(reportId) + 
@@ -139,6 +141,64 @@ namespace ProfitWise.Data.Repositories
             return results;
         }
 
+        // Dataset #2 operations
+        public List<GroupedTotal> RetreiveTotalsByProduct(long reportId)
+        {
+            var query =
+                @"SELECT t1.PwMasterProductId AS GroupingId,
+		                t4.Title AS GroupingName,
+		                SUM(t3.GrossRevenue) As TotalRevenue, 
+                        SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
+		                SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+                FROM profitwisereport t0
+	                INNER JOIN profitwisereportquerystub t1
+		                ON t0.PwShopId = t1.PwShopId AND t0.PwReportId = t1.PwReportId 
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+			                AND t3.OrderDate >= t0.StartDate AND t3.OrderDate <= t0.EndDate
+ 	                LEFT JOIN profitwiseproduct t4
+		                ON t1.PwShopId = t4.PwShopId AND t4.PwMasterProductId = t1.PwMasterProductId AND t4.IsPrimary = 1               
+                WHERE t0.PwShopId = @PwShopId AND t0.PwReportID = @reportId
+                GROUP BY t1.PwMasterProductId, t4.Title
+                ORDER BY TotalRevenue DESC
+                LIMIT 10;";
+
+            return _connection.Query<GroupedTotal>(query, new { PwShopId, reportId }).ToList();
+        }
+
+        public List<GroupedTotal> RetreiveTotalsByVariant(long reportId)
+        {
+            var query =
+                @"SELECT t1.PwMasterProductId AS GroupingId,
+		                t4.Title AS GroupingName,
+		                SUM(t3.GrossRevenue) As TotalRevenue, 
+                        SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
+		                SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+                FROM profitwisereport t0
+	                INNER JOIN profitwisereportquerystub t1
+		                ON t0.PwShopId = t1.PwShopId AND t0.PwReportId = t1.PwReportId 
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+			                AND t3.OrderDate >= t0.StartDate AND t3.OrderDate <= t0.EndDate
+ 	                LEFT JOIN profitwiseproduct t4
+		                ON t1.PwShopId = t4.PwShopId AND t4.PwMasterProductId = t1.PwMasterProductId AND t4.IsPrimary = 1               
+                WHERE t0.PwShopId = @PwShopId AND t0.PwReportID = @reportId
+                GROUP BY t1.PwMasterProductId, t4.Title
+                ORDER BY TotalRevenue DESC
+                LIMIT 10;";
+
+            return _connection.Query<GroupedTotal>(query, new { PwShopId, reportId }).ToList();
+        }
+
+
+
+
+        // Dataset #1 operations 
+        [Obsolete]
         public List<OrderLineProfit> 
                     RetrieveOrderLineProfits(long reportId, DateTime startDate, DateTime endDate)
         {
@@ -171,6 +231,7 @@ namespace ProfitWise.Data.Repositories
             return results;
         }
 
+        [Obsolete]
         public List<PwReportMasterVariantCogs> RetrieveCogsData(long reportId)
         {
             var query =

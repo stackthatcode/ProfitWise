@@ -255,6 +255,18 @@ namespace ProfitWise.Data.Repositories
         // This is the first iteration - next will be more granular i.e. Master Variant Id
         public void UpdateOrderLinesWithSimpleCogs()
         {
+            var query = OrderLineSimpleCogsQuery();
+            _connection.Execute(query, new { this.PwShopId });
+        }
+
+        public void UpdateOrderLinesWithSimpleCogs(long pwMasterVariantId)
+        {
+            var query = OrderLineSimpleCogsQuery() + " AND t1.PwMasterVariantId = @pwMasterVariantId";
+            _connection.Execute(query, new { this.PwShopId, PwMasterVariantId = pwMasterVariantId });
+        }
+
+        private static string OrderLineSimpleCogsQuery()
+        {
             var query =
                 @"UPDATE profitwiseshop t0
                     INNER JOIN profitwisemastervariant t1 
@@ -264,7 +276,7 @@ namespace ProfitWise.Data.Repositories
                 SET t1.CogsCurrencyId = t0.CurrencyId, t1.CogsAmount = t2.HighPrice * 0.80, t1.CogsDetail = false
                 WHERE t0.PwShopId = @PwShopId
                 AND t1.CogsAmount IS NULL;";
-            _connection.Execute(query, new { this.PwShopId });
+            return query;
         }
     }
 }

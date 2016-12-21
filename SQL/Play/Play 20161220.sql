@@ -36,9 +36,11 @@ UPDATE profitwiseshop t0
 			AND t4.SourceCurrencyId = t1.CogsCurrencyId
 			AND t4.DestinationCurrencyId = t0.CurrencyId
 SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0))
-WHERE t0.PwShopId = 100001;
+WHERE t0.PwShopId = 100001
+AND t3.UnitCogs IS NULL;
 
 
+UPDATE shopifyorderlineitem SET UnitCogs = NULL;
 
 SELECT * FROM shopifyorderlineitem;
 
@@ -48,6 +50,61 @@ SELECT * FROM shopifyorderlineitem;
 
 SET @rank=0;
 SELECT * FROM profitwisereportquerystub;
+
+
+
+
+SELECT 	t1.PwMasterProductId AS GroupingId,
+		t1.ProductTitle AS GroupingName,
+		SUM(t3.GrossRevenue) As TotalRevenue, 
+        SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
+		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+FROM profitwisereport t0
+	INNER JOIN profitwisereportquerystub t1
+		ON t0.PwShopId = t1.PwShopId AND t0.PwReportId = t1.PwReportId 
+	INNER JOIN profitwisevariant t2
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	INNER JOIN shopifyorderlineitem t3
+		ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+			AND t3.OrderDate >= t0.StartDate AND t3.OrderDate <= t0.EndDate             
+WHERE t0.PwShopId = 100001 AND t0.PwReportID = 99739
+GROUP BY t1.PwMasterProductId, t1.ProductTitle
+ORDER BY TotalRevenue DESC
+LIMIT 10;
+
+
+SELECT 	t1.PwMasterVariantId AS GroupingId,
+		t1.VariantTitle AS GroupingName,
+		SUM(t3.GrossRevenue) As TotalRevenue, 
+        SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
+		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+FROM profitwisereport t0
+	INNER JOIN profitwisereportquerystub t1
+		ON t0.PwShopId = t1.PwShopId AND t0.PwReportId = t1.PwReportId 
+	INNER JOIN profitwisevariant t2
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	INNER JOIN shopifyorderlineitem t3
+		ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+			AND t3.OrderDate >= t0.StartDate AND t3.OrderDate <= t0.EndDate             
+WHERE t0.PwShopId = 100001 AND t0.PwReportID = 99739
+GROUP BY t1.PwMasterVariantId, t1.VariantTitle
+ORDER BY TotalRevenue DESC
+LIMIT 10;
+
+
+
+
+
+
+
+
+
+
+
+SELECT * FROM profitwisereport;
+SELECT * FROM profitwisereportquerystub;
+SELECT * FROM profitwiseproduct;
+
 
 
 

@@ -295,3 +295,137 @@
 2016-12-21 14:48:06.3089|Debug|8d3a00b4-d6f3-49d0-b2a0-a16d43a29668|Start database queries - query stub creation/retrieval and order line profits
 2016-12-21 14:48:06.9611|Debug|8d3a00b4-d6f3-49d0-b2a0-a16d43a29668|End database queries - query stub creation/retrieval and order line profits
 2016-12-21 14:48:07.2414|Debug|8d3a00b4-d6f3-49d0-b2a0-a16d43a29668|End - Dataset method
+2016-12-21 14:59:36.0415|Debug|7365cb90-37ea-4d34-912c-a19350769108|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 14:59:36.3120|Debug|a38ebb81-d799-4b75-9663-938d082d1513|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 14:59:36.3120|Debug|a38ebb81-d799-4b75-9663-938d082d1513|Start - Dataset method
+2016-12-21 14:59:36.3195|Debug|a38ebb81-d799-4b75-9663-938d082d1513|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 14:59:36.9608|Debug|a38ebb81-d799-4b75-9663-938d082d1513|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 14:59:36.9608|Info|a38ebb81-d799-4b75-9663-938d082d1513|Loading Exchange Rates cache 
+2016-12-21 14:59:37.2218|Info|a38ebb81-d799-4b75-9663-938d082d1513|Exchange Rates cached from 1/1/2014 12:00:00 AM through 1/20/2017 12:00:00 AM
+2016-12-21 14:59:37.2218|Info|a38ebb81-d799-4b75-9663-938d082d1513|CacheRefreshAllowed set to 12/21/2016 3:14:37 PM
+2016-12-21 14:59:37.4799|Debug|a38ebb81-d799-4b75-9663-938d082d1513|End - Dataset method
+2016-12-21 14:59:59.0882|Debug|b4d4c064-1ae2-45a9-ac0a-407e30dff9c1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 14:59:59.1398|Debug|3d088709-5730-45d9-8b77-4df3bbfb752e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 14:59:59.1468|Debug|3d088709-5730-45d9-8b77-4df3bbfb752e|Start - Dataset method
+2016-12-21 14:59:59.1468|Debug|3d088709-5730-45d9-8b77-4df3bbfb752e|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 14:59:59.9230|Debug|3d088709-5730-45d9-8b77-4df3bbfb752e|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:00:00.3698|Debug|3d088709-5730-45d9-8b77-4df3bbfb752e|End - Dataset method
+2016-12-21 15:03:01.5539|Debug|de9c9ae7-d2ab-4b7c-90c0-7f9cefa282b3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:01.5379|Debug|f83d2acb-2310-45d0-9d5e-38cb28e6606c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:01.9914|Debug|84169ef1-d3ee-4ff9-8172-1fcf2e83f245|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:02.0474|Debug|5ac18e1c-e8a9-43f7-9c2f-b4c58f3dcb23|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:02.6449|Debug|89523ddb-602f-48c4-a7f8-6aa2954f6b80|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:02.8489|Debug|0b3758de-c244-4870-a041-da770e1703c4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:02.9604|Debug|844f835f-d88a-4f90-8f9c-50197aa52ef1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:02.9779|Debug|844f835f-d88a-4f90-8f9c-50197aa52ef1|Start - Dataset method
+2016-12-21 15:03:02.9779|Debug|844f835f-d88a-4f90-8f9c-50197aa52ef1|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:03:04.2299|Debug|844f835f-d88a-4f90-8f9c-50197aa52ef1|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:03:04.2424|Info|844f835f-d88a-4f90-8f9c-50197aa52ef1|Loading Exchange Rates cache 
+2016-12-21 15:03:04.5424|Info|844f835f-d88a-4f90-8f9c-50197aa52ef1|Exchange Rates cached from 1/1/2014 12:00:00 AM through 1/20/2017 12:00:00 AM
+2016-12-21 15:03:04.6064|Info|844f835f-d88a-4f90-8f9c-50197aa52ef1|CacheRefreshAllowed set to 12/21/2016 3:18:04 PM
+2016-12-21 15:03:05.2224|Debug|844f835f-d88a-4f90-8f9c-50197aa52ef1|End - Dataset method
+2016-12-21 15:03:07.7164|Debug|303b2b32-1fcc-4b1b-9163-c80f5526dcc6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:07.9189|Debug|54fab50e-4663-4ec9-bc1a-dba1e918d5b5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:08.0679|Debug|af7be12f-9523-47b6-99e9-4a5aa0850683|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:08.4579|Debug|4bec04b2-06a3-4f57-88ff-1ef3924e3388|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:08.4804|Debug|242dc642-93a4-46f8-869f-86588f15c1b1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:08.4804|Debug|242dc642-93a4-46f8-869f-86588f15c1b1|Start - Dataset method
+2016-12-21 15:03:08.4804|Debug|242dc642-93a4-46f8-869f-86588f15c1b1|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:03:09.5299|Debug|242dc642-93a4-46f8-869f-86588f15c1b1|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:03:09.5369|Debug|242dc642-93a4-46f8-869f-86588f15c1b1|End - Dataset method
+2016-12-21 15:03:13.0791|Debug|a1813bd3-cec1-48c8-95ae-363588f072a2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:13.1131|Debug|5786e35e-7e97-451f-808d-b1d1cf113037|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:13.1391|Debug|be786e79-c913-48fa-88a5-0a12eff41058|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:13.1676|Debug|3074b7f5-c557-4bd3-8c78-6f984a3b9145|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:03:13.1676|Debug|3074b7f5-c557-4bd3-8c78-6f984a3b9145|Start - Dataset method
+2016-12-21 15:03:13.1676|Debug|3074b7f5-c557-4bd3-8c78-6f984a3b9145|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:03:14.0722|Debug|3074b7f5-c557-4bd3-8c78-6f984a3b9145|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:03:14.4533|Debug|3074b7f5-c557-4bd3-8c78-6f984a3b9145|End - Dataset method
+2016-12-21 15:11:25.6306|Debug|239524f6-8217-4193-8503-b24cab85306a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:25.6976|Debug|75c7a83c-dd31-4b37-a4de-e6a7fc5d879d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:25.7326|Debug|95431087-74f7-42ce-a916-327d30e8f5e3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:25.7326|Debug|95431087-74f7-42ce-a916-327d30e8f5e3|Start - Dataset method
+2016-12-21 15:11:25.7326|Debug|95431087-74f7-42ce-a916-327d30e8f5e3|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:11:26.4450|Debug|95431087-74f7-42ce-a916-327d30e8f5e3|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:11:27.0041|Debug|95431087-74f7-42ce-a916-327d30e8f5e3|End - Dataset method
+2016-12-21 15:11:33.4900|Debug|79ddadbc-1468-4319-b263-7348aacbfb33|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:33.6585|Debug|0ee82888-7a3a-4cf7-8f95-53b39481ddc6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:33.7025|Debug|0abdcd29-cb93-4945-80b3-09877d697325|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:33.7265|Debug|88a8da03-4fcb-487a-b746-a3502ec1b347|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:33.7425|Debug|f97b229c-d4fe-435a-be1b-c3eff3f1298c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:33.7626|Debug|439e98e8-a3fb-4519-8844-cd3f6451a8ed|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:11:33.7626|Debug|439e98e8-a3fb-4519-8844-cd3f6451a8ed|Start - Dataset method
+2016-12-21 15:11:33.7626|Debug|439e98e8-a3fb-4519-8844-cd3f6451a8ed|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:11:34.4680|Debug|439e98e8-a3fb-4519-8844-cd3f6451a8ed|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:11:34.8703|Debug|439e98e8-a3fb-4519-8844-cd3f6451a8ed|End - Dataset method
+2016-12-21 15:54:37.0074|Debug|441e2358-e90a-4b05-8753-6ff9018b5fe4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:37.3817|Debug|11f84855-f37f-44e7-b3e0-0dde8807d2ac|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:37.4992|Debug|3e9f4d5a-41c9-449f-91ae-fdb104f72188|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:37.5517|Debug|6282497e-1114-4469-8ae1-60c37ff1e719|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:37.5837|Debug|4af9a6b6-8a8b-4c22-9f7b-a4c63625288d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:40.3016|Debug|5f9e8bd6-68d0-4a03-a027-46aa9dc3ba27|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:40.6036|Debug|8889459a-c78b-43a8-b208-8ad647f85128|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:40.6891|Debug|1254974a-3825-457d-8105-34df2a20fd2d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:40.7141|Debug|6c8cc157-cf98-4f21-8038-33b781b552f1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 15:54:40.7241|Debug|6c8cc157-cf98-4f21-8038-33b781b552f1|Start - Dataset method
+2016-12-21 15:54:40.7241|Debug|6c8cc157-cf98-4f21-8038-33b781b552f1|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:54:41.0956|Debug|6c8cc157-cf98-4f21-8038-33b781b552f1|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 15:54:41.1111|Info|6c8cc157-cf98-4f21-8038-33b781b552f1|Loading Exchange Rates cache 
+2016-12-21 15:54:41.5696|Info|6c8cc157-cf98-4f21-8038-33b781b552f1|Exchange Rates cached from 1/1/2014 12:00:00 AM through 1/20/2017 12:00:00 AM
+2016-12-21 15:54:41.5696|Info|6c8cc157-cf98-4f21-8038-33b781b552f1|CacheRefreshAllowed set to 12/21/2016 4:09:41 PM
+2016-12-21 15:54:42.3752|Debug|6c8cc157-cf98-4f21-8038-33b781b552f1|End - Dataset method
+2016-12-21 16:00:29.9619|Debug|ae89e2f1-507e-4c90-b7a0-ba1786305b23|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:33.1610|Debug|71fd2a45-d9e8-4c18-87d8-b3615880b0f3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:33.4165|Debug|8b8478b1-f7d8-4687-9ddd-8c1700d30e7b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:33.4600|Debug|ada52a7d-d8df-4a29-8a36-9318bd23f633|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:33.5310|Debug|58b40c2b-ba6c-49c7-83e2-c845305e6cc6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:33.6010|Debug|025e8e3c-3d19-4b10-8123-bc3853a46c06|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:33.6010|Debug|025e8e3c-3d19-4b10-8123-bc3853a46c06|Start - Dataset method
+2016-12-21 16:00:33.6010|Debug|025e8e3c-3d19-4b10-8123-bc3853a46c06|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:00:33.7005|Debug|025e8e3c-3d19-4b10-8123-bc3853a46c06|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:00:33.7110|Info|025e8e3c-3d19-4b10-8123-bc3853a46c06|Loading Exchange Rates cache 
+2016-12-21 16:00:33.9335|Info|025e8e3c-3d19-4b10-8123-bc3853a46c06|Exchange Rates cached from 1/1/2014 12:00:00 AM through 1/20/2017 12:00:00 AM
+2016-12-21 16:00:33.9335|Info|025e8e3c-3d19-4b10-8123-bc3853a46c06|CacheRefreshAllowed set to 12/21/2016 4:15:33 PM
+2016-12-21 16:00:33.9555|Debug|025e8e3c-3d19-4b10-8123-bc3853a46c06|End - Dataset method
+2016-12-21 16:00:41.9123|Debug|24cb8165-255f-4c54-968d-a964a4704ac4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:42.1628|Debug|f24e9e59-c354-4b22-9a4e-29e1eef05542|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:42.1978|Debug|b1ba97bb-8b51-4e9a-957c-aa2bb135312a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:42.2378|Debug|bdbb66e6-e7ae-41e3-84a4-3ddd89a5dd54|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:42.2618|Debug|5a624690-2217-4fb6-b0fa-538295bf55d5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:43.3959|Debug|b8dce0b9-f50d-4a76-972c-1d4d185c17e8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:43.4289|Debug|b5697bc3-aee1-4d01-87ef-9f0671f9e4dc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:43.4799|Debug|1e4acb5c-7aa0-485e-a59b-f28e7d834f57|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:43.5119|Debug|28c271d5-5c74-44f2-b8d1-150d6375867c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:43.5119|Debug|28c271d5-5c74-44f2-b8d1-150d6375867c|Start - Dataset method
+2016-12-21 16:00:43.5119|Debug|28c271d5-5c74-44f2-b8d1-150d6375867c|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:00:43.6539|Debug|28c271d5-5c74-44f2-b8d1-150d6375867c|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:00:43.6539|Debug|28c271d5-5c74-44f2-b8d1-150d6375867c|End - Dataset method
+2016-12-21 16:00:47.6174|Debug|d3a07be9-9951-41ed-b8ab-08753f794d8d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:47.7624|Debug|6bee1f30-4b03-49cb-9892-e00a0e99708d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:49.0505|Debug|67e3b6f3-8ea2-4ed9-ac4d-fa4069b58852|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:49.1335|Debug|a486f2aa-2b71-46ca-8324-727d73070b4b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:49.1820|Debug|4a79b72d-431e-452f-8339-a26610cc265a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:49.2235|Debug|2957df33-2951-4dea-a7da-8ad195a99aaa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:49.2435|Debug|0cebe0bd-2b6f-43fa-aa88-f19251a886e2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:49.2690|Debug|1094534d-e4ba-4d6d-bd5c-61d7346bbdf0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:00:49.2690|Debug|1094534d-e4ba-4d6d-bd5c-61d7346bbdf0|Start - Dataset method
+2016-12-21 16:00:49.2690|Debug|1094534d-e4ba-4d6d-bd5c-61d7346bbdf0|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:00:49.3330|Debug|1094534d-e4ba-4d6d-bd5c-61d7346bbdf0|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:00:49.3330|Debug|1094534d-e4ba-4d6d-bd5c-61d7346bbdf0|End - Dataset method
+2016-12-21 16:01:56.1735|Debug|f18b2070-b3d2-486c-b39a-139dcd990441|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:01:56.3035|Debug|e297ad9b-d656-463b-934e-2881ca2ce108|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:01:56.3445|Debug|3955bd59-813c-4502-a402-435e892e459d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:01:56.3445|Debug|3955bd59-813c-4502-a402-435e892e459d|Start - Dataset method
+2016-12-21 16:01:56.3560|Debug|3955bd59-813c-4502-a402-435e892e459d|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:01:56.4965|Debug|3955bd59-813c-4502-a402-435e892e459d|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:01:59.2269|Debug|3955bd59-813c-4502-a402-435e892e459d|End - Dataset method
+2016-12-21 16:02:00.5409|Debug|e7aef1b1-eee7-4181-b662-498b87c3c399|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:02:00.6379|Debug|40e5cc58-32eb-4138-a196-2d3e720ca6a6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:02:00.6784|Debug|01984490-0621-46a1-90e0-59d322e88be4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:02:00.7109|Debug|258f6cd5-f3fc-49fb-b251-8209d394efce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:02:00.7454|Debug|4f50a7eb-6181-4951-ad4f-a37483867d3e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:02:00.7714|Debug|9992c410-d7be-47ce-adc6-c0def4e2b35f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-21 16:02:00.7714|Debug|9992c410-d7be-47ce-adc6-c0def4e2b35f|Start - Dataset method
+2016-12-21 16:02:00.7714|Debug|9992c410-d7be-47ce-adc6-c0def4e2b35f|Start database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:02:01.0499|Debug|9992c410-d7be-47ce-adc6-c0def4e2b35f|End database queries - query stub creation/retrieval and order line profits
+2016-12-21 16:02:04.7032|Debug|9992c410-d7be-47ce-adc6-c0def4e2b35f|End - Dataset method

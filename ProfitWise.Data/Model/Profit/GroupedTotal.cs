@@ -1,8 +1,13 @@
-﻿namespace ProfitWise.Data.Model.Profit
+﻿using Newtonsoft.Json;
+
+namespace ProfitWise.Data.Model.Profit
 {
     public class GroupedTotal
     {
+        [JsonIgnore]
         public GroupingKey GroupingKey { get; set; }
+
+        public string GroupingId { get; set; }
         public string GroupingName { get; set; }
 
         public decimal TotalCogs { get; set; }
