@@ -148,15 +148,13 @@ namespace ProfitWise.Data.Repositories
                 @"	SUM(t3.GrossRevenue) As TotalRevenue, 
                     SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
 		            SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
-            FROM profitwisereport t0
-	            INNER JOIN profitwisereportquerystub t1
-		            ON t0.PwShopId = t1.PwShopId AND t0.PwReportId = t1.PwReportId 
-	            INNER JOIN profitwisevariant t2
+            FROM profitwisereportquerystub t1
+		        INNER JOIN profitwisevariant t2
 		            ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	            INNER JOIN shopifyorderlineitem t3
 		            ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
-			            AND t3.OrderDate >= t0.StartDate AND t3.OrderDate <= t0.EndDate             
-            WHERE t0.PwShopId = @PwShopId AND t0.PwReportId = @PwReportId ";
+			            AND t3.OrderDate >= @StartDate AND t3.OrderDate <= @EndDate             
+            WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
         }
 
         public string QueryTailForTotals(int limit)
@@ -164,15 +162,16 @@ namespace ProfitWise.Data.Repositories
             return $"ORDER BY TotalRevenue DESC LIMIT {limit};";
         }
 
-
-
-        public ExecutiveSummary RetreiveTotalsForAll(long reportId)
+        public ExecutiveSummary RetreiveTotalsForAll(long reportId, DateTime startDate, DateTime endDate)
         {
             var query = @"SELECT " + QueryGutsForTotals();
-            return _connection.Query<ExecutiveSummary>(query, new {PwShopId, PwReportId = reportId}).First();
+            return _connection
+                    .Query<ExecutiveSummary>(
+                        query, new {PwShopId, PwReportId = reportId, StartDate = startDate , EndDate = endDate})
+                    .First();
         }
 
-        public List<GroupedTotal> RetreiveTotalsByProduct(long reportId)
+        public List<GroupedTotal> RetreiveTotalsByProduct(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
                 @"SELECT t1.PwMasterProductId AS GroupingId, t1.ProductTitle AS GroupingName, " +
@@ -180,10 +179,12 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.PwMasterProductId, t1.ProductTitle " +
                 QueryTailForTotals(10);
 
-            return _connection.Query<GroupedTotal>(query, new { PwShopId, PwReportId = reportId }).ToList();
+            return _connection.Query<GroupedTotal>(
+                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+                .ToList();
         }
 
-        public List<GroupedTotal> RetreiveTotalsByVariant(long reportId)
+        public List<GroupedTotal> RetreiveTotalsByVariant(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
                 @"SELECT t1.PwMasterVariantId AS GroupingId, t1.VariantTitle AS GroupingName, " +
@@ -191,10 +192,12 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.PwMasterVariantId, t1.VariantTitle " +
                 QueryTailForTotals(10);
 
-            return _connection.Query<GroupedTotal>(query, new { PwShopId, PwReportId = reportId }).ToList();
+            return _connection.Query<GroupedTotal>(
+                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+                .ToList();
         }
 
-        public List<GroupedTotal> RetreiveTotalsByProductType(long reportId)
+        public List<GroupedTotal> RetreiveTotalsByProductType(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
                 @"SELECT t1.ProductType AS GroupingId, t1.ProductType AS GroupingName, " +
@@ -202,10 +205,12 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.ProductType " +
                 QueryTailForTotals(10);
 
-            return _connection.Query<GroupedTotal>(query, new { PwShopId, PwReportId = reportId }).ToList();
+            return _connection.Query<GroupedTotal>(
+                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+                .ToList();
         }
 
-        public List<GroupedTotal> RetreiveTotalsByVendor(long reportId)
+        public List<GroupedTotal> RetreiveTotalsByVendor(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
                 @"SELECT t1.Vendor AS GroupingId, t1.Vendor AS GroupingName, " +
@@ -213,7 +218,9 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.Vendor " +
                 QueryTailForTotals(10);
 
-            return _connection.Query<GroupedTotal>(query, new { PwShopId, PwReportId = reportId }).ToList();
+            return _connection.Query<GroupedTotal>(
+                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+                .ToList();
         }
 
 

@@ -92,18 +92,20 @@ namespace ProfitWise.Web.Controllers
                 queryRepository.PopulateQueryStub(reportId);
 
                 // Summary for consumption by pie chart
-                var executiveSummary = queryRepository.RetreiveTotalsForAll(reportId);
+                var executiveSummary = 
+                    queryRepository.RetreiveTotalsForAll(reportId, report.StartDate, report.EndDate);
+
                 var productTotals =
-                    queryRepository.RetreiveTotalsByProduct(reportId)
+                    queryRepository.RetreiveTotalsByProduct(reportId, report.StartDate, report.EndDate)
                         .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
                 var variantTotals =
-                    queryRepository.RetreiveTotalsByVariant(reportId)
+                    queryRepository.RetreiveTotalsByVariant(reportId, report.StartDate, report.EndDate)
                         .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
                 var productTypeTotals =
-                    queryRepository.RetreiveTotalsByProductType(reportId)
+                    queryRepository.RetreiveTotalsByProductType(reportId, report.StartDate, report.EndDate)
                         .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
                 var vendorTotals =
-                    queryRepository.RetreiveTotalsByVendor(reportId)
+                    queryRepository.RetreiveTotalsByVendor(reportId, report.StartDate, report.EndDate)
                         .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
 
                 var summary = new Summary()
