@@ -30,10 +30,9 @@ namespace ProfitWise.Data.Model.Profit
         {
             return new ExecutiveSummary()
             {
-                NumberOfOrders = profitLines.Select(x => x.ShopifyOrderId).Distinct().Count(),
-                CostOfGoodsSold = profitLines.Sum(x => x.TotalCogs),
-                GrossRevenue = profitLines.Sum(x => x.GrossRevenue),                
-                Profit = profitLines.Sum(x => x.Profit)
+                TotalNumberSold = profitLines.Select(x => x.ShopifyOrderId).Distinct().Count(),
+                TotalCogs = profitLines.Sum(x => x.TotalCogs),
+                TotalRevenue = profitLines.Sum(x => x.GrossRevenue),                
             };
         }
         

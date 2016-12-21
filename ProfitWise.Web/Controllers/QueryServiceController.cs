@@ -78,28 +78,52 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Dataset(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
-            var reportRepository = _factory.MakeReportRepository(userBrief.PwShop);
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+
 
             using (var transaction = repository.InitiateTransaction())
             {
                 _logger.Debug("Start - Dataset method");
 
-                var report = reportRepository.RetrieveReport(reportId);
                 var shopCurrencyId = userBrief.PwShop.CurrencyId;
-                
-                var orderLineProfits = BuildOrderLineProfits(reportId, userBrief, report.StartDate, report.EndDate);
+                var report = repository.RetrieveReport(reportId);
+
+                queryRepository.PopulateQueryStub(reportId);
 
                 // Summary for consumption by pie chart
-                var summary = orderLineProfits.BuildCompleteGroupedSummary(shopCurrencyId);
+                var executiveSummary = queryRepository.RetreiveTotalsForAll(reportId);
+                var productTotals =
+                    queryRepository.RetreiveTotalsByProduct(reportId)
+                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                var variantTotals =
+                    queryRepository.RetreiveTotalsByVariant(reportId)
+                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                var productTypeTotals =
+                    queryRepository.RetreiveTotalsByProductType(reportId)
+                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                var vendorTotals =
+                    queryRepository.RetreiveTotalsByVendor(reportId)
+                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+
+                var summary = new Summary()
+                {
+                    CurrencyId = shopCurrencyId,
+                    ExecutiveSummary = executiveSummary,
+                    ProductsByMostProfitable = productTotals,
+                    VariantByMostProfitable = variantTotals,
+                    ProductTypeByMostProfitable = productTypeTotals,
+                    VendorsByMostProfitable = vendorTotals,
+                };
+                
 
                 // Build top-level Series for the column chart
-                var seriesDataset = BuildSeriesTopLevel(report, orderLineProfits, summary);
-
+                var seriesDataset = new List<ReportSeries>();
+                
                 // Create the Series drill-down data
                 var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
-                var drilldown = BuildSeriesDrilldown(seriesDataset, orderLineProfits, completeDrillDown);
-
+                var drilldown = new List<ReportSeries>();
+                
                 _logger.Debug("End - Dataset method");
 
                 transaction.Commit();
@@ -118,17 +142,17 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
+        [Obsolete]
         public ActionResult Dataset2(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
-            var reportRepository = _factory.MakeReportRepository(userBrief.PwShop);
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
             {
                 _logger.Debug("Start - Dataset method");
 
-                var report = reportRepository.RetrieveReport(reportId);
+                var report = repository.RetrieveReport(reportId);
                 var shopCurrencyId = userBrief.PwShop.CurrencyId;
                 var orderLineProfits = BuildOrderLineProfits(reportId, userBrief, report.StartDate, report.EndDate);
 
@@ -154,6 +178,7 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
+        [Obsolete]
         private List<OrderLineProfit> BuildOrderLineProfits(
             long reportId, IdentitySnapshot userBrief, DateTime startDate, DateTime endDate)
         {
@@ -189,6 +214,7 @@ namespace ProfitWise.Web.Controllers
             return orderLineProfits;
         }
 
+        [Obsolete]
         private void PopulateCogs(
                     IList<OrderLineProfit> orderLineProfits,
                     Dictionary<long, PwReportMasterVariantCogs> cogs,
@@ -208,6 +234,7 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
+        [Obsolete]
         private List<ReportSeries> BuildSeriesTopLevel(PwReport report, List<OrderLineProfit> orderLineProfits, Summary summary)
         {
             List<ReportSeries> seriesDataset;
@@ -248,6 +275,7 @@ namespace ProfitWise.Web.Controllers
             return seriesDataset;
         }
 
+        [Obsolete]
         private ReportSeries
                     BuildSeriesFromGroupKeyInclusive(
                         IList<OrderLineProfit> orderLines,
@@ -269,7 +297,8 @@ namespace ProfitWise.Web.Controllers
             series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
             return series;
         }
-        
+
+        [Obsolete]
         private List<ReportSeries> 
                 BuildSeriesDrilldown(
                         List<ReportSeries> seriesDataset, 
@@ -292,6 +321,7 @@ namespace ProfitWise.Web.Controllers
             return output;
         }
 
+        [Obsolete]
         private List<ReportSeries>
                     BuildSeriesDrilldownHelper(ReportSeries series, List<OrderLineProfit> orderLines)
         {

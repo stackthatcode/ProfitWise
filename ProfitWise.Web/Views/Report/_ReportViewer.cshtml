@@ -125,19 +125,19 @@
             <div class="row" data-bind="with: $data.ExecutiveSummary">
                 <div class="col-xs-3">
                     <div class="report-widget-label">Number of Orders</div>
-                    <h1 data-bind="text: NumberOfOrders"></h1>
+                    <h1 data-bind="text: TotalNumberSold"></h1>
                 </div>
                 <div class="col-xs-3">
                     <div class="report-widget-label">Revenue</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(GrossRevenue, $parent.CurrencyId)"></h1>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId)"></h1>
                 </div>
                 <div class="col-xs-3">
                     <div class="report-widget-label">Cost of Goods Sold</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(CostOfGoodsSold, $parent.CurrencyId)"></h1>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId)"></h1>
                 </div>
                 <div class="col-xs-3">
                     <div class="report-widget-label">Profit</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Profit, $parent.CurrencyId)"></h1>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></h1>
                 </div>
             </div>
             
