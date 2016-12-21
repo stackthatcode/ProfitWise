@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Shopify
 {
     public class ShopifyOrderLineItem
     {

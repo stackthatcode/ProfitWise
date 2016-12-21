@@ -69,10 +69,16 @@ CREATE TABLE `profitwisereportquerystub` (
 	`PwReportId` BIGINT NOT NULL,
 	`PwShopId` BIGINT NOT NULL,    
     `PwMasterVariantId` BIGINT NOT NULL,
-        
+    `PwMasterProductId` BIGINT NOT NULL,
+    `Vendor` VARCHAR(100) NULL,
+    `ProductType` VARCHAR(100) NULL,        
     PRIMARY KEY (`PwReportId`, `PwShopId`, `PwMasterVariantId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+ALTER TABLE `profitwisereportquerystub` ADD INDEX `PwMasterProductId` (`PwMasterProductId`);
+ALTER TABLE `profitwisereportquerystub` ADD INDEX `Vendor` (`Vendor`);
+ALTER TABLE `profitwisereportquerystub` ADD INDEX `ProductType` (`ProductType`);
 
 

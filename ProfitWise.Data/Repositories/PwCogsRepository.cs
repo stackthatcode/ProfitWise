@@ -153,7 +153,6 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { PwShopId = this.PwShop.PwShopId, masterVariantId, stockedDirectly });
         }
 
-
         public void UpdateExcludeByPicklist(long pickListId, bool exclude)
         {
             var query =
@@ -231,5 +230,42 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(
                 query, new { this.PwShopId, masterVariantId, currencyId, amount });
         }
+
+
+        public const decimal DefaultMargin = 0.20m;
+
+        public void UpdateNewMasterVariantCogsToDefault()
+        {           
+            var query =
+                @"UPDATE profitwiseshop t0
+                    INNER JOIN profitwisemastervariant t1 
+		                ON t0.PwShopId = t1.PwShopId
+	                INNER JOIN profitwisevariant t2 
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
+                SET t1.CogsCurrencyId = t0.CurrencyId, 
+                    t1.CogsAmount = t2.HighPrice * @FractionOfHighPrice, 
+                    t1.CogsDetail = false
+                WHERE t0.PwShopId = @PwShopId
+                AND t1.CogsAmount IS NULL;";
+
+            var FractionOfHighPrice = 1.00m - DefaultMargin;
+            _connection.Execute(query, new { this.PwShopId, FractionOfHighPrice });
+        }
+
+        // This is the first iteration - next will be more granular i.e. Master Variant Id
+        public void UpdateOrderLinesWithSimpleCogs()
+        {
+            var query =
+                @"UPDATE profitwiseshop t0
+                    INNER JOIN profitwisemastervariant t1 
+		                ON t0.PwShopId = t1.PwShopId
+	                INNER JOIN profitwisevariant t2 
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
+                SET t1.CogsCurrencyId = t0.CurrencyId, t1.CogsAmount = t2.HighPrice * 0.80, t1.CogsDetail = false
+                WHERE t0.PwShopId = @PwShopId
+                AND t1.CogsAmount IS NULL;";
+            _connection.Execute(query, new { this.PwShopId });
+        }
     }
 }
+

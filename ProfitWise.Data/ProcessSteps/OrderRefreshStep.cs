@@ -216,6 +216,7 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var productVariantBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
+            var cogsRepostory = _multitenantFactory.MakeCogsRepository(shop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
@@ -241,6 +242,7 @@ namespace ProfitWise.Data.ProcessSteps
                     WriteOrderToPersistence(importedOrder, context);
                 }
 
+                cogsRepostory.UpdateOrderLinesWithSimpleCogs();
                 trans.Commit();
             }
         }

@@ -113,7 +113,7 @@ namespace ProfitWise.Data.Repositories
 
             var createQuery =
                 @"INSERT INTO profitwisereportquerystub
-                SELECT @PwReportId, @PwShopId, PwMasterVariantId
+                SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, Vendor, ProductType
                 FROM vw_MasterProductAndVariantSearch 
                 WHERE PwShopId = @PwShopId " +
                 ReportFilterClauseGenerator(reportId) + 

@@ -39,8 +39,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwisebatchstate SET 
                             ProductsLastUpdated = @ProductsLastUpdated, 
                             OrderDatasetStart = @OrderDatasetStart, 
-                            OrderDatasetEnd = @OrderDatasetEnd,
-                            ExchangeRateLastDate = @ExchangeRateLastDate
+                            OrderDatasetEnd = @OrderDatasetEnd
                             WHERE PwShopId = @PwShopId";
             _connection.Execute(query, state);
         }

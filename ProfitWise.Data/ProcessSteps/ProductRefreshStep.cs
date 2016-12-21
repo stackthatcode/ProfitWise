@@ -69,6 +69,10 @@ namespace ProfitWise.Data.ProcessSteps
             var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
             SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
 
+            // Update the CoGS of the new Products (Master Variants)
+            var cogsRepository = _multitenantFactory.MakeCogsRepository(shop);
+            cogsRepository.UpdateNewMasterVariantCogsToDefault();
+
             // Update Batch State
             batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
             batchStateRepository.Update(batchState);
