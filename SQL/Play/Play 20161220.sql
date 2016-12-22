@@ -137,8 +137,20 @@ GROUP BY t4.y, t4.m, DateLabel, GroupingName
 ORDER BY t4.y, t4.m;
 
 
+SELECT * FROM profitwisemastervariant;
 
 
+
+SELECT t3.OrderDate,
+		SUM(t3.GrossRevenue) AS TotalRevenue, 
+		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+FROM profitwisereportquerystub t1
+	INNER JOIN profitwisevariant t2
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	INNER JOIN shopifyorderlineitem t3
+		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+GROUP BY t3.OrderDate
+ORDER BY t3.OrderDate
 
 
 

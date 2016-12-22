@@ -302,6 +302,29 @@ namespace ProfitWise.Data.Repositories
                     query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
                 .ToList();
         }
+
+
+        public List<DateTotal> RetrieveOverallDateTotals(
+                long reportId, DateTime startDate, DateTime endDate)
+        {
+            var query = 
+                @"SELECT t3.OrderDate,
+		                SUM(t3.GrossRevenue) AS TotalRevenue, 
+		                SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+                FROM profitwisereportquerystub t1
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+                WHERE t1.PwShopId = @PwShopId AND t1.PwReportID = @PwReportId
+                AND t3.OrderDate >= @StartDate AND t3.OrderDate <= @EndDate 
+                GROUP BY t3.OrderDate
+                ORDER BY t3.OrderDate";
+
+            return _connection.Query<DateTotal>(
+                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+                .ToList();
+        }
     }
 }
 

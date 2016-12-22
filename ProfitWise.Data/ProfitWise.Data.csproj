@@ -74,8 +74,9 @@
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="Model\Profit\DateTotal.cs" />
     <Compile Include="Model\Profit\DataGranularity.cs" />
-    <Compile Include="Model\Profit\DateBucketedTotals.cs" />
+    <Compile Include="Model\Profit\CanonizedDateTotal.cs" />
     <Compile Include="Model\Profit\ExecutiveSummary.cs" />
     <Compile Include="Model\Profit\ColumnOrdering.cs" />
     <Compile Include="Model\Profit\GroupedTotal.cs" />

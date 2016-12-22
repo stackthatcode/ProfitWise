@@ -73,7 +73,11 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { Selections = selections, RecordCounts = counts });
         }
 
-
+        public class ColumnChartData
+        {
+            public List<ReportSeries> Series { get; set; }
+            public List<ReportSeries> Drilldown { get; set; }
+        }
 
         [HttpPost]
         public ActionResult Dataset(long reportId)
@@ -85,8 +89,6 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = repository.InitiateTransaction())
             {
-                _logger.Debug("Start - Dataset method");
-
                 var shopCurrencyId = userBrief.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
 
@@ -95,74 +97,43 @@ namespace ProfitWise.Web.Controllers
 
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userBrief.PwShop);
-
-                 var topLevelTotals = new List<CanonizedDateTotal>();
-                var drilldownDataset = new List<ReportSeries>();
-                var seriesDataset = new List<ReportSeries>();
-
-
+                ColumnChartData columnChartData;
+                
+                var dateTotals =
+                    queryRepository
+                        .RetrieveOverallDateTotals(report.PwReportId, report.StartDate, report.EndDate)
+                        .ToDictionary(x => x.OrderDate, x => x);
 
                 if (report.GroupingId == ReportGrouping.Overall)
                 {
-                    //seriesDataset.Add(
-                    //    BuildSeries("All", report.StartDate, report.EndDate, granularity));
+                    var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
+                    var series = BuildSeriesFromDateTotals(
+                            "All", report.StartDate, report.EndDate, granularity, dateTotals);
+                    
+                    columnChartData = new ColumnChartData
+                    {
+                        Series = new List<ReportSeries> { series },
+                        Drilldown = new List<ReportSeries>()
+                    };
                 }
                 else
                 {
-                    // 1st-level drill down
-                    var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
-                    topLevelTotals =
-                        queryRepository.RetrieveCanonizedDateTotals(
-                                reportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
-
-                    //  The Grouping Names should match with those from the Summary
-                    var groupingNames = summary
-                            .TotalsByGroupingId(report.GroupingId)
-                            .Take(NumberOfColumnGroups)
-                            .Select(x => x.GroupingName)
-                            .ToList();
-
-                    foreach (var groupingName in groupingNames)
-                    {
-                        var series = BuildSeriesFromBucketTotals(
-                                groupingName, report.StartDate, report.EndDate, granularity, topLevelTotals);
-                        seriesDataset.Add(series);
-                    }
-
-                    if (granularity != DataGranularity.Day)
-                    {
-                        var drilldownGranularity = granularity.NextDrilldownLevel();
-                        var drilldownTotals = 
-                            queryRepository.RetrieveCanonizedDateTotals(
-                                reportId, report.StartDate, report.EndDate, report.GroupingId, drilldownGranularity);
-
-                        foreach (var element in seriesDataset.SelectMany(x => x.data))
-                        {
-                            var series = BuildSeriesFromBucketTotals(
-                                    element.Parent.name, element.StartDate, element.EndDate, drilldownGranularity, drilldownTotals);
-
-                            element.drilldown = element.CanonizedIdentifier;
-                            series.id = element.CanonizedIdentifier;
-
-                            drilldownDataset.Add(series);
-                        }
-                    }
+                    columnChartData = BuildColumnChartSeriesNonOverall(userBrief.PwShop, report, summary);
                 }
                 
-
                 transaction.Commit();
 
                 return new JsonNetResult(
                     new
                     {
-                        Sample = topLevelTotals,
                         CurrencyId = shopCurrencyId,
                         Summary = summary,
-                        Series = seriesDataset,
-                        Drilldown = drilldownDataset
+                        Series = columnChartData.Series,
+                        Drilldown = columnChartData.Drilldown
                     });
             }
         }
+
 
         private Summary BuildSummary(PwReport report, PwShop shop)
         {
@@ -197,8 +168,55 @@ namespace ProfitWise.Web.Controllers
             return summary;
         }
 
+        private ColumnChartData BuildColumnChartSeriesNonOverall(PwShop shop, PwReport report, Summary summary)
+        {
+            var queryRepository = _factory.MakeReportQueryRepository(shop);
+            var seriesDataset = new List<ReportSeries>();
+            var drilldownDataset = new List<ReportSeries>();
 
-        private ReportSeries BuildSeriesFromBucketTotals(
+            // 1st-level drill down
+            var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
+            var topLevelTotals =
+                queryRepository.RetrieveCanonizedDateTotals(
+                    report.PwReportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
+
+            //  The Grouping Names should match with those from the Summary
+            var groupingNames = summary
+                .TotalsByGroupingId(report.GroupingId)
+                .Take(NumberOfColumnGroups)
+                .Select(x => x.GroupingName)
+                .ToList();
+
+            foreach (var groupingName in groupingNames)
+            {
+                var series = BuildSeriesFromCanonizedDateTotals(
+                    groupingName, report.StartDate, report.EndDate, granularity, topLevelTotals);
+                seriesDataset.Add(series);
+            }
+
+            if (granularity != DataGranularity.Day)
+            {
+                var drilldownGranularity = granularity.NextDrilldownLevel();
+                var drilldownTotals =
+                    queryRepository.RetrieveCanonizedDateTotals(
+                        report.PwReportId, report.StartDate, report.EndDate, report.GroupingId, drilldownGranularity);
+
+                foreach (var element in seriesDataset.SelectMany(x => x.data))
+                {
+                    var series = BuildSeriesFromCanonizedDateTotals(
+                        element.Parent.name, element.StartDate, element.EndDate, drilldownGranularity, drilldownTotals);
+
+                    element.drilldown = element.CanonizedIdentifier;
+                    series.id = element.CanonizedIdentifier;
+
+                    drilldownDataset.Add(series);
+                }
+            }
+
+            return new ColumnChartData { Series = seriesDataset, Drilldown = drilldownDataset };
+        }
+
+        private ReportSeries BuildSeriesFromCanonizedDateTotals(
                     string groupingName, DateTime start, DateTime end, DataGranularity granularity,
                     List<CanonizedDateTotal> dateBucketedTotals)
         {
@@ -207,22 +225,42 @@ namespace ProfitWise.Web.Controllers
 
             foreach (var element in series.data)
             {
-                var total =
-                    dateBucketedTotals.FirstOrDefault(
+                var total = dateBucketedTotals.FirstOrDefault(
                         x => x.CanonizedIdentifier == element.CanonizedIdentifier);
 
                 if (total != null)
                 {
-                    element.y = total.TotalRevenue;
+                    element.y = total.TotalProfit;
                 }
             }
 
             return series;
         }
-        
 
+        private ReportSeries BuildSeriesFromDateTotals(
+                    string groupingName, DateTime start, DateTime end, 
+                    DataGranularity granularity, Dictionary<DateTime, DateTotal> dateTotals)
+        {
+            var series = ReportSeriesFactory.GenerateSeries(groupingName, start, end, granularity);
+            series.id = groupingName;   // The jury is out on this one!!
+
+            foreach (var element in series.data)
+            {
+                var total = 0m;
+                var current = element.StartDate;
+                while (current <= element.EndDate)
+                {
+                    if (dateTotals.ContainsKey(current))
+                    {
+                        total += dateTotals[current].TotalProfit;
+                    }
+                    current = current.AddDays(1);
+                }
+                element.y = total;
+            }
+
+            return series;
+        }
     }
 }
-
-
 
