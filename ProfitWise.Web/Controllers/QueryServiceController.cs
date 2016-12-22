@@ -117,12 +117,13 @@ namespace ProfitWise.Web.Controllers
                     ProductTypeByMostProfitable = productTypeTotals,
                     VendorsByMostProfitable = vendorTotals,
                 };
-                
+
+                var granularity = (report.EndDate - report.StartDate).SuggestedDataGranularity();
+                var dateBucketedTotals = queryRepository
+                    .RetrieveDateBucketedTotals(reportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
 
                 // Build top-level Series for the column chart
                 var seriesDataset = new List<ReportSeries>();
-                
-                // Create the Series drill-down data
                 var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
                 var drilldown = new List<ReportSeries>();
                 
@@ -133,6 +134,7 @@ namespace ProfitWise.Web.Controllers
                 return new JsonNetResult(
                     new
                     {
+                        Sample = dateBucketedTotals,
                         CurrencyId = shopCurrencyId,
                         Summary = summary,
                         Series = seriesDataset,
@@ -142,100 +144,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-
-        [HttpPost]
-        [Obsolete]
-        public ActionResult Dataset2(long reportId)
-        {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-
-            using (var transaction = repository.InitiateTransaction())
-            {
-                _logger.Debug("Start - Dataset method");
-
-                var report = repository.RetrieveReport(reportId);
-                var shopCurrencyId = userBrief.PwShop.CurrencyId;
-                var orderLineProfits = BuildOrderLineProfits(reportId, userBrief, report.StartDate, report.EndDate);
-
-                // Summary for consumption by pie chart
-                var summary = orderLineProfits.BuildCompleteGroupedSummary(shopCurrencyId);
-
-                // Build top-level Series for the column chart
-                var seriesDataset = BuildSeriesTopLevel(report, orderLineProfits, summary);
-
-                // Create the Series drill-down data
-                var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
-                var drilldown = BuildSeriesDrilldown(seriesDataset, orderLineProfits, completeDrillDown);
-
-                _logger.Debug("End - Dataset method");
-
-                transaction.Commit();
-
-                return new JsonNetResult(
-                    new
-                    {
-                        CurrencyId = shopCurrencyId, Summary = summary, Series = seriesDataset, Drilldown = drilldown
-                    });
-            }
-        }
-
-        [Obsolete]
-        private List<OrderLineProfit> BuildOrderLineProfits(
-            long reportId, IdentitySnapshot userBrief, DateTime startDate, DateTime endDate)
-        {
-            var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
-            var shopCurrencyId = userBrief.PwShop.CurrencyId;
-
-
-            _logger.Debug("Start database queries - query stub creation/retrieval and order line profits");
-
-            // Transforms Report Filters into Master Variants to join with Order Line data
-            queryRepository.PopulateQueryStub(reportId);
-
-            // Retrieve by Date Range and assign CoGS to all the Order Lines to compute Profits
-            var orderLineProfits = queryRepository
-                    .RetrieveOrderLineProfits(reportId, startDate, endDate);
-
-            var searchStubs = queryRepository
-                    .RetrieveSearchStubs(reportId)
-                    .ToDictionary(x => x.PwMasterVariantId);
-
-            _logger.Debug("End database queries - query stub creation/retrieval and order line profits");
-
-            orderLineProfits.ForEach(x => x.SearchStub = searchStubs[x.PwMasterVariantId]);
-
-            // CoGS data for this Report
-            var cogs = queryRepository
-                    .RetrieveCogsData(reportId)
-                    .ToDictionary(x => x.PwMasterVariantId);
-
-            // Combines CoGS and Search Stubs with the Order Lines
-            PopulateCogs(orderLineProfits, cogs, shopCurrencyId);
-
-            return orderLineProfits;
-        }
-
-        [Obsolete]
-        private void PopulateCogs(
-                    IList<OrderLineProfit> orderLineProfits,
-                    Dictionary<long, PwReportMasterVariantCogs> cogs,
-                    int shopCurrencyId)
-        {
-            foreach (var line in orderLineProfits)
-            {
-                var cogsEntry = cogs[line.PwMasterVariantId];
-
-                var normalizedCogsAmount =
-                    cogsEntry.HasData
-                        ? _currencyService.Convert(
-                            cogsEntry.CogsAmount.Value, cogsEntry.CogsCurrencyId.Value, shopCurrencyId, line.OrderDate)
-                        : 0m;
-
-                line.PerUnitCogs = normalizedCogsAmount;
-            }
-        }
-
+        
         [Obsolete]
         private List<ReportSeries> BuildSeriesTopLevel(PwReport report, List<OrderLineProfit> orderLineProfits, Summary summary)
         {

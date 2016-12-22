@@ -598,7 +598,7 @@
                 function (data) {
                     // Rename to Summary Dataset
                     self.Dataset(data.Summary);
-                    //console.log(data);
+                    console.log(data.Sample);
                                         
                     self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
@@ -673,8 +673,8 @@
 
         self.LoadColumnChart = function (id, title, seriesData, drilldownData) {
 
-            console.log(seriesData);
-            console.log(drilldownData);
+            //console.log(seriesData);
+            //console.log(drilldownData);
 
             $(id).highcharts({
                 chart: {

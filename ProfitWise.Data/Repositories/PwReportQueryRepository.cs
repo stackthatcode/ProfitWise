@@ -7,6 +7,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
+using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -14,13 +15,15 @@ namespace ProfitWise.Data.Repositories
     {
         private readonly MySqlConnection _connection;
         private readonly MultitenantFactory _factory;
+        private readonly IPushLogger _logger;
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
-        public PwReportQueryRepository(MySqlConnection connection, MultitenantFactory factory)
+        public PwReportQueryRepository(MySqlConnection connection, MultitenantFactory factory, IPushLogger logger)
         {
             _connection = connection;
             _factory = factory;
+            _logger = logger;
         }
 
 
@@ -144,8 +147,7 @@ namespace ProfitWise.Data.Repositories
         // Dataset #2 operations
         public string QueryGutsForTotals()
         {
-            return
-                @"	SUM(t3.GrossRevenue) As TotalRevenue, 
+            return @"SUM(t3.GrossRevenue) As TotalRevenue, 
                     SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
 		            SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
             FROM profitwisereportquerystub t1
@@ -223,59 +225,69 @@ namespace ProfitWise.Data.Repositories
                 .ToList();
         }
 
-
-
-
-        // Dataset #1 operations 
-        [Obsolete]
-        public List<OrderLineProfit> 
-                    RetrieveOrderLineProfits(long reportId, DateTime startDate, DateTime endDate)
+        // Matches the following Date Label convention: 2014, 2014 Q2, January 2014, Week 13 of 2014, 4/11/2014
+        public List<DateBucketedTotal> 
+                RetrieveDateBucketedTotals(
+                    long reportId, 
+                    DateTime startDate, 
+                    DateTime endDate, 
+                    ReportGrouping grouping, 
+                    DataGranularity granularity)
         {
-            endDate = endDate.AddDays(1);
+            string dateField;
+            if (granularity == DataGranularity.Year)
+                dateField = "t4.y AS DateLabel, ";
+            else if (granularity == DataGranularity.Quarter) 
+                dateField = "t4.y, t4.q, CONCAT(t4.y, ' ',  t4.q) AS DateLabel, ";
+            else if (granularity == DataGranularity.Month)
+                dateField = "t4.y, t4.m, CONCAT(t4.monthName, ' ',  t4.y) AS DateLabel, ";
+            else if (granularity == DataGranularity.Week)
+                dateField = "t4.y, t4.w, CONCAT('Week ', t4.w, ' of ', t4.y) AS DateLabel, ";
+            else // DataGranularity.Day
+                dateField = "t4.dt, CONCAT(t4.m, '/', t4.d, '/', t4.y) AS DateLabel, ";
 
-            var query =
-                @"SELECT t1.PwReportId, t1.PwShopId, t2.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, 
-		        t3.OrderDate, t3.ShopifyOrderId, t3.ShopifyOrderLineId, t3.Quantity, t3.TotalRestockedQuantity, t3.UnitPrice, t3.GrossRevenue,
-                t4.OrderNumber
+            string groupingField;
+            if (grouping == ReportGrouping.Product)
+                groupingField = "t1.ProductTitle AS GroupingName, ";
+            else if (grouping == ReportGrouping.Variant)
+                groupingField = "t1.VariantTitle AS GroupingName, ";
+            else if (grouping == ReportGrouping.ProductType)
+                groupingField = "t1.ProductType AS GroupingName, ";
+            else if (grouping == ReportGrouping.Vendor)
+                groupingField = "t1.Vendor AS GroupingName, ";
+            else // Overall
+                groupingField = "'Overall' AS GroupingName, ";
+
+            var queryGuts =
+                @"SUM(t3.GrossRevenue) AS TotalRevenue, 
+		        SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
                 FROM profitwisereportquerystub t1
 	                INNER JOIN profitwisevariant t2
-		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-			                AND t1.PwShopId = t2.PwShopId
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	                INNER JOIN shopifyorderlineitem t3
-		                ON t2.PwProductId = t3.PwProductId 
-			                AND t2.PwVariantId = t3.PwVariantId
-                            AND t2.PwShopID = t3.PwShopId
-	                INNER JOIN shopifyorder t4
-		                ON t3.ShopifyOrderId = t4.ShopifyOrderId
-                            AND t3.PwShopID = t4.PwShopId
-                WHERE t1.PwReportID = @reportId
-                AND t1.PwShopId = @PwShopId
-                AND t3.OrderDate >= @startDate
-                AND t3.OrderDate <= @endDate;";
-            
-            var results = 
-                _connection
-                    .Query<OrderLineProfit>(
-                        query, new { PwShopId, reportId, startDate, endDate }).ToList();
-            return results;
-        }
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+	                INNER JOIN calendar_table t4
+		                ON t3.OrderDate = t4.dt
+                WHERE t1.PwShopId = @PwShopId AND t1.PwReportID = @PwReportId 
+                AND t3.OrderDate >= @StartDate AND t3.OrderDate <= @EndDate ";
 
-        [Obsolete]
-        public List<PwReportMasterVariantCogs> RetrieveCogsData(long reportId)
-        {
-            var query =
-                @"SELECT t2.PwMasterVariantId, t1.CogsCurrencyId, t1.CogsAmount
-                FROM profitwisemastervariant t1 
-	                INNER JOIN profitwisereportquerystub t2 
-                        ON t1.PwMasterVariantId = t2.PwMasterVariantId
-                WHERE t1.PwShopId = @PwShopId 
-                AND t1.PwShopId = @PwShopId 
-                AND t2.PwReportId = @reportId;";
+            string queryTail;
+            if (granularity == DataGranularity.Year)
+                queryTail = "GROUP BY t4.y, GroupingName ORDER BY t4.y;";
+            else if (granularity == DataGranularity.Quarter)
+                queryTail = "GROUP BY t4.y, t4.q, GroupingName ORDER BY t4.y, t4.q;";
+            else if (granularity == DataGranularity.Month)
+                queryTail = "GROUP BY t4.y, t4.m, GroupingName ORDER BY t4.y, t4.m;";
+            else if (granularity == DataGranularity.Week)
+                queryTail = "GROUP BY t4.y, t4.w, GroupingName ORDER BY t4.y, t4.w;";
+            else // DataGranularity.Day
+                queryTail = "GROUP BY t4.dt, GroupingName ORDER BY t4.dt;";
 
-            var results = 
-                _connection.Query<PwReportMasterVariantCogs>(
-                    query, new { PwShopId, reportId }).ToList();
-            return results;
+            var query = @"SELECT " + dateField + groupingField + queryGuts + queryTail;
+
+            return _connection.Query<DateBucketedTotal>(
+                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+                .ToList();
         }
     }
 }

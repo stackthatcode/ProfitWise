@@ -64,12 +64,12 @@ FROM profitwisereport t0
 	INNER JOIN shopifyorderlineitem t3
 		ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
 			AND t3.OrderDate >= t0.StartDate AND t3.OrderDate <= t0.EndDate   
-            
+WHERE t0.PwShopId = 100001 AND t0.PwReportID = 99739;
+          
 
 
 
 SELECT 	'Product' AS GroupingType, t1.PwMasterProductId AS GroupingId, t1.ProductTitle AS GroupingName,
-
 		SUM(t3.GrossRevenue) As TotalRevenue, 
         SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
 		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
@@ -87,117 +87,19 @@ ORDER BY TotalRevenue DESC
 LIMIT 10;
 
 
-SELECT 	'Variant' AS GroupingType, t1.PwMasterVariantId AS GroupingId, t1.VariantTitle AS GroupingName,
-
-		SUM(t3.GrossRevenue) As TotalRevenue, 
-        SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
-		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
-FROM profitwisereport t0
-	INNER JOIN profitwisereportquerystub t1
-		ON t0.PwShopId = t1.PwShopId AND t0.PwReportId = t1.PwReportId 
-	INNER JOIN profitwisevariant t2
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	INNER JOIN shopifyorderlineitem t3
-		ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
-			AND t3.OrderDate >= t0.StartDate AND t3.OrderDate <= t0.EndDate             
-WHERE t0.PwShopId = 100001 AND t0.PwReportID = 99739
-
-GROUP BY t1.PwMasterVariantId, t1.VariantTitle
-
-ORDER BY TotalRevenue DESC
-LIMIT 10;
 
 
 
 
 
-
-
-
-
-
-
-SELECT * FROM profitwisereport;
-SELECT * FROM profitwisereportquerystub;
-SELECT * FROM profitwiseproduct;
-
-
-
-
-SELECT 	t1.PwMasterVariantId,
-		SUM(t3.GrossRevenue) As TotalRevenue, 
-		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
-FROM profitwisereportquerystub t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	INNER JOIN shopifyorderlineitem t3
-		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99742 AND t3.OrderDate >= '2013-11-01'
-GROUP BY t1.PwMasterVariantId
-ORDER BY TotalRevenue DESC;
-
-
-
-SELECT COUNT(*) FROM shopifyorderlineitem INNER JOIN
-ints;
-
-
-
-SELECT 	t1.PwMasterVariantId,
-		SUM(t3.GrossRevenue) As TotalRevenue, 
-		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
-FROM profitwisereportquerystub t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	INNER JOIN shopifyorderlineitem t3
-		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99742 AND t3.OrderDate >= '2013-11-01'
-GROUP BY t1.PwMasterVariantId
-ORDER BY TotalRevenue DESC
-LIMIT 10, 500000;
-
-
-
-SELECT 	t1.Vendor,
-		SUM(t3.GrossRevenue) AS TotalRevenue, 
-		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
-FROM profitwisereportquerystub t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	INNER JOIN shopifyorderlineitem t3
-		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-	INNER JOIN ints ON ints.i < 5
-WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99742 AND t3.OrderDate >= '2013-11-02'
-GROUP BY t1.Vendor
-ORDER BY TotalRevenue DESC
-LIMIT 10;
-
-
-
-
+SELECT * FROM calendar_table;
 
 ### Report Series Generation
 ### { y + y, y + q, y + m, w, dw }
 
-SELECT 	t4.y, t4.m, t1.Vendor, 
-		SUM(t3.GrossRevenue), 
-		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
-FROM profitwisereportquerystub t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	INNER JOIN shopifyorderlineitem t3
-		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-	INNER JOIN calendar_table t4
-		ON t3.OrderDate = t4.dt
-WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99740 AND t3.OrderDate >= '2014-01-02'
-AND t1.Vendor IN ( 'Ultimaker', 'ColorFabb' )
-GROUP BY t1.Vendor, t4.y, t4.m
-ORDER BY t4.y, t4.m, t1.Vendor;
 
-
-
-
-SELECT 	t1.PwMasterProductId,
+SELECT  t4.y, t4.m, CONCAT(CONCAT(t4.monthName, ' '),  t4.y) AS DateLabel, 
+		t1.ProductTitle AS GroupingName, 	# Grouping 
 		SUM(t3.GrossRevenue) AS TotalRevenue, 
 		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
 FROM profitwisereportquerystub t1
@@ -207,12 +109,42 @@ FROM profitwisereportquerystub t1
 		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
 	INNER JOIN calendar_table t4
 		ON t3.OrderDate = t4.dt
-WHERE t1.PwShopId = 100001 
-AND t1.PwReportID = 99740 
-AND t3.OrderDate >= '2015-01-02'
-##AND t1.Vendor = 'LulzBot'
-GROUP BY t1.PwMasterProductId
-ORDER BY TotalCogs DESC;
+WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99739 AND t3.OrderDate >= '2014-01-02'
+
+# AND t1.ProductTitle IN ( 'Ultimaker', 'ColorFabb' )
+
+GROUP BY t4.y, t4.m, DateLabel, GroupingName # Build Query Tail ( Granularity )
+ORDER BY t4.y, t4.m;
+
+
+
+SELECT t4.dt, CONCAT(t4.m, '/', t4.d, '/', t4.y) AS DateLabel, 
+		t1.Vendor AS GroupingName, 	# Grouping 
+		SUM(t3.GrossRevenue) AS TotalRevenue, 
+		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+FROM profitwisereportquerystub t1
+	INNER JOIN profitwisevariant t2
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	INNER JOIN shopifyorderlineitem t3
+		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+	INNER JOIN calendar_table t4
+		ON t3.OrderDate = t4.dt
+WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99739 AND t3.OrderDate >= '2014-01-02'
+
+# AND t1.ProductTitle IN ( 'Ultimaker', 'ColorFabb' )
+
+GROUP BY t4.dt, DateLabel, GroupingName ORDER BY t4.dt;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -227,8 +159,8 @@ SELECT * FROM profitwisemastervariant;
 
 SELECT COUNT(*) FROM shopifyorderlineitem;
 
-
 SELECT * FROM exchangerate;
 
 SELECT * FROM calendar_table;
+
 
