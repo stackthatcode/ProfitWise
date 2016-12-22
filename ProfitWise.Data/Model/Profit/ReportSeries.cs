@@ -19,9 +19,9 @@ namespace ProfitWise.Data.Model.Profit
     public class ReportSeriesElement
     {
         [JsonIgnore]
-        public DateTime Start { get; set; }
+        public DateTime StartDate { get; set; }
         [JsonIgnore]
-        public DateTime End { get; set; }
+        public DateTime EndDate { get; set; }
         [JsonIgnore]
         public string DateIdentifier { get; set; }
         [JsonIgnore]

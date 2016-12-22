@@ -76,3 +76,167 @@
 2016-12-22 10:27:12.3368|Debug|c52bd748-5f5d-4b02-8df0-7c7093f3cf97|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-22 10:27:12.3718|Debug|5f66911b-c085-4170-a157-439a331b784b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-22 10:27:12.3718|Debug|5f66911b-c085-4170-a157-439a331b784b|Start - Dataset method
+2016-12-22 10:32:04.7649|Debug|19492e5a-28c9-49e7-bdcb-b916af10cc77|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:32:04.8669|Debug|7b4c86d6-f290-4f8b-8b8f-1bad81c99dbd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:32:04.8984|Debug|c68ffc0f-c239-4fd8-b81d-34e4f7f152e5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:32:04.9054|Debug|c68ffc0f-c239-4fd8-b81d-34e4f7f152e5|Start - Dataset method
+2016-12-22 10:32:45.9723|Debug|88416da6-27cf-41c4-a278-f74506a85805|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:32:46.0698|Debug|789ff0e9-22d7-4e07-8162-1f9e5dcf86e2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:32:46.1028|Debug|789ff0e9-22d7-4e07-8162-1f9e5dcf86e2|Start - Dataset method
+2016-12-22 10:53:51.1570|Debug|6f4e4030-b135-4518-8a59-dc2087484863|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:53:56.5345|Debug|23e5791a-fc5b-45e4-98ca-b1c57585b081|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:53:57.0595|Debug|fd8924c7-33bf-4976-bc31-2bf4489bdf33|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:53:57.1155|Debug|0067acdc-6891-417f-9e7c-841732294220|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:53:57.2390|Debug|39fd7e30-e6f8-4205-9d5d-e9a5cf2f2692|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:53:57.3030|Debug|3147ac29-049e-47f7-8895-067110785c1a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:53:57.3170|Debug|3147ac29-049e-47f7-8895-067110785c1a|Start - Dataset method
+2016-12-22 10:54:15.7505|Debug|3f39d28a-3b0f-4e37-80c0-74b24eabe40c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:18.6299|Debug|847a1bab-0b6c-4b3c-b66e-10db84e7f8dd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:18.8244|Debug|e5a26877-b599-4ab3-b12e-26bb7eba2340|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:18.8629|Debug|e5a26877-b599-4ab3-b12e-26bb7eba2340|Start - Dataset method
+2016-12-22 10:54:25.2936|Debug|06224d11-9dbb-4c63-9fa2-3b05ad5a473b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:25.3236|Debug|2a074bf9-95ed-42b8-8c4f-59639678771e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:25.3756|Debug|3a77fd46-fe3f-4845-8481-8ea03f3803e9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:25.4026|Debug|0b64a53e-234e-4571-8f32-1a4cd2ee278f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:25.4026|Debug|0b64a53e-234e-4571-8f32-1a4cd2ee278f|Start - Dataset method
+2016-12-22 10:54:33.5467|Debug|c810fedd-e034-4083-b6ee-32d6fa4c7a1e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:33.7072|Debug|f8609528-cc31-474e-9455-55b3fdf9511d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:33.7487|Debug|e24a6b34-49f5-41f3-aee9-f8df00c80d50|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:33.7487|Debug|e24a6b34-49f5-41f3-aee9-f8df00c80d50|Start - Dataset method
+2016-12-22 10:54:47.6530|Debug|20c10e98-02ab-48be-885a-43b685fc7ea4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:47.7315|Debug|d681b101-9bc4-407d-ae2f-0d26eda7983a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:54:47.7315|Debug|d681b101-9bc4-407d-ae2f-0d26eda7983a|Start - Dataset method
+2016-12-22 10:55:16.7496|Debug|a248f84e-47af-4b70-907b-5d40cda268b9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:55:16.8546|Debug|bfba2451-7f1e-43e9-8f9f-571da2c0d701|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:55:16.8581|Debug|bfba2451-7f1e-43e9-8f9f-571da2c0d701|Start - Dataset method
+2016-12-22 10:55:28.1628|Debug|d147de0d-1646-47fa-95ad-76c8822da680|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:55:28.2278|Debug|dea1559f-a5ba-4440-a510-0f146269d61f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:55:28.2278|Debug|dea1559f-a5ba-4440-a510-0f146269d61f|Start - Dataset method
+2016-12-22 10:55:32.7920|Debug|6248f6b3-d7dd-4a9a-bbb9-728a7fcbdf11|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:55:32.9230|Debug|21fbae6e-0e90-480d-bac3-16fac1a83dcc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:55:32.9230|Debug|21fbae6e-0e90-480d-bac3-16fac1a83dcc|Start - Dataset method
+2016-12-22 10:56:07.7342|Debug|e666ef40-2066-417b-9a33-97035bcd569f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:56:07.8877|Debug|ff1a2652-3c04-4d06-b26a-7fb0aa7a6b29|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:56:07.8877|Debug|ff1a2652-3c04-4d06-b26a-7fb0aa7a6b29|Start - Dataset method
+2016-12-22 10:57:07.9442|Debug|2297a317-4561-49f3-be77-c16358369729|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:57:08.1672|Debug|1b95a0a2-fc60-41e3-b00b-0907778fc2a7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 10:57:08.1702|Debug|1b95a0a2-fc60-41e3-b00b-0907778fc2a7|Start - Dataset method
+2016-12-22 11:04:22.0280|Debug|79497c8e-99cf-44dd-a154-5c128eac5125|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:25.0436|Debug|f838ce77-1c31-48d6-b728-15c079cd7dd7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:25.2726|Debug|52e4b3e6-34b7-4e13-a1ef-fcdee3a356a4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:25.3346|Debug|95f3b2c4-2f80-4262-b28e-70e237f76012|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:25.4116|Debug|e62f3705-f547-40cf-a72f-7ae0dd5ec46e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:25.4636|Debug|a08d6f90-52f0-47d3-9cd2-f163febf5ccb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:25.4636|Debug|a08d6f90-52f0-47d3-9cd2-f163febf5ccb|Start - Dataset method
+2016-12-22 11:04:28.4059|Debug|54c3f7cd-4c02-404e-9bf2-c89d5c7c8dd9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:28.4939|Debug|5c2fb36d-072e-4003-8fbb-7149089f35ce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:28.5159|Debug|21cf5cf5-7151-4d0d-af98-8dcd7771f3b3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:28.5444|Debug|0cf1fa79-2da9-4edd-a92c-2d6a3f2d1aa7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:28.5444|Debug|0cf1fa79-2da9-4edd-a92c-2d6a3f2d1aa7|Start - Dataset method
+2016-12-22 11:04:32.1170|Debug|ad8be90f-66e9-4c89-89d8-1e0193eec487|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:32.2403|Debug|39ce785d-b3b5-45ae-99b9-f496dea115d9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:32.3203|Debug|c9e1acfb-2126-410c-bd7d-6830838b7baa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:32.3258|Debug|c9e1acfb-2126-410c-bd7d-6830838b7baa|Start - Dataset method
+2016-12-22 11:04:43.8075|Debug|3724f1aa-b737-429b-a094-3def39bc1ebd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:43.8615|Debug|d356bcb0-f8e1-468d-945c-d00d477c2941|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:43.8875|Debug|cfd1cf8c-a8ac-4139-b964-a48d24e18376|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:43.9085|Debug|2ae70a78-5785-4c94-900c-99764b0a156b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:43.9275|Debug|2db04df2-1163-447f-b684-ddfedc8c8d49|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:43.9480|Debug|467f4e7f-ad78-4ef2-b277-2bfe41f2d873|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:04:43.9480|Debug|467f4e7f-ad78-4ef2-b277-2bfe41f2d873|Start - Dataset method
+2016-12-22 11:05:18.1293|Debug|e996a2dd-411e-466b-b81c-1a86732e7889|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:05:18.2363|Debug|30b02512-78d5-4a79-a096-3a945d205c08|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:05:18.2668|Debug|fe17db24-088e-4f38-a58c-08b43e272083|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:05:18.2668|Debug|fe17db24-088e-4f38-a58c-08b43e272083|Start - Dataset method
+2016-12-22 11:05:23.8048|Debug|f82558c2-ab9f-4d81-bac6-9ee825b75d98|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:05:23.9718|Debug|5e1917fb-74ba-475a-9a70-2c90e6e8ed69|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:05:23.9843|Debug|5e1917fb-74ba-475a-9a70-2c90e6e8ed69|Start - Dataset method
+2016-12-22 11:05:27.8624|Debug|382dde4b-a392-4e54-b048-a84afbe87c8b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:05:27.9604|Debug|b2ce9fa8-ac88-4f87-be73-4ff492f29435|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:05:27.9869|Debug|b2ce9fa8-ac88-4f87-be73-4ff492f29435|Start - Dataset method
+2016-12-22 11:22:08.9346|Debug|98ba8afb-7d4f-4012-9c52-b985b559860b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:09.4927|Debug|94888ff0-f542-496e-a65b-2790a674fb14|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:09.5737|Debug|c7a892af-786b-48f3-a064-a659550e5639|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:09.6337|Debug|02aa99e2-e0b4-4d4b-9747-d969938a0e47|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:09.6752|Debug|a6d5cf1c-5bd3-4564-afbe-b8a3dc421ac9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:09.7082|Debug|12ccefb8-272d-41ca-88c6-983c838e7265|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:09.7082|Debug|12ccefb8-272d-41ca-88c6-983c838e7265|Start - Dataset method
+2016-12-22 11:22:16.3632|Debug|38b4205d-e9c5-4a4a-81da-ca3a699a7acd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:16.4372|Debug|99384521-deed-4be6-a157-43f3db09b979|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:16.4662|Debug|bd777db7-597a-4377-b78b-cb49754938ab|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:16.5012|Debug|cdd66ea3-d209-4479-8a7d-258cc8fc5e87|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:22:16.5012|Debug|cdd66ea3-d209-4479-8a7d-258cc8fc5e87|Start - Dataset method
+2016-12-22 11:32:19.8676|Debug|7b470e4b-3f7a-4cee-9b55-d560896a5a64|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:22.9068|Debug|6b1fcb2f-a385-4dd5-b7a1-f03ca31eb751|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:23.1558|Debug|0040b567-abc8-46e0-a5ac-30771de76c35|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:23.2853|Debug|010287c5-b96e-4117-bb70-ae6e192fd9b2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:23.3218|Debug|fac79eda-67ba-43ee-b4e4-f2ba4d52abce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:23.3778|Debug|610108d4-8c67-4524-b402-0a5c2a2ecad7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:23.3968|Debug|610108d4-8c67-4524-b402-0a5c2a2ecad7|Start - Dataset method
+2016-12-22 11:32:26.8470|Debug|f666787c-78a5-443b-8dd4-8fd3b15ed3e4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:26.9620|Debug|c3650437-583f-43df-b98d-37bd7f620338|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:26.9895|Debug|be9cd485-e145-4b5c-bc44-f0ce0d138af0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:27.0135|Debug|7da70dae-c0c0-4d56-abad-c981130efc7b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:27.0135|Debug|7da70dae-c0c0-4d56-abad-c981130efc7b|Start - Dataset method
+2016-12-22 11:32:40.9558|Debug|86eedda7-7ca7-43e8-b423-694848f29009|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:41.0098|Debug|c07e1897-dec5-4633-84f0-5ccfa506bc66|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:41.0943|Debug|77d62204-d8a1-436e-a089-3409605ee94e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:41.2018|Debug|99b5fb7d-2dfe-44c1-81df-f99953f8d80c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:41.2018|Debug|99b5fb7d-2dfe-44c1-81df-f99953f8d80c|Start - Dataset method
+2016-12-22 11:32:50.0053|Debug|36fd6726-4125-4549-866c-fcda3a9c5c61|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:50.1208|Debug|30416a9e-3579-483a-8d32-02d275aa8b2b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:50.1648|Debug|c86f1dcf-0d30-4e92-a300-d6748c9f15a8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:32:50.2058|Debug|c86f1dcf-0d30-4e92-a300-d6748c9f15a8|Start - Dataset method
+2016-12-22 11:34:30.1400|Debug|4383f432-97ef-4501-a2f6-97b5ced5b3b7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:34:30.2540|Debug|71894684-7eb3-4370-933c-f51ce6a4e3e9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:34:30.2660|Debug|71894684-7eb3-4370-933c-f51ce6a4e3e9|Start - Dataset method
+2016-12-22 11:34:56.1381|Debug|13400c28-dd72-48fe-b138-22c761f6e47a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:34:56.1796|Debug|5a00ee51-7bfe-4e29-96d2-96e5055b366c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:34:56.1836|Debug|5a00ee51-7bfe-4e29-96d2-96e5055b366c|Start - Dataset method
+2016-12-22 11:35:09.0171|Debug|742737b3-7400-4c9f-a092-15fbe0c909e3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:35:09.1761|Debug|e8253db6-a5ed-46f4-adbd-b111d2c9a0db|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:35:09.1761|Debug|e8253db6-a5ed-46f4-adbd-b111d2c9a0db|Start - Dataset method
+2016-12-22 11:35:21.3601|Debug|af4a90bf-7620-4061-907a-4e3162d9c179|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:35:21.4531|Debug|7c54b899-dbb1-45f8-99fe-6a7f56e63ff4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:35:21.4641|Debug|7c54b899-dbb1-45f8-99fe-6a7f56e63ff4|Start - Dataset method
+2016-12-22 11:36:23.0892|Debug|6962a2f8-a454-416e-bb27-a3298d6816aa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:36:23.4253|Debug|52587794-a8a8-4d40-a027-6b26723660db|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:36:23.4763|Debug|52587794-a8a8-4d40-a027-6b26723660db|Start - Dataset method
+2016-12-22 11:52:11.0138|Debug|eb76d6ec-1f48-41cf-8797-6b62bd65dcea|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:14.9213|Debug|a9877f20-4013-4df9-a808-a1583fbc72ba|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:15.1683|Debug|d39599a2-8610-460e-ad7b-b79bbe1389f7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:15.2413|Debug|229a093a-334a-49b5-b56c-dfe6e9b0a8e9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:15.3183|Debug|be96544d-a3f9-4074-b69b-4fe2f9b002e7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:15.3813|Debug|9416f8b5-6fc2-43ae-ae78-931025cb8951|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:15.3958|Debug|9416f8b5-6fc2-43ae-ae78-931025cb8951|Start - Dataset method
+2016-12-22 11:52:19.4185|Debug|b8cf5ca4-4afe-4c0f-8ae0-fb102500b940|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:19.4945|Debug|81ca4625-791e-4b14-a336-13f29a6265cd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:19.5145|Debug|9f9f3c8d-dc66-4f67-bbb3-f36c5acd660d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:19.5540|Debug|d6e8e111-697d-48fd-ac56-df8038966a68|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:19.5565|Debug|d6e8e111-697d-48fd-ac56-df8038966a68|Start - Dataset method
+2016-12-22 11:52:42.6008|Debug|53612768-00a5-4caf-aaf3-d430092a4a53|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:42.7618|Debug|9ad2ee39-f915-4ee7-a22c-7ec9a73e9e00|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:42.8948|Debug|49876e86-63fe-4a83-a648-c8c3947c83d3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:52:42.8948|Debug|49876e86-63fe-4a83-a648-c8c3947c83d3|Start - Dataset method
+2016-12-22 11:53:52.4900|Debug|1fc138a1-78cc-4e2a-a21a-54e415353a9f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:53:52.6315|Debug|a54c5591-5c5f-45f9-913e-99b9785b5609|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:53:52.6340|Debug|a54c5591-5c5f-45f9-913e-99b9785b5609|Start - Dataset method
+2016-12-22 11:54:18.4524|Debug|49a95ba7-08f5-45d8-b4f1-58b5a2c47306|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:54:19.3760|Debug|defc43ca-4f0b-4f39-b871-5c7f045e4cfa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:54:19.5665|Debug|c6904ca4-2882-4c98-aa7a-49e082a75f2d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:54:19.7935|Debug|bd26c916-b253-4be2-884c-4af50cbba0a7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:54:19.9175|Debug|5fc8c27a-ef69-4339-a64d-19fedcee3a5e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:54:19.9880|Debug|901bb697-6bbb-455c-9ab6-54dec6d24917|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:54:19.9880|Debug|901bb697-6bbb-455c-9ab6-54dec6d24917|Start - Dataset method
+2016-12-22 11:55:06.8005|Debug|3242400f-1652-44f1-a71a-b1facd622858|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:06.8375|Debug|903c0d73-21fe-47c2-a594-8a7825569ecd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:06.8715|Debug|47585113-e62c-4333-8c2b-8d8ffb162e08|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:06.9140|Debug|03030f2b-bc96-418b-bd25-dfddd2320ab1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:06.9155|Debug|03030f2b-bc96-418b-bd25-dfddd2320ab1|Start - Dataset method
+2016-12-22 11:55:13.0088|Debug|68ff5bd6-1d10-418c-8b40-da6c474bc3ec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:13.0823|Debug|1b4fc6ed-a435-47ff-a65a-efbe13caf2cc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:13.1218|Debug|5cbec698-e4e8-42b3-8987-0a465cc38d72|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:13.1218|Debug|5cbec698-e4e8-42b3-8987-0a465cc38d72|Start - Dataset method
+2016-12-22 11:55:18.8635|Debug|ef2c950a-f0b3-412f-9831-e556ee5f1d5c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:18.9165|Debug|188b06ae-a240-4626-89bb-c6df0d4ce419|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 11:55:18.9165|Debug|188b06ae-a240-4626-89bb-c6df0d4ce419|Start - Dataset method

@@ -6,6 +6,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
+using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -89,171 +90,135 @@ namespace ProfitWise.Web.Controllers
                 var shopCurrencyId = userBrief.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
 
+                // First create the query stub...
                 queryRepository.PopulateQueryStub(reportId);
 
-                // Summary for consumption by pie chart
-                var executiveSummary = 
-                    queryRepository.RetreiveTotalsForAll(reportId, report.StartDate, report.EndDate);
+                // Next build the top-performing summary
+                var summary = BuildSummary(report, userBrief.PwShop);
 
-                var productTotals =
-                    queryRepository.RetreiveTotalsByProduct(reportId, report.StartDate, report.EndDate)
-                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-                var variantTotals =
-                    queryRepository.RetreiveTotalsByVariant(reportId, report.StartDate, report.EndDate)
-                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-                var productTypeTotals =
-                    queryRepository.RetreiveTotalsByProductType(reportId, report.StartDate, report.EndDate)
-                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-                var vendorTotals =
-                    queryRepository.RetreiveTotalsByVendor(reportId, report.StartDate, report.EndDate)
-                        .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-
-                var summary = new Summary()
-                {
-                    CurrencyId = shopCurrencyId,
-                    ExecutiveSummary = executiveSummary,
-                    ProductsByMostProfitable = productTotals,
-                    VariantByMostProfitable = variantTotals,
-                    ProductTypeByMostProfitable = productTypeTotals,
-                    VendorsByMostProfitable = vendorTotals,
-                };
-
-                var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
-                var dateBucketedTotals = 
-                    queryRepository.RetrieveDateBucketedTotals(
-                            reportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
-                
+                 var topLevelTotals = new List<DateBucketedTotal>();
+                var drilldownDataset = new List<ReportSeries>();
                 var seriesDataset = new List<ReportSeries>();
 
                 if (report.GroupingId == ReportGrouping.Overall)
                 {
-                    seriesDataset.Add(
-                        BuildSeries("All", report.StartDate, report.EndDate, granularity));
+                    //seriesDataset.Add(
+                    //    BuildSeries("All", report.StartDate, report.EndDate, granularity));
                 }
                 else
                 {
+                    // 1st-level drill down
+                    var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
+                    topLevelTotals =
+                        queryRepository.RetrieveDateBucketedTotalsByGrouping(
+                                reportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
+
+                    //  The Grouping Names should match with those from the Summary
                     var groupingNames = summary
-                       .TotalsByGroupingId(report.GroupingId)
-                       .Take(NumberOfColumnGroups)
-                       .Select(x => x.GroupingName)
-                       .ToList();
+                            .TotalsByGroupingId(report.GroupingId)
+                            .Take(NumberOfColumnGroups)
+                            .Select(x => x.GroupingName)
+                            .ToList();
 
                     foreach (var groupingName in groupingNames)
                     {
-                        seriesDataset.Add(
-                            BuildSeries(groupingName, report.StartDate, report.EndDate, granularity));
+                        var series = BuildSeriesFromBucketTotals(
+                                groupingName, report.StartDate, report.EndDate, granularity, topLevelTotals);
+                        seriesDataset.Add(series);
+                    }
+
+                    if (granularity != DataGranularity.Day)
+                    {
+                        var drilldownGranularity = granularity.NextDrilldownLevel();
+                        var drilldownTotals = 
+                            queryRepository.RetrieveDateBucketedTotalsByGrouping(
+                                reportId, report.StartDate, report.EndDate, report.GroupingId, drilldownGranularity);
+
+                        foreach (var element in seriesDataset.SelectMany(x => x.data))
+                        {
+                            var series = BuildSeriesFromBucketTotals(
+                                    element.Parent.name, element.StartDate, element.EndDate, drilldownGranularity, drilldownTotals);
+
+                            element.drilldown = element.CanonizedIdentifier;
+                            series.id = element.CanonizedIdentifier;
+
+                            drilldownDataset.Add(series);
+                        }
                     }
                 }
-
                 
-                //var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
-                var drilldown = new List<ReportSeries>();
+
                 transaction.Commit();
 
                 return new JsonNetResult(
                     new
                     {
-                        Sample = dateBucketedTotals,
+                        Sample = topLevelTotals,
                         CurrencyId = shopCurrencyId,
                         Summary = summary,
                         Series = seriesDataset,
-                        Drilldown = drilldown
+                        Drilldown = drilldownDataset
                     });
             }
         }
 
-
-        
-        [Obsolete]
-        private List<ReportSeries> BuildSeriesTopLevel(PwReport report)
+        private Summary BuildSummary(PwReport report, PwShop shop)
         {
-            List<ReportSeries> seriesDataset;
-            var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
+            long reportId = report.PwReportId;
+            var queryRepository = _factory.MakeReportQueryRepository(shop);
 
+            var executiveSummary =
+                queryRepository.RetreiveTotalsForAll(reportId, report.StartDate, report.EndDate);
 
-                var series =
-                    ReportSeriesFactory.GenerateSeries(
-                        "All", report.StartDate, report.EndDate, granularity);
+            var productTotals =
+                queryRepository.RetreiveTotalsByProduct(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+            var variantTotals =
+                queryRepository.RetreiveTotalsByVariant(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+            var productTypeTotals =
+                queryRepository.RetreiveTotalsByProductType(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+            var vendorTotals =
+                queryRepository.RetreiveTotalsByVendor(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
 
-                //series.Populate(orderLineProfits, x => true);
-                seriesDataset = new List<ReportSeries> { series };
-
-            return seriesDataset;
-        }
-
-        private ReportSeries
-                BuildSeries(string groupingName, DateTime start, DateTime end, DataGranularity granularity)
-        {
-            var series =
-                ReportSeriesFactory.GenerateSeries(
-                    groupingName,  // Ultimaker 2, 3D Printers, 3DU285PLARED, etc.
-                    start,
-                    end,
-                    granularity);
-
-            series.id = groupingName;
-
-            //series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
-            return series;
-        }
-
-        [Obsolete]
-        private List<ReportSeries> 
-                BuildSeriesDrilldown(
-                        List<ReportSeries> seriesDataset, 
-                        List<OrderLineProfit> orderLineProfits, 
-                        bool completeDrillDown)
-        {
-            var output = new List<ReportSeries>();
-            foreach (var series in seriesDataset)
+            var summary = new Summary()
             {
-                var drilldownSeries = BuildSeriesDrilldownHelper(series, orderLineProfits);
-                output.AddRange(drilldownSeries);
-
-                // Note: there's no need to drilldown past Week
-                if (completeDrillDown && series.Granularity != DataGranularity.Week && series.Granularity != DataGranularity.Day)
-                {
-                    // Recursive invocation
-                    output.AddRange(BuildSeriesDrilldown(drilldownSeries, orderLineProfits, true));
-                }
-            }
-            return output;
+                CurrencyId = shop.CurrencyId,
+                ExecutiveSummary = executiveSummary,
+                ProductsByMostProfitable = productTotals,
+                VariantByMostProfitable = variantTotals,
+                ProductTypeByMostProfitable = productTypeTotals,
+                VendorsByMostProfitable = vendorTotals,
+            };
+            return summary;
         }
 
-        [Obsolete]
-        private List<ReportSeries>
-                    BuildSeriesDrilldownHelper(ReportSeries series, List<OrderLineProfit> orderLines)
+
+        private ReportSeries BuildSeriesFromBucketTotals(
+                    string groupingName, DateTime start, DateTime end, DataGranularity granularity,
+                    List<DateBucketedTotal> dateBucketedTotals)
         {
-            var output = new List<ReportSeries>();
+            var series = ReportSeriesFactory.GenerateSeries(groupingName, start, end, granularity);
+            series.id = groupingName;   // The jury is out on this one!!
 
             foreach (var element in series.data)
             {
-                var granularity = (element.End - element.Start).ToDefaultGranularity();
+                var total =
+                    dateBucketedTotals.FirstOrDefault(
+                        x => x.CanonizedIdentifier == element.CanonizedIdentifier);
 
-                //var drilldownSeries =
-                //    ReportSeriesFactory.GenerateSeries(
-                //        series.name,    // Series will always have the same name
-                //        series.GroupingKey,
-                //        element.Start,
-                //        element.End,
-                //        granularity);
-
-                // *** Important - this identifier is what glues the drilldown together
-                var identifier = series.name + " - " + element.name;
-                //drilldownSeries.id = identifier;
-                element.drilldown = identifier;
-
-                //drilldownSeries.Populate(
-                //        orderLines, 
-                //        x => series.GroupingKey.MatchWithOrderLine(x) && 
-                //            x.OrderDate >= element.Start &&
-                //            x.OrderDate <= element.End.AddDays(1).AddSeconds(-1));
-
-                //output.Add(drilldownSeries);
+                if (total != null)
+                {
+                    element.y = total.TotalRevenue;
+                }
             }
 
-            return output;
+            return series;
         }
+        
+
     }
 }
 

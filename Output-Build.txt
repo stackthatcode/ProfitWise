@@ -1,0 +1,14 @@
+﻿1>------ Build started: Project: ProfitWise.Data, Configuration: Debug Any CPU ------
+1>  ProfitWise.Data -> C:\DEV\ProfitWise\ProfitWise.Data\bin\Debug\ProfitWise.Data.dll
+2>------ Build started: Project: ProfitWise.Batch, Configuration: Debug Any CPU ------
+3>------ Build started: Project: ProfitWise.Web, Configuration: Debug Any CPU ------
+2>C:\Program Files (x86)\MSBuild\14.0\bin\Microsoft.Common.CurrentVersion.targets(1820,5): warning MSB3277: Found conflicts between different versions of the same dependent assembly that could not be resolved.  These reference conflicts are listed in the build log when log verbosity is set to detailed.
+2>  ProfitWise.Batch -> C:\DEV\ProfitWise\ProfitWise.Batch\bin\Debug\ProfitWise.Batch.exe
+3>C:\DEV\ProfitWise\ProfitWise.Web\App_Start\AuthConfig.cs(81,39,99,22): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+3>C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs(55,17,55,22): warning CS0219: The variable 'limit' is assigned but its value is never used
+3>C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs(68,17,68,22): warning CS0219: The variable 'limit' is assigned but its value is never used
+3>C:\DEV\ProfitWise\ProfitWise.Web\Controllers\ShopifyAuthController.cs(176,28,176,49): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+3>C:\DEV\ProfitWise\ProfitWise.Web\Controllers\AdminHomeController.cs(63,41,63,52): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+3>C:\DEV\ProfitWise\ProfitWise.Web\Controllers\AdminHomeController.cs(72,41,72,59): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+3>  ProfitWise.Web -> C:\DEV\ProfitWise\ProfitWise.Web\bin\ProfitWise.Web.dll
+========== Build: 3 succeeded, 0 failed, 6 up-to-date, 0 skipped ==========

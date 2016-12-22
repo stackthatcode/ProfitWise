@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Push.Foundation.Utilities.Helpers;
 
@@ -30,8 +31,8 @@ namespace ProfitWise.Data.Model.Profit
                         DateIdentifier = current.CanonicalDateIdentifier(level),
                         y = 0,
 
-                        Start = current.StartOfPeriod(level),
-                        End = current.EndOfPeriod(level),
+                        StartDate = current.StartOfPeriod(level),
+                        EndDate = current.EndOfPeriod(level),
                         Parent = output,
                     });
 
@@ -91,10 +92,16 @@ namespace ProfitWise.Data.Model.Profit
             }
             if (DataGranularity.Week == level)
             {
-                return input.Year + ":W" + input.Month;
+                return input.Year + ":W" + input.WeekOfYearIso8601();
             }
             // DataGranularity.Day
             return input.Year + ":" + input.Month + ":" + input.Day;
+        }
+
+        public static int WeekOfYearIso8601(this DateTime date)
+        {
+            var day = (int)CultureInfo.CurrentCulture.Calendar.GetDayOfWeek(date);
+            return CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(date.AddDays(4 - (day == 0 ? 7 : day)), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
     }
 }

@@ -100,6 +100,11 @@ namespace ProfitWise.Data.Model.Profit
 
             return DataGranularity.Day;
         }
+
+        public static DataGranularity NextDrilldownLevel(this DataGranularity input)
+        {
+            return input == DataGranularity.Day ? DataGranularity.Day : (DataGranularity) ((int) input + 1);
+        }
     }
 
 }
