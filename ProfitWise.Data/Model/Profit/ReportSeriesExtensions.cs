@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model.Profit
@@ -41,7 +40,6 @@ namespace ProfitWise.Data.Model.Profit
 
             return output;
         }
-
         public static int MonthToQuarter(this int month)
         {
             if (month >= 1 && month <= 3)

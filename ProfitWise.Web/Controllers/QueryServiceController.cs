@@ -86,7 +86,6 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
             var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
 
-
             using (var transaction = repository.InitiateTransaction())
             {
                 var shopCurrencyId = userBrief.PwShop.CurrencyId;
@@ -106,15 +105,7 @@ namespace ProfitWise.Web.Controllers
 
                 if (report.GroupingId == ReportGrouping.Overall)
                 {
-                    var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
-                    var series = BuildSeriesFromDateTotals(
-                            "All", report.StartDate, report.EndDate, granularity, dateTotals);
-                    
-                    columnChartData = new ColumnChartData
-                    {
-                        Series = new List<ReportSeries> { series },
-                        Drilldown = new List<ReportSeries>()
-                    };
+                    columnChartData = BuildColumnChartSeriesOverall(report, dateTotals);
                 }
                 else
                 {
@@ -133,7 +124,6 @@ namespace ProfitWise.Web.Controllers
                     });
             }
         }
-
 
         private Summary BuildSummary(PwReport report, PwShop shop)
         {
@@ -168,6 +158,7 @@ namespace ProfitWise.Web.Controllers
             return summary;
         }
 
+        // Canonized Date Totals
         private ColumnChartData BuildColumnChartSeriesNonOverall(PwShop shop, PwReport report, Summary summary)
         {
             var queryRepository = _factory.MakeReportQueryRepository(shop);
@@ -235,6 +226,52 @@ namespace ProfitWise.Web.Controllers
             }
 
             return series;
+        }
+
+
+        // Date-bucketed Totals
+        public const string NoGroupingName = "All";
+
+        private ColumnChartData BuildColumnChartSeriesOverall(PwReport report, Dictionary<DateTime, DateTotal> dateTotals)
+        {
+            var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
+            var series = 
+                BuildSeriesFromDateTotals(
+                    NoGroupingName, report.StartDate, report.EndDate, granularity, dateTotals);
+
+            var drilldownSeries = BuildDrillDownFromDateTotals(series, dateTotals);
+
+            return new ColumnChartData
+            {
+                Series = new List<ReportSeries> { series },
+                Drilldown = drilldownSeries
+            };
+        }
+
+        private List<ReportSeries> BuildDrillDownFromDateTotals(
+                    ReportSeries series, Dictionary<DateTime, DateTotal> dateTotals)
+        {
+            var output = new List<ReportSeries>();
+
+            foreach (var element in series.data)
+            {
+                var granularity = (element.EndDate - element.StartDate).ToDefaultGranularity();                
+
+                var nextSeries =
+                    BuildSeriesFromDateTotals(
+                        NoGroupingName, element.StartDate, element.EndDate, granularity, dateTotals);
+
+                element.drilldown = element.CanonizedIdentifier;
+                nextSeries.id = element.drilldown;
+                output.Add(nextSeries);
+
+                if (granularity != DataGranularity.Day)
+                {
+                    output.AddRange(BuildDrillDownFromDateTotals(nextSeries, dateTotals));
+                }
+            }
+
+            return output;
         }
 
         private ReportSeries BuildSeriesFromDateTotals(
