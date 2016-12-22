@@ -599,7 +599,8 @@
                     // Rename to Summary Dataset
                     self.Dataset(data.Summary);
                     console.log(data.Sample);
-                                        
+                    console.log(data.Series);
+
                     self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);

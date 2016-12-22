@@ -238,13 +238,26 @@ namespace ProfitWise.Data.Repositories
             if (granularity == DataGranularity.Year)
                 dateField = "t4.y AS DateLabel, ";
             else if (granularity == DataGranularity.Quarter) 
-                dateField = "t4.y, t4.q, CONCAT(t4.y, ' ',  t4.q) AS DateLabel, ";
+                dateField = "t4.y, t4.q, CONCAT('Q', t4.q, ', ', t4.y) AS DateLabel, ";
             else if (granularity == DataGranularity.Month)
                 dateField = "t4.y, t4.m, CONCAT(t4.monthName, ' ',  t4.y) AS DateLabel, ";
             else if (granularity == DataGranularity.Week)
                 dateField = "t4.y, t4.w, CONCAT('Week ', t4.w, ' of ', t4.y) AS DateLabel, ";
             else // DataGranularity.Day
                 dateField = "t4.dt, CONCAT(t4.m, '/', t4.d, '/', t4.y) AS DateLabel, ";
+
+            // IMPORTANT *** canonicalized date identifier format
+            string dateIdField;
+            if (granularity == DataGranularity.Year)
+                dateIdField = "t4.y AS DateIdentifier, ";
+            else if (granularity == DataGranularity.Quarter)
+                dateIdField = "t4.y, t4.q, CONCAT(t4.y, ':Q',  t4.q) AS DateIdentifier, ";
+            else if (granularity == DataGranularity.Month)
+                dateIdField = "t4.y, t4.m, CONCAT(t4.y, ':M', t4.m) AS DateIdentifier, ";
+            else if (granularity == DataGranularity.Week)
+                dateIdField = "t4.y, t4.w, CONCAT(t4.y, ':W', t4.w) AS DateIdentifier, ";
+            else // DataGranularity.Day
+                dateIdField = "t4.dt, CONCAT(t4.y, ':',  t4.m, ':', t4.d) AS DateIdentifier, ";
 
             string groupingField;
             if (grouping == ReportGrouping.Product)
@@ -283,7 +296,7 @@ namespace ProfitWise.Data.Repositories
             else // DataGranularity.Day
                 queryTail = "GROUP BY t4.dt, GroupingName ORDER BY t4.dt;";
 
-            var query = @"SELECT " + dateField + groupingField + queryGuts + queryTail;
+            var query = @"SELECT " + dateField + dateIdField + groupingField + queryGuts + queryTail;
 
             return _connection.Query<DateBucketedTotal>(
                     query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })

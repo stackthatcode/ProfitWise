@@ -79,7 +79,7 @@ namespace ProfitWise.Data.Model.Profit
             return input.StartOfPeriod(level).AddTime(level).AddDays(-1);
         }
 
-        public static DataGranularity SuggestedDataGranularity(this TimeSpan lengthOfReportingPeriod)
+        public static DataGranularity ToDefaultGranularity(this TimeSpan lengthOfReportingPeriod)
         {
             if (lengthOfReportingPeriod.Days > 730)
             {

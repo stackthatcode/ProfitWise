@@ -118,7 +118,7 @@ ORDER BY t4.y, t4.m;
 
 
 
-SELECT t4.dt, CONCAT(t4.m, '/', t4.d, '/', t4.y) AS DateLabel, 
+SELECT t4.y, t4.m, t4.monthName AS DateLabel, 
 		t1.Vendor AS GroupingName, 	# Grouping 
 		SUM(t3.GrossRevenue) AS TotalRevenue, 
 		SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
@@ -131,9 +131,10 @@ FROM profitwisereportquerystub t1
 		ON t3.OrderDate = t4.dt
 WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99739 AND t3.OrderDate >= '2014-01-02'
 
-# AND t1.ProductTitle IN ( 'Ultimaker', 'ColorFabb' )
+AND t1.Vendor IN ( 'Ultimaker', 'ColorFabb' )
 
-GROUP BY t4.dt, DateLabel, GroupingName ORDER BY t4.dt;
+GROUP BY t4.y, t4.m, DateLabel, GroupingName 
+ORDER BY t4.y, t4.m;
 
 
 

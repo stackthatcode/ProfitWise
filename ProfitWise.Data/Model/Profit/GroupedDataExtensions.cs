@@ -52,7 +52,6 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.PwMasterProductId)
                         .Select(xg => new GroupedTotal()
                         {
-                            GroupingKey = new GroupingKey(ReportGrouping.Product, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
@@ -67,7 +66,6 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.Vendor)
                         .Select(xg => new GroupedTotal()
                         {
-                            GroupingKey = new GroupingKey(ReportGrouping.Vendor, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
@@ -82,7 +80,6 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.ProductType)
                         .Select(xg => new GroupedTotal()
                         {
-                            GroupingKey = new GroupingKey(ReportGrouping.ProductType, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),
@@ -97,7 +94,6 @@ namespace ProfitWise.Data.Model.Profit
                         .GroupBy(x => x.SearchStub.PwMasterVariantId)
                         .Select(xg => new GroupedTotal()
                         {
-                            GroupingKey = new GroupingKey(ReportGrouping.Variant, xg.Key),
                             TotalRevenue = xg.Sum(line => line.GrossRevenue),
                             TotalCogs = xg.Sum(line => line.TotalCogs),
                             TotalNumberSold = xg.Sum(line => line.NetQuantity),

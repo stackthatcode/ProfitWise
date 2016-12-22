@@ -14,7 +14,7 @@ namespace ProfitWise.Data.Model.Profit
         public IList<GroupedTotal> VariantByMostProfitable { get; set; }
         public IList<GroupedTotal> ProductTypeByMostProfitable { get; set; }
 
-        public IList<GroupedTotal> TotalsByGroupedId(ReportGrouping groupingId)
+        public IList<GroupedTotal> TotalsByGroupingId(ReportGrouping groupingId)
         {
             if (groupingId == ReportGrouping.Product)
             {

@@ -8,7 +8,7 @@ namespace ProfitWise.Data.Model.Profit
     public static class ReportSeriesFactory
     {        
         public static ReportSeries GenerateSeries(
-                string seriesName, GroupingKey groupingKey, DateTime start, DateTime end, DataGranularity level)
+                string seriesName, DateTime start, DateTime end, DataGranularity level)
         {
             var correctedStart = start.StartOfPeriod(level);
             var correctedEnd = end.EndOfPeriod(level);
@@ -16,7 +16,6 @@ namespace ProfitWise.Data.Model.Profit
             var current = correctedStart;
             var output = new ReportSeries();
 
-            output.GroupingKey = groupingKey;
             output.Granularity = level;
 
             output.name = seriesName;
@@ -28,6 +27,7 @@ namespace ProfitWise.Data.Model.Profit
                     new ReportSeriesElement()
                     {
                         name = current.DateLabel(level),
+                        DateIdentifier = current.CanonicalDateIdentifier(level),
                         y = 0,
 
                         Start = current.StartOfPeriod(level),
@@ -41,6 +41,18 @@ namespace ProfitWise.Data.Model.Profit
             return output;
         }
 
+        public static int MonthToQuarter(this int month)
+        {
+            if (month >= 1 && month <= 3)
+                return 1;
+            if (month >= 4 && month <= 6)
+                return 2;
+            if (month >= 7 && month <= 9)
+                return 3;
+            if (month >= 10 && month <= 12)
+                return 4;
+            throw new ArgumentException();
+        }
 
         public static string DateLabel(this DateTime input, DataGranularity level)
         {
@@ -50,47 +62,39 @@ namespace ProfitWise.Data.Model.Profit
             }
             if (DataGranularity.Quarter == level)
             {
-                if (input.Month == 1)
-                {
-                    return "Q1, " + input.Year.ToString();
-                }
-                if (input.Month == 4)
-                {
-                    return "Q2, " + input.Year.ToString();
-                }
-                if (input.Month == 7)
-                {
-                    return "Q3, " + input.Year.ToString();
-                }
-    
-                return "Q4, " + input.Year.ToString();
+                return "Q" + input.Month.MonthToQuarter() +", " + input.Year;
             }
             if (DataGranularity.Month == level)
             {
-                return input.ToShortMonthName() + " " + input.Year.ToString();
+                return input.ToShortMonthName() + " " + input.Year;
             }
             if (DataGranularity.Week == level)
             {
                 return "Week of " + input.ToString("MM-dd-yyyy");
             }
-            return input.DayOfWeek.ToString() + " " + input.ToString("MM-dd-yyyy");
+            return input.DayOfWeek + " " + input.ToString("MM-dd-yyyy");
         }
 
-        // Takes all Order Line Profits...
-        public static void Populate(
-                    this ReportSeries series,
-                    IList<OrderLineProfit> orderLineProfits,
-                    Func<OrderLineProfit, bool> orderLineFilter)
+        public static string CanonicalDateIdentifier(this DateTime input, DataGranularity level)
         {
-            foreach (var element in series.data)
+            if (DataGranularity.Year == level)
             {
-                element.y =
-                    orderLineProfits
-                        .Where(x => x.OrderDate >= element.Start &&
-                                    x.OrderDate <= element.End.AddDays(1).AddSeconds(-1) &&
-                                    orderLineFilter(x))
-                        .Sum(x => x.TotalCogs);
+                return input.Year.ToString();
             }
+            if (DataGranularity.Quarter == level)
+            {
+                return input.Year + ":Q" + input.Month.MonthToQuarter();
+            }
+            if (DataGranularity.Month == level)
+            {
+                return input.Year + ":M" + input.Month;
+            }
+            if (DataGranularity.Week == level)
+            {
+                return input.Year + ":W" + input.Month;
+            }
+            // DataGranularity.Day
+            return input.Year + ":" + input.Month + ":" + input.Day;
         }
     }
 }

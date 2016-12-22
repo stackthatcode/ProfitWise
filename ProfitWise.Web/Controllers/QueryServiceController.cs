@@ -118,17 +118,36 @@ namespace ProfitWise.Web.Controllers
                     VendorsByMostProfitable = vendorTotals,
                 };
 
-                var granularity = (report.EndDate - report.StartDate).SuggestedDataGranularity();
-                var dateBucketedTotals = queryRepository
-                    .RetrieveDateBucketedTotals(reportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
-
-                // Build top-level Series for the column chart
-                var seriesDataset = new List<ReportSeries>();
-                var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
-                var drilldown = new List<ReportSeries>();
+                var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
+                var dateBucketedTotals = 
+                    queryRepository.RetrieveDateBucketedTotals(
+                            reportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
                 
-                _logger.Debug("End - Dataset method");
+                var seriesDataset = new List<ReportSeries>();
 
+                if (report.GroupingId == ReportGrouping.Overall)
+                {
+                    seriesDataset.Add(
+                        BuildSeries("All", report.StartDate, report.EndDate, granularity));
+                }
+                else
+                {
+                    var groupingNames = summary
+                       .TotalsByGroupingId(report.GroupingId)
+                       .Take(NumberOfColumnGroups)
+                       .Select(x => x.GroupingName)
+                       .ToList();
+
+                    foreach (var groupingName in groupingNames)
+                    {
+                        seriesDataset.Add(
+                            BuildSeries(groupingName, report.StartDate, report.EndDate, granularity));
+                    }
+                }
+
+                
+                //var completeDrillDown = report.GroupingId == ReportGrouping.Overall;
+                var drilldown = new List<ReportSeries>();
                 transaction.Commit();
 
                 return new JsonNetResult(
@@ -146,66 +165,35 @@ namespace ProfitWise.Web.Controllers
 
         
         [Obsolete]
-        private List<ReportSeries> BuildSeriesTopLevel(PwReport report, List<OrderLineProfit> orderLineProfits, Summary summary)
+        private List<ReportSeries> BuildSeriesTopLevel(PwReport report)
         {
             List<ReportSeries> seriesDataset;
-            var granularity = (report.EndDate - report.StartDate).SuggestedDataGranularity();
+            var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
 
-            if (report.GroupingId == ReportGrouping.Overall)
-            {
+
                 var series =
                     ReportSeriesFactory.GenerateSeries(
-                        "All", GroupingKey.Factory(ReportGrouping.Overall, null),
-                        report.StartDate, report.EndDate, granularity);
+                        "All", report.StartDate, report.EndDate, granularity);
 
-                series.Populate(orderLineProfits, x => true);
+                //series.Populate(orderLineProfits, x => true);
                 seriesDataset = new List<ReportSeries> { series };
-            }
-            else
-            {
-                var orderedTotalsBySelectedGroup =
-                    summary
-                        .TotalsByGroupedId(report.GroupingId)
-                        .Take(NumberOfColumnGroups)
-                        .ToList();
 
-                seriesDataset = new List<ReportSeries>();
-
-                foreach (var groupedTotal in orderedTotalsBySelectedGroup)
-                {
-                    seriesDataset.Add(
-                            BuildSeriesFromGroupKeyInclusive(
-                                    orderLineProfits, 
-                                    groupedTotal.GroupingName,
-                                    groupedTotal.GroupingKey,
-                                    report.StartDate,
-                                    report.EndDate,
-                                    granularity));
-                }
-            }
             return seriesDataset;
         }
 
-        [Obsolete]
         private ReportSeries
-                    BuildSeriesFromGroupKeyInclusive(
-                        IList<OrderLineProfit> orderLines,
-                        string groupingName,
-                        GroupingKey groupingKey,
-                        DateTime start,
-                        DateTime end,
-                        DataGranularity granularity)
+                BuildSeries(string groupingName, DateTime start, DateTime end, DataGranularity granularity)
         {
             var series =
                 ReportSeriesFactory.GenerateSeries(
                     groupingName,  // Ultimaker 2, 3D Printers, 3DU285PLARED, etc.
-                    groupingKey,
                     start,
                     end,
                     granularity);
 
             series.id = groupingName;
-            series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
+
+            //series.Populate(orderLines, x => groupingKey.MatchWithOrderLine(x));
             return series;
         }
 
@@ -240,28 +228,28 @@ namespace ProfitWise.Web.Controllers
 
             foreach (var element in series.data)
             {
-                var granularity = (element.End - element.Start).SuggestedDataGranularity();
+                var granularity = (element.End - element.Start).ToDefaultGranularity();
 
-                var drilldownSeries =
-                    ReportSeriesFactory.GenerateSeries(
-                        series.name,    // Series will always have the same name
-                        series.GroupingKey,
-                        element.Start,
-                        element.End,
-                        granularity);
+                //var drilldownSeries =
+                //    ReportSeriesFactory.GenerateSeries(
+                //        series.name,    // Series will always have the same name
+                //        series.GroupingKey,
+                //        element.Start,
+                //        element.End,
+                //        granularity);
 
                 // *** Important - this identifier is what glues the drilldown together
                 var identifier = series.name + " - " + element.name;
-                drilldownSeries.id = identifier;
+                //drilldownSeries.id = identifier;
                 element.drilldown = identifier;
 
-                drilldownSeries.Populate(
-                        orderLines, 
-                        x => series.GroupingKey.MatchWithOrderLine(x) && 
-                            x.OrderDate >= element.Start &&
-                            x.OrderDate <= element.End.AddDays(1).AddSeconds(-1));
+                //drilldownSeries.Populate(
+                //        orderLines, 
+                //        x => series.GroupingKey.MatchWithOrderLine(x) && 
+                //            x.OrderDate >= element.Start &&
+                //            x.OrderDate <= element.End.AddDays(1).AddSeconds(-1));
 
-                output.Add(drilldownSeries);
+                //output.Add(drilldownSeries);
             }
 
             return output;
