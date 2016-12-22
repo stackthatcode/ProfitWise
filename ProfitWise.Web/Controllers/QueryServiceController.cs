@@ -96,9 +96,11 @@ namespace ProfitWise.Web.Controllers
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userBrief.PwShop);
 
-                 var topLevelTotals = new List<DateBucketedTotal>();
+                 var topLevelTotals = new List<CanonizedDateTotal>();
                 var drilldownDataset = new List<ReportSeries>();
                 var seriesDataset = new List<ReportSeries>();
+
+
 
                 if (report.GroupingId == ReportGrouping.Overall)
                 {
@@ -198,7 +200,7 @@ namespace ProfitWise.Web.Controllers
 
         private ReportSeries BuildSeriesFromBucketTotals(
                     string groupingName, DateTime start, DateTime end, DataGranularity granularity,
-                    List<DateBucketedTotal> dateBucketedTotals)
+                    List<CanonizedDateTotal> dateBucketedTotals)
         {
             var series = ReportSeriesFactory.GenerateSeries(groupingName, start, end, granularity);
             series.id = groupingName;   // The jury is out on this one!!

@@ -226,8 +226,8 @@ namespace ProfitWise.Data.Repositories
         }
 
         // Matches the following Date Label convention: 2014, 2014 Q2, January 2014, Week 13 of 2014, 4/11/2014
-        public List<DateBucketedTotal> 
-                RetrieveDateBucketedTotalsByGrouping(
+        public List<CanonizedDateTotal> 
+                RetrieveCanonizedDateTotals(
                     long reportId, 
                     DateTime startDate, 
                     DateTime endDate, 
@@ -298,7 +298,7 @@ namespace ProfitWise.Data.Repositories
 
             var query = @"SELECT " + dateField + dateIdField + groupingField + queryGuts + queryTail;
 
-            return _connection.Query<DateBucketedTotal>(
+            return _connection.Query<CanonizedDateTotal>(
                     query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
                 .ToList();
         }

@@ -1,6 +1,6 @@
 ﻿namespace ProfitWise.Data.Model.Profit
 {
-    public class DateBucketedTotal
+    public class CanonizedDateTotal
     {
         public string GroupingName { get; set; }
         public string DateIdentifier { get; set; }
