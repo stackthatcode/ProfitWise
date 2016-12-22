@@ -112,7 +112,7 @@ namespace ProfitWise.Web.Controllers
                     // 1st-level drill down
                     var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
                     topLevelTotals =
-                        queryRepository.RetrieveDateBucketedTotalsByGrouping(
+                        queryRepository.RetrieveCanonizedDateTotals(
                                 reportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
 
                     //  The Grouping Names should match with those from the Summary
@@ -133,7 +133,7 @@ namespace ProfitWise.Web.Controllers
                     {
                         var drilldownGranularity = granularity.NextDrilldownLevel();
                         var drilldownTotals = 
-                            queryRepository.RetrieveDateBucketedTotalsByGrouping(
+                            queryRepository.RetrieveCanonizedDateTotals(
                                 reportId, report.StartDate, report.EndDate, report.GroupingId, drilldownGranularity);
 
                         foreach (var element in seriesDataset.SelectMany(x => x.data))
