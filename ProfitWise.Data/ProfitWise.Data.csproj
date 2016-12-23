@@ -75,15 +75,15 @@
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />
+    <Compile Include="Model\Profit\GroupingKeyAndName.cs" />
     <Compile Include="Model\Profit\PeriodType.cs" />
     <Compile Include="Model\Profit\DatePeriodTotal.cs" />
     <Compile Include="Model\Profit\ExecutiveSummary.cs" />
     <Compile Include="Model\Profit\ColumnOrdering.cs" />
     <Compile Include="Model\Profit\GroupedTotal.cs" />
-    <Compile Include="Model\Profit\ReportSeriesExtensions.cs" />
+    <Compile Include="Model\Profit\ReportSeriesFactory.cs" />
     <Compile Include="Model\Profit\SimpleCogs.cs" />
     <Compile Include="Model\Profit\ReportSearchStub.cs" />
-    <Compile Include="Model\Profit\OrderLineProfit.cs" />
     <Compile Include="Model\System\ExchangeRate.cs" />
     <Compile Include="Model\System\Currency.cs" />
     <Compile Include="Model\Shopify\OrderLineItemSubset.cs" />
@@ -107,7 +107,6 @@
     <Compile Include="Model\Shop\PwPreferences.cs" />
     <Compile Include="Model\Catalog\PwProduct.cs" />
     <Compile Include="Model\Reports\FilteredMasterProduct.cs" />
-    <Compile Include="Model\Profit\GroupedTotalExtensions.cs" />
     <Compile Include="Model\Profit\ReportSeries.cs" />
     <Compile Include="Model\Shopify\ShopifyOrder.cs" />
     <Compile Include="Model\Shopify\ShopifyOrderExtensions.cs" />

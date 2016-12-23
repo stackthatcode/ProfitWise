@@ -29,42 +29,5 @@ namespace ProfitWise.Data.Model.Profit
         public decimal TotalRevenue { get; set; }
         public decimal TotalCogs { get; set; }
         public decimal TotalProfit => TotalRevenue - TotalCogs;
-
-
-        
-        public bool IsDirectChildOf(DatePeriodTotal input)
-        {            
-            if (this.PeriodType == PeriodType.Year)
-            {
-                return input.PeriodType == PeriodType.Quarter &&
-                    input.Year == this.Year &&
-                    input.GroupingKey == this.GroupingKey;
-            }
-            if (this.PeriodType == PeriodType.Quarter)
-            {
-                return input.PeriodType == PeriodType.Month &&
-                    input.Year == this.Year &&
-                    input.Quarter == this.Quarter &&
-                    input.GroupingKey == this.GroupingKey;
-            }
-            if (this.PeriodType == PeriodType.Month)
-            {
-                return input.PeriodType == PeriodType.Week &&
-                    input.Year == this.Year &&
-                    input.Quarter == this.Quarter &&
-                    input.Month == this.Month &&
-                    input.GroupingKey == this.GroupingKey;
-            }
-            if (this.PeriodType == PeriodType.Week)
-            {
-                return input.PeriodType == PeriodType.Day &&
-                    input.Year == this.Year &&
-                    input.Quarter == this.Quarter &&
-                    input.Month == this.Month &&
-                    input.Week == this.Week &&
-                    input.GroupingKey == this.GroupingKey;
-            }
-            return false;
-        }
     }    
 }

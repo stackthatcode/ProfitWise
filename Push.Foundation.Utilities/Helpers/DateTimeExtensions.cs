@@ -15,16 +15,15 @@ namespace Push.Foundation.Utilities.Helpers
             return dt.AddDays(-1 * diff).Date;
         }
 
-        public static string ToMonthName(this DateTime dateTime)
+        public static string ToMonthName(this int month)
         {
-            return CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(dateTime.Month);
+            return CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
         }
 
-        public static string ToShortMonthName(this DateTime dateTime)
+        public static string ToShortMonthName(this int month)
         {
-            return CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(dateTime.Month);
+            return CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month);
         }
-
 
         public static int Quarter(this DateTime input)
         {

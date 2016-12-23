@@ -5,5 +5,4 @@
         public string GroupingKey { get; set; }
         public string GroupingName { get; set; }
     }
-
 }
