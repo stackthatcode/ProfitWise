@@ -6,11 +6,11 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
-using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
+
 
 namespace ProfitWise.Web.Controllers
 {
@@ -19,19 +19,19 @@ namespace ProfitWise.Web.Controllers
     public class QueryServiceController : Controller
     {
         private readonly MultitenantFactory _factory;
-        private readonly CurrencyService _currencyService;
         private readonly IPushLogger _logger;
 
         public const int NumberOfColumnGroups = 5;
+        public const string AllOtherGroupingName = "All other";
+        // Date-bucketed Totals
+        public const string NoGroupingName = "All";
 
 
         public QueryServiceController(
                 MultitenantFactory factory, 
-                CurrencyService currencyService,
                 IPushLogger logger)
         {
             _factory = factory;
-            _currencyService = currencyService;
             _logger = logger;
         }
 
@@ -188,17 +188,18 @@ namespace ProfitWise.Web.Controllers
                    .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
                    .ToDictionary(x => x.OrderDate, x => x);
 
-            // Add the all other column totals
-            //AppendAllOtherTotals(report.StartDate, report.EndDate, granularity, seriesDataset, dateTotals);
-            //AppendAllOtherTotals(report, granularity.NextDrilldownLevel(), drilldownDataset, dateTotals);
+            var allOtherTotals = BuildAllOtherTotals(
+                report.StartDate, report.EndDate, seriesDataset, aggregageDateTotals, granularity.NextDrilldownLevel());
+            seriesDataset.AddRange(allOtherTotals);
 
+            // Critical - this illustrates the boundary (of a bounded context) between 
+            // a flattened List representation and Highchart's representation of data
             return new ColumnChartData
             {
                 Series = seriesDataset.Where(x => x.Granularity == granularity).ToList(),
                 Drilldown = seriesDataset.Where(x => x.Granularity > granularity).ToList()
             };
         }
-
 
         // Recursively invokes SQL to build data set
         private List<CanonizedDateTotal> BuildCanonizedDateTotals(
@@ -278,36 +279,42 @@ namespace ProfitWise.Web.Controllers
             return series;
         }
 
-        public const string AllOtherGroupingName = "All other";
-
-        private void AppendAllOtherTotals(
-                DateTime start, DateTime end, DataGranularity granularity, List<ReportSeries> seriesDataset, 
-                Dictionary<DateTime, DateTotal> dateTotals)
+        private List<ReportSeries> BuildAllOtherTotals(
+                DateTime start, DateTime end, List<ReportSeries> seriesForComputation, 
+                Dictionary<DateTime, DateTotal> dateTotals, DataGranularity maximumGranularity)
         {
-            var allOtherSeries = ReportSeriesFactory.GenerateSeries(AllOtherGroupingName, start, end, granularity);
+            var output = new List<ReportSeries>();
+            var granularity = (end - start).ToDefaultGranularity();
+            var series = ReportSeriesFactory.GenerateSeries(AllOtherGroupingName, start, end, granularity);
 
-            foreach (var allOtherElement in allOtherSeries.data)
+            foreach (var element in series.data)
             {
+                // Find all other series elements with the same canonical date
                 var matchingElements = 
-                    seriesDataset.SelectMany(x => x.data)
-                        .Where(x => x.DateIdentifier == allOtherElement.DateIdentifier)
+                    seriesForComputation
+                        .SelectMany(x => x.data)
+                        .Where(x => x.DateIdentifier == element.DateIdentifier)
                         .ToList();
 
-                var isolatedTotal = matchingElements.Sum(plot => plot.y);
+                var isolatedTotal = matchingElements.Sum(item => item.y);
 
-                var overallTotal = 
-                    dateTotals.Total(allOtherElement.StartDate, allOtherElement.EndDate, x => x.TotalProfit);
+                var overallTotal = dateTotals.Total(element.StartDate, element.EndDate, x => x.TotalProfit);
+                element.y = overallTotal - isolatedTotal;
 
-                allOtherElement.y = overallTotal - isolatedTotal;
+                output.Add(series);
+
+                if (series.Granularity < maximumGranularity)
+                {
+                    output.AddRange(
+                        BuildAllOtherTotals(
+                            element.StartDate, element.EndDate, seriesForComputation, dateTotals, maximumGranularity));
+                }
             }
 
-            seriesDataset.Add(allOtherSeries);
+            return output;
         }
 
 
-
-        // Date-bucketed Totals
-        public const string NoGroupingName = "All";
 
         private ColumnChartData BuildSeriesFromAggregateTotals(PwReport report, Dictionary<DateTime, DateTotal> dateTotals)
         {
