@@ -30,7 +30,7 @@ namespace ProfitWise.Data.Model.Profit
                     input.Elements.Select(x =>
                         new JsonSeriesElement
                         {
-                            name = x.CanonicalDateIdentifier(),
+                            name = x.DateLabel(),
                             drilldown = x.Drilldown,
                             y = x.Amount,
                         }).ToList()

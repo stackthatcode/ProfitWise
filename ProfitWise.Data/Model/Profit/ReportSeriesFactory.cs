@@ -29,23 +29,21 @@ namespace ProfitWise.Data.Model.Profit
                     string groupingKey, string groupingName, DateTime start, DateTime end,
                     PeriodType periodType, PeriodType maximumDepth)
         {
-            if (periodType >= maximumDepth)
-            {
-                return null;
-            }
-
             var series = GenerateSeries(groupingKey, groupingName, start, end, periodType);
 
-            foreach (var element in series.Elements)
+            if (periodType < maximumDepth && periodType != PeriodType.Day)
             {
-                var nextDepth = periodType.NextDrilldownLevel();
-                var childSeries = GenerateSeriesRecursive(
+                foreach (var element in series.Elements)
+                {
+                    var nextDepth = periodType.NextDrilldownLevel();
+                    var childSeries = GenerateSeriesRecursive(
                         groupingKey, groupingName, start, end, nextDepth, maximumDepth);
 
-                if (childSeries != null)
-                {
-                    element.ChildSeries = childSeries;
-                    childSeries.Parent = element;
+                    if (childSeries != null)
+                    {
+                        element.ChildSeries = childSeries;
+                        childSeries.Parent = element;
+                    }
                 }
             }
             return series;

@@ -259,7 +259,7 @@ namespace ProfitWise.Web.Controllers
             var series =
                 ReportSeriesFactory.GenerateSeriesRecursive(
                     AllOtherGroupingName, AllOtherGroupingName,
-                    report.StartDate, report.EndDate, periodType, periodType.NextDrilldownLevel());
+                    report.StartDate, report.EndDate, periodType, PeriodType.Day);
 
             series.VisitElements(element =>
             {
@@ -267,11 +267,12 @@ namespace ProfitWise.Web.Controllers
                 var current = element.Start;
                 while (current <= element.End)
                 {
-                    var dateTotal = aggregageDateTotals[current];
-                    if (dateTotal != null)
+                    if (aggregageDateTotals.ContainsKey(current))
                     {
+                        var dateTotal = aggregageDateTotals[current];
                         runningTotal += dateTotal.TotalProfit;
                     }
+                    current = current.AddDays(1);
                 }
 
                 element.Amount = runningTotal;
