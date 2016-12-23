@@ -229,11 +229,8 @@ namespace ProfitWise.Data.Repositories
         // TODO - add filtering thereto!
         public List<CanonizedDateTotal> 
                 RetrieveCanonizedDateTotals(
-                    long reportId, 
-                    DateTime startDate, 
-                    DateTime endDate, 
-                    ReportGrouping grouping, 
-                    DataGranularity granularity)
+                    long reportId, DateTime startDate, DateTime endDate, List<string> groupingKeys,
+                    ReportGrouping grouping, DataGranularity granularity)
         {
             string dateField;
             if (granularity == DataGranularity.Year)

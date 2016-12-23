@@ -8,17 +8,16 @@ namespace ProfitWise.Data.Model.Profit
     public static class ReportSeriesFactory
     {        
         public static ReportSeries GenerateSeries(
-                string seriesName, DateTime start, DateTime end, DataGranularity level)
+                string seriesName, DateTime start, DateTime end, DataGranularity granularity)
         {
-            var correctedStart = start.StartOfPeriod(level);
-            var correctedEnd = end.EndOfPeriod(level);
+            var correctedStart = start.StartOfPeriod(granularity);
+            var correctedEnd = end.EndOfPeriod(granularity);
 
             var current = correctedStart;
             var output = new ReportSeries();
 
-            output.Granularity = level;
-
             output.name = seriesName;
+            output.Granularity = granularity;
             output.data = new List<ReportSeriesElement>();
             
             while (current <= correctedEnd)
@@ -26,16 +25,16 @@ namespace ProfitWise.Data.Model.Profit
                 output.data.Add(
                     new ReportSeriesElement()
                     {
-                        name = current.DateLabel(level),
-                        DateIdentifier = current.CanonicalDateIdentifier(level),
+                        name = current.DateLabel(granularity),
+                        DateIdentifier = current.CanonicalDateIdentifier(granularity),
                         y = 0,
 
-                        StartDate = current.StartOfPeriod(level),
-                        EndDate = current.EndOfPeriod(level),
+                        StartDate = current.StartOfPeriod(granularity),
+                        EndDate = current.EndOfPeriod(granularity),
                         Parent = output,
                     });
 
-                current = current.AddTime(level);
+                current = current.AddTime(granularity);
             }
 
             return output;
