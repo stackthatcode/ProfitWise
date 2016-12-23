@@ -639,3 +639,358 @@
 2016-12-22 20:58:26.9526|Debug|5a480f59-ff45-43ac-b945-f77f01c4f316|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-22 20:58:43.7735|Debug|63632a39-d978-4525-b9c0-72e2da1dd5fd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-22 20:58:43.8190|Debug|8a8f3ea1-b8ac-4d2e-bc7e-4600a8cb88e3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:40:43.0783|Debug|9f63d3a3-162d-47b6-b954-510c071c9156|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:40:43.6139|Debug|059c3b95-b69d-4354-8f9b-6255fa8c1e4a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:40:43.9189|Debug|4d50281f-542f-4630-9116-4dd33d072b9f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:40:44.0254|Debug|0caedc40-2c37-4991-814f-c3ffeeee29e3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:47:53.9987|Debug|e6d1f267-93f5-48bf-bb04-2b97b770ce7e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:02.1601|Debug|8678ef59-fc71-441c-933c-64a579ac607b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:02.4581|Debug|e04827a3-2777-4425-ad44-82c402d8c383|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:02.5226|Debug|ecb14222-8bef-4252-85c0-ac0e60257bd7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:02.5576|Debug|07b2cbdb-cecf-4d65-8988-92bbd787b9ea|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:02.5891|Debug|230989fe-8642-4881-9f2e-b0c61c548f10|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:06.0745|Debug|6ddaf0cf-6928-4298-ac24-b8f9777a814c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:06.1495|Debug|430063aa-84a0-44e1-9727-e191d125b6ef|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:06.1960|Debug|e11851f0-b2fb-4ae8-96e2-26313a9c68ce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:48:06.2600|Debug|765c7b18-1ac6-47b2-b942-f64bf90efb44|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:50:12.6021|Debug|22c49798-ffe0-4173-a201-63c4299cdef5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:50:12.7661|Debug|d713864e-c584-448e-9985-6f89ef4b4b9c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:50:12.8051|Debug|a46d9d8c-cd8e-4e57-99ee-44b5e63f63b7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 21:50:12.8411|Debug|93f25151-753e-4bb3-a851-e78d6ac05409|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:01:06.9590|Debug|3d260bb5-f048-4889-8eb4-6bb669466273|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:01:08.0020|Debug|6235980d-1092-4e56-aa0e-88ae80279d87|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:01:08.9180|Debug|f07de2b5-758d-45b1-a0a4-d01d31bb1fae|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:01:09.2435|Debug|92fd309d-f6dc-4523-abe7-1d16b8c6322a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:01:09.3615|Debug|ae13c943-56f2-4938-a70f-5211b31485cd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:01:09.3980|Debug|602ea7ee-8b6c-43a2-a533-fbcb286e4c71|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:17.5377|Debug|3e3f7c46-9ac7-4f65-a5ff-7642884145f9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:20.8790|Debug|5da165c5-d5c3-43d4-981e-43c7635822c7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:21.0565|Debug|e3ff9d0b-3270-450f-8080-0c2a20a13398|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:21.1390|Debug|80679758-6213-4134-aa41-faed3b259289|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:21.2080|Debug|752b5b3d-55e1-4060-beda-f9f38d1e86df|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:21.2600|Debug|d5503383-21e4-419b-b637-c2a6522e5a5f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:23.7707|Debug|5eeac1b3-7d7e-4cb0-a4fc-1b222ed4f545|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:23.8047|Debug|c7432bc2-fbb5-416d-b138-f2af28678a90|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:23.8277|Debug|e6397298-2d46-486e-869d-fa7efdb095d5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:10:23.8592|Debug|c0ae825d-4f3f-4905-9fd9-06bdd19ff322|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:15:45.7602|Debug|8346d50d-e284-4626-bb21-92c6ce7db4a4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:15:45.8187|Debug|45eea136-f396-4e85-892d-a617ee874890|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:15:45.8377|Debug|48b23f6c-2a65-44cc-88f3-c27d8760508e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:15:45.8617|Debug|f1835c14-e3a3-45ef-846e-23911612cae2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:17:11.6287|Debug|2b45fcd5-3299-49bb-8048-12de30cda1fa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:17:11.9459|Debug|d9d482fe-a69e-478b-b675-60d153990334|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:17:11.9868|Debug|1a3e9435-ee5c-4e72-b260-566ada9048ce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:17:12.0648|Debug|9157595a-d0ab-4f71-80c1-a5c7d9447cc3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:06.1501|Debug|8d9e9b01-f8ba-47ec-bd02-a0a71d2c2062|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:06.1501|Debug|27293cc3-d2e6-430d-ac46-1580e81923c1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:07.0746|Debug|6e07e9ad-8ca0-4009-93bc-22895d862ffb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:07.1911|Debug|abd67a93-f81e-42d4-ae09-934a91d3ace9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:07.8651|Debug|6ccba6b9-baa0-47ff-80a7-2f7e52a161d7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:31.9951|Debug|1dfaf722-de32-4559-b1e1-f05010653bf4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:32.2168|Debug|a1e7ae37-e264-461e-b280-44bba35d0bd2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:32.3038|Debug|21870dd0-2c9e-4d35-987e-2f3996dd759b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:32.4078|Debug|07af4afa-66d0-44fa-a096-1b893491de61|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:32.5393|Debug|64f7401b-7f51-4ac1-8f3e-396ce68ed23c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:37.3882|Debug|6c3045f9-cff6-4cfb-9454-4be1cd2d9754|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:37.5472|Debug|7714c4b3-7944-42e9-bec0-b803d834ae29|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:37.5862|Debug|f9957ec6-5626-4e20-9005-5982ad16c112|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:21:37.6112|Debug|42c0e8a7-e06f-4b3e-86ac-1b248ff5acf7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:18.3965|Debug|ecce5ce6-c67c-407c-86ef-40d49469e701|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:21.2739|Debug|55766d53-ac44-4aa8-8148-b60ebf6511b4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:21.5514|Debug|b8bc54d4-20af-42e2-9280-b16786095685|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:21.6114|Debug|8723c82f-09a3-4434-846f-1c1b7e25ded3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:21.6824|Debug|d432653f-fc6f-457c-bd77-7f29a8473020|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:21.7454|Debug|a7ff2e1a-c5ca-4acf-a7f3-77db01120314|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:24.7884|Debug|fccaca73-df54-4978-9342-f3e46605d712|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:24.9009|Debug|4c161400-cd82-46c1-959f-22a6236ae15a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:24.9359|Debug|d1143687-9b27-4c9d-8e2b-9c01576fade6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:24.9559|Debug|f43e7f65-e59b-4a1e-a441-a21ef9edc39f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:38.4883|Debug|dac5827a-f06f-4c7b-bf28-cbfd9f5d7e9a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:41.4776|Debug|e1d25c4d-5bdb-4062-89b5-43f51469293e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:41.6481|Debug|a1e9bc6f-5d3e-47af-bd60-ac30aa9c365c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:59.6039|Debug|085882ac-1cae-4c36-bd30-ea5d72b46332|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:23:59.7419|Debug|9ccc23bd-51fa-448d-9234-19ddbf8d7e3b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:26:50.7367|Debug|49e4e0ea-2f58-446f-b5e6-f95048dc842c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:26:50.8277|Debug|38dacf73-1e8c-4b7e-af17-d7afabb19571|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:27:01.8490|Debug|ecd774fe-6d59-450e-b53f-c15882625dfb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:27:02.0035|Debug|a817d019-a77b-423c-834d-ef86dda8e9b5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:27:09.2367|Debug|a97bdeb0-851c-4103-ba2f-7c30bf53b7ac|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:27:09.4052|Debug|4505d7b8-eac1-46de-9b39-b0d04d92abb4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:12.2971|Debug|62ea53e2-ba26-44fe-ad35-4d919b9ced0f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:12.4966|Debug|4f8c90b9-0c86-4ec7-b95a-feff2e1567cd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:12.5236|Debug|3b3b143c-990c-4aaf-9f43-e44e7d6185a9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:12.5946|Debug|a2bcb8f9-7833-4a86-ab56-aa774c506720|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:13.7972|Debug|b2497a70-e0b2-48d7-bd81-84cc8aedc55e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:13.8637|Debug|95bddf59-825e-423b-8b5e-fbf893b1f45a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:13.8912|Debug|7287d7f4-9dfb-4fba-8a58-bfcad771f9b0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:14.4791|Debug|116feef7-e871-4646-a4d2-e175b994463b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:14.5142|Debug|b06cb2c7-3c6a-429e-b411-6123bd0f0590|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:14.5396|Debug|31938f1e-4ecf-4088-b87e-1455e79909c6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:14.9935|Debug|fdf6f0dd-2c58-4f31-9216-c95ed26fd0c2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:15.0205|Debug|64b7e55e-0131-48d1-baba-80bec52ca436|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:15.0465|Debug|bcd9bed0-de3d-4b56-a3d2-5a515cd8892c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:15.4131|Debug|867753bb-911a-46b3-aa62-7d525b047a47|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:15.4796|Debug|777b36b9-1fa3-40fc-bde8-74497e0e519c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:15.5176|Debug|3dd8dab9-9adb-46ad-87d5-1a4a2bb5b6e7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:17.1488|Debug|23fbc2f3-3929-4135-9785-6a3f7e720eea|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:17.3273|Debug|ea9eb574-739b-42a7-930f-3872adfcbf96|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:17.4193|Debug|979f84c1-7907-45c1-a1e9-042a0ebddf50|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:28:17.4533|Debug|c069fddd-261c-4b6b-a3bd-6310c8786772|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:12.1820|Debug|b2df3622-9c0c-4d70-84be-5412aa583289|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:12.3775|Debug|8b9252be-2f1c-4d41-8680-be772161cce3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:12.4115|Debug|0f936745-8cc1-4584-aca8-f21e0a8348ae|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:12.4865|Debug|0311062c-987a-41ec-9610-dce31be99210|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:14.1929|Debug|98881fa0-f15f-42fb-9d62-d91b59404561|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:14.2799|Debug|fb01b86c-85e3-4158-bb4b-ad13d0498e0f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:14.3599|Debug|2a8e2b3c-a80c-4bc2-bba5-9470435e07da|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:14.3839|Debug|480992df-43fa-4da1-b81f-186bb4c45dc4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:19.9602|Debug|5c96e7b1-ca6b-42dd-b767-f0db9de9f2d0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:29:20.0822|Debug|95a4d542-19dc-4b9a-882d-7f96125d762f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:42.8830|Debug|31367bc8-60d3-4321-b81a-6baf7cea07be|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:43.1731|Debug|ae161476-4600-4070-8912-e74c601024fd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:43.2081|Debug|a433db81-99fc-4e4c-8de2-4bbe9f98c612|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:43.2634|Debug|be42ce3e-e6e3-4388-96b8-6ed18dd2a68b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:43.4622|Error|be42ce3e-e6e3-4388-96b8-6ed18dd2a68b|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-22 22:37:43.4742|Error|be42ce3e-e6e3-4388-96b8-6ed18dd2a68b|MySql.Data.MySqlClient.MySqlException:Unknown column 't1.Sku' in 'field list'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1589
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1479
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.RetreiveTotalsByVariant(Int64 reportId, DateTime startDate, DateTime endDate) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 197
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildSummary(PwReport report, PwShop shop) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 139
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 96
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-22 22:37:45.9034|Debug|3f5ae9dd-602d-4dc1-9cf1-bb40adb54464|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:49.3123|Debug|aeecf8fd-c1a7-4921-a4e7-c0a70ca8c926|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:49.5063|Debug|133e87c5-a9ce-4df0-ac4e-40bac4ce245d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:49.5633|Debug|253c9d81-2104-4d0a-8b6e-68a0c0338cda|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:49.6273|Debug|93b70b02-8a60-4421-8432-00e97fe6a24d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:49.6824|Debug|892dc9c5-44fa-4155-ae0a-56ed645cd9c4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:37:49.9563|Error|892dc9c5-44fa-4155-ae0a-56ed645cd9c4|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-22 22:37:49.9563|Error|892dc9c5-44fa-4155-ae0a-56ed645cd9c4|MySql.Data.MySqlClient.MySqlException:Unknown column 't1.Sku' in 'field list'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1589
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1479
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.RetreiveTotalsByVariant(Int64 reportId, DateTime startDate, DateTime endDate) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 197
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildSummary(PwReport report, PwShop shop) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 139
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 96
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-22 22:40:01.1296|Debug|1fb3555a-c7bf-4449-9436-cc580d9a7773|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:40:04.1553|Debug|8c2ffa81-a5bd-41f2-acb1-36789fc961cf|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:40:04.3873|Debug|1f6854ee-78ac-481e-ab4c-042317238a06|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:40:04.4658|Debug|627c2ebb-6d4a-4613-b5f8-39ea578f2b6b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:40:04.5533|Debug|add9bca6-2198-4bbb-891a-050d3573c3e0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:40:04.6218|Debug|2ca40bf1-2f71-4696-874f-f385fc9abb0e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:40:04.8923|Error|2ca40bf1-2f71-4696-874f-f385fc9abb0e|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-22 22:40:04.9043|Error|2ca40bf1-2f71-4696-874f-f385fc9abb0e|MySql.Data.MySqlClient.MySqlException:Unknown column 't1.Sku' in 'field list'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1589
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1479
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.RetreiveTotalsByVariant(Int64 reportId, DateTime startDate, DateTime endDate) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 197
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildSummary(PwReport report, PwShop shop) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 139
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 96
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-22 22:42:48.4251|Debug|8136bcc7-e7af-4d21-bbc9-bed80f2541e3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:54.3206|Debug|d0917cd9-105f-4603-8cc2-488cd679f8f4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:54.6142|Debug|3802c16a-5555-4d1c-88af-027072c3a104|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:54.6802|Debug|c427b41e-9fb0-4c47-978a-b726b63adcd1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:54.7452|Debug|4285c5cb-4d49-4744-bbbf-fc1f058e8508|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:54.7922|Debug|ed849b31-30e1-43cb-b4af-f153db9da18e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:54.9403|Error|ed849b31-30e1-43cb-b4af-f153db9da18e|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-22 22:42:54.9573|Error|ed849b31-30e1-43cb-b4af-f153db9da18e|MySql.Data.MySqlClient.MySqlException:Column count doesn't match value count at row 1
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at Dapper.SqlMapper.ExecuteCommand(IDbConnection cnn, CommandDefinition& command, Action`2 paramReader) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 3397
+   at Dapper.SqlMapper.ExecuteImpl(IDbConnection cnn, CommandDefinition& command) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1346
+   at Dapper.SqlMapper.Execute(IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1221
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.PopulateQueryStub(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 126
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 93
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-22 22:42:56.6507|Debug|273a9bbc-17eb-431b-89f8-92bc9c762808|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:57.2517|Debug|80cc6017-aefe-4c96-af1d-d2f74b2bfbeb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:57.3807|Debug|dedf8150-da15-4bf4-85e1-f116aaf504a1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:57.4797|Debug|9622f935-2753-4773-95f4-60b1a662b34c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:57.5603|Debug|55661524-6f76-4675-982e-f53569e86a3b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:57.6432|Debug|ddf742f7-6d86-45ff-b236-03f2627be9b3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:42:57.6852|Error|ddf742f7-6d86-45ff-b236-03f2627be9b3|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-22 22:42:57.6852|Error|ddf742f7-6d86-45ff-b236-03f2627be9b3|MySql.Data.MySqlClient.MySqlException:Column count doesn't match value count at row 1
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at Dapper.SqlMapper.ExecuteCommand(IDbConnection cnn, CommandDefinition& command, Action`2 paramReader) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 3397
+   at Dapper.SqlMapper.ExecuteImpl(IDbConnection cnn, CommandDefinition& command) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1346
+   at Dapper.SqlMapper.Execute(IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1221
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.PopulateQueryStub(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 126
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 93
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-22 22:43:42.0932|Debug|ca04e0e1-8b2e-4f46-9286-6b767163d87e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:42.8192|Debug|66c93448-3d82-45f1-b228-3b132f551c57|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:42.8827|Debug|a70f776a-7134-4f4b-8b98-fe68690381af|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:42.9192|Debug|bbc673ae-b396-470e-b83d-cc9412b5a89e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:42.9567|Debug|330cf6d0-3494-4308-b44a-0f5f74a5674f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:43.0117|Debug|51bd2db9-06fd-40a9-91f4-14f123983107|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:50.1456|Debug|769d8335-9dd9-455b-842a-e7f1a385ebb7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:52.8747|Debug|09ee0def-1e53-4d28-bd65-30f19ee45912|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:43:53.0277|Debug|3279ee04-0459-4ef7-851d-29c995f7fb4f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:44:31.8252|Debug|60de115b-c260-4d86-a463-9a8f94cb2784|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:44:31.9427|Debug|582e2c2e-3762-44ab-a3f6-faa3fb31c7cb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:44:40.1935|Debug|df7abf54-497f-41a6-8e4b-4c2a14bddb63|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:44:40.3455|Debug|3093f20b-4a0f-4b73-a604-9b31636f4ce7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:47.1762|Debug|a4c82c4f-c251-4ad4-8791-da21f516f68e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:50.3108|Debug|a0dd4b00-80b8-4f54-9f06-14493b089d59|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:50.5298|Debug|42fd515d-e137-40e3-87e1-8223932d3826|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:50.6053|Debug|e5ffc2d9-41f3-4e44-9619-4154f11ce110|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:50.6639|Debug|c31249e3-1539-4f37-bc1a-675aedc6f692|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:50.7138|Debug|cbc05fc2-9915-48fe-b66e-3c223d84eeb7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:51.9199|Debug|6d80ad85-d936-4ee0-91f1-458e00557470|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:54.5329|Debug|93a5a3b4-7d7f-4ed9-8696-fedacf784cf4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:45:54.7034|Debug|a716b683-4c1b-425b-90a3-87a72300d4c4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:46:11.8251|Debug|12784de1-ff6b-4ac5-a7e1-be268831c7d6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:46:11.9041|Debug|dc0c46ae-c0a9-49d5-9977-3b41dcbbc6f5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:46:47.9031|Debug|dcdf83fb-b988-4199-8c20-ba4d6a656d90|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:46:48.1021|Debug|b48bc375-a244-4baa-ad3b-f9d55295fd65|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:47:26.7651|Debug|36d9e79d-8fbf-4641-9e57-12e360c59e8d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:47:26.8531|Debug|01ff20cd-2578-4d27-903c-50587346cd80|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:11.0676|Debug|cede36a8-d12c-44e5-881d-3a1531f7810a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:11.1551|Debug|85ad6fcd-4751-48eb-8000-066f0f8761d9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:22.2602|Debug|64098b89-89ac-4930-bf29-8be895ba189b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:22.3522|Debug|759b9fa9-71a5-4df6-8fef-530d56c93dc9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:22.3807|Debug|3e8a8c97-f446-4570-93eb-806052cf6857|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:22.4007|Debug|440df688-cc94-4c31-a44d-fd4aeefc84f1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:31.0831|Debug|6c09b68f-0a9b-4b37-8d1a-1fbda855925f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:40.2609|Debug|6c9eb54e-6820-44fb-9b98-3bb67c651575|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:40.5669|Debug|77f9281a-d090-4621-a2a4-73c14df04aa3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:40.8470|Debug|7d2684d7-8a57-4196-b945-eada4be5d8fa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:42.3730|Debug|23d8c0eb-336f-41e3-b1f0-12ab4f4c36ce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:49:44.0996|Debug|a9b2f486-26b8-4670-a020-5ec74c19bd95|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:56:44.3599|Debug|93e89024-5b70-4aab-a5db-4755f11995a7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:56:45.3709|Debug|5753ad2b-bf4f-434a-8f98-b5fa0bc5454a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:56:46.5760|Debug|0b4bd810-4cbe-4ea5-9a0e-38463daf2ae0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:56:46.6235|Debug|b6b7793b-b688-4159-b35f-e2741a316142|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:56:46.8560|Debug|2c5e0639-28f2-4fd7-9fa8-272c23b39057|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:56:46.8895|Debug|f5e1ed13-7a63-443a-9b72-c254997c5a3c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:25.1923|Debug|a1286532-3f60-41f8-a6e3-73297becb942|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:28.1039|Debug|75169abc-2058-4e8b-89bf-9332ecae7836|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:28.3219|Debug|d0a87e46-a6a7-44c4-8aa2-0b4a4922df5b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:28.3814|Debug|b2e8c80d-b787-4e34-9d06-366ea835a176|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:28.4359|Debug|64e34873-b8e8-48fb-88f1-74d8526139a8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:28.4939|Debug|d75d7b65-6a87-4488-b97f-d31d1310e432|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:32.0311|Debug|1f3756ea-75a2-4627-ab87-520ec4331d47|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:32.1666|Debug|4e0b0d13-0819-4f43-ba30-698dc7610e0f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:32.2211|Debug|ac509244-94e5-453b-be63-3e0344f46d98|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:45.2474|Debug|c4a4450c-5a42-49c9-907d-121608d564fa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:58:45.4019|Debug|0acb12b2-5aa9-47f7-b094-ac757303bac8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:59:37.9623|Debug|17ee5094-ecd7-46b4-99aa-57a049ee7bf8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 22:59:38.0943|Debug|c411dc84-cd8c-4afa-81a2-87755f26b182|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:13.8973|Debug|23d61467-501e-4158-b263-2f260e3d91bd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:14.1423|Debug|86ef9091-8e91-4828-ac84-4c0218b67ae9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:15.8261|Debug|8b985caa-9254-4ed1-9f94-9f99f6eac150|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:15.9032|Debug|a75b27d8-cf04-4f50-a10c-db09eec80e08|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:16.0172|Debug|da03789d-3658-449c-8881-2f46f2c37d69|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:16.0727|Debug|ab6efae3-2ff6-4a83-9794-1a8978bb0c45|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:16.1077|Debug|3891bb26-ca49-4eda-a011-4051b60641ee|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:01:16.1378|Debug|cfd43ab2-e466-422d-b10e-5844d1166d13|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:24.8481|Debug|2145b45d-5bb5-4f42-b167-4a7b8fb4745e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:25.7487|Debug|49d52d1b-16f6-4963-82ad-1e8e675dc7fb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:25.8672|Debug|b8ea12f5-c33e-4193-8b23-42a1d2b79c88|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:26.0407|Debug|67b918e7-6079-43ad-9b6d-d25da55113c6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:26.0732|Debug|d45622c0-f352-43da-849e-c06a43703ebf|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:26.0996|Debug|c05fec1d-1f17-44ee-b764-0006499c772c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:31.6109|Debug|8e96f370-00a2-440a-9356-376e1154233f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:31.7529|Debug|d8f5e729-2ecd-4af9-b26e-d653206fdd94|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:31.8234|Debug|98dbd1f1-cf33-4327-991f-ef7d98ba6a19|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:38.7204|Debug|b3a9b298-6451-41ea-ae62-b6a65266ba89|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:38.9629|Debug|df8f333d-2256-43aa-b7db-cafdf0f09f9c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:43.5471|Debug|816a707c-120f-4d45-9b39-9c07a47901af|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:43.7576|Debug|199c8bdd-c562-4a6a-b054-556ba93f1c5f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:43.7851|Debug|bbd28e6e-094f-453d-8d15-986ac34b5d9b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:02:43.8121|Debug|2f4452a8-fd78-4fcb-8e6b-3dc714c32490|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:21.8126|Debug|eef70654-79e1-446d-b243-857b0f723219|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:22.6476|Debug|67b0be01-a291-4d9d-800c-30643998663b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:22.7991|Debug|2722fd53-a098-48f1-a0ca-1f2bf286ece8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:22.8766|Debug|6b7f9701-8e23-4318-b1e5-349b441fdab6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:22.9996|Debug|402dd62c-6d84-4fbb-afc6-ade5c7f785b2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:23.0467|Debug|16ac08a6-a505-49ec-b954-f8f418c45bb9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:26.2584|Debug|40dd8cec-4c70-473a-a110-6703db184aaa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:26.3324|Debug|d2cb9249-5f7a-4c74-8c13-34de149410f2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:26.3684|Debug|da931c73-39ef-44d7-a256-6225e3d9af38|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-22 23:06:26.3949|Debug|b1002420-992b-43d9-b3a5-2d6b30efef40|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext

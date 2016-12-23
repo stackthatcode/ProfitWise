@@ -123,7 +123,8 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
-        // The aggregated Grouped Totals
+
+        // *** The aggregated Grouped Totals, including Executive Summary
         private Summary BuildSummary(PwReport report, PwShop shop)
         {
             long reportId = report.PwReportId;
@@ -158,7 +159,8 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        // Canonized Date Totals
+
+        // *** Builds Report Series data for High Charts multi-column chart
         private ColumnChartData BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary)
         {
             var queryRepository = _factory.MakeReportQueryRepository(shop);
@@ -188,8 +190,12 @@ namespace ProfitWise.Web.Controllers
                    .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
                    .ToDictionary(x => x.OrderDate, x => x);
 
+            var series = ReportSeriesFactory.GenerateSeries(
+                    AllOtherGroupingName, report.StartDate, report.EndDate, granularity);
+
             var allOtherTotals = BuildAllOtherTotals(
-                report.StartDate, report.EndDate, seriesDataset, aggregageDateTotals, granularity.NextDrilldownLevel());
+                report.StartDate, report.EndDate, series, seriesDataset, aggregageDateTotals, granularity.NextDrilldownLevel());
+
             seriesDataset.AddRange(allOtherTotals);
 
             // Critical - this illustrates the boundary (of a bounded context) between 
@@ -201,7 +207,7 @@ namespace ProfitWise.Web.Controllers
             };
         }
 
-        // Recursively invokes SQL to build data set
+        // ... recursively invokes SQL to build data set of Date Totals organized by Grouping
         private List<CanonizedDateTotal> BuildCanonizedDateTotals(
                 PwShop shop, long reportId, DateTime startDate, DateTime endDate, List<string> groupingKeys,
                 ReportGrouping grouping, DataGranularity granularity, DataGranularity maximiumGranularity)
@@ -280,14 +286,13 @@ namespace ProfitWise.Web.Controllers
         }
 
         private List<ReportSeries> BuildAllOtherTotals(
-                DateTime start, DateTime end, List<ReportSeries> seriesForComputation, 
+                DateTime start, DateTime end, ReportSeries inputSeries, List<ReportSeries> seriesForComputation, 
                 Dictionary<DateTime, DateTotal> dateTotals, DataGranularity maximumGranularity)
         {
             var output = new List<ReportSeries>();
-            var granularity = (end - start).ToDefaultGranularity();
-            var series = ReportSeriesFactory.GenerateSeries(AllOtherGroupingName, start, end, granularity);
+            output.Add(inputSeries);
 
-            foreach (var element in series.data)
+            foreach (var element in inputSeries.data)
             {
                 // Find all other series elements with the same canonical date
                 var matchingElements = 
@@ -300,14 +305,24 @@ namespace ProfitWise.Web.Controllers
 
                 var overallTotal = dateTotals.Total(element.StartDate, element.EndDate, x => x.TotalProfit);
                 element.y = overallTotal - isolatedTotal;
-
-                output.Add(series);
-
-                if (series.Granularity < maximumGranularity)
+                
+                if (inputSeries.Granularity < maximumGranularity)
                 {
+                    var nextGranularity = (element.EndDate - element.StartDate).ToDefaultGranularity();
+
+                    var nextSeries = 
+                        ReportSeriesFactory.GenerateSeries(
+                            AllOtherGroupingName, element.StartDate, element.EndDate, nextGranularity);
+
+                    // This enables Highcharts drilldown
+                    element.drilldown = element.CanonizedIdentifier;
+                    nextSeries.id = element.CanonizedIdentifier;
+
+                    output.Add(nextSeries);
+
                     output.AddRange(
                         BuildAllOtherTotals(
-                            element.StartDate, element.EndDate, seriesForComputation, dateTotals, maximumGranularity));
+                            element.StartDate, element.EndDate, nextSeries, seriesForComputation, dateTotals, maximumGranularity));
                 }
             }
 
@@ -316,6 +331,7 @@ namespace ProfitWise.Web.Controllers
 
 
 
+        // *** Aggregate Totals - no grouping with this data
         private ColumnChartData BuildSeriesFromAggregateTotals(PwReport report, Dictionary<DateTime, DateTotal> dateTotals)
         {
             var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
@@ -365,7 +381,7 @@ namespace ProfitWise.Web.Controllers
             var series = ReportSeriesFactory.GenerateSeries(groupingName, start, end, granularity);            
             foreach (var element in series.data)
             {                
-                element.y = dateTotals.Total(start, end, x => x.TotalProfit);
+                element.y = dateTotals.Total(element.StartDate, element.EndDate, x => x.TotalProfit);
             }
 
             return series;

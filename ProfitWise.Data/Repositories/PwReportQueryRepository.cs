@@ -118,7 +118,7 @@ namespace ProfitWise.Data.Repositories
             var createQuery =
                 @"INSERT INTO profitwisereportquerystub
                 SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, 
-                        Vendor, ProductType, ProductTitle, VariantTitle
+                        Vendor, ProductType, ProductTitle, Sku, VariantTitle
                 FROM vw_MasterProductAndVariantSearch 
                 WHERE PwShopId = @PwShopId " +
                 ReportFilterClauseGenerator(reportId) + 
@@ -189,9 +189,9 @@ namespace ProfitWise.Data.Repositories
         public List<GroupedTotal> RetreiveTotalsByVariant(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
-                @"SELECT t1.PwMasterVariantId AS GroupingId, t1.VariantTitle AS GroupingName, " +
+                @"SELECT t1.PwMasterVariantId AS GroupingId, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
-                @"GROUP BY t1.PwMasterVariantId, t1.VariantTitle " +
+                @"GROUP BY t1.PwMasterVariantId, GroupingName " +
                 QueryTailForTotals(10);
 
             return _connection.Query<GroupedTotal>(
@@ -261,7 +261,7 @@ namespace ProfitWise.Data.Repositories
             if (grouping == ReportGrouping.Product)
                 groupingField = "t1.ProductTitle AS GroupingName, ";
             else if (grouping == ReportGrouping.Variant)
-                groupingField = "t1.VariantTitle AS GroupingName, ";
+                groupingField = "CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, ";
             else if (grouping == ReportGrouping.ProductType)
                 groupingField = "t1.ProductType AS GroupingName, ";
             else if (grouping == ReportGrouping.Vendor)

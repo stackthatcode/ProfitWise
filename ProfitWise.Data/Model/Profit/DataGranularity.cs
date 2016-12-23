@@ -37,7 +37,6 @@ namespace ProfitWise.Data.Model.Profit
             return input.AddYears(1);
         }
 
-
         public static DateTime StartOfPeriod(this DateTime input, DataGranularity level)
         {
             if (level == DataGranularity.Quarter)

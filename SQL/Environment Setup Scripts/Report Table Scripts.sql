@@ -73,6 +73,7 @@ CREATE TABLE `profitwisereportquerystub` (
     `Vendor` VARCHAR(100) NULL,
     `ProductType` VARCHAR(100) NULL,   
     `ProductTitle` VARCHAR(100) NULL,
+    `Sku` VARCHAR(100) NULL,
     `VariantTitle` VARCHAR(100) NULL,
     PRIMARY KEY (`PwReportId`, `PwShopId`, `PwMasterVariantId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
