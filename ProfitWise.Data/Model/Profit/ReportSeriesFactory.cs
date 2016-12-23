@@ -37,7 +37,7 @@ namespace ProfitWise.Data.Model.Profit
                 {
                     var nextDepth = periodType.NextDrilldownLevel();
                     var childSeries = GenerateSeriesRecursive(
-                        groupingKey, groupingName, start, end, nextDepth, maximumDepth);
+                        groupingKey, groupingName, element.Start, element.End, nextDepth, maximumDepth);
 
                     if (childSeries != null)
                     {

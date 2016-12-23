@@ -192,7 +192,7 @@ namespace ProfitWise.Web.Controllers
                     groupingKeys, report.GroupingId, periodType, periodType.NextDrilldownLevel());
 
             // Context #2 - Aggregate Date Totals
-            var aggregageDateTotals =
+            var aggregateDateTotals =
                 queryRepository
                     .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
                     .ToDictionary(x => x.OrderDate, x => x);
@@ -208,11 +208,21 @@ namespace ProfitWise.Web.Controllers
                 {
                     var total = datePeriodTotals.FirstOrDefault(element.MatchByGroupingAndDate);
                     if (total != null)
-                    {
                         element.Amount = total.TotalProfit;
-                    }
                 });
             }
+
+            // All Other catch-all
+            var allOtherSeries = 
+                ReportSeriesFactory.GenerateSeriesRecursive(
+                    "All", "All", report.StartDate, report.EndDate, periodType, periodType.NextDrilldownLevel());
+
+            allOtherSeries.VisitElements(element =>
+            {
+                var totalAll = aggregateDateTotals.Total(element.Start, element.End, x => x.TotalProfit);
+                var matchingDatePeriodTotals = datePeriodTotals.Where(x => element.MatchByDate(x)).ToList();
+                element.Amount = totalAll - matchingDatePeriodTotals.Sum(x => x.TotalProfit);
+            });
 
             return seriesDataset;
         }
@@ -250,37 +260,20 @@ namespace ProfitWise.Web.Controllers
             // 1st-level drill down
             var periodType = (report.EndDate - report.StartDate).ToDefaultGranularity();
 
-            var aggregageDateTotals =
-                queryRepository
+            var aggregateDateTotals = queryRepository
                     .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
                     .ToDictionary(x => x.OrderDate, x => x);
 
             // Context #3 - Report Series hierarchical structure
-            var series =
-                ReportSeriesFactory.GenerateSeriesRecursive(
-                    AllOtherGroupingName, AllOtherGroupingName,
-                    report.StartDate, report.EndDate, periodType, PeriodType.Day);
-
+            var series = ReportSeriesFactory.GenerateSeriesRecursive(
+                    "All", "All", report.StartDate, report.EndDate, periodType, PeriodType.Day);
             series.VisitElements(element =>
-            {
-                var runningTotal = 0m;
-                var current = element.Start;
-                while (current <= element.End)
-                {
-                    if (aggregageDateTotals.ContainsKey(current))
-                    {
-                        var dateTotal = aggregageDateTotals[current];
-                        runningTotal += dateTotal.TotalProfit;
-                    }
-                    current = current.AddDays(1);
-                }
-
-                element.Amount = runningTotal;
+            {                
+                element.Amount = aggregateDateTotals.Total(element.Start, element.End, x=> x.TotalProfit);
             });
 
             return new List<ReportSeries> { series };
         }
     }
-
 }
 
