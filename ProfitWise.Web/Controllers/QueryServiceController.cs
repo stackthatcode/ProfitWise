@@ -98,7 +98,7 @@ namespace ProfitWise.Web.Controllers
                 
                 var dateTotals =
                     queryRepository
-                        .RetrieveOverallDateTotals(report.PwReportId, report.StartDate, report.EndDate)
+                        .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
                         .ToDictionary(x => x.OrderDate, x => x);
 
                 if (report.GroupingId == ReportGrouping.Overall)
@@ -107,7 +107,7 @@ namespace ProfitWise.Web.Controllers
                 }
                 else
                 {
-                    columnChartData = BuildSeriesNonOverall(userBrief.PwShop, report, summary);
+                    columnChartData = BuildSeriesWithGrouping(userBrief.PwShop, report, summary);
                 }
                 
                 transaction.Commit();
@@ -157,7 +157,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         // Canonized Date Totals
-        private ColumnChartData BuildSeriesNonOverall(PwShop shop, PwReport report, Summary summary)
+        private ColumnChartData BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary)
         {
             var queryRepository = _factory.MakeReportQueryRepository(shop);
             
@@ -165,30 +165,54 @@ namespace ProfitWise.Web.Controllers
             var granularity = (report.EndDate - report.StartDate).ToDefaultGranularity();
 
             //  The Grouping Names should match with those from the Summary
-            var groupingNames = summary
-                .TotalsByGroupingId(report.GroupingId)
-                .Take(NumberOfColumnGroups)
-                .Select(x => x.GroupingName)
-                .ToList();
+            var topGroups = summary.TotalsByGroupingId(report.GroupingId).Take(NumberOfColumnGroups);
 
-            var topLevelTotals =
-                queryRepository.RetrieveCanonizedDateTotals(
-                    report.PwReportId, report.StartDate, report.EndDate, report.GroupingId, granularity);
-            
+            var groupingNames = topGroups.Select(x => x.GroupingName).ToList();
+            var groupingKeys = topGroups.Select(x => x.GroupingKey).ToList();
+
+            var canonizedTotals =
+                AssembleCanonizedDateTotals(shop, report.PwReportId, report.StartDate, report.EndDate,
+                    groupingKeys, report.GroupingId, granularity, granularity.NextDrilldownLevel());
+
+            var aggregageDateTotals =
+                queryRepository
+                    .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
+                    .ToDictionary(x => x.OrderDate, x => x);
+
             var seriesDataset = BuildSeriesNonOverallTopLevel(shop, report, groupingNames, granularity);
             var drilldownDataset = BuildSeriesNonOverallDrilldown(shop, report, granularity, seriesDataset);
 
             // Add the all other column totals
-            var dateTotals =
-                queryRepository
-                    .RetrieveOverallDateTotals(report.PwReportId, report.StartDate, report.EndDate)
-                    .ToDictionary(x => x.OrderDate, x => x);
+
 
             AppendAllOtherTotals(report.StartDate, report.EndDate, granularity, seriesDataset, dateTotals);
             //AppendAllOtherTotals(report, granularity.NextDrilldownLevel(), drilldownDataset, dateTotals);
 
             return new ColumnChartData { Series = seriesDataset, Drilldown = drilldownDataset };
         }
+
+
+        private List<CanonizedDateTotal> AssembleCanonizedDateTotals(
+                PwShop shop, long reportId, DateTime startDate, DateTime endDate, List<string> groupingKeys,
+                ReportGrouping grouping, DataGranularity granularity, DataGranularity maximiumGranularity)
+        {
+            var queryRepository = _factory.MakeReportQueryRepository(shop);
+
+            var output =
+                queryRepository.RetrieveCanonizedDateTotals(
+                    reportId, startDate, endDate, grouping, granularity);
+
+            if (granularity != DataGranularity.Day && granularity != maximiumGranularity)
+            {
+                output.AddRange(
+                    AssembleCanonizedDateTotals(
+                        shop, reportId, startDate, endDate, groupingKeys, grouping, granularity.NextDrilldownLevel(),
+                        maximiumGranularity));
+            }
+
+            return output;
+        }
+
 
         private List<ReportSeries> BuildSeriesNonOverallTopLevel(
                 PwShop shop, PwReport report, List<string> groupingNames, DataGranularity granularity)

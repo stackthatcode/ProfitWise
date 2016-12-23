@@ -226,6 +226,7 @@ namespace ProfitWise.Data.Repositories
         }
 
         // Matches the following Date Label convention: 2014, 2014 Q2, January 2014, Week 13 of 2014, 4/11/2014
+        // TODO - add filtering thereto!
         public List<CanonizedDateTotal> 
                 RetrieveCanonizedDateTotals(
                     long reportId, 
@@ -304,7 +305,7 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        public List<DateTotal> RetrieveOverallDateTotals(
+        public List<DateTotal> RetrieveDateTotals(
                 long reportId, DateTime startDate, DateTime endDate)
         {
             var query = 

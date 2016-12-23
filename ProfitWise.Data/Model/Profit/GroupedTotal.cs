@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using ProfitWise.Data.Model.Reports;
+
 
 namespace ProfitWise.Data.Model.Profit
 {
     public class GroupedTotal
     {
+        public ReportGrouping ReportGrouping { get; set; }
+        public string GroupingKey { get; set; }
         public string GroupingName { get; set; }
-
         public decimal TotalCogs { get; set; }
         public decimal TotalRevenue { get; set; }
         public decimal TotalProfit => TotalRevenue - TotalCogs;
