@@ -598,8 +598,8 @@
                 function (data) {
                     // Rename to Summary Dataset
                     self.Dataset(data.Summary);
-                    console.log(data.Sample);
                     console.log(data.Series);
+                    console.log(data.Drilldown);
 
                     self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);

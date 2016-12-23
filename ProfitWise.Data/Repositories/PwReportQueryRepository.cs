@@ -121,8 +121,9 @@ namespace ProfitWise.Data.Repositories
                         Vendor, ProductType, ProductTitle, Sku, VariantTitle
                 FROM vw_MasterProductAndVariantSearch 
                 WHERE PwShopId = @PwShopId " +
-                ReportFilterClauseGenerator(reportId) + 
-                " GROUP BY PwMasterVariantId;";
+                ReportFilterClauseGenerator(reportId) +
+                @" GROUP BY PwMasterVariantId,  PwMasterProductId, 
+                    Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
             _connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
         }
 
@@ -176,7 +177,7 @@ namespace ProfitWise.Data.Repositories
         public List<GroupedTotal> RetreiveTotalsByProduct(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
-                @"SELECT t1.PwMasterProductId AS GroupingId, t1.ProductTitle AS GroupingName, " +
+                @"SELECT t1.PwMasterProductId AS GroupingKey, t1.ProductTitle AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.PwMasterProductId, t1.ProductTitle " +
                 QueryTailForTotals(10);
@@ -189,7 +190,7 @@ namespace ProfitWise.Data.Repositories
         public List<GroupedTotal> RetreiveTotalsByVariant(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
-                @"SELECT t1.PwMasterVariantId AS GroupingId, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, " +
+                @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.PwMasterVariantId, GroupingName " +
                 QueryTailForTotals(10);
@@ -202,7 +203,7 @@ namespace ProfitWise.Data.Repositories
         public List<GroupedTotal> RetreiveTotalsByProductType(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
-                @"SELECT t1.ProductType AS GroupingId, t1.ProductType AS GroupingName, " +
+                @"SELECT t1.ProductType AS GroupingKey, t1.ProductType AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.ProductType " +
                 QueryTailForTotals(10);
@@ -215,7 +216,7 @@ namespace ProfitWise.Data.Repositories
         public List<GroupedTotal> RetreiveTotalsByVendor(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
-                @"SELECT t1.Vendor AS GroupingId, t1.Vendor AS GroupingName, " +
+                @"SELECT t1.Vendor AS GroupingKey, t1.Vendor AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.Vendor " +
                 QueryTailForTotals(10);
@@ -225,49 +226,58 @@ namespace ProfitWise.Data.Repositories
                 .ToList();
         }
 
-        // Matches the following Date Label convention: 2014, 2014 Q2, January 2014, Week 13 of 2014, 4/11/2014
-        // TODO - add filtering thereto!
-        public List<CanonizedDateTotal> 
-                RetrieveCanonizedDateTotals(
-                    long reportId, DateTime startDate, DateTime endDate, List<string> groupingKeys,
-                    ReportGrouping grouping, DataGranularity granularity)
+
+        public List<DatePeriodTotal> RetrieveDatePeriodTotals(
+                long reportId, DateTime startDate, DateTime endDate, List<string> filterKeys,
+                ReportGrouping grouping, PeriodType periodType)
         {
-            string dateField;
-            if (granularity == DataGranularity.Year)
-                dateField = "t4.y AS DateLabel, ";
-            else if (granularity == DataGranularity.Quarter) 
-                dateField = "t4.y, t4.q, CONCAT('Q', t4.q, ', ', t4.y) AS DateLabel, ";
-            else if (granularity == DataGranularity.Month)
-                dateField = "t4.y, t4.m, CONCAT(t4.monthName, ' ',  t4.y) AS DateLabel, ";
-            else if (granularity == DataGranularity.Week)
-                dateField = "t4.y, t4.w, CONCAT('Week ', t4.w, ' of ', t4.y) AS DateLabel, ";
-            else // DataGranularity.Day
-                dateField = "t4.dt, CONCAT(t4.m, '/', t4.d, '/', t4.y) AS DateLabel, ";
+            string dateHeader;
+            if (periodType == PeriodType.Year)
+            {
+                dateHeader = $@"t4.y AS Year, ";
+            }
+            else if (periodType == PeriodType.Quarter)
+            {
+                dateHeader =
+                    $@"t4.y AS Year, t4.q AS Quarter, ";
+            }
+            else if (periodType == PeriodType.Month)
+            {
+                dateHeader =
+                    $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, ";
+            }
+            else if (periodType == PeriodType.Week)
+            {
+                dateHeader =
+                    $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, t4.w AS Week, ";
+            }
+            else   // DataGranularity.Day
+            {   
+                dateHeader =
+                    $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, t4.w AS Week, t4.d AS Day, ";
+            }
 
-            // IMPORTANT *** canonicalized date identifier format
-            string dateIdField;
-            if (granularity == DataGranularity.Year)
-                dateIdField = "t4.y AS DateIdentifier, ";
-            else if (granularity == DataGranularity.Quarter)
-                dateIdField = "t4.y, t4.q, CONCAT(t4.y, ':Q',  t4.q) AS DateIdentifier, ";
-            else if (granularity == DataGranularity.Month)
-                dateIdField = "t4.y, t4.m, CONCAT(t4.y, ':M', t4.m) AS DateIdentifier, ";
-            else if (granularity == DataGranularity.Week)
-                dateIdField = "t4.y, t4.w, CONCAT(t4.y, ':W', t4.w) AS DateIdentifier, ";
-            else // DataGranularity.Day
-                dateIdField = "t4.dt, CONCAT(t4.y, ':',  t4.m, ':', t4.d) AS DateIdentifier, ";
-
-            string groupingField;
+            string groupingHeader;
             if (grouping == ReportGrouping.Product)
-                groupingField = "t1.ProductTitle AS GroupingName, ";
+            {
+                groupingHeader = $@"t1.PwMasterProductId AS GroupingKey, t1.ProductTitle AS GroupingName, ";
+            }
             else if (grouping == ReportGrouping.Variant)
-                groupingField = "CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, ";
+            {
+                groupingHeader = $@"t1.PwMasterProductId AS GroupingKey, t1.ProductTitle AS GroupingName, ";
+            }
             else if (grouping == ReportGrouping.ProductType)
-                groupingField = "t1.ProductType AS GroupingName, ";
+            {
+                groupingHeader = $@"t1.ProductType AS GroupingKey, t1.ProductType AS GroupingName, ";
+            }
             else if (grouping == ReportGrouping.Vendor)
-                groupingField = "t1.Vendor AS GroupingName, ";
+            {
+                groupingHeader = $@"t1.Vendor AS GroupingKey, t1.Vendor AS GroupingName, ";
+            }
             else // Overall
-                groupingField = "'Overall' AS GroupingName, ";
+            {
+                groupingHeader = $@"NULL AS GroupingKey, 'Overall' AS GroupingName, ";
+            }
 
             var queryGuts =
                 @"SUM(t3.GrossRevenue) AS TotalRevenue, 
@@ -282,23 +292,74 @@ namespace ProfitWise.Data.Repositories
                 WHERE t1.PwShopId = @PwShopId AND t1.PwReportID = @PwReportId 
                 AND t3.OrderDate >= @StartDate AND t3.OrderDate <= @EndDate ";
 
-            string queryTail;
-            if (granularity == DataGranularity.Year)
-                queryTail = "GROUP BY t4.y, GroupingName ORDER BY t4.y;";
-            else if (granularity == DataGranularity.Quarter)
-                queryTail = "GROUP BY t4.y, t4.q, GroupingName ORDER BY t4.y, t4.q;";
-            else if (granularity == DataGranularity.Month)
-                queryTail = "GROUP BY t4.y, t4.m, GroupingName ORDER BY t4.y, t4.m;";
-            else if (granularity == DataGranularity.Week)
-                queryTail = "GROUP BY t4.y, t4.w, GroupingName ORDER BY t4.y, t4.w;";
+            var filterClause = "";
+            if (filterKeys != null && filterKeys.Count > 0)
+            {
+                if (grouping == ReportGrouping.Product)
+                {
+                    filterClause = "AND t1.PwMasterProductId in @FilterKeys ";
+                }
+                if (grouping == ReportGrouping.Variant)
+                {
+                    filterClause = "AND t1.PwMasterVariantId in @FilterKeys ";
+                }
+                if (grouping == ReportGrouping.ProductType)
+                {
+                    filterClause = "AND t1.ProductType in @FilterKeys ";
+                }
+                if (grouping == ReportGrouping.Vendor)
+                {
+                    filterClause = "AND t1.Vendor in @FilterKeys ";
+                }
+            }
+
+            string groupAndOrderClause;
+            if (periodType == PeriodType.Year)
+            {
+                groupAndOrderClause = 
+                    @"GROUP BY Year, GroupingKey, GroupingName
+                    ORDER BY Year;";
+            }
+            else if (periodType == PeriodType.Quarter)
+            {
+                groupAndOrderClause =
+                    @"GROUP BY Year, Quarter, GroupingKey, GroupingName
+                    ORDER BY Year, Quarter;";
+            }
+            else if (periodType == PeriodType.Month)
+            {
+                groupAndOrderClause =
+                    @"GROUP BY Year, Quarter, Month, GroupingKey, GroupingName
+                    ORDER BY Year, Quarter, Month;";
+            }
+            else if (periodType == PeriodType.Week)
+            {
+                groupAndOrderClause =
+                    @"GROUP BY Year, Quarter, Month, Week, GroupingKey, GroupingName
+                    ORDER BY Year, Quarter, Month, Week;";
+            }
             else // DataGranularity.Day
-                queryTail = "GROUP BY t4.dt, GroupingName ORDER BY t4.dt;";
+            {
+                groupAndOrderClause =
+                     @"GROUP BY Year, Quarter, Month, Week, Day, GroupingKey, GroupingName
+                    ORDER BY Year, Quarter, Month, Week, Day;";
+            }
 
-            var query = @"SELECT " + dateField + dateIdField + groupingField + queryGuts + queryTail;
+            var query = @"SELECT " + dateHeader + dateHeader + groupingHeader + queryGuts + filterClause + groupAndOrderClause;
 
-            return _connection.Query<CanonizedDateTotal>(
-                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+            var output = _connection
+                .Query<DatePeriodTotal>(
+                    query,
+                    new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate, FilterKeys = filterKeys, })
                 .ToList();
+
+            // ... and finally decorate these values
+            output.ForEach(x =>
+            {
+                x.GroupingType = grouping;
+                x.PeriodType = periodType;
+            });
+            return output;
         }
 
 

@@ -3,7 +3,7 @@ using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model.Profit
 {
-    public enum DataGranularity
+    public enum PeriodType
     {
         Year = 1,
         Quarter = 2,
@@ -14,21 +14,21 @@ namespace ProfitWise.Data.Model.Profit
 
     public static class DataGranularityExtensions
     {
-        public static DateTime AddTime(this DateTime input, DataGranularity level)
+        public static DateTime AddTime(this DateTime input, PeriodType level)
         {
-            if (level == DataGranularity.Quarter)
+            if (level == PeriodType.Quarter)
             {
                 return input.AddMonths(3);
             }
-            if (level == DataGranularity.Month)
+            if (level == PeriodType.Month)
             {
                 return input.AddMonths(1);
             }
-            if (level == DataGranularity.Week)
+            if (level == PeriodType.Week)
             {
                 return input.AddDays(7);
             }
-            if (level == DataGranularity.Day)
+            if (level == PeriodType.Day)
             {
                 return input.AddDays(1);
             }
@@ -37,9 +37,9 @@ namespace ProfitWise.Data.Model.Profit
             return input.AddYears(1);
         }
 
-        public static DateTime StartOfPeriod(this DateTime input, DataGranularity level)
+        public static DateTime StartOfPeriod(this DateTime input, PeriodType level)
         {
-            if (level == DataGranularity.Quarter)
+            if (level == PeriodType.Quarter)
             {
                 int month;
                 if (input.Month < 4)
@@ -58,51 +58,51 @@ namespace ProfitWise.Data.Model.Profit
 
                 return new DateTime(input.Year, month, 1);
             }
-            if (level == DataGranularity.Month)
+            if (level == PeriodType.Month)
             {
                 return new DateTime(input.Year, input.Month, 1);
             }
-            if (level == DataGranularity.Day)
+            if (level == PeriodType.Day)
             {
                 return input;
             }
-            if (level == DataGranularity.Week)
+            if (level == PeriodType.Week)
             {
                 return input.StartOfWeek(DayOfWeek.Sunday);
             }
             return new DateTime(input.Year, 1, 1);
         }
 
-        public static DateTime EndOfPeriod(this DateTime input, DataGranularity level)
+        public static DateTime EndOfPeriod(this DateTime input, PeriodType level)
         {
             return input.StartOfPeriod(level).AddTime(level).AddDays(-1);
         }
 
-        public static DataGranularity ToDefaultGranularity(this TimeSpan lengthOfReportingPeriod)
+        public static PeriodType ToDefaultGranularity(this TimeSpan lengthOfReportingPeriod)
         {
             if (lengthOfReportingPeriod.Days > 730)
             {
-                return DataGranularity.Year;
+                return PeriodType.Year;
             }
             if (lengthOfReportingPeriod.Days > 365)
             {
-                return DataGranularity.Quarter;
+                return PeriodType.Quarter;
             }
             if (lengthOfReportingPeriod.Days > 90)
             {
-                return DataGranularity.Month;
+                return PeriodType.Month;
             }
             if (lengthOfReportingPeriod.Days > 7)
             {
-                return DataGranularity.Week;
+                return PeriodType.Week;
             }
 
-            return DataGranularity.Day;
+            return PeriodType.Day;
         }
 
-        public static DataGranularity NextDrilldownLevel(this DataGranularity input)
+        public static PeriodType NextDrilldownLevel(this PeriodType input)
         {
-            return input == DataGranularity.Day ? DataGranularity.Day : (DataGranularity) ((int) input + 1);
+            return input == PeriodType.Day ? PeriodType.Day : (PeriodType) ((int) input + 1);
         }
     }
 

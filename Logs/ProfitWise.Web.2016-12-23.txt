@@ -1,0 +1,167 @@
+2016-12-23 09:57:12.1009|Info|94b011b2-a2dc-4ef7-b12b-7fbeb828dd5e|Existing User 3duniverse has just authenticated
+2016-12-23 09:57:12.2534|Info|94b011b2-a2dc-4ef7-b12b-7fbeb828dd5e|Loading Currency cache
+2016-12-23 09:57:12.2534|Info|94b011b2-a2dc-4ef7-b12b-7fbeb828dd5e|Updated Shop - UserId: 57f0da58-6e74-41d5-90a9-736d09aa3b2f, CurrencyId: 1, TimeZone: (GMT-06:00) Central Time (US & Canada) - and set IsAccessTokenValid = true
+2016-12-23 09:57:12.2659|Info|94b011b2-a2dc-4ef7-b12b-7fbeb828dd5e|Successfully refreshed Identity Claims for User 3duniverse
+2016-12-23 09:57:12.3114|Debug|6d31372f-87e0-485c-b16c-615d83c801a0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:12.8689|Debug|dcabf1d3-d09c-4152-9fd0-7d603674f95c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:12.9775|Debug|cdbd072a-ed1a-4c52-816e-c454e31509a5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:13.0400|Debug|4d998a22-bacf-455b-aeea-218d7c891b6c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:13.1710|Debug|f9e1a6dc-4f4f-49b6-96d1-86482ded9aa2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:13.2205|Debug|cc3163fc-5ed2-48f3-ada5-a624bf7c4f32|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:13.2735|Error|cc3163fc-5ed2-48f3-ada5-a624bf7c4f32|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-23 09:57:13.2820|Error|cc3163fc-5ed2-48f3-ada5-a624bf7c4f32|MySql.Data.MySqlClient.MySqlException:Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'vw_MasterProductAndVariantSearch.PwMasterProductId' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at Dapper.SqlMapper.ExecuteCommand(IDbConnection cnn, CommandDefinition& command, Action`2 paramReader) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 3397
+   at Dapper.SqlMapper.ExecuteImpl(IDbConnection cnn, CommandDefinition& command) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1346
+   at Dapper.SqlMapper.Execute(IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1221
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.PopulateQueryStub(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 126
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 93
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-23 09:57:15.0218|Debug|12b4fbee-559a-4d70-98ef-c50fb83ad0d7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:15.6408|Debug|2863d16e-6702-493e-bd86-d78d498ac001|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:15.6873|Debug|81ca003c-f2da-4e5e-8ba4-55d6a29facd6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:15.7233|Debug|5225a40e-7dca-4f31-9301-ab4ffdd549ec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:15.7648|Debug|86e12fe6-bbda-4de1-92d5-3546a26b9be6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:15.7973|Debug|26631ea9-6878-4485-a1c2-c957b79f989c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:57:15.8308|Error|26631ea9-6878-4485-a1c2-c957b79f989c|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-23 09:57:15.8308|Error|26631ea9-6878-4485-a1c2-c957b79f989c|MySql.Data.MySqlClient.MySqlException:Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'vw_MasterProductAndVariantSearch.PwMasterProductId' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at Dapper.SqlMapper.ExecuteCommand(IDbConnection cnn, CommandDefinition& command, Action`2 paramReader) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 3397
+   at Dapper.SqlMapper.ExecuteImpl(IDbConnection cnn, CommandDefinition& command) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1346
+   at Dapper.SqlMapper.Execute(IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1221
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.PopulateQueryStub(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 126
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 93
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-23 09:58:58.6906|Debug|a0b11cf3-da03-4c77-954b-b6fe8d3bbcfd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:01.7016|Debug|ab50e4da-d129-48fa-b00a-186619c7cd76|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:01.9536|Debug|cb1356fd-d229-4f40-9f43-07d6c277b77e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:02.0106|Debug|9c510a17-aa01-41a9-885a-4f8a067dae2f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:02.0471|Debug|c8f7d6a0-5c9e-45f0-b724-6119916a4111|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:02.0971|Debug|daf0ee53-fc67-435b-861d-6cee5db3bff7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:07.4366|Debug|20a02ecd-4135-4ef5-9a08-7fdf9522f5fe|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:07.5886|Debug|d0cca583-4d94-4df5-a74b-fa4d290fc96e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:07.6121|Debug|ad9ea049-4040-4b29-bb8d-0d67edf8fb50|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:07.6536|Debug|a70bc6b4-bab0-4179-9574-295a0601ed11|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:42.0415|Debug|aed58f9d-dd0e-4ef1-87aa-8bb02490da57|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:50.3224|Debug|a2b73f42-d701-4cae-a108-8d5999ecb656|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 09:59:50.4519|Debug|59d37d8a-52b9-4aaa-9b4a-1300542f9bef|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:01:52.1250|Debug|12d8b1ce-8291-4f45-a80b-5d96fcc4e365|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:01:52.5000|Debug|02cf12b5-6a97-40b4-b4fb-2f1111b589ae|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:01:52.5510|Debug|e025915b-0317-46ef-aad6-2e0dbd5ded99|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:01:52.6130|Debug|e42e7862-685e-4c71-bc78-5861e6d5087e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:03:23.2471|Error|e42e7862-685e-4c71-bc78-5861e6d5087e|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-23 11:03:23.2861|Error|e42e7862-685e-4c71-bc78-5861e6d5087e|MySql.Data.MySqlClient.MySqlException:Unknown column 'Quarter' in 'field list'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1589
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1479
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.RetrieveDatePeriodTotals(Int64 reportId, DateTime startDate, DateTime endDate, List`1 filterKeys, ReportGrouping grouping, PeriodType periodType) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 356
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildCanonizedDateTotals(PwShop shop, Int64 reportId, DateTime startDate, DateTime endDate, List`1 groupingKeys, ReportGrouping grouping, PeriodType granularity, PeriodType maximiumGranularity) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 218
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 181
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 110
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-23 11:13:08.6050|Debug|6be21427-5191-4949-90da-319ba09aba6f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:12.8656|Debug|420895c9-d801-4e3b-bd1b-15d3667b20fa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:13.1961|Debug|ae7f0777-feff-40bf-829a-7024da31e122|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:13.3557|Debug|b0e33395-aa0e-4159-9ead-bb44447a4da2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:13.4177|Debug|46d99419-5ae1-46b0-94ce-448a356d854d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:13.4887|Debug|93f1749d-7104-48a7-91df-445d483297d3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:18.5556|Debug|b8c5b090-cb54-49af-abc1-053865671a99|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:18.7061|Debug|2f792781-d45a-446e-938c-4160bf157aa5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:18.7466|Debug|3a6cdee7-7d9c-471d-b402-9163b949c43a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:18.7706|Debug|5ca7d530-b743-4bb5-85d2-ea5eaee6fb56|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:13:41.5833|Error|5ca7d530-b743-4bb5-85d2-ea5eaee6fb56|URL:https://gracie2/ProfitWise/QueryService/Dataset - IsAjaxRequest: True
+2016-12-23 11:13:41.6883|Error|5ca7d530-b743-4bb5-85d2-ea5eaee6fb56|MySql.Data.MySqlClient.MySqlException:Unknown column 'Quarter' in 'field list'
+   at MySql.Data.MySqlClient.MySqlStream.ReadPacket()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32& affectedRow, Int64& insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult()
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1589
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) in D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:line 1479
+   at ProfitWise.Data.Repositories.PwReportQueryRepository.RetrieveDatePeriodTotals(Int64 reportId, DateTime startDate, DateTime endDate, List`1 filterKeys, ReportGrouping grouping, PeriodType periodType) in C:\DEV\ProfitWise\ProfitWise.Data\Repositories\PwReportQueryRepository.cs:line 350
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildCanonizedDateTotals(PwShop shop, Int64 reportId, DateTime startDate, DateTime endDate, List`1 groupingKeys, ReportGrouping grouping, PeriodType granularity, PeriodType maximiumGranularity) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 218
+   at ProfitWise.Web.Controllers.QueryServiceController.BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 181
+   at ProfitWise.Web.Controllers.QueryServiceController.Dataset(Int64 reportId) in C:\DEV\ProfitWise\ProfitWise.Web\Controllers\QueryServiceController.cs:line 110
+   at lambda_method(Closure , ControllerBase , Object[] )
+   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<BeginInvokeSynchronousActionMethod>b__39(IAsyncResult asyncResult, ActionInvocation innerInvokeState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3d()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass46.<InvokeActionMethodFilterAsynchronouslyRecursive>b__3f()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<>c__DisplayClass2b.<BeginInvokeAction>b__1c()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass21.<BeginInvokeAction>b__1e(IAsyncResult asyncResult)
+2016-12-23 11:14:55.3402|Debug|af8f83c0-7e45-4f74-a0ea-0834ea5cd6ed|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:14:58.3761|Debug|408ece35-a2f0-4467-b495-fe7cb2e187f9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:14:58.7076|Debug|e82816c6-6eee-42a0-9448-fb9a23aff96e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:14:58.7816|Debug|4b60f041-88cc-4ad2-8736-314cc6cdce0d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:14:58.8491|Debug|36731499-06eb-43ef-98cb-1786216bd983|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:14:58.9281|Debug|3df5762e-8a8d-443b-b993-78505e17d262|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:15:01.3498|Debug|9b2cee4b-d766-495a-8507-e7c09b57200d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:15:01.4203|Debug|d9cc30f8-f428-4593-9b6f-a975f1d5cd57|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:15:01.4533|Debug|e1b7efa4-c014-49e0-b673-e10e4d55387c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:15:01.4733|Debug|73aed73d-fcf4-4366-958d-73b86634febc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:16:57.0988|Debug|053dfe68-c286-4017-a216-a8819b478c8b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:16:57.5249|Debug|c56010bf-0813-4126-a13f-2be2502bd698|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:16:57.5614|Debug|39a8d70e-ee46-4d0d-904a-3b1ff99fc952|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:16:57.6189|Debug|142d6bc5-ccba-4cde-9c5b-3c8a70632402|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:33:57.9797|Debug|73b89e08-0e6c-4673-904f-fd31c0baa6c6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:34:02.3842|Debug|37d5abbd-d019-4bc0-81d1-bb7b05875728|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:34:02.6117|Debug|875a80f8-30a4-4199-a641-cd6341ad5c99|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:34:02.6882|Debug|58542746-7a5f-40fb-9097-3600f3f15150|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:34:02.7607|Debug|e2b92135-d66b-4f6e-8716-861c897921f9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-23 11:34:02.7897|Debug|a83a4bfe-6195-48fa-95ea-d902b188203b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
