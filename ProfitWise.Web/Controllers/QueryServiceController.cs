@@ -212,10 +212,10 @@ namespace ProfitWise.Web.Controllers
                 });
             }
 
-            // All Other catch-all
-            var allOtherSeries = 
-                ReportSeriesFactory.GenerateSeriesRecursive(
-                    "All", "All", report.StartDate, report.EndDate, periodType, periodType.NextDrilldownLevel());
+            // ...add the "All Other" catch-all
+            var allOtherSeries = ReportSeriesFactory.GenerateSeriesRecursive(
+                    AllOtherGroupingName, AllOtherGroupingName,
+                    report.StartDate, report.EndDate, periodType, periodType.NextDrilldownLevel());
 
             allOtherSeries.VisitElements(element =>
             {
@@ -223,6 +223,8 @@ namespace ProfitWise.Web.Controllers
                 var matchingDatePeriodTotals = datePeriodTotals.Where(x => element.MatchByDate(x)).ToList();
                 element.Amount = totalAll - matchingDatePeriodTotals.Sum(x => x.TotalProfit);
             });
+
+            seriesDataset.Add(allOtherSeries);
 
             return seriesDataset;
         }

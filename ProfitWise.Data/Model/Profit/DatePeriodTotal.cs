@@ -30,6 +30,5 @@ namespace ProfitWise.Data.Model.Profit
         public decimal TotalCogs { get; set; }
         public decimal TotalProfit => TotalRevenue - TotalCogs;
 
-        public bool MatchDate()
     }    
 }
