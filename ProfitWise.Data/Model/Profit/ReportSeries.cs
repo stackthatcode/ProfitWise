@@ -117,7 +117,6 @@ namespace ProfitWise.Data.Model.Profit
         {
             return
                 this.Parent.GroupingKey == input.GroupingKey &&
-                this.Parent.GroupingName == input.GroupingName &&
                 MatchByDate(input);
         }
 

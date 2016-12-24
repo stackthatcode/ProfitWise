@@ -264,7 +264,7 @@ namespace ProfitWise.Data.Repositories
             }
             else if (grouping == ReportGrouping.Variant)
             {
-                groupingHeader = $@"t1.PwMasterProductId AS GroupingKey, t1.ProductTitle AS GroupingName, ";
+                groupingHeader = $@"t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, ";
             }
             else if (grouping == ReportGrouping.ProductType)
             {
