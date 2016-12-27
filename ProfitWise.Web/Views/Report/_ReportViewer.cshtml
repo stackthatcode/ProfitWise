@@ -18,16 +18,18 @@
     table#product-types tr td:nth-child(3) {
         width: 45%;
     }
+
     .report-viewer-top-button {
         width: 130px;
     }
 
     .report-widget-label {
-        font-weight: 800;
+        font-weight: 700;
+        color: #AAA;
     }
 
     .profit-table tr td:nth-child(1), .profit-table tr th:nth-child(1)  {
-        width:20%;
+        width:25%;
         text-align:left;
     }
     .profit-table tr td:nth-child(2), .profit-table tr th:nth-child(2)  {
@@ -46,22 +48,32 @@
         width:20%;
         text-align:right;
     }
+
+    .executive-summary h1 {
+        font-weight: 700;
+        margin-top: 6px;
+    }
+    .executive-summary-label {
+        font-weight: 700;
+        color: #999;
+    }
 </style>
 
 <script id="Report-Viewer-Top-Level" type="text/html">
-    <div id="report-viewer-header" class="fixed-positioning-container">
+    <div id="report-viewer-header" style="width: 100%; padding-left: 20px; padding-right: 20px;">
         <div class="standard-header-sleeve" style="height: 190px; border-bottom: 1px solid #FFF;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
-                <div class="col-xs-6">
+                <div class="col-xs-6 no-side-padding">
                     <div data-bind="if: ReportViewerContext.ReportLoaded()">
-                        <div data-bind="template: { name: 'Report-Viewer-Context-Summary', data: $data.ReportViewerContext }">
+                        <div data-bind="template: { name: 'Report-Viewer-Context-Summary', 
+                                                    data: $data.ReportViewerContext }">
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xs-6" style="padding-top:10px; min-width:500px;">
+                <div class="col-xs-6 no-side-padding" style="padding-top:10px; min-width:500px;">
                     <div class="btn-group pull-right" 
                          data-bind="template: { name: 'Report-Viewer-Report-Selector', 
                                                     data: { SystemDefinedReports: $data.SystemDefinedReports,
@@ -116,118 +128,157 @@
     </div>
 
     <div id="report-viewer-body" class="container page-content-sleeve">
-        <div class="page-content" style="margin-top: 190px; padding-top: 30px; overflow: auto;">
+        <div class="page-content" style="padding-top: 0px; overflow: auto; margin-top:0px;">
 
             <!-- TODO : allow injection of external template -->
             <div style="position: relative; width: 100%;">
-                <div data-bind="template: { name: 'Report-Viewer-Dashboard', data: $data.ReportDashboardContext  }"></div>
+                <div data-bind="template: { name: 'Report-Viewer-Dashboard' }"></div>           
             </div>
         </div>
     </div>
 </script>
 
 <script id="Report-Viewer-Dashboard" type="text/html">   
-    <div data-bind="ifnot: DatasetLoaded">
+    <div data-bind="ifnot: ReportDashboardContext.DatasetLoaded">
         <div style="min-height: 600px;">
-            <h1 style="text-align:center; padding-top:180px; font-weight:700; font-size:6em; color:#EEE;">No Report Loaded Yet</h1>
+            <h1 style="margin-top: 100px; text-align:center; font-weight:700; font-size:6em; color:#EEE;">No Report Loaded Yet</h1>
         </div>
     </div>
 
-    <div data-bind="if: DatasetLoaded">
-        <div style="min-height: 600px" data-bind="with: Dataset">            
-            
+    <div data-bind="if: ReportDashboardContext.DatasetLoaded">
+        <div style="min-height: 600px">                        
             <!-- Executive Summary -->
-            <div class="row" data-bind="with: $data.ExecutiveSummary">
+            <div class="row executive-summary" 
+                 data-bind="with: $data.ReportDashboardContext.SummaryDataset">
                 <div class="col-xs-3">
-                    <div class="report-widget-label">Number of Orders</div>
-                    <h1 data-bind="text: TotalNumberSold"></h1>
+                    <div class="executive-summary-label">Number of Orders</div>
+                    <h1 data-bind="text: ExecutiveSummary.TotalNumberSold"></h1>
                 </div>
                 <div class="col-xs-3">
-                    <div class="report-widget-label">Revenue</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId)"></h1>
+                    <div class="executive-summary-label">Revenue</div>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
                 </div>
                 <div class="col-xs-3">
-                    <div class="report-widget-label">Cost of Goods Sold</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId)"></h1>
+                    <div class="executive-summary-label">Cost of Goods Sold</div>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
                 </div>
                 <div class="col-xs-3">
-                    <div class="report-widget-label">Profit</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></h1>
+                    <div class="executive-summary-label">Profit</div>
+                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
                 </div>
             </div>
             
             <!-- Spacer -->
             <div class="row">
-                <div class="col-xs-12" style="height:20px; overflow:auto;">
+                <div class="col-xs-12" style="height:25px; overflow:auto;">
                 </div>
             </div>
             
             <!-- Column Chart with drilldown -->
             <div class="row">
                 <div class="col-xs-12" style="overflow:auto;">
+                    <div style="text-align:center;">
+                        <h4 style="font-weight:700; color:#AAA;">Profits by Time Period</h4>
+                        <span>Grouped by </span>
+                        <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.GroupingPopoverModel }">
+                        </span>
+                        <span>/</span>
+                        <span>Ordered by </span>
+                        <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.OrderingPopoverModel }">
+                        </span>
+                    </div>
                     <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
                 </div>
             </div>
+
+        <!-- Spacer -->
+        <div class="row">
+            <div class="col-xs-12" style="height:50px; overflow:auto;">
+            </div>
+        </div>
             
+        <div data-bind="with:ReportDashboardContext.SummaryDataset">
             <!-- Pie Charts -->
             <div class="row">
-                <div class="col-xs-6" >
-                    <div id="products-pie-chart" 
+                <div class="col-xs-6">
+                    <div>
+                        <span class="report-widget-label">Top Performing Products</span>
+                        <a href="#" class="btn btn-primary pull-right" style="width:200px;">
+                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Detail
+                        </a>
+                    </div>
+                    <div id="products-pie-chart"
                          style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
-                    <div data-bind="template: { name: 'Report-Profit-Widget',
+                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
                                     data: { ProfitData: ProductsByMostProfitable,
-                                            HeadingLabel: 'Top Products',
                                             CurrencyId: CurrencyId } }">
                     </div>
                 </div>
 
                 <div class="col-xs-6">
+                    <div>
+                        <span class="report-widget-label">Top Performing Vendors</span>
+                        <a href="#" class="btn btn-primary pull-right" style="width:200px;">
+                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Vendor Detail
+                        </a>
+                    </div>
                     <div id="vendors-pie-chart"
                          style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
-                    <div data-bind="template: { name: 'Report-Profit-Widget',
+                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
                                     data: { ProfitData: VendorsByMostProfitable,
-                                            HeadingLabel: 'Top Vendor',
                                             CurrencyId: CurrencyId } }">
                     </div>
                 </div>
             </div>
+            <!-- Spacer -->
+            <div class="row">
+                <div class="col-xs-12" style="height:50px; overflow:auto;">
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-xs-6">
+                    <div>
+                        <span class="report-widget-label">Top Performing Variants</span>
+                        <a href="#" class="btn btn-primary pull-right" style="width:200px;">
+                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Variant Detail
+                        </a>
+                    </div>
                     <div id="variants-pie-chart"
                          style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
-                    <div data-bind="template: { name: 'Report-Profit-Widget',
+                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
                                         data: { ProfitData: VariantByMostProfitable,
-                                                HeadingLabel: 'Top Variants',
                                                 CurrencyId: CurrencyId } }"></div>
                 </div>
 
                 <div class="col-xs-6">
+                    <div>
+                        <span class="report-widget-label">Top Performing Product Types</span>
+                        <a href="#" class="btn btn-primary pull-right" style="width:200px;">
+                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Type Detail
+                        </a>
+                    </div>
+
                     <div id="product-types-pie-chart"
                          style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
-                    <div data-bind="template: { name: 'Report-Profit-Widget',
+
+                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
                                     data: { ProfitData: ProductTypeByMostProfitable,
-                                            HeadingLabel: 'Top Product Types',
                                             CurrencyId: CurrencyId } }"></div>
                 </div>
-            </div>        
+            </div>
+        </div>      
         </div>
     </div>
 </script>
 
 <!-- Expects to bind to: ProfitData, HeadingLabel, CurrencyId -->
-<script id="Report-Profit-Widget" type="text/html">
+<script id="Report-Profit-Summary-Widget" type="text/html">
     <div data-bind="if: ProfitData.length > 0">
-        <div>
-            <span class="report-widget-label" data-bind="text: HeadingLabel"></span>
-            
-            <a href="#" class="btn btn-primary pull-right">
-                <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Detail</a>
-        </div>
-
         <table class="table profit-table">
             <thead>
             <tr>
@@ -255,7 +306,7 @@
 
 <script type="text/html" id="Report-Viewer-Context-Summary">
     <div>
-        <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
+        <h2 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h2>
 
         <div style="display:inline-block; " data-bind="if: CopyForEditing">
             <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)                
@@ -272,16 +323,6 @@
             <div style="height: 25px;">
                 <span>Filtered by</span>
                 <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: ReportFilterSummaryModel }"></span>
-            </div>
-
-            <div style="height: 25px;">
-                <span>Grouped by </span>
-                <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
-                </span>
-                <span>/</span>
-                <span>Ordered by </span>
-                <span data-bind="template: { name: 'Selector-Popover-Widget', data: OrderingPopoverModel }">
-                </span>
             </div>
         </div>
     </div>
@@ -582,10 +623,10 @@
     ProfitWiseWidgets.ReportDashboardContext = function() {
         var self = this;
 
-        self.Dataset = ko.observable();
+        self.SummaryDataset = ko.observable();
 
         self.DatasetLoaded = ko.computed(function() {
-            return self.Dataset() != null;
+            return self.SummaryDataset() != null;
         });
 
         self.LoadDataset = function (reportId, callback) {
@@ -596,8 +637,9 @@
                 }, 
                 function (data) {
                     // Rename to Summary Dataset
-                    self.Dataset(data.Summary);
-                    
+                    self.SummaryDataset(data.Summary);
+                    console.log(self.SummaryDataset);
+
                     self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);

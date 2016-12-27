@@ -910,3 +910,370 @@
 2016-12-27 12:08:23.5111|Debug|3084b5b8-0f1a-4f98-b80c-d50a1bf77e7b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-27 12:08:23.5476|Debug|d36f2f39-62a2-43cb-8995-e443923ee2f4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
 2016-12-27 12:08:23.5756|Debug|33f7cd88-3830-4a01-8f27-8a1425d36454|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:03.3286|Debug|e7c18ee9-6d0e-4912-93ca-d6020806971a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:07.1633|Debug|e014bdb7-d18e-4e31-bc17-3848bff7517a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:07.2993|Debug|b676f03e-49e3-4531-a16e-417978a3044b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:07.3349|Debug|007fa5c8-af03-49b0-8db8-d0eced104ab6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:07.3634|Debug|012937ec-efaf-4599-8ae8-15b058015434|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:07.3909|Debug|42fe2631-7da9-40b7-911a-922daf5c1678|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:34.8365|Debug|7118c944-413c-48c4-bb8a-e6b92c6c136a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:38.5724|Debug|1fdaf2cf-659b-4695-a4cd-09e6bb70ef80|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:38.7454|Debug|10081886-a25c-43c4-b356-4c917e9509db|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:38.7809|Debug|b5d88bab-f37c-4d28-8a13-89959636f34c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:38.8074|Debug|af5acfd6-bccc-4614-9e06-15f551b68108|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:10:38.8645|Debug|19657da5-20da-4426-bfda-33f985348dad|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:11:03.4231|Debug|6fb2ec92-a5cc-4917-a38c-d36f693e0e5b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:11:07.0754|Debug|1c27634e-1453-4164-8394-46dea3a68521|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:11:07.1884|Debug|489409af-afdf-4c0e-a273-4fb439a0391c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:11:07.2429|Debug|d1baad60-6160-4df9-9ce0-cc477609c852|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:11:07.2724|Debug|ee6f886b-fdfb-463f-9c96-e192c5e05424|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:11:07.2929|Debug|2dbabbbf-4074-4803-89fd-aa51b441927a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:11:58.7962|Debug|32589cbd-87f1-4a39-ad13-159d99770897|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:12:02.6235|Debug|f0ba1915-f950-4257-befc-7b77e09e4911|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:12:02.7120|Debug|d191958c-0d75-497b-aef7-da79fc98c6d3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:12:02.8360|Debug|d955ec12-1218-411c-a9fc-7aa107c2e7f2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:12:02.9120|Debug|97eca89a-1a8c-4cdb-aa41-181cc833c59e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:12:02.9291|Debug|681000a4-7d3c-4d2e-8636-f265a9180097|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:18.0020|Debug|fbd777dd-5f3b-46e6-8896-f2751392c559|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:22.7711|Debug|ef5d4527-13be-4c56-8b56-d4861ccc140e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:22.9537|Debug|6257a0ae-7b49-47fb-bd65-73d2b9efa3f2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:23.0062|Debug|4ef1f6ae-4c78-411a-915a-01763066545c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:23.0547|Debug|22813725-6d2f-49f3-8c05-3bab7b8f610d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:23.1187|Debug|a257d71d-8eb9-4d0e-9152-548d39bacd96|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:55.4399|Debug|57e26eba-4a8e-41d7-aafe-368dd7b1f8f6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:14:59.9540|Debug|2d3f1cae-dd31-4e2e-be82-41069b72d943|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:00.1120|Debug|31af2605-73c4-4550-8394-fae2843705c9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:00.1880|Debug|0aea6b6d-1246-458c-83d8-adfa178d95a4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:00.2291|Debug|05064c65-3a14-40f2-a416-ea15c9566686|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:00.2601|Debug|e8a67fc5-52c4-4b26-8335-b7ede810ee94|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:08.0204|Debug|d24e8172-bd49-4caa-a167-cefb3f112a1b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:09.4023|Debug|ece37f7e-c7ab-4cb1-acde-ee57e3d128c3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:09.6114|Debug|3cbc38fe-3f2b-4be9-8ea9-96300def6161|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:09.6974|Debug|e35c1fd3-2a91-4dc0-a084-8af38597f96c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:09.7969|Debug|12cd2eba-442b-4fa7-bfa4-08babba6c900|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:15:09.8379|Debug|076a3bf8-22c3-4a35-9972-ffd01b1faa61|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:17:47.1147|Debug|d364e7dd-f77c-4883-b908-6647c5e12e4b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:17:51.1385|Debug|40ac82ad-4555-4ff8-a7fb-93312b33bcf7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:17:51.2550|Debug|a4023c96-6821-4d49-9741-6fd4badcbfc9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:17:51.3385|Debug|c466a05f-3e68-4a85-baf7-f8dcc62c039b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:17:51.3806|Debug|c2f22c9d-6947-4ea8-b9a3-2d4f88de1704|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:17:51.4076|Debug|07ee6910-b9ec-47ff-a176-49723b6d16ea|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:18:37.1957|Debug|b78531bb-8ed2-4309-869c-bc8e56a72ba3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:18:41.1815|Debug|eace9c8d-0b1b-4fb8-a542-a44550bff71a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:18:41.2491|Debug|b852e00d-29bf-41c8-8526-08d51aad2773|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:18:41.3311|Debug|ee225423-c792-404c-9518-c753452825ca|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:18:41.3571|Debug|33cffcf9-36fa-4671-9096-7a2ea416478f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:18:41.3916|Debug|22061f50-7006-4edd-a2bd-15e5a0e4adf1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:25:18.9435|Debug|5f20fd88-aec8-40b7-8a51-3c6a4250d386|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:25:23.0326|Debug|3b03ed1a-043f-492b-aacb-4533aa33c507|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:25:23.2131|Debug|04eeef4e-5582-4313-a812-ca91def6d523|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:25:23.2602|Debug|cbf537df-a56c-406e-bd59-db81848b8480|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:25:23.2886|Debug|9ac82c45-79e6-464f-ac6e-2ab4e36152f2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:25:23.3221|Debug|84fbe440-f544-4754-80a2-5580e76dab5d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:26:47.1353|Debug|0c6fe8f0-4ad2-431e-bfbe-ea84571c3ea9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:26:51.2230|Debug|a27a95fc-4fe9-4925-8a04-4e3a15623150|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:26:51.3365|Debug|0308380a-d28d-428e-b542-78b7f4ed6a07|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:26:51.3775|Debug|95eb8788-27ef-407e-a584-3e0fda844807|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:26:51.4200|Debug|4a7fbeaa-988a-41fe-9889-e79df94254a1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:26:51.4385|Debug|07745892-089d-4ee4-aacb-be3ea86f3b61|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:28:23.7787|Debug|9672e7a1-4fc5-402d-817d-bb538952f7c1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:28:27.9874|Debug|e1f43c10-7627-4d9f-9428-5d1f2e64e402|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:28:28.2470|Debug|c66553f8-f466-4563-bf17-6c3532d5d7e9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:28:28.4075|Debug|59f19e23-7e19-4f49-a056-2f4e03d82cfc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:28:28.4466|Debug|9f5cf970-6460-412a-b010-59375b2a85be|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:28:28.4716|Debug|0a1bbdea-d645-46b1-97d2-da50180b4201|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:29:38.5579|Debug|cb803d0b-8995-4819-9e15-0beb6ee06b2f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:29:42.6644|Debug|331b2f43-08a8-4505-930d-e3e129ad9e53|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:29:42.7984|Debug|4ac70f6d-3c92-4500-b513-c80afb9b870e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:29:42.8895|Debug|e7a71cd2-8fc9-4b5f-85b8-7c39a97cc2d2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:29:42.9390|Debug|56d4dcb5-8798-4414-aae1-5e878ea4b3cb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:29:42.9655|Debug|8ed698b2-c063-4d2d-a6b1-2880391db1ac|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:09.4617|Debug|c9054448-30e3-4680-9e5c-32c97eb337ec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:13.3516|Debug|f8398a5f-0bea-458e-9957-4db1ee539e56|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:13.4501|Debug|6e8dc482-1fbe-45c8-8e59-7bf03cd3ecc3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:13.4961|Debug|360d6ef2-ae77-47e2-bbe6-2b418b5c8053|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:13.5201|Debug|f51d75d6-bece-48cf-9587-8a0c3ac0008d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:13.5786|Debug|b17d029d-5272-44a3-8de3-236f4c8ddcd5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:40.1586|Debug|47dbe075-e6ec-421f-a9cc-bf5c0fac7210|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:44.2362|Debug|a7fd7528-eeb5-4f42-8ecf-4411d4ba260e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:44.3217|Debug|c86bfc2e-cf1b-43b0-92b6-a60a511737c0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:44.3823|Debug|f75d8d7c-2413-4313-9957-ecaf201027fc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:44.4293|Debug|bc9ddc5d-970a-4ac3-a436-3c18ef43f3cc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:30:44.4573|Debug|0577d842-c776-4a1c-afd6-96d6a57b6ae6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:32:47.0440|Debug|762781b5-057c-4493-80cf-ab2ed89f2fc9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:32:51.6425|Debug|d56af537-3b5c-412c-ac27-149beda23c7a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:32:51.8246|Debug|dfaa0f8d-4f66-43bb-8092-a89394cff83d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:32:51.8756|Debug|dc890888-e419-44ac-b0ea-706b876769c0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:32:51.9366|Debug|040f442a-5887-4741-81cf-79b47311ab4a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:32:51.9606|Debug|f5f0d6ab-4706-411c-8b61-0258b736f616|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:17.0023|Debug|64674aa6-940f-482a-b82d-847023b1cf0b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:21.0709|Debug|6606f2e8-69cb-4481-8d8f-1b092914fbb6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:21.2395|Debug|a7a3e807-5c58-4b44-a80c-76425e608887|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:21.3010|Debug|74fa383b-95aa-406f-8c83-7073245b392b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:21.3355|Debug|7fc70924-f35e-4c8e-ac98-0e6298f380be|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:21.3590|Debug|adc124fa-93ca-4bc9-8981-e0af299d4421|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:52.4116|Debug|d8abc51a-0750-42cd-9698-a46872fabdaf|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:57.0268|Debug|82b50b8a-b0b8-41d3-a69e-cf182439fc8b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:57.2058|Debug|36ff6ec9-bb75-4b54-a503-d35f4641adef|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:57.2934|Debug|507a8cc9-a046-49ed-8f47-b8ef0d7eaa4c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:57.3284|Debug|3452dd49-55fb-41ba-bb0e-bbdcc883c276|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:33:57.3529|Debug|be792891-3ab9-47b3-9edd-36bfe44f9fc8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:34:59.4956|Debug|dbf807eb-49e0-44e9-915d-7575fc22931a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:03.6842|Debug|3a8fed92-705e-44ba-8f19-935a56ee271c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:03.8048|Debug|69465a18-5bcc-46f7-88a2-49706c9a7ffe|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:03.8558|Debug|842a3976-255a-455a-8d94-70e3040ebe0a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:03.8843|Debug|d9a776fe-1101-4302-a23f-e3e157278bb4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:03.9308|Debug|89915e1e-1c5f-4cd7-8f42-1e6239ec3f11|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:38.7910|Debug|dd8e014f-6c4c-436a-a632-272ccc801d46|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:43.6447|Debug|5f46949d-a672-4617-9b4f-a5e5f451e1f2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:43.8337|Debug|2ecad31e-7e83-4f56-9408-f311eded22bc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:43.8938|Debug|03a4a182-e233-4c7b-bc4d-560e5906d6f8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:43.9308|Debug|a1ce217e-23c8-4af6-8faa-7000b412d823|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:35:43.9868|Debug|3999db2a-3108-4e6f-bedb-46907f4ae995|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:06.1312|Debug|b4e55715-f088-4c03-9e82-b6ee798372d3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:10.0248|Debug|3f7886cd-6d43-4308-8f77-f9d4f7de620f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:10.0814|Debug|d30d54f2-6970-4955-bc9e-174d5e15fc44|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:10.1209|Debug|a8ad2f4f-b353-4fc3-a2dd-33af12fb5e51|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:10.1654|Debug|ba4ba983-6c2f-4456-98a6-51b07d0774b9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:10.2229|Debug|6043de14-d2fa-4ad4-bca6-57fe08a84720|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:24.4405|Debug|3a8334ca-f286-4dbc-a40f-d2c1ddeecf9e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:24.4835|Debug|de488279-bf39-4afc-b677-600c7998ef4e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:24.5135|Debug|f98824a1-71ca-4b94-95d7-51eca4428c3b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:24.5491|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:36:24.7697|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:4 Revenue:2394.00 Cogs:1915.20 Profit:478.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:18 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 12:36:24.7707|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 12:36:24.7863|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 12:36:24.7863|Debug|66f0a110-b4d0-45c3-b261-a959fdc2fdb5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 12:38:53.5817|Debug|a024d438-3213-4476-ac2a-34803efd7038|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:38:55.3395|Debug|dd54dd30-cee0-44ba-8c2f-9686956498b9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:38:55.4605|Debug|f39488e8-6022-4fa9-b271-6ea63faf5339|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:41:25.8611|Debug|231db62a-3888-4d9c-88b5-bc3fc14e7002|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:41:30.6936|Debug|a7a47fa1-af41-4cdd-8e49-c9e9d40bfa06|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:41:30.7921|Debug|1caa2621-990b-4741-9dfd-cb4a1f5ea1b5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:41:30.8402|Debug|ba3acd3d-6013-45f5-ad88-4b86456cc359|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:41:30.8792|Debug|a8e8a8bf-bdad-4c27-bd50-f9e7c97c8e3f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:41:30.9267|Debug|eca7608a-a410-4086-b5b0-1b39ceb031f6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:42:56.4963|Debug|7902145e-f1a2-4d65-a3cc-b97d0c3176de|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:47:04.0274|Debug|a74f1b5f-9b95-4f4a-9bbe-a0e173cc4509|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:47:08.4410|Debug|0adcdea8-5d67-497d-a710-bf5b314f6b67|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:47:08.5231|Debug|0a1fa953-e55f-4edf-9b6a-ea7f0212ad01|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:47:08.5841|Debug|5cc848a0-a4d1-4e48-ba35-88c5de5912c2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:47:08.6316|Debug|ea209866-527a-4c5d-be1b-fbc67b4c1fee|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:47:08.6536|Debug|070b7d54-500a-4ff0-9b5c-bc7ba18ecd48|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:49:26.3964|Debug|b3c86708-78d4-4a18-b230-2499a1607c1d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:50:00.4547|Debug|54ea47a0-208b-4650-9c26-790aa2d11ec1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:50:06.4834|Debug|e41a449a-75be-47ec-924f-d0a7bf4d2521|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:50:06.6225|Debug|1654b183-839e-4e1b-9219-f176299efe34|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:50:06.7450|Debug|69ab1b49-d1f4-4237-b319-e2f0625da6d0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:50:06.7960|Debug|ffd5633f-1b39-40b9-a511-2778122f8e0b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:50:06.8210|Debug|13fe4a67-bab9-45ad-9513-aa527ec2f2c0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:52:43.4269|Debug|f72d31e1-5a34-4739-8779-b96c65581c5e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:52:48.2480|Debug|d55326b5-f243-4663-bf73-5cbc0430a948|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:52:48.4266|Debug|d4987f65-dc86-4063-bed6-06c677ed0be9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:52:48.5711|Debug|5b64b632-1605-4daa-ab3a-688501755fbd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:52:48.6371|Debug|46d34fff-42a3-4c67-96ee-f361662ef98f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:52:48.6706|Debug|af294404-0fc4-4e61-b9d4-1cd46f97daa7|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:12.0323|Debug|74cf3133-67a1-434f-ba8e-de62df8ce15c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:16.1117|Debug|4c55ce04-b7f1-497d-ab7f-206fac13b27b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:16.2232|Debug|506acdad-a336-423a-a557-a1535061c3da|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:16.2717|Debug|6b09c9e4-0be8-4d20-9b20-fbc2a983a54d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:16.3202|Debug|6dcfecb5-3aa7-4f65-af33-3401b1d6cafa|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:16.3502|Debug|e1d00783-d10e-482f-9812-1f42d3219d73|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:36.0613|Debug|6d3adb5b-96dd-404a-8f3b-36089bf2da77|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:39.9306|Debug|075467c6-d738-41aa-9a44-4cd88b81480b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:40.0266|Debug|44b6db78-46fd-4063-9bbf-4f68b5aa1165|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:40.0777|Debug|2fe62f6e-c367-4cbc-a7a8-23de20e796dc|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:40.1017|Debug|8a67bf32-d94e-40bd-ae47-9e2e6e1148eb|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:53:40.1457|Debug|554fc008-fc59-44e3-b8b9-430c586360b3|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:54:50.3036|Debug|f38aaedd-d1bf-4fad-9d01-6d47ada29419|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:54:54.2832|Debug|40b672f7-bde5-484a-b40b-37b5213f6e9c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:54:54.5623|Debug|20ddcc90-e547-42ad-ba1f-924b47ede669|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:54:54.6328|Debug|039c81ed-4c69-404a-a912-f34274c6aee2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:54:54.6578|Debug|8267a001-31a5-4100-ab18-00e0b69126de|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:54:54.6853|Debug|b842f5e2-0285-404d-b196-b12af203d6ce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:55:56.4387|Debug|28f69611-9d83-41b5-b1b4-6326fca3ff62|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:55:56.4927|Debug|baf5079a-ea36-46b2-b16f-edce6404e876|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:55:56.5257|Debug|5201911b-317d-4966-95bc-3593794ec986|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:55:56.5482|Debug|8b166600-4afe-43e5-9a48-6762bb977b7e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:56:03.7529|Debug|6c1adb07-83a4-486a-98f4-23d3c18f7b79|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:56:03.7934|Debug|dc29b3f3-eec9-4811-83e4-3520555d0b19|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:56:03.8324|Debug|8fe65596-0ba2-4aaf-8720-1fa5eea782ba|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:56:03.8544|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:4 Revenue:2394.00 Cogs:1915.20 Profit:478.80
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 12:56:04.0895|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:18 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 12:56:04.0985|Debug|4a6feb65-0f97-405c-8c8e-53e719255ae1|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 12:57:21.1131|Debug|3b98f50a-2ae2-4bf5-b2e8-506177a7eddf|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:25.0559|Debug|fd08c14f-e5db-4651-bd24-8ce4e42808d2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:25.2085|Debug|210828dc-72dc-4da2-951f-66258a5c1caf|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:25.2430|Debug|56121bf1-4e6b-4840-9f43-ae66343add8e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:25.2615|Debug|4e62ef1d-dd56-4e2a-826b-5aeed170b2e2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:25.2795|Debug|e4edf88a-1899-4514-8e3b-bc9883dc6010|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:30.9010|Debug|3fa724e6-d1ea-448a-86c6-ecd548b79fd0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:32.4928|Debug|82689b00-fcb7-4a1c-9cd4-d844012f09ce|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:32.6424|Debug|4f537ff6-ccc8-43be-8d4e-aa06082df368|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:32.8205|Debug|4f537ff6-ccc8-43be-8d4e-aa06082df368|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 12:57:32.8205|Debug|4f537ff6-ccc8-43be-8d4e-aa06082df368|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 12:57:36.3532|Debug|8657be3e-3ed7-4dae-8cdf-8f39bb4dda44|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:57:36.4693|Debug|af5a9a72-8dd5-428a-a3b2-32aadda21ac0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:23.3899|Debug|25146638-104d-4a34-98ef-833e97cd9836|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:27.2921|Debug|f488a7fa-ba32-471b-af21-152f73211503|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:27.4062|Debug|dd58a26c-3b66-4fee-a4e9-a12db5a5181b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:27.4677|Debug|0abf33ff-c64a-4cc1-8e80-2912ebcd402a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:27.5052|Debug|ec16a121-f7ef-43a0-a495-bfc6aeadd093|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:27.5527|Debug|a214be65-e620-49b2-9510-9aba9dd9c9f0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:42.8392|Debug|dc94f4c8-341f-48f7-a297-eb8acd181e7f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:44.8006|Debug|bb38ea86-1d34-4006-8bd8-a359f72d6ff9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 12:58:44.9802|Debug|34e8b177-4726-464b-967c-7dee353caf61|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:04.6653|Debug|b9b433af-b18b-401f-8a2b-46225fe2c5dd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:05.3080|Debug|ed8d76a4-3345-4787-bd15-8c2575272f27|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:05.4520|Debug|e86245ee-f1c2-4bf2-9b0f-fd580c6d96d9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:05.5356|Debug|2c9548d3-4aeb-4ed6-b639-0c522ce75348|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:05.5806|Debug|9b0ba5e1-3f3f-478e-b567-06691675f897|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:05.6736|Debug|8ea57c7e-5cd4-4092-85d2-b7828a2d8cf1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:45.6947|Debug|ed8bfe29-9b17-4351-9aa2-642b1c7fd33b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:46.5285|Debug|b2cb8eb1-67e0-48d8-91ad-172dd7b1d1fd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:46.7080|Debug|7a681af0-fc63-4373-9d9f-e75aec488e42|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:46.7815|Debug|2d9c5087-88a2-4af3-9ac3-e31166c4cf8f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:46.8616|Debug|bc067c9b-2957-4fd4-b07e-069bbd64a29c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:00:46.8926|Debug|3122a0f6-ee0b-4687-b6c3-e1d43a7e6021|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:08:33.3764|Debug|4f8183b8-cf13-4e7c-bde8-474a2596e04c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:08:34.2016|Debug|45cc4a6b-4ee3-45a7-a7e7-a0dd4fa36a49|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:08:34.2761|Debug|a7c975a0-8989-4e54-bfae-dcbd9d1bae51|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:08:34.4547|Debug|31a4d7d2-6880-4044-a1c6-2da24afeb59c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:08:34.5402|Debug|c28da447-d5b9-41cb-b7c4-a3538339cd52|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:08:34.5672|Debug|d9a925c7-990f-40cd-96ce-03e52e5e6b1e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:09:38.8166|Debug|91951fb8-c75e-4aaf-9a14-d7bb9d545323|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:09:44.2757|Debug|2b1a680c-607e-4644-a24a-b50f2ad712fd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:09:44.4328|Debug|8bfae60d-6c3f-41d1-a7dd-57e84fddfc7f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:09:44.4778|Debug|87d5bffe-a35d-4e80-bb16-dd0eb61366ff|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:09:44.5038|Debug|32bf5a1c-e5c4-4bcc-b14a-0215f7127d55|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:09:44.5333|Debug|cb33e432-d4f3-4f86-844e-cef450cd9120|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:11.7555|Debug|2a3230e4-f6f6-426e-86db-237c64f575dd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:12.5283|Debug|d4423dd1-4603-43ad-98ea-c4c008eacd63|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:12.6333|Debug|c00ae816-66f7-432e-8daf-d0f366e151de|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:12.7503|Debug|8547c19f-68fd-43b4-b605-94b38507487d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:12.7898|Debug|9bd7174b-bfd5-4487-a1ec-cf1d0abd3fb5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:12.8714|Debug|a10be993-a605-4ce1-a8b6-e04de2df4cac|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:19.7139|Debug|537fcaba-2d2f-4abd-ace0-53659130af16|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:21.4169|Debug|2ea06340-4788-4d18-8eb9-1aa27a4873b2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:21.5619|Debug|45f22c8e-08a3-436b-abc9-e3e7c30e049c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:10:21.8270|Debug|45f22c8e-08a3-436b-abc9-e3e7c30e049c|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 13:10:21.8270|Debug|45f22c8e-08a3-436b-abc9-e3e7c30e049c|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 13:18:06.9017|Debug|27191792-d94b-4969-9833-3921926d972d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:12.5612|Debug|a296f10b-38c8-4e3b-a1ff-bb0c451badb6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:12.7517|Debug|81fd9a7c-d05b-4d46-ab8f-6260cf825447|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:12.8212|Debug|9648fedd-e900-48d5-b32d-69a9eb908f9a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:12.8492|Debug|c294aef3-f59c-4918-98fe-3cbb3348675c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:12.8858|Debug|af6413bc-9c4e-4d31-9f12-ccf91c162c09|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:22.5315|Debug|d18097c8-9b15-43ba-b087-8fdf50c70ecd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:22.6325|Debug|64b3e381-078e-48c8-99a8-bc9291c59589|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:22.6930|Debug|c05cc71a-02c7-4469-80ba-5bf220ccf58e|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:22.7130|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:18:22.9156|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 13:18:22.9156|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 13:18:22.9156|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:4 Revenue:2394.00 Cogs:1915.20 Profit:478.80
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:18 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 13:18:22.9356|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 13:18:22.9506|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 13:18:22.9506|Debug|42593dc3-0f10-421d-97af-9278ab1373c6|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 13:19:53.0867|Debug|51b8b488-1f18-430a-870e-c16fe2d092e5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:19:57.0353|Debug|3e452646-1a7a-46e7-8abb-0591124a38dd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:19:57.1348|Debug|c4d9d4f0-a6f4-42e6-b640-2fef42518e87|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:19:57.1929|Debug|dcdefdb3-a104-402b-9e62-3de089c611e5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:19:57.2214|Debug|c7c20450-816c-4e73-9ac5-3b7437ae958d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:19:57.2589|Debug|1bb5fa3e-b827-4605-984e-fca4d52ab19d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:20:26.8428|Debug|89649c78-9732-4298-8415-17348b1ee239|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:20:27.7916|Debug|1ed84427-7d40-454c-bbf4-7338db520fe9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:20:28.0041|Debug|44e06d3a-a139-41f7-a6d6-2fa1ad6c39cf|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:20:28.0742|Debug|0ed94a13-be19-4074-aff0-8d4e00cb325a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:20:28.1287|Debug|06d6f430-5107-4f38-97b8-1dbd371c3b6f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:20:28.1797|Debug|708a68d3-beea-4919-b8db-1b4f3ebf446b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:17.9699|Debug|19da8930-368a-4adb-80c1-bc01f4893032|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:23.2553|Debug|7fe6a9ca-ea3c-4bc1-9890-2821d105c57a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:23.5264|Debug|17efa8d1-1e56-4ed7-aae5-1bc0bcadf496|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:23.5979|Debug|44aca188-b97e-49f1-b8f9-bffd4c085d99|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:23.6494|Debug|6295aa77-af46-4ee6-a647-3e637f2332a9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:23.7135|Debug|13f02c8a-b923-443b-8a97-5aca0f75f04f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:53.1685|Debug|4fa92ce6-b9f6-4bab-9764-ef17b216b0f1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:57.6371|Debug|9c81a88e-20c4-4a4c-8884-3de5bc7c122b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:57.7637|Debug|276c0567-07f1-4214-9537-568e3265bf82|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:57.8297|Debug|6e88a3d1-0443-41e3-835e-8167d1d7950c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:57.8802|Debug|17eeb522-4462-433b-9a15-42a18d69ff40|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:23:57.9077|Debug|5f4565f0-0ea4-495e-a38d-5a5e6db08743|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:24:18.2151|Debug|9f5d9e94-de3a-4d64-a858-58e5ce91be81|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:24:22.0329|Debug|10061e1d-4f1f-45f3-a7d6-570102caa67d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:24:22.2495|Debug|efcc7422-5ee6-4f77-8be4-68e4a589e8dd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:24:22.3275|Debug|b5e5e6ff-8227-4cd9-857c-2ca327136685|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:24:22.4506|Debug|9c9f7f1c-7aa4-4697-966c-7635317c44b1|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:24:22.5081|Debug|671ce3fb-6489-4699-803d-688318159c6a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:24:56.3831|Debug|0f5dddcc-a49e-4ce6-9a81-c029e192e97a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:00.2848|Debug|782395e6-1d22-468d-bca5-3fe198bf0657|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:00.4118|Debug|eaa5c561-a06a-4f47-86d6-bdb4c8248b5a|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:53.9983|Debug|0015a849-79db-4313-a8c5-abd2ebc12f4c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:58.0463|Debug|0da86f79-2b0e-4273-955e-a5e95caa0418|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:58.2824|Debug|7f4d0cc8-42c1-403c-864c-826f5ac3aca5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:58.3209|Debug|3aff0dc9-309c-4555-96cb-55a937a7c813|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:58.3489|Debug|74f990cc-62b1-4cca-888b-b49b14238810|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:25:58.3904|Debug|275f73e3-a946-4f9c-85a4-3785962ecff0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:26:09.9088|Debug|0f2e65c0-9368-4b0e-8e76-12b75f5c4aa2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:26:11.9486|Debug|87cae92d-5fb1-4d14-803a-5e2bf3bba035|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:26:12.1037|Debug|351ab4e8-408e-4d85-abcf-5151a544e4b5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:26:12.3269|Debug|351ab4e8-408e-4d85-abcf-5151a544e4b5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 13:26:12.3269|Debug|351ab4e8-408e-4d85-abcf-5151a544e4b5|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 13:26:15.8118|Debug|11a84d7b-078c-4b15-9cf4-869a91c8c930|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 13:26:15.9908|Debug|a489a353-d821-4205-8de8-8266ed0fa1f0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
