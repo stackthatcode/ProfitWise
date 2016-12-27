@@ -149,11 +149,18 @@ FROM profitwisereportquerystub t1
 		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	INNER JOIN shopifyorderlineitem t3
 		ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+WHERE t1.PwShopId = 100001 AND t1.PwReportID = 99739 
 GROUP BY t3.OrderDate
 ORDER BY t3.OrderDate
 
 
+SELECT * FROM profitwisereportquerystub;
 
+
+SELECT * FROM calendar_table WHERE y = 2016;
+
+
+SELECT * FROM profitwisevariant WHERE PwPRoductId IN ( '1', '2' );
 
 
 

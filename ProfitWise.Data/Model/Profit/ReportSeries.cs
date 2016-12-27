@@ -126,27 +126,37 @@ namespace ProfitWise.Data.Model.Profit
             {
                 return false;
             }
-            if (this.PeriodType >= PeriodType.Year && input.Year != this.Year)
+            if (this.PeriodType == PeriodType.Year 
+                && input.Year == this.Year)
             {
-                return false;
+                return true;
             }
-            if (this.PeriodType >= PeriodType.Quarter && input.Quarter != this.Quarter)
+            if (this.PeriodType == PeriodType.Quarter
+                && input.Year == this.Year
+                && input.Quarter == this.Quarter)
             {
-                return false;
+                return true;
             }
-            if (this.PeriodType >= PeriodType.Month && input.Month != this.Month)
+            if (this.PeriodType == PeriodType.Month
+                && input.Year == this.Year
+                && input.Month == this.Month)
             {
-                return false;
+                return true;
             }
-            if (this.PeriodType >= PeriodType.Week && input.Week != this.Week)
+            if (this.PeriodType == PeriodType.Week
+                && input.Year == this.Year
+                && input.Week == this.Week)
             {
-                return false;
+                return true;
             }
-            if (this.PeriodType >= PeriodType.Day && input.Day != this.Day)
+            if (this.PeriodType == PeriodType.Day
+                 && input.Year == this.Year
+                 && input.Month == this.Month
+                 && input.Day == this.Day)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
     }
 }
