@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Model.Reports;
-
+using Castle.Core.Internal;
 
 namespace ProfitWise.Data.Model.Profit
 {
@@ -9,7 +9,36 @@ namespace ProfitWise.Data.Model.Profit
     {
         public ReportGrouping ReportGrouping { get; set; }
         public string GroupingKey { get; set; }
-        public string GroupingName { get; set; }
+
+        private string _groupingName;
+        public string GroupingName
+        {
+            get
+            {
+                if (!_groupingName.IsNullOrEmpty())
+                {
+                    return _groupingName;
+                }
+                if (ReportGrouping == ReportGrouping.Product)
+                {
+                    return "(No Product Namer)";
+                }
+                if (ReportGrouping == ReportGrouping.Variant)
+                {
+                    return "(No Variant Name)";
+                }
+                if (ReportGrouping == ReportGrouping.ProductType)
+                {
+                    return "(No Product Type)";
+                }
+                if (ReportGrouping == ReportGrouping.Vendor)
+                {
+                    return "(No Vendor)";
+                }
+                return "(No Description)";
+            }
+            set { _groupingName = value; }
+        }
         public decimal TotalCogs { get; set; }
         public decimal TotalRevenue { get; set; }
         public decimal TotalProfit => TotalRevenue - TotalCogs;
@@ -43,6 +72,15 @@ namespace ProfitWise.Data.Model.Profit
                 TotalCogs = summary.TotalCogs - input.Sum(x => x.TotalCogs),
                 TotalNumberSold = summary.TotalNumberSold - input.Sum(x => x.TotalNumberSold)
             });
+            return input;
+        }
+
+        public static List<GroupedTotal> AssignGrouping(this List<GroupedTotal> input, ReportGrouping grouping)
+        {
+            foreach (var total in input)
+            {
+                total.ReportGrouping = grouping;
+            }
             return input;
         }
     }

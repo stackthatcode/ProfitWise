@@ -538,3 +538,74 @@
 2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
 2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
 2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:32:48.0965|Debug|396884cb-3d92-4683-aa00-6e7bc29de4c8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:32:51.2491|Debug|4fbc1803-069c-483b-863f-7498671a9e77|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:32:51.4041|Debug|9a958094-bfb0-4564-bb82-b8704c95c6e8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:32:56.7337|Debug|245ebb18-2310-438f-8321-cb3a614574ee|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:32:56.8877|Debug|71caf32d-d623-4f65-8e23-c3b4416b7fe0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:08.6628|Debug|c492b863-0c24-4108-a562-e5b346dc804b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:11.7691|Debug|105fa1d2-4dbe-46ea-a3dc-535b8ba7965b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:11.9751|Debug|3185a2f8-fa41-46a5-a368-b08a80cf0a5b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:12.0211|Debug|995098e6-6c37-459e-8a7a-aeacc19e28e5|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:12.0906|Debug|fca0a030-341d-4615-9082-2005c5b71e25|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:12.1481|Debug|da91fe8a-90e7-4375-a925-8a6e4823d020|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:17.0772|Debug|7b9be94c-e393-460a-9399-8981a971ebee|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:17.1842|Debug|b063d82a-6991-4baf-a4db-5fb42736d4f8|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:17.2052|Debug|120a290c-6619-4913-8f49-c0b675371bcd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:17.2382|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:39:17.4312|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 10:39:17.4312|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 10:39:17.4312|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 10:39:17.4312|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 10:39:17.4312|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 10:39:17.4312|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 10:39:17.4312|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:4 Revenue:2394.00 Cogs:1915.20 Profit:478.80
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 10:39:17.4412|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 10:39:17.4562|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:18 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:39:17.4562|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 10:39:17.4562|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 10:39:17.4562|Debug|e2723337-c1b5-4f88-9c61-5cb9b7569144|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 10:41:20.8471|Debug|31aa34fc-f129-4d2a-837b-cc141b4701ba|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:23.8889|Debug|85fc6d4d-8ed5-4449-95c2-dfe49116e849|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:24.1079|Debug|ddc52b88-0c2a-4ef7-a2f9-3549149bc287|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:24.1629|Debug|3e942336-12d5-4153-874b-9effefda1025|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:24.2070|Debug|2b5495f3-2d52-4c11-9c8d-6764d0a0f54f|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:24.2980|Debug|fadf3a54-5bb8-4399-ad33-41f115ac9a34|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:35.2314|Debug|c703efdd-a7d3-4cf8-b847-9f70829de5f0|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:35.3624|Debug|9b722b42-e301-4c01-ae1f-559658e7049c|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:35.3939|Debug|d3aa4f45-28bd-4f70-b485-3f7837976bbd|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:35.4134|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:41:35.5954|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 10:41:35.5954|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:4 Revenue:2394.00 Cogs:1915.20 Profit:478.80
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 10:41:35.5974|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 10:41:35.6134|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 10:41:35.6134|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 10:41:35.6134|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:18 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:41:35.6134|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 10:41:35.6134|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 10:41:35.6134|Debug|6601cf80-5ba8-43d9-a576-1cf0fa9c0900|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80

@@ -91,8 +91,8 @@ namespace ProfitWise.Web.Controllers
 
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userBrief.PwShop);
-                var seriesDataset = new List<ReportSeries>();
 
+                var seriesDataset = new List<ReportSeries>();
                 if (report.GroupingId == ReportGrouping.Overall)
                 {
                     seriesDataset = BuildSeriesFromAggregateTotals(userBrief.PwShop, report);
@@ -140,17 +140,28 @@ namespace ProfitWise.Web.Controllers
                 queryRepository.RetreiveTotalsForAll(reportId, report.StartDate, report.EndDate);
 
             var productTotals =
-                queryRepository.RetreiveTotalsByProduct(reportId, report.StartDate, report.EndDate)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                queryRepository
+                    .RetreiveTotalsByProduct(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary)
+                    .AssignGrouping(ReportGrouping.Product);
+
             var variantTotals =
-                queryRepository.RetreiveTotalsByVariant(reportId, report.StartDate, report.EndDate)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                queryRepository
+                    .RetreiveTotalsByVariant(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary)
+                    .AssignGrouping(ReportGrouping.Variant);
+
             var productTypeTotals =
-                queryRepository.RetreiveTotalsByProductType(reportId, report.StartDate, report.EndDate)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                queryRepository
+                    .RetreiveTotalsByProductType(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary)
+                    .AssignGrouping(ReportGrouping.ProductType);
+
             var vendorTotals =
-                queryRepository.RetreiveTotalsByVendor(reportId, report.StartDate, report.EndDate)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                queryRepository
+                    .RetreiveTotalsByVendor(reportId, report.StartDate, report.EndDate)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary)
+                    .AssignGrouping(ReportGrouping.Vendor);
 
             var summary = new Summary()
             {
