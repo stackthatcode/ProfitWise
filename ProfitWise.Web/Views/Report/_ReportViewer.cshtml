@@ -1,5 +1,4 @@
-﻿@using ProfitWise.Data.Model
-@using ProfitWise.Data.Model.Reports
+﻿@using ProfitWise.Data.Model.Reports
 @using Push.Foundation.Web.Json
 
 @Html.Partial("~/Views/SharedTemplates/_SelectorPopoverWidget.cshtml")
@@ -21,6 +20,31 @@
     }
     .report-viewer-top-button {
         width: 130px;
+    }
+
+    .report-widget-label {
+        font-weight: 800;
+    }
+
+    .profit-table tr td:nth-child(1), .profit-table tr th:nth-child(1)  {
+        width:20%;
+        text-align:left;
+    }
+    .profit-table tr td:nth-child(2), .profit-table tr th:nth-child(2)  {
+        width:20%;
+        text-align:right;
+    }
+    .profit-table tr td:nth-child(3), .profit-table tr th:nth-child(3)  {
+        width:20%;
+        text-align:right;
+    }
+    .profit-table tr td:nth-child(4), .profit-table tr th:nth-child(4)  {
+        width:20%;
+        text-align:right;
+    }
+    .profit-table tr td:nth-child(5), .profit-table tr th:nth-child(5)  {
+        width:20%;
+        text-align:right;
     }
 </style>
 
@@ -92,36 +116,27 @@
     </div>
 
     <div id="report-viewer-body" class="container page-content-sleeve">
-        <!-- Will move/transistion when the filters appear -->
         <div class="page-content" style="margin-top: 190px; padding-top: 30px; overflow: auto;">
 
             <!-- TODO : allow injection of external template -->
             <div style="position: relative; width: 100%;">
-                <div data-bind="template: { name: 'Report-Viewer-Dashboard', data: $data.ReportDatasetContext  }"></div>
+                <div data-bind="template: { name: 'Report-Viewer-Dashboard', data: $data.ReportDashboardContext  }"></div>
             </div>
         </div>
     </div>
 </script>
 
-<script id="Report-Viewer-Dashboard" type="text/html">
+<script id="Report-Viewer-Dashboard" type="text/html">   
     <div data-bind="ifnot: DatasetLoaded">
         <div style="min-height: 600px;">
-            <h1>
-                Not Yet Loaded...
-            </h1>
+            <h1 style="text-align:center; padding-top:180px; font-weight:700; font-size:6em; color:#EEE;">No Report Loaded Yet</h1>
         </div>
     </div>
-    
-    <style>
-        .report-widget-label {
-            font-weight:800;
-        }
-    </style>
 
     <div data-bind="if: DatasetLoaded">
-        <div style="min-height: 600px" data-bind="with: Dataset">
-            <!--<img style="width: 100%;" src="@Url.Content("~/Content/images/ProfitabilityMockup.PNG")" /> -->
+        <div style="min-height: 600px" data-bind="with: Dataset">            
             
+            <!-- Executive Summary -->
             <div class="row" data-bind="with: $data.ExecutiveSummary">
                 <div class="col-xs-3">
                     <div class="report-widget-label">Number of Orders</div>
@@ -141,17 +156,20 @@
                 </div>
             </div>
             
+            <!-- Spacer -->
             <div class="row">
                 <div class="col-xs-12" style="height:20px; overflow:auto;">
                 </div>
             </div>
             
+            <!-- Column Chart with drilldown -->
             <div class="row">
                 <div class="col-xs-12" style="overflow:auto;">
                     <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
                 </div>
             </div>
-
+            
+            <!-- Pie Charts -->
             <div class="row">
                 <div class="col-xs-6" >
                     <div id="products-pie-chart" 
@@ -202,29 +220,6 @@
 
 <!-- Expects to bind to: ProfitData, HeadingLabel, CurrencyId -->
 <script id="Report-Profit-Widget" type="text/html">
-    <style>
-        .profit-table tr td:nth-child(1), .profit-table tr th:nth-child(1)  {
-            width:20%;
-            text-align:left;
-        }
-        .profit-table tr td:nth-child(2), .profit-table tr th:nth-child(2)  {
-            width:20%;
-            text-align:right;
-        }
-        .profit-table tr td:nth-child(3), .profit-table tr th:nth-child(3)  {
-            width:20%;
-            text-align:right;
-        }
-        .profit-table tr td:nth-child(4), .profit-table tr th:nth-child(4)  {
-            width:20%;
-            text-align:right;
-        }
-        .profit-table tr td:nth-child(5), .profit-table tr th:nth-child(5)  {
-            width:20%;
-            text-align:right;
-        }
-    </style>    
-
     <div data-bind="if: ProfitData.length > 0">
         <div>
             <span class="report-widget-label" data-bind="text: HeadingLabel"></span>
@@ -259,34 +254,35 @@
 </script>
 
 <script type="text/html" id="Report-Viewer-Context-Summary">
-    <div class="context-summary-name">
-    <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
+    <div>
+        <h4 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h4>
 
-    <div style="display:inline-block; " data-bind="if: CopyForEditing">
-        <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)                
+        <div style="display:inline-block; " data-bind="if: CopyForEditing">
+            <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)                
+            </div>
         </div>
-    </div>
     
-    <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
-        Report Id: <span data-bind="text: ReportId"></span>
-    </div>
-
-    <div class="context-summary-details"  style="font-size: 1.0em; color: #666;">
-        <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
-
-        <div style="height: 25px;">
-            <span>Filtered by</span>
-            <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: ReportFilterSummaryModel }"></span>
+        <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
+            Report Id: <span data-bind="text: ReportId"></span>
         </div>
 
-        <div style="height: 25px;">
-            <span>Grouped by </span>
-            <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
-            </span>
-            <span>/</span>
-            <span>Ordered by </span>
-            <span data-bind="template: { name: 'Selector-Popover-Widget', data: OrderingPopoverModel }">
-            </span>
+        <div style="font-size: 1.0em; color: #666;">
+            <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
+
+            <div style="height: 25px;">
+                <span>Filtered by</span>
+                <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: ReportFilterSummaryModel }"></span>
+            </div>
+
+            <div style="height: 25px;">
+                <span>Grouped by </span>
+                <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
+                </span>
+                <span>/</span>
+                <span>Ordered by </span>
+                <span data-bind="template: { name: 'Selector-Popover-Widget', data: OrderingPopoverModel }">
+                </span>
+            </div>
         </div>
     </div>
 </script>
@@ -314,6 +310,7 @@
         <!-- ko if: UserDefinedReports().length == 0 -->
         <li><a href="#">(No custom reports defined yet)</a></li>
         <!-- /ko -->
+
         <!-- ko foreach: UserDefinedReports -->
         <li>
             <a href="#" data-bind="click: $parent.SelectReportClick">
@@ -327,6 +324,7 @@
     </ul>
 </script>
 
+<!-- Report Viewer and Report Context object definitions -->
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -352,6 +350,7 @@
         self.IsSystemReport = ko.observable(false);
 
         self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
+
         self.ReportFilterSummaryModel = new ProfitWiseWidgets.ReportFilterSummaryModel();
         self.ReportFilterSummaryModel.SummaryClickCallback = function() {
             self.EditFilterClickCallback();
@@ -580,7 +579,7 @@
         return self;
     };
 
-    ProfitWiseWidgets.ReportDatasetContext = function() {
+    ProfitWiseWidgets.ReportDashboardContext = function() {
         var self = this;
 
         self.Dataset = ko.observable();
@@ -598,15 +597,13 @@
                 function (data) {
                     // Rename to Summary Dataset
                     self.Dataset(data.Summary);
-                    console.log(data.Series);
-                    console.log(data.Drilldown);
-
+                    
                     self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.Summary.ProductTypeByMostProfitable, data.CurrencyId);
 
-                    self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown);
+                    self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
                     
                     if (callback) {
                         callback();
@@ -614,11 +611,6 @@
                 }
             );
         };
-
-        String.prototype.trunc = String.prototype.trunc ||
-            function (n) {
-                return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
-            };
 
         self.LoadPieChart = function (id, title, keyedDataset, currencyId) {
             var pieChartData =
@@ -671,58 +663,37 @@
             });
         };
 
-
-        self.LoadColumnChart = function (id, title, seriesData, drilldownData) {
-
-            //console.log(seriesData);
-            //console.log(drilldownData);
-
+        self.LoadColumnChart = function (id, title, seriesData, drilldownData, currencyId) {
             $(id).highcharts({
-                chart: {
-                    type: 'column',
-                },
-                title: {
-                    text: title
-                },
-                subtitle: {
-                    text: 'Click the columns to see time detail.'
-                },
-                xAxis: {
-                    type: 'category'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Total profits'
-                    }
-                },
-                lang: {
-                     drillUpText: '◁ Back'
-                },
-                legend: {
-                    enabled: true
-                },
+                chart: { type: 'column', },
+                xAxis: { type: 'category' },
+                yAxis: { title: { text: 'Total profits' } },
+                lang: { drillUpText: '◁ Back' },
+                legend: { enabled: true },
+                title: { text: '' },
 
                 plotOptions: {
                     series: {
                         borderWidth: 0,
                         dataLabels: {
                             enabled: false,
-                            format: '${point.y:.2f}',
+                            formatter: function() {
+                                return ProfitWiseFunctions.FormatCurrency(this.y, currencyId);
+                            }
                         }
                     }
                 },
                 
                 tooltip: {
-                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                    pointFormat:
-                        '<span style="color:{point.color}">{point.name}</span>: <b>${point.y:,.2f}</b> total profit<br/>'
+                    formatter: function() {
+                        return '<span style="font-size:11px">' + this.series.name + '</span><br>' +
+                                '<span style="color:' + this.point.color + '>' + this.point.name + '</span>: ' +
+                                ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
+                    }
                 },
 
                 series: seriesData,
-
-                drilldown: {
-                    series: drilldownData,
-                }
+                drilldown: { series: drilldownData, }
             });
         };
 
@@ -732,21 +703,8 @@
     ProfitWiseWidgets.ReportViewerModel = function () {
         var self = this;
 
+        // Upper right menu selector for Reports
         self.ReportList = ko.observable([]);
-
-        self.ReportDatasetContext = new ProfitWiseWidgets.ReportDatasetContext();
-
-        self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
-        self.ReportViewerContext.TriggerReportListRefresh = function(callback) {
-            self.RefreshReportList(callback);
-        };
-        self.ReportViewerContext.EditFilterClickCallback = function() {
-            self.EditReportClick();
-        };
-        self.ReportViewerContext.TriggerReportDataRefresh = function(reportId, callback) {
-            self.ReportDatasetContext.LoadDataset(reportId, callback);
-        };
-
 
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.ReportList()).where(function (item) { return item.IsSystemReport == false; }).toArray();
@@ -763,18 +721,17 @@
                     ajax.HttpGet("/ReportService/All", this);
                 },
                 function (data) {
-                    AQ(data)
-                        .each(
-                            function (item) {
-                                item.CurrentlySelected =
-                                    ko.computed(
-                                        function () {
-                                            if (!self.ReportViewerContext.ReportLoaded()) {
-                                                return false;
-                                            }
-                                            return self.ReportViewerContext.ReportId()  == item.PwReportId;
-                                        });
-                            });
+                    AQ(data).each(
+                        function (item) {
+                            item.CurrentlySelected =
+                                ko.computed(
+                                    function () {
+                                        if (!self.ReportViewerContext.ReportLoaded()) {
+                                            return false;
+                                        }
+                                        return self.ReportViewerContext.ReportId() == item.PwReportId;
+                                    });
+                        });
 
                     self.ReportList(data);
                     if (callback) {
@@ -783,6 +740,24 @@
                 });
         };
 
+        // Data for the Top Header
+        self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
+
+        self.ReportViewerContext.TriggerReportListRefresh = function (callback) {
+            self.RefreshReportList(callback);
+        };
+        self.ReportViewerContext.TriggerReportDataRefresh = function (reportId, callback) {
+            self.ReportDashboardContext.LoadDataset(reportId, callback);
+        };
+        self.ReportViewerContext.EditFilterClickCallback = function () {
+            self.EditReportClick();
+        };
+
+        // Data used to populate the Dashboard
+        self.ReportDashboardContext = new ProfitWiseWidgets.ReportDashboardContext();
+
+
+        // State changes to the Report Selection
         self.SelectReportByReportId = function (id) {
             var report =
                 AQ(self.ReportList())
@@ -804,11 +779,12 @@
                     self.ReportViewerContext.LoadReport(reportId, this);
                 },
                 function () {
-                    self.ReportDatasetContext.LoadDataset(reportId);
+                    self.ReportDashboardContext.LoadDataset(reportId);
                 }
             );
         };
 
+        // Transition to show Report Editor
         self.EditReportClick = function () {
             flow.exec(
                 function() {
@@ -823,6 +799,5 @@
 
         return self;
     };
-
 </script>
 
