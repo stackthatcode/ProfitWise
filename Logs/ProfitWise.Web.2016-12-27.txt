@@ -1,0 +1,540 @@
+2016-12-27 10:17:03.6855|Debug|d5ed5984-e181-4680-83f2-2e04b842b927|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:17:03.7640|Debug|897d7117-31a0-458a-9795-c1ecbce00490|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:17:03.7830|Debug|4b2984f2-dcff-4cf7-8421-45a298d8d96b|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:17:03.7985|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:17:03.9335|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:4 Revenue:2394.00 Cogs:1915.20 Profit:478.80
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 10:17:03.9355|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 10:17:03.9515|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:18 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:17:03.9515|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 10:17:03.9515|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 10:17:03.9515|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 10:17:03.9515|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Week Start:11/27/2016 12:00:00 AM End:12/3/2016 12:00:00 AM Y:2016 Q:4 M:11 W:47 D: Amount:0
+2016-12-27 10:17:03.9515|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:11/27/2016 12:00:00 AM End:11/27/2016 12:00:00 AM Y:2016 Q:4 M:11 W:47 D:27 Amount:0
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:11/28/2016 12:00:00 AM End:11/28/2016 12:00:00 AM Y:2016 Q:4 M:11 W:48 D:28 Amount:0
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:11/29/2016 12:00:00 AM End:11/29/2016 12:00:00 AM Y:2016 Q:4 M:11 W:48 D:29 Amount:0
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:11/30/2016 12:00:00 AM End:11/30/2016 12:00:00 AM Y:2016 Q:4 M:11 W:48 D:30 Amount:0
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/1/2016 12:00:00 AM End:12/1/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:1 Amount:0
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/2/2016 12:00:00 AM End:12/2/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:2 Amount:0
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/3/2016 12:00:00 AM End:12/3/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:3 Amount:0
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9670|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Week Start:12/4/2016 12:00:00 AM End:12/10/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D: Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/4/2016 12:00:00 AM End:12/4/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:4 Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/5/2016 12:00:00 AM End:12/5/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:5 Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/6/2016 12:00:00 AM End:12/6/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:6 Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/7/2016 12:00:00 AM End:12/7/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:7 Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/8/2016 12:00:00 AM End:12/8/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:8 Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/9/2016 12:00:00 AM End:12/9/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:9 Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/10/2016 12:00:00 AM End:12/10/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:10 Amount:0
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9840|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Week Start:12/11/2016 12:00:00 AM End:12/17/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D: Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/11/2016 12:00:00 AM End:12/11/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:11 Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/12/2016 12:00:00 AM End:12/12/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:12 Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/13/2016 12:00:00 AM End:12/13/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:13 Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/14/2016 12:00:00 AM End:12/14/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:14 Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/15/2016 12:00:00 AM End:12/15/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:15 Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/16/2016 12:00:00 AM End:12/16/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:16 Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/17/2016 12:00:00 AM End:12/17/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:17 Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Week Start:12/18/2016 12:00:00 AM End:12/24/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D: Amount:0
+2016-12-27 10:17:03.9981|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/18/2016 12:00:00 AM End:12/18/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:18 Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/19/2016 12:00:00 AM End:12/19/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:19 Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/20/2016 12:00:00 AM End:12/20/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:20 Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/21/2016 12:00:00 AM End:12/21/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:21 Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/22/2016 12:00:00 AM End:12/22/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:22 Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/23/2016 12:00:00 AM End:12/23/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:23 Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/24/2016 12:00:00 AM End:12/24/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:24 Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Week Start:12/25/2016 12:00:00 AM End:12/31/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D: Amount:0
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 10:17:04.0150|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/25/2016 12:00:00 AM End:12/25/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:25 Amount:0
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/26/2016 12:00:00 AM End:12/26/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:26 Amount:0
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/27/2016 12:00:00 AM End:12/27/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:27 Amount:0
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/28/2016 12:00:00 AM End:12/28/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:28 Amount:0
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/29/2016 12:00:00 AM End:12/29/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:29 Amount:0
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0370|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/30/2016 12:00:00 AM End:12/30/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:30 Amount:0
+2016-12-27 10:17:04.0451|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0451|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Assigning Totals for Type:Day Start:12/31/2016 12:00:00 AM End:12/31/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:31 Amount:0
+2016-12-27 10:17:04.0451|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0451|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0675|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0765|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key: Name: Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:31493.88 Cogs:26882.40 Profit:4611.48
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key: Name: Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:31493.88 Cogs:26882.40 Profit:4611.48
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.0925|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:1425.85 Cogs:1140.68 Profit:285.17
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1076|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:6712.77 Cogs:5475.95 Profit:1236.82
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:50 D:11 Revenue:332.61 Cogs:281.36 Profit:51.25
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:8722.10 Cogs:7032.32 Profit:1689.78
+2016-12-27 10:17:04.1226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:2829.60 Cogs:2263.68 Profit:565.92
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1386|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:264.89 Cogs:211.91 Profit:52.98
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1546|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:423.03 Cogs:371.12 Profit:51.91
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:50 D:11 Revenue:59.00 Cogs:47.20 Profit:11.80
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:5819.70 Cogs:4655.76 Profit:1163.94
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1696|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:994.86 Cogs:795.88 Profit:198.98
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.1856|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:375.00 Cogs:420.00 Profit:-45.00
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2017|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:531.02 Cogs:544.00 Profit:-12.98
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:50 D:11 Revenue:25.00 Cogs:20.00 Profit:5.00
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2226|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:805.00 Cogs:708.00 Profit:97.00
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:440.00 Cogs:360.00 Profit:80.00
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2327|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2476|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:17:04.2476|Debug|af0e99c5-dca0-41ef-98e2-453f6b15d692|No Date Period Total found - oh noes!!
+2016-12-27 10:20:35.1402|Debug|592b856f-790c-47d3-ad0d-c6cf73d2ba19|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:38.0090|Debug|93189d02-ee99-4fde-b4ae-2c1f869a11f9|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:38.2585|Debug|f31203b6-8a36-411b-824a-e4b9216f79ec|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:38.3250|Debug|156712f9-a16a-4bc3-ac44-d09c249bca87|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:38.3750|Debug|6cd77458-79bf-4daf-b76d-03b5d82a8d3d|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:38.4320|Debug|f4b4487b-ac45-4955-835b-e54bf9e27395|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:42.6153|Debug|338ab2ae-dcb1-48ef-a70f-47973b932ff2|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:42.7133|Debug|b24286d2-05ee-45eb-b628-1ffcd7181245|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:42.7303|Debug|8cd409e1-5ed4-4d40-b7b8-2d7efb682ba4|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:42.7568|Debug|daf42119-1231-4935-9b59-12217a141b96|Successfully hydrated User 57f0da58-6e74-41d5-90a9-736d09aa3b2f Identity Snapshot into HttpContext
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:4 Revenue:2394.00 Cogs:1915.20 Profit:478.80
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 10:20:42.9383|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:18 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 10:20:42.9528|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 10:20:42.9663|Debug|daf42119-1231-4935-9b59-12217a141b96|Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Week Start:11/27/2016 12:00:00 AM End:12/3/2016 12:00:00 AM Y:2016 Q:4 M:11 W:47 D: Amount:0
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:11/27/2016 12:00:00 AM End:11/27/2016 12:00:00 AM Y:2016 Q:4 M:11 W:47 D:27 Amount:0
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:11/28/2016 12:00:00 AM End:11/28/2016 12:00:00 AM Y:2016 Q:4 M:11 W:48 D:28 Amount:0
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:11/29/2016 12:00:00 AM End:11/29/2016 12:00:00 AM Y:2016 Q:4 M:11 W:48 D:29 Amount:0
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:42.9824|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:11/30/2016 12:00:00 AM End:11/30/2016 12:00:00 AM Y:2016 Q:4 M:11 W:48 D:30 Amount:0
+2016-12-27 10:20:43.0043|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0043|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/1/2016 12:00:00 AM End:12/1/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:1 Amount:0
+2016-12-27 10:20:43.0043|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:12085.00 Cogs:9668.00 Profit:2417.00
+2016-12-27 10:20:43.0043|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/2/2016 12:00:00 AM End:12/2/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:2 Amount:0
+2016-12-27 10:20:43.0043|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:395.00 Cogs:316.00 Profit:79.00
+2016-12-27 10:20:43.0043|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/3/2016 12:00:00 AM End:12/3/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:3 Amount:0
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:5484.00 Cogs:4387.20 Profit:1096.80
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Week Start:12/4/2016 12:00:00 AM End:12/10/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D: Amount:0
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:17964.00 Cogs:14371.20 Profit:3592.80
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/4/2016 12:00:00 AM End:12/4/2016 12:00:00 AM Y:2016 Q:4 M:12 W:48 D:4 Amount:0
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/5/2016 12:00:00 AM End:12/5/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:5 Amount:0
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:1250.00 Cogs:1000.00 Profit:250.00
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/6/2016 12:00:00 AM End:12/6/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:6 Amount:0
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:6288.00 Cogs:5030.40 Profit:1257.60
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/7/2016 12:00:00 AM End:12/7/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:7 Amount:0
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:7983.00 Cogs:6386.40 Profit:1596.60
+2016-12-27 10:20:43.0163|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/8/2016 12:00:00 AM End:12/8/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:8 Amount:0
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1199.00 Cogs:959.20 Profit:239.80
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/9/2016 12:00:00 AM End:12/9/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:9 Amount:0
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:4075.30 Cogs:3428.00 Profit:647.30
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/10/2016 12:00:00 AM End:12/10/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:10 Amount:0
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Week Start:12/11/2016 12:00:00 AM End:12/17/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D: Amount:0
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:23189.30 Cogs:18719.20 Profit:4470.10
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/11/2016 12:00:00 AM End:12/11/2016 12:00:00 AM Y:2016 Q:4 M:12 W:49 D:11 Amount:0
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0303|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/12/2016 12:00:00 AM End:12/12/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:12 Amount:0
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:10564.56 Cogs:9108.80 Profit:1455.76
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/13/2016 12:00:00 AM End:12/13/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:13 Amount:0
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:9678.00 Cogs:7742.40 Profit:1935.60
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/14/2016 12:00:00 AM End:12/14/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:14 Amount:0
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:19169.00 Cogs:15335.20 Profit:3833.80
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/15/2016 12:00:00 AM End:12/15/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:15 Amount:0
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:8175.00 Cogs:6540.00 Profit:1635.00
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/16/2016 12:00:00 AM End:12/16/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:16 Amount:0
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:11680.00 Cogs:9344.00 Profit:2336.00
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/17/2016 12:00:00 AM End:12/17/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:17 Amount:0
+2016-12-27 10:20:43.0453|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:2499.00 Cogs:1999.20 Profit:499.80
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Week Start:12/18/2016 12:00:00 AM End:12/24/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D: Amount:0
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:61765.56 Cogs:50069.60 Profit:11695.96
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/18/2016 12:00:00 AM End:12/18/2016 12:00:00 AM Y:2016 Q:4 M:12 W:50 D:18 Amount:0
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/19/2016 12:00:00 AM End:12/19/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:19 Amount:0
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:24369.00 Cogs:19495.20 Profit:4873.80
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/20/2016 12:00:00 AM End:12/20/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:20 Amount:0
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:10672.00 Cogs:8537.60 Profit:2134.40
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/21/2016 12:00:00 AM End:12/21/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:21 Amount:0
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:10789.00 Cogs:8631.20 Profit:2157.80
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/22/2016 12:00:00 AM End:12/22/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:22 Amount:0
+2016-12-27 10:20:43.0613|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0763|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/23/2016 12:00:00 AM End:12/23/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:23 Amount:0
+2016-12-27 10:20:43.0763|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0763|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/24/2016 12:00:00 AM End:12/24/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:24 Amount:0
+2016-12-27 10:20:43.0763|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0763|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Week Start:12/25/2016 12:00:00 AM End:12/31/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D: Amount:0
+2016-12-27 10:20:43.0763|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printer Name:3D Printer Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:47029.00 Cogs:37623.20 Profit:9405.80
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/25/2016 12:00:00 AM End:12/25/2016 12:00:00 AM Y:2016 Q:4 M:12 W:51 D:25 Amount:0
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/26/2016 12:00:00 AM End:12/26/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:26 Amount:0
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/27/2016 12:00:00 AM End:12/27/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:27 Amount:0
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/28/2016 12:00:00 AM End:12/28/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:28 Amount:0
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/29/2016 12:00:00 AM End:12/29/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:29 Amount:0
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/30/2016 12:00:00 AM End:12/30/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:30 Amount:0
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.0923|Debug|daf42119-1231-4935-9b59-12217a141b96|Assigning Totals for Type:Day Start:12/31/2016 12:00:00 AM End:12/31/2016 12:00:00 AM Y:2016 Q:4 M:12 W:52 D:31 Amount:0
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1073|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key: Name: Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:31493.88 Cogs:26882.40 Profit:4611.48
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key: Name: Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:0.00 Cogs:0.00 Profit:0.00
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key: Name: Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:31493.88 Cogs:26882.40 Profit:4611.48
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1233|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:11 W:48 D:30 Revenue:1228.05 Cogs:982.44 Profit:245.61
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:628.60 Cogs:502.88 Profit:125.72
+2016-12-27 10:20:43.1383|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:729.25 Cogs:583.40 Profit:145.85
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:48 D:3 Revenue:68.00 Cogs:54.40 Profit:13.60
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:1425.85 Cogs:1140.68 Profit:285.17
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:945.10 Cogs:815.38 Profit:129.72
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:1379.90 Cogs:1150.36 Profit:229.54
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:49 D:7 Revenue:1028.95 Cogs:823.16 Profit:205.79
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:1949.00 Cogs:1559.20 Profit:389.80
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:1084.12 Cogs:867.29 Profit:216.83
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:49 D:10 Revenue:325.70 Cogs:260.56 Profit:65.14
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:6712.77 Cogs:5475.95 Profit:1236.82
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:855.63 Cogs:702.12 Profit:153.51
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:934.26 Cogs:747.40 Profit:186.86
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:2394.70 Cogs:1937.52 Profit:457.18
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:3199.90 Cogs:2559.92 Profit:639.98
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:1005.00 Cogs:804.00 Profit:201.00
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1538|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:8722.10 Cogs:7032.32 Profit:1689.78
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:1405.90 Cogs:1124.72 Profit:281.18
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:1006.05 Cogs:804.84 Profit:201.21
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:290.65 Cogs:232.52 Profit:58.13
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Filament Name:Filament Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:2829.60 Cogs:2263.68 Profit:565.92
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1703|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:34.99 Cogs:27.99 Profit:7.00
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:229.90 Cogs:183.92 Profit:45.98
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.1853|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:264.89 Cogs:211.91 Profit:52.98
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:59.00 Cogs:47.20 Profit:11.80
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:274.08 Cogs:251.96 Profit:22.12
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:89.95 Cogs:71.96 Profit:17.99
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:423.03 Cogs:371.12 Profit:51.91
+2016-12-27 10:20:43.2023|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:1779.00 Cogs:1423.20 Profit:355.80
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:3807.75 Cogs:3046.20 Profit:761.55
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:50 D:16 Revenue:114.95 Cogs:91.96 Profit:22.99
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:59.00 Cogs:47.20 Profit:11.80
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:5819.70 Cogs:4655.76 Profit:1163.94
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2350|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:51 D:19 Revenue:384.93 Cogs:307.94 Profit:76.99
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:259.99 Cogs:207.99 Profit:52.00
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Day Y:2016 Q:4 M:12 W:51 D:21 Revenue:314.95 Cogs:251.96 Profit:62.99
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:Accessories Name:Accessories Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:994.86 Cogs:795.88 Profit:198.98
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2487|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:11 W:48 D:30 Revenue:35.00 Cogs:28.00 Profit:7.00
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:48 D:1 Revenue:110.00 Cogs:120.00 Profit:-10.00
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:48 D:2 Revenue:265.00 Cogs:300.00 Profit:-35.00
+2016-12-27 10:20:43.2644|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:48 D: Revenue:375.00 Cogs:420.00 Profit:-45.00
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:49 D:5 Revenue:136.02 Cogs:116.00 Profit:20.02
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:49 D:6 Revenue:175.00 Cogs:220.00 Profit:-45.00
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:49 D:8 Revenue:110.00 Cogs:120.00 Profit:-10.00
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:49 D:9 Revenue:50.00 Cogs:40.00 Profit:10.00
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:49 D:10 Revenue:25.00 Cogs:20.00 Profit:5.00
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:49 D: Revenue:531.02 Cogs:544.00 Profit:-12.98
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:50 D:12 Revenue:285.00 Cogs:260.00 Profit:25.00
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:50 D:13 Revenue:60.00 Cogs:48.00 Profit:12.00
+2016-12-27 10:20:43.2804|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:50 D:14 Revenue:355.00 Cogs:300.00 Profit:55.00
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:50 D:15 Revenue:55.00 Cogs:60.00 Profit:-5.00
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:50 D:17 Revenue:25.00 Cogs:20.00 Profit:5.00
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:50 D: Revenue:805.00 Cogs:708.00 Profit:97.00
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Day Y:2016 Q:4 M:12 W:51 D:20 Revenue:390.00 Cogs:320.00 Profit:70.00
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.2964|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|Found Date Period Total Type:ProductType Key:3D Printable Project Kits Name:3D Printable Project Kits Period:Week Y:2016 Q:4 M:12 W:51 D: Revenue:440.00 Cogs:360.00 Profit:80.00
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!
+2016-12-27 10:20:43.3124|Debug|daf42119-1231-4935-9b59-12217a141b96|No Date Period Total found - oh noes!!

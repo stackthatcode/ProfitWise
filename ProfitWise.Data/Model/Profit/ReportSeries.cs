@@ -142,7 +142,7 @@ namespace ProfitWise.Data.Model.Profit
             {
                 return false;
             }
-            if (this.PeriodType >= PeriodType.Day && input.Month != this.Day)
+            if (this.PeriodType >= PeriodType.Day && input.Day != this.Day)
             {
                 return false;
             }

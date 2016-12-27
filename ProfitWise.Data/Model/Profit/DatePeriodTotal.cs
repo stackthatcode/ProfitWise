@@ -20,15 +20,15 @@ namespace ProfitWise.Data.Model.Profit
         public DatePeriodTotal Parent { get; set; }
         public List<DatePeriodTotal> Drilldown { get; set; }
 
-
-        // In time my friend...
-        //public string DateIdentifier { get; set; }
-        //public string CanonizedIdentifier => GroupingName + ":" + DateIdentifier;
-        //public string DateLabel { get; set; }
-
+        
         public decimal TotalRevenue { get; set; }
         public decimal TotalCogs { get; set; }
         public decimal TotalProfit => TotalRevenue - TotalCogs;
 
+        public override string ToString()
+        {
+            return $"Type:{GroupingType} Key:{GroupingKey} Name:{GroupingName} Period:{PeriodType} Y:{Year} " +
+                $"Q:{Quarter} M:{Month} W:{Week} D:{Day} Revenue:{TotalRevenue} Cogs:{TotalCogs} Profit:{TotalProfit}";
+        }
     }    
 }

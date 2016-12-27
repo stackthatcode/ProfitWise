@@ -191,6 +191,11 @@ namespace ProfitWise.Web.Controllers
                     shop, report.PwReportId, report.StartDate, report.EndDate,
                     groupingKeys, report.GroupingId, periodType, periodType.NextDrilldownLevel());
 
+            foreach (var total in datePeriodTotals.Where(x => x.GroupingKey == "3D Printer"))
+            {
+                _logger.Debug(total.ToString());
+            }
+
             // Context #2 - Aggregate Date Totals
             var aggregateDateTotals =
                 queryRepository
@@ -208,7 +213,9 @@ namespace ProfitWise.Web.Controllers
                 {
                     var total = datePeriodTotals.FirstOrDefault(element.MatchByGroupingAndDate);
                     if (total != null)
+                    {
                         element.Amount = total.TotalProfit;
+                    }
                 });
             }
 
@@ -228,6 +235,7 @@ namespace ProfitWise.Web.Controllers
 
             return seriesDataset;
         }
+
 
         // ... recursively invokes SQL to build data set of Date Totals organized by Grouping
         private List<DatePeriodTotal>  RetrieveDatePeriodTotalsRecursive(
