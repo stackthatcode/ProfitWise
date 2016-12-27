@@ -237,9 +237,9 @@
             <thead>
             <tr>
                 <th></th>
-                <th>Profit</th>
                 <th>Gross Sales</th>
                 <th>Cogs</th>
+                <th>Profit</th>
                 <th># Sold</th>
             </tr>
             </thead>
@@ -248,9 +248,9 @@
                 <td class="overflow-gracefully">
                     <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span>
                 </td>
-                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId) "></td>
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId) "></td>
+                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
                 <td data-bind="text: TotalNumberSold"></td>
             </tr>
             </tbody>
