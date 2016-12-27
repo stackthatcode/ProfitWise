@@ -150,7 +150,9 @@ namespace ProfitWise.Data.Repositories
         {
             return @"SUM(t3.GrossRevenue) As TotalRevenue, 
                     SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
-		            SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs
+		            SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs,
+                    SUM(t3.GrossRevenue) - SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalProfits
+
             FROM profitwisereportquerystub t1
 		        INNER JOIN profitwisevariant t2
 		            ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
@@ -162,7 +164,7 @@ namespace ProfitWise.Data.Repositories
 
         public string QueryTailForTotals(int limit)
         {
-            return $"ORDER BY TotalRevenue DESC LIMIT {limit};";
+            return $"ORDER BY TotalProfits DESC LIMIT {limit};";
         }
 
         public ExecutiveSummary RetreiveTotalsForAll(long reportId, DateTime startDate, DateTime endDate)

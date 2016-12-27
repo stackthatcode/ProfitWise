@@ -58,6 +58,7 @@ namespace ProfitWise.Data.Model.Profit
             {
                 return input;
             }
+
             if (input.Sum(x => x.TotalRevenue) == summary.TotalRevenue &&
                 input.Sum(x => x.TotalCogs) == summary.TotalCogs &&
                 input.Sum(x => x.TotalNumberSold) == summary.TotalNumberSold)

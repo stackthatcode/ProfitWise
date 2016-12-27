@@ -191,7 +191,7 @@ namespace ProfitWise.Web.Controllers
                 .ToList();
 
             var groupingKeysAndName = topGroups
-                .Select(x => new GroupingKeyAndName {GroupingKey = x.GroupingKey, GroupingName = x.GroupingName,})
+                .Select(x => new GroupingKeyAndName { GroupingKey = x.GroupingKey, GroupingName = x.GroupingName })
                 .ToList();
 
             var groupingKeys = topGroups.Select(x => x.GroupingKey).ToList();
@@ -222,10 +222,26 @@ namespace ProfitWise.Web.Controllers
             {
                 series.VisitElements(element =>
                 {
+                    if (element.Parent.GroupingKey == "3D Printer")
+                    {
+                        _logger.Debug("Assigning Totals for " + element.ToString());
+                    }
+
                     var total = datePeriodTotals.FirstOrDefault(element.MatchByGroupingAndDate);
                     if (total != null)
                     {
+                        if (element.Parent.GroupingKey == "3D Printer")
+                        {
+                            _logger.Debug("Found Date Period Total " + total.ToString());
+                        }
                         element.Amount = total.TotalProfit;
+                    }
+                    else
+                    {
+                        if (element.Parent.GroupingKey == "3D Printer")
+                        {
+                            _logger.Debug("No Date Period Total found - oh noes!!");
+                        }
                     }
                 });
             }
