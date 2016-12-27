@@ -11,19 +11,14 @@
     <div class="input-group" style="width:250px;">
         <div style="height:30px;" data-bind="text:PromptText"></div>
 
-        <div class="input-group" style="width:100%;">
-            <!-- Data-Bind to KO stuff -->
-            <select class="form-control"
+        <!-- Data-Bind to KO stuff -->
+        <select class="form-control"
+                style="width:100%;"
                     data-bind="options: Options,
                         optionsText: OptionsText(),
                         value: EditSelection,
-                        optionsValue: OptionsValue()"></select>
-
-            <span class="input-group-btn">
-                <a href="#" data-bind="click: OkButtonClick"
-                   class="btn btn-primary" type="button">Ok</a>
-            </span>
-        </div>
+                        optionsValue: OptionsValue(),
+                        event: { change: OkButtonClick }"></select>
     </div>
 </script>
 
