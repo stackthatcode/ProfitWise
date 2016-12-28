@@ -92,7 +92,7 @@ namespace ProfitWise.Web.Controllers
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userBrief.PwShop);
 
-                var seriesDataset = new List<ReportSeries>();
+                List<ReportSeries> seriesDataset;
                 if (report.GroupingId == ReportGrouping.Overall)
                 {
                     seriesDataset = BuildSeriesFromAggregateTotals(userBrief.PwShop, report);
@@ -222,31 +222,33 @@ namespace ProfitWise.Web.Controllers
             {
                 series.VisitElements(element =>
                 {
-                    if (element.Parent.GroupingKey == "3D Printer") _logger.Debug("Assigning Totals for " + element.ToString());
-
+                    // if (element.Parent.GroupingKey == "3D Printer") _logger.Debug("Assigning Totals for " + element.ToString());
                     var total = datePeriodTotals.FirstOrDefault(element.MatchByGroupingAndDate);
                     if (total != null)
                     {
-                        if (element.Parent.GroupingKey == "3D Printer") _logger.Debug("Found Date Period Total " + total.ToString());
-
                         element.Amount = total.TotalProfit;
+                        // if (element.Parent.GroupingKey == "3D Printer") _logger.Debug("Found Date Period Total " + total.ToString());
                     }
                 });
             }
 
-            // ...add the "All Other" catch-all
-            var allOtherSeries = ReportSeriesFactory.GenerateSeriesRecursive(
-                    AllOtherGroupingName, AllOtherGroupingName,
-                    report.StartDate, report.EndDate, periodType, periodType.NextDrilldownLevel());
-
-            allOtherSeries.VisitElements(element =>
+            if (summary.TotalsByGroupingId(report.GroupingId).Count > NumberOfColumnGroups)
             {
-                var totalAll = aggregateDateTotals.Total(element.Start, element.End, x => x.TotalProfit);
-                var matchingDatePeriodTotals = datePeriodTotals.Where(x => element.MatchByDate(x)).ToList();
-                element.Amount = totalAll - matchingDatePeriodTotals.Sum(x => x.TotalProfit);
-            });
+                // ...add the "All Other" catch-all
+                var allOtherSeries = 
+                    ReportSeriesFactory.GenerateSeriesRecursive(
+                        AllOtherGroupingName, AllOtherGroupingName,
+                        report.StartDate, report.EndDate, periodType, periodType.NextDrilldownLevel());
 
-            seriesDataset.Add(allOtherSeries);
+                allOtherSeries.VisitElements(element =>
+                {
+                    var totalAll = aggregateDateTotals.Total(element.Start, element.End, x => x.TotalProfit);
+                    var matchingDatePeriodTotals = datePeriodTotals.Where(x => element.MatchByDate(x)).ToList();
+                    element.Amount = totalAll - matchingDatePeriodTotals.Sum(x => x.TotalProfit);
+                });
+
+                seriesDataset.Add(allOtherSeries);
+            }
 
             return seriesDataset;
         }
@@ -272,9 +274,6 @@ namespace ProfitWise.Web.Controllers
 
             return output;
         }
-
-        // Report Series output data type        
-
 
 
         // *** Builds Report Series data for High Charts multi-column chart

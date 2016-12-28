@@ -181,10 +181,10 @@
                         <span>Grouped by </span>
                         <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.GroupingPopoverModel }">
                         </span>
-                        <span>/</span>
+                        <!--<span>/</span>
                         <span>Ordered by </span>
                         <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.OrderingPopoverModel }">
-                        </span>
+                        </span>-->
                     </div>
                     <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
                 </div>
@@ -430,27 +430,33 @@
         });
         
         self.AfterRenderDateRangePicker = function () {
-            ProfitWiseWidgets.CreateDatePicker(".date-ranger-picker", self.UpdateDate);
+            ProfitWiseWidgets.CreateDatePicker(".date-ranger-picker", self.PushDateToModelAndUpdate);
         };
 
-        self.PushDatesFromModel = function() {
+        // Expects to receive JavaScript Date objects
+        self.PushDatesToDateRangePicker = function (start, end) {
             var dateRangePickerData = $('.date-ranger-picker').data('daterangepicker');
+
             if (dateRangePickerData) {
-                dateRangePickerData.setStartDate(new Date(self.StartDate().substring(0, 10)));
-                dateRangePickerData.setEndDate(new Date(self.EndDate().substring(0, 10)));
+                dateRangePickerData.setStartDate(start);
+                dateRangePickerData.setEndDate(end);
             }
         };
 
-        self.UpdateDate = function(startDate, endDate, label) {
+
+        self.PushDateToModelAndUpdate = function (startDate, endDate) {
             flow.exec(
-                function() {
+                function () {
                     self.PrepareCopyForEditing(this);
                 },
                 function () {
-                    self.StartDate(startDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
-                    self.EndDate(endDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"));
-                    
-                    self.PushDatesFromModel();
+                    // Taking startDate and endDate from DateRangePicker as moment.js objects
+                    // ... we set everything to midnight, local time
+                    self.StartDate(ProfitWiseFunctions.MomentStartOfDay(startDate).toDate());
+                    self.EndDate(ProfitWiseFunctions.MomentStartOfDay(endDate).toDate());
+
+                    // Push the corrected dates out to DateRangePicker to make it consistent
+                    self.PushDatesToDateRangePicker(self.StartDate(), self.EndDate());
                     self.Update();
                 }
             );
@@ -484,9 +490,12 @@
 
             self.ReportId(current.PwReportId);
             self.Name(current.Name);
-            self.StartDate(current.StartDate);
-            self.EndDate(current.EndDate);
-            self.PushDatesFromModel();
+
+            // Store in the local model..
+            self.StartDate(current.StartDate.parseDateToStartOfDayLocalTime());
+            self.EndDate(current.EndDate.parseDateToStartOfDayLocalTime());
+
+            self.PushDatesToDateRangePicker(self.StartDate(), self.EndDate());
             
             self.CopyForEditing(current.CopyForEditing);
             self.IsSystemReport(current.IsSystemReport);
@@ -511,6 +520,7 @@
                         startDate: self.StartDate(),
                         endDate: self.EndDate()
                     };
+
                     ajax.HttpPost("/ReportService/Update", data, this);
                 },
                 function() {
@@ -635,9 +645,8 @@
                     ajax.HttpPost("/QueryService/Dataset", { reportId: reportId }, this);
                 }, 
                 function (data) {
-                    // Rename to Summary Dataset
+                    // Rename to Summary Dataset                    
                     self.SummaryDataset(data.Summary);
-                    console.log(self.SummaryDataset);
 
                     self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                     self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);

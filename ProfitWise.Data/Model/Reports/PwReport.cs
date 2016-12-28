@@ -90,10 +90,8 @@ namespace ProfitWise.Data.Model.Reports
             Dictionary<ReportOrdering, string> _orderingDescriptions =
                 new Dictionary<ReportOrdering, string>()
                 {
-                            { ReportOrdering.NameAscending, "Name (A-to-Z)" },
-                            { ReportOrdering.NameDescending, "Name (Z-to-A)" },
-                            { ReportOrdering.ProfitabilityAscending , "Profitability (least to most)" },
                             { ReportOrdering.ProfitabilityDescending, "Profitability (most to least)" },
+                            { ReportOrdering.ProfitabilityAscending , "Profitability (least to most)" },
                 };
 
         public static object AllGroupingToNamedObject()

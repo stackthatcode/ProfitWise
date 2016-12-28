@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -14,12 +12,10 @@ namespace ProfitWise.Web.Controllers
     public class ReportController : Controller
     {
         private readonly MultitenantFactory _factory;
-        private readonly CurrencyService _currencyService;
-        
-        public ReportController(MultitenantFactory factory, CurrencyService currencyService)
+
+        public ReportController(MultitenantFactory factory)
         {
             _factory = factory;
-            _currencyService = currencyService;
         }
 
         public ActionResult Dashboard()

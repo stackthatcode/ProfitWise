@@ -38,6 +38,16 @@ String.prototype.trunc = String.prototype.trunc ||
         return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
     };
 
+String.prototype.parseDateToStartOfDayLocalTime = String.prototype.parseDateToStartOfDayLocalTime ||
+    function() {
+        return moment(this.substring(0, 10)).toDate();
+    };
+
+ProfitWiseFunctions.MomentStartOfDay =
+    function (momentObject) {
+        return momentObject.hours(0).minutes(0).seconds(0).milliseconds(0);
+    };
+
 
 // Relies upon .popover-container for enclosing parent & .popover-launcher for the triggering element
 ProfitWiseFunctions.PopOverCloseAll = function() {
