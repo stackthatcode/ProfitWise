@@ -145,59 +145,65 @@
     </div>
 
     <div data-bind="if: ReportDashboardContext.DatasetLoaded">
-        <div style="min-height: 600px">                        
-            <!-- Executive Summary -->
-            <div class="row executive-summary" 
-                 data-bind="with: $data.ReportDashboardContext.SummaryDataset">
-                <div class="col-xs-3">
-                    <div class="executive-summary-label">Number of Orders</div>
-                    <h1 data-bind="text: ExecutiveSummary.TotalNumberSold"></h1>
-                </div>
-                <div class="col-xs-3">
-                    <div class="executive-summary-label">Revenue</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
-                </div>
-                <div class="col-xs-3">
-                    <div class="executive-summary-label">Cost of Goods Sold</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
-                </div>
-                <div class="col-xs-3">
-                    <div class="executive-summary-label">Profit</div>
-                    <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
-                </div>
-            </div>
-            
-            <!-- Spacer -->
-            <div class="row">
-                <div class="col-xs-12" style="height:25px; overflow:auto;">
-                </div>
-            </div>
-            
-            <!-- Column Chart with drilldown -->
-            <div class="row">
-                <div class="col-xs-12" style="overflow:auto;">
-                    <div style="text-align:center;">
-                        <h4 style="font-weight:700; color:#AAA;">Profits by Time Period</h4>
-                        <span>Grouped by </span>
-                        <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.GroupingPopoverModel }">
-                        </span>
-                        <!--<span>/</span>
-                        <span>Ordered by </span>
-                        <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.OrderingPopoverModel }">
-                        </span>-->
-                    </div>
-                    <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-                </div>
-            </div>
-
-        <!-- Spacer -->
-        <div class="row">
-            <div class="col-xs-12" style="height:50px; overflow:auto;">
-            </div>
+        <div style="min-height: 600px" 
+             data-bind="template: { name: 'Report-Viewer-Summary-Section', data: $data }">
         </div>
-            
-        <div data-bind="with:ReportDashboardContext.SummaryDataset">
-            <!-- Pie Charts -->
+    </div>
+</script>
+
+<script id="Report-Viewer-Summary-Section" type="html/text">
+    <!-- Executive Summary -->
+    <div class="row executive-summary" data-bind="with: ReportDashboardContext.SummaryDataset">
+        <div class="col-xs-3">
+            <div class="executive-summary-label">Number of Orders</div>
+            <h1 data-bind="text: ExecutiveSummary.TotalNumberSold"></h1>
+        </div>
+        <div class="col-xs-3">
+            <div class="executive-summary-label">Revenue</div>
+            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
+        </div>
+        <div class="col-xs-3">
+            <div class="executive-summary-label">Cost of Goods Sold</div>
+            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
+        </div>
+        <div class="col-xs-3">
+            <div class="executive-summary-label">Profit</div>
+            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
+        </div>
+    </div>
+
+    <!-- Spacer -->
+    <div class="row">
+        <div class="col-xs-12" style="height:25px; overflow:auto;">
+        </div>
+    </div>
+
+    <!-- Column Chart with drilldown -->
+    <div class="row">
+        <div class="col-xs-12" style="overflow:auto;">
+            <div style="text-align:center;">
+                <h4 style="font-weight:700; color:#AAA;">Profits by Time Period</h4>
+                <span>Grouped by </span>
+                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.GroupingPopoverModel }">
+                </span>
+                <!--<span>/</span>
+                <span>Ordered by </span>
+                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.OrderingPopoverModel }">
+                </span>-->
+            </div>
+            <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+    </div>
+
+    <!-- Spacer -->
+    <div class="row">
+        <div class="col-xs-12" style="height:50px; overflow:auto;">
+        </div>
+    </div>
+
+    <!-- Pie Charts -->
+    <div data-bind="with: ReportDashboardContext.SummaryDataset">
+        <div data-bind="if: ExecutiveSummary.TotalNumberSold > 0">
             <div class="row">
                 <div class="col-xs-6">
                     <div>
@@ -207,11 +213,11 @@
                         </a>
                     </div>
                     <div id="products-pie-chart"
-                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                            style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
                     <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                    data: { ProfitData: ProductsByMostProfitable,
-                                            CurrencyId: CurrencyId } }">
+                                        data: { ProfitData: ProductsByMostProfitable,
+                                                CurrencyId: CurrencyId } }">
                     </div>
                 </div>
 
@@ -223,11 +229,11 @@
                         </a>
                     </div>
                     <div id="vendors-pie-chart"
-                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                            style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
                     <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                    data: { ProfitData: VendorsByMostProfitable,
-                                            CurrencyId: CurrencyId } }">
+                                        data: { ProfitData: VendorsByMostProfitable,
+                                                CurrencyId: CurrencyId } }">
                     </div>
                 </div>
             </div>
@@ -246,11 +252,11 @@
                         </a>
                     </div>
                     <div id="variants-pie-chart"
-                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                            style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
                     <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                        data: { ProfitData: VariantByMostProfitable,
-                                                CurrencyId: CurrencyId } }"></div>
+                                            data: { ProfitData: VariantByMostProfitable,
+                                                    CurrencyId: CurrencyId } }"></div>
                 </div>
 
                 <div class="col-xs-6">
@@ -262,15 +268,19 @@
                     </div>
 
                     <div id="product-types-pie-chart"
-                         style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
+                            style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto">
                     </div>
 
                     <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                    data: { ProfitData: ProductTypeByMostProfitable,
-                                            CurrencyId: CurrencyId } }"></div>
+                                        data: { ProfitData: ProductTypeByMostProfitable,
+                                                CurrencyId: CurrencyId } }"></div>
                 </div>
             </div>
-        </div>      
+        </div> 
+         
+        <div data-bind="ifnot: ExecutiveSummary.TotalNumberSold > 0">
+            <h1 style="margin-top: 100px; margin-bottom:300px; text-align:center; font-weight:700; font-size:4em; color:#CCC;">
+                No Data Found With Current Parameters</h1>
         </div>
     </div>
 </script>
@@ -647,14 +657,16 @@
                 function (data) {
                     // Rename to Summary Dataset                    
                     self.SummaryDataset(data.Summary);
-
-                    self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
-                    self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
-                    self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);
-                    self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.Summary.ProductTypeByMostProfitable, data.CurrencyId);
-
                     self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
                     
+                    if (data.Summary.ExecutiveSummary.TotalNumberSold > 0)
+                    {
+                        self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
+                        self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
+                        self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);
+                        self.LoadPieChart('product-types-pie-chart', 'Top Product Types', data.Summary.ProductTypeByMostProfitable, data.CurrencyId);
+                    }
+
                     if (callback) {
                         callback();
                     }
