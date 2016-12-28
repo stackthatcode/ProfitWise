@@ -152,8 +152,7 @@ namespace ProfitWise.Data.Repositories
                     SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
 		            SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs,
                     SUM(t3.GrossRevenue) - SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalProfit,
-                    SUM(t3.GrossRevenue) - SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) /
-                    SUM(t3.Quantity - t3.TotalRestockedQuantity) AS AverageMargin
+                    100.0 - (100.0 * SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) / SUM(t3.GrossRevenue)) AS AverageMargin
                 FROM profitwisereportquerystub t1
 		            INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 

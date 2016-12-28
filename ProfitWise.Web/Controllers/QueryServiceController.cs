@@ -23,13 +23,10 @@ namespace ProfitWise.Web.Controllers
 
         public const int NumberOfColumnGroups = 5;
         public const string AllOtherGroupingName = "All other";
-        // Date-bucketed Totals
-        public const string NoGroupingName = "All";
+        public const string NoGroupingName = "All"; // Date-bucketed Totals
 
 
-        public QueryServiceController(
-            MultitenantFactory factory,
-            IPushLogger logger)
+        public QueryServiceController(MultitenantFactory factory, IPushLogger logger)
         {
             _factory = factory;
             _logger = logger;

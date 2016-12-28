@@ -43,6 +43,10 @@ String.prototype.parseDateToStartOfDayLocalTime = String.prototype.parseDateToSt
         return moment(this.substring(0, 10)).toDate();
     };
 
+ProfitWiseFunctions.ToDecimalPlaces = function(input) {
+    return parseFloat(Math.round(input * 100) / 100).toFixed(2);
+}
+
 ProfitWiseFunctions.MomentStartOfDay =
     function (momentObject) {
         return momentObject.hours(0).minutes(0).seconds(0).milliseconds(0);
