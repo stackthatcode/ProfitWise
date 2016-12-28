@@ -3,6 +3,7 @@
 @using Push.Foundation.Web.Json
 
 @Html.Partial("~/Views/SharedTemplates/_SelectorPopoverWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
 
 <style>
     table#product-types td {
@@ -197,11 +198,16 @@
                 <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Items Sold</th>
-                    <th>Average Margin</th>
-                    <th>Net Sales</th>
-                    <th>CoGS</th>
-                    <th>Profit</th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 0, ColumnName: 'Items Sold', Model: SortingModel } }"></th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 1, ColumnName: 'Average Margin', Model: SortingModel } }"></th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 2, ColumnName: 'Net Sales', Model: SortingModel } }"></th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 3, ColumnName: 'CoGS', Model: SortingModel } }"></th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 4, ColumnName: 'Profit', Model: SortingModel } }"></th>
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: Data">
@@ -228,9 +234,6 @@
         </div>
 
     </div>
-
-   <!-- <h1 style="margin-top: 200px; margin-bottom:300px; text-align:center; font-weight:700; font-size:4em; color:#CCC;">
-        No Details Loaded Yet</h1>-->
 </script>
 
 <script id="Report-Viewer-Summary-Section" type="html/text">
@@ -517,7 +520,7 @@
         self.OnlySaveAsAllowed = ko.computed(function() {
             return self.IsSystemReport() || self.CopyOfSystemReport();
         });
-        
+
         self.AfterRenderDateRangePicker = function () {
             ProfitWiseWidgets.CreateDatePicker(".date-ranger-picker", self.PushDateToModelAndUpdate);
         };
@@ -551,7 +554,7 @@
             );
         };
 
-        self.PrepareCopyForEditing = function(callback) {            
+        self.PrepareCopyForEditing = function(callback) {
             flow.exec(
                 function () {
                     if (self.CopyForEditing()) {
@@ -585,7 +588,7 @@
             self.EndDate(current.EndDate.parseDateToStartOfDayLocalTime());
 
             self.PushDatesToDateRangePicker(self.StartDate(), self.EndDate());
-            
+
             self.CopyForEditing(current.CopyForEditing);
             self.IsSystemReport(current.IsSystemReport);
 
@@ -653,7 +656,7 @@
                 },
                 function (data) {
                     self.LoadReport(data.reportId, this);
-                }, 
+                },
                 function() {
                     self.TriggerReportListRefresh(this);
                 },
@@ -686,7 +689,7 @@
                     self.TriggerReportDataRefresh(self.ReportId());
                 });
         };
-        
+
         self.Delete = function() {
             flow.exec(
                 function () {
@@ -726,19 +729,19 @@
         self.DatasetLoaded = ko.computed(function() {
             return self.Data() != null;
         });
-        
+
         self.LoadDataset = function (reportId, callback) {
             flow.exec(
                 function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpPost("/QueryService/Summary", { reportId: reportId }, this);
-                }, 
+                },
                 function (data) {
-                    // Rename to Summary Dataset                    
+                    // Rename to Summary Dataset
                     self.Data(data.Summary);
 
                     self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
-                    
+
                     if (data.Summary.ExecutiveSummary.TotalNumberSold > 0) {
                         self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                         self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
@@ -799,7 +802,7 @@
                 series: [{
                     name: 'Profits',
                     colorByPoint: true,
-                    data: pieChartData,                    
+                    data: pieChartData,
                 }]
             });
         };
@@ -824,7 +827,7 @@
                         }
                     }
                 },
-                
+
                 tooltip: {
                     formatter: function() {
                         return '<span style="font-size:11px">' + this.series.name + '</span><br>' +
@@ -845,13 +848,12 @@
 
         return self;
     };
-    
+
     ProfitWiseWidgets.ReportDetailContext = function () {
         var self = this;
 
         self.Data = ko.observableArray();
         self.Grouping = ko.observable('@ReportGrouping.Product');
-        self.Ordering = ko.observable('@ColumnOrdering.ProfitDescending');
         self.Currency = ko.observable(1);  // TODO: is there a cleaner way to get this?
 
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
@@ -860,11 +862,35 @@
         };
         self.PagingModel.ShowPageSizeSelector(true);
 
+        self.SortingModel = new ProfitWiseWidgets.SortingModel();
+        self.SortingModel.Callback = function () { self.LoadDataset(self.ReportId()); };
+
         self.ReportId = ko.observable();
 
         self.Initialize = function() {
             self.PagingModel.PageNumber(1);
+            self.SortingModel.SelectedColumnIndex(4);
+            self.SortingModel.SortByDirectionDown(true);
         }
+
+        self.Ordering = ko.computed(function() {
+            var index = self.SortingModel.SelectedColumnIndex();
+            var descending = self.SortingModel.SortByDirectionDown();
+
+            if (index == 0)
+                return descending ? '@ColumnOrdering.QuantitySoldDescending' : '@ColumnOrdering.QuantitySoldAscending';
+            if (index == 1)
+                return descending ? '@ColumnOrdering.AverageMarginDescending' : '@ColumnOrdering.AverageMarginAscending';
+            if (index == 2)
+                return descending ? '@ColumnOrdering.NetSalesDescending' : '@ColumnOrdering.NetSalesAscending';
+            if (index == 3)
+                return descending ? '@ColumnOrdering.CogsDescending' : '@ColumnOrdering.CogsAscending';
+            if (index == 4)
+                return descending ? '@ColumnOrdering.ProfitDescending' : '@ColumnOrdering.ProfitAscending';
+
+            return '@ColumnOrdering.ProfitDescending';
+        });
+
 
         self.LoadDataset = function (reportId, callback) {
             flow.exec(
@@ -880,7 +906,7 @@
                     };
                     ajax.HttpPost("/QueryService/Detail",  data, this);
                 },
-                function (data) {                    
+                function (data) {
                     self.Data.removeAll();
                     self.Data(data.rows);
                     self.PagingModel.RecordCount(data.count);
@@ -962,7 +988,7 @@
         self.ReportViewerContext.TriggerReportDataRefresh = function(reportId, callback) {
              self.RefreshReportData(callback);
         }
-        
+
         self.ExitDetailClick = function() {
             self.SummaryActive(true);
             self.RefreshReportData();
@@ -1007,7 +1033,7 @@
                     self.ReportViewerContext.LoadReport(reportId, this);
                 },
                 function () {
-                    self.ReportSummaryContext.LoadDataset(reportId);
+                    self.ReportViewerContext.TriggerReportDataRefresh(reportId);
                 }
             );
         };
