@@ -130,7 +130,8 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Detail(long reportId, ReportGrouping grouping, ColumnOrdering ordering)
+        public ActionResult Detail(
+                long reportId, ReportGrouping grouping, ColumnOrdering ordering, int pageNumber = 1, int pageSize = 50)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
@@ -141,9 +142,7 @@ namespace ProfitWise.Web.Controllers
                 var shopCurrencyId = userBrief.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
 
-                // First create the query stub...
                 queryRepository.PopulateQueryStub(reportId);
-
                 var queryContext = new TotalQueryContext
                 {
                     PwShopId = userBrief.PwShop.PwShopId,
@@ -152,12 +151,15 @@ namespace ProfitWise.Web.Controllers
                     EndDate = report.EndDate,
                     Grouping = grouping,
                     Ordering = ordering,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
                 };
 
                 var totals = queryRepository.RetrieveTotals(queryContext);
-                transaction.Commit();
+                var totalCounts = queryRepository.RetreiveTotalCounts(queryContext);
 
-                return new JsonNetResult(totals);
+                transaction.Commit();
+                return new JsonNetResult(new { rows = totals, count = totalCounts, currency = shopCurrencyId });
             }
         }
 

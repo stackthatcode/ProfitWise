@@ -162,15 +162,56 @@
     </div>
 </script>
 
-<script id="Report-Viewer-Detail-Section" type="text/html">   
+<script id="Report-Viewer-Detail-Section" type="text/html">
     <div id="details-drillup-button">
         <a href="#" class="btn btn-primary" style="width:250px;" data-bind="click: ExitDetailClick">
             <i class="glyphicon glyphicon-arrow-left"></i> Navigate Back to Summary
         </a>
     </div>
-    <h1 style="margin-top: 200px; margin-bottom:300px; text-align:center; font-weight:700; font-size:4em; color:#CCC;">
-        No Details Loaded Yet
-    </h1>
+    
+    <style>        
+        #detail-report-table tr td:nth-child(1) { width: 25%; }
+        #detail-report-table tr td:nth-child(2) { width: 15%; }
+        #detail-report-table tr td:nth-child(3) { width: 15%; }
+        #detail-report-table tr td:nth-child(4) { width: 15%; }
+        #detail-report-table tr td:nth-child(5) { width: 15%; }
+        #detail-report-table tr td:nth-child(6) { width: 15%; }
+    </style>
+
+    <div class="standard-padding">
+        <div data-bind="template: { name: 'Paging-Widget', data: ReportDetailContext.PagingModel }"></div>
+
+        <table class="table table-striped table-hover" id="detail-report-table" style="margin-bottom: 0px;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Items Sold</th>
+                <th>Average Margin</th>
+                <th>Net Sales</th>
+                <th>CoGS</th>
+                <th>Profit</th>
+            </tr>
+            </thead>
+            <tbody data-bind="foreach: ReportDetailContext.Data">
+            <tr>
+                <td><span class="overflow-gracefully" 
+                          data-bind="text: GroupingName"></span></td>
+                <td><span class="overflow-gracefully" 
+                          data-bind="text: TotalNumberSold"></span></td>
+                <td><span class="overflow-gracefully" 
+                          data-bind="text: AverageMargin"></span></td>
+                <td><span class="overflow-gracefully" 
+                          data-bind="text: TotalRevenue"></span></td>
+                <td><span class="overflow-gracefully" 
+                          data-bind="text: TotalCogs"></span></td>
+                <td><span class="overflow-gracefully" 
+                          data-bind="text: TotalProfit"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+   <!-- <h1 style="margin-top: 200px; margin-bottom:300px; text-align:center; font-weight:700; font-size:4em; color:#CCC;">
+        No Details Loaded Yet</h1>-->
 </script>
 
 <script id="Report-Viewer-Summary-Section" type="html/text">
@@ -790,25 +831,41 @@
         var self = this;
 
         self.Data = ko.observable();
-
         self.Grouping = ko.observable('@ReportGrouping.Product');
         self.Ordering = ko.observable('@ColumnOrdering.ProfitDescending');
+        
+        self.PagingModel = new ProfitWiseWidgets.PagingModel();
+        self.PagingModel.Callback = function() {
+            self.LoadDataset(self.ReportId());
+        };
+        self.PagingModel.ShowPageSizeSelector(true);
+
+        self.ReportId = ko.observable();
+
+        self.Initialize = function() {
+            self.PagingModel.PageNumber(1);
+        }
 
         self.LoadDataset = function (reportId, callback) {
             flow.exec(
                 function () {
+                    self.ReportId(reportId);
+                    
                     var ajax = new ProfitWiseFunctions.Ajax();
                     var data = {
                         reportId: reportId,
                         grouping: self.Grouping(),
-                        ordering: self.Ordering()
+                        ordering: self.Ordering(),
+                        pageNumber: self.PagingModel.PageNumber(),
+                        pageSize: self.PagingModel.PageSize(),
                     };
                     ajax.HttpPost("/QueryService/Detail",  data, this);
                 },
                 function (data) {
                     console.log(data);
 
-                    self.Data(data);
+                    self.Data(data.rows);
+                    self.PagingModel.RecordCount(data.count);
 
                     //self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
 
@@ -874,12 +931,12 @@
         // Data used to populate the Dashboard
         self.SummaryActive = ko.observable(true);
 
-        //TODO - plug-in logic for Detail/Summary toggling
         self.RefreshReportData = function (callback) {
             var reportId = self.ReportViewerContext.ReportId();
             if (self.SummaryActive()) {
                 self.ReportSummaryContext.LoadDataset(reportId, callback);
-            } else {                
+            } else {
+                self.ReportDetailContext.Initialize();
                 self.ReportDetailContext.LoadDataset(reportId, callback);
             }
         };
@@ -898,6 +955,7 @@
         self.ReportSummaryContext.DetailCallback = function (grouping) {
             flow.exec(
                 function () {
+                    // TODO - stub out setting Page Number, default Column Ordering
                     self.ReportDetailContext.Grouping(grouping);
                     self.SummaryActive(false);
                     self.RefreshReportData(this);
