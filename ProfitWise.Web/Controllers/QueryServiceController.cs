@@ -75,7 +75,7 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Dataset(long reportId)
+        public ActionResult Summary(long reportId)
         {
             var userBrief = HttpContext.PullIdentitySnapshot();
             var repository = _factory.MakeReportRepository(userBrief.PwShop);
@@ -129,6 +129,38 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult Detail(long reportId, ReportGrouping grouping, ColumnOrdering ordering)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+
+            using (var transaction = repository.InitiateTransaction())
+            {
+                var shopCurrencyId = userBrief.PwShop.CurrencyId;
+                var report = repository.RetrieveReport(reportId);
+
+                // First create the query stub...
+                queryRepository.PopulateQueryStub(reportId);
+
+                var queryContext = new TotalQueryContext
+                {
+                    PwShopId = userBrief.PwShop.PwShopId,
+                    PwReportId = reportId,
+                    StartDate = report.StartDate,
+                    EndDate = report.EndDate,
+                    Grouping = grouping,
+                    Ordering = ordering,
+                };
+
+                var totals = queryRepository.RetrieveTotals(queryContext);
+                transaction.Commit();
+
+                return new JsonNetResult(totals);
+            }
+        }
+
 
         // *** The aggregated Grouped Totals, including Executive Summary
         private Summary BuildSummary(PwReport report, PwShop shop)
@@ -178,7 +210,6 @@ namespace ProfitWise.Web.Controllers
             };
             return summary;
         }
-
 
         // *** Builds Report Series data for High Charts multi-column chart
         private List<ReportSeries> BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary)
@@ -257,7 +288,6 @@ namespace ProfitWise.Web.Controllers
             return seriesDataset;
         }
 
-
         // ... recursively invokes SQL to build data set of Date Totals organized by Grouping
         private List<DatePeriodTotal>  RetrieveDatePeriodTotalsRecursive(
                 PwShop shop, long reportId, DateTime startDate, DateTime endDate, List<string> keyFilters,
@@ -278,7 +308,6 @@ namespace ProfitWise.Web.Controllers
 
             return output;
         }
-
 
         // *** Builds Report Series data for High Charts multi-column chart
         private List<ReportSeries> BuildSeriesFromAggregateTotals(PwShop shop, PwReport report)

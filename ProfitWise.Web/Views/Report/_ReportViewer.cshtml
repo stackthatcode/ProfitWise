@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Data.Model.Reports
+﻿@using ProfitWise.Data.Model.Profit
+@using ProfitWise.Data.Model.Reports
 @using Push.Foundation.Web.Json
 
 @Html.Partial("~/Views/SharedTemplates/_SelectorPopoverWidget.cshtml")
@@ -670,7 +671,7 @@
             flow.exec(
                 function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/QueryService/Dataset", { reportId: reportId }, this);
+                    ajax.HttpPost("/QueryService/Summary", { reportId: reportId }, this);
                 }, 
                 function (data) {
                     // Rename to Summary Dataset                    
@@ -778,8 +779,8 @@
         };
 
         // Needs to be set by owner
-        self.DetailCallback = function (groupingId) {
-            alert("DetailCallback fired with GroupingId: " + groupingId);
+        self.DetailCallback = function (grouping) {
+            alert("DetailCallback fired with Grouping: " + grouping);
         }
 
         return self;
@@ -787,7 +788,36 @@
     
     ProfitWiseWidgets.ReportDetailContext = function () {
         var self = this;
-        
+
+        self.Data = ko.observable();
+
+        self.Grouping = ko.observable('@ReportGrouping.Product');
+        self.Ordering = ko.observable('@ColumnOrdering.ProfitDescending');
+
+        self.LoadDataset = function (reportId, callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: reportId,
+                        grouping: self.Grouping(),
+                        ordering: self.Ordering()
+                    };
+                    ajax.HttpPost("/QueryService/Detail",  data, this);
+                },
+                function (data) {
+                    console.log(data);
+
+                    self.Data(data);
+
+                    //self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
+
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
         return self;
     };
 
@@ -837,9 +867,6 @@
         self.ReportViewerContext.TriggerReportListRefresh = function (callback) {
             self.RefreshReportList(callback);
         };
-        self.ReportViewerContext.TriggerReportDataRefresh = function (reportId, callback) {
-            self.ReportSummaryContext.LoadDataset(reportId, callback);
-        };
         self.ReportViewerContext.EditFilterClickCallback = function () {
             self.EditReportClick();
         };
@@ -847,17 +874,36 @@
         // Data used to populate the Dashboard
         self.SummaryActive = ko.observable(true);
 
+        //TODO - plug-in logic for Detail/Summary toggling
+        self.RefreshReportData = function (callback) {
+            var reportId = self.ReportViewerContext.ReportId();
+            if (self.SummaryActive()) {
+                self.ReportSummaryContext.LoadDataset(reportId, callback);
+            } else {                
+                self.ReportDetailContext.LoadDataset(reportId, callback);
+            }
+        };
+
+        self.ReportViewerContext.TriggerReportDataRefresh = function(reportId, callback) {
+             self.RefreshReportData(callback);
+        }
+        
         self.ExitDetailClick = function() {
             self.SummaryActive(true);
-            self.ReportSummaryContext.LoadDataset(self.ReportViewerContext.ReportId());
+            self.RefreshReportData();
         };
 
         self.ReportSummaryContext = new ProfitWiseWidgets.ReportSummaryContext();
-        self.ReportSummaryContext.DetailCallback = function(grouping) {
-            alert(grouping);
-            self.SummaryActive(false);
-            $('html, body').animate({ scrollTop: 0 });
 
+        self.ReportSummaryContext.DetailCallback = function (grouping) {
+            flow.exec(
+                function () {
+                    self.ReportDetailContext.Grouping(grouping);
+                    self.SummaryActive(false);
+                    self.RefreshReportData(this);
+                }, function() {
+                    $('html, body').animate({ scrollTop: 0 });
+                });
         };
 
         self.ReportDetailContext = new ProfitWiseWidgets.ReportDetailContext();
