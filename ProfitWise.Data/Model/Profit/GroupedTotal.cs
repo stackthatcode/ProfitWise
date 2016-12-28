@@ -46,7 +46,6 @@ namespace ProfitWise.Data.Model.Profit
         public decimal AverageMargin { get; set; }
     }
 
-    // SAVE this for Dataset2
     public static class GroupedTotalExtensions
     {
         public static List<GroupedTotal> 

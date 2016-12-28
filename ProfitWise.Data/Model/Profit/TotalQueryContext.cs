@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Policy;
 using ProfitWise.Data.Model.Reports;
 
 namespace ProfitWise.Data.Model.Profit
@@ -26,4 +25,3 @@ namespace ProfitWise.Data.Model.Profit
         public int StartingIndex => PageNumber - 1;
     }
 }
-
