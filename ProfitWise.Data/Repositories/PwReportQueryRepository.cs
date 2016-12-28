@@ -145,87 +145,117 @@ namespace ProfitWise.Data.Repositories
             return results;
         }
 
-        // Dataset #2 operations
+        // Queries for generating Totals
         public string QueryGutsForTotals()
         {
             return @"SUM(t3.GrossRevenue) As TotalRevenue, 
                     SUM(t3.Quantity - t3.TotalRestockedQuantity) AS TotalNumberSold,
 		            SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalCogs,
-                    SUM(t3.GrossRevenue) - SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalProfits
-
-            FROM profitwisereportquerystub t1
-		        INNER JOIN profitwisevariant t2
-		            ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	            INNER JOIN shopifyorderlineitem t3
-		            ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
-			            AND t3.OrderDate >= @StartDate AND t3.OrderDate <= @EndDate             
-            WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
+                    SUM(t3.GrossRevenue) - SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) AS TotalProfit,
+                    SUM(t3.GrossRevenue) - SUM(t3.UnitCogs * (t3.Quantity - t3.TotalRestockedQuantity)) /
+                    SUM(t3.Quantity - t3.TotalRestockedQuantity) AS AverageMargin
+                FROM profitwisereportquerystub t1
+		            INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+			                AND t3.OrderDate >= @StartDate AND t3.OrderDate <= @EndDate             
+                WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
         }
 
-        public string QueryTailForTotals(int limit)
+        public string QueryTailForTotals(TotalQueryContext queryContext)
         {
-            return $"ORDER BY TotalProfits DESC LIMIT {limit};";
+            string orderByClause = "";
+            if (queryContext.Ordering == ColumnOrdering.ProfitDescending)
+                orderByClause = "ORDER BY TotalProfit DESC ";
+            if (queryContext.Ordering == ColumnOrdering.ProfitAscending)
+                orderByClause = "ORDER BY TotalProfit ASC ";
+            if (queryContext.Ordering == ColumnOrdering.CogsDescending)
+                orderByClause = "ORDER BY TotalCogs DESC ";
+            if (queryContext.Ordering == ColumnOrdering.CogsAscending)
+                orderByClause = "ORDER BY TotalCogs ASC ";
+            if (queryContext.Ordering == ColumnOrdering.NetSalesDescending)
+                orderByClause = "ORDER BY TotalRevenue DESC ";
+            if (queryContext.Ordering == ColumnOrdering.NetSalesAscending)
+                orderByClause = "ORDER BY TotalRevenue ASC ";
+            if (queryContext.Ordering == ColumnOrdering.QuantitySoldDescending)
+                orderByClause = "ORDER BY TotalNumberSold DESC ";
+            if (queryContext.Ordering == ColumnOrdering.QuantitySoldAscending)
+                orderByClause = "ORDER BY TotalNumberSold ASC ";
+
+            return orderByClause + "LIMIT @StartingIndex, @PageSize";
         }
 
-        public ExecutiveSummary RetreiveTotalsForAll(long reportId, DateTime startDate, DateTime endDate)
+        public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
         {
             var query = @"SELECT " + QueryGutsForTotals();
-            return _connection
-                    .Query<ExecutiveSummary>(
-                        query, new {PwShopId, PwReportId = reportId, StartDate = startDate , EndDate = endDate})
-                    .First();
+            return _connection.Query<GroupedTotal>(query, queryContext).First();
         }
 
-        public List<GroupedTotal> RetreiveTotalsByProduct(long reportId, DateTime startDate, DateTime endDate)
+        public List<GroupedTotal> RetrieveTotals(TotalQueryContext queryContext)
+        {
+            if (queryContext.Grouping == ReportGrouping.Product)
+                return RetreiveTotalsByProduct(queryContext);
+            if (queryContext.Grouping == ReportGrouping.Variant)
+                return RetreiveTotalsByVariant(queryContext);
+            if (queryContext.Grouping == ReportGrouping.ProductType)
+                return RetreiveTotalsByProductType(queryContext);
+            if (queryContext.Grouping == ReportGrouping.Vendor)
+                return RetreiveTotalsByVendor(queryContext);
+
+            throw new ArgumentException("RetrieveTotals does not support that ReportGrouping");
+        }
+
+        public List<GroupedTotal> RetreiveTotalsByProduct(TotalQueryContext queryContext)
         {
             var query =
                 @"SELECT t1.PwMasterProductId AS GroupingKey, t1.ProductTitle AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.PwMasterProductId, t1.ProductTitle " +
-                QueryTailForTotals(10);
+                QueryTailForTotals(queryContext);
 
-            return _connection.Query<GroupedTotal>(
-                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
-                .ToList();
+            return _connection
+                .Query<GroupedTotal>(query, queryContext).ToList()
+                .AssignGrouping(ReportGrouping.Product);
         }
 
-        public List<GroupedTotal> RetreiveTotalsByVariant(long reportId, DateTime startDate, DateTime endDate)
+        public List<GroupedTotal> RetreiveTotalsByVariant(TotalQueryContext queryContext)
         {
             var query =
                 @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.PwMasterVariantId, GroupingName " +
-                QueryTailForTotals(10);
+                QueryTailForTotals(queryContext);
 
-            return _connection.Query<GroupedTotal>(
-                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
-                .ToList();
+            return _connection
+                .Query<GroupedTotal>(query, queryContext).ToList()
+                .AssignGrouping(ReportGrouping.Variant);
         }
 
-        public List<GroupedTotal> RetreiveTotalsByProductType(long reportId, DateTime startDate, DateTime endDate)
+        public List<GroupedTotal> RetreiveTotalsByProductType(TotalQueryContext queryContext)
         {
             var query =
                 @"SELECT t1.ProductType AS GroupingKey, t1.ProductType AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.ProductType " +
-                QueryTailForTotals(10);
+                QueryTailForTotals(queryContext);
 
-            return _connection.Query<GroupedTotal>(
-                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
-                .ToList();
+            return _connection
+                .Query<GroupedTotal>(query, queryContext).ToList()
+                .AssignGrouping(ReportGrouping.ProductType);
         }
 
-        public List<GroupedTotal> RetreiveTotalsByVendor(long reportId, DateTime startDate, DateTime endDate)
+        public List<GroupedTotal> RetreiveTotalsByVendor(TotalQueryContext queryContext)
         {
             var query =
                 @"SELECT t1.Vendor AS GroupingKey, t1.Vendor AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.Vendor " +
-                QueryTailForTotals(10);
+                QueryTailForTotals(queryContext);
 
-            return _connection.Query<GroupedTotal>(
-                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
-                .ToList();
+            return _connection
+                .Query<GroupedTotal>(query, queryContext).ToList()
+                .AssignGrouping(ReportGrouping.Vendor);
         }
 
 

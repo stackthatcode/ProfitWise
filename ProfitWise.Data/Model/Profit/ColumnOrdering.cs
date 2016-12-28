@@ -10,5 +10,7 @@
         CogsAscending = 6,
         QuantitySoldDescending = 7,
         QuantitySoldAscending = 8,
+        AverageMarginDescending = 9,
+        AverageMarginAscending = 10,
     };
 }

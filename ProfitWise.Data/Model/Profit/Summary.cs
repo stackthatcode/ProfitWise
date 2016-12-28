@@ -7,7 +7,7 @@ namespace ProfitWise.Data.Model.Profit
     public class Summary
     {
         public int CurrencyId { get; set; }
-        public ExecutiveSummary ExecutiveSummary { get; set; }
+        public GroupedTotal ExecutiveSummary { get; set; }
 
         public IList<GroupedTotal> ProductsByMostProfitable { get; set; }
         public IList<GroupedTotal> VendorsByMostProfitable { get; set; }

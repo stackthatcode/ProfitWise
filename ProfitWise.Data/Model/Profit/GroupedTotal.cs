@@ -21,7 +21,7 @@ namespace ProfitWise.Data.Model.Profit
                 }
                 if (ReportGrouping == ReportGrouping.Product)
                 {
-                    return "(No Product Namer)";
+                    return "(No Product Name)";
                 }
                 if (ReportGrouping == ReportGrouping.Variant)
                 {
@@ -41,8 +41,9 @@ namespace ProfitWise.Data.Model.Profit
         }
         public decimal TotalCogs { get; set; }
         public decimal TotalRevenue { get; set; }
-        public decimal TotalProfit => TotalRevenue - TotalCogs;
+        public decimal TotalProfit { get; set; }
         public int TotalNumberSold { get; set; }
+        public decimal AverageMargin { get; set; }
     }
 
     // SAVE this for Dataset2
@@ -50,8 +51,8 @@ namespace ProfitWise.Data.Model.Profit
     {
         public static List<GroupedTotal> 
                     AppendAllOthersAsDifferenceOfSummary(
-                        this List<GroupedTotal> input, 
-                        ExecutiveSummary summary, 
+                        this List<GroupedTotal> input,
+                        GroupedTotal summary, 
                         string allOthersName = "All Others")
         {
             if (input.Count < 10)
