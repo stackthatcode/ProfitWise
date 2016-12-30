@@ -14,7 +14,8 @@ namespace ProfitWise.Batch
             Bootstrap.ConfigureApp();
             using (var container = AutofacRegistration.Build())
             {
-                //ExchangeRateProcess(container);
+
+                ExchangeRateProcess(container);
 
                 RefreshServiceForSingleUser(container, args);
 

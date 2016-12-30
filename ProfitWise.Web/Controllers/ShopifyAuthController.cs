@@ -31,7 +31,7 @@ namespace ProfitWise.Web.Controllers
         private readonly UserService _userService;
         private readonly IPushLogger _logger;
 
-        private readonly DateTime _defaultStartDateForOrders = new DateTime(2016, 8, 1);
+        private readonly DateTime _defaultStartDateForOrders = new DateTime(2014, 1, 1);
 
 
         public ShopifyAuthController(

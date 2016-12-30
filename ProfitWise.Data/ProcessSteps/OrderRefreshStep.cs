@@ -242,7 +242,7 @@ namespace ProfitWise.Data.ProcessSteps
                     WriteOrderToPersistence(importedOrder, context);
                 }
 
-                cogsRepostory.UpdateOrderLinesWithSimpleCogs();
+                //cogsRepostory.UpdateOrderLinesWithSimpleCogs();
                 trans.Commit();
             }
         }

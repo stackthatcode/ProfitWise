@@ -173,7 +173,7 @@ namespace ProfitWise.Web.Controllers
             var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
             cogsRepository.UpdateMasterVariantCogs(masterVariantId, currencyId, amount);
 
-            cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
+            //cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
 
             ValidateCogs(currencyId, amount);
 
