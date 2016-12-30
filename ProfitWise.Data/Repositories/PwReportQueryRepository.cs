@@ -162,7 +162,6 @@ namespace ProfitWise.Data.Repositories
                 WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
         }
 
-
         public string QueryTailForTotals(TotalQueryContext queryContext)
         {
             string orderByClause = "";

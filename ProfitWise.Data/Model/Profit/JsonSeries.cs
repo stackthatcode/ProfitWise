@@ -14,8 +14,9 @@ namespace ProfitWise.Data.Model.Profit
     public class JsonSeriesElement
     {
         public string name { get; set; }
-        public string drilldown { get; set; }
         public decimal y { get; set; }
+        public string drilldown { get; set; }
+        public string drilldownurl { get; set; }
     }
 
     public static class JsonSeriesExtensions
@@ -36,5 +37,22 @@ namespace ProfitWise.Data.Model.Profit
                         }).ToList()
             };
         }
+
+        public static JsonSeries ToJsonSeriesWithAjaxDrilldown(this ReportSeries input)
+        {
+            return new JsonSeries
+            {
+                id = input.Identifier,
+                name = input.GroupingName,
+                data = input.Elements.Select(x =>
+                new JsonSeriesElement
+                {
+                    name = x.DateLabel(),
+                    drilldown = x.Drilldown,
+                    y = x.Amount,
+                }).ToList()
+            };
+        }
+        
     }
 }

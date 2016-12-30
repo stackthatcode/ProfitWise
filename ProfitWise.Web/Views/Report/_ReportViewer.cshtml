@@ -178,6 +178,8 @@
         #detail-report-table tr td:nth-child(5), #detail-report-table tr th:nth-child(5) { width: 15%; text-align: right; }
         #detail-report-table tr td:nth-child(6), #detail-report-table tr th:nth-child(6) { width: 15%; text-align: right; }
     </style>
+    
+    <div id="column-chart-detail" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
     <div data-bind="with: ReportDetailContext">
         <div data-bind="if: Data().length == 0">
@@ -740,7 +742,8 @@
                     // Rename to Summary Dataset
                     self.Data(data.Summary);
 
-                    self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
+                    ProfitWiseWidgets.LoadColumnChart(
+                        '#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
 
                     if (data.Summary.ExecutiveSummary.TotalNumberSold > 0) {
                         self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
@@ -807,46 +810,49 @@
             });
         };
 
-        self.LoadColumnChart = function (id, title, seriesData, drilldownData, currencyId) {
-            $(id).highcharts({
-                chart: { type: 'column', },
-                xAxis: { type: 'category' },
-                yAxis: { title: { text: 'Total profits' } },
-                lang: { drillUpText: '◁ Back' },
-                legend: { enabled: true },
-                title: { text: '' },
-
-                plotOptions: {
-                    series: {
-                        borderWidth: 0,
-                        dataLabels: {
-                            enabled: false,
-                            formatter: function() {
-                                return ProfitWiseFunctions.FormatCurrency(this.y, currencyId);
-                            }
-                        }
-                    }
-                },
-
-                tooltip: {
-                    formatter: function() {
-                        return '<span style="font-size:11px">' + this.series.name + '</span><br>' +
-                                '<span style="color:' + this.point.color + '>' + this.point.name + '</span>: ' +
-                                ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
-                    }
-                },
-
-                series: seriesData,
-                drilldown: { series: drilldownData, }
-            });
-        };
-
         // Needs to be set by owner
         self.DetailCallback = function (grouping) {
             alert("DetailCallback fired with Grouping: " + grouping);
         }
 
         return self;
+    };
+
+    ProfitWiseWidgets.LoadColumnChart = function (id, title, seriesData, drilldownData, currencyId, drilldownFunc) {
+        //console.log(seriesData);
+        var events = drilldownFunc ?  { drilldown: drilldownFunc } : null;
+
+        $(id).highcharts({
+            chart: { type: 'column', events: events },
+            xAxis: { type: 'category' },
+            yAxis: { title: { text: 'Total profits' } },
+            lang: { drillUpText: '◁ Back' },
+            legend: { enabled: true },
+            title: { text: '' },
+
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: false,
+                        formatter: function() {
+                            return ProfitWiseFunctions.FormatCurrency(this.y, currencyId);
+                        }
+                    }
+                }
+            },
+
+            tooltip: {
+                formatter: function() {
+                    return '<span style="font-size:11px">' + this.series.name + '</span><br>' +
+                            '<span style="color:' + this.point.color + '>' + this.point.name + '</span>: ' +
+                            ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
+                }
+            },
+
+            series: seriesData,
+            drilldown: { series: drilldownData, }
+        });
     };
 
     ProfitWiseWidgets.ReportDetailContext = function () {
@@ -891,6 +897,20 @@
             return '@ColumnOrdering.ProfitDescending';
         });
 
+        self.Drilldown = function (e) {
+            if (e.seriesOptions) {
+                return;
+            }
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet(e.point.drilldownurl, this);
+                },
+                function (data) {
+                    e.target.addSeriesAsDrilldown(e.point, data);
+                    console.log(data);
+                });
+        }
 
         self.LoadDataset = function (reportId, callback) {
             flow.exec(
@@ -911,7 +931,8 @@
                     self.Data(data.rows);
                     self.PagingModel.RecordCount(data.count);
 
-                    //self.LoadColumnChart('#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
+                    ProfitWiseWidgets.LoadColumnChart(
+                        '#column-chart-detail', 'Profitability', data.series, null, data.currency, self.Drilldown);
 
                     if (callback) {
                         callback();

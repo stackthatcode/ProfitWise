@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -155,9 +156,80 @@ namespace ProfitWise.Web.Controllers
                 var totals = queryRepository.RetrieveTotals(queryContext);
                 var totalCounts = queryRepository.RetreiveTotalCounts(queryContext);
 
+                // Top-level series...
+                var series =
+                    new object[]
+                    {
+                        new {
+                            name = "Profitability",
+                            data = totals.Select(x =>
+                                new
+                                {
+                                    name = x.GroupingName,
+                                    y = x.TotalProfit,
+                                    drilldown = true,
+                                    drilldownurl = DrilldownUrlBuilder(
+                                        report.PwReportId, grouping, x.GroupingKey, x.GroupingName, report.StartDate, report.EndDate),
+                                }).ToList()
+                        }
+                    };
+
                 transaction.Commit();
-                return new JsonNetResult(new { rows = totals, count = totalCounts, currency = shopCurrencyId });
+                return new JsonNetResult(
+                    new { rows = totals, count = totalCounts, currency = shopCurrencyId, series = series });
             }
+        }
+
+        public string DrilldownUrlBuilder(
+                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
+        {
+            return $"/QueryService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
+                   $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&"+
+                   $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
+        }
+
+        [HttpGet]
+        public ActionResult Drilldown(
+                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
+        {
+            var userBrief = HttpContext.PullIdentitySnapshot();
+            var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+
+            var keyFilters = new List<string>() {key};
+            var periodType = (end - start).ToDefaultGranularity();
+
+            var datePeriodTotals = 
+                queryRepository.RetrieveDatePeriodTotals(
+                    reportId, start, end, keyFilters, grouping, periodType);
+
+            var series = 
+                ReportSeriesFactory.GenerateSeriesRecursive(
+                    key, name, start, end, periodType, periodType);
+
+            series.VisitElements(element =>
+            {
+                var total = datePeriodTotals.FirstOrDefault(element.MatchByGroupingAndDate);
+                if (total != null)
+                {
+                    element.Amount = total.TotalProfit;
+                }
+            });
+
+            var output =  new JsonSeries
+            {
+                name = name,
+                data = series.Elements.Select(element =>
+                    new JsonSeriesElement
+                    {
+                        name = element.DateLabel(),
+                        y = element.Amount,
+                        drilldown = (periodType == PeriodType.Day) ? null : "true",
+                        drilldownurl = (periodType == PeriodType.Day) ? null :
+                            DrilldownUrlBuilder(reportId, grouping, key, name, element.Start, element.End)
+                    }).ToList()
+            };
+
+            return new JsonNetResult(output);
         }
 
 
@@ -236,10 +308,10 @@ namespace ProfitWise.Web.Controllers
                     shop, report.PwReportId, report.StartDate, report.EndDate,
                     groupingKeys, report.GroupingId, periodType, periodType.NextDrilldownLevel());
 
-            foreach (var total in datePeriodTotals.Where(x => x.GroupingKey == "3D Printer"))
-            {
-                _logger.Debug(total.ToString());
-            }
+            //foreach (var total in datePeriodTotals.Where(x => x.GroupingKey == "3D Printer"))
+            //{
+            //    _logger.Debug(total.ToString());
+            //}
 
             // Context #2 - Aggregate Date Totals
             var aggregateDateTotals =
@@ -294,8 +366,9 @@ namespace ProfitWise.Web.Controllers
         {
             var queryRepository = _factory.MakeReportQueryRepository(shop);
 
-            var output = queryRepository.RetrieveDatePeriodTotals(
-                reportId, startDate, endDate, keyFilters, grouping, periodType);
+            var output = 
+                queryRepository.RetrieveDatePeriodTotals(
+                    reportId, startDate, endDate, keyFilters, grouping, periodType);
 
             if (periodType != PeriodType.Day && periodType != maximumPeriodType)
             {
