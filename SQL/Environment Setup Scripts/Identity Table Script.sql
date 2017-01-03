@@ -114,3 +114,22 @@ ALTER TABLE `aspnetuserroles`
 
 
 
+DROP TABLE IF EXISTS `profitwiseshop`; 
+
+CREATE TABLE `profitwiseshop` (
+  `PwShopId` BIGINT NOT NULL AUTO_INCREMENT, # ProfitWise's unique identifier for each shop
+  `ShopOwnerUserId` varchar(128) NOT NULL, # Email address of shop owner
+  `ShopifyShopId` BIGINT NULL, # Shopify's internal identifier for each shop
+  `CurrencyId` INT NULL, # Numeric value representing shop currency
+  `StartingDateForOrders` TIMESTAMP NULL, # Starting date for order data to import
+  `TimeZone` varchar(50) NULL, # Shop time zone
+  
+  `IsAccessTokenValid` TINYINT NOT NULL, # Is the shop's access token currently valid?
+  `IsShopEnabled` TINYINT NOT NULL, # Is the shop currently enabled in ProfitWise?
+  `IsDataLoaded` TINYINT NOT NULL, # Has the shop's data been loaded into ProfitWise?
+  
+  PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
+
+
+

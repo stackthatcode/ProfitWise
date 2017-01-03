@@ -326,7 +326,8 @@ namespace ProfitWise.Data.ProcessSteps
                             $"Updating existing Order Line Item: {translatedOrder.OrderNumber} / " +
                             $"{translatedLineItem.ShopifyOrderId} / {translatedLineItem.ShopifyOrderLineId}");
 
-                    translatedLineItem.TotalRestockedQuantity = translatedLineItem.TotalRestockedQuantity;
+                    translatedLineItem.NetQuantity = 
+                        translatedLineItem.Quantity - translatedLineItem.TotalRestockedQuantity;
                     translatedLineItem.GrossRevenue = translatedLineItem.GrossRevenue;
                     
                     orderRepository.UpdateOrderLineItem(translatedLineItem);

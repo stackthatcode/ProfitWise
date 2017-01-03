@@ -126,10 +126,10 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO shopifyorderlineitem ( 
                     PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, PwProductId, PwVariantId, 
-                    Quantity, UnitPrice, TotalDiscount, TotalRestockedQuantity, GrossRevenue )
+                    Quantity, UnitPrice, TotalDiscount, NetQuantity, GrossRevenue )
                 VALUES ( 
                     @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @PwProductId, @PwVariantId,
-                    @Quantity, @UnitPrice, @TotalDiscount, @TotalRestockedQuantity, @GrossRevenue )";
+                    @Quantity, @UnitPrice, @TotalDiscount, @NetQuantity, @GrossRevenue )";
             _connection.Execute(query, lineitem);
         }
 
@@ -138,7 +138,7 @@ namespace ProfitWise.Data.Repositories
             lineitem.PwShopId = PwShop.PwShopId;
             var query =
                 @"UPDATE shopifyorderlineitem SET
-                    TotalRestockedQuantity = @TotalRestockedQuantity,
+                    NetQuantity = @NetQuantity,
                     GrossRevenue = @GrossRevenue
                 WHERE PwShopId = @PwShopId 
                 AND ShopifyOrderId = @ShopifyOrderId

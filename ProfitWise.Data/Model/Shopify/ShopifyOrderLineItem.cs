@@ -43,15 +43,14 @@ namespace ProfitWise.Data.Model.Shopify
 
         public decimal NetUnitPrice => NetTotal / Quantity;
 
-        
-        public int TotalRestockedQuantity { get; set; } // Store
-        
+        public int NetQuantity { get; set; }
+        public int TotalRestockedQuantity => Quantity - NetQuantity;
+
 
         public decimal TotalRestockedValue => TotalRestockedQuantity * NetUnitPrice;
 
         public decimal TotalRemainingValue => NetTotal - TotalRestockedValue;
 
-        public int RemainingQuantity => Quantity - TotalRestockedQuantity;
 
         public decimal RestockedItemsRefundAmount
         {
@@ -118,9 +117,9 @@ namespace ProfitWise.Data.Model.Shopify
                 $"NetUnitPrice = {NetUnitPrice}" + Environment.NewLine +
 
                 $"TotalRestockedQuantity = {TotalRestockedQuantity}" + Environment.NewLine +
+                $"NetQuantity = {NetQuantity}" + Environment.NewLine +
                 $"TotalRestockedValue = {TotalRestockedValue}" + Environment.NewLine +
                 $"TotalRemainingValue = {TotalRemainingValue}" + Environment.NewLine +
-                $"RemainingQuantity = {RemainingQuantity}" + Environment.NewLine +
                 $"RestockedItemsRefundAmount = {RestockedItemsRefundAmount}" + Environment.NewLine +
                 $"RefundAdjustment = {OrderLevelRefundAdjustment}" + Environment.NewLine +
                 $"TotalRefund = {TotalRefund}" + Environment.NewLine +

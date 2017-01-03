@@ -3,8 +3,6 @@ USE profitwise; # Set active database
 SET SQL_SAFE_UPDATES = 0; # Turn off Safe Updates setting
 
 
-DROP TABLE IF EXISTS `profitwiseshop`; 
-
 DROP TABLE IF EXISTS `profitwisemasterproduct`; 
 DROP TABLE IF EXISTS `profitwiseproduct`; 
 DROP TABLE IF EXISTS `profitwisemastervariant`; 
@@ -23,21 +21,6 @@ DROP TABLE IF EXISTS `profitwisepicklistmasterproduct`;
 
 
 
-
-CREATE TABLE `profitwiseshop` (
-  `PwShopId` BIGINT NOT NULL AUTO_INCREMENT, # ProfitWise's unique identifier for each shop
-  `ShopOwnerUserId` varchar(128) NOT NULL, # Email address of shop owner
-  `ShopifyShopId` BIGINT NULL, # Shopify's internal identifier for each shop
-  `CurrencyId` INT NULL, # Numeric value representing shop currency
-  `StartingDateForOrders` TIMESTAMP NULL, # Starting date for order data to import
-  `TimeZone` varchar(50) NULL, # Shop time zone
-  
-  `IsAccessTokenValid` TINYINT NOT NULL, # Is the shop's access token currently valid?
-  `IsShopEnabled` TINYINT NOT NULL, # Is the shop currently enabled in ProfitWise?
-  `IsDataLoaded` TINYINT NOT NULL, # Has the shop's data been loaded into ProfitWise?
-  
-  PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
-) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `profitwisemasterproduct` (
@@ -63,6 +46,9 @@ CREATE TABLE `profitwiseproduct` (
   `LastUpdated` TIMESTAMP NOT NULL, # When was this product last updated in Shopify?
   PRIMARY KEY (`PwProductId`, `PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `profitwiseproduct` ADD INDEX `PwMasterProductId` (`PwMasterProductId`);
+ALTER TABLE `profitwiseproduct` ADD INDEX `IsPrimary` (`IsPrimary`);
 
 CREATE TABLE `profitwisemastervariant` (
   `PwMasterVariantId` BIGINT NOT NULL AUTO_INCREMENT, # ProfitWise's unique identifier for each variant (may contain multiple "linked" variants)
@@ -141,7 +127,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `Quantity` int(6) unsigned NOT NULL, # Quantity for this line item
   `UnitPrice` decimal(15,2) DEFAULT NULL, # Unit price for this line item (for qty 1)
   `TotalDiscount` decimal(15,2) DEFAULT NULL, # Total discount applied to this line item
-  `TotalRestockedQuantity` int(6) unsigned NOT NULL, # Total quantity restocked from this line item
+  `NetQuantity` int(6) unsigned NOT NULL, # Quantity minus Restocked Quantity from this line item
   `GrossRevenue` decimal(15,2) DEFAULT NULL, # Gross revenue for this line item (after discounts and refunds)
   
   `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit
