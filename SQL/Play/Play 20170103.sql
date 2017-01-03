@@ -2,16 +2,32 @@ USE profitwise;
 
 
 
+SELECT * FROM profitwisebatchstate;
+
+SELECT * FROM profitwisep
+
 SELECT * FROM profitwiseproduct;
 
 SELECT * FROM profitwisevariant WHERE ShopifyVariantId = 26345730377;
 
-SELECT * FROM profitwiseshop;
+UPDATE profitwiseshop SET StartingDateForOrders = '2014-01-01';
+
+
+
+SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
+
+SELECT * FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
+
+
+# ProfitWise says => 1535.06
+# Shopify says => 1590.67
+
 
 SELECT * FROM shopifyorderlineitem t1 INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId;
 
-SELECT * FROM shopifyorderlineitem WHERE PwProductId = 76;
+SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE PwProductId = 76;
 
+SELECT * FROM shopifyorderlineitem;
 
 
 

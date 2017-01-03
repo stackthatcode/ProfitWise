@@ -289,20 +289,23 @@ namespace ProfitWise.Data.ProcessSteps
 
                 foreach (var importedLineItem in importedOrder.LineItems)
                 {
-                    var translatedLineItem = 
+                    var translatedLineItem =
                         importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
                     translatedOrder.AddLineItem(translatedLineItem);
 
                     var pwVariant = FindCreateProductVariant(context, importedLineItem);
                     translatedLineItem.PwVariantId = pwVariant.PwVariantId;
                     translatedLineItem.PwProductId = pwVariant.PwProductId;
+                }
 
+                foreach (var item in translatedOrder.LineItems)
+                {
                     _pushLogger.Debug(
                         $"Inserting new Order Line Item: {translatedOrder.OrderNumber} / ShopifyOrderId: {translatedOrder.ShopifyOrderId} / " +
-                        $"ShopifyOrderLineId: {translatedLineItem.ShopifyOrderLineId} / PwProductId {translatedLineItem.PwProductId} / " + 
-                        $"PwVariantId: {translatedLineItem.PwVariantId}");
+                        $"ShopifyOrderLineId: {item.ShopifyOrderLineId} / PwProductId {item.PwProductId} / " + 
+                        $"PwVariantId: {item.PwVariantId}");
 
-                    orderRepository.InsertOrderLineItem(translatedLineItem);
+                    orderRepository.InsertOrderLineItem(item);
                 }
             }
             else

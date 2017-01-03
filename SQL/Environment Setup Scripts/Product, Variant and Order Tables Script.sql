@@ -98,7 +98,6 @@ CREATE TABLE `profitwisebatchstate` (
 
 
 
-
 CREATE TABLE `shopifyorder` (
   `PwShopId` int(6) unsigned NOT NULL, # ProfitWise's shop identifier
   `ShopifyOrderId` BIGINT NOT NULL, # Shopify's unique order identifier
