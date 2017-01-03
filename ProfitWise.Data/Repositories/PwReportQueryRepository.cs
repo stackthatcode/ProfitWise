@@ -165,6 +165,10 @@ namespace ProfitWise.Data.Repositories
         public string QueryTailForTotals(TotalQueryContext queryContext)
         {
             string orderByClause = "";
+            if (queryContext.Ordering == ColumnOrdering.AverageMarginDescending)
+                orderByClause = "ORDER BY AverageMargin DESC ";
+            if (queryContext.Ordering == ColumnOrdering.AverageMarginAscending)
+                orderByClause = "ORDER BY AverageMargin ASC ";
             if (queryContext.Ordering == ColumnOrdering.ProfitDescending)
                 orderByClause = "ORDER BY TotalProfit DESC ";
             if (queryContext.Ordering == ColumnOrdering.ProfitAscending)

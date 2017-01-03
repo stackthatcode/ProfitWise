@@ -13,7 +13,7 @@
         <div class="fixed-positioning-container" style="top: 145px;">
             <!-- Space -->
             <div class="standard-header-sleeve" style="height: 178px;">
-                <div class="standard-header standard-padding" style="overflow: visible;">
+                <div class="standard-header header-scrollfix standard-padding" style="overflow: visible;">
 
                     <!-- Report Editor component -->
                     <div data-bind="template: { name: 'Report-Editor-Header' }"></div>
@@ -26,7 +26,7 @@
         <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
             
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
+            <div class="standard-header header-scrollfix standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
                 <div class="col-xs-6 no-side-padding">
                     <div class="popover-container" data-bind="if: ReportContext">
                         <h4 style="display:inline-block; font-weight:700;" data-bind="text: ReportContext().Name"></h4>

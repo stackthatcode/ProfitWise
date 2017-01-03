@@ -275,7 +275,7 @@ namespace ProfitWise.Data.Repositories
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
                 SET t1.CogsCurrencyId = t0.CurrencyId, t1.CogsAmount = t2.HighPrice * 0.80, t1.CogsDetail = false
                 WHERE t0.PwShopId = @PwShopId
-                AND t1.CogsAmount IS NULL;";
+                AND t1.CogsAmount IS NULL";
             return query;
         }
     }

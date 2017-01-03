@@ -58,6 +58,27 @@ td.overflow-gracefully {
     height: 100%;
 }
 
+
+/** Standardized Page Count container styling **/
+.page-content-sleeve {
+    margin: 0; 
+    width: 100%; 
+    padding-left: 20px; /* Outside padding */
+    padding-right: 20px;  /* Outside padding */
+}
+
+.page-content {
+    min-width: 900px;   /** This default style is for Cogs -> Products view **/
+    position: relative; 
+    background-color: #FFF; 
+    padding:0; 
+    margin:0;
+    overflow: auto; 
+}
+
+
+
+
 .top-border-facade {
     border-top: 20px rgb(235, 238, 240) solid; 
 }
@@ -76,23 +97,6 @@ td.overflow-gracefully {
     padding-right: 10px;   
 }
 
-
-/** Standardized Page Count container styling **/
-.page-content-sleeve {
-    margin: 0; 
-    width: 100%; 
-    padding-left: 20px; 
-    padding-right: 20px;
-}
-
-.page-content {
-    min-width: 900px;   /** This default style is for Cogs -> Products view **/
-    margin-top: 209px;  /** This default style is for Cogs -> Products view **/
-    position: relative; 
-    background-color: #FFF; 
-    padding-left: 25px; 
-    padding-right: 25px;    
-}
 
 
 

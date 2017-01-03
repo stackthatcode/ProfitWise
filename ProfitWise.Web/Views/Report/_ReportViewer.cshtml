@@ -66,11 +66,12 @@
 </style>
 
 <script id="Report-Viewer-Top-Level" type="text/html">
-    <div id="report-viewer-header" style="width: 100%; padding-left: 20px; padding-right: 20px;">
+    <div id="report-viewer-header" style="min-width:1200px; padding-left: 20px; padding-right: 20px;">
         <div class="standard-header-sleeve" style="height: 190px; border-bottom: 1px solid #FFF;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
+
                 <div class="col-xs-6 no-side-padding">
                     <div data-bind="if: ReportViewerContext.ReportLoaded()">
                         <div data-bind="template: { name: 'Report-Viewer-Context-Summary', 
@@ -132,8 +133,8 @@
         </div>
     </div>
 
-    <div id="report-viewer-body" class="container page-content-sleeve">
-        <div class="page-content" style="padding-top: 0px; overflow: auto; margin-top:0px;">
+    <div id="report-viewer-body" class="container page-content-sleeve" style="min-width:1200px;">
+        <div class="page-content standard-padding">
 
             <!-- TODO : allow injection of external template -->
             <div style="position: relative; width: 100%;">
