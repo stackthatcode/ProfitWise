@@ -14,9 +14,21 @@ UPDATE profitwiseshop SET StartingDateForOrders = '2014-01-01';
 
 
 
-SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
+SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE OrderDate = '2016-12-05';
 
 SELECT * FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
+
+
+SELECT t1.OrderNumber, t2.* FROM shopifyorder t1 
+	INNER JOIN shopifyorderlineitem t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId
+WHERE OrderDate = '2016-12-05';
+
+
+SELECT * FROM shopifyorderlineitem WHERE ShopifyOrderId = 4255498761;
+
+
+SELECT * FROM shopifyorder WHERE OrderNumber = '#5237634'
+
 
 
 # ProfitWise says => 1535.06
@@ -26,6 +38,7 @@ SELECT * FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
 SELECT * FROM shopifyorderlineitem t1 INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId;
 
 SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE PwProductId = 76;
+
 
 SELECT * FROM shopifyorderlineitem;
 

@@ -293,20 +293,21 @@ namespace ProfitWise.Data.ProcessSteps
                         importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
                     translatedOrder.AddLineItem(translatedLineItem);
 
+
                     var pwVariant = FindCreateProductVariant(context, importedLineItem);
                     translatedLineItem.PwVariantId = pwVariant.PwVariantId;
                     translatedLineItem.PwProductId = pwVariant.PwProductId;
                 }
 
-                foreach (var item in translatedOrder.LineItems)
-                {
-                    _pushLogger.Debug(
-                        $"Inserting new Order Line Item: {translatedOrder.OrderNumber} / ShopifyOrderId: {translatedOrder.ShopifyOrderId} / " +
-                        $"ShopifyOrderLineId: {item.ShopifyOrderLineId} / PwProductId {item.PwProductId} / " + 
-                        $"PwVariantId: {item.PwVariantId}");
+                //foreach (var item in translatedOrder.LineItems)
+                //{
+                //    _pushLogger.Debug(
+                //        $"Inserting new Order Line Item: {translatedOrder.OrderNumber} / ShopifyOrderId: {translatedOrder.ShopifyOrderId} / " +
+                //        $"ShopifyOrderLineId: {item.ShopifyOrderLineId} / PwProductId {item.PwProductId} / " + 
+                //        $"PwVariantId: {item.PwVariantId}");
 
-                    orderRepository.InsertOrderLineItem(item);
-                }
+                //    orderRepository.InsertOrderLineItem(item);
+                //}
             }
             else
             {
@@ -330,8 +331,8 @@ namespace ProfitWise.Data.ProcessSteps
                             $"{translatedLineItem.ShopifyOrderId} / {translatedLineItem.ShopifyOrderLineId}");
 
                     translatedLineItem.NetQuantity = 
-                        translatedLineItem.Quantity - translatedLineItem.TotalRestockedQuantity;
-                    translatedLineItem.GrossRevenue = translatedLineItem.GrossRevenue;
+                        translatedLineItem.Quantity - translatedLineItem.RestockedQuantity;
+                    //translatedLineItem.NetTotal = translatedLineItem.NetTotal;
                     
                     orderRepository.UpdateOrderLineItem(translatedLineItem);
                 }

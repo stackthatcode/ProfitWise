@@ -16,66 +16,65 @@ namespace ProfitWise.Data.Model.Shopify
         public long? PwProductId { get; set; }
         public long? PwVariantId { get; set; }
 
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal TotalDiscount { get; set; } // Store
-        public decimal TotalMinusLineItemDiscount => Quantity * UnitPrice - TotalDiscount;
+        public int Quantity { get; set; }   // From Shopify - we store this
+        public decimal UnitPrice { get; set; }  // From Shopify - we store this
+        public decimal LineDiscount { get; set; }   // From Shopify - we store this
 
-        // Hey! Our computation is like Shopify's!
-        public decimal ProportionOfOrderDiscount
+        public decimal GrossLineAmount => Quantity * UnitPrice;
+
+        public decimal LineAmountAfterLineDiscount => GrossLineAmount - LineDiscount;
+        // Our computation is exactly like Shopify's: each line item will have deducted from it an amount
+        // ... in proportion to its Line Amount after line-level Discount * the total Order Discount
+
+        public decimal PortionOfOrderDiscount
         {
             get
             {
-                if (this.ParentOrder.LineItems.Sum(x => x.TotalMinusLineItemDiscount) == 0)
+                if (this.ParentOrder.LineItems.Sum(x => x.LineAmountAfterLineDiscount) == 0)
                 {
                     return 0m;
                 }
                 else
                 {
-                    return this.ParentOrder.OrderLevelDiscount * this.TotalMinusLineItemDiscount /
-                           this.ParentOrder.LineItems.Sum(x => x.TotalMinusLineItemDiscount);
+                    return this.ParentOrder.OrderLevelDiscount * this.LineAmountAfterLineDiscount /
+                           this.ParentOrder.LineItems.Sum(x => x.LineAmountAfterLineDiscount);
                 }
             }
         }
+        public decimal LineAmountAfterAllDiscounts => LineAmountAfterLineDiscount - PortionOfOrderDiscount;
 
-        // Why is this NetTotal 
-        public decimal NetTotal => TotalMinusLineItemDiscount - ProportionOfOrderDiscount;
-
-        public decimal NetUnitPrice => NetTotal / Quantity;
+        public decimal DiscountedUnitPrice => LineAmountAfterAllDiscounts / Quantity;
 
         public int NetQuantity { get; set; }
-        public int TotalRestockedQuantity => Quantity - NetQuantity;
-
-
-        public decimal TotalRestockedValue => TotalRestockedQuantity * NetUnitPrice;
-
-        public decimal TotalRemainingValue => NetTotal - TotalRestockedValue;
+        public int RestockedQuantity => Quantity - NetQuantity;
+        public decimal RestockedValue => RestockedQuantity * DiscountedUnitPrice;
+        public decimal LineAmountAfterRestock => LineAmountAfterAllDiscounts - RestockedValue;
 
 
         public decimal RestockedItemsRefundAmount
         {
             get
             {
-                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping > this.ParentOrder.TotalRestockedValueForAllLineItems)
+                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping > this.ParentOrder.RestockedValueForAllLineItems)
                 {
-                    return TotalRestockedValue;
+                    return RestockedValue;
                 }
 
-                if (this.ParentOrder.TotalRestockedValueForAllLineItems == 0)
+                if (this.ParentOrder.RestockedValueForAllLineItems == 0)
                 {
                     return 0m;
                 }
 
                 return this.ParentOrder.TotalRefundExcludingTaxAndShipping * 
-                        ( TotalRestockedValue / this.ParentOrder.TotalRestockedValueForAllLineItems );
+                        ( RestockedValue / this.ParentOrder.RestockedValueForAllLineItems );
             }
         }
-
         public decimal OrderLevelRefundAdjustment
         {
             get
             {
-                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping <= this.ParentOrder.TotalRestockedValueForAllLineItems)
+                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping 
+                        <= this.ParentOrder.RestockedValueForAllLineItems)
                 {
                     return 0.00m;
                 }
@@ -86,18 +85,13 @@ namespace ProfitWise.Data.Model.Shopify
                 }
 
                 return this.ParentOrder.RefundBalanceAboveRestockValue *
-                           (TotalRemainingValue / this.ParentOrder.TotalRemainingValueForAllLineItems);
+                           (LineAmountAfterRestock / this.ParentOrder.TotalRemainingValueForAllLineItems);
             }
         }
-
         public decimal TotalRefund => RestockedItemsRefundAmount + OrderLevelRefundAdjustment;
 
-        public decimal GrossRevenue
-        {
-            get { return NetTotal - TotalRefund; }
-            set {  }
-        }
 
+        public decimal NetTotal => LineAmountAfterAllDiscounts - TotalRefund;
 
 
         public override string ToString()
@@ -110,21 +104,19 @@ namespace ProfitWise.Data.Model.Shopify
                 $"PwProductId = {PwProductId}" + Environment.NewLine +
                 $"Quantity = {Quantity}" + Environment.NewLine +
                 $"UnitPrice = {UnitPrice}" + Environment.NewLine +
-                $"TotalDiscount = {TotalDiscount}" + Environment.NewLine +
-                $"TotalMinusLineItemDiscount = {TotalMinusLineItemDiscount}" + Environment.NewLine +
-                $"ProportionOfOrderDiscount = {ProportionOfOrderDiscount}" + Environment.NewLine +
-                $"NetTotal = {NetTotal}" + Environment.NewLine +
-                $"NetUnitPrice = {NetUnitPrice}" + Environment.NewLine +
-
-                $"TotalRestockedQuantity = {TotalRestockedQuantity}" + Environment.NewLine +
+                $"TotalDiscount = {LineDiscount}" + Environment.NewLine +
+                $"LineAmountAfterLineDiscount = {LineAmountAfterLineDiscount}" + Environment.NewLine +
+                $"PortionOfOrderDiscount = {PortionOfOrderDiscount}" + Environment.NewLine +
+                $"NetTotal = {LineAmountAfterAllDiscounts}" + Environment.NewLine +
+                $"NetUnitPrice = {DiscountedUnitPrice}" + Environment.NewLine +
+                $"RestockedQuantity = {RestockedQuantity}" + Environment.NewLine +
                 $"NetQuantity = {NetQuantity}" + Environment.NewLine +
-                $"TotalRestockedValue = {TotalRestockedValue}" + Environment.NewLine +
-                $"TotalRemainingValue = {TotalRemainingValue}" + Environment.NewLine +
+                $"RestockedValue = {RestockedValue}" + Environment.NewLine +
+                $"LineAmountAfterRestock = {LineAmountAfterRestock}" + Environment.NewLine +
                 $"RestockedItemsRefundAmount = {RestockedItemsRefundAmount}" + Environment.NewLine +
-                $"RefundAdjustment = {OrderLevelRefundAdjustment}" + Environment.NewLine +
+                $"OrderLevelRefundAdjustment = {OrderLevelRefundAdjustment}" + Environment.NewLine +
                 $"TotalRefund = {TotalRefund}" + Environment.NewLine +
-                $"GrossRevenue = {GrossRevenue}" + Environment.NewLine;
+                $"NetTotal = {NetTotal}" + Environment.NewLine;
         }
-
     }
 }

@@ -131,44 +131,47 @@ namespace Push.Shopify.Repositories
                     refundResult.ParentOrder = orderResult;
                     refundResult.Id = refund.id;                    
                     refundResult.LineItems = new List<RefundLineItem>();
+                    refundResult.OrderAdjustments = new List<OrderAdjustment>();
 
                     foreach (var refundLineItems in refund.refund_line_items)
                     {
                         var resultRefundLineItem = new RefundLineItem();
-                        resultRefundLineItem.Id = refundLineItems.id;
-                        resultRefundLineItem.LineItemId = refundLineItems.line_item_id;
-                        resultRefundLineItem.RestockQuantity = refundLineItems.quantity;    // TEST THIS!!!
-                        resultRefundLineItem.ParentRefund = refundResult;
-                        resultRefundLineItem.TaxRefund = 0m;
 
-                        foreach (var taxline in refundLineItems.line_item.tax_lines)
-                        {
-                            decimal amount = taxline.price;
-                            resultRefundLineItem.TaxRefund += amount;
-                        }
+                        resultRefundLineItem.Id = refundLineItems.id;
+                        resultRefundLineItem.ParentRefund = refundResult;
+                        resultRefundLineItem.LineItemId = refundLineItems.line_item_id;
+                        resultRefundLineItem.RestockQuantity = refundLineItems.quantity;
+                        resultRefundLineItem.TaxTotal = refundLineItems.tax_amount;
+                        resultRefundLineItem.SubTotal = refundLineItems.subtotal;
+
                         refundResult.LineItems.Add(resultRefundLineItem);
                     }
 
-                    refundResult.TransactionAmount = 0m;
+                    foreach (var adjustment in refund.order_adjustments)
+                    {
+                        var adjustmentItem = new OrderAdjustment();
+
+                        adjustmentItem.Refund = refundResult;
+                        adjustmentItem.Id = adjustment.id;
+                        adjustmentItem.Amount = adjustment.amount;
+                        adjustmentItem.Kind = adjustment.kind;
+                        adjustmentItem.Reason = adjustment.reason;
+                        adjustmentItem.TaxAmount = adjustment.tax_amount;
+
+                        refundResult.OrderAdjustments.Add(adjustmentItem);
+                    }
+
                     foreach (var transaction in refund.transactions)
                     {
                         if (transaction.status == "success")
                         {
-                            decimal amount = transaction.amount;
-                            refundResult.TransactionAmount += amount;
+                            var transactionItem = new Transaction();
+                            transactionItem.Id = transaction.id;
+                            transactionItem.Amount = transaction.amount;
+                            refundResult.Transactions.Add(transactionItem);
                         }
                     }
-
-                    refundResult.ShippingAdjustment = 0m;
-                    foreach (var adjustment in refund.order_adjustments)
-                    {
-                        if (adjustment.kind == "shipping_refund")
-                        {
-                            decimal amount = adjustment.amount;
-                            refundResult.ShippingAdjustment += amount;
-                        }
-                    }
-
+                    
                     orderResult.Refunds.Add(refundResult);
                 }
                 results.Add(orderResult); 

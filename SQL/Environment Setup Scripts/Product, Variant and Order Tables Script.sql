@@ -127,8 +127,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `UnitPrice` decimal(15,2) DEFAULT NULL, # Unit price for this line item (for qty 1)
   `TotalDiscount` decimal(15,2) DEFAULT NULL, # Total discount applied to this line item
   `NetQuantity` int(6) unsigned NOT NULL, # Quantity minus Restocked Quantity from this line item
-  `GrossRevenue` decimal(15,2) DEFAULT NULL, # Gross revenue for this line item (after discounts and refunds)
-  
+  `NetTotal` decimal(15,2) DEFAULT NULL, # Net revenue for this line item (after discounts and refunds)  
   `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit
   
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)

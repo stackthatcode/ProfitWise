@@ -1,4 +1,6 @@
-﻿namespace Push.Shopify.Model
+﻿using System.Collections.Generic;
+
+namespace Push.Shopify.Model
 {
     public class RefundLineItem
     {
@@ -6,6 +8,7 @@
         public long Id { get; set; }
         public long LineItemId { get; set; }
         public int RestockQuantity { get; set; }
-        public decimal TaxRefund { get; set; }
+        public decimal TaxTotal { get; set; }
+        public decimal SubTotal { get; set; }
     }
 }
