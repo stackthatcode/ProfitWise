@@ -17,9 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Foundation.Web", "Push
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Shopify", "Push.Shopify\Push.Shopify.csproj", "{98704840-5BBD-4175-AE04-45A40CD48ADB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Test", "ProfitWise.Test\ProfitWise.Test.csproj", "{385CD876-6C90-460D-ACA8-2BE8C32DC55C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.DataMocks", "ProfitWise.DataMocks\ProfitWise.DataMocks.csproj", "{5451AD2D-AACD-4050-9A53-CFED81F062DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Test", "ProfitWise.Test\ProfitWise.Test.csproj", "{81F30573-25F8-4EA7-8957-38F3D93DB690}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,18 +70,18 @@ Global
 		{98704840-5BBD-4175-AE04-45A40CD48ADB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{98704840-5BBD-4175-AE04-45A40CD48ADB}.ReleaseAzure|Any CPU.ActiveCfg = Release|Any CPU
 		{98704840-5BBD-4175-AE04-45A40CD48ADB}.ReleaseAzure|Any CPU.Build.0 = Release|Any CPU
-		{385CD876-6C90-460D-ACA8-2BE8C32DC55C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{385CD876-6C90-460D-ACA8-2BE8C32DC55C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{385CD876-6C90-460D-ACA8-2BE8C32DC55C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{385CD876-6C90-460D-ACA8-2BE8C32DC55C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{385CD876-6C90-460D-ACA8-2BE8C32DC55C}.ReleaseAzure|Any CPU.ActiveCfg = Release|Any CPU
-		{385CD876-6C90-460D-ACA8-2BE8C32DC55C}.ReleaseAzure|Any CPU.Build.0 = Release|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.ReleaseAzure|Any CPU.ActiveCfg = Release|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.ReleaseAzure|Any CPU.Build.0 = Release|Any CPU
+		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81F30573-25F8-4EA7-8957-38F3D93DB690}.ReleaseAzure|Any CPU.ActiveCfg = Release|Any CPU
+		{81F30573-25F8-4EA7-8957-38F3D93DB690}.ReleaseAzure|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
