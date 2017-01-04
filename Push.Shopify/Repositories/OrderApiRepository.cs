@@ -132,6 +132,7 @@ namespace Push.Shopify.Repositories
                     refundResult.Id = refund.id;                    
                     refundResult.LineItems = new List<RefundLineItem>();
                     refundResult.OrderAdjustments = new List<OrderAdjustment>();
+                    refundResult.Transactions = new List<Transaction>();
 
                     foreach (var refundLineItems in refund.refund_line_items)
                     {
@@ -141,7 +142,7 @@ namespace Push.Shopify.Repositories
                         resultRefundLineItem.ParentRefund = refundResult;
                         resultRefundLineItem.LineItemId = refundLineItems.line_item_id;
                         resultRefundLineItem.RestockQuantity = refundLineItems.quantity;
-                        resultRefundLineItem.TaxTotal = refundLineItems.tax_amount;
+                        resultRefundLineItem.TaxTotal = refundLineItems.total_tax;
                         resultRefundLineItem.SubTotal = refundLineItems.subtotal;
 
                         refundResult.LineItems.Add(resultRefundLineItem);

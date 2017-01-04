@@ -86,6 +86,9 @@
     <Compile Include="Model\Profit\SimpleCogs.cs" />
     <Compile Include="Model\Profit\ReportSearchStub.cs" />
     <Compile Include="Model\Profit\TotalQueryContext.cs" />
+    <Compile Include="Model\Shopify\ShopifyOrderAdjustment.cs" />
+    <Compile Include="Model\Shopify\ShopifyOrderLineRefund.cs" />
+    <Compile Include="Model\Shopify\ShopifyOrderRefund.cs" />
     <Compile Include="Model\System\ExchangeRate.cs" />
     <Compile Include="Model\System\Currency.cs" />
     <Compile Include="Model\Shopify\OrderLineItemSubset.cs" />

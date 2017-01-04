@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProfitWise.Data.Model.Shopify
@@ -10,6 +11,8 @@ namespace ProfitWise.Data.Model.Shopify
         public long ShopifyOrderId { get; set; }
 
         public ShopifyOrder ParentOrder { get; set; }
+        public IList<ShopifyOrderLineRefund> Refunds { get; set; }
+
         public DateTime OrderDateTimestamp { get; set; }
         public DateTime OrderDate { get; set; }
 
@@ -43,54 +46,9 @@ namespace ProfitWise.Data.Model.Shopify
         }
         public decimal LineAmountAfterAllDiscounts => LineAmountAfterLineDiscount - PortionOfOrderDiscount;
 
-        public decimal DiscountedUnitPrice => LineAmountAfterAllDiscounts / Quantity;
+        public decimal DiscountedUnitPrice => LineAmountAfterAllDiscounts / Quantity;        
 
-        public int NetQuantity { get; set; }
-        public int RestockedQuantity => Quantity - NetQuantity;
-        public decimal RestockedValue => RestockedQuantity * DiscountedUnitPrice;
-        public decimal LineAmountAfterRestock => LineAmountAfterAllDiscounts - RestockedValue;
-
-
-        public decimal RestockedItemsRefundAmount
-        {
-            get
-            {
-                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping > this.ParentOrder.RestockedValueForAllLineItems)
-                {
-                    return RestockedValue;
-                }
-
-                if (this.ParentOrder.RestockedValueForAllLineItems == 0)
-                {
-                    return 0m;
-                }
-
-                return this.ParentOrder.TotalRefundExcludingTaxAndShipping * 
-                        ( RestockedValue / this.ParentOrder.RestockedValueForAllLineItems );
-            }
-        }
-        public decimal OrderLevelRefundAdjustment
-        {
-            get
-            {
-                if (this.ParentOrder.TotalRefundExcludingTaxAndShipping 
-                        <= this.ParentOrder.RestockedValueForAllLineItems)
-                {
-                    return 0.00m;
-                }
-
-                if (this.ParentOrder.TotalRemainingValueForAllLineItems == 0m)
-                {
-                    return 0.00m;
-                }
-
-                return this.ParentOrder.RefundBalanceAboveRestockValue *
-                           (LineAmountAfterRestock / this.ParentOrder.TotalRemainingValueForAllLineItems);
-            }
-        }
-        public decimal TotalRefund => RestockedItemsRefundAmount + OrderLevelRefundAdjustment;
-
-
+        public decimal TotalRefund { get; set; } // Get from Child Refunds
         public decimal NetTotal => LineAmountAfterAllDiscounts - TotalRefund;
 
 
@@ -107,14 +65,8 @@ namespace ProfitWise.Data.Model.Shopify
                 $"TotalDiscount = {LineDiscount}" + Environment.NewLine +
                 $"LineAmountAfterLineDiscount = {LineAmountAfterLineDiscount}" + Environment.NewLine +
                 $"PortionOfOrderDiscount = {PortionOfOrderDiscount}" + Environment.NewLine +
-                $"NetTotal = {LineAmountAfterAllDiscounts}" + Environment.NewLine +
                 $"NetUnitPrice = {DiscountedUnitPrice}" + Environment.NewLine +
-                $"RestockedQuantity = {RestockedQuantity}" + Environment.NewLine +
-                $"NetQuantity = {NetQuantity}" + Environment.NewLine +
-                $"RestockedValue = {RestockedValue}" + Environment.NewLine +
-                $"LineAmountAfterRestock = {LineAmountAfterRestock}" + Environment.NewLine +
-                $"RestockedItemsRefundAmount = {RestockedItemsRefundAmount}" + Environment.NewLine +
-                $"OrderLevelRefundAdjustment = {OrderLevelRefundAdjustment}" + Environment.NewLine +
+                $"NetTotal = {LineAmountAfterAllDiscounts}" + Environment.NewLine +
                 $"TotalRefund = {TotalRefund}" + Environment.NewLine +
                 $"NetTotal = {NetTotal}" + Environment.NewLine;
         }

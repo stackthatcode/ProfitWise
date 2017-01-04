@@ -57,7 +57,6 @@ namespace ProfitWise.Data.Model
 
             shopifyOrderLineItem.UnitPrice = line_item.Price;
             shopifyOrderLineItem.Quantity = line_item.Quantity;
-            shopifyOrderLineItem.NetQuantity = line_item.Quantity - line_item.TotalRestockQuantity;
             shopifyOrderLineItem.LineDiscount = line_item.Discount;
 
             return shopifyOrderLineItem;

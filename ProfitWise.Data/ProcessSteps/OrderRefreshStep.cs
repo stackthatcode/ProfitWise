@@ -285,8 +285,7 @@ namespace ProfitWise.Data.ProcessSteps
             {                
                 _pushLogger.Debug(
                    $"Inserting new Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
-                orderRepository.InsertOrder(translatedOrder);
-
+                
                 foreach (var importedLineItem in importedOrder.LineItems)
                 {
                     var translatedLineItem =
@@ -298,6 +297,8 @@ namespace ProfitWise.Data.ProcessSteps
                     translatedLineItem.PwVariantId = pwVariant.PwVariantId;
                     translatedLineItem.PwProductId = pwVariant.PwProductId;
                 }
+
+                //orderRepository.InsertOrder(translatedOrder);
 
                 //foreach (var item in translatedOrder.LineItems)
                 //{
@@ -329,10 +330,6 @@ namespace ProfitWise.Data.ProcessSteps
                     _pushLogger.Debug(
                             $"Updating existing Order Line Item: {translatedOrder.OrderNumber} / " +
                             $"{translatedLineItem.ShopifyOrderId} / {translatedLineItem.ShopifyOrderLineId}");
-
-                    translatedLineItem.NetQuantity = 
-                        translatedLineItem.Quantity - translatedLineItem.RestockedQuantity;
-                    //translatedLineItem.NetTotal = translatedLineItem.NetTotal;
                     
                     orderRepository.UpdateOrderLineItem(translatedLineItem);
                 }

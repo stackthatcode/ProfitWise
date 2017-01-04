@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model.Shopify;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Shopify
 {
     public class ShopifyOrder
     {
@@ -13,6 +12,9 @@ namespace ProfitWise.Data.Model
         public string OrderNumber { get; set; }
         
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
+        public IList<ShopifyOrderAdjustment> Adjustments { get; set; }
+        public IList<ShopifyOrderRefund> Refunds { get; set; }
+
 
         public void AddLineItem(ShopifyOrderLineItem lineItem)
         {
@@ -36,14 +38,7 @@ namespace ProfitWise.Data.Model
 
 
         public decimal TotalRefundExcludingTaxAndShipping => TotalRefund - TaxRefundAmount + ShippingRefundAmount;
-
-        public decimal RestockedValueForAllLineItems => this.LineItems.Sum(x => x.RestockedValue);
-
-        public decimal TotalRemainingValueForAllLineItems => this.LineItems.Sum(x => x.LineAmountAfterRestock);
-
-        public decimal RefundBalanceAboveRestockValue => TotalRefundExcludingTaxAndShipping -
-                                                         LineItems.Sum(x => x.RestockedItemsRefundAmount);
-
+        
         public decimal TotalGrossRevenue => this.LineItems.Sum(x => x.NetTotal);
         public bool Cancelled { get; set; }
 
@@ -65,9 +60,6 @@ namespace ProfitWise.Data.Model
                 $"TaxRefundAmount = {TaxRefundAmount}" + Environment.NewLine +
                 $"ShippingRefundAmount = {ShippingRefundAmount}" + Environment.NewLine +
                 $"TotalRefundExcludingTaxAndShipping = {TotalRefundExcludingTaxAndShipping}" + Environment.NewLine +
-                $"TotalRestockedValueForAllLineItems = {RestockedValueForAllLineItems}" + Environment.NewLine +
-                $"TotalRemainingValueForAllLineItems = {TotalRemainingValueForAllLineItems}" + Environment.NewLine +
-                $"RefundBalanceAboveRestockValue = {RefundBalanceAboveRestockValue}" + Environment.NewLine +
                 $"TotalGrossRevenue = {TotalGrossRevenue}" + Environment.NewLine;
 
             foreach (var line in this.LineItems)
