@@ -26,7 +26,6 @@ namespace Push.Shopify.Model
                     .Where(x => x.LineItemId == this.Id)
                     .ToList();
 
-
         public int TotalRestockQuantity
         {
             get
@@ -39,6 +38,5 @@ namespace Push.Shopify.Model
                         .Sum(x => x.RestockQuantity);
             }
         }
-
     }
 }

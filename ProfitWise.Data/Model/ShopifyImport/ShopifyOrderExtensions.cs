@@ -7,7 +7,8 @@ namespace ProfitWise.Data.Model.ShopifyImport
 {
     public static class ShopifyOrderExtensions
     {
-        public static void AppendLineItems(this IList<ShopifyOrder> orders, IList<ShopifyOrderLineItem> lineItems)
+        public static void AppendLineItems(
+                    this IList<ShopifyOrder> orders, IList<ShopifyOrderLineItem> lineItems)
         {
             foreach (var order in orders)
             {
@@ -68,24 +69,29 @@ namespace ProfitWise.Data.Model.ShopifyImport
             newLineItem.UnitPrice = lineFromShopify.Price;
             newLineItem.Quantity = lineFromShopify.Quantity;
             newLineItem.LineDiscount = lineFromShopify.Discount;
-
             newLineItem.Refunds = new List<ShopifyOrderLineRefund>();
 
             foreach (var refundLineFromShopify in lineFromShopify.RefundLineItems)
-            {
-                var newRefund = new ShopifyOrderLineRefund();
-                newRefund.PwShopId = pwShopId;
-                newRefund.ShopifyRefundId = refundLineFromShopify.Id;
-                newRefund.ShopifyOrderId = parentOrder.ShopifyOrderId;
-                newRefund.ShopifyOrderLineId = refundLineFromShopify.LineItemId;
-                newRefund.OrderLineItem = newLineItem;
-                newRefund.Amount = refundLineFromShopify.SubTotal;
-                newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt;
-
-                newLineItem.Refunds.Add(newRefund);
+            {                
+                newLineItem.Refunds.Add(
+                    refundLineFromShopify.ToShopifyOrderLineRefund(pwShopId, parentOrder, newLineItem));
             }
 
             return newLineItem;
+        }
+
+        public static ShopifyOrderLineRefund ToShopifyOrderLineRefund(
+                this RefundLineItem refundLineFromShopify, int pwShopId, ShopifyOrder parentOrder, ShopifyOrderLineItem parentLineItem)
+        {
+            var newRefund = new ShopifyOrderLineRefund();
+            newRefund.PwShopId = pwShopId;
+            newRefund.ShopifyRefundId = refundLineFromShopify.Id;
+            newRefund.ShopifyOrderId = parentOrder.ShopifyOrderId;
+            newRefund.ShopifyOrderLineId = refundLineFromShopify.LineItemId;
+            newRefund.OrderLineItem = parentLineItem;
+            newRefund.Amount = refundLineFromShopify.SubTotal;
+            newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt;
+            return newRefund;
         }
 
 

@@ -5,7 +5,6 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
-using ProfitWise.Data.Model.Shopify;
 using ProfitWise.Data.Model.ShopifyImport;
 
 namespace ProfitWise.Data.Repositories
@@ -27,7 +26,6 @@ namespace ProfitWise.Data.Repositories
         {
             return _connection.BeginTransaction();
         }
-
 
         public virtual ShopifyOrder RetrieveOrders()
         {
@@ -103,9 +101,7 @@ namespace ProfitWise.Data.Repositories
 
             var query2 = @"DELETE FROM shopifyorder WHERE ShopifyOrderId IN @orderIdList";
             _connection.Execute(query2, new { orderIdList });
-        }
-
-
+        }        
 
         public virtual IList<ShopifyOrderLineItem> RetrieveOrderLineItems(long shopifyOrderId)
         {

@@ -189,15 +189,14 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"{count} Orders to process ({filter})");
 
             var numberofpages =
-                PagingFunctions.NumberOfPages(
-                    _refreshServiceConfiguration.MaxOrderRate, count);
+                    PagingFunctions.NumberOfPages(
+                        _refreshServiceConfiguration.MaxOrderRate, count);
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info(
-                    $"Page {pagenumber} of {numberofpages} pages");
-
+                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
                 var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+
                 WriteOrdersToPersistence(importedOrders, shop);
 
                 // Update the Batch State based on Order Filter's Sort
@@ -251,6 +250,8 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void WriteOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
         {
+            var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.ShopifyShop);
+
             if (_diagnostic.PwShopId == context.ShopifyShop.PwShopId &&
                 _diagnostic.OrderIds.Contains(orderFromShopify.Id))
             {
@@ -261,32 +262,38 @@ namespace ProfitWise.Data.ProcessSteps
                 context.CurrentExistingOrders
                     .FirstOrDefault(x => x.ShopifyOrderId == orderFromShopify.Id);
 
-            if (existingOrder == null && orderFromShopify.Cancelled == true)
-            {
-                _pushLogger.Debug(
-                        $"Skipping cancelled Order: {orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
-                return;
-            }
 
-            var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.ShopifyShop);
+            // ON HOLD FOR NOW
+            //if (existingOrder == null && orderFromShopify.Cancelled == true)
+            //{
+            //    _pushLogger.Debug(
+            //            $"Skipping cancelled Order: {orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
+            //    return;
+            //}
 
             if (existingOrder != null && orderFromShopify.Cancelled == true)
             {
-                _pushLogger.Debug(
-                        $"Deleting cancelled Order: {orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
+                _pushLogger.Debug($"Deleting cancelled Order: " + 
+                    $"{orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
 
                 orderRepository.DeleteOrderLineItems(orderFromShopify.Id);
                 orderRepository.DeleteOrder(orderFromShopify.Id);
                 return;
             }
 
-            _pushLogger.Debug($"Translating Shopify Order {orderFromShopify.Name} ({orderFromShopify.Id}) to ProfitWise data model");
+
+            _pushLogger.Debug($"Translating Shopify Order " + 
+                $"{orderFromShopify.Name} ({orderFromShopify.Id}) to ProfitWise data model");
+
             var translatedOrder = orderFromShopify.ToShopifyOrder(context.ShopifyShop.PwShopId);
+
+
+            _pushLogger.Debug(Environment.NewLine + translatedOrder.ToString());
 
             if (existingOrder == null)
             {                
-                _pushLogger.Debug(
-                   $"Inserting new Order: {orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
+                _pushLogger.Debug($"Inserting new Order: " + 
+                    $"{orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
                 
                 foreach (var lineItemFromShopify in orderFromShopify.LineItems)
                 {

@@ -15,7 +15,6 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
         public IList<ShopifyOrderAdjustment> Adjustments { get; set; }
 
-
         public void AddLineItem(ShopifyOrderLineItem lineItem)
         {
             LineItems.Add(lineItem);

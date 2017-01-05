@@ -124,8 +124,6 @@ namespace Push.Shopify.Repositories
 
                 foreach (var refund in order.refunds)
                 {
-                    _logger.Debug($"Translating Refund {refund.id}");
-
                     var refundResult = new Refund();
                     refundResult.ParentOrder = orderResult;
                     refundResult.Id = refund.id;
