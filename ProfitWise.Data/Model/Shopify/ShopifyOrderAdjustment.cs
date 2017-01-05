@@ -10,6 +10,9 @@ namespace ProfitWise.Data.Model.Shopify
         public long ShopifyOrderId { get; set; }
         public ShopifyOrder Order { get; set; }
         public decimal Amount { get; set; }
+        public decimal TaxAmount { get; set; }
+        public string Kind { get; set; }
+        public string Reason { get; set; }
     }
 }
 

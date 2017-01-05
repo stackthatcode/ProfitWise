@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model.Shopify;
 using Push.Shopify.Model;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Shopify
 {
     public static class ShopifyOrderExtensions
     {
@@ -38,39 +37,85 @@ namespace ProfitWise.Data.Model
                 UpdatedAt = order.UpdatedAt,
 
                 LineItems = new List<ShopifyOrderLineItem>(),
+                Adjustments = new List<ShopifyOrderAdjustment>(),
+
                 Cancelled = order.CancelledAt.HasValue, // only used during Refresh to DELETE Cancelled Orders
             };
+
+            foreach (var lineItem in order.LineItems)
+            {
+                shopifyOrder.LineItems.Add(lineItem.ToShopifyOrderLineItem(pwShopId, shopifyOrder));
+            }
+
+            foreach (var adjustment in order.Adjustments)
+            {
+                shopifyOrder.Adjustments.Add(adjustment.ToShopifyOrderAdjustment(pwShopId, shopifyOrder));
+            }            
+
             return shopifyOrder;
         }
 
-        public static ShopifyOrderLineItem ToShopifyOrderLineItem(
-                this OrderLineItem line_item, ShopifyOrder parentOrder, int pwShopId)
+        public static ShopifyOrderLineItem 
+                ToShopifyOrderLineItem(
+                    this OrderLineItem lineFromShopify, int pwShopId, ShopifyOrder parentOrder)
         {
-            var shopifyOrderLineItem = new ShopifyOrderLineItem();
-            shopifyOrderLineItem.PwShopId = pwShopId;
+            var newLineItem = new ShopifyOrderLineItem();
+            newLineItem.PwShopId = pwShopId;
+            newLineItem.ParentOrder = parentOrder;
+            newLineItem.OrderDate = parentOrder.CreatedAt.Date;
+            newLineItem.OrderDateTimestamp = parentOrder.CreatedAt;
+            newLineItem.ShopifyOrderId = parentOrder.ShopifyOrderId;
+            newLineItem.ShopifyOrderLineId = lineFromShopify.Id;
+            newLineItem.UnitPrice = lineFromShopify.Price;
+            newLineItem.Quantity = lineFromShopify.Quantity;
+            newLineItem.LineDiscount = lineFromShopify.Discount;
 
-            shopifyOrderLineItem.ParentOrder = parentOrder;
-            shopifyOrderLineItem.OrderDate = parentOrder.CreatedAt.Date;
-            shopifyOrderLineItem.OrderDateTimestamp = parentOrder.CreatedAt;
-            shopifyOrderLineItem.ShopifyOrderId = parentOrder.ShopifyOrderId;
-            shopifyOrderLineItem.ShopifyOrderLineId = line_item.Id;
+            newLineItem.Refunds = new List<ShopifyOrderLineRefund>();
 
-            shopifyOrderLineItem.UnitPrice = line_item.Price;
-            shopifyOrderLineItem.Quantity = line_item.Quantity;
-            shopifyOrderLineItem.LineDiscount = line_item.Discount;
+            foreach (var refundLineFromShopify in lineFromShopify.RefundLineItems)
+            {
+                var newRefund = new ShopifyOrderLineRefund();
+                newRefund.PwShopId = pwShopId;
+                newRefund.ShopifyRefundId = refundLineFromShopify.Id;
+                newRefund.ShopifyOrderId = parentOrder.ShopifyOrderId;
+                newRefund.ShopifyOrderLineId = refundLineFromShopify.LineItemId;
+                newRefund.OrderLineItem = newLineItem;
+                newRefund.Amount = refundLineFromShopify.SubTotal;
+                newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt;
 
-            return shopifyOrderLineItem;
+                newLineItem.Refunds.Add(newRefund);
+            }
+
+            return newLineItem;
+        }
+
+
+        public static ShopifyOrderAdjustment ToShopifyOrderAdjustment(
+                this OrderAdjustment shopifyAdjustment, int pwShopId, ShopifyOrder parentOrder)
+        {
+            var adjustment = new ShopifyOrderAdjustment();
+            adjustment.PwShopId = pwShopId;
+            adjustment.ShopifyAdjustmentId = shopifyAdjustment.Id;
+            adjustment.ShopifyOrderId = parentOrder.ShopifyOrderId;
+            adjustment.Order = parentOrder;
+            adjustment.AdjustmentDate = shopifyAdjustment.Refund.CreatedAt;
+            adjustment.Amount = shopifyAdjustment.Amount;
+            adjustment.TaxAmount = shopifyAdjustment.TaxAmount;
+            adjustment.Kind = shopifyAdjustment.Kind;
+            adjustment.Reason = shopifyAdjustment.Reason;
+            return adjustment;
         }
 
         public static void CopyIntoExistingOrderForUpdate(this ShopifyOrder importedOrder, ShopifyOrder existingOrder)
         {
             existingOrder.UpdatedAt = importedOrder.UpdatedAt;
             existingOrder.Email = importedOrder.Email;
-            existingOrder.TotalRefund = importedOrder.TotalRefund;
-            existingOrder.TaxRefundAmount = importedOrder.TaxRefundAmount;
-            existingOrder.ShippingRefundAmount = importedOrder.ShippingRefundAmount;
             existingOrder.Tags = importedOrder.Tags;
             existingOrder.FinancialStatus = importedOrder.FinancialStatus;
+
+            //existingOrder.TotalRefund = importedOrder.TotalRefund;
+            //existingOrder.TaxRefundAmount = importedOrder.TaxRefundAmount;
+            //existingOrder.ShippingRefundAmount = importedOrder.ShippingRefundAmount;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Push.Shopify.Model
+﻿namespace Push.Shopify.Model
 {
     public class RefundLineItem
     {

@@ -13,7 +13,6 @@ namespace ProfitWise.Data.Model.Shopify
         
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
         public IList<ShopifyOrderAdjustment> Adjustments { get; set; }
-        public IList<ShopifyOrderRefund> Refunds { get; set; }
 
 
         public void AddLineItem(ShopifyOrderLineItem lineItem)

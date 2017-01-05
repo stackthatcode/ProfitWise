@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Push.Shopify.Model
 {
@@ -18,6 +19,13 @@ namespace Push.Shopify.Model
         public string Vendor { get; set; }
 
         public Order ParentOrder { get; set; }
+
+        public IList<RefundLineItem> 
+                RefundLineItems => ParentOrder.Refunds
+                    .SelectMany(x => x.LineItems)
+                    .Where(x => x.LineItemId == this.Id)
+                    .ToList();
+
 
         public int TotalRestockQuantity
         {

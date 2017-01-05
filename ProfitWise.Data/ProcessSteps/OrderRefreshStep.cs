@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Shopify;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
@@ -247,53 +248,52 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        private void WriteOrderToPersistence(Order importedOrder, OrderRefreshContext context)
+        private void WriteOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
         {
             if (_diagnostic.PwShopId == context.ShopifyShop.PwShopId &&
-                _diagnostic.OrderIds.Contains(importedOrder.Id))
+                _diagnostic.OrderIds.Contains(orderFromShopify.Id))
             {
-                _pushLogger.Debug(importedOrder.ToString());
+                _pushLogger.Debug(orderFromShopify.ToString());
             }
             
             var existingOrder = 
                 context.CurrentExistingOrders
-                    .FirstOrDefault(x => x.ShopifyOrderId == importedOrder.Id);
+                    .FirstOrDefault(x => x.ShopifyOrderId == orderFromShopify.Id);
 
-            if (existingOrder == null && importedOrder.Cancelled == true)
+            if (existingOrder == null && orderFromShopify.Cancelled == true)
             {
                 _pushLogger.Debug(
-                        $"Skipping cancelled Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
+                        $"Skipping cancelled Order: {orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
                 return;
             }
 
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.ShopifyShop);
 
-            if (existingOrder != null && importedOrder.Cancelled == true)
+            if (existingOrder != null && orderFromShopify.Cancelled == true)
             {
                 _pushLogger.Debug(
-                        $"Deleting cancelled Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
+                        $"Deleting cancelled Order: {orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
 
-                orderRepository.DeleteOrderLineItems(importedOrder.Id);
-                orderRepository.DeleteOrder(importedOrder.Id);
+                orderRepository.DeleteOrderLineItems(orderFromShopify.Id);
+                orderRepository.DeleteOrder(orderFromShopify.Id);
                 return;
             }
 
-            _pushLogger.Debug($"Translating Shopify Order {importedOrder.Name} ({importedOrder.Id}) to ProfitWise data model");
-            var translatedOrder = importedOrder.ToShopifyOrder(context.ShopifyShop.PwShopId);
+            _pushLogger.Debug($"Translating Shopify Order {orderFromShopify.Name} ({orderFromShopify.Id}) to ProfitWise data model");
+            var translatedOrder = orderFromShopify.ToShopifyOrder(context.ShopifyShop.PwShopId);
 
             if (existingOrder == null)
             {                
                 _pushLogger.Debug(
-                   $"Inserting new Order: {importedOrder.Name} / {importedOrder.Id} for {importedOrder.Email}");
+                   $"Inserting new Order: {orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
                 
-                foreach (var importedLineItem in importedOrder.LineItems)
+                foreach (var lineItemFromShopify in orderFromShopify.LineItems)
                 {
                     var translatedLineItem =
-                        importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
-                    translatedOrder.AddLineItem(translatedLineItem);
-
-
-                    var pwVariant = FindCreateProductVariant(context, importedLineItem);
+                            translatedOrder
+                                .LineItems.First(x => x.ShopifyOrderLineId == lineItemFromShopify.Id);
+                        
+                    var pwVariant = FindCreateProductVariant(context, lineItemFromShopify);
                     translatedLineItem.PwVariantId = pwVariant.PwVariantId;
                     translatedLineItem.PwProductId = pwVariant.PwProductId;
                 }
@@ -310,30 +310,30 @@ namespace ProfitWise.Data.ProcessSteps
                 //    orderRepository.InsertOrderLineItem(item);
                 //}
             }
-            else
-            {
-                _pushLogger.Debug(
-                    $"Updating existing Order: {translatedOrder.OrderNumber} / {translatedOrder.ShopifyOrderId} for {translatedOrder.Email}");
+            //else
+            //{
+            //    _pushLogger.Debug(
+            //        $"Updating existing Order: {translatedOrder.OrderNumber} / {translatedOrder.ShopifyOrderId} for {translatedOrder.Email}");
 
-                translatedOrder.CopyIntoExistingOrderForUpdate(existingOrder);
-                orderRepository.UpdateOrder(existingOrder);
+            //    translatedOrder.CopyIntoExistingOrderForUpdate(existingOrder);
+            //    orderRepository.UpdateOrder(existingOrder);
 
-                foreach (var importedLineItem in importedOrder.LineItems)
-                {
-                    var translatedLineItem =
-                        importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
+            //    foreach (var importedLineItem in orderFromShopify.LineItems)
+            //    {
+            //        var translatedLineItem =
+            //            importedLineItem.ToShopifyOrderLineItem(translatedOrder, context.ShopifyShop.PwShopId);
 
-                    existingOrder.LineItems.FirstOrDefault(
-                            x => x.ShopifyOrderId == translatedLineItem.ShopifyOrderId &&
-                                x.ShopifyOrderLineId == translatedLineItem.ShopifyOrderLineId);
+            //        existingOrder.LineItems.FirstOrDefault(
+            //                x => x.ShopifyOrderId == translatedLineItem.ShopifyOrderId &&
+            //                    x.ShopifyOrderLineId == translatedLineItem.ShopifyOrderLineId);
 
-                    _pushLogger.Debug(
-                            $"Updating existing Order Line Item: {translatedOrder.OrderNumber} / " +
-                            $"{translatedLineItem.ShopifyOrderId} / {translatedLineItem.ShopifyOrderLineId}");
+            //        _pushLogger.Debug(
+            //                $"Updating existing Order Line Item: {translatedOrder.OrderNumber} / " +
+            //                $"{translatedLineItem.ShopifyOrderId} / {translatedLineItem.ShopifyOrderLineId}");
                     
-                    orderRepository.UpdateOrderLineItem(translatedLineItem);
-                }
-            }            
+            //        orderRepository.UpdateOrderLineItem(translatedLineItem);
+            //    }
+            //}            
         }
 
         public PwVariant FindCreateProductVariant(OrderRefreshContext context, OrderLineItem importedLineItem)

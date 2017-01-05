@@ -129,7 +129,8 @@ namespace Push.Shopify.Repositories
 
                     var refundResult = new Refund();
                     refundResult.ParentOrder = orderResult;
-                    refundResult.Id = refund.id;                    
+                    refundResult.Id = refund.id;
+                    refundResult.CreatedAt = refund.created_at;
                     refundResult.LineItems = new List<RefundLineItem>();
                     refundResult.OrderAdjustments = new List<OrderAdjustment>();
                     refundResult.Transactions = new List<Transaction>();
