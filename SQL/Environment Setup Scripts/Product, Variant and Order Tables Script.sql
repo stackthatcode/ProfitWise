@@ -123,6 +123,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `UnitPrice` decimal(15,2) DEFAULT NULL, # Unit price for this line item (for qty 1)
   `TotalDiscount` decimal(15,2) DEFAULT NULL, # Total discount applied to this line item
   `NetTotal` decimal(15,2) DEFAULT NULL, # Net revenue for this line item (after discounts and refunds)  
+  `NetQuantity` INT(6) NOT NULL,
   `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit, in Store Currency
   
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
@@ -137,7 +138,7 @@ CREATE TABLE `shopifyorderrefund` (
   `PwProductId` BIGINT NOT NULL, # Product (PwProductId) for this line item
   `PwVariantId` BIGINT NOT NULL, # Variant (PwVariantId) for this line item
   `Amount` decimal(15,2) DEFAULT NULL, # Amount for this Refund
-  
+  `RestockQuantity` int(6) unsigned NOT NULL, 
   PRIMARY KEY  (`PwShopId`, `ShopifyRefundId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

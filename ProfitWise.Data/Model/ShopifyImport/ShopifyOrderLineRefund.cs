@@ -16,5 +16,6 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
         public DateTime RefundDate { get; set; }
         public decimal Amount { get; set; }
+        public int RestockQuantity { get; set; }
     }
 }

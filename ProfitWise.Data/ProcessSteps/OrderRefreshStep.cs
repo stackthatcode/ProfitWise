@@ -254,12 +254,11 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Debug(orderFromShopify.ToString());
             }
 
-            // RENABLE AFTER TESTING
-            //if (existingOrder == null && orderFromShopify.Cancelled == true)
-            //{
-            //    _pushLogger.Debug($"Skipping cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
-            //    return;
-            //}
+            if (existingOrder == null && orderFromShopify.Cancelled == true)
+            {
+                _pushLogger.Debug($"Skipping cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
+                return;
+            }
 
             if (existingOrder != null && orderFromShopify.Cancelled == true)
             {
@@ -295,8 +294,7 @@ namespace ProfitWise.Data.ProcessSteps
                             .LineItems.First(x => x.ShopifyOrderLineId == lineItemFromShopify.Id);
 
                 var pwVariant = FindCreateProductVariant(context, lineItemFromShopify);
-
-                translatedLineItem.SetProfitWiseVariant(pwVariant.PwVariantId, pwVariant.PwProductId);
+                translatedLineItem.SetProfitWiseVariant(pwVariant);
             }
 
             orderRepository.InsertOrder(translatedOrder);

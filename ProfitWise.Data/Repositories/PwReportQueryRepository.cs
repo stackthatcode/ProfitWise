@@ -145,14 +145,15 @@ namespace ProfitWise.Data.Repositories
             return results;
         }
 
+
         // Queries for generating Totals
         public string QueryGutsForTotals()
         {
-            return @"SUM(t3.GrossRevenue) As TotalRevenue, 
+            return @"SUM(t3.NetTotal) As TotalRevenue, 
                     SUM(t3.NetQuantity) AS TotalNumberSold,
 		            SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs,
-                    SUM(t3.GrossRevenue) - SUM(t3.UnitCogs * t3.NetQuantity) AS TotalProfit,
-                    100.0 - (100.0 * SUM(t3.UnitCogs * t3.NetQuantity) / SUM(t3.GrossRevenue)) AS AverageMargin
+                    SUM(t3.NetTotal) - SUM(t3.UnitCogs * t3.NetQuantity) AS TotalProfit,
+                    100.0 - (100.0 * SUM(t3.UnitCogs * t3.NetQuantity) / SUM(t3.NetTotal)) AS AverageMargin
                 FROM profitwisereportquerystub t1
 		            INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
@@ -287,6 +288,7 @@ namespace ProfitWise.Data.Repositories
         }
 
 
+        // Date Period Bucketed Totals
         public List<DatePeriodTotal> RetrieveDatePeriodTotals(
                 long reportId, DateTime startDate, DateTime endDate, List<string> filterKeys,
                 ReportGrouping grouping, PeriodType periodType)
@@ -340,7 +342,7 @@ namespace ProfitWise.Data.Repositories
             }
 
             var queryGuts =
-                @"SUM(t3.GrossRevenue) AS TotalRevenue, 
+                @"SUM(t3.NetTotal) AS TotalRevenue, 
 		        SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs
                 FROM profitwisereportquerystub t1
 	                INNER JOIN profitwisevariant t2
@@ -428,7 +430,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = 
                 @"SELECT t3.OrderDate,
-		                SUM(t3.GrossRevenue) AS TotalRevenue, 
+		                SUM(t3.NetTotal) AS TotalRevenue, 
 		                SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs
                 FROM profitwisereportquerystub t1
 	                INNER JOIN profitwisevariant t2

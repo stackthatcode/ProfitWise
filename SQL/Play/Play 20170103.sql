@@ -1,47 +1,11 @@
 USE profitwise;
 
 
-
-SELECT * FROM profitwisebatchstate;
-
-SELECT * FROM profitwisep
-
-SELECT * FROM profitwiseproduct;
-
-SELECT * FROM profitwisevariant WHERE ShopifyVariantId = 26345730377;
-
-UPDATE profitwiseshop SET StartingDateForOrders = '2014-01-01';
-
-
-
 SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE OrderDate = '2016-12-05';
-
 SELECT * FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
-
-
-SELECT t1.OrderNumber, t2.* FROM shopifyorder t1 
-	INNER JOIN shopifyorderlineitem t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId
-WHERE OrderDate = '2016-12-05';
-
-
-SELECT * FROM shopifyorderlineitem WHERE ShopifyOrderId = 4255498761;
-
-
-SELECT * FROM shopifyorder WHERE OrderNumber = '#5237634'
-SELECT * FROM shopifyorder WHERE TotalRefund > 0;
-
-
 
 # ProfitWise says => 1535.06
 # Shopify says => 1590.67
-
-
-SELECT * FROM shopifyorderlineitem t1 INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId;
-
-SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE PwProductId = 76;
-
-
-SELECT * FROM shopifyorderlineitem;
 
 
 
@@ -82,6 +46,29 @@ AND t3.UnitCogs IS NULL;
 
 
 
-SELECT * FROM 
+SELECT * FROM calendar_table;
+
+SELECT * FROM shopifyorder;
+SELECT * FROM shopifyorderlineitem;
+SELECT * FROM shopifyorderadjustment;
+SELECT * FROM shopifyorderrefund;
+
+SELECT * FROM profitwisereportquerystub;
+
+
+
+	SUM(t3.NetTotal) As TotalRevenue, 
+	SUM(t3.NetQuantity) AS TotalNumberSold,
+	SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs,
+	SUM(t3.NetTotal) - SUM(t3.UnitCogs * t3.NetQuantity) AS TotalProfit,
+	100.0 - (100.0 * SUM(t3.UnitCogs * t3.NetQuantity) / SUM(t3.NetTotal)) AS AverageMargin
+FROM profitwisereportquerystub t1
+	INNER JOIN profitwisevariant t2
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	INNER JOIN shopifyorderlineitem t3
+		ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+
+
+
 
 

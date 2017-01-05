@@ -136,17 +136,17 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO shopifyorderlineitem ( 
                     PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, PwProductId, PwVariantId, 
-                    Quantity, UnitPrice, TotalDiscount, NetTotal, UnitCogs )
+                    Quantity, UnitPrice, TotalDiscount, NetTotal, NetQuantity, UnitCogs )
                 VALUES ( 
                     @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @PwProductId, @PwVariantId,
-                    @Quantity, @UnitPrice, @TotalDiscount, @NetTotal, @UnitCogs )";
+                    @Quantity, @UnitPrice, @TotalDiscount, @NetTotal, @NetQuantity, @UnitCogs )";
             _connection.Execute(query, lineitem);
         }
 
         public virtual void UpdateLineItemNetTotal(ShopifyOrderLineItem lineItem)
         {
             lineItem.PwShopId = PwShop.PwShopId;
-            var query = @"UPDATE shopifyorder SET NetTotal = @NetTotal
+            var query = @"UPDATE shopifyorder SET NetTotal = @NetTotal, NetQuantity = @NetQuantity
                             WHERE PwShopId = @PwShopId AND ShopifyOrderLineId = @ShopifyOrderLineId";
             _connection.Execute(query, lineItem);
         }
@@ -183,10 +183,10 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO shopifyorderrefund ( 
                     PwShopId, ShopifyRefundId, ShopifyOrderId, ShopifyOrderLineId, RefundDate, 
-                    PwProductId, PwVariantId, Amount )
+                    PwProductId, PwVariantId, Amount, RestockQuantity )
                 VALUES ( 
                     @PwShopId, @ShopifyRefundId, @ShopifyOrderId, @ShopifyOrderLineId, @RefundDate, 
-                    @PwProductId, @PwVariantId, @Amount )";
+                    @PwProductId, @PwVariantId, @Amount, @RestockQuantity )";
             _connection.Execute(query, refund);
         }
 

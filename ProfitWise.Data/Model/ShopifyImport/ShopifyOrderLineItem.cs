@@ -20,6 +20,8 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public long? PwVariantId { get; set; }
 
         public int Quantity { get; set; }           // From Shopify - we store this
+        public int NetQuantity => Quantity - Refunds.Sum(x => x.RestockQuantity);   // We store this
+
         public decimal UnitPrice { get; set; }      // From Shopify - we store this
         public decimal GrossTotal => Quantity * UnitPrice;
         public decimal LineDiscount { get; set; }   // From Shopify - we store this
@@ -51,15 +53,15 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public decimal NetTotal => TotalAfterAllDiscounts - TotalRefund;    // We store this for Reporting
         public decimal? UnitCogs { get; set; }
 
-        public void SetProfitWiseVariant(long pwProductId, long pwVariantId)
+        public void SetProfitWiseVariant(PwVariant pwVariant)
         {
-            this.PwProductId = pwProductId;
-            this.PwVariantId = pwVariantId;
+            this.PwProductId = pwVariant.PwProductId;
+            this.PwVariantId = pwVariant.PwVariantId;
 
             foreach (var refund in this.Refunds)
             {
-                refund.PwProductId = pwProductId;
-                refund.PwVariantId = pwVariantId;
+                refund.PwProductId = pwVariant.PwProductId;
+                refund.PwVariantId = pwVariant.PwVariantId;
             }
         }
 

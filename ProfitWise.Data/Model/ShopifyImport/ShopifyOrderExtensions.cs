@@ -115,9 +115,10 @@ namespace ProfitWise.Data.Model.ShopifyImport
             newRefund.ShopifyRefundId = refundLineFromShopify.Id;
             newRefund.ShopifyOrderId = parentOrder.ShopifyOrderId;
             newRefund.ShopifyOrderLineId = refundLineFromShopify.LineItemId;
+            newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt;
             newRefund.OrderLineItem = parentLineItem;
             newRefund.Amount = refundLineFromShopify.SubTotal;
-            newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt;
+            newRefund.RestockQuantity = refundLineFromShopify.RestockQuantity;
             return newRefund;
         }
 
