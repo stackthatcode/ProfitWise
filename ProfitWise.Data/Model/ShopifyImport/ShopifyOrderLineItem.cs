@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model.Shopify;
 
 namespace ProfitWise.Data.Model.ShopifyImport
 {
@@ -25,6 +24,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public decimal GrossTotal => Quantity * UnitPrice;
         public decimal LineDiscount { get; set; }   // From Shopify - we store this
 
+
         // Our computation is exactly like Shopify's: each line item will have deducted from it an amount
         // ... in proportion to its Line Amount after line-level Discount * the total Order Discount
         public decimal TotalAfterLineDiscount => GrossTotal - LineDiscount;        
@@ -46,8 +46,8 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public decimal TotalDiscount => LineDiscount + PortionOfOrderDiscount;
         public decimal TotalAfterAllDiscounts => GrossTotal - TotalDiscount;  
         public decimal DiscountedUnitPrice => TotalAfterAllDiscounts / Quantity;
-
         public decimal TotalRefund => Refunds.Sum(x => x.Amount);
+
         public decimal NetTotal => TotalAfterAllDiscounts - TotalRefund;    // We store this for Reporting
 
 

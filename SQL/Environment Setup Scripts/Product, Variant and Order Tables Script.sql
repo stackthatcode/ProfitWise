@@ -3,6 +3,8 @@ USE profitwise; # Set active database
 SET SQL_SAFE_UPDATES = 0; # Turn off Safe Updates setting
 
 
+DROP TABLE IF EXISTS `profitwisebatchstate`;
+
 DROP TABLE IF EXISTS `profitwisemasterproduct`; 
 DROP TABLE IF EXISTS `profitwiseproduct`; 
 DROP TABLE IF EXISTS `profitwisemastervariant`; 
@@ -10,15 +12,22 @@ DROP TABLE IF EXISTS `profitwisevariant`;
 
 DROP TABLE IF EXISTS `shopifyorder`; 
 DROP TABLE IF EXISTS `shopifyorderlineitem`; 
-
-DROP TABLE IF EXISTS `profitwisebatchstate`;
-
-DROP TABLE IF EXISTS `profitwisequery`;
-DROP TABLE IF EXISTS `profitwisequerymasterproduct`;
+DROP TABLE IF EXISTS `shopifyorderrefund`; 
+DROP TABLE IF EXISTS `shopifyorderadjustment`; 
 
 DROP TABLE IF EXISTS `profitwisepicklist`;
 DROP TABLE IF EXISTS `profitwisepicklistmasterproduct`;
 
+
+
+
+CREATE TABLE `profitwisebatchstate` (
+  `PwShopId` BIGINT unsigned NOT NULL, 	# ProfitWise's shop identifier
+  `ProductsLastUpdated` TIMESTAMP NULL, # When did ProfitWise last update products from Shopify's catalog?
+  `OrderDatasetStart` TIMESTAMP NULL, 	# Start date for the current order data set to be loaded from Shopify
+  `OrderDatasetEnd` TIMESTAMP NULL, 	# End date for the current order data set to be loaded from Shopify
+   PRIMARY KEY (`PwShopId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -87,31 +96,18 @@ CREATE TABLE `profitwisevariant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `profitwisebatchstate` (
-  `PwShopId` BIGINT unsigned NOT NULL, 	# ProfitWise's shop identifier
-  `ProductsLastUpdated` TIMESTAMP NULL, # When did ProfitWise last update products from Shopify's catalog?
-  `OrderDatasetStart` TIMESTAMP NULL, 	# Start date for the current order data set to be loaded from Shopify
-  `OrderDatasetEnd` TIMESTAMP NULL, 	# End date for the current order data set to be loaded from Shopify
-   PRIMARY KEY (`PwShopId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
 
 CREATE TABLE `shopifyorder` (
   `PwShopId` int(6) unsigned NOT NULL, # ProfitWise's shop identifier
   `ShopifyOrderId` BIGINT NOT NULL, # Shopify's unique order identifier
   `Email` varchar(128) DEFAULT NULL, # Email address associated with the order
   `OrderNumber` varchar(128) DEFAULT NULL, # Shopify order number
-  `OrderLevelDiscount` decimal(15,2) DEFAULT NULL, # Discount applied at the order-level
-  `SubTotal` decimal(15,2) DEFAULT NULL, # Order subtotal
-  `TotalRefund` decimal(15,2) DEFAULT NULL,	# Total of refunds issued for this order
-  `TaxRefundAmount` decimal(15,2) DEFAULT NULL, # Total of taxes refunded for this order
-  `ShippingRefundAmount` decimal(15,2) DEFAULT NULL, # Total of shipping fees refunded for this order
+  `OrderLevelDiscount` decimal(15,2) DEFAULT NULL, # Discount applied at the order-level  
   `FinancialStatus` varchar(25) DEFAULT NULL, # Financial settlement status of this order
   `Tags` varchar(500) DEFAULT NULL, # Tags for this order
   `CreatedAt` timestamp NOT NULL, # Date-time when this order was created
   `UpdatedAt` timestamp NOT NULL, # Date-time when this order was last updated in Shopify
+  
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -126,12 +122,38 @@ CREATE TABLE `shopifyorderlineitem` (
   `Quantity` int(6) unsigned NOT NULL, # Quantity for this line item
   `UnitPrice` decimal(15,2) DEFAULT NULL, # Unit price for this line item (for qty 1)
   `TotalDiscount` decimal(15,2) DEFAULT NULL, # Total discount applied to this line item
-  `NetQuantity` int(6) unsigned NOT NULL, # Quantity minus Restocked Quantity from this line item
   `NetTotal` decimal(15,2) DEFAULT NULL, # Net revenue for this line item (after discounts and refunds)  
-  `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit
+  `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit, in Store Currency
   
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `shopifyorderrefund` (
+  `PwShopId` int(6) unsigned NOT NULL, # ProfitWise's shop identifier
+  `ShopifyRefundId` BIGINT NOT NULL, # Shopify identifier for refund  
+  `ShopifyOrderId` BIGINT NOT NULL, # Shopify identifier for associated order
+  `ShopifyOrderLineId` BIGINT NOT NULL, # Shopify identifier for order line item
+  `RefundDate` DATE NOT NULL, # Date-time simplified to Date-only for easy joins
+  `PwProductId` BIGINT NOT NULL, # Product (PwProductId) for this line item
+  `PwVariantId` BIGINT NOT NULL, # Variant (PwVariantId) for this line item
+  `Amount` decimal(15,2) DEFAULT NULL, # Amount for this Refund
+  
+  PRIMARY KEY  (`PwShopId`, `ShopifyRefundId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `shopifyorderadjustment` (
+  `PwShopId` int(6) unsigned NOT NULL, # ProfitWise's shop identifier
+  `ShopifyAdjustmentId` BIGINT NOT NULL, # Shopify identifier for refund  
+  `AdjustmentDate` DATE NOT NULL, # Date-time simplified to Date-only for easy joins
+  `ShopifyOrderId` BIGINT NOT NULL, # Shopify identifier for associated order
+  `Amount` decimal(15,2) DEFAULT NULL, # Amount for this Adjustment
+  `TaxAmount` decimal(15,2) DEFAULT NULL, # Tax Amount for this Adjustment
+  `Kind` VARCHAR(100) DEFAULT NULL,
+  `Reason` VARCHAR(100) DEFAULT NULL,
+  
+  PRIMARY KEY  (`PwShopId`, `ShopifyAdjustmentId` )
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
-using ProfitWise.Data.Model.Shopify;
 using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
@@ -228,7 +227,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                 // A filtered list of Existing Orders and Line Items for possible update
                 var existingShopifyOrders = orderRepository.RetrieveOrders(orderIdList);
-                var existingShopifyOrderLineItems = orderRepository.RetrieveOrderLineItems(orderIdList);
+                var existingShopifyOrderLineItems = orderRepository.RetrieveLineItems(orderIdList);
                 existingShopifyOrders.AppendLineItems(existingShopifyOrderLineItems);
 
                 var context = new OrderRefreshContext
@@ -276,7 +275,7 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Debug($"Deleting cancelled Order: " + 
                     $"{orderFromShopify.Name} / {orderFromShopify.Id} for {orderFromShopify.Email}");
 
-                orderRepository.DeleteOrderLineItems(orderFromShopify.Id);
+                orderRepository.DeleteLineItems(orderFromShopify.Id);
                 orderRepository.DeleteOrder(orderFromShopify.Id);
                 return;
             }
@@ -286,7 +285,6 @@ namespace ProfitWise.Data.ProcessSteps
                 $"{orderFromShopify.Name} ({orderFromShopify.Id}) to ProfitWise data model");
 
             var translatedOrder = orderFromShopify.ToShopifyOrder(context.ShopifyShop.PwShopId);
-
 
             _pushLogger.Debug(Environment.NewLine + translatedOrder.ToString());
 

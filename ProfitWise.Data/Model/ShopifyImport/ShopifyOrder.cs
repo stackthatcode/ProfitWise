@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model.Shopify;
 
 namespace ProfitWise.Data.Model.ShopifyImport
 {
@@ -11,7 +10,8 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public long ShopifyOrderId { get; set; }
         public string Email { get; set; }
         public string OrderNumber { get; set; }
-        
+        public decimal OrderLevelDiscount { get; set; }  // We store this - comes directly from Shopify
+
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
         public IList<ShopifyOrderAdjustment> Adjustments { get; set; }
 
@@ -21,19 +21,16 @@ namespace ProfitWise.Data.Model.ShopifyImport
             lineItem.ParentOrder = this;
         }
 
-        public decimal OrderLevelDiscount { get; set; }  // We store this - comes directly from Shopify
+        // Entirely computational fields - nothing will be stored in SQL
         public decimal GrossSales => this.LineItems.Sum(x => x.GrossTotal);
-
         public decimal TotalDiscounts => this.LineItems.Sum(x => x.TotalDiscount);        
         public decimal TotalAdjustments => this.Adjustments.Sum(x => x.Amount);
         public decimal TotalLineItemRefunds => this.LineItems.SelectMany(x => x.Refunds).Sum(x => x.Amount);
-
         public decimal NetSales => GrossSales - TotalLineItemRefunds - TotalDiscounts + TotalAdjustments;
 
 
         public string FinancialStatus { get; set; }
         public string Tags { get; set;  }
-
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         

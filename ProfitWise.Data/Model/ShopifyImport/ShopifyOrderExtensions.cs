@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model.Shopify;
 using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.ShopifyImport

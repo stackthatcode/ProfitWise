@@ -1,7 +1,6 @@
 ﻿using System;
-using ProfitWise.Data.Model.ShopifyImport;
 
-namespace ProfitWise.Data.Model.Shopify
+namespace ProfitWise.Data.Model.ShopifyImport
 {
     public class ShopifyOrderLineRefund
     {
