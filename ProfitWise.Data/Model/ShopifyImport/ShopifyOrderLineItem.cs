@@ -49,6 +49,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public decimal TotalRefund => Refunds.Sum(x => x.Amount);
 
         public decimal NetTotal => TotalAfterAllDiscounts - TotalRefund;    // We store this for Reporting
+        public decimal? UnitCogs { get; set; }
 
         public void SetProfitWiseVariant(long pwProductId, long pwVariantId)
         {

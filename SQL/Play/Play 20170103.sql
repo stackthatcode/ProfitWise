@@ -28,6 +28,7 @@ SELECT * FROM shopifyorderlineitem WHERE ShopifyOrderId = 4255498761;
 
 
 SELECT * FROM shopifyorder WHERE OrderNumber = '#5237634'
+SELECT * FROM shopifyorder WHERE TotalRefund > 0;
 
 
 
@@ -78,5 +79,9 @@ UPDATE profitwiseshop t0
 SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0))
 WHERE t0.PwShopId = 100001
 AND t3.UnitCogs IS NULL;
+
+
+
+SELECT * FROM 
 
 

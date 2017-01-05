@@ -257,18 +257,18 @@ namespace ProfitWise.Data.ProcessSteps
             // RENABLE AFTER TESTING
             //if (existingOrder == null && orderFromShopify.Cancelled == true)
             //{
-            //    _pushLogger.Debug($"Skipping cancelled Order: {orderFromShopify.Name} / {orderFromShopify.Id}");
+            //    _pushLogger.Debug($"Skipping cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
             //    return;
             //}
 
             if (existingOrder != null && orderFromShopify.Cancelled == true)
             {
-                _pushLogger.Debug($"Deleting cancelled Order: {orderFromShopify.Name} / {orderFromShopify.Id}");                
+                _pushLogger.Debug($"Deleting cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");                
                 orderRepository.DeleteOrderFullDepth(orderFromShopify.Id);
                 return;
             }
 
-            _pushLogger.Debug($"Translating Order from Shopify {orderFromShopify.Name} / {orderFromShopify.Id} to ProfitWise data model");
+            _pushLogger.Debug($"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} to ProfitWise data model");
 
             if (existingOrder == null)
             {
@@ -285,7 +285,7 @@ namespace ProfitWise.Data.ProcessSteps
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
             var translatedOrder = orderFromShopify.ToShopifyOrder(context.PwShop.PwShopId);
 
-            _pushLogger.Debug($"Inserting new Order: {orderFromShopify.Name} / {orderFromShopify.Id}");
+            _pushLogger.Debug($"Inserting new Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
             _pushLogger.Trace(Environment.NewLine + translatedOrder.ToString());
 
             foreach (var lineItemFromShopify in orderFromShopify.LineItems)

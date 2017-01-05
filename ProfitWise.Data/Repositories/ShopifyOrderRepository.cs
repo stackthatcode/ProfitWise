@@ -127,7 +127,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = 
                 @"SELECT * FROM shopifyorderlineitem WHERE PwShopId = @PwShopId AND ShopifyOrderId IN @orderIdList";
-            return _connection.Query<ShopifyOrderLineItem>(query, new {orderIdList}).ToList();
+            return _connection.Query<ShopifyOrderLineItem>(query, new {PwShop.PwShopId, orderIdList }).ToList();
         }
 
         public virtual void InsertLineItem(ShopifyOrderLineItem lineitem)
@@ -136,10 +136,10 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO shopifyorderlineitem ( 
                     PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, PwProductId, PwVariantId, 
-                    Quantity, UnitPrice, TotalDiscount, NetQuantity, GrossRevenue )
+                    Quantity, UnitPrice, TotalDiscount, NetTotal, UnitCogs )
                 VALUES ( 
                     @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @PwProductId, @PwVariantId,
-                    @Quantity, @UnitPrice, @TotalDiscount, @NetQuantity, @GrossRevenue )";
+                    @Quantity, @UnitPrice, @TotalDiscount, @NetTotal, @UnitCogs )";
             _connection.Execute(query, lineitem);
         }
 
@@ -174,7 +174,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = 
                 @"SELECT * FROM shopifyorderrefund WHERE PwShopId = @PwShopId AND ShopifyOrderId IN @orderIdList";
-            return _connection.Query<ShopifyOrderLineRefund>(query, new { orderIdList }).ToList();
+            return _connection.Query<ShopifyOrderLineRefund>(query, new { PwShop.PwShopId, orderIdList }).ToList();
         }
 
         public virtual void InsertRefund(ShopifyOrderLineRefund refund)
@@ -213,7 +213,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT * FROM shopifyorderadjustment WHERE PwShopId = @PwShopId AND ShopifyOrderId IN @orderIdList";
-            return _connection.Query<ShopifyOrderAdjustment>(query, new { orderIdList }).ToList();
+            return _connection.Query<ShopifyOrderAdjustment>(query, new { PwShop.PwShopId, orderIdList }).ToList();
         }
 
         public virtual void InsertAdjustment(ShopifyOrderAdjustment refund)
