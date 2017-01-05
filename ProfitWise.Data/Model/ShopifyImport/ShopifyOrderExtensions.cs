@@ -19,6 +19,34 @@ namespace ProfitWise.Data.Model.ShopifyImport
             }
         }
 
+        public static void AppendAdjustments(
+            this IList<ShopifyOrder> orders, IList<ShopifyOrderAdjustment> adjustments)
+        {
+            foreach (var order in orders)
+            {
+                order.Adjustments = adjustments.Where(x => x.ShopifyOrderId == order.ShopifyOrderId).ToList();
+                foreach (var adjustment in order.Adjustments)
+                {
+                    adjustment.Order = order;
+                }
+            }
+        }
+        public static void AppendRefunds(
+            this IList<ShopifyOrder> orders, IList<ShopifyOrderLineRefund> refunds)
+        {
+            foreach (var lineItem in orders.SelectMany(x => x.LineItems))
+            {
+                lineItem.Refunds = refunds.Where(x => x.ShopifyOrderLineId == lineItem.ShopifyOrderLineId).ToList();
+
+                foreach (var refund in lineItem.Refunds)
+                {
+                    refund.OrderLineItem = lineItem;
+                }
+            }
+        }
+
+
+
         public static ShopifyOrder ToShopifyOrder(this Order order, int pwShopId)
         {
             var shopifyOrder = new ShopifyOrder()

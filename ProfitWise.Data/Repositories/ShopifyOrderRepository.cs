@@ -46,10 +46,19 @@ namespace ProfitWise.Data.Repositories
                     .FirstOrDefault();
         }
 
-        public virtual IList<ShopifyOrder> RetrieveOrders(IList<long> orderIdList)
+        public virtual IList<ShopifyOrder> RetrieveOrdersFullDepth(IList<long> orderIdList)
         {
-            var query2 = @"SELECT * FROM shopifyorder WHERE ShopifyOrderId IN @orderIdList";
-            return _connection.Query<ShopifyOrder>(query2, new {orderIdList}).ToList();
+            var query = @"SELECT * FROM shopifyorder WHERE ShopifyOrderId IN @orderIdList";
+            var orders = _connection.Query<ShopifyOrder>(query, new {orderIdList}).ToList();
+
+            var lineItems = this.RetrieveLineItems(orderIdList);
+            var refunds = this.RetrieveRefunds(orderIdList);
+            var adjustments = this.RetrieveAdjustments(orderIdList);
+
+            orders.AppendLineItems(lineItems);
+            orders.AppendRefunds(refunds);
+            orders.AppendAdjustments(adjustments);
+            return orders;
         }
 
         public virtual void InsertOrder(ShopifyOrder order)
@@ -80,11 +89,15 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, order);
         }
 
-        public virtual void DeleteOrder(long shopifyOrderId)
+        public virtual void DeleteOrderFullDepth(long shopifyOrderId)
         {
             var query = @"DELETE FROM shopifyorder 
                         WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
             _connection.Execute(query, new { PwShopId = PwShop.PwShopId, shopifyOrderId });
+
+            DeleteRefunds(shopifyOrderId);
+            DeleteLineItems(shopifyOrderId);
+            DeleteAdjustments(shopifyOrderId);
         }
 
         public virtual void MassDelete(IList<ShopifyOrder> orders)
@@ -129,7 +142,15 @@ namespace ProfitWise.Data.Repositories
                     @Quantity, @UnitPrice, @TotalDiscount, @NetQuantity, @GrossRevenue )";
             _connection.Execute(query, lineitem);
         }
-        
+
+        public virtual void UpdateLineItemNetTotal(ShopifyOrderLineItem lineItem)
+        {
+            lineItem.PwShopId = PwShop.PwShopId;
+            var query = @"UPDATE shopifyorder SET NetTotal = @NetTotal
+                            WHERE PwShopId = @PwShopId AND ShopifyOrderLineId = @ShopifyOrderLineId";
+            _connection.Execute(query, lineItem);
+        }
+
         public virtual void DeleteLineItems(long shopifyOrderId)
         {
             var query =

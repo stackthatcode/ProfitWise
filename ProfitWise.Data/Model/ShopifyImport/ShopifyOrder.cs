@@ -40,7 +40,6 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
         public override string ToString()
         {
-            // I can't hear you, Jeremy.
             var output =
                 "ShopifyOrder" + Environment.NewLine +
                 $"PwShopId = {PwShopId}" + Environment.NewLine +

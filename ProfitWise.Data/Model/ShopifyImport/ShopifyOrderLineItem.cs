@@ -50,6 +50,18 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
         public decimal NetTotal => TotalAfterAllDiscounts - TotalRefund;    // We store this for Reporting
 
+        public void SetProfitWiseVariant(long pwProductId, long pwVariantId)
+        {
+            this.PwProductId = pwProductId;
+            this.PwVariantId = pwVariantId;
+
+            foreach (var refund in this.Refunds)
+            {
+                refund.PwProductId = pwProductId;
+                refund.PwVariantId = pwVariantId;
+            }
+        }
+
 
         public override string ToString()
         {
