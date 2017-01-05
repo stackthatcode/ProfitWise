@@ -86,11 +86,11 @@
     <Compile Include="Model\Profit\SimpleCogs.cs" />
     <Compile Include="Model\Profit\ReportSearchStub.cs" />
     <Compile Include="Model\Profit\TotalQueryContext.cs" />
-    <Compile Include="Model\Shopify\ShopifyOrderAdjustment.cs" />
-    <Compile Include="Model\Shopify\ShopifyOrderLineRefund.cs" />
+    <Compile Include="Model\ShopifyImport\ShopifyOrderAdjustment.cs" />
+    <Compile Include="Model\ShopifyImport\ShopifyOrderLineRefund.cs" />
     <Compile Include="Model\System\ExchangeRate.cs" />
     <Compile Include="Model\System\Currency.cs" />
-    <Compile Include="Model\Shopify\OrderLineItemSubset.cs" />
+    <Compile Include="Model\ShopifyImport\OrderLineItemSubset.cs" />
     <Compile Include="Model\Cogs\ProductSearchFilter.cs" />
     <Compile Include="Model\Cogs\PwCogsVariant.cs" />
     <Compile Include="Model\Cogs\PwCogsProductSummary.cs" />
@@ -112,9 +112,9 @@
     <Compile Include="Model\Catalog\PwProduct.cs" />
     <Compile Include="Model\Reports\FilteredMasterProduct.cs" />
     <Compile Include="Model\Profit\ReportSeries.cs" />
-    <Compile Include="Model\Shopify\ShopifyOrder.cs" />
-    <Compile Include="Model\Shopify\ShopifyOrderExtensions.cs" />
-    <Compile Include="Model\Shopify\ShopifyOrderLineItem.cs" />
+    <Compile Include="Model\ShopifyImport\ShopifyOrder.cs" />
+    <Compile Include="Model\ShopifyImport\ShopifyOrderExtensions.cs" />
+    <Compile Include="Model\ShopifyImport\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
     <Compile Include="Repositories\SystemStateRepository.cs" />

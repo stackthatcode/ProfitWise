@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Model.Shopify;
 
-namespace ProfitWise.Data.Model.Shopify
+namespace ProfitWise.Data.Model.ShopifyImport
 {
     public class ShopifyOrder
     {
@@ -21,24 +22,23 @@ namespace ProfitWise.Data.Model.Shopify
             lineItem.ParentOrder = this;
         }
 
-        public decimal OrderLevelDiscount { get; set; }
-        public decimal SubTotal { get; set; }
+        public decimal OrderLevelDiscount { get; set; }  // We store this - comes directly from Shopify
+        public decimal GrossSales => this.LineItems.Sum(x => x.GrossTotal);
 
-        public decimal TotalRefund { get; set; }
-        public decimal TaxRefundAmount { get; set; }
-        public decimal ShippingRefundAmount { get; set; }
+        public decimal TotalDiscounts => this.LineItems.Sum(x => x.TotalDiscount);        
+        public decimal TotalAdjustments => this.Adjustments.Sum(x => x.Amount);
+        public decimal TotalLineItemRefunds => this.LineItems.SelectMany(x => x.Refunds).Sum(x => x.Amount);
+
+        public decimal NetSales => GrossSales - TotalDiscounts - TotalAdjustments;
+
 
         public string FinancialStatus { get; set; }
         public string Tags { get; set;  }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
-
-
-        public decimal TotalRefundExcludingTaxAndShipping => TotalRefund - TaxRefundAmount + ShippingRefundAmount;
         
-        public decimal TotalGrossRevenue => this.LineItems.Sum(x => x.NetTotal);
+        public decimal NetTotal => this.LineItems.Sum(x => x.NetTotal);
         public bool Cancelled { get; set; }
 
 
@@ -54,12 +54,13 @@ namespace ProfitWise.Data.Model.Shopify
                 $"OrderLevelDiscount = {OrderLevelDiscount}" + Environment.NewLine +
                 $"CreatedAt = {CreatedAt}" + Environment.NewLine +
                 $"UpdatedAt = {UpdatedAt}" + Environment.NewLine +
-                $"SubTotal = {SubTotal}" + Environment.NewLine +
-                $"TotalRefund = {TotalRefund}" + Environment.NewLine +
-                $"TaxRefundAmount = {TaxRefundAmount}" + Environment.NewLine +
-                $"ShippingRefundAmount = {ShippingRefundAmount}" + Environment.NewLine +
-                $"TotalRefundExcludingTaxAndShipping = {TotalRefundExcludingTaxAndShipping}" + Environment.NewLine +
-                $"TotalGrossRevenue = {TotalGrossRevenue}" + Environment.NewLine;
+
+                $"GrossSales = {GrossSales}" + Environment.NewLine +
+                $"OrderLevelDiscount = {OrderLevelDiscount}" + Environment.NewLine +
+                $"TotalDiscounts = {TotalDiscounts}" + Environment.NewLine +
+                $"TotalAdjustments = {TotalAdjustments}" + Environment.NewLine +
+                $"TotalLineItemRefunds = {TotalLineItemRefunds}" + Environment.NewLine +
+                $"NetSales = {NetSales}" + Environment.NewLine;
 
             foreach (var line in this.LineItems)
             {

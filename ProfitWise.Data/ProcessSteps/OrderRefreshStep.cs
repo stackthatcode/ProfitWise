@@ -4,6 +4,7 @@ using System.Linq;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Shopify;
+using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;

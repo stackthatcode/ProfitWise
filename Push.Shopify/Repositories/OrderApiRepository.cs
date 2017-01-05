@@ -94,6 +94,7 @@ namespace Push.Shopify.Repositories
                             Tags = order.tags,
                     };
 
+                // The Order Discount is just the sum of all Discount Codes
                 foreach (var discount_code in order.discount_codes)
                 {
                     decimal amount = discount_code.amount;
@@ -102,8 +103,6 @@ namespace Push.Shopify.Repositories
 
                 foreach (var line_item in order.line_items)
                 {
-                    _logger.Debug($"Translating Order Line Item {line_item.id}");
-
                     var orderLineItemResult = new OrderLineItem();
 
                     orderLineItemResult.Id = line_item.id;

@@ -1,4 +1,5 @@
 ﻿using System;
+using ProfitWise.Data.Model.ShopifyImport;
 
 namespace ProfitWise.Data.Model.Shopify
 {

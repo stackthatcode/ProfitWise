@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Model.Shopify;
 using Push.Shopify.Model;
 
-namespace ProfitWise.Data.Model.Shopify
+namespace ProfitWise.Data.Model.ShopifyImport
 {
     public static class ShopifyOrderExtensions
     {
@@ -26,12 +27,10 @@ namespace ProfitWise.Data.Model.Shopify
                 ShopifyOrderId = order.Id,
                 Email = order.Email,
                 OrderNumber = order.Name,
+
                 OrderLevelDiscount = order.OrderDiscount,
-                SubTotal = order.SubTotal,
-                TotalRefund = order.TotalRefunds,
-                TaxRefundAmount = order.TotalTaxRefunds,
-                ShippingRefundAmount = order.TotalShippingRefund,
                 FinancialStatus = order.FinancialStatus,
+
                 Tags = order.Tags,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
