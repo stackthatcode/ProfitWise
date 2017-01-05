@@ -28,7 +28,7 @@ namespace Push.Shopify.Model
         public IList<Refund> Refunds { get; set; }
 
         public IEnumerable<OrderAdjustment> Adjustments => Refunds.SelectMany(x => x.OrderAdjustments);
-        public IEnumerable<OrderAdjustment> NonShippingAdjustments => Adjustments.Where(x => x.IsShippingAdjustment);
+        public IEnumerable<OrderAdjustment> NonShippingAdjustments => Adjustments.Where(x => !x.IsShippingAdjustment);
             
 
         public string FinancialStatus { get; set; }

@@ -28,7 +28,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public decimal TotalAdjustments => this.Adjustments.Sum(x => x.Amount);
         public decimal TotalLineItemRefunds => this.LineItems.SelectMany(x => x.Refunds).Sum(x => x.Amount);
 
-        public decimal NetSales => GrossSales - TotalDiscounts - TotalAdjustments;
+        public decimal NetSales => GrossSales - TotalLineItemRefunds - TotalDiscounts + TotalAdjustments;
 
 
         public string FinancialStatus { get; set; }
@@ -64,6 +64,11 @@ namespace ProfitWise.Data.Model.ShopifyImport
             foreach (var line in this.LineItems)
             {
                 output += Environment.NewLine + line.ToString();
+            }
+
+            foreach (var adjustment in this.Adjustments)
+            {
+                output += Environment.NewLine + adjustment.ToString();
             }
 
             return output;

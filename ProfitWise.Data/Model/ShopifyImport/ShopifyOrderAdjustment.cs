@@ -13,6 +13,21 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public decimal TaxAmount { get; set; }
         public string Kind { get; set; }
         public string Reason { get; set; }
+
+
+        public override string ToString()
+        {
+            return
+                "ShopifyOrderAdjustment" + Environment.NewLine +
+                $"PwShopId = {PwShopId}" + Environment.NewLine +
+                $"ShopifyAdjustmentId = {ShopifyAdjustmentId}" + Environment.NewLine +
+                $"ShopifyOrderId = {ShopifyOrderId}" + Environment.NewLine +
+                $"AdjustmentDate = {AdjustmentDate}" + Environment.NewLine +
+                $"Amount = {Amount}" + Environment.NewLine +
+                $"TaxAmount = {TaxAmount}" + Environment.NewLine +
+                $"Kind = {Kind}" + Environment.NewLine +                
+                $"Reason = {Reason}" + Environment.NewLine;
+        }
     }
 }
 

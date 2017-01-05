@@ -47,7 +47,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 shopifyOrder.LineItems.Add(lineItem.ToShopifyOrderLineItem(pwShopId, shopifyOrder));
             }
 
-            foreach (var adjustment in order.Adjustments)
+            foreach (var adjustment in order.NonShippingAdjustments)
             {
                 shopifyOrder.Adjustments.Add(adjustment.ToShopifyOrderAdjustment(pwShopId, shopifyOrder));
             }            
