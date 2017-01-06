@@ -254,18 +254,18 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Debug(orderFromShopify.ToString());
             }
 
-            if (existingOrder == null && orderFromShopify.Cancelled == true)
-            {
-                _pushLogger.Debug($"Skipping cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
-                return;
-            }
+            //if (existingOrder == null && orderFromShopify.Cancelled == true)
+            //{
+            //    _pushLogger.Debug($"Skipping cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
+            //    return;
+            //}
 
-            if (existingOrder != null && orderFromShopify.Cancelled == true)
-            {
-                _pushLogger.Debug($"Deleting cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");                
-                orderRepository.DeleteOrderFullDepth(orderFromShopify.Id);
-                return;
-            }
+            //if (existingOrder != null && orderFromShopify.Cancelled == true)
+            //{
+            //    _pushLogger.Debug($"Deleting cancelled Order: {orderFromShopify.Name}/{orderFromShopify.Id}");                
+            //    orderRepository.DeleteOrderFullDepth(orderFromShopify.Id);
+            //    return;
+            //}
 
             _pushLogger.Debug($"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} to ProfitWise data model");
 

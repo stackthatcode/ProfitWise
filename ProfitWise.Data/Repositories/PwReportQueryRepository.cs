@@ -168,8 +168,11 @@ namespace ProfitWise.Data.Repositories
             else
             {
                 var totalsQuery =
-                    @"SELECT SUM(NetSales) As TotalRevenue, 0 AS TotalNumberSold, SUM(CoGS) AS TotalCogs, 
-                        SUM(NetSales) - SUM(CoGS) AS TotalProfit, 100.0 - (100.0 * SUM(CoGS) / SUM(NetSales)) AS AverageMargin
+                    @"SELECT SUM(NetSales) As TotalRevenue, 
+                        COUNT(DISTINCT(ShopifyOrderId))  AS TotalNumberSold, 
+                        SUM(CoGS) AS TotalCogs, 
+                        SUM(NetSales) - SUM(CoGS) AS TotalProfit, 
+                        100.0 - (100.0 * SUM(CoGS) / SUM(NetSales)) AS AverageMargin
                     FROM profitwiseprofitreportentry
                     WHERE PwShopId = @PwShopId AND EntryDate >= @StartDate AND EntryDate <= @EndDate";
                 return _connection.Query<GroupedTotal>(totalsQuery, queryContext).First();

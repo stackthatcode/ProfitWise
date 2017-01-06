@@ -69,8 +69,7 @@ FROM shopifyorderadjustment t1;
 
 
 
-SELECT 
-	SUM(t3.NetSales) As TotalRevenue, 
+SELECT t3.NetSales As TotalRevenue, 
 	COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalNumberSold,
 	SUM(t3.CoGS) AS TotalCogs, 
     SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
@@ -83,14 +82,34 @@ FROM profitwisereportquerystub t1
 			AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
             AND t3.EntryDate >= '2016-12-05' AND t3.EntryDate <= '2016-12-05'           
 WHERE t1.PwShopId = 100001 AND t1.PwReportId = 99741
-                
 
-SELECT SUM(NetSales) As TotalRevenue, 
-	0 AS TotalNumberSold,
-	SUM(CoGS) AS TotalCogs, 
-    SUM(NetSales) - SUM(CoGS) AS TotalProfit,
-	100.0 - (100.0 * SUM(CoGS) / SUM(NetSales)) AS AverageMargin
+SELECT SUM(NetSales) As TotalRevenue, 0 AS TotalNumberSold, SUM(CoGS) AS TotalCogs, 
+    SUM(NetSales) - SUM(CoGS) AS TotalProfit, 100.0 - (100.0 * SUM(CoGS) / SUM(NetSales)) AS AverageMargin
 FROM profitwiseprofitreportentry
+WHERE EntryDate >= '2016-12-05' AND EntryDate <= '2016-12-05' 
+
+
+
+SELECT 2763771.43 - 2761863.17
+
+1908.26
+
+
+
+SELECT ShopifyOrderId, SUM(NetSales)
+FROM profitwiseprofitreportentry WHERE EntryDate = '2016-12-28' 
+GROUP BY ShopifyOrderId
+ORDER BY ShopifyOrderId;
+
+
+
+
+
+
+
+
+
+
 WHERE PwProductId IS NULL AND PwVariantId IS NULL
 AND EntryDate = '2016-12-05';
 
