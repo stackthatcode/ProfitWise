@@ -8,15 +8,13 @@ using OpenQA.Selenium.Support.UI;
 using System.Threading;
 using System.Drawing.Imaging;
 
-namespace ProfitWise.Test
+namespace ProfitWise.Test.Chrome
 {
     [TestClass]
-    public class ProfitWiseTesting
+    public class ProfitWiseTestingChrome
     {
 
-        static IWebDriver driverFF;
         static IWebDriver driverGC;
-        static IWebDriver driverIE;
 
         [AssemblyInitialize]
         public static void SetUp(TestContext context)
@@ -25,13 +23,13 @@ namespace ProfitWise.Test
             options.AddArgument("--start-maximized");
             driverGC = new ChromeDriver(options);
 
-            //driverFF = new FirefoxDriver();
-
-            //driverIE = new InternetExplorerDriver();
         }
 
+
+        //Google Chrome test procedures
+
         [TestMethod]
-        public void LoginToProfitWise()
+        public void GCLoginToProfitWise()
         {
             driverGC.Navigate().GoToUrl("https://3duniverse.myshopify.com/admin/apps/50d69dbaf54ee35929a946790d5884e4");
 
@@ -50,12 +48,12 @@ namespace ProfitWise.Test
             wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\Dashboard.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\Dashboard.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         }
 
         [TestMethod]
-        public void LoadOverallProfitability2016Report()
+        public void GCLoadOverallProfitability2016Report()
         {
 
 
@@ -95,12 +93,12 @@ namespace ProfitWise.Test
             Console.WriteLine("Total Profit for 2016 = " + Total2016Profit);
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\OverallProfitability2016.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\OverallProfitability2016.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         }
 
         [TestMethod]
-        public void TestDrillDown()
+        public void GCTestDrillDown()
         {
 
 
@@ -118,12 +116,12 @@ namespace ProfitWise.Test
             Thread.Sleep(1000);
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\DrillDown.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\DrillDown.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         }
 
         [TestMethod]
-        public void SetCustomDateRange()
+        public void GCSetCustomDateRange()
         {
 
             WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
@@ -163,12 +161,12 @@ namespace ProfitWise.Test
             Console.WriteLine("Profit for December, 2016 = " + Dec2016Profit);
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\CustomDateRange.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\CustomDateRange.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         }
 
         //[TestMethod]
-        //public void GroupByVendor()
+        //public void GCGroupByVendor()
         //{
         //    WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
 
@@ -187,12 +185,12 @@ namespace ProfitWise.Test
         //    Thread.Sleep(2000);
 
         //    Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-        //    ss.SaveAsFile("c:\\Screenshots\\GroupByVendor.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+        //    ss.SaveAsFile("c:\\Screenshots\\Chrome\\GroupByVendor.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         //}
 
         [TestMethod]
-        public void LoadEditFilters()
+        public void GCLoadEditFilters()
         {
             WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
 
@@ -218,7 +216,7 @@ namespace ProfitWise.Test
             
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\EditFilters.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\EditFilters.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
             //Click OK to go back to Dashboard
             driverGC.FindElement(By.CssSelector(".btn.btn-primary")).Click();
@@ -228,7 +226,7 @@ namespace ProfitWise.Test
         }
 
         [TestMethod]
-        public void LoadVendorDetailReport()
+        public void GCLoadVendorDetailReport()
         {
             WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
 
@@ -244,8 +242,13 @@ namespace ProfitWise.Test
             wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
             Thread.Sleep(2000);
 
+            //Check to make sure Number of Ultimaker products sold in December, 2016 = 96
+            var NumSold = driverGC.FindElement(By.XPath("//*[@id=\"detail-report-table\"]/tbody/tr[1]/td[2]/span")).Text;
+            Assert.AreEqual("96", NumSold);
+            Console.WriteLine("Number of Ultimaker sales in December, 2016 = " + NumSold);
+
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\VendorDetails.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\VendorDetails.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
             //Click Navigate Back to Summary to go back to Dashboard
             driverGC.FindElement(By.XPath("//*[@id=\"details-drillup-button\"]/a")).Click();
@@ -253,7 +256,7 @@ namespace ProfitWise.Test
         }
 
         [TestMethod]
-        public void LoadEditCoGS()
+        public void GCLoadEditCoGS()
         {
             WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
 
@@ -273,12 +276,12 @@ namespace ProfitWise.Test
             wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\EditCoGS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\EditCoGS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         }
 
         [TestMethod]
-        public void EditCoGSValue()
+        public void GCEditCoGSValue()
         {
             WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
           
@@ -301,10 +304,14 @@ namespace ProfitWise.Test
             driverGC.SwitchTo().DefaultContent();
             driverGC.SwitchTo().Frame("app-modal-iframe");
 
-            //Enter new value for CoGS
             Thread.Sleep(1000);
+
+            //Check to make sure the CoGS edit window is on the right product
+            var Title = driverGC.FindElement(By.XPath("/html/body/div[1]/form/div[1]/div[1]/span")).Text;
+            Assert.AreEqual("Ultimaker 3", Title);
+
+            //Enter new CoGS value
             wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector(".form-control.money-editor-text")));
-            //driverGC.FindElement(By.CssSelector(".form-control.money-editor-text")).Clear();
             driverGC.FindElement(By.CssSelector(".form-control.money-editor-text")).SendKeys("2796.01" + Keys.Enter);
 
             //Switch back to the main app window
@@ -312,21 +319,22 @@ namespace ProfitWise.Test
             driverGC.SwitchTo().DefaultContent();
             driverGC.SwitchTo().Frame("app-iframe");
 
+            //Check the CoGS Value for Ultimaker 3
             var CoGSValue = driverGC.FindElement(By.XPath("//*[@id=\"product-search-grid\"]/tbody/tr[1]/td[5]/a/span/span[1]/span")).Text;
-            Assert.AreEqual(CoGSValue, "$2,796.01 USD");
+            Assert.AreEqual("$2,796.01 USD", CoGSValue);
             Console.WriteLine("CoGS for Ultimaker 3 = " + CoGSValue);
-
-
 
             //Take a screenshot
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-            ss.SaveAsFile("c:\\Screenshots\\EditCoGSValue.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            ss.SaveAsFile("c:\\Screenshots\\Chrome\\EditCoGSValue.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+
 
         }
 
 
+
         //[TestMethod]
-        //public void TestTemplate()
+        //public void GCTestTemplate()
         //{
         //    WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
 
@@ -342,16 +350,22 @@ namespace ProfitWise.Test
         //    wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
         //    Thread.Sleep(2000);
 
+        //    //Check a value
+        //    var Value = driverGC.FindElement(By.XPath("PATH")).Text;
+        //    Assert.AreEqual("Value", Value);
+        //    Console.WriteLine("Value = " + Value);
+
         //    Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
-        //    ss.SaveAsFile("c:\\Screenshots\\XXX.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+        //    ss.SaveAsFile("c:\\Screenshots\\Chrome\\XXX.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         //}
+
+
 
 
         [ClassCleanup]
         public static void Cleanup()
         {
-
             Thread.Sleep(1000);
             driverGC.Quit();
         }
