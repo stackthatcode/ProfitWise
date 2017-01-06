@@ -7,6 +7,7 @@ using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.ShopifyImport;
 
+
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopRequired))]
@@ -136,17 +137,17 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO shopifyorderlineitem ( 
                     PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, PwProductId, PwVariantId, 
-                    Quantity, UnitPrice, TotalDiscount, NetTotal, NetQuantity, UnitCogs )
+                    Quantity, UnitPrice, TotalDiscount, TotalAfterAllDiscounts, NetQuantity, UnitCogs )
                 VALUES ( 
                     @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @PwProductId, @PwVariantId,
-                    @Quantity, @UnitPrice, @TotalDiscount, @NetTotal, @NetQuantity, @UnitCogs )";
+                    @Quantity, @UnitPrice, @TotalDiscount, @TotalAfterAllDiscounts, @NetQuantity, @UnitCogs )";
             _connection.Execute(query, lineitem);
         }
 
         public virtual void UpdateLineItemNetTotal(ShopifyOrderLineItem lineItem)
         {
             lineItem.PwShopId = PwShop.PwShopId;
-            var query = @"UPDATE shopifyorder SET NetTotal = @NetTotal, NetQuantity = @NetQuantity
+            var query = @"UPDATE shopifyorderlineitem SET TotalAfterAllDiscounts = @TotalAfterAllDiscounts, NetQuantity = @NetQuantity
                             WHERE PwShopId = @PwShopId AND ShopifyOrderLineId = @ShopifyOrderLineId";
             _connection.Execute(query, lineItem);
         }

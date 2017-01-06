@@ -15,6 +15,8 @@ DROP TABLE IF EXISTS `shopifyorderlineitem`;
 DROP TABLE IF EXISTS `shopifyorderrefund`; 
 DROP TABLE IF EXISTS `shopifyorderadjustment`; 
 
+DROP TABLE IF EXISTS `profitwiseprofitreportentry`;
+
 DROP TABLE IF EXISTS `profitwisepicklist`;
 DROP TABLE IF EXISTS `profitwisepicklistmasterproduct`;
 
@@ -122,7 +124,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `Quantity` int(6) unsigned NOT NULL, # Quantity for this line item
   `UnitPrice` decimal(15,2) DEFAULT NULL, # Unit price for this line item (for qty 1)
   `TotalDiscount` decimal(15,2) DEFAULT NULL, # Total discount applied to this line item
-  `NetTotal` decimal(15,2) DEFAULT NULL, # Net revenue for this line item (after discounts and refunds)  
+  `TotalAfterAllDiscounts` decimal(15,2) DEFAULT NULL, # Revenue before Refunds 
   `NetQuantity` INT(6) NOT NULL,
   `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit, in Store Currency
   
@@ -155,6 +157,21 @@ CREATE TABLE `shopifyorderadjustment` (
   PRIMARY KEY  (`PwShopId`, `ShopifyAdjustmentId` )
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
+CREATE TABLE `profitwiseprofitreportentry` (
+  `PwShopId` int(6) unsigned NOT NULL, 	# ProfitWise's shop identifier
+  `EntryDate` DATE NOT NULL,
+  `EntryType` TINYINT NOT NULL, 		# { 1 == Sale, 2 == Refund, 3 == Adjustment }
+  `ShopifyOrderId` BIGINT NOT NULL, 	# Shopify identifier for associated order
+  `SourceId` BIGINT NOT NULL, 
+  `PwProductId` BIGINT NULL, 	
+  `PwVariantId` BIGINT NULL, 	
+  `NetSales` decimal(15,2) DEFAULT NULL,
+  `CoGS` decimal(15,2) DEFAULT NULL,
+  
+  PRIMARY KEY  (`PwShopId`, `EntryDate` )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 

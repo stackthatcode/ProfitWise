@@ -7,8 +7,6 @@ SELECT * FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
 # ProfitWise says => 1535.06
 # Shopify says => 1590.67
 
-
-
 UPDATE profitwisemastervariant SET CoGSAmount = NULL;
 ##UPDATE profitwisemastervariant SET CurrencyId = 1, CogsAmount = 0 WHERE CogsAmount = NULL
 
@@ -26,8 +24,6 @@ AND t1.CogsAmount IS NULL;
 #$1000 @ 20% Margin = $800
 #$800 @ 20% ROI => $960
 
-
-
 ## SAVE *** Update all the Order Line CoGS
 UPDATE profitwiseshop t0
     INNER JOIN profitwisemastervariant t1 
@@ -41,33 +37,52 @@ UPDATE profitwiseshop t0
 			AND t4.SourceCurrencyId = t1.CogsCurrencyId
 			AND t4.DestinationCurrencyId = t0.CurrencyId
 SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0))
-WHERE t0.PwShopId = 100001
-AND t3.UnitCogs IS NULL;
+WHERE t0.PwShopId = 100001;
 
 
+
+
+SELECT
+	SUM(t3.TotalAfterAllDiscounts) As TotalRevenue, 
+	COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalNumberSold,
+	SUM(t3.UnitCogs * t3.Quantity) AS TotalCogs,
+	SUM(t3.TotalAfterAllDiscounts) - SUM(t3.UnitCogs * t3.Quantity) AS TotalProfit,
+	100.0 - (100.0 * SUM(t3.UnitCogs * t3.NetQuantity) / SUM(t3.TotalAfterAllDiscounts)) AS AverageMargin
+FROM profitwisereportquerystub t1
+	INNER JOIN profitwisevariant t2
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	LEFT JOIN shopifyorderlineitem t3
+		ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+			AND t3.OrderDate >= '2016-12-05' AND t3.OrderDate <= '2016-12-05' 
+	LEFT JOIN shopifyorderrefund t4
+		ON t1.PwShopId = t4.PwShopId AND t2.PwProductId = t4.PwProductId AND t2.PwVariantId = t4.PwVariantId  
+		
+SELECT * FROM shopifyorderlineitem;
+        
+                            
+                            
 
 SELECT * FROM calendar_table;
-
 SELECT * FROM shopifyorder;
-SELECT * FROM shopifyorderlineitem;
+
+
+SELECT t1.Quantity * t1.UnitPrice FROM shopifyorderlineitem t1
+	INNER JOIN profitwisevariant t2 ON t1.PwProductId = t2.PwProductId AND t1.PwVariantId = t2.PwVariantId
+WHERE OrderDate = '2016-12-05'
+ORDER BY Sku;
+
+SELECT 2461.95 - 102.00 - 102.00 - 34.00 -24.28;
+
+SELECT * FROM shopifyorderrefund WHERE RefundDate = '2016-12-05';
+SELECT * FROM shopifyorderadjustment WHERE AdjustmentDate = '2016-12-05';
+
+SELECT * FROM shopifyorderlineitem WHERE ShopifyOrderId = 4255498761;
+SELECT * FROM shopifyorder WHERE ShopifyOrderId = 4255498761;
 SELECT * FROM shopifyorderadjustment;
 SELECT * FROM shopifyorderrefund;
 
 SELECT * FROM profitwisereportquerystub;
-
-
-
-	SUM(t3.NetTotal) As TotalRevenue, 
-	SUM(t3.NetQuantity) AS TotalNumberSold,
-	SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs,
-	SUM(t3.NetTotal) - SUM(t3.UnitCogs * t3.NetQuantity) AS TotalProfit,
-	100.0 - (100.0 * SUM(t3.UnitCogs * t3.NetQuantity) / SUM(t3.NetTotal)) AS AverageMargin
-FROM profitwisereportquerystub t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	INNER JOIN shopifyorderlineitem t3
-		ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
-
+SELECT * FROM profitwisemastervariant;
 
 
 

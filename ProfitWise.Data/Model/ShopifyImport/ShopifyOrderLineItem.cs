@@ -46,11 +46,13 @@ namespace ProfitWise.Data.Model.ShopifyImport
             }
         }
         public decimal TotalDiscount => LineDiscount + PortionOfOrderDiscount;
-        public decimal TotalAfterAllDiscounts => GrossTotal - TotalDiscount;  
+        public decimal TotalAfterAllDiscounts => GrossTotal - TotalDiscount;    // We store this
+         
+        // Additional computation fields that aren't stored - we dump them to the interface later for forensics
         public decimal DiscountedUnitPrice => TotalAfterAllDiscounts / Quantity;
         public decimal TotalRefund => Refunds.Sum(x => x.Amount);
-
-        public decimal NetTotal => TotalAfterAllDiscounts - TotalRefund;    // We store this for Reporting
+        public decimal NetTotal => TotalAfterAllDiscounts - TotalRefund;
+        
         public decimal? UnitCogs { get; set; }
 
         public void SetProfitWiseVariant(PwVariant pwVariant)

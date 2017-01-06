@@ -149,11 +149,11 @@ namespace ProfitWise.Data.Repositories
         // Queries for generating Totals
         public string QueryGutsForTotals()
         {
-            return @"SUM(t3.NetTotal) As TotalRevenue, 
-                    SUM(t3.NetQuantity) AS TotalNumberSold,
-		            SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs,
-                    SUM(t3.NetTotal) - SUM(t3.UnitCogs * t3.NetQuantity) AS TotalProfit,
-                    100.0 - (100.0 * SUM(t3.UnitCogs * t3.NetQuantity) / SUM(t3.NetTotal)) AS AverageMargin
+            return @"SUM(t3.TotalAfterAllDiscounts) As TotalRevenue, 
+                    COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalNumberSold,
+		            SUM(t3.UnitCogs * t3.Quantity) AS TotalCogs,
+                    SUM(t3.TotalAfterAllDiscounts) - SUM(t3.UnitCogs * t3.Quantity) AS TotalProfit,
+                    100.0 - (100.0 * SUM(t3.UnitCogs * t3.NetQuantity) / SUM(t3.TotalAfterAllDiscounts)) AS AverageMargin
                 FROM profitwisereportquerystub t1
 		            INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
@@ -234,7 +234,6 @@ namespace ProfitWise.Data.Repositories
             return _connection.Query<int>(query, queryContext).First();
         }
 
-
         public List<GroupedTotal> RetreiveTotalsByProduct(TotalQueryContext queryContext)
         {
             var query =
@@ -286,6 +285,22 @@ namespace ProfitWise.Data.Repositories
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Vendor);
         }
+
+
+        // Queries for Refunds
+        public string QueryGutsForRefunds()
+        {
+            return
+                @"SUM(Amount) As TotalRefund
+                FROM profitwisereportquerystub t1
+		            INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN shopifyorderrefund t3
+		                ON t1.PwShopId = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId  
+			                AND t3.RefundDate >= @StartDate AND t3.RefundDate <= @EndDate             
+                WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
+        }
+
 
 
         // Date Period Bucketed Totals
@@ -342,7 +357,7 @@ namespace ProfitWise.Data.Repositories
             }
 
             var queryGuts =
-                @"SUM(t3.NetTotal) AS TotalRevenue, 
+                @"SUM(t3.TotalAfterAllDiscounts) AS TotalRevenue, 
 		        SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs
                 FROM profitwisereportquerystub t1
 	                INNER JOIN profitwisevariant t2
@@ -428,9 +443,9 @@ namespace ProfitWise.Data.Repositories
         public List<DateTotal> RetrieveDateTotals(
                 long reportId, DateTime startDate, DateTime endDate)
         {
-            var query = 
+            var query =
                 @"SELECT t3.OrderDate,
-		                SUM(t3.NetTotal) AS TotalRevenue, 
+		                SUM(t3.TotalAfterAllDiscounts) AS TotalRevenue, 
 		                SUM(t3.UnitCogs * t3.NetQuantity) AS TotalCogs
                 FROM profitwisereportquerystub t1
 	                INNER JOIN profitwisevariant t2
