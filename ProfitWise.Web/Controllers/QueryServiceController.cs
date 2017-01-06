@@ -153,7 +153,7 @@ namespace ProfitWise.Web.Controllers
                     PageSize = pageSize,
                 };
 
-                var totals = queryRepository.RetrieveTotals(queryContext);
+                var totals = queryRepository.RetrieveTotalsByContext(queryContext);
                 var totalCounts = queryRepository.RetreiveTotalCounts(queryContext);
 
                 // Top-level series...
@@ -389,9 +389,10 @@ namespace ProfitWise.Web.Controllers
             // 1st-level drill down
             var periodType = (report.EndDate - report.StartDate).ToDefaultGranularity();
 
-            var aggregateDateTotals = queryRepository
-                    .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
-                    .ToDictionary(x => x.OrderDate, x => x);
+            var totals = queryRepository
+                .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate);
+
+            var aggregateDateTotals = totals.ToDictionary(x => x.OrderDate, x => x);
 
             // Context #3 - Report Series hierarchical structure
             var series = ReportSeriesFactory.GenerateSeriesRecursive(
