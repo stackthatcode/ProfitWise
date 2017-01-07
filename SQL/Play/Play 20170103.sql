@@ -87,3 +87,34 @@ SELECT * FROM profitwisemastervariant;
 
 
 
+SELECT 
+	SUM(t1.NetSales) As TotalRevenue, 
+	SUM(DISTINCT(IF(t2.ShopifyOrderId IS NULL, 0, 1)))  AS TotalNumberSold, 
+	SUM(t1.CoGS) AS TotalCogs, 
+	SUM(t1.NetSales) - SUM(t1.CoGS) AS TotalProfit, 
+	100.0 - (100.0 * SUM(t1.CoGS) / SUM(t1.NetSales)) AS AverageMargin
+FROM profitwiseprofitreportentry t1
+	LEFT OUTER JOIN shopifyorder t2
+		ON t1.PwShopId = t2.PwShopId AND t1.ShopifyOrderId = t2.ShopifyOrderId
+
+
+
+
+SELECT 
+	SUM(t1.NetSales) As TotalRevenue, 
+	SUM(t1.CoGS) AS TotalCogs, 
+	SUM(t1.NetSales) - SUM(t1.CoGS) AS TotalProfit, 
+	100.0 - (100.0 * SUM(t1.CoGS) / SUM(t1.NetSales)) AS AverageMargin,
+	
+FROM profitwiseprofitreportentry t1, shopifyorder t2
+WHERE t2.Cancelled = 1;
+
+
+SELECT COUNT(*) AS NumberOfOrders FROM shopifyorder
+WHERE OrderDate >= '2016-12-01' AND OrderDate <= '2016-12-31'
+AND 
+
+
+
+SELECT * FROM shopifyorder;
+

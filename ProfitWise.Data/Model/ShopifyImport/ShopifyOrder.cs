@@ -11,6 +11,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public string Email { get; set; }
         public string OrderNumber { get; set; }
         public decimal OrderLevelDiscount { get; set; }  // We store this - comes directly from Shopify
+        public DateTime OrderDate { get; set; }
 
         public IList<ShopifyOrderLineItem> LineItems { get; set; }
         public IList<ShopifyOrderAdjustment> Adjustments { get; set; }

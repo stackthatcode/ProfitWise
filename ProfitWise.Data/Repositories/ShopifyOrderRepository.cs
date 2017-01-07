@@ -70,11 +70,13 @@ namespace ProfitWise.Data.Repositories
                                 @ShopifyOrderId,
                                 @Email, 
                                 @OrderNumber, 
+                                @OrderDate,
                                 @OrderLevelDiscount,
                                 @FinancialStatus,
                                 @Tags,
                                 @CreatedAt, 
-                                @UpdatedAt)";
+                                @UpdatedAt,
+                                @Cancelled )";
             _connection.Execute(query, order);
         }
 
@@ -85,7 +87,8 @@ namespace ProfitWise.Data.Repositories
                                 Email = @Email,
                                 FinancialStatus = @FinancialStatus,
                                 Tags = @Tags,
-                                UpdatedAt = @UpdatedAt
+                                UpdatedAt = @UpdatedAt,
+                                Cancelled = @Cancelled
                             WHERE PwShopId = @PwShopId AND ShopifyOrderId = @ShopifyOrderId";
             _connection.Execute(query, order);
         }

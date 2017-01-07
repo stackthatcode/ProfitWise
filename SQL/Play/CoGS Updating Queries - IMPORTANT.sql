@@ -1,7 +1,4 @@
 
-SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE OrderDate = '2016-12-05';
-SELECT * FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
-
 # ProfitWise says => 1535.06
 # Shopify says => 1590.67
 
@@ -43,15 +40,17 @@ DELETE FROM profitwiseprofitreportentry;
 
 # Step #1 - Populate all the Order Lines into Profit Report Entries
 INSERT INTO profitwiseprofitreportentry
-SELECT 	t1.PwShopId, t1.OrderDate, 1 AS EntryType, t1.ShopifyOrderId, t1.ShopifyOrderLineId AS SourceId, 
-		t1.PwProductId, t1.PwVariantId, t1.TotalAfterAllDiscounts AS NetSales, Quantity * UnitCogs AS CoGS
-FROM shopifyorderlineitem t1;
+SELECT 	PwShopId, OrderDate, 1 AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
+		PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, Quantity * UnitCogs AS CoGS,
+        Quantity AS Quantity
+FROM shopifyorderlineitem;
 
 
 # Step #2 - Populate all the Refunds into Profit Report Entries
 INSERT INTO profitwiseprofitreportentry
 SELECT 	t1.PwShopId, t1.RefundDate, 2 AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
-		t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, -t1.RestockQuantity * t2.UnitCogs AS CoGS
+		t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, -t1.RestockQuantity * t2.UnitCogs AS CoGS,
+        -t1.RestockQuantity AS Quantity
 FROM shopifyorderrefund t1
 		INNER JOIN shopifyorderlineitem t2
 			ON t1.PwShopId = t2.PwShopId 
@@ -62,57 +61,9 @@ FROM shopifyorderrefund t1
 # Step #3 - Populate all the Adjustments into Profit Report Entries
 INSERT INTO profitwiseprofitreportentry
 SELECT t1.PwShopId, t1.AdjustmentDate, 3 AS EntryType, t1.ShopifyOrderId, t1.ShopifyAdjustmentId AS SourceId, 
-		NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS
+		NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS, NULL AS Quantity
 FROM shopifyorderadjustment t1;
 
 
 
-
-
-SELECT t3.NetSales As TotalRevenue, 
-	COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalNumberSold,
-	SUM(t3.CoGS) AS TotalCogs, 
-    SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
-	100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) AS AverageMargin
-FROM profitwisereportquerystub t1
-	INNER JOIN profitwisevariant t2
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	INNER JOIN profitwiseprofitreportentry t3
-		ON t1.PwShopId = t3.PwShopId 
-			AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-            AND t3.EntryDate >= '2016-12-05' AND t3.EntryDate <= '2016-12-05'           
-WHERE t1.PwShopId = 100001 AND t1.PwReportId = 99741
-
-SELECT SUM(NetSales) As TotalRevenue, 0 AS TotalNumberSold, SUM(CoGS) AS TotalCogs, 
-    SUM(NetSales) - SUM(CoGS) AS TotalProfit, 100.0 - (100.0 * SUM(CoGS) / SUM(NetSales)) AS AverageMargin
-FROM profitwiseprofitreportentry
-WHERE EntryDate >= '2016-12-05' AND EntryDate <= '2016-12-05' 
-
-
-
-SELECT 2763771.43 - 2761863.17
-
-1908.26
-
-
-
-SELECT ShopifyOrderId, SUM(NetSales)
-FROM profitwiseprofitreportentry WHERE EntryDate = '2016-12-28' 
-GROUP BY ShopifyOrderId
-ORDER BY ShopifyOrderId;
-
-
-
-
-
-
-
-
-
-
-WHERE PwProductId IS NULL AND PwVariantId IS NULL
-AND EntryDate = '2016-12-05';
-
-
-WHERE PwShopId = @PwShopId AND 
 

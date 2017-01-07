@@ -100,6 +100,7 @@ CREATE TABLE `profitwiseprofitreportentry` (
   `PwVariantId` BIGINT NULL, 	
   `NetSales` decimal(15,2) DEFAULT NULL,
   `CoGS` decimal(15,2) DEFAULT NULL,
+  `Quantity` INT NULL,
   
   PRIMARY KEY  (`PwShopId`, `EntryDate`, `EntryType`, `ShopifyOrderId`, `SourceId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -168,14 +168,25 @@ namespace ProfitWise.Data.Repositories
             else
             {
                 var totalsQuery =
-                    @"SELECT SUM(NetSales) As TotalRevenue, 
-                        COUNT(DISTINCT(ShopifyOrderId))  AS TotalNumberSold, 
-                        SUM(CoGS) AS TotalCogs, 
-                        SUM(NetSales) - SUM(CoGS) AS TotalProfit, 
-                        100.0 - (100.0 * SUM(CoGS) / SUM(NetSales)) AS AverageMargin
-                    FROM profitwiseprofitreportentry
-                    WHERE PwShopId = @PwShopId AND EntryDate >= @StartDate AND EntryDate <= @EndDate";
-                return _connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
+                    @"SELECT 
+	                    SUM(t1.NetSales) As TotalRevenue, 
+	                    SUM(t1.CoGS) AS TotalCogs, 
+	                    SUM(t1.NetSales) - SUM(t1.CoGS) AS TotalProfit, 
+	                    100.0 - (100.0 * SUM(t1.CoGS) / SUM(t1.NetSales)) AS AverageMargin
+                    FROM profitwiseprofitreportentry t1 
+                        LEFT OUTER JOIN shopifyorder t2
+		                    ON t1.PwShopId = t2.PwShopId AND t1.ShopifyOrderId = t2.ShopifyOrderId AND t2.Cancelled = 0
+                    WHERE t1.PwShopId = @PwShopId AND t1.EntryDate >= @StartDate AND t1.EntryDate <= @EndDate";
+                var totals = _connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
+
+                var numberOfOrdersQuery =
+                    @"SELECT COUNT(*) AS NumberOfOrders FROM shopifyorder
+                    WHERE OrderDate >= @StartDate AND OrderDate <= @EndDate
+                    AND PwShopId = @PwShopId AND Cancelled = 0";
+
+                var orderCount = _connection.Query<int>(numberOfOrdersQuery, queryContext).First();
+                totals.TotalNumberSold = orderCount;
+                return totals;
             }
         }
         
@@ -274,17 +285,21 @@ namespace ProfitWise.Data.Repositories
 
         public string QueryGutsForTotals()
         {
-            return @"SUM(t3.NetSales) As TotalRevenue, COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalNumberSold,
-		            SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
+            return @"SUM(t3.NetSales) As TotalRevenue,
+                    SUM(t3.Quantity) AS TotalNumberSold,
+		            SUM(t3.CoGS) AS TotalCogs, 
+                    SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
                     100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) AS AverageMargin
-                FROM profitwisereportquerystub t1
-		            INNER JOIN profitwisevariant t2
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitwiseprofitreportentry t3
-		                ON t1.PwShopId = t3.PwShopId 
-                            AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-                            AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate             
-                WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
+                    FROM profitwisereportquerystub t1
+		                INNER JOIN profitwisevariant t2
+		                    ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                    INNER JOIN profitwiseprofitreportentry t3
+		                    ON t1.PwShopId = t3.PwShopId
+                                AND t2.PwProductId = t3.PwProductId 
+                                AND t2.PwVariantId = t3.PwVariantId
+                                AND t3.EntryDate >= @StartDate
+                                AND t3.EntryDate <= @EndDate             
+                    WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
         }
 
         public string OrderingAndPagingForTotals(TotalQueryContext queryContext)

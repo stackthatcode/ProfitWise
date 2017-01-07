@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Push.Shopify.Model;
 
@@ -55,10 +56,9 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 ShopifyOrderId = order.Id,
                 Email = order.Email,
                 OrderNumber = order.Name,
-
+                OrderDate = order.CreatedAt.Date,
                 OrderLevelDiscount = order.OrderDiscount,
                 FinancialStatus = order.FinancialStatus,
-
                 Tags = order.Tags,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
@@ -77,7 +77,27 @@ namespace ProfitWise.Data.Model.ShopifyImport
             foreach (var adjustment in order.NonShippingAdjustments)
             {
                 shopifyOrder.Adjustments.Add(adjustment.ToShopifyOrderAdjustment(pwShopId, shopifyOrder));
-            }            
+            }
+
+            var difference = shopifyOrder.OrderLevelDiscount - shopifyOrder.LineItems.Sum(x => x.PortionOfOrderDiscount);
+            if (Math.Abs(difference) > 0)
+            {
+                var balancingAdjustment = new ShopifyOrderAdjustment();
+                balancingAdjustment.PwShopId = pwShopId;
+                balancingAdjustment.Order = shopifyOrder;
+
+                // I know, I know... but we don't have any other way to provision numbers for this
+                balancingAdjustment.ShopifyAdjustmentId = shopifyOrder.ShopifyOrderId;
+                balancingAdjustment.ShopifyOrderId = shopifyOrder.ShopifyOrderId;
+                balancingAdjustment.AdjustmentDate = order.CreatedAt;
+
+                balancingAdjustment.Amount = -difference;
+                balancingAdjustment.TaxAmount = 0;
+                balancingAdjustment.Reason = "Balancing Entry to account for rounding errors in Discounts";
+                balancingAdjustment.Kind = "Discount Adjustment";
+
+                shopifyOrder.Adjustments.Add(balancingAdjustment);
+            }
 
             return shopifyOrder;
         }
@@ -145,10 +165,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
             existingOrder.Email = importedOrder.Email;
             existingOrder.Tags = importedOrder.Tags;
             existingOrder.FinancialStatus = importedOrder.FinancialStatus;
-
-            //existingOrder.TotalRefund = importedOrder.TotalRefund;
-            //existingOrder.TaxRefundAmount = importedOrder.TaxRefundAmount;
-            //existingOrder.ShippingRefundAmount = importedOrder.ShippingRefundAmount;
+            existingOrder.Cancelled = importedOrder.Cancelled;
         }
     }
 }

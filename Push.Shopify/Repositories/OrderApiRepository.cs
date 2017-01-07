@@ -97,8 +97,11 @@ namespace Push.Shopify.Repositories
                 // The Order Discount is just the sum of all Discount Codes
                 foreach (var discount_code in order.discount_codes)
                 {
-                    decimal amount = discount_code.amount;
-                    orderResult.OrderDiscount += amount;
+                    if (discount_code.type != "shipping")
+                    {
+                        decimal amount = discount_code.amount;
+                        orderResult.OrderDiscount += amount;
+                    }
                 }
 
                 foreach (var line_item in order.line_items)

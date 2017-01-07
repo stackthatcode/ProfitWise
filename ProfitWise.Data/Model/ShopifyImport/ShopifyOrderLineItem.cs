@@ -15,6 +15,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
         public DateTime OrderDateTimestamp { get; set; }
         public DateTime OrderDate { get; set; }
+        //public bool Cancelled => ParentOrder.Cancelled;
 
         public long? PwProductId { get; set; }
         public long? PwVariantId { get; set; }
@@ -40,8 +41,8 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 }
                 else
                 {
-                    return this.ParentOrder.OrderLevelDiscount * this.TotalAfterLineDiscount /
-                           this.ParentOrder.LineItems.Sum(x => x.TotalAfterLineDiscount);
+                    return Math.Round(this.ParentOrder.OrderLevelDiscount * this.TotalAfterLineDiscount /
+                           this.ParentOrder.LineItems.Sum(x => x.TotalAfterLineDiscount), 2);
                 }
             }
         }
