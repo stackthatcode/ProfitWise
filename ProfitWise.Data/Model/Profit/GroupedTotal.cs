@@ -42,7 +42,8 @@ namespace ProfitWise.Data.Model.Profit
         public decimal TotalCogs { get; set; }
         public decimal TotalRevenue { get; set; }
         public decimal TotalProfit { get; set; }
-        public int TotalNumberSold { get; set; }
+        public int TotalQuantitySold { get; set; }
+        public int TotalOrders { get; set; }
         public decimal AverageMargin { get; set; }
     }
 
@@ -61,7 +62,7 @@ namespace ProfitWise.Data.Model.Profit
 
             if (input.Sum(x => x.TotalRevenue) == summary.TotalRevenue &&
                 input.Sum(x => x.TotalCogs) == summary.TotalCogs &&
-                input.Sum(x => x.TotalNumberSold) == summary.TotalNumberSold)
+                input.Sum(x => x.TotalQuantitySold) == summary.TotalQuantitySold)
             {
                 return input;
             }
@@ -71,7 +72,7 @@ namespace ProfitWise.Data.Model.Profit
                 GroupingName = allOthersName,
                 TotalRevenue = summary.TotalRevenue - input.Sum(x => x.TotalRevenue),
                 TotalCogs = summary.TotalCogs - input.Sum(x => x.TotalCogs),
-                TotalNumberSold = summary.TotalNumberSold - input.Sum(x => x.TotalNumberSold)
+                TotalQuantitySold = summary.TotalQuantitySold - input.Sum(x => x.TotalQuantitySold)
             });
             return input;
         }

@@ -169,6 +169,7 @@ namespace ProfitWise.Data.Repositories
             {
                 var totalsQuery =
                     @"SELECT 
+                        SUM(t1.Quantity) AS TotalQuantitySold,
 	                    SUM(t1.NetSales) As TotalRevenue, 
 	                    SUM(t1.CoGS) AS TotalCogs, 
 	                    SUM(t1.NetSales) - SUM(t1.CoGS) AS TotalProfit, 
@@ -185,7 +186,7 @@ namespace ProfitWise.Data.Repositories
                     AND PwShopId = @PwShopId AND Cancelled = 0";
 
                 var orderCount = _connection.Query<int>(numberOfOrdersQuery, queryContext).First();
-                totals.TotalNumberSold = orderCount;
+                totals.TotalOrders = orderCount;
                 return totals;
             }
         }
@@ -286,9 +287,8 @@ namespace ProfitWise.Data.Repositories
         public string QueryGutsForTotals()
         {
             return @"SUM(t3.NetSales) As TotalRevenue,
-                    SUM(t3.Quantity) AS TotalNumberSold,
-		            SUM(t3.CoGS) AS TotalCogs, 
-                    SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
+                    SUM(t3.Quantity) AS TotalQuantitySold,
+		            SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
                     100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) AS AverageMargin
                     FROM profitwisereportquerystub t1
 		                INNER JOIN profitwisevariant t2
