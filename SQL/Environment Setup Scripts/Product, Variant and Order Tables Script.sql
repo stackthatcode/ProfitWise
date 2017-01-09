@@ -102,6 +102,7 @@ CREATE TABLE `shopifyorder` (
   `ShopifyOrderId` BIGINT NOT NULL, # Shopify's unique order identifier
   `Email` varchar(128) DEFAULT NULL, # Email address associated with the order
   `OrderNumber` varchar(128) DEFAULT NULL, # Shopify order number
+  `OrderDate` DATE NOT NULL, # Date-time simplified to Date-only for easy joins
   `OrderLevelDiscount` decimal(15,2) DEFAULT NULL, # Discount applied at the order-level  
   `FinancialStatus` varchar(25) DEFAULT NULL, # Financial settlement status of this order
   `Tags` varchar(500) DEFAULT NULL, # Tags for this order
