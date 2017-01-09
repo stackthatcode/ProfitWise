@@ -6,6 +6,7 @@
         public long Id { get; set; }
         public long LineItemId { get; set; }
         public int RestockQuantity { get; set; }
-        public decimal TaxRefund { get; set; }
+        public decimal TaxTotal { get; set; }
+        public decimal SubTotal { get; set; }
     }
 }

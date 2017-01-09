@@ -218,7 +218,7 @@
                     <td><div class="overflow-gracefully" style="max-width:350px;"
                              data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></div></td>
                     <td><span class="overflow-gracefully" 
-                              data-bind="text: TotalNumberSold"></span></td>
+                              data-bind="text: TotalQuantitySold"></span></td>
                     <td><span class="overflow-gracefully" 
                               data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(AverageMargin)"></span>%</td>
                     <td><span class="overflow-gracefully" 
@@ -244,7 +244,7 @@
     <div class="row executive-summary" data-bind="with: ReportSummaryContext.Data">
         <div class="col-xs-3">
             <div class="executive-summary-label">Number of Orders</div>
-            <h1 data-bind="text: ExecutiveSummary.TotalNumberSold"></h1>
+            <h1 data-bind="text: ExecutiveSummary.TotalOrders"></h1>
         </div>
         <div class="col-xs-3">
             <div class="executive-summary-label">Revenue</div>
@@ -291,7 +291,7 @@
 
     <!-- Pie Charts -->
     <div data-bind="with: ReportSummaryContext">
-        <div data-bind="if: Data().ExecutiveSummary.TotalNumberSold > 0">
+        <div data-bind="if: Data().ExecutiveSummary.TotalQuantitySold > 0">
             <div class="row">
                 <div class="col-xs-6">
                     <div>
@@ -362,7 +362,7 @@
             </div>
         </div> 
          
-        <div data-bind="ifnot: Data().ExecutiveSummary.TotalNumberSold > 0">
+        <div data-bind="ifnot: Data().ExecutiveSummary.TotalQuantitySold > 0">
             <h1 style="margin-top: 100px; margin-bottom:300px; text-align:center; font-weight:700; font-size:4em; color:#CCC;">
                 No Data Found With Current Parameters
             </h1>
@@ -391,7 +391,7 @@
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId) "></td>
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId) "></td>
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
-                <td data-bind="text: TotalNumberSold"></td>
+                <td data-bind="text: TotalQuantitySold"></td>
             </tr>
             </tbody>
         </table>
@@ -746,7 +746,7 @@
                     ProfitWiseWidgets.LoadColumnChart(
                         '#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
 
-                    if (data.Summary.ExecutiveSummary.TotalNumberSold > 0) {
+                    if (data.Summary.ExecutiveSummary.TotalQuantitySold > 0) {
                         self.LoadPieChart('products-pie-chart', 'Top Products', data.Summary.ProductsByMostProfitable, data.CurrencyId);
                         self.LoadPieChart('vendors-pie-chart', 'Top Vendors', data.Summary.VendorsByMostProfitable, data.CurrencyId);
                         self.LoadPieChart('variants-pie-chart', 'Top Variants', data.Summary.VariantByMostProfitable, data.CurrencyId);

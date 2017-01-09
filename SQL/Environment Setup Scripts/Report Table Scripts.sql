@@ -85,3 +85,25 @@ ALTER TABLE `profitwisereportquerystub` ADD INDEX `Vendor` (`Vendor`);
 ALTER TABLE `profitwisereportquerystub` ADD INDEX `ProductType` (`ProductType`);
 
 
+
+
+
+DROP TABLE IF EXISTS `profitwiseprofitreportentry`;
+
+CREATE TABLE `profitwiseprofitreportentry` (
+  `PwShopId` int(6) unsigned NOT NULL, 	# ProfitWise's shop identifier
+  `EntryDate` DATE NOT NULL,
+  `EntryType` TINYINT NOT NULL, 		# { 1 == Sale, 2 == Refund, 3 == Adjustment }
+  `ShopifyOrderId` BIGINT NOT NULL, 	# Shopify identifier for associated order
+  `SourceId` BIGINT NOT NULL, 
+  `PwProductId` BIGINT NULL, 	
+  `PwVariantId` BIGINT NULL, 	
+  `NetSales` decimal(15,2) DEFAULT NULL,
+  `CoGS` decimal(15,2) DEFAULT NULL,
+  `Quantity` INT NULL,
+  
+  PRIMARY KEY  (`PwShopId`, `EntryDate`, `EntryType`, `ShopifyOrderId`, `SourceId` )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
