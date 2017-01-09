@@ -180,29 +180,29 @@ namespace ProfitWise.Test.Firefox
 
         }
 
-        //[TestMethod]
-        //public void FFGroupByVendor()
-        //{
-        //    WebDriverWait wait = new WebDriverWait(driverFF, TimeSpan.FromSeconds(30));
+        [TestMethod]
+        public void FFGroupByVendor()
+        {
+            WebDriverWait wait = new WebDriverWait(driverFF, TimeSpan.FromSeconds(30));
 
-        //    //Wait for Spinner Layer to go away
-        //    wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
+            //Wait for Spinner Layer to go away
+            wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
 
-        //    //Wait for Group By drop-down to be available
-        //    wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[3]/div/div[1]/span[2]/span/a/span")));
+            //Wait for Group By drop-down to be available
+            wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[3]/div/div[1]/span[2]/span/a")));
 
-        //    driverFF.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[3]/div/div[1]/span[2]/span/a/span")).Click();
-        //    driverFF.FindElement(By.ClassName("form-control")).Click();
-        //    driverFF.FindElement(By.PartialLinkText("Vendor")).Click();
+            driverFF.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[3]/div/div[1]/span[2]/span/a")).Click();
+            driverFF.FindElement(By.ClassName("form-control")).Click();
+            driverFF.FindElement(By.PartialLinkText("Vendor")).Click();
 
-        //    //Wait for Spinner Layer to go away
-        //    wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
-        //    Thread.Sleep(2000);
+            //Wait for Spinner Layer to go away
+            wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.ClassName("spinner-layer")));
+            Thread.Sleep(2000);
 
-        //    Screenshot ss = ((ITakesScreenshot)driverFF).GetScreenshot();
-        //    ss.SaveAsFile("c:\\Screenshots\\Firefox\\GroupByVendor.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            Screenshot ss = ((ITakesScreenshot)driverFF).GetScreenshot();
+            ss.SaveAsFile("c:\\Screenshots\\Firefox\\GroupByVendor.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
-        //}
+        }
 
         [TestMethod]
         public void FFLoadEditFilters()
