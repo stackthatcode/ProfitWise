@@ -81,12 +81,12 @@ namespace ProfitWise.Test.Chrome
 
             //Check 2016 Revenues
             var Total2016Revenues = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[2]/h1")).Text;
-            Assert.AreEqual("$2,656,800.96", Total2016Revenues);
+            Assert.AreEqual("$2,763,804.31", Total2016Revenues);
             Console.WriteLine("Total Revenues for 2016 = " + Total2016Revenues);
 
             //Check 2016 Profits
             var Total2016Profit = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[4]/h1")).Text;
-            Assert.AreEqual("$584,770.58", Total2016Profit);
+            Assert.AreEqual("$698,536.12", Total2016Profit);
             Console.WriteLine("Total Profit for 2016 = " + Total2016Profit);
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
@@ -149,12 +149,12 @@ namespace ProfitWise.Test.Chrome
 
             //Check December, 2016 Revenues
             var Dec2016Revenues = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[2]/h1")).Text;
-            Assert.AreEqual("$296,613.65", Dec2016Revenues);
+            Assert.AreEqual("$296,153.83", Dec2016Revenues);
             Console.WriteLine("Revenues for December, 2016 = " + Dec2016Revenues);
 
             //Check December, 2016 Profits
             var Dec2016Profit = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[4]/h1")).Text;
-            Assert.AreEqual("$63,400.84", Dec2016Profit);
+            Assert.AreEqual("$63,176.20", Dec2016Profit);
             Console.WriteLine("Profit for December, 2016 = " + Dec2016Profit);
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
@@ -208,7 +208,7 @@ namespace ProfitWise.Test.Chrome
 
             //Check to make sure Number of Variants = 20
             var NumVariants = driverGC.FindElement(By.XPath("//*[@id=\"product-variant-count-container\"]/div[3]/a/span")).Text;
-            Assert.AreEqual("20", NumVariants);
+            Assert.AreEqual("21", NumVariants);
             Console.WriteLine("Number of 3D Printer Variants = " + NumVariants);
             
 

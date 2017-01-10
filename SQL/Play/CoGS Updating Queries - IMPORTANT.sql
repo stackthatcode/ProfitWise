@@ -2,18 +2,18 @@
 # ProfitWise says => 1535.06
 # Shopify says => 1590.67
 
-UPDATE profitwisemastervariant SET CoGSAmount = NULL;
+#UPDATE profitwisemastervariant SET CoGSAmount = NULL;
 ##UPDATE profitwisemastervariant SET CurrencyId = 1, CogsAmount = 0 WHERE CogsAmount = NULL
 
 
 ## SAVE *** Update all the CoGS based on 20% margin
-UPDATE profitwiseshop t0
-    INNER JOIN profitwisemastervariant t1 
-		ON t0.PwShopId = t1.PwShopId
-	INNER JOIN profitwisevariant t2 
-		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
-SET t1.CogsCurrencyId = t0.CurrencyId, t1.CogsAmount = t2.HighPrice * 0.80, t1.CogsDetail = false
-WHERE t0.PwShopId = 100001;
+#UPDATE profitwiseshop t0
+#    INNER JOIN profitwisemastervariant t1 
+#		ON t0.PwShopId = t1.PwShopId
+#	INNER JOIN profitwisevariant t2 
+#		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
+#SET t1.CogsCurrencyId = t0.CurrencyId, t1.CogsAmount = t2.HighPrice * 0.80, t1.CogsDetail = false
+#WHERE t0.PwShopId = 100001;
 
 
 #$1000 @ 20% Margin = $800
