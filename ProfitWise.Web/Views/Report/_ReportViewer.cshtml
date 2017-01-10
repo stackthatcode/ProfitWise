@@ -2,9 +2,6 @@
 @using ProfitWise.Data.Model.Reports
 @using Push.Foundation.Web.Json
 
-@Html.Partial("~/Views/SharedTemplates/_SelectorPopoverWidget.cshtml")
-@Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
-
 <style>
     table#product-types td {
         height: 70px !important;
@@ -28,6 +25,12 @@
     .report-widget-label {
         font-weight: 700;
         color: #AAA;
+    }
+
+    .report-widget-drilldown-link {
+        font-weight:700; 
+        margin-top:15px;
+        display: inline-block;
     }
 
     .profit-table tr td:nth-child(1), .profit-table tr th:nth-child(1)  {
@@ -59,9 +62,16 @@
         font-weight: 700;
         color: #999;
     }
+    .executive-summary .summary-cell {
+        text-align: left;
+    }
+
+    .summary-header {
+        text-align:center; border-bottom:1px dashed #CCC; overflow:auto;
+    }
 
     .pie-chart {
-        min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto
+        min-width: 310px; height: 400px; max-width: 600px;margin: 0 auto;clear: both;
     }
 </style>
 
@@ -242,19 +252,19 @@
 <script id="Report-Viewer-Summary-Section" type="html/text">
     <!-- Executive Summary -->
     <div class="row executive-summary" data-bind="with: ReportSummaryContext.Data">
-        <div class="col-xs-3">
+        <div class="col-xs-3 summary-cell">
             <div class="executive-summary-label">Number of Orders</div>
             <h1 data-bind="text: ExecutiveSummary.TotalOrders"></h1>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-3 summary-cell">
             <div class="executive-summary-label">Revenue</div>
             <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-3 summary-cell">
             <div class="executive-summary-label">Cost of Goods Sold</div>
             <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-3 summary-cell">
             <div class="executive-summary-label">Profit</div>
             <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
         </div>
@@ -294,14 +304,14 @@
         <div data-bind="if: Data().ExecutiveSummary.TotalQuantitySold > 0">
             <div class="row">
                 <div class="col-xs-6">
-                    <div>
-                        <span class="report-widget-label">Top Performing Products</span>
-                        <a href="#" class="btn btn-primary pull-right" style="width:200px;"
+                    <div class="summary-header">
+                        <h4 class="report-widget-label pull-left">Top Performing Products</h4>
+                        <a href="#" class="report-widget-drilldown-link pull-right"
                            data-bind="click: function() { DetailCallback('@ReportGrouping.Product') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Detail
+                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; View Product Detail
                         </a>
                     </div>
-                    <div id="products-pie-chart" class="pie-chart"></div>
+                    <div id="products-pie-chart" class="pie-chart" style="clear:both;"></div>
                     <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
                                         data: { ProfitData: Data().ProductsByMostProfitable,
                                                 CurrencyId: Data().CurrencyId } }">
@@ -309,9 +319,9 @@
                 </div>
 
                 <div class="col-xs-6">
-                    <div>
-                        <span class="report-widget-label">Top Performing Vendors</span>
-                        <a href="#" class="btn btn-primary pull-right" style="width:200px;"
+                    <div class="summary-header">
+                        <h4 class="report-widget-label pull-left">Top Performing Vendors</h4>
+                        <a href="#" class="report-widget-drilldown-link pull-right"
                            data-bind="click: function() { DetailCallback('@ReportGrouping.Vendor') }">
                             <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Vendor Detail
                         </a>
@@ -331,9 +341,9 @@
 
             <div class="row">
                 <div class="col-xs-6">
-                    <div>
-                        <span class="report-widget-label">Top Performing Variants</span>
-                        <a href="#" class="btn btn-primary pull-right" style="width:200px;"
+                    <div class="summary-header">
+                        <h4 class="report-widget-label pull-left">Top Performing Variants</h4>
+                        <a href="#" class="report-widget-drilldown-link pull-right"
                            data-bind="click: function() { DetailCallback('@ReportGrouping.Variant') }">
                             <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Variant Detail
                         </a>
@@ -345,9 +355,9 @@
                 </div>
 
                 <div class="col-xs-6">
-                    <div>
-                        <span class="report-widget-label">Top Performing Product Types</span>
-                        <a href="#" class="btn btn-primary pull-right" style="width:200px;"
+                    <div class="summary-header">
+                        <h4 class="report-widget-label pull-left">Top Performing Product Types</h4>
+                        <a href="#" class="report-widget-drilldown-link pull-right"
                            data-bind="click: function() { DetailCallback('@ReportGrouping.ProductType') }">
                             <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Type Detail
                         </a>

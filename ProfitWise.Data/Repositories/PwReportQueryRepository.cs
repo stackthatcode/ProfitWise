@@ -31,8 +31,8 @@ namespace ProfitWise.Data.Repositories
         public ProductAndVariantCount RetrieveReportRecordCount(long reportId)
         {
             var query =
-                @"SELECT COUNT(PwMasterProductId) AS ProductCount, 
-                        COUNT(PwMasterVariantId) AS VariantCount
+                @"SELECT COUNT(DISTINCT(PwMasterProductId)) AS ProductCount, 
+                        COUNT(DISTINCT(PwMasterVariantId)) AS VariantCount
                 FROM vw_MasterProductAndVariantSearch 
                 WHERE PwShopId = @PwShopId ";
 

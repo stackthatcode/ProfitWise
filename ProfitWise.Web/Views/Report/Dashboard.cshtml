@@ -1,9 +1,19 @@
-﻿@Html.Partial("~/Views/Report/_ReportManager.cshtml")
-
+﻿@using ProfitWise.Data.Model.Reports
 @{
-    ViewBag.CommonContext.PageTitle = "ProfitWise Dashboard";
+    ViewBag.CommonContext.PageTitle = "ProfitWise - Profitability Dashboard";
 }
 
+<!-- Dependency Widgets -->
+@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_SelectorPopoverWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
+@Html.Partial("~/Views/Report/_DatePickerWidget.cshtml")
+@Html.Partial("~/Views/Report/_FilterPagingWidget.cshtml")
+@Html.Partial("~/Views/Report/_ReportSelectionCountPreview.cshtml")
+@Html.Partial("~/Views/Report/_ReportFilterSummary.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditorFilters.cshtml")
+@Html.Partial("~/Views/Report/_ReportViewer.cshtml")
+@Html.Partial("~/Views/Report/_ReportEditor.cshtml")
 
 <style>
     .daterangepicker {
@@ -22,25 +32,64 @@
     }
 </style>
 
+<script type="text/html" id="Report-Manager-Top-Level">
+    <div data-bind="if: $data.InFilterEditMode">
+        <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
+    </div>
+
+    <div data-bind="ifnot: $data.InFilterEditMode">
+        <div data-bind="template: { name: 'Report-Viewer-Top-Level', data: ReportViewerModel }"></div>
+    </div>
+</script>
+
 <!-- KnockoutJS Root Element -->
-<div data-bind="template: { name: 'Report-Manager-Top-Level', data: ReportManagerModel }"></div>
+<div data-bind="template: { name: 'Report-Manager-Top-Level', data: $root }"></div>
 
 <!-- KnockoutJS Model -->
 <script>
-    var ProfitWise = ProfitWise || {};
-    
-    ProfitWise.DashboardModel = function () {
-        var self = this;
-        
-        // Report View Model configuration
-        self.ReportManagerModel = new ProfitWiseWidgets.ReportManagerModel();           
-        self.ReportManagerModel.RegisterSelectReportCallback(            
-            function (reportId) {
-                console.log("Ok, as the Dashboard, somebody selected Report Id: " + reportId);
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};    
+    var OverallProfitabilityReportId = @PwSystemReportFactory.OverallProfitabilityId;
 
-                // TODO - call ajax function to get data and return to Report Viewer, which
-                // ... then pass it on to the View Template we specified
-            });
+    // Requires a reference to a InFilterEditMode observable
+    ProfitWiseWidgets.ReportManagerModel = function () {
+        var self = this;
+        self.InFilterEditMode = ko.observable(false);
+
+        self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel();
+        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
+
+        // To be configured by the parent/owner object
+        self.ReportViewerModel.EditReportCallback = function (reportId) {
+            self.InFilterEditMode(true);
+            self.ReportEditorModel.LoadReport(reportId);        
+        };
+
+        self.ReportEditorModel.OkCallback = function () {
+            self.InFilterEditMode(false);
+            self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
+        };
+
+        self.ReportEditorModel.CancelCallback = function () {
+            self.InFilterEditMode(false);
+        };
+
+        self.RegisterSelectReportCallback = function (callback) {
+            self.ReportViewerModel.SelectReportCallback = callback;
+        };
+        
+        self.Initialize = function (callback) {
+            self.InFilterEditMode(false);
+            flow.exec(
+                function() {
+                    self.ReportViewerModel.RefreshReportList(this);
+                }, 
+                function() {
+                    self.ReportViewerModel.SelectReportByReportId(OverallProfitabilityReportId);
+                    if (callback) {
+                        callback();
+                    }
+                });
+        };
 
         return self;
     };
@@ -50,9 +99,8 @@
             ProfitWiseFunctions.FixedHeaderScrollingInit(".header-scrollfix");
             ProfitWiseFunctions.PopOverAutoCloseInit();
 
-            var model = new ProfitWise.DashboardModel();
+            var model = new ProfitWiseWidgets.ReportManagerModel();
             ko.applyBindings(model);
-            model.ReportManagerModel.Initialize();
+            model.Initialize();
         });
 </script>
-

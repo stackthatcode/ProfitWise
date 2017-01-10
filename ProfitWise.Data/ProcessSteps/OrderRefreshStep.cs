@@ -105,7 +105,7 @@ namespace ProfitWise.Data.ProcessSteps
             batchStateRepository.Update(postBatchState);
             _pushLogger.Info("Complete: " + postBatchState.ToString());
         }
-
+        
         private void EarlierStartDateWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
             _pushLogger.Info($"Expanding Order date range for {shop.PwShopId}");
@@ -244,7 +244,6 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void WriteOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
         {
-            var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
             var existingOrder =
                 context.CurrentExistingOrders
                     .FirstOrDefault(x => x.ShopifyOrderId == orderFromShopify.Id);
@@ -253,6 +252,8 @@ namespace ProfitWise.Data.ProcessSteps
             {
                 _pushLogger.Debug(orderFromShopify.ToString());
             }
+
+            // If the Order is Void then Delete the Order
             
             _pushLogger.Debug($"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} to ProfitWise data model");
 

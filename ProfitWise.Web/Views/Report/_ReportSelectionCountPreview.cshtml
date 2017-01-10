@@ -10,19 +10,15 @@
     <div id="product-variant-count-container">
         <p>
             <div style="display:inline-block;">This Report includes</div>
+
             <div class="popover-container" style="display: inline-block">
-                <a href="#" rel="popover" class="popover-launcher"
-                   data-bind="click: RefreshProductSelections,
-                                popover: {  options: { placement: 'bottom', trigger: 'click',  },
-                                            template: 'Report-Selected-Products', data: $data }">
-                    <span data-bind="text: ProductCount"></span> Products
-                </a>
-            </div>&nbsp;
+                <a href="#" rel="popover" class="popover-launcher" 
+                   data-bind="click: LaunchProductSelectionPopup"><span data-bind="text: ProductCount"></span> Products</a>
+            </div>
+
             <div class="popover-container" style="display: inline-block">
                 (<a href="#" rel="popover" class="popover-launcher"
-                    data-bind="click: RefreshVariantSelections,
-                                        popover: {  options: { placement: 'bottom', trigger: 'click',  },
-                                                    template: 'Report-Selected-Variants', data: $data }"><span data-bind="text: VariantCount"></span> Variants)</a>.
+                    data-bind="click: LaunchVariantSelectionPopup"><span data-bind="text: VariantCount"></span> Variants)</a>.
             </div>
             
             <div style="display: inline-block;" data-bind="if: ProductCount() == 0 && VariantCount() == 0">
@@ -41,40 +37,6 @@
 <script type="text/html" id="Report-No-Products-Or-Variants">
     <p style="width:200px;">Your selected Report Filters currently result in zero Products or Variants. 
         Please try removing filters. For help with using filters, <a href="#">watch this video</a>.</p>
-</script>
-
-<script type="text/html" id="Report-Selected-Products">
-    <div data-bind="foreach: ProductSelections" class="selection-preview-listing-container">
-        <div class="select-preview-listing overflow-gracefully" data-bind="text: Title"></div>
-    </div>
-    <div data-bind="if: ProductCount() > MaximumNumberOfProducts">
-        <div class="selection-preview-listing-overflow-top">
-            You have over <span data-bind="text: MaximumNumberOfProducts"></span> Products selected.
-        </div>
-        <div class="selection-preview-listing-overflow-bottom">
-            <a href="#" data-bind="click: LaunchProductSelectionPopup">Click here to view all.</a>
-        </div>
-    </div>
-</script>
-
-<script type="text/html" id="Report-Selected-Variants">
-    <div data-bind="foreach: VariantSelections" class="selection-preview-listing-container">
-        <div class="select-preview-listing overflow-gracefully" style="color:#333;" data-bind="text: ProductTitle"></div>
-        
-        <div data-bind="foreach: Variants">
-            <div class="select-preview-listing-indented">
-                <span data-bind="text: VariantTitle"></span> - <span style="color:#888;" data-bind="text: Sku"></span>
-            </div>
-        </div>
-    </div>
-    <div data-bind="if: VariantCount() > MaximumNumberOfVariants">
-        <div class="selection-preview-listing-overflow-top">
-            You have over <span data-bind="text: MaximumNumberOfVariants"></span> Variants selected.
-        </div>
-        <div class="selection-preview-listing-overflow-bottom">
-            <a href="#" data-bind="click: LaunchVariantSelectionPopup">Click here to view all.</a>
-        </div>
-    </div>
 </script>
 
 <script>
@@ -108,48 +70,6 @@
                     }
                 }
             );
-        };
-
-        self.RefreshProductSelections = function () {
-            flow.exec(function () {
-                var ajax = new ProfitWiseFunctions.Ajax();
-                ajax.HttpGet("/QueryService/ProductSelectionsByPage?reportId=" + self.ReportId(), this);
-            },
-            function (data) {
-                self.ProductSelections(data.Selections);
-            });
-        };
-        
-        self.RefreshVariantSelections = function () {
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/QueryService/VariantSelectionsByPage?reportId=" + self.ReportId(), this);
-                },
-                function (data) {
-                    var products =
-                        AQ(data.Selections)
-                            .select(function(item) {
-                                return {
-                                    PwMasterProductId: item.PwMasterProductId,
-                                    ProductTitle: item.ProductTitle,
-                                };
-                            })
-                            .distinct(function(a, b) { return a.PwMasterProductId == b.PwMasterProductId; })
-                            .toArray();
-
-                    AQ(products)
-                        .each(function(product) {
-                            product.Variants =
-                                AQ(data.Selections)
-                                    .where(function(item) {
-                                        return item.PwMasterProductId == product.PwMasterProductId;
-                                    })
-                                    .toArray();
-                        });
-
-                    self.VariantSelections(products);
-                });
         };
 
         self.LaunchProductSelectionPopup = function() {

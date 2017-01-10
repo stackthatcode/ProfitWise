@@ -109,7 +109,7 @@ CREATE TABLE `shopifyorder` (
   `CreatedAt` timestamp NOT NULL, # Date-time when this order was created
   `UpdatedAt` timestamp NOT NULL, # Date-time when this order was last updated in Shopify
   `Cancelled` TINYINT NOT NULL,
-    
+	
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
