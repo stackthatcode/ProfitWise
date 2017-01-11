@@ -25,11 +25,12 @@
     .report-widget-label {
         font-weight: 700;
         color: #AAA;
+        font-size: 1.2em;
     }
 
     .report-widget-drilldown-link {
         font-weight:700; 
-        margin-top:15px;
+        margin-top:10px;
         display: inline-block;
     }
 
@@ -61,6 +62,7 @@
     .executive-summary-label {
         font-weight: 700;
         color: #999;
+        font-size:18p
     }
     .executive-summary .summary-cell {
         text-align: left;
@@ -76,11 +78,11 @@
 </style>
 
 <script id="Report-Viewer-Top-Level" type="text/html">
-    <div id="report-viewer-header" style="min-width:1200px; padding-left: 20px; padding-right: 20px;">
-        <div class="standard-header-sleeve" style="height: 190px; border-bottom: 1px solid #FFF;">
-
+    <div id="report-viewer-header" class="std-outer-padding" style="min-width:1200px;">
+        <div class="standard-header-sleeve" style="height: 190px;">
+            
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
+            <div class="standard-header std-inner-padding top-border-facade" style="overflow: visible; padding-top:20px;">
 
                 <div class="col-xs-6 no-side-padding">
                     <div data-bind="if: ReportViewerContext.ReportLoaded()">
@@ -144,7 +146,7 @@
     </div>
 
     <div id="report-viewer-body" class="container page-content-sleeve" style="min-width:1200px;">
-        <div class="page-content standard-padding">
+        <div class="page-content std-inner-padding">
 
             <!-- TODO : allow injection of external template -->
             <div style="position: relative; width: 100%;">
@@ -175,8 +177,8 @@
 </script>
 
 <script id="Report-Viewer-Detail-Section" type="text/html">
-    <div id="details-drillup-button">
-        <a href="#" class="btn btn-primary" style="width:250px;" data-bind="click: ExitDetailClick">
+    <div id="details-drillup-button" style="height:40px; overflow:auto;">
+        <a href="#" style="width:250px; font-weight:700;" data-bind="click: ExitDetailClick">
             <i class="glyphicon glyphicon-arrow-left"></i> Navigate Back to Summary
         </a>
     </div>
@@ -830,7 +832,6 @@
     };
 
     ProfitWiseWidgets.LoadColumnChart = function (id, title, seriesData, drilldownData, currencyId, drilldownFunc) {
-        //console.log(seriesData);
         var events = drilldownFunc ?  { drilldown: drilldownFunc } : null;
 
         $(id).highcharts({
@@ -1000,6 +1001,7 @@
         self.ReportViewerContext.TriggerReportListRefresh = function (callback) {
             self.RefreshReportList(callback);
         };
+
         self.ReportViewerContext.EditFilterClickCallback = function () {
             self.EditReportClick();
         };
@@ -1041,8 +1043,7 @@
         };
 
         self.ReportDetailContext = new ProfitWiseWidgets.ReportDetailContext();
-
-
+        
         // State changes to the Report Selection
         self.SelectReportByReportId = function (id) {
             var report =

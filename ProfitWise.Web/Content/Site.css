@@ -34,17 +34,19 @@ td.overflow-gracefully {
 }
 
 
+
+
 /** Page Header common styling **/
-.fixed-positioning-container {
+.fixed-header-container {
     position: fixed; 
     width: 100%; 
     top: 0; 
-    padding-left: 20px; 
-    padding-right: 20px; 
     z-index: 100;
 }
 
-/** This element is where we set height **/
+
+
+/** Standardized Header and Page Content CSS **/
 .standard-header-sleeve {
     position: relative; 
     width: 100%;
@@ -58,13 +60,34 @@ td.overflow-gracefully {
     height: 100%;
 }
 
+.top-border-facade {
+    border-top: 20px rgb(235, 238, 240) solid; 
+}
 
-/** Standardized Page Count container styling **/
+.no-side-padding {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.std-outer-padding {
+    padding-left: 20px !important;     /* standard outside padding */
+    padding-right: 20px !important;    /* standard outside padding */
+}
+.std-inner-padding {
+    padding-left: 25px !important; 
+    padding-right: 25px !important;   
+}
+
+.reduced-padding {
+    padding-left: 10px !important; 
+    padding-right: 10px !important;   
+}
+
 .page-content-sleeve {
     margin: 0; 
     width: 100%; 
-    padding-left: 20px; /* Outside padding */
-    padding-right: 20px;  /* Outside padding */
+    padding-left: 20px;     /* standard outside padding */
+    padding-right: 20px;    /* standard outside padding */
 }
 
 .page-content {
@@ -75,28 +98,6 @@ td.overflow-gracefully {
     margin:0;
     overflow: auto; 
 }
-
-
-
-
-.top-border-facade {
-    border-top: 20px rgb(235, 238, 240) solid; 
-}
-
-.no-side-padding {
-    padding-left: 0px;
-    padding-right: 0px;
-}
-.standard-padding {
-    padding-left: 25px; 
-    padding-right: 25px;   
-}
-
-.reduced-padding {
-    padding-left: 10px; 
-    padding-right: 10px;   
-}
-
 
 
 

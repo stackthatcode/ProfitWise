@@ -448,7 +448,7 @@
     <Content Include="Views\Report\_ReportViewer.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_ReportFilterSummary.cshtml" />
+    <Content Include="Views\Report\_ReportFilterWidgets.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\_DatePickerWidget.cshtml" />

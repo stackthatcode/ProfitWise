@@ -1,25 +1,23 @@
 ﻿@using ProfitWise.Data.Model
 
 <script type="text/html" id="Report-Editor-Top-Level">
-    <div id="report-editor-header-bottom">
-        <!-- Move this to the Report Editor...? -->
-        <div class="fixed-positioning-container" style="top: 145px;">
-            <!-- Space -->
-            <div class="standard-header-sleeve" style="height: 178px;">
-                <div class="standard-header header-scrollfix standard-padding" style="overflow: visible;">
+    <!-- Move this to the Report Editor...? -->
+    <div class="fixed-header-container std-outer-padding" style="top: 145px;">
+        <!-- Space -->
+        <div class="standard-header-sleeve" style="height: 178px;">
+            <div class="standard-header std-inner-padding header-scrollfix" style="overflow: visible;">
 
-                    <!-- Report Editor component -->
-                    <div data-bind="template: { name: 'Report-Editor-Header' }"></div>
-                </div>
+                <!-- Report Editor component -->
+                <div data-bind="template: { name: 'Report-Editor-Header' }"></div>
             </div>
         </div>
     </div>
 
-    <div id="report-editor-header-top" class="fixed-positioning-container">
+    <div class="fixed-header-container std-outer-padding" id="report-editor-header-top">
         <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
             
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header header-scrollfix standard-padding top-border-facade" style="overflow: visible; padding-top:20px;">
+            <div class="standard-header header-scrollfix std-inner-padding top-border-facade" style="overflow: visible; padding-top:20px;">
                 <div class="col-xs-6 no-side-padding">
                     <div class="popover-container" data-bind="if: ReportContext">
                         <h4 style="display:inline-block; font-weight:700;" data-bind="text: ReportContext().Name"></h4>
@@ -51,7 +49,7 @@
 
 <script type="text/html" id="Report-Editor-Header">
     <!-- Spacer - 15px -->
-    <div class="vert-spacer" style="height: 15px;"></div>
+    <div style="height: 15px;"></div>
 
     <!-- Nav tabs - 43px -->
     <div class="row-fluid" style="height: 43px;">

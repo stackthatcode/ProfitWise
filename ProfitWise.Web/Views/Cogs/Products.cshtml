@@ -16,7 +16,6 @@
         font-size: 14px !important;
         font-weight: 700;
         color: #777;
-        height: 60px;
     }
 
     #product-search-grid tr td:nth-child(1), #product-search-heading tr th:nth-child(1) {
@@ -64,9 +63,10 @@
 @Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
 @Html.Partial("~/Views/Cogs/_EditMasterProduct.cshtml")
 
+
 <script type="text/html" id="Product-Search-Header">
     <!-- Filtering and Paging -->
-    <div class="row standard-padding">
+    <div class="row">
         <!-- Filtering Widget -->
         <div class="col-lg-6" style="padding-top: 20px;">
             <div class="pull-left;"
@@ -85,32 +85,31 @@
         </div>
     </div>
 
-
-    <!-- Table Headings - note: measured table rendering height is 61px, top border offset is 20px; -->
-    <div class="standard-padding" 
-        style="position: absolute; top: 129px;"
-        data-bind="visible: $root.CurrentGrid().length > 0">
-        <table class="table" id="product-search-heading" style="margin-bottom: 0px;">
-            <thead>
-            <tr>
-                <th data-bind="template: { name: 'Sortable-Column-Header', 
+    <div class="row" data-bind="visible: $root.CurrentGrid().length > 0">
+        <div class="col-xs-12">
+            <!-- The margin bumps this downward so it hugs the bottom of the header -->
+            <table class="table" id="product-search-heading" style="margin-top: 53px;">
+                <thead>
+                <tr>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
                                 data: { ColumnIndex: 0, ColumnName: 'Vendor', Model: $root.SortingModel } }">
-                </th>
-                <th data-bind="template: { name: 'Sortable-Column-Header',
+                    </th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
                                 data: { ColumnIndex: 1, ColumnName: 'Product', Model: $root.SortingModel } }">
-                </th>
+                    </th>
 
-                <th>Inventory</th>
-                <th>Price</th>
-                <th>CoGS</th>
+                    <th>Inventory</th>
+                    <th>Price</th>
+                    <th>CoGS</th>
 
-                <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked Directly</a></th>
-                <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
+                    <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked Directly</a></th>
+                    <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
+                </tr>
+                </thead>
+            </table>
 
-            </tr>
-        </thead>
-    </table>
-</div>
+        </div>
+    </div>
 </script>
 
 <script type="text/html" id="Product-Search-Body">
@@ -192,10 +191,10 @@
 </script>
 
 <script type="text/html" id="Main-Template">
-    <div class="fixed-positioning-container">
+    <div class="fixed-header-container std-outer-padding">
         <div class="standard-header-sleeve" style="height: 210px;">
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header top-border-facade">
+            <div class="standard-header top-border-facade std-inner-padding">
                 <div data-bind="if: EditProductId">
                     <div data-bind="template: { name: 'Product-Edit-Header', data: $root.ProductVariantEditorModel }"></div>
                 </div>
@@ -207,7 +206,7 @@
     </div>
 
     <div class="container page-content-sleeve">
-        <div class="page-content" style="margin-top: 209px;">
+        <div class="page-content std-inner-padding" style="margin-top: 209px;">
             <div data-bind="if: EditProductId">
                 <div data-bind="template: { name: 'Product-Edit-Body', data: $root.ProductVariantEditorModel }"></div>
             </div>
