@@ -226,11 +226,8 @@ namespace ProfitWise.Web.Controllers
             }
             else
             {
-                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                Response.SuppressFormsAuthenticationRedirect = true;
-                Response.TrySkipIisCustomErrors = true;
-
-                return View(new AuthorizationProblemModel(returnUrl));
+                return AuthorizationProblem(
+                    returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.");
             }
         }
 
@@ -238,34 +235,43 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure(string returnUrl)
         {
-            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            Response.SuppressFormsAuthenticationRedirect = true;
-            Response.TrySkipIisCustomErrors = true;
-
-            return View(new AuthorizationProblemModel(returnUrl));
+            return AuthorizationProblem(
+                returnUrl, "External Login Failure", 
+                "It appears that something went wrong while authorizing your Shopify Account.");            
         }
+
 
         // GET: /ShopifyAuth/AccessTokenRefresh
         [AllowAnonymous]
         public ActionResult AccessTokenRefresh(string returnUrl)
         {
-            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            Response.SuppressFormsAuthenticationRedirect = true;
-            Response.TrySkipIisCustomErrors = true;
-
-            return View(new AuthorizationProblemModel(returnUrl));
+            return AuthorizationProblem(
+                returnUrl, "Refresh Shopify Access",
+                "It appears your Shopify Access has expired or is invalid.");
         }
 
         // GET: /ShopifyAuth/AuthorizationFailure
         [AllowAnonymous]
         public ActionResult SevereAuthorizationFailure(string returnUrl)
         {
+            return AuthorizationProblem(
+                returnUrl, "Authorization Failure",
+                "Something went wrong while attempting to authorize your Shopify account.");
+        }        
+
+        private ActionResult AuthorizationProblem(string returnUrl, string title, string message)
+        {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             Response.SuppressFormsAuthenticationRedirect = true;
             Response.TrySkipIisCustomErrors = true;
-            return View(new AuthorizationProblemModel(returnUrl));
-        }
 
+            var model = new AuthorizationProblemModel(returnUrl)
+            {
+                Title = title,
+                Message = message
+            };
+            return View("AuthorizationProblem", model);
+        }
 
         private ActionResult RedirectToLocal(string returnUrl)
         {
@@ -275,7 +281,7 @@ namespace ProfitWise.Web.Controllers
             }
             return RedirectToAction("Dashboard", "Report");
         }
-
     }
 }
+
 

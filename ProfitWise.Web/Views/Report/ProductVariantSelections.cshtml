@@ -2,7 +2,7 @@
 @model ProductVariantSelectionModel
 @{
     ViewBag.CommonContext.PageTitle = @Model.SelectionType + " Selections";
-    Layout = "~/Views/Shared/_UserLayoutDialogBox.cshtml";
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml.cshtml";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")

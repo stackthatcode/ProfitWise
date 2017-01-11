@@ -247,6 +247,7 @@
     <Compile Include="Models\CogsMasterProductModel.cs" />
     <Compile Include="Models\CogsProductGridModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
+    <Compile Include="Models\CommonContext.cs" />
     <Compile Include="Models\EditProductCogsModel.cs" />
     <Compile Include="Models\FilterEditorModel.cs" />
     <Compile Include="Models\MoneyRange.cs" />
@@ -255,7 +256,6 @@
     <Compile Include="Models\SearchResultSelection.cs" />
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />
-    <Compile Include="Models\CommonContextModel.cs" />
     <Compile Include="Models\ProductVariantSelectionModel.cs" />
     <Compile Include="Plumbing\GlobalConfig.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />
@@ -338,13 +338,12 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\Report\_ViewStart.cshtml" />
-    <Content Include="Views\Error\ServerFault.cshtml" />
-    <Content Include="Views\Shared\_UserLayout.cshtml" />
+    <Content Include="Views\Error\Http500.cshtml" />
+    <Content Include="Views\Shared\_AuthenticatedLayout.cshtml" />
     <Content Include="Views\UserAuxiliary\About.cshtml" />
     <Content Include="Views\UserAuxiliary\Contact.cshtml" />
     <Content Include="Views\AdminAuth\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\AdminAuth\ConfirmEmail.cshtml" />
-    <Content Include="Views\ShopifyAuth\SevereAuthorizationFailure.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPassword.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPasswordConfirmation.cshtml" />
     <Content Include="Views\AdminAuth\Login.cshtml" />
@@ -360,14 +359,12 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Report\Dashboard.cshtml" />
-    <Content Include="Views\ShopifyAuth\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_AnonymousLayout.cshtml" />
     <Content Include="Views\AdminHome\Index.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
     <Content Include="Views\AdminHome\Users.cshtml" />
     <Content Include="Views\AdminAuth\_ViewStart.cshtml" />
     <Content Include="Views\AdminHome\_ViewStart.cshtml" />
-    <Content Include="Views\ShopifyAuth\UnauthorizedAccess.cshtml" />
     <Content Include="Views\Cogs\Products.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -379,8 +376,8 @@
     <Content Include="Views\SharedTemplates\_ProductFilterWidget.cshtml" />
     <Content Include="Views\Shared\_PageFooter.cshtml" />
     <Content Include="Views\SharedTemplates\_MoneyEditorWidget.cshtml" />
-    <Content Include="Views\Shared\_UserLayoutDialogBox.cshtml" />
-    <Content Include="Views\Shared\_UserScripts.cshtml" />
+    <Content Include="Views\Shared\_AuthenticatedPopupLayout.cshtml" />
+    <Content Include="Views\Shared\_StyleAndScripts.cshtml" />
     <Content Include="Views\Cogs\BulkEditCogs.cshtml" />
     <Content Include="Views\SharedTemplates\_MoneyRangeWidget.cshtml" />
     <Content Include="Views\Cogs\StockedProductPopup.cshtml" />
@@ -388,7 +385,6 @@
     <Content Include="Views\Cogs\ExcludedProductPopup.cshtml" />
     <Content Include="Views\Cogs\StockedPickListPopup.cshtml" />
     <Content Include="Views\Error\ErrorDialogBox.cshtml" />
-    <Content Include="Views\ShopifyAuth\ExternalLoginFailure.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">
@@ -409,7 +405,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\ShopifyAuth\AccessTokenRefresh.cshtml" />
+    <Content Include="Views\ShopifyAuth\AuthorizationProblem.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_SpinnerLayer.cshtml" />
@@ -458,6 +454,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\SaveAs.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Error\_ViewStart.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

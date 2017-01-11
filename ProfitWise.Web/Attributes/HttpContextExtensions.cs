@@ -1,30 +1,42 @@
 ﻿using System.Web;
+using ProfitWise.Web.Models;
 
 namespace ProfitWise.Web.Attributes
 {
     public static class HttpContextExtensions
     {
-        public const string _key = "IdentitySnapshot";
+        public const string _key = "ProfitWise.CommonContext";        
         
-        
-        public static IdentitySnapshot PullIdentitySnapshot(this HttpContextBase context)
+        public static IdentitySnapshot PullIdentity(this HttpContextBase context)
         {
-            return context.Items[_key] as IdentitySnapshot;
+            var commonContext = context.Items[_key] as CommonContext;
+            return commonContext?.IdentitySnapshot;
         }
 
-        public static IdentitySnapshot PullIdentitySnapshot(this HttpContext context)
+        public static IdentitySnapshot PullIdentity(this HttpContext context)
         {
-            return context.Items[_key] as IdentitySnapshot;
+            var commonContext = context.Items[_key] as CommonContext;
+            return commonContext?.IdentitySnapshot;
         }
 
-        public static void PushIdentitySnapshot(this HttpContextBase context, IdentitySnapshot user)
+        public static CommonContext PullCommonContext(this HttpContextBase context)
         {
-            context.Items[_key] = user;
+            return context.Items[_key] as CommonContext;
         }
 
-        public static void PushIdentitySnapshot(this HttpContext context, IdentitySnapshot user)
+        public static CommonContext PullCommonContext(this HttpContext context)
         {
-            context.Items[_key] = user;
+            return context.Items[_key] as CommonContext;
+        }
+
+        public static void PushCommonContext(this HttpContextBase context, CommonContext commonContext)
+        {
+            context.Items[_key] = commonContext;
+        }
+
+        public static void PushCommonContext(this HttpContext context, CommonContext commonContext)
+        {
+            context.Items[_key] = commonContext;
         }
     }
 }

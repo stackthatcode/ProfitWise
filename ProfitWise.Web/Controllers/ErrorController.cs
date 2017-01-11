@@ -9,10 +9,11 @@ namespace ProfitWise.Web.Controllers
     [IdentityProcessor]
     public class ErrorController : Controller
     {
-        public ActionResult ServerFault(string returnUrl)
+        public ActionResult Http500(string returnUrl)
         {
             var model = new ErrorModel() {ReturnUrl = returnUrl};
 
+            Response.ContentType = "text/html";
             Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             Response.SuppressFormsAuthenticationRedirect = true;
             Response.TrySkipIisCustomErrors = true;
@@ -24,6 +25,7 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult Http404()
         {
+            Response.ContentType = "text/html";
             Response.StatusCode = (int)HttpStatusCode.NotFound;
             Response.SuppressFormsAuthenticationRedirect = true;
             Response.TrySkipIisCustomErrors = true;

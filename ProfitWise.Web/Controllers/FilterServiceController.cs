@@ -27,8 +27,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult ProductTypes()
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             var data = repository.RetrieveProductTypeSummary();
 
             // NOTE: this is domain logic living on the controller...
@@ -45,8 +45,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Vendors(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             var data = repository.RetrieveVendorSummary(reportId);
 
             // NOTE: this is domain logic living on the controller...
@@ -63,8 +63,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult MasterProducts(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             //var data = new List<PwProductSummary>();
             //for (int i = 0; i < 5000; i++)
@@ -88,8 +88,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Skus(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             var data = repository.RetrieveSkuSummary(reportId);
 
             var output = data.Select(x => new
@@ -111,8 +111,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Filters(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             var filters = repository.RetrieveFilters(reportId);
 
             var output = filters.Select(x => new
@@ -131,12 +131,12 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult AddFilter(long reportId, int filterType, string key, string title)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var filter = new PwReportFilter()
             {
-                PwShopId = userBrief.PwShop.PwShopId,
+                PwShopId = userIdentity.PwShop.PwShopId,
                 PwReportId = reportId,
                 FilterType = filterType,
                 Title = title.Truncate(100),
@@ -152,8 +152,8 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult RemoveFilter(long reportId, int filterType, string key)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             repository.DeleteFilter(reportId, filterType, key);
             return JsonNetResult.Success();
         }
@@ -161,8 +161,8 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult RemoveFilterById(long reportId, long filterId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             repository.DeleteFilterById(reportId, filterId);
             return JsonNetResult.Success();
         }
@@ -170,8 +170,8 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult RemoveFilterByType(long reportId, int filterType)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             repository.DeleteFilters(reportId, filterType);
             return JsonNetResult.Success();
         }

@@ -62,7 +62,10 @@ namespace ProfitWise.Web
             var registry = new InceptorRegistry();
             //registry.Add(typeof(ErrorForensics));
 
-            // Controller registration            
+            // Controller registration   
+            builder.RegisterType<ErrorController>()
+                .InstancePerDependency()
+                .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ReportController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);

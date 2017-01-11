@@ -24,11 +24,12 @@ namespace ProfitWise.Web.Controllers
             _currencyService = currencyService;
         }
 
+
+        [HttpGet]
         public ActionResult Products()
         {
-            this.LoadCommonContextIntoViewBag();
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
             
             var model = new EditProductCogsModel()
             {
@@ -39,29 +40,31 @@ namespace ProfitWise.Web.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public ActionResult BulkEditCogs(int masterProductId)
         {            
             return View(RetrieveProduct(masterProductId));
         }
-
-
+        
+        [HttpGet]
         public ActionResult StockedPicklistPopup(int pickListId)
         {
             return View(new SimplePickList(pickListId));
         }
 
+        [HttpGet]
         public ActionResult StockedProductPopup(int masterProductId)
         {
             return View(RetrieveProduct(masterProductId));
         }
 
-
-
+        [HttpGet]
         public ActionResult ExcludedPickListPopup(int pickListId)
         {
             return View(new SimplePickList(pickListId));
         }
 
+        [HttpGet]
         public ActionResult ExcludedProductPopup(int masterProductId)
         {
             return View(RetrieveProduct(masterProductId));
@@ -73,15 +76,14 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { Success = true });
         }
 
-
         private PwCogsProductSummary RetrieveProduct(int masterProductId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var cogsRepository = _factory.MakeCogsRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
             var product = cogsRepository.RetrieveProduct(masterProductId);
             product.Variants = cogsRepository.RetrieveVariants(new List<long> { masterProductId });
-            product.PopulateNormalizedCogsAmount(_currencyService, userBrief.PwShop.CurrencyId);
+            product.PopulateNormalizedCogsAmount(_currencyService, userIdentity.PwShop.CurrencyId);
 
             return product;
         }

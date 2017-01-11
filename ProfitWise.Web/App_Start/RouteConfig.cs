@@ -15,6 +15,11 @@ namespace ProfitWise.Web
                 defaults: new { controller = "Report", action = "Dashboard", id = UrlParameter.Optional }
             );
 
+            routes.MapRoute(
+                name: "Root",
+                url: "",
+                defaults: new { controller = "Report", action = "Dashboard", id = UrlParameter.Optional }
+            );
         }
     }
 }

@@ -68,8 +68,7 @@ namespace ProfitWise.Web.Attributes
 
             if (!pwShop.IsShopEnabled)
             {
-                logger.Info(
-                    $"PwShop {pwShop.PwShopId} has been disabled - aborting IdentityProcessing");
+                logger.Info($"PwShop {pwShop.PwShopId} has been disabled - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
                 filterContext.Result = AuthConfig.SevereAuthorizationFailureRedirect(currentUrl);
                 return;
@@ -106,12 +105,13 @@ namespace ProfitWise.Web.Attributes
 
             logger.Debug($"Successfully hydrated User {user.Id} Identity Snapshot into HttpContext");
 
-            filterContext.HttpContext.PushIdentitySnapshot(identity);
-            filterContext.Controller.ViewBag.CommonContext = new CommonContext
+            var commonContext = new CommonContext
             {
                 ShopifyApiKey = GlobalConfig.ShopifyApiKey,
                 IdentitySnapshot = identity,
             };
+
+            filterContext.HttpContext.PushCommonContext(commonContext);
         }
     }
 }

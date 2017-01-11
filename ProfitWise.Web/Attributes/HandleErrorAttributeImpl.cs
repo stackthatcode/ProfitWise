@@ -1,6 +1,5 @@
 ﻿using System.Web;
 using System.Web.Mvc;
-using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 
@@ -26,15 +25,12 @@ namespace ProfitWise.Web.Attributes
             }
             catch
             {          
-                // TODO - create an Event Viewer log entry writer      
+                // TODO - unable to create an Error Log - what to do, now???
             }
-
-            // Notify System Admins
-            //ErrorNotification.Send(filterContext.Exception);
-
-            // And now respond
+            
             if (filterContext.HttpContext.Request.IsAjaxRequest())
             {
+                // This will please a JSON message in the response
                 filterContext.Result = new JsonResult
                 {
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet,
@@ -48,17 +44,18 @@ namespace ProfitWise.Web.Attributes
             }
             else
             {
-                var model = new ErrorModel();
-                model.ReturnUrl = filterContext.HttpContext.Request.Url.ToString();
-
+                // This will render the ServerFault page...
+                var model = new ErrorModel()
+                {
+                    ReturnUrl = filterContext.HttpContext.Request.Url?.ToString()
+                };
                 var result = new ViewResult();
-                result.ViewName = "~/Views/Error/ServerFault.cshtml";
-                result.ViewData = new ViewDataDictionary<ErrorModel>(model);
-                CommonContext commonContext = filterContext.Controller.ViewBag.CommonContext;
-                result.ViewBag.CommonContext = commonContext;
+                result.ViewName = "~/Views/Error/Http500.cshtml";
+                result.ViewData = new ViewDataDictionary<ErrorModel>(model);                
                 filterContext.Result = result;
             }
 
+            // ... and this ensures proper HTTP Status Codes are returned
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();
             filterContext.HttpContext.Response.StatusCode = 500;

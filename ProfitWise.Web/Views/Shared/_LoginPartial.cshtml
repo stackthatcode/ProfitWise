@@ -6,19 +6,19 @@
     @Html.AntiForgeryToken()
 
     <ul class="nav navbar-nav navbar-right">
-        @if (HttpContext.Current.PullIdentitySnapshot().IsAdmin)
+        @if (HttpContext.Current.PullIdentity().IsAdmin)
         {
             <li>
-                @Html.ActionLink(HttpContext.Current.PullIdentitySnapshot().UserName + " (" +
-                                 HttpContext.Current.PullIdentitySnapshot().RolesFlattened + ")",
+                @Html.ActionLink(HttpContext.Current.PullIdentity().UserName + " (" +
+                                 HttpContext.Current.PullIdentity().RolesFlattened + ")",
                     "Index", "AdminHome", routeValues: null, htmlAttributes: new {title = "Manage"})
             </li>
         }
         else
         {
             <li>Hello,
-                @Html.ActionLink(HttpContext.Current.PullIdentitySnapshot().UserName + " (" +
-                                 HttpContext.Current.PullIdentitySnapshot().RolesFlattened + ")",
+                @Html.ActionLink(HttpContext.Current.PullIdentity().UserName + " (" +
+                                 HttpContext.Current.PullIdentity().RolesFlattened + ")",
                     "Index", "UserHome", routeValues: null, htmlAttributes: new { title = "Manage" })
             </li>
         }

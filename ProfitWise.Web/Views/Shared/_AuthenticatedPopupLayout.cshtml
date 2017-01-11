@@ -1,7 +1,6 @@
 ﻿@using ProfitWise.Web.Attributes
-@using ProfitWise.Web.Models
 @{
-    var commonContext = (CommonContext)ViewBag.CommonContext;
+    var commonContext = Context.PullCommonContext();
 }
 
 <!DOCTYPE html>
@@ -12,7 +11,7 @@
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
     <title>@commonContext.FullyBrandedPageTitle</title>
     
-    @Html.Partial("_UserScripts")
+    @Html.Partial("_StyleAndScripts")
 
     <!-- Shopify JavaScript API -->
     <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>

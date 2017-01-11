@@ -1,0 +1,25 @@
+﻿@model ProfitWise.Web.Models.AuthorizationProblemModel
+@{
+    ViewBag.Title = "ProfitWise - " + @Model.Title;
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+
+<div class="exception">
+
+    <h2 class="header">ProfitWise - @Model.Title</h2>
+    <h4>@Model.Message</h4>
+    <div style="height: 25px;"></div>
+
+    <p>
+        @if (!Model.ReturnUrl.IsNullOrEmpty())
+        {
+            @:You can retry by <a href="@Model.ReturnUrl">clicking here</a>.
+    }
+        else
+        {
+            @:You can try re-opening ProfitWise from Shopify Apps.
+    }
+        If the issue persists, feel free to reach out to our Support Team for assistance.
+    </p>
+</div>
+

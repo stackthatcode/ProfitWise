@@ -25,8 +25,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult All()
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
 
             var systemReports = repository.RetrieveSystemDefinedReports();
             var userReports = repository.RetrieveUserDefinedReports();
@@ -38,8 +38,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Report(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
 
             var current = repository.RetrieveReport(reportId);
             var original = repository.RetrieveReport(current.OriginalReportId);
@@ -49,9 +49,9 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult SaveAs(long reportId, string name, bool deleteOriginal)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var filterRepository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var nameCollision = repository.ReportNameCollision(reportId, name);
             if (nameCollision)
@@ -113,9 +113,9 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Save(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var filterRepository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var reportToSave = repository.RetrieveReport(reportId);
 
@@ -155,9 +155,9 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult CopyForEditing(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var filterRepository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var sourceReport = repository.RetrieveReport(reportId);
             var copyReport = sourceReport.MakeCopyForEditing();
@@ -172,8 +172,8 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Update(
                 long reportId, ReportGrouping groupingId, ReportOrdering orderingId, DateTime startDate, DateTime endDate)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
 
             var report = repository.RetrieveReport(reportId);
             report.GroupingId = groupingId;
@@ -189,9 +189,9 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Delete(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var filterRepository = _factory.MakeReportFilterRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var report = repository.RetrieveReport(reportId);
             repository.DeleteReport(report.PwReportId);

@@ -5,6 +5,7 @@ using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using ProfitWise.Web.Controllers;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
 
@@ -25,18 +26,33 @@ namespace ProfitWise.Web
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            // TODO => use this?
-            //if (!ConfigurationManager.AppSettings["ErrorHandlingEnabled"].ToBoolTryParse())
-
+            // Log the error
             var lastError = Server.GetLastError();
             LoggerSingleton.Get().Error(lastError);
 
+            // Instantiate the Error Controller
+            IController errorController = DependencyResolver.Current.GetService<ErrorController>();
+
+            // Build the route
+            var errorRoute = new RouteData();
+            errorRoute.Values.Add("controller", "Error");
+            var httpException = lastError as HttpException;
+            if (httpException.GetHttpCode() == 404)
+            {
+                errorRoute.Values.Add("action", "Http404");
+            }
+            else
+            {
+                errorRoute.Values.Add("action", "Http500");
+            }
+            errorRoute.Values.Add("returnUrl", HttpContext.Current.Request.Url.OriginalString);
+            
+            // Clear the error on Server and the Reponse
             Server.ClearError();
+            Response.Clear();
 
-            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            //var returnUrl = HttpContext.Current.Request.Url.ToString();
-            //var url = $"~/Error/ServerFault?returnUrl={WebUtility.UrlEncode(returnUrl)}";
+            var context = new HttpContextWrapper(HttpContext.Current);
+            errorController.Execute(new RequestContext(context, errorRoute));            
         }
     }
 }

@@ -34,28 +34,13 @@ ProfitWiseShopify.BarInitialize = function (title) {
                                 target: "app"
                             },
                             {
-                                label: "Reports",
-                                href: ProfitWiseConfig.BaseUrl + "/Report/Reports",
-                                target: "app"
-                            },
-                            {
                                 label: "Edit Preferences",
                                 href: ProfitWiseConfig.BaseUrl + "/Report/Preferences",
                                 target: "app"
                             },
                             {
-                                label: "Edit Product CoGS (legacy)",
-                                href: "/ProfitWise/Static/CoGS.html",
-                                target: "app"
-                            },
-                            {
                                 label: "Edit Product CoGS",
                                 href: ProfitWiseConfig.BaseUrl + "/Cogs/Products",
-                                target: "app"
-                            },
-                            {
-                                label: "Manage Purchase Orders",
-                                href: ProfitWiseConfig.BaseUrl + "/Report/ManagePurchaseOrders",
                                 target: "app"
                             },
                             {
@@ -80,7 +65,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             },
                             {
                                 label: "Not Found - 404 (Remove for Prod)",
-                                href: ProfitWiseConfig.BaseUrl + "/NonsenseUrl",
+                                href: ProfitWiseConfig.BaseUrl + "/Bullshit/NonsenseUrl",
                                 target: "app"
                             },
                         ]

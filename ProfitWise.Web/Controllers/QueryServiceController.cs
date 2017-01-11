@@ -37,8 +37,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult RecordCounts(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
             var output = repository.RetrieveReportRecordCount(reportId);
             return new JsonNetResult(output);
         }
@@ -47,8 +47,8 @@ namespace ProfitWise.Web.Controllers
         public ActionResult ProductSelectionsByPage(long reportId, int pageNumber = 1,
             int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
             var selections = repository.RetrieveProductSelections(reportId, pageNumber, pageSize);
@@ -61,8 +61,8 @@ namespace ProfitWise.Web.Controllers
         public ActionResult VariantSelectionsByPage(
                 long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
             var selections = repository.RetrieveVariantSelections(reportId, pageNumber, pageSize);
@@ -75,29 +75,29 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Summary(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
             {
-                var shopCurrencyId = userBrief.PwShop.CurrencyId;
+                var shopCurrencyId = userIdentity.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
 
                 // First create the query stub...
                 queryRepository.PopulateQueryStub(reportId);
 
                 // Next build the top-performing summary
-                var summary = BuildSummary(report, userBrief.PwShop);
+                var summary = BuildSummary(report, userIdentity.PwShop);
 
                 List<ReportSeries> seriesDataset;
                 if (report.GroupingId == ReportGrouping.Overall)
                 {
-                    seriesDataset = BuildSeriesFromAggregateTotals(userBrief.PwShop, report);
+                    seriesDataset = BuildSeriesFromAggregateTotals(userIdentity.PwShop, report);
                 }
                 else
                 {
-                    seriesDataset = BuildSeriesWithGrouping(userBrief.PwShop, report, summary);
+                    seriesDataset = BuildSeriesWithGrouping(userIdentity.PwShop, report, summary);
                 }
 
                 transaction.Commit();
@@ -131,19 +131,19 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Detail(
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering, int pageNumber = 1, int pageSize = 50)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
-            var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
             {
-                var shopCurrencyId = userBrief.PwShop.CurrencyId;
+                var shopCurrencyId = userIdentity.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
 
                 queryRepository.PopulateQueryStub(reportId);
                 var queryContext = new TotalQueryContext
                 {
-                    PwShopId = userBrief.PwShop.PwShopId,
+                    PwShopId = userIdentity.PwShop.PwShopId,
                     PwReportId = reportId,
                     StartDate = report.StartDate,
                     EndDate = report.EndDate,
@@ -192,8 +192,8 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Drilldown(
                 long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var queryRepository = _factory.MakeReportQueryRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             var keyFilters = new List<string>() {key};
             var periodType = (end - start).ToDefaultGranularity();

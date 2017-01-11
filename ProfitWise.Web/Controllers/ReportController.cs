@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Web.Json;
@@ -18,12 +17,14 @@ namespace ProfitWise.Web.Controllers
             _factory = factory;
         }
 
+        [HttpGet]
         public ActionResult Dashboard()
         {
             this.LoadCommonContextIntoViewBag();
             return View();
         }
 
+        [HttpGet]
         public ActionResult ProductVariantSelections(long reportId, string selectionType)
         {
             return View(
@@ -34,8 +35,8 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult SaveAs(long reportId)
         {
-            var userBrief = HttpContext.PullIdentitySnapshot();
-            var repository = _factory.MakeReportRepository(userBrief.PwShop);
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var report = repository.RetrieveReport(reportId);
 
             var originalReport = repository.RetrieveReport(report.OriginalReportId) ?? report;
@@ -46,7 +47,6 @@ namespace ProfitWise.Web.Controllers
 
             return View(new SaveAsModel { Current = report, Original = originalReport });
         }
-
 
         [HttpGet]
         public ActionResult Ping()
