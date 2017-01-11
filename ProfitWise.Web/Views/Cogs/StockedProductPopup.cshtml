@@ -1,10 +1,10 @@
-﻿@model ProfitWise.Data.Model.PwCogsProductSummary
+﻿@using ProfitWise.Web.Attributes
+@model ProfitWise.Data.Model.PwCogsProductSummary
 
 @{
-    ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml.cshtml";
+    Context.PullCommonContext().PageTitle = "Bulk Set Stocked Directly for Variants";
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
 }
-
 
 <script id="Main-Template" type="text/html">
     <h4 style="font-weight: 600;" data-bind="text: $data.ProductTitle"></h4>
@@ -23,7 +23,6 @@
 
 <div data-bind="template: { name: 'Main-Template' }">
 </div>
-
 
 <script>
     var masterProductId = @Model.PwMasterProductId;

@@ -157,38 +157,27 @@ namespace ProfitWise.Data.Repositories
         }
 
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
-        {
-            var filterCount = FilterCount(queryContext.PwReportId);
+        {            
+            var totalsQuery = @"SELECT " + QueryGutsForTotals();
+            var totals = _connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
 
-            if (filterCount > 0)
-            {
-                var totalsQuery = @"SELECT " + QueryGutsForTotals();
-                return _connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
-            }
-            else
-            {
-                var totalsQuery =
-                    @"SELECT 
-                        SUM(t1.Quantity) AS TotalQuantitySold,
-	                    SUM(t1.NetSales) As TotalRevenue, 
-	                    SUM(t1.CoGS) AS TotalCogs, 
-	                    SUM(t1.NetSales) - SUM(t1.CoGS) AS TotalProfit, 
-	                    100.0 - (100.0 * SUM(t1.CoGS) / SUM(t1.NetSales)) AS AverageMargin
-                    FROM profitwiseprofitreportentry t1 
-                        LEFT OUTER JOIN shopifyorder t2
-		                    ON t1.PwShopId = t2.PwShopId AND t1.ShopifyOrderId = t2.ShopifyOrderId AND t2.Cancelled = 0
-                    WHERE t1.PwShopId = @PwShopId AND t1.EntryDate >= @StartDate AND t1.EntryDate <= @EndDate";
-                var totals = _connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
-
-                var numberOfOrdersQuery =
-                    @"SELECT COUNT(*) AS NumberOfOrders FROM shopifyorder
-                    WHERE OrderDate >= @StartDate AND OrderDate <= @EndDate
-                    AND PwShopId = @PwShopId AND Cancelled = 0";
-
-                var orderCount = _connection.Query<int>(numberOfOrdersQuery, queryContext).First();
-                totals.TotalOrders = orderCount;
-                return totals;
-            }
+            var numberOfOrdersQuery =
+                @"SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 
+                FROM profitwisereportquerystub t1
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN profitwiseprofitreportentry t3
+		                ON  t1.PwShopId = t3.PwShopId
+			                AND t2.PwProductId = t3.PwProductId 
+			                AND t2.PwVariantId = t3.PwVariantId
+			                AND t3.EntryDate >= @StartDate
+			                AND t3.EntryDate <= @EndDate 
+                            AND t3.EntryType = 1 
+                WHERE t1.PwReportId = @PwReportId AND t1.PwShopId = @PwShopId ";
+            
+            var orderCount = _connection.Query<int>(numberOfOrdersQuery, queryContext).First();
+            totals.TotalOrders = orderCount;
+            return totals;
         }
         
         public List<GroupedTotal> RetrieveTotalsByContext(TotalQueryContext queryContext)

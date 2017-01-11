@@ -1,8 +1,9 @@
-﻿@model ProfitWise.Web.Models.SimplePickList
+﻿@using ProfitWise.Web.Attributes
+@model ProfitWise.Web.Models.SimplePickList
 
 @{
-    ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml.cshtml";
+    Context.PullCommonContext().PageTitle = "Bulk Exclude/Include Products";
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
 }
 
 

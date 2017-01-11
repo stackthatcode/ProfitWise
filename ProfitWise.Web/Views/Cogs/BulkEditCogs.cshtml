@@ -1,8 +1,9 @@
-﻿@using Push.Foundation.Web.Json
+﻿@using ProfitWise.Web.Attributes
+@using Push.Foundation.Web.Json
 @model ProfitWise.Data.Model.PwCogsProductSummary
 @{
-    ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml.cshtml";
+    Context.PullCommonContext().PageTitle = "Bulk Edit Product Variant CoGS";
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")

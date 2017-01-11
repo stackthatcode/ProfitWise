@@ -1,8 +1,9 @@
-﻿@model ProfitWise.Data.Model.PwCogsProductSummary
+﻿@using ProfitWise.Web.Attributes
+@model ProfitWise.Data.Model.PwCogsProductSummary
 
 @{
-    ViewBag.CommonContext.PageTitle = "Bulk Edit Product Variant CoGS";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml.cshtml";
+    Context.PullCommonContext().PageTitle = "Bulk Exclude/Include Variants";
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
 }
 
 
