@@ -3,7 +3,6 @@
 var ProfitWiseConfig = ProfitWiseConfig || {};
 ProfitWiseConfig.BaseUrl = '/ProfitWise';
 
-
 ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
     ShopifyApp.init({
         apiKey: apiKey,
@@ -35,7 +34,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             },
                             {
                                 label: "Edit Preferences",
-                                href: ProfitWiseConfig.BaseUrl + "/Report/Preferences",
+                                href: ProfitWiseConfig.BaseUrl + "/Preferences/Edit",
                                 target: "app"
                             },
                             {

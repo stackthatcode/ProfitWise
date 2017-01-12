@@ -78,14 +78,12 @@ namespace ProfitWise.Web
             builder.RegisterType<ShopifyAuthController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
-
             builder.RegisterType<CogsServiceController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<CogsController>()
                 .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            
+                .EnableClassInterceptorsWithRegistry(registry);            
             builder.RegisterType<FilterServiceController>()
                 .InstancePerDependency()
                 .EnableClassInterceptorsWithRegistry(registry);
@@ -95,7 +93,11 @@ namespace ProfitWise.Web
             builder.RegisterType<ReportServiceController>()
                  .InstancePerDependency()
                  .EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<PreferencesController>()
+                 .InstancePerDependency()
+                 .EnableClassInterceptorsWithRegistry(registry);
             
+
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

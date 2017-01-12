@@ -131,7 +131,7 @@
                     
                     <div id="report-date-picker" class="pull-right" data-bind="with: ReportViewerContext">
                         <input type="hidden" data-bind="value: StartDate"/>
-                        <div data-bind="template: { name: 'Date-Picker-Widget', afterRender: AfterRenderDateRangePicker }"></div>
+                        <div data-bind="template: { name: 'Date-Range-Picker-Widget', afterRender: AfterRenderDateRangePicker }"></div>
                     </div>
 
                     <div class="pull-right">
@@ -486,7 +486,6 @@
     ProfitWiseWidgets.ReportViewerContext = function() {
         var self = this;
 
-        // Reference data
         self.ReportId = ko.observable();
         self.Name = ko.observable();
         self.StartDate = ko.observable();
@@ -537,7 +536,8 @@
         });
 
         self.AfterRenderDateRangePicker = function () {
-            ProfitWiseWidgets.CreateDatePicker(".date-ranger-picker", self.PushDateToModelAndUpdate);
+            ProfitWiseWidgets.CreateDateRangePicker(
+                ".date-ranger-picker", self.PushDateToModelAndUpdate);
         };
 
         // Expects to receive JavaScript Date objects

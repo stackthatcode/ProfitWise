@@ -1,7 +1,6 @@
 ﻿// Currency Functions
 var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
-
 ProfitWiseFunctions.CurrencyCache = [
     { Id: 1, Abbr: "USD", Symbol: "$" },
     { Id: 2, Abbr: "EUR", Symbol: "€" },
@@ -11,7 +10,6 @@ ProfitWiseFunctions.CurrencyCache = [
     { Id: 6, Abbr: "CHF", Symbol: "Fr" },
     { Id: 7, Abbr: "CAD", Symbol: "$" },
 ];
-
 
 ProfitWiseFunctions.FormatCurrencyWithAbbr = function (amount, currencyId) {
     var item =

@@ -20,7 +20,6 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Dashboard()
         {
-            this.LoadCommonContextIntoViewBag();
             return View();
         }
 

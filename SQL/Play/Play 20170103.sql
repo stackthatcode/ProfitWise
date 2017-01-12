@@ -126,3 +126,20 @@ SELECT * FROM shopifyorder WHERE OrderDate >= '2016-12-01' AND OrderDate <= '201
 
 SELECT * FROM profitwiseprofitreportentry WHERE ShopifyOrderId = 4444204050;
 
+
+SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 
+FROM profitwisereportquerystub t1
+	INNER JOIN profitwisevariant t2
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	INNER JOIN profitwiseprofitreportentry t3
+		ON t1.PwShopId = t3.PwShopId
+			AND t2.PwProductId = t3.PwProductId 
+			AND t2.PwVariantId = t3.PwVariantId
+            AND t3.EntryType = 1
+WHERE t1.PwReportId = 99759;
+
+SELECT * FROM profitwiseprofitreportentry;
+
+
+AND t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId 
+

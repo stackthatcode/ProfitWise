@@ -1,0 +1,139 @@
+﻿@using ProfitWise.Data.Model.Preferences
+@model ProfitWise.Web.Models.EditPreferencesModel
+@{
+    Layout = "~/Views/Shared/_AuthenticatedLayout.cshtml";
+}
+@Html.Partial("~/Views/Report/_DatePickerWidget.cshtml")
+
+<style>
+    .vert-spacer { height:48px; }
+    .preference-control-cell { padding-left:40px; }
+</style>
+
+<script type="text/html" id="Main-Template">
+    <div class="std-outer-padding">
+        <div class="standard-header-sleeve" style="height: 150px;">
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div class="standard-header top-border-facade std-inner-padding">
+                <div class="row">
+                    <div class="col-xs-12" style="padding-top:20px;">
+                        <h2 styl="font-weight:700;">Profitwise &gt; Edit Preferences</h2>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-content-sleeve">
+        <div class="page-content std-inner-padding" style="min-height: 400px; padding-bottom: 100px;">
+            <div data-bind="template: { name: 'Page-Content' }"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="Order-Start-Date">
+    <label>Starting Date For Importing Historical Data</label>
+
+    <div style="display:inline-block; width:150px; margin-left:30px; position:relative;">
+        <input class="form-control" type="text" id="order-start-date" style="width:150px;" />
+        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
+    </div>
+</script>
+
+<script type="text/html" id="Page-Content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div data-bind="template: { name: 'Order-Start-Date', afterRender: DatePickerRender }"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="vert-spacer"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <label>When should revenues/profits be recognized for orders?</label>
+
+            <div class="preference-control-cell">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios"
+                                value="@ProfitRealization.OrderReceived" checked>
+                        When the order is created
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios"
+                                value="@ProfitRealization.PaymentClears">
+                        When payment for the order is captured
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="vert-spacer"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <label>Default Date Range for Dashboard</label>
+            <div class="preference-control-cell" data-bind="foreach: DateRangeOptions">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="defaultDateRadio" data-bind="value: $data.Id" value="option1" checked>
+                        <span data-bind="text: $data.Name"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</script>
+
+<!-- KnockoutJS Root View -->
+<div data-bind="template: { name: 'Main-Template' }">
+</div>
+
+<!-- KnockoutJS Model -->
+<script>
+    var ProfitWise = ProfitWise || {};
+    ProfitWise.EditPreferencesModel = function () {
+        var self = this;
+        self.DateRangeOptions = ProfitWiseWidgets.DateRanges;
+
+        self.DatePickerRender = function () {
+            $('input[id="order-start-date"]').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true
+            },
+                function (start, end, label) {
+                    alert('Trigger Date Update');
+                    //var years = moment().diff(start, 'years');
+                    //alert("You are " + years + " years old.");
+                });
+
+            $(".date-range-picker-icon").click(function () {
+                $(this).parent().find('input').click();
+            });
+        };
+
+        return self;
+    };
+
+    $(document)
+        .ready(function () {
+            var model = new ProfitWise.EditPreferencesModel();
+            console.log(model.DateRangeOptions);
+            ko.applyBindings(model);
+        });
+</script>
+

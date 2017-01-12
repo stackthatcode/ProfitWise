@@ -114,19 +114,27 @@ ALTER TABLE `aspnetuserroles`
 
 
 
+# TODO => are we updating the CurrencyId and Time Zone...?
+
 DROP TABLE IF EXISTS `profitwiseshop`; 
 
 CREATE TABLE `profitwiseshop` (
-  `PwShopId` BIGINT NOT NULL AUTO_INCREMENT, # ProfitWise's unique identifier for each shop
-  `ShopOwnerUserId` varchar(128) NOT NULL, # Email address of shop owner
-  `ShopifyShopId` BIGINT NULL, # Shopify's internal identifier for each shop
-  `CurrencyId` INT NULL, # Numeric value representing shop currency
-  `StartingDateForOrders` TIMESTAMP NULL, # Starting date for order data to import
-  `TimeZone` varchar(50) NULL, # Shop time zone
+  `PwShopId` BIGINT NOT NULL AUTO_INCREMENT, 	# ProfitWise's unique identifier for each shop
   
-  `IsAccessTokenValid` TINYINT NOT NULL, # Is the shop's access token currently valid?
-  `IsShopEnabled` TINYINT NOT NULL, # Is the shop currently enabled in ProfitWise?
-  `IsDataLoaded` TINYINT NOT NULL, # Has the shop's data been loaded into ProfitWise?
+  `ShopOwnerUserId` varchar(128) NOT NULL, 		# Shopify - Email address of shop owner
+  `ShopifyShopId` BIGINT NULL, 					# Shopify - Shopify's internal identifier for each shop
+  `CurrencyId` INT NULL, 						# Shopify - Numeric value representing shop currency
+  `TimeZone` varchar(50) NULL, 					# Shopify - Shop time zone
+  
+  `IsAccessTokenValid` TINYINT NOT NULL, 		# Is the shop's access token currently valid?
+  `IsShopEnabled` TINYINT NOT NULL, 			# Is the shop currently enabled in ProfitWise?
+  `IsDataLoaded` TINYINT NOT NULL, 				# Has the shop's data been loaded into ProfitWise?
+  
+  `StartingDateForOrders` TIMESTAMP NULL, 		# User Preference - Starting date for order data to import
+  `ProfitRealization` TINYINT NOT NULL,			# User Preference - Profit Realization selection
+  `DateRangeDefault` TINYINT NOT NULL,			# User Preference - Profit Realization selection
+  `DefaultMargin` TINYINT NOT NULL,				# User Preference - Profit Realization selection
+  
   
   PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;

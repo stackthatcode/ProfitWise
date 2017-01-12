@@ -19,18 +19,5 @@ namespace ProfitWise.Web.Models
         // Identity Snapshot
         public IdentitySnapshot IdentitySnapshot { get; set; }
         public string ShopUrl => "https://" + IdentitySnapshot.ShopDomain;
-    }
-
-
-    public static class CommonContextExtensions
-    {
-        public static void LoadCommonContextIntoViewBag(this Controller controller)
-        {
-            controller.ViewBag.CommonContext = new CommonContext
-            {
-                ShopifyApiKey = GlobalConfig.ShopifyApiKey,
-                IdentitySnapshot = controller.HttpContext.PullIdentity(),
-            };
-        }
-    }
+    }    
 }

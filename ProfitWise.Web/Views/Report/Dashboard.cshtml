@@ -1,6 +1,7 @@
 ﻿@using ProfitWise.Data.Model.Reports
+@using ProfitWise.Web.Attributes
 @{
-    ViewBag.CommonContext.PageTitle = "ProfitWise - Profitability Dashboard";
+    Context.PullCommonContext().PageTitle = "Profitability Dashboard";
 }
 
 <!-- Dependency Widgets -->
@@ -16,20 +17,7 @@
 @Html.Partial("~/Views/Report/_ReportEditor.cshtml")
 
 <style>
-    .daterangepicker {
-        width: 720px !important;
-        font-size: 13px !important;
-    }
-    div.calendar-table td {
-        padding: 0px !important;
-        line-height: 33px;
-    }
-    .modal-backdrop {
-        z-index: 900;
-    }    
-    i.date-range-picker-icon {
-        position: absolute; bottom: 10px; right: 10px; top: auto; cursor: pointer;
-    }
+    .modal-backdrop { z-index: 900; }
 </style>
 
 <script type="text/html" id="Report-Manager-Top-Level">

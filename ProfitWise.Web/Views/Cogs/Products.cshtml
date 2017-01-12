@@ -201,7 +201,7 @@
         </div>
     </div>
 
-    <div class="container page-content-sleeve">
+    <div class="page-content-sleeve">
         <div class="page-content std-inner-padding" style="margin-top: 209px; min-height: 300px;">
             <div data-bind="if: EditProductId">
                 <div data-bind="template: { name: 'Product-Edit-Body', data: $root.ProductVariantEditorModel }"></div>
@@ -211,7 +211,7 @@
             </div>
         </div>
     </div>
-    </script>
+</script>
 
 <!-- KnockoutJS Root View -->
 <div data-bind="template: { name: 'Main-Template' }">
@@ -221,6 +221,8 @@
 <script>
     var productTypes = @Html.Raw(Model.ProductTypes.SerializeToJson());
     var productVendors = @Html.Raw(Model.Vendors.SerializeToJson());
+
+    ProfitWise = ProfitWise || {};
 
     ProfitWise.EditProductCogsModel = function () {
         var self = this;
