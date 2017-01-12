@@ -424,6 +424,7 @@
             self.LastScrollTop = $(document).scrollTop();
             self.EditProductId(model.MasterProductId);
             self.ProductVariantEditorModel.RetrieveMasterProduct(model.MasterProductId);
+            $('html,body').animate({ scrollTop: 0 });
         };
 
         self.JQueryInit = function() {
