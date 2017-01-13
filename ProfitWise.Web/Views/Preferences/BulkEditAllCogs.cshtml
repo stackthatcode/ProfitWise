@@ -1,0 +1,121 @@
+﻿@using ProfitWise.Web.Attributes
+@using Push.Foundation.Web.Json
+@model ProfitWise.Web.Models.BulkEditAllCogsModel
+
+@{
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    Context.PullCommonContext().PageTitle = "Bulk Edit CoGS Values";
+}
+
+@Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
+
+<script type="text/html" id="Main-Template">
+    <form class="form-horizontal" onsubmit="return false;">
+        <div class="form-group" style="height: 32px;">
+            <div class="col-xs-12">
+                This function allows you to bulk apply a Cost of Goods Sold value to every single
+                Product-Variant in your ProfitWise data set based on a single % Margin.
+            </div>
+        </div>
+        <div style="height: 40px;"></div>
+
+        <div class="form-group" style="height: 32px;">
+            <label class="col-xs-8 control-label"
+                   style="color: #777; display: inline-block; margin-top: 8px;">Enter Margin % by which to set all Cost of Goods </label>
+
+            <div class="col-xs-4" style="text-align: left;">
+                <div style="display:inline-block; width:70px;" data-bind="template: { name: 'Number-Editor-Widget', data: $root.MarginEditorModel }"></div>
+                <div style="display:inline-block; position:relative; margin-left:4px; top:-9px; color:#999; font-size:1.25em; font-weight:700;">%</div>
+            </div>
+        </div>
+
+        <div class="form-group" style="height: 32px;">
+            <label class="col-xs-7 control-label"
+                   style="color: #777; display: inline-block; margin-top: 8px;">Apply to all Product/Variants Cost of Goods, or only to those with $0 CoGs?</label>
+
+            <div class="col-xs-5" style="text-align: left;padding-top:15px;">
+                <select class="form-control">
+                    <option>All Product/Variants</option>
+                    <option>With $0 CoGS only</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="height: 40px;"></div>
+
+        <div class="form-group">
+            <div class="col-xs-12">
+                <div class="alert alert-danger" role="alert">
+                    <strong>WARNING!</strong> Clicking "OK" will overwrite all CoGS data for all Product-Variants
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <div class="col-xs-12">
+                <input type="button" class="btn btn-default" style="width:100px;" value="Cancel" data-bind="click: CancelButtonClick" />
+                <input type="button" class="btn btn-danger" style="width:100px;" value="Ok" data-bind="click: OkButtonClick" />
+            </div>
+        </div>
+
+        <div style="height:20px;"></div>
+    </form>
+</script>
+
+<div data-bind="template: { name: 'Main-Template', afterRender: function() { $data.MarginEditorModel.SetFocus() } }">
+</div>
+
+<script>
+    // Data pass via PwCogsProduct C# object
+    var data = @Html.Raw(Model.SerializeToJson());
+
+    var ProfitWise = ProfitWise || {};
+
+    ProfitWise.BulkEditAllCogsModel = function() {
+        var self = this;
+
+        self.DefaultMargin = ko.observable();
+
+        self.ValidationState = ko.computed(function() {
+        });
+
+        self.CancelButtonClick = function() {
+            ShopifyApp.Modal.close({ result: false });
+        };
+
+        self.OkButtonClick = function() {
+            //var cogsAmount = self.CogsAmountEditorModel.PullState();
+
+            //var postData = {
+            //    masterProductId: self.MasterProductId(),
+            //    currencyId: cogsAmount.CurrencyId,
+            //    Amount: cogsAmount.Amount,
+            //};
+
+            //var settings = new ProfitWiseFunctions.AjaxSettings(true);
+            //var ajax = new ProfitWiseFunctions.Ajax(settings);
+
+            //ajax.HttpPost(
+            //    "/CogsService/BulkUpdateCogs",
+            //    postData,
+            //    function() {
+            //        ShopifyApp.Modal.close({ result: true });
+            //    });
+
+            return false;
+        };
+
+        self.MarginEditorModel = new ProfitWiseWidgets.NumberEditorWidgetModel("number-editor", "Margin %");
+
+        self.MarginEditorModel.RegisterEnterKeyCallback(function() {
+            return self.OkButtonClick();
+        });
+    };
+
+    $(document)
+        .ready(function () {
+            var model = new ProfitWise.BulkEditAllCogsModel();
+            model.MarginEditorModel.Amount(data.DefaultMargin);
+            ko.applyBindings(model);
+        });
+</script>

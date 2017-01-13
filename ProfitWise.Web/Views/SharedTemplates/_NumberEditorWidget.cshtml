@@ -1,0 +1,98 @@
+﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+
+<script type="text/html" id="Number-Editor-Widget">
+    <div class="input-group">
+        
+        <input type="text"
+               data-bind="formatMoney: Amount,
+                        attr: { id: $data.Identifier, placeholder: $data.PlaceHolder },
+                        event: { 
+                            focus: function() { event.target.select(); }, 
+                            keyup: InvokeKeyCallback,
+                            blur: InvokeEditorLostFocusCallback }"
+               class="form-control"
+               placeholder="Enter Value"
+               maxlength="12">
+    </div>
+</script>
+
+<script type="text/javascript">
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.NumberEditorWidgetModel = function(identifier, placeholder) {
+        var self = this;
+        
+        var defaultAmount = 0.00;
+        self.Identifier = ko.observable(identifier);
+        self.Amount = ko.observable(numeral(0 || defaultAmount).format('0,0.00'));
+        self.PlaceHolder = ko.observable(placeholder);
+
+        // TODO - merge his with the Money Editor Widget
+        ko.bindingHandlers.formatMoney = {
+            init: function(element, valueAccessor) {
+                var value = valueAccessor();
+                var interceptor = ko.computed({
+                        read: function() {
+                            // Here's the formatting injection point
+                            var unwrapperValue = ProfitWiseFunctions.UnformatCurrency(ko.unwrap(value));
+                            var output = numeral(unwrapperValue).format('0,0.00');
+                            return output;
+                        },
+                        write: function(newValue) {
+                            if ($.trim(newValue) == '')
+                                value("0");
+                            else
+                                value(numeral().unformat(newValue));
+                            value.valueHasMutated();
+                        }
+                    })
+                    .extend({ notify: 'always' });
+
+                // Only apply bindings to node...?
+                if (element.tagName.toLowerCase() == 'input') {
+                    ko.applyBindingsToNode(element, { value: interceptor });
+                } else {
+                    ko.applyBindingsToNode(element, { text: interceptor });
+                }
+            }
+        };
+
+        self.SetFocus = function() { $(self.Identifier()).focus(); };
+
+        // Enter-key Stuff
+        self.EnterKeyCallback = function () { };
+        self.EscapeKeyCallback = function () { };
+        self.EditorLostFocusCallback = function() {};
+
+        self.RegisterEnterKeyCallback = function (callback) {
+            self.EnterKeyCallback = callback;
+        };
+
+        self.RegisterEscapeKeyCallback = function (callback) {
+            self.EscapeKeyCallback = callback;
+        };
+
+        self.RegisterEditorLostFocusCallback = function(callback) {
+            self.EditorLostFocusCallback = callback;
+        };
+
+        self.InvokeKeyCallback = function (model, event) {
+            if (event.keyCode == 27) {
+                self.EscapeKeyCallback();
+                return false;
+            }
+            if (event.keyCode == 13) {
+                self.EnterKeyCallback();
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        self.InvokeEditorLostFocusCallback = function(model, event) {
+            self.EditorLostFocusCallback();
+        };
+
+        return self;
+    };
+</script>

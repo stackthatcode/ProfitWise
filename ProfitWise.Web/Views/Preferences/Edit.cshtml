@@ -100,7 +100,8 @@
             <label>Bulk apply value to all CoGS Data</label>
 
             <div style="display:inline-block; margin-left:10px; position:relative;">
-                <a href="#" class="btn btn-warning" style="width:200px; display:inline-block; margin-top:-4px;">
+                <a href="#" class="btn btn-warning" data-bind="click: BulkEditAllCogsDialogPopup"
+                   style="width:200px; display:inline-block; margin-top:-4px;">
                     Bulk Set CoGS Data &nbsp;<i class="glyphicon glyphicon-list"></i>
                 </a>
             </div>
@@ -183,7 +184,17 @@
                 $(this).parent().find('input').click();
             });
         };
-
+        
+        self.BulkEditAllCogsDialogPopup = function () {
+            var url = ProfitWiseConfig.BaseUrl + '/Preferences/BulkEditAllCogs';
+            
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Bulk Edit All Cost of Goods Sold',
+                width: 'small',
+                height: 420,
+            }, self.Refresh);
+        };
         return self;
     };
 

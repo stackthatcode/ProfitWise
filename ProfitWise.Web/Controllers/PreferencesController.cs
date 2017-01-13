@@ -22,7 +22,17 @@ namespace ProfitWise.Web.Controllers
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public ActionResult BulkEditAllCogs()
+        {
+            var model = new BulkEditAllCogsModel
+            {
+                DefaultMargin = 20,
+            };
+            return View(model);
+        }
+
         [HttpGet]
         public ActionResult Ping()
         {

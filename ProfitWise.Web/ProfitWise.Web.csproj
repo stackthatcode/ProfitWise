@@ -244,6 +244,7 @@
     <Compile Include="Controllers\CogsController.cs" />
     <Compile Include="Controllers\PreferencesController.cs" />
     <Compile Include="Controllers\ReportServiceController.cs" />
+    <Compile Include="Models\BulkEditAllCogsModel.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\CogsMasterProductModel.cs" />
     <Compile Include="Models\CogsProductGridModel.cs" />
@@ -459,6 +460,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Preferences\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Preferences\BulkEditAllCogs.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SharedTemplates\_NumberEditorWidget.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
