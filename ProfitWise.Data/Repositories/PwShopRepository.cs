@@ -3,6 +3,7 @@ using System.Linq;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Model;
 using Dapper;
+using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -34,11 +35,15 @@ namespace ProfitWise.Data.Repositories
         public int Insert(PwShop shop)
         {
             var query =
-                @"INSERT INTO profitwiseshop 
-                    (ShopOwnerUserId, ShopifyShopId, CurrencyId, StartingDateForOrders, TimeZone,
-                    IsAccessTokenValid, IsShopEnabled, IsDataLoaded) 
-                VALUES (@ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @StartingDateForOrders, @TimeZone,
-                    @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded);
+                @"INSERT INTO 
+                    profitwiseshop (
+                        ShopOwnerUserId, ShopifyShopId, TimeZone, CurrencyId, 
+                        IsAccessTokenValid, IsShopEnabled, IsDataLoaded,
+                        StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, DateRangeDefault 
+                ) VALUES (
+                        @ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @TimeZone,
+                        @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded,
+                        @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, @DateRangeDefault );
                 SELECT LAST_INSERT_ID();";
             return _connection
                 .Query<int>(query, shop)
@@ -52,14 +57,6 @@ namespace ProfitWise.Data.Repositories
                             TimeZone = @TimeZone
                         WHERE PwShopId = @PwShopId";
             _connection.Execute(query, shop);
-        }
-
-        public void UpdateStartingDateForOrders(int pwShopId, DateTime startingDateForOrders)
-        {
-            var query = @"UPDATE profitwiseshop 
-                        SET StartingDateForOrders = @startingDateForOrders,
-                        WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, startingDateForOrders });
         }
 
         public void UpdateIsAccessTokenValid(int pwShopId, bool isAccessTokenValid)
@@ -86,5 +83,40 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, new { pwShopId, isDataLoaded });
         }
 
+
+
+        public void UpdateStartingDateForOrders(int pwShopId, DateTime startingDateForOrders)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET StartingDateForOrders = @startingDateForOrders
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, startingDateForOrders });
+        }
+
+        public void UpdateDefaultMargin(int pwShopId, bool useDefaultMargin, decimal defaultMargin)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET UseDefaultMargin = @useDefaultMargin,
+                            DefaultMargin = @defaultMargin  
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, useDefaultMargin, defaultMargin });
+        }
+
+        public void UpdateProfitRealization(int pwShopId, int profitRealization)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET ProfitRealization = @profitRealization
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, profitRealization });
+        }
+
+        public void UpdateDateRangeDefault(int pwShopId, int dateRangeDefault)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET DateRangeDefault = @dateRangeDefault
+                        WHERE PwShopId = @pwShopId";
+            _connection.Execute(query, new { pwShopId, dateRangeDefault });
+        }
     }
 }
+

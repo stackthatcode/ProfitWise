@@ -39,7 +39,6 @@ namespace ProfitWise.Web
 
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
-            // Configure the sign in cookie
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
@@ -55,6 +54,8 @@ namespace ProfitWise.Web
                             validateInterval: TimeSpan.FromMinutes(30),
                             regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
 
+                    // Note 01/13/2017 - this is a countermeasure to prevent OWIN from intercepting 401 responses
+                    // ... and automatically sending uses to the LoginPath
                     OnApplyRedirect = ctx =>
                     {
                         if (!AuthorizationResponseUrls.Any(x => ctx.Request.Uri.PathAndQuery.Contains(x)))

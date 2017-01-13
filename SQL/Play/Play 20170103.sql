@@ -140,6 +140,8 @@ WHERE t1.PwReportId = 99759;
 
 SELECT * FROM profitwiseprofitreportentry;
 
+SELECT * FROM profitwiseshop;
 
-AND t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId 
+
+UPDATE profitwiseshop SET IsAccessTokenValid = 0;
 

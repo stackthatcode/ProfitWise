@@ -5,10 +5,10 @@ using ProfitWise.Web.Attributes;
 
 namespace ProfitWise.Web.Controllers
 {
-    [Authorize(Roles = "ADMIN, USER")]
-    [IdentityProcessor]
     public class ErrorController : Controller
     {
+        [HttpGet]
+        [AllowAnonymous]
         public ActionResult Http500(string returnUrl)
         {
             var model = new ErrorModel() {ReturnUrl = returnUrl};

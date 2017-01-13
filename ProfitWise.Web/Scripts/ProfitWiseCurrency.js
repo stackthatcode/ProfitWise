@@ -39,31 +39,35 @@ ProfitWiseFunctions.ExtractRawNumber = function (amount) {
     return numeral().unformat(amountAsString);
 };
 
-ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor
-    = function (knockoutValue, lowConstraint, highConstraint) {
-        return ko.computed({
-            read: function() {
-                // Here's the formatting injection point
-                var numericValue = ProfitWiseFunctions.ExtractRawNumber(ko.unwrap(knockoutValue));
-                numericValue =
-                    (lowConstraint && numericValue < lowConstraint)
-                        ? lowConstraint
-                        : numericValue;
-                numericValue =
-                    (highConstraint && numericValue > highConstraint)
-                        ? highConstraint
-                        : numericValue;
 
+// Parameters  { knockoutValue, lowConstraint, highConstraint }
+ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor =
+    function (parameters) {
+        return ko.computed({
+            read: function () {
+                // Executed after user input
+                var numericValue = ProfitWiseFunctions.ExtractRawNumber(ko.unwrap(parameters.knockoutValue));
+
+                numericValue =
+                    (typeof parameters.lowConstraint !== "undefined" && numericValue < parameters.lowConstraint)
+                        ? parameters.lowConstraint
+                        : numericValue;
+                numericValue =
+                    (typeof parameters.highConstraint !== "undefined" && numericValue > parameters.highConstraint)
+                        ? parameters.highConstraint
+                        : numericValue;
+                
                 var output = numeral(numericValue).format('0,0.00');
                 return output;
             },
-            write: function(newValue) {
+            write: function (newValue) {
+                // Executed before user input
                 if ($.trim(newValue) == '') {
-                    knockoutValue("0");
+                    parameters.knockoutValue("0");
                 } else {
-                    knockoutValue(numeral().unformat(newValue));
+                    parameters.knockoutValue(numeral().unformat(newValue));
                 }
-                knockoutValue.valueHasMutated();
+                parameters.knockoutValue.valueHasMutated();
             }
         }).extend({ notify: 'always' });
     };

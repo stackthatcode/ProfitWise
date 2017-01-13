@@ -1,6 +1,5 @@
 ﻿using System;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
@@ -18,26 +17,24 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
+        private readonly ShopSynchronizationService _shopSynchronizationService;
 
         public ShopRefreshService(
                     IPushLogger pushLogger, 
                     PwShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
                     MultitenantFactory factory,
-                    CurrencyService currencyService)
+                    CurrencyService currencyService, 
+                    ShopSynchronizationService shopSynchronizationService)
         {
             _pushLogger = pushLogger;
             _shopDataRepository = shopDataRepository;
             _apiRepositoryFactory = apiRepositoryFactory;
             _factory = factory;
             _currencyService = currencyService;
+            _shopSynchronizationService = shopSynchronizationService;
         }
-
-
-        // TODO => update before going to Production
-        public readonly DateTime DefaultStartDateForOrders = new DateTime(2016, 9, 1);
-
-
+        
         public int Execute(ShopifyCredentials shopifyCredentials)
         {
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(shopifyCredentials);
@@ -45,13 +42,16 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Map the Shop Currency Id
             var shopCurrencyId = _currencyService.AbbreviationToCurrencyId(shopFromShopify.Currency);
-
             _pushLogger.Info($"Shop Refresh Service for UserId : {shopifyCredentials.ShopOwnerUserId}");
-
             var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
+
+            // Update Shop with the latest
+            _shopSynchronizationService.UpdateShopTimeZoneAndCurrency(
+                shop, shopCurrencyId, shopFromShopify.TimeZone);
+
+            // Ensure the proper Batch State exists for Shop
             var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(shop);
             var batchState = profitWiseBatchStateRepository.Retrieve();
-
             if (batchState == null)
             {
                 var state = new PwBatchState
@@ -62,14 +62,6 @@ namespace ProfitWise.Data.ProcessSteps
                 profitWiseBatchStateRepository.Insert(state);
                 _pushLogger.Info($"Created Batch State for Shop - UserId: {shop.ShopOwnerUserId}");
             }
-
-            shop.CurrencyId = shopCurrencyId;
-            shop.TimeZone = shopFromShopify.TimeZone;
-            _shopDataRepository.Update(shop);
-            _pushLogger.Info(
-                    $"Updated Shop - UserId: {shop.ShopOwnerUserId}, " +
-                    $"CurrencyId: {shop.CurrencyId}, " +
-                    $"TimeZone: {shop.TimeZone}");
 
             return shop.PwShopId;
         }

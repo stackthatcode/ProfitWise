@@ -119,22 +119,23 @@ ALTER TABLE `aspnetuserroles`
 DROP TABLE IF EXISTS `profitwiseshop`; 
 
 CREATE TABLE `profitwiseshop` (
-  `PwShopId` BIGINT NOT NULL AUTO_INCREMENT, 	# ProfitWise's unique identifier for each shop
-  
+  `PwShopId` BIGINT NOT NULL AUTO_INCREMENT, 	# ProfitWise's unique identifier for each shop  
   `ShopOwnerUserId` varchar(128) NOT NULL, 		# Shopify - Email address of shop owner
   `ShopifyShopId` BIGINT NULL, 					# Shopify - Shopify's internal identifier for each shop
-  `CurrencyId` INT NULL, 						# Shopify - Numeric value representing shop currency
-  `TimeZone` varchar(50) NULL, 					# Shopify - Shop time zone
+  
+  `CurrencyId` INT NULL, 						# Shopify - Numeric value representing shop currency ** can mutate
+  `TimeZone` varchar(50) NULL, 					# Shopify - Shop time zone ** can mutate
   
   `IsAccessTokenValid` TINYINT NOT NULL, 		# Is the shop's access token currently valid?
   `IsShopEnabled` TINYINT NOT NULL, 			# Is the shop currently enabled in ProfitWise?
   `IsDataLoaded` TINYINT NOT NULL, 				# Has the shop's data been loaded into ProfitWise?
   
   `StartingDateForOrders` TIMESTAMP NULL, 		# User Preference - Starting date for order data to import
+  `UseDefaultMargin` TINYINT NOT NULL,			# User Preference - Should we use a default margin?
+  `DefaultMargin` DECIMAL(15, 2) NOT NULL,		# User Preference - Default margin  
   `ProfitRealization` TINYINT NOT NULL,			# User Preference - Profit Realization selection
-  `DateRangeDefault` TINYINT NOT NULL,			# User Preference - Profit Realization selection
-  `DefaultMargin` TINYINT NOT NULL,				# User Preference - Profit Realization selection
-  
+  `DateRangeDefault` TINYINT NOT NULL,			# User Preference - Default Date Range selection
+ 
   
   PRIMARY KEY  (`PwShopId`, `ShopOwnerUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;

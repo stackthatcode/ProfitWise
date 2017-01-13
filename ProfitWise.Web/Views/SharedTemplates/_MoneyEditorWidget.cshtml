@@ -32,8 +32,12 @@
         </div>
         <input type="text"
                data-bind="formatMoney: Amount,
-                        event: { 
-                            focus: function() { event.target.select(); }, 
+                        event: {
+                            focus: function() { 
+                                if (event) { 
+                                    event.target.select();
+                                }
+                            }, 
                             keyup: InvokeKeyCallback,
                             blur: InvokeEditorLostFocusCallback }"
                class="form-control money-editor-text"
@@ -45,25 +49,29 @@
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.MoneyEditorWidgetModel = function(currencyId, amount) {
+    // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount, defaultcurrencyid }
+    ProfitWiseWidgets.MoneyEditorWidgetModel = function(parameters) {
         var self = this;
-        var defaultCurrencyId = 1;
-        var defaultAmount = 0.00;
-        
-        // TODO: load this from the database...
         self.CurrencyCache = ProfitWiseFunctions.CurrencyCache;
 
+        var defaultCurrencyId = 1; // USD
+        
         // Populate the input amounts
-        self.CurrencyId = ko.observable(currencyId || defaultCurrencyId);   // Default to Currency Id = 1;
-        self.Amount = ko.observable(numeral(amount || defaultAmount).format('0,0.00'));
+        self.Identifier = ko.observable(parameters.identifier);
+        self.CurrencyId = ko.observable(parameters.currencyid || defaultCurrencyId);   // Default to Currency Id = 1;
+        self.Amount = ko.observable(numeral(parameters.amount || 0).format('0,0.00'));
 
         ko.bindingHandlers.formatMoney = {
             init: function(element, valueAccessor) {
                 var value = valueAccessor();
                 var interceptor =
-                    ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor(value);
+                    ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor(
+                    {
+                        knockoutValue: value,
+                        lowConstraint: parameters.lowconstraint,
+                        highConstraint: parameters.highconstraint
+                    });
 
-                // Only apply bindings to node...?
                 if (element.tagName.toLowerCase() == 'input') {
                     ko.applyBindingsToNode(element, { value: interceptor });
                 } else {
@@ -139,6 +147,10 @@
 
         self.InvokeEditorLostFocusCallback = function(model, event) {
             self.EditorLostFocusCallback();
+        };
+
+        self.SetFocus = function () {
+            $("#" + self.Identifier()).focus();
         };
 
         return self;

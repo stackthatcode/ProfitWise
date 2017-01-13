@@ -1,14 +1,11 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using ProfitWise.Data.Model;
-using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
-using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
@@ -26,13 +23,11 @@ namespace ProfitWise.Web.Controllers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IShopifyCredentialService _credentialService;
-        private readonly CurrencyService _currencyService;
-        private readonly PwShopRepository _pwShopRepository;
+
+        private readonly ShopSynchronizationService _shopSynchronizationService;
         private readonly UserService _userService;
         private readonly IPushLogger _logger;
-
-        private readonly DateTime _defaultStartDateForOrders = new DateTime(2014, 1, 1);
-
+        
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
@@ -41,8 +36,7 @@ namespace ProfitWise.Web.Controllers
                 IShopifyCredentialService credentialService,
                 UserService userService,
                 IPushLogger logger, 
-                CurrencyService currencyService, 
-                PwShopRepository pwShopRepository)
+                ShopSynchronizationService shopSynchronizationService)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
@@ -50,8 +44,7 @@ namespace ProfitWise.Web.Controllers
             _credentialService = credentialService;
             _userService = userService;
             _logger = logger;
-            _currencyService = currencyService;
-            _pwShopRepository = pwShopRepository;
+            _shopSynchronizationService = shopSynchronizationService;
         }
 
         [AllowAnonymous]
@@ -71,15 +64,13 @@ namespace ProfitWise.Web.Controllers
         {
             // External Login Info is contained in the OWIN-issued cookie, and has information from the 
             // external call to the Shop's OAuth service.
-
             var externalLoginInfo = await _authenticationManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
-                _logger.Warn("Unable to retrieve ExternalLoginInfo from Authentication Manager");
+                _logger.Error("Unable to retrieve ExternalLoginInfo from Authentication Manager");
 
                 // Looks like the first cookie died, was corrupted, etc. We'll ask the User to refresh their browser.
                 return RedirectToAction("ExternalLoginFailure", new { returnUrl });
-
             }
 
             // Sign in the user with this external login provider if the user already has a login
@@ -88,10 +79,11 @@ namespace ProfitWise.Web.Controllers
 
             if (externalLoginCookieResult == SignInStatus.Success)
             {
-                if (await IsShopExistingAndDisabled(externalLoginInfo))
+                var user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);                
+                if (_shopSynchronizationService.IsShopExistingButDisabled(user.Id))
                 {
                     _logger.Error($"Attempt to login to disabled PwShop by {externalLoginInfo.DefaultUserName}");
-                    return RedirectToAction("SevereAuthorizationFailure", new {returnUrl});
+                    return RedirectToAction("SevereAuthorizationFailure", new { returnUrl });
                 }
 
                 _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
@@ -136,7 +128,6 @@ namespace ProfitWise.Web.Controllers
 
                 // Save the Shopify Domain and Access Token to Persistence
                 await PushCookieClaimsToPersistence(externalLoginInfo);
-
                 transaction.Complete();
             }
 
@@ -146,13 +137,6 @@ namespace ProfitWise.Web.Controllers
             await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
             return RedirectToLocal(returnUrl);
-        }
-
-        private async Task<bool> IsShopExistingAndDisabled(ExternalLoginInfo externalLoginInfo)
-        {
-            ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
-            var pwShop = _pwShopRepository.RetrieveByUserId(user.Id);
-            return (pwShop != null && pwShop.IsShopEnabled == false);
         }
 
         private async Task PushCookieClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
@@ -168,67 +152,31 @@ namespace ProfitWise.Web.Controllers
 
             // Update the Shop with the latest serialized Shop from the OAuth handshake
             var shop = new Shop(shopSerialised.Value);
-            await RefreshProfitWiseShop(user.Id, shop);
+            _shopSynchronizationService.RefreshShop(user.Id, shop);
 
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
-
-        private async Task RefreshProfitWiseShop(string userId, Shop shop)  
+        
+        private ActionResult RedirectToLocal(string returnUrl)
         {
-            var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);
-            var pwShop = _pwShopRepository.RetrieveByUserId(userId);
-
-            if (pwShop == null)
+            if (Url.IsLocalUrl(returnUrl))
             {
-                var newShop = new PwShop
-                {
-                    ShopOwnerUserId = userId,
-                    CurrencyId = currencyId,
-                    ShopifyShopId = shop.Id,
-                    StartingDateForOrders = _defaultStartDateForOrders,
-                    TimeZone = shop.TimeZone,
-                    IsAccessTokenValid = true,
-                    IsShopEnabled = true,
-                    IsDataLoaded = false,
-                };
-
-                newShop.PwShopId = _pwShopRepository.Insert(newShop);
-
-                _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}, " +
-                             $"CurrencyId: {newShop.CurrencyId}, " +
-                             $"ShopifyShopId: {newShop.ShopifyShopId}, " +
-                             $"StartingDateForOrders: {newShop.StartingDateForOrders}");
+                return Redirect(returnUrl);
             }
-            else
-            {
-                pwShop.CurrencyId = currencyId;
-                pwShop.TimeZone = shop.TimeZone;
-                _pwShopRepository.Update(pwShop);
-
-                _pwShopRepository.UpdateIsAccessTokenValid(pwShop.PwShopId, true);
-                _logger.Info($"Updated Shop - UserId: {pwShop.ShopOwnerUserId}, " +
-                            $"CurrencyId: {pwShop.CurrencyId}, " +
-                            $"TimeZone: {pwShop.TimeZone} - and set IsAccessTokenValid = true");
-            }
+            return Redirect(GlobalConfig.BaseUrl + returnUrl.ExtractQueryString());
         }
 
 
+
+        // Error pages...
 
         // GET: /ShopifyAuth/UnauthorizedAccess
         [HttpGet]
         [AllowAnonymous]
         public ActionResult UnauthorizedAccess(string returnUrl)
-        {
-            var shop = returnUrl.ExtractQueryParameter("shop");
-            if (shop != null)
-            {
-                return Login(shop, returnUrl);
-            }
-            else
-            {
-                return AuthorizationProblem(
-                    returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.");
-            }
+        {           
+            return AuthorizationProblem(
+                returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.");
         }
 
         // GET: /ShopifyAuth/ExternalLoginFailure
@@ -239,7 +187,6 @@ namespace ProfitWise.Web.Controllers
                 returnUrl, "External Login Failure", 
                 "It appears that something went wrong while authorizing your Shopify Account.");            
         }
-
 
         // GET: /ShopifyAuth/AccessTokenRefresh
         [AllowAnonymous]
@@ -265,22 +212,20 @@ namespace ProfitWise.Web.Controllers
             Response.SuppressFormsAuthenticationRedirect = true;
             Response.TrySkipIisCustomErrors = true;
 
-            var model = new AuthorizationProblemModel(returnUrl)
-            {
-                Title = title,
-                Message = message
-            };
+            var shop = returnUrl.ExtractQueryParameter("shop");            
+            var url = GlobalConfig.BaseUrl + 
+                $"/ShopifyAuth/Login?shop={shop}&returnUrl={HttpUtility.UrlEncode(returnUrl)}";            
+
+            var model = 
+                new AuthorizationProblemModel(url)
+                {
+                    Title = title,
+                    Message = message
+                };
+
             return View("AuthorizationProblem", model);
         }
 
-        private ActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            return RedirectToAction("Dashboard", "Report");
-        }
     }
 }
 

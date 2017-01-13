@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Identity;
 

@@ -24,7 +24,8 @@
                    style="color: #777; display: inline-block; margin-top: 8px;">Enter Margin % by which to set all Cost of Goods </label>
 
             <div class="col-xs-4" style="text-align: left;">
-                <div style="display:inline-block; width:70px;" data-bind="template: { name: 'Number-Editor-Widget', data: $root.MarginEditorModel }"></div>
+                <div style="display:inline-block; width:100px;" 
+                     data-bind="template: { name: 'Number-Editor-Widget', data: $root.MarginEditorModel }"></div>
                 <div style="display:inline-block; position:relative; margin-left:4px; top:-9px; color:#999; font-size:1.25em; font-weight:700;">%</div>
             </div>
         </div>
@@ -66,7 +67,7 @@
 </div>
 
 <script>
-    // Data pass via PwCogsProduct C# object
+    // Data pass via BulkEditAllCogsModel C# object
     var data = @Html.Raw(Model.SerializeToJson());
 
     var ProfitWise = ProfitWise || {};
@@ -74,7 +75,12 @@
     ProfitWise.BulkEditAllCogsModel = function() {
         var self = this;
 
-        self.DefaultMargin = ko.observable();
+        self.MarginEditorModel = 
+            new ProfitWiseWidgets.NumberEditorWidgetModel({ 
+                identifier: "number-editor", 
+                placeholder: "Margin %", 
+                lowconstraint: 0,
+                highconstraint: 100 });
 
         self.ValidationState = ko.computed(function() {
         });
@@ -104,13 +110,6 @@
 
             return false;
         };
-
-        self.MarginEditorModel = 
-            new ProfitWiseWidgets.NumberEditorWidgetModel({ 
-                        identifier: "number-editor", 
-                        placeholder: "Margin %", 
-                        lowconstraint: 0,
-                        highconstraint: 100 });
 
         self.MarginEditorModel.RegisterEnterKeyCallback(function() {
             return self.OkButtonClick();

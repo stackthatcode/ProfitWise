@@ -1,5 +1,3 @@
-﻿@using System.Configuration
-@using Push.Foundation.Utilities.Helpers
 @model ProfitWise.Web.Models.AuthorizationProblemModel
 @{
     ViewBag.Title = "ProfitWise - " + @Model.Title;
@@ -10,8 +8,14 @@
     <h2 class="header">ProfitWise - @Model.Title</h2>
     <h4>@Model.Message</h4>
     <div style="height: 25px;"></div>
-
-    <p>You can try to re-authenticate by <a href="@ConfigurationManager.AppSettings["application_root_url"]">clicking here</a>, 
-        or exiting Shopify and restarting ProfitWise.</p>    
+    
+    @if (@Model.UrlContainsShop)
+    {
+        <p>You can retry by <a href="@Model.Url">clicking here</a>, or exiting Shopify and restarting ProfitWise.</p>
+    }
+    else
+    {
+        <p>Please try refreshing the page, or exiting Shopify and restarting ProfitWise.</p>
+    }
     <p>If the issue persists, feel free to reach out to our Support Team for assistance.</p>
 </div>

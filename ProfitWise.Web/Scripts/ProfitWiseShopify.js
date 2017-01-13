@@ -1,6 +1,6 @@
 ﻿var ProfitWiseShopify = ProfitWiseShopify || {};
-
 var ProfitWiseConfig = ProfitWiseConfig || {};
+
 ProfitWiseConfig.BaseUrl = '/ProfitWise';
 
 ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
@@ -11,6 +11,16 @@ ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
 };
 
 ProfitWiseShopify.BarInitialize = function (title) {
+    var querystring = (location.search);
+    console.log(querystring);
+
+    var linkBuilder = function(path, label) {
+        return {
+            label: label,
+            href: ProfitWiseConfig.BaseUrl + path + querystring,
+            target: "app",
+        }
+    };
 
     ShopifyApp.ready(function () {
         ShopifyApp.Bar.initialize({
@@ -18,71 +28,25 @@ ProfitWiseShopify.BarInitialize = function (title) {
 
             buttons: {
                 secondary: [
-                    {
-                        label: "Home",
-                        href: ProfitWiseConfig.BaseUrl,
-                        target: "app",
-                    },
+                    linkBuilder("", "Home"),
                     {
                         label: "Navigate to...",
                         type: "dropdown",
                         links: [
-                            {
-                                label: "Dashboard",
-                                href: ProfitWiseConfig.BaseUrl,
-                                target: "app"
-                            },
-                            {
-                                label: "Edit Preferences",
-                                href: ProfitWiseConfig.BaseUrl + "/Preferences/Edit",
-                                target: "app"
-                            },
-                            {
-                                label: "Edit Product CoGS",
-                                href: ProfitWiseConfig.BaseUrl + "/Cogs/Products",
-                                target: "app"
-                            },
-                            {
-                                label: "Edit Goals",
-                                href: ProfitWiseConfig.BaseUrl + "/Report/Goals",
-                                target: "app"
-                            },
-                            {
-                                label: "Product Consolidation",
-                                href: ProfitWiseConfig.BaseUrl + "/Report/Products",
-                                target: "app"
-                            },
-                            {
-                                label: "Error Page - Anon (Remove for Prod)",
-                                href: ProfitWiseConfig.BaseUrl + "/Error/ThrowAnonymousError",
-                                target: "app"
-                            },
-                            {
-                                label: "Error Page - Authed (Remove for Prod)",
-                                href: ProfitWiseConfig.BaseUrl + "/Error/ThrowAuthenticatedError",
-                                target: "app"
-                            },
-                            {
-                                label: "Not Found - 404 (Remove for Prod)",
-                                href: ProfitWiseConfig.BaseUrl + "/Bullshit/NonsenseUrl",
-                                target: "app"
-                            },
+                            linkBuilder("", "Profitability Dashboard"),
+                            linkBuilder("/Preferences/Edit", "Edit Preferences"),
+                            linkBuilder("/Cogs/Products", "Edit Product CoGS"),
+                            linkBuilder("/Error/ThrowAnonymousError", "Error Page - Anon (Remove for Prod)"),
+                            linkBuilder("/Error/ThrowAuthenticatedError", "Error Page - Authed (Remove for Prod)"),
+                            linkBuilder("/Bullshit/NonsenseUrl", "Not Found - 404 (Remove for Prod)"),
                         ]
                     },
                     {
                         label: "Support",
                         type: "dropdown",
                         links: [
-                            {
-                                label: "About ProfitWise",
-                                href: ProfitWiseConfig.BaseUrl + "/UserAuxiliary/About",
-                                target: "app"
-                            },
-                            {
-                                label: "Contact Us",
-                                href: ProfitWiseConfig.BaseUrl + "/UserAuxiliary/Contact",
-                                target: "app"
-                            }
+                            linkBuilder("/UserAuxiliary/About", "About ProfitWise"),
+                            linkBuilder("/UserAuxiliary/Contact", "Contact Us"),
                         ]
                     },
                 ]
@@ -116,7 +80,8 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
     );
 };
 
-ProfitWiseShopify.ErrorMessage = "We're sorry for the inconvenience, but the System has encountered an error. " +
+ProfitWiseShopify.ErrorMessage =
+    "We're sorry for the inconvenience, but the System has encountered an error. " +
     "Please try reloading the page. If the problem persists, reach out to our Support Team!";
 
 ProfitWiseShopify.ErrorPopup = function () {

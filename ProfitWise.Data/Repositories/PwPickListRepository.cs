@@ -4,6 +4,7 @@ using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Helpers;
 

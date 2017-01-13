@@ -7,7 +7,11 @@
                data-bind="formatNumber: Amount,
                         attr: { id: $data.Identifier, placeholder: $data.PlaceHolder },
                         event: { 
-                            focus: function() { event.target.select(); }, 
+                            focus: function() { 
+                                if (event) { 
+                                    event.target.select();
+                                }
+                            }, 
                             keyup: InvokeKeyCallback,
                             blur: InvokeEditorLostFocusCallback }"
                class="form-control"
@@ -32,7 +36,11 @@
                 var value = valueAccessor();
                 var interceptor =
                     ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor(
-                        value, parameters.lowconstraint, parameters.highconstraint);
+                    {
+                        knockoutValue: value, 
+                        lowConstraint: parameters.lowconstraint, 
+                        highConstraint: parameters.highconstraint                         
+                    });
 
                 // Only apply bindings to node...?
                 if (element.tagName.toLowerCase() == 'input') {
@@ -43,7 +51,9 @@
             }
         };
 
-        self.SetFocus = function() { $(self.Identifier()).focus(); };
+        self.SetFocus = function() {
+             $("#" + self.Identifier()).focus();
+        };
 
         // Enter-key Stuff
         self.EnterKeyCallback = function () { };

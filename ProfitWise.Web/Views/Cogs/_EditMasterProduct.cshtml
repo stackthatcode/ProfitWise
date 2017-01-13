@@ -226,7 +226,11 @@
 
                     item.EditorModel =
                         new ProfitWiseWidgets.MoneyEditorWidgetModel(
-                                item.CogsCurrencyId, item.CogsAmount);
+                        {
+                            defaultcurrencyid: item.CogsCurrencyId, 
+                            defaultamount: item.CogsAmount,
+                            lowconstraint: 0,
+                        });
 
                     item.UpdateAndHide = function () {
                         item.EditorVisible(false);

@@ -7,6 +7,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Logging;

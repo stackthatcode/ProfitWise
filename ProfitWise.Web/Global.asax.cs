@@ -37,7 +37,7 @@ namespace ProfitWise.Web
             var errorRoute = new RouteData();
             errorRoute.Values.Add("controller", "Error");
             var httpException = lastError as HttpException;
-            if (httpException.GetHttpCode() == 404)
+            if (httpException != null && httpException.GetHttpCode() == 404)
             {
                 errorRoute.Values.Add("action", "Http404");
             }

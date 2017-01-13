@@ -5,6 +5,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.ShopifyImport;
 
 

@@ -112,7 +112,9 @@
                     return false;
                 };
 
-                self.CogsAmountEditorModel = new ProfitWiseWidgets.MoneyEditorWidgetModel();
+                self.CogsAmountEditorModel =                         
+                    new ProfitWiseWidgets
+                        .MoneyEditorWidgetModel({ lowconstraint: 0 });
 
                 self.CogsAmountEditorModel.RegisterEnterKeyCallback(function() {
                     return self.OkButtonClick();

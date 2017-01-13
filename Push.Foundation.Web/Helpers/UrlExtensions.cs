@@ -5,7 +5,7 @@ namespace Push.Foundation.Web.Helpers
 {
     public static class UrlExtensions
     {
-        public static string ExtractQueryParameter(this string input, string name)
+        public static string ExtractQueryString(this string input)
         {
             if (input == null)
             {
@@ -17,6 +17,12 @@ namespace Push.Foundation.Web.Helpers
                 return null;
             }
             var queryString = input.Substring(index);
+            return queryString;
+        }
+
+        public static string ExtractQueryParameter(this string input, string name)
+        {
+            var queryString = input.ExtractQueryString();
             var queryStringCollection = HttpUtility.ParseQueryString(queryString);
             return queryStringCollection[name];
         }
