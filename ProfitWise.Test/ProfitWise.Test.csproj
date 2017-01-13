@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="ProfitWiseTestingChrome.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SeleniumExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
