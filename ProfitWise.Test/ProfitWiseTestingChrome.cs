@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System.Threading;
+using SeleniumExtensions;
 
 namespace ProfitWise.Test.Chrome
 {
@@ -24,6 +25,43 @@ namespace ProfitWise.Test.Chrome
 
 
         //Google Chrome test procedures
+
+
+        //[TestMethod]
+        //public void GCRemoveProfitWiseIfInstalled()
+        //{
+        //    WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
+
+        //    driverGC.Navigate().GoToUrl("https://3duniverse.myshopify.com/admin/apps");
+
+        //    wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("login-input")));
+
+        //    driverGC.FindElement(By.Id("login-input")).SendKeys("jeremy@3duniverse.org");
+        //    driverGC.FindElement(By.Id("password")).SendKeys("Pi3141592654" + Keys.Enter);
+
+
+        //    wait.Until(ExpectedConditions.ElementToBeClickable(By.PartialLinkText("Visit Shopify App Store")));
+
+        //    if (driverGC.IsElementEnabled(By.PartialLinkText("ProfitWise")))
+        //    {
+
+        //        //Remove ProfitWise app
+
+        //    }
+        //}
+
+        //[TestMethod]
+        //public void GCInstallProfitWise()
+        //{
+        //    WebDriverWait wait = new WebDriverWait(driverGC, TimeSpan.FromSeconds(30));
+        //
+        //    driverGC.Navigate().GoToUrl("<install URL>");
+        //
+        // 
+        //
+        //}
+
+
 
         [TestMethod]
         public void GCLoginToProfitWise()
@@ -81,12 +119,12 @@ namespace ProfitWise.Test.Chrome
 
             //Check 2016 Revenues
             var Total2016Revenues = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[2]/h1")).Text;
-            Assert.AreEqual("$2,763,804.31", Total2016Revenues);
+            Assert.AreEqual("$2,656,441.92", Total2016Revenues);
             Console.WriteLine("Total Revenues for 2016 = " + Total2016Revenues);
 
             //Check 2016 Profits
             var Total2016Profit = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[4]/h1")).Text;
-            Assert.AreEqual("$698,536.12", Total2016Profit);
+            Assert.AreEqual("$591,173.73", Total2016Profit);
             Console.WriteLine("Total Profit for 2016 = " + Total2016Profit);
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
@@ -149,12 +187,12 @@ namespace ProfitWise.Test.Chrome
 
             //Check December, 2016 Revenues
             var Dec2016Revenues = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[2]/h1")).Text;
-            Assert.AreEqual("$296,153.83", Dec2016Revenues);
+            Assert.AreEqual("$296,188.84", Dec2016Revenues);
             Console.WriteLine("Revenues for December, 2016 = " + Dec2016Revenues);
 
             //Check December, 2016 Profits
             var Dec2016Profit = driverGC.FindElement(By.XPath("//*[@id=\"report-viewer-body\"]/div/div/div/div[2]/div/div[1]/div[4]/h1")).Text;
-            Assert.AreEqual("$63,176.20", Dec2016Profit);
+            Assert.AreEqual("$63,211.21", Dec2016Profit);
             Console.WriteLine("Profit for December, 2016 = " + Dec2016Profit);
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
@@ -266,7 +304,7 @@ namespace ProfitWise.Test.Chrome
 
             driverGC.FindElement(By.XPath("//*[@id=\"next-popover-activator--1\"]")).Click();
             Thread.Sleep(1000);
-            driverGC.FindElement(By.XPath("//*[@id=\"next-popover--1\"]/div[2]/div/div/ul/li[5]/button")).Click();
+            driverGC.FindElement(By.XPath("//*[@id=\"next-popover--1\"]/div[2]/div/div/ul/li[3]/button")).Click();
             Thread.Sleep(2000);
             driverGC.SwitchTo().Frame("app-iframe");
             //Wait for Spinner Layer to go away
@@ -274,7 +312,7 @@ namespace ProfitWise.Test.Chrome
 
             Screenshot ss = ((ITakesScreenshot)driverGC).GetScreenshot();
             ss.SaveAsFile("c:\\Screenshots\\Chrome\\EditCoGS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
+            
         }
 
         [TestMethod]
@@ -356,7 +394,6 @@ namespace ProfitWise.Test.Chrome
         //    ss.SaveAsFile("c:\\Screenshots\\Chrome\\XXX.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
         //}
-
 
 
 
