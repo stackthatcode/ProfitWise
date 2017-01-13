@@ -58,7 +58,6 @@ namespace ProfitWise.Web.Controllers
                 Url.Action("ExternalLoginCallback", "ShopifyAuth", new { ReturnUrl = returnUrl }), null, correctedShopName);
         }
         
-        // GET: /ShopifyAuth/ExternalLoginCallback
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
@@ -170,7 +169,6 @@ namespace ProfitWise.Web.Controllers
 
         // Error pages...
 
-        // GET: /ShopifyAuth/UnauthorizedAccess
         [HttpGet]
         [AllowAnonymous]
         public ActionResult UnauthorizedAccess(string returnUrl)
@@ -179,7 +177,6 @@ namespace ProfitWise.Web.Controllers
                 returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.");
         }
 
-        // GET: /ShopifyAuth/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure(string returnUrl)
         {
@@ -188,7 +185,6 @@ namespace ProfitWise.Web.Controllers
                 "It appears that something went wrong while authorizing your Shopify Account.");            
         }
 
-        // GET: /ShopifyAuth/AccessTokenRefresh
         [AllowAnonymous]
         public ActionResult AccessTokenRefresh(string returnUrl)
         {
@@ -197,7 +193,6 @@ namespace ProfitWise.Web.Controllers
                 "It appears your Shopify Access has expired or is invalid.");
         }
 
-        // GET: /ShopifyAuth/AuthorizationFailure
         [AllowAnonymous]
         public ActionResult SevereAuthorizationFailure(string returnUrl)
         {

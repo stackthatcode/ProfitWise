@@ -8,10 +8,11 @@ using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 
+
 namespace ProfitWise.Web.Attributes
 {
     public class IdentityProcessorAttribute : ActionFilterAttribute, IActionFilter
-    {        
+    {
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
             var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
@@ -25,13 +26,13 @@ namespace ProfitWise.Web.Attributes
             var currentUrl = filterContext.HttpContext.Request.Url.PathAndQuery;
             var userId = filterContext.HttpContext.User.ExtractUserId();
 
-
             if (userId == null)
             {
-                logger.Debug($"Null UserId - aborting IdentityProcessing");
+                logger.Info($"Null UserId - aborting IdentityProcessing");
 
                 // It appears that the Authorize Attribute has incorrectly authorized a user...?
-                filterContext.Result = AuthConfig.UnauthorizedAccessRedirect(currentUrl);
+                filterContext.Result = 
+                    GlobalConfig.Redirect(AuthConfig.UnauthorizedAccessUrl, currentUrl);
                 return;
             }
 
@@ -40,7 +41,7 @@ namespace ProfitWise.Web.Attributes
             {
                 logger.Error($"Unable to retrieve User with Id {userId} - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = AuthConfig.SevereAuthorizationFailureRedirect(currentUrl);
+                filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
                 return;
             }
 
@@ -51,7 +52,7 @@ namespace ProfitWise.Web.Attributes
                 logger.Error(
                     $"Unable to Retrieve Claims for User {userId}: '{result.Message}' - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = AuthConfig.SevereAuthorizationFailureRedirect(currentUrl);
+                filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
                 return;
             }
 
@@ -62,7 +63,7 @@ namespace ProfitWise.Web.Attributes
                 logger.Error(
                     $"Shop does not exist for User {userId}: '{result.Message}' - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = AuthConfig.SevereAuthorizationFailureRedirect(currentUrl);
+                filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
                 return;
             }
 
@@ -70,7 +71,7 @@ namespace ProfitWise.Web.Attributes
             {
                 logger.Info($"PwShop {pwShop.PwShopId} has been disabled - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = AuthConfig.SevereAuthorizationFailureRedirect(currentUrl);
+                filterContext.Result = GlobalConfig.Redirect(AuthConfig.UnauthorizedAccessUrl, currentUrl);
                 return;
             }
 
@@ -79,7 +80,7 @@ namespace ProfitWise.Web.Attributes
                 logger.Info(
                     $"The Access Token for PwShop {pwShop.PwShopId} needs to be Refreshed - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = AuthConfig.AccessTokenRefreshRedirect(currentUrl);
+                filterContext.Result = GlobalConfig.Redirect(AuthConfig.AccessTokenRefreshUrl, currentUrl);
                 return;
             }
 

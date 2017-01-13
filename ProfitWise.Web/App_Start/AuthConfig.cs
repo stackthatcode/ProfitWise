@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
-using System.Web.Mvc;
 using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -12,29 +10,29 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 using Owin.Security.Providers.Shopify;
-using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Identity;
+
 
 namespace ProfitWise.Web
 {
     public class AuthConfig
     {
-        public static readonly string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
-        public static readonly string ExternalLoginFailureUrl = "/ShopifyAuth/ExternalLoginFailure";
-        public static readonly string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
-        public static readonly string SevereAuthorizationFailureUrl = "/ShopifyAuth/SevereAuthorizationFailure";
-
-        public static string[] AuthorizationResponseUrls = new[]
-        {
-            UnauthorizedAccessUrl,
-            SevereAuthorizationFailureUrl,
-            AccessTokenRefreshUrl,
-            ExternalLoginFailureUrl
-        };
-
+        // For Convenient Access
+        public const string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
+        public const string ExternalLoginFailureUrl = "/ShopifyAuth/ExternalLoginFailure";
+        public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
+        public const string SevereAuthorizationFailureUrl = "/ShopifyAuth/SevereAuthorizationFailure";
 
         public static void Configure(IAppBuilder app, IContainer autofacContainer)
         {
+            var authorizationProblemUrls = new[]
+            {
+                AuthConfig.UnauthorizedAccessUrl,
+                AuthConfig.SevereAuthorizationFailureUrl,
+                AuthConfig.AccessTokenRefreshUrl,
+                AuthConfig.ExternalLoginFailureUrl
+            };
+
             app.UseAutofacMiddleware(autofacContainer);
 
             // Enable the application to use a cookie to store information for the signed in user
@@ -58,7 +56,7 @@ namespace ProfitWise.Web
                     // ... and automatically sending uses to the LoginPath
                     OnApplyRedirect = ctx =>
                     {
-                        if (!AuthorizationResponseUrls.Any(x => ctx.Request.Uri.PathAndQuery.Contains(x)))
+                        if (!authorizationProblemUrls.Any(x => ctx.Request.Uri.PathAndQuery.Contains(x)))
                         {
                             ctx.Response.Redirect(ctx.RedirectUri);
                         }
@@ -110,31 +108,6 @@ namespace ProfitWise.Web
         {
             signInManager.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             signInManager.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-        }
-
-
-        public static RedirectResult AccessTokenRefreshRedirect(string redirectUrl)
-        {
-            var url = 
-                $"{GlobalConfig.BaseUrl}" + 
-                $"{AuthConfig.AccessTokenRefreshUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
-            return new RedirectResult(url);
-        }
-
-        public static RedirectResult UnauthorizedAccessRedirect(string redirectUrl)
-        {
-            var url = 
-                $"{GlobalConfig.BaseUrl}" +
-                $"{AuthConfig.UnauthorizedAccessUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
-            return new RedirectResult(url);
-        }
-
-        public static RedirectResult SevereAuthorizationFailureRedirect(string redirectUrl)
-        {
-            var url = 
-                $"{GlobalConfig.BaseUrl}" +
-                $"{AuthConfig.SevereAuthorizationFailureUrl}?returnUrl={WebUtility.UrlEncode(redirectUrl)}";
-            return new RedirectResult(url);
         }
 
     }
