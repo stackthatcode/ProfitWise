@@ -60,22 +60,8 @@
         ko.bindingHandlers.formatMoney = {
             init: function(element, valueAccessor) {
                 var value = valueAccessor();
-                var interceptor = ko.computed({
-                        read: function() {
-                            // Here's the formatting injection point
-                            var unwrapperValue = ProfitWiseFunctions.UnformatCurrency(ko.unwrap(value));
-                            var output = numeral(unwrapperValue).format('0,0.00');
-                            return output;
-                        },
-                        write: function(newValue) {
-                            if ($.trim(newValue) == '')
-                                value("0");
-                            else
-                                value(numeral().unformat(newValue));
-                            value.valueHasMutated();
-                        }
-                    })
-                    .extend({ notify: 'always' });
+                var interceptor =
+                    ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor(value);
 
                 // Only apply bindings to node...?
                 if (element.tagName.toLowerCase() == 'input') {

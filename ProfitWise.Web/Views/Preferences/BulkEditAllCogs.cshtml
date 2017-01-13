@@ -105,7 +105,12 @@
             return false;
         };
 
-        self.MarginEditorModel = new ProfitWiseWidgets.NumberEditorWidgetModel("number-editor", "Margin %");
+        self.MarginEditorModel = 
+            new ProfitWiseWidgets.NumberEditorWidgetModel({ 
+                        identifier: "number-editor", 
+                        placeholder: "Margin %", 
+                        lowconstraint: 0,
+                        highconstraint: 100 });
 
         self.MarginEditorModel.RegisterEnterKeyCallback(function() {
             return self.OkButtonClick();

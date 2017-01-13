@@ -284,7 +284,7 @@
             
             // Update observables
             item.CurrentCogsAmount(
-                ProfitWiseFunctions.UnformatCurrency(item.EditorModel.Amount()));
+                ProfitWiseFunctions.ExtractRawNumber(item.EditorModel.Amount()));
             item.CurrentCogsCurrencyId(item.EditorModel.CurrencyId());
 
             var data = {
