@@ -537,11 +537,11 @@
 
         self.AfterRenderDateRangePicker = function () {
             ProfitWiseWidgets.CreateDateRangePicker(
-                ".date-ranger-picker", self.PushDateToModelAndUpdate);
+                ".date-ranger-picker", self.PullValuesFromDateRangePicker);
         };
 
         // Expects to receive JavaScript Date objects
-        self.PushDatesToDateRangePicker = function (start, end) {
+        self.LoadDateRangePicker = function (start, end) {
             var dateRangePickerData = $('.date-ranger-picker').data('daterangepicker');
 
             if (dateRangePickerData) {
@@ -550,8 +550,7 @@
             }
         };
 
-
-        self.PushDateToModelAndUpdate = function (startDate, endDate) {
+        self.PullValuesFromDateRangePicker = function (startDate, endDate) {
             flow.exec(
                 function () {
                     self.PrepareCopyForEditing(this);
@@ -563,7 +562,7 @@
                     self.EndDate(ProfitWiseFunctions.MomentStartOfDay(endDate).toDate());
 
                     // Push the corrected dates out to DateRangePicker to make it consistent
-                    self.PushDatesToDateRangePicker(self.StartDate(), self.EndDate());
+                    self.LoadDateRangePicker(self.StartDate(), self.EndDate());
                     self.Update();
                 }
             );
@@ -598,11 +597,11 @@
             self.ReportId(current.PwReportId);
             self.Name(current.Name);
 
-            // Store in the local model..
+            // Store in the local model as Javascript Date objects
             self.StartDate(current.StartDate.parseDateToStartOfDayLocalTime());
             self.EndDate(current.EndDate.parseDateToStartOfDayLocalTime());
 
-            self.PushDatesToDateRangePicker(self.StartDate(), self.EndDate());
+            self.LoadDateRangePicker(self.StartDate(), self.EndDate());
 
             self.CopyForEditing(current.CopyForEditing);
             self.IsSystemReport(current.IsSystemReport);

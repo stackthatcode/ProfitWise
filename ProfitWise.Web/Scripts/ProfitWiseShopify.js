@@ -12,8 +12,7 @@ ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
 
 ProfitWiseShopify.BarInitialize = function (title) {
     var querystring = (location.search);
-    console.log(querystring);
-
+    
     var linkBuilder = function(path, label) {
         return {
             label: label,

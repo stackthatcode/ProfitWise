@@ -1,5 +1,6 @@
 ﻿@using ProfitWise.Data.Model.Preferences
-@model ProfitWise.Web.Models.EditPreferencesModel
+@using Push.Foundation.Web.Json
+@model ProfitWise.Data.Model.Shop.PwShop
 @{
     Layout = "~/Views/Shared/_AuthenticatedLayout.cshtml";
 }
@@ -7,7 +8,7 @@
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
 
 <style>
-    .vert-spacer { height:60px; }
+    .vert-spacer { height:65px; }
     .preference-control-cell { padding-left:40px; }
 </style>
 
@@ -33,12 +34,24 @@
     </div>
 </script>
 
-<script type="text/html" id="Order-Start-Date">
-    <label>Starting Date For Importing Historical Data</label>
+<script type="text/html" id="Order-Start-Date">    
+    <div class="form-group" style="display:inline-block;">
+        <label>Starting Date For Importing Historical Data</label>
+        
+        <div style="width:200px; display:inline-block; margin-left: 20px; top:10px; position:relative;">
+            <div class='input-group date' 
+                 data-bind="dateTimePicker: StartingDateForOrders, 
+                            change: function(value) { },
+                            dateTimePickerOptions: { format: 'MM/DD/YYYY' }">
 
-    <div style="display:inline-block; width:150px; margin-left:30px; position:relative;">
-        <input class="form-control" type="text" id="order-start-date" style="width:150px;" />
-        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
+                <input type='text' class="form-control" 
+                       data-bind="click: function(data, event) { $(event.target).next().click(); }" />
+                
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
     </div>
 </script>
 
@@ -140,7 +153,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="vert-spacer"></div>
+            <div style="height:20px;"></div>
         </div>
     </div>
 
@@ -166,26 +179,24 @@
 <!-- KnockoutJS Model -->
 <script>
     var ProfitWise = ProfitWise || {};
-    ProfitWise.EditPreferencesModel = function () {
+    ProfitWise.EditPreferencesModel = function (initialValues) {
         var self = this;
         self.DateRangeOptions = ProfitWiseWidgets.DateRanges;
 
         self.DatePickerRender = function () {
-            $('input[id="order-start-date"]').daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true
-            },
-                function (start, end, label) {
-                    alert('Trigger Date Update');
-                    //var years = moment().diff(start, 'years');
-                    //alert("You are " + years + " years old.");
-                });
-
-            $(".date-range-picker-icon").click(function () {
-                $(this).parent().find('input').click();
-            });
+            //$('#datetimepicker1').datetimepicker();
+            //$('#datetimepicker1').data("DateTimePicker").date(self.StartingDateForOrders());
         };
+
+        // This must be populated with Javascript Date object
+        self.StartingDateForOrders = ko.observable(
+                initialValues.StartingDateForOrders.parseDateToStartOfDayLocalTime());
         
+        self.UseDefaultMargin = ko.observable(initialValues.UseDefaultMargin);
+        self.DefaultMargin = ko.observable(initialValues.DefaultMargin);
+        self.ProfitRealization = ko.observable(initialValues.ProfitRealization);
+        self.DateRangeDefault = ko.observable(initialValues.DateRangeDefault);
+
         self.DefaultMarginEditor =
             new ProfitWiseWidgets.NumberEditorWidgetModel({
                 identifier: "number-editor",
@@ -193,10 +204,10 @@
                 lowconstraint: 0,
                 highconstraint: 100
             });
-
+        
         self.BulkEditAllCogsDialogPopup = function () {
             var url = ProfitWiseConfig.BaseUrl + '/Preferences/BulkEditAllCogs';
-            
+
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Bulk Edit All Cost of Goods Sold',
@@ -204,13 +215,57 @@
                 height: 420,
             }, self.Refresh);
         };
+
         return self;
+    };
+
+    ko.bindingHandlers.dateTimePicker = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+            //initialize datepicker with some optional options
+            var options = allBindingsAccessor().dateTimePickerOptions || {};
+            $(element).datetimepicker(options);
+
+            //when a user changes the date, update the view model
+            ko.utils.registerEventHandler(element, "dp.change", function (event) {
+                var value = valueAccessor();
+                if (ko.isObservable(value)) {
+                    if (event.date != null && !(event.date instanceof Date)) {
+                        value(event.date.toDate());
+                    } else {
+                        value(event.date);
+                    }
+                }
+
+                if (allBindingsAccessor().change) {
+                    allBindingsAccessor().change(value());
+                }
+            });
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                var picker = $(element).data("DateTimePicker");
+                if (picker) {
+                    picker.destroy();
+                }
+            });
+        },
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            var picker = $(element).data("DateTimePicker");
+            //when the view model is updated, update the widget
+            if (picker) {
+                var koDate = ko.utils.unwrapObservable(valueAccessor());
+
+                //in case return from server datetime i am get in this form for example /Date(93989393)/ then fomat this
+                koDate = (typeof (koDate) !== 'object') ? new Date(parseFloat(koDate.replace(/[^0-9]/g, ''))) : koDate;                
+                picker.date(koDate);
+            }
+        }
     };
 
     $(document)
         .ready(function () {
-            var model = new ProfitWise.EditPreferencesModel();
-            console.log(model.DateRangeOptions);
+            var data = @Html.Raw(Model.SerializeToJson());
+            var model = new ProfitWise.EditPreferencesModel(data);
+            
             ko.applyBindings(model);
         });
 </script>

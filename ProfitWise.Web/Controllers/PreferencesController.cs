@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Web.Json;
@@ -11,16 +12,20 @@ namespace ProfitWise.Web.Controllers
     public class PreferencesController : Controller
     {
         private readonly MultitenantFactory _factory;
+        private readonly PwShopRepository _shopRepository;
 
-        public PreferencesController(MultitenantFactory factory)
+        public PreferencesController(
+                MultitenantFactory factory, PwShopRepository shopRepository)
         {
             _factory = factory;
+            _shopRepository = shopRepository;
         }
 
         [HttpGet]
         public ActionResult Edit()
         {
-            return View();
+            var shop = HttpContext.PullIdentity().PwShop;
+            return View(shop);
         }
 
         [HttpGet]

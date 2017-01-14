@@ -1,5 +1,7 @@
 USE profitwise;
 
+SET SQL_SAFE_UPDATES = 0;
+
 
 SELECT SUM(GrossRevenue) FROM shopifyorderlineitem WHERE OrderDate = '2016-12-05';
 SELECT * FROM shopifyorderlineitem WHERE OrderDate = '2016-12-02';
@@ -57,13 +59,13 @@ FROM profitwisereportquerystub t1
 	LEFT JOIN shopifyorderrefund t4
 		ON t1.PwShopId = t4.PwShopId AND t2.PwProductId = t4.PwProductId AND t2.PwVariantId = t4.PwVariantId  
 		
-SELECT * FROM shopifyorderlineitem;
-        
-                            
-                            
 
 SELECT * FROM calendar_table;
+
+SELECT * FROM shopifyorderlineitem;
+
 SELECT * FROM shopifyorder;
+
 
 
 SELECT t1.Quantity * t1.UnitPrice FROM shopifyorderlineitem t1
@@ -143,5 +145,11 @@ SELECT * FROM profitwiseprofitreportentry;
 SELECT * FROM profitwiseshop;
 
 
+
 UPDATE profitwiseshop SET IsAccessTokenValid = 0;
+
+UPDATE profitwiseshop SET IsShopEnabled = 0;
+
+UPDATE profitwiseshop SET IsShopEnabled = 1;
+
 

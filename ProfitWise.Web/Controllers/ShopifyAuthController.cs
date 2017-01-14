@@ -220,7 +220,6 @@ namespace ProfitWise.Web.Controllers
 
             return View("AuthorizationProblem", model);
         }
-
     }
 }
 

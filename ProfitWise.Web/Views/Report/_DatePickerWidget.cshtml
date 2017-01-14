@@ -1,6 +1,5 @@
 ﻿@using ProfitWise.Data.Model.Preferences
 
-
 <style>
     .date-ranger-picker-parent .daterangepicker {
         width: 720px !important;
@@ -15,21 +14,13 @@
     }
 </style>
 
+<!-- For demonstration purposes only -->
 <script id="Date-Range-Picker-Widget" type="text/html">
     <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">        
         <input type="text" class="date-ranger-picker form-control" style="width: 100%; font-size: 1.0em;" />
         <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>        
     </div>
 </script>
-
-<script id="Date-Picker-Widget" type="text/html">
-    <div class="date-picker-parent" style="width: 139px; position: relative;">
-        <input type="text" class="date-picker form-control" style="width: 100%; font-size: 1.0em;" />
-        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
-    </div>
-</script>
-
-
 
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
@@ -95,14 +86,13 @@
         return output;
     };
 
-    ProfitWiseWidgets.CreateDateRangePicker = 
-            function(rootIdentifier, callback, startDate, endDate) {
+    ProfitWiseWidgets.CreateDateRangePicker = function(rootIdentifier, callback, startDate, endDate) {
+        
+        var systemDateRanges = ProfitWiseWidgets.DateRangeAsObject();
 
         $(".date-range-picker-icon").click(function () {
             $(this).parent().find('input').click();
         });
-
-        var systemDateRanges = ProfitWiseWidgets.DateRangeAsObject();
 
         $(".date-ranger-picker")
             .daterangepicker({

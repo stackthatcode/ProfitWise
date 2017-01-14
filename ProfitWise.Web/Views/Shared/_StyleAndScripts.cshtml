@@ -17,8 +17,13 @@
 @Scripts.Render("~/Scripts/aQuery-1.0-min.js")
 @Scripts.Render("~/Scripts/flow.js")
 @Scripts.Render("~/Scripts/moment.js")
+
+<!-- Date Range Picker -->
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+<!-- Date Picker -->
+@Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
 
 <!-- High Charts -->
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -31,4 +36,6 @@
 
 <!-- Style Sheet -->
 @Styles.Render("~/Content/css")
+@Styles.Render("~/Content/datetimepicker.css")
 @Scripts.Render("~/bundles/modernizr")
+

@@ -250,7 +250,6 @@
     <Compile Include="Models\CogsProductGridModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
     <Compile Include="Models\CommonContext.cs" />
-    <Compile Include="Models\EditPreferencesModel.cs" />
     <Compile Include="Models\EditProductCogsModel.cs" />
     <Compile Include="Models\FilterEditorModel.cs" />
     <Compile Include="Models\MoneyRange.cs" />
@@ -275,7 +274,6 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ShopifyAuthModels.cs" />
     <Compile Include="Attributes\IdentitySnapshot.cs" />
-    <Compile Include="Plumbing\ShopifyCredentialExtensions.cs" />
     <Compile Include="Plumbing\ShopifyExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -292,7 +290,6 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\images\spinner.gif" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\aQuery-1.0-min.js" />
@@ -307,13 +304,11 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\_bootstrap-datetimepicker.less" />
     <Content Include="Content\bootstrap-datetimepicker-build.less" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\daterangepicker.css" />
     <Content Include="Scripts\daterangepicker.js" />
+    <Content Include="Content\datetimepicker.css" />
     <Content Include="Scripts\flow.js" />
     <Content Include="Scripts\highcharts\js\highcharts.js" />
     <Content Include="Scripts\highcharts\js\modules\data.js" />

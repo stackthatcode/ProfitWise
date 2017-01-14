@@ -26,4 +26,12 @@ namespace ProfitWise.Web.Attributes
         // ProfitWise Shop
         public PwShop PwShop { get; set; }
     }
+
+    public static class ShopifyExtensions
+    {
+        public static string ShopName(this string domain)
+        {
+            return domain.Replace(".myshopify.com", "");
+        }
+    }
 }
