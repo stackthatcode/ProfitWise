@@ -1,0 +1,180 @@
+﻿@using ProfitWise.Data.Model.Preferences
+
+<style>
+    .date-ranger-picker-parent .daterangepicker {
+        width: 720px !important;
+        font-size: 13px !important;
+    }
+    div.calendar-table td {
+        padding: 0px !important;
+        line-height: 33px;
+    }
+    i.date-range-picker-icon {
+        position: absolute; bottom: 10px; right: 10px; top: auto; cursor: pointer;
+    }
+</style>
+
+<script id="Date-Range-Picker-Widget" type="text/html">
+    <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">        
+        <input type="text" class="date-ranger-picker form-control" style="width: 100%; font-size: 1.0em;" />
+        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>        
+    </div>
+</script>
+
+
+<script id="Date-Range-Picker-Widget-2" type="text/html">
+    <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">
+        <input data-bind="dateRangeTimePicker: $data.daterange, change: $data.change" type="text" 
+                class="form-control" style="width: 100%; font-size: 1.0em;" />
+        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
+    </div>
+</script>
+
+<script>
+    ko.bindingHandlers.dateRangeTimePicker = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+            
+            //initialize datepicker with some optional options
+            var options = allBindingsAccessor().options || {};
+            var systemDateRanges = ProfitWiseWidgets.DateRangeAsObject();
+            var value = valueAccessor();
+            var dateRange = ko.utils.unwrapObservable(value);
+            
+            console.log(value());
+            $(element)
+                .daterangepicker({
+                    "parentEl": $(element).parent(),
+                    "startDate": dateRange.startdate || moment().subtract(6, 'days'),
+                    "endDate": dateRange.enddate || moment(),
+                    "alwaysShowCalendars": true,
+                    "linkedCalendars": false,
+                    "applyClass": "btn-primary",
+                    "ranges": systemDateRanges,            
+                    "opens": "left",
+                },
+                function (start, end, label) {
+                    var value = valueAccessor();
+                    if (ko.isObservable(value)) {
+                            value({
+                                startdate: ProfitWiseFunctions.MomentStartOfDay(start).toDate(),
+                                enddate: ProfitWiseFunctions.MomentStartOfDay(end).toDate(),
+                            });
+                    }
+                    
+                    if (allBindingsAccessor().change) {
+                        allBindingsAccessor().change(value());
+                    }
+                });
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                var picker = $(element).data("daterangepicker");
+                if (picker) {
+                    picker.destroy();
+                }
+            });
+        },
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            //valueAccessor refers to the field specified in dateRangeTimePicker
+
+            var picker = $(element).data("daterangepicker");
+
+            ////when the view model is updated, update the widget
+            if (picker) {
+                var dateRange = ko.utils.unwrapObservable(valueAccessor());
+
+                picker.setStartDate(dateRange.startdate);
+                picker.setEndDate(dateRange.enddate);
+            }
+        }
+    };
+
+
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.DateRanges = [ {
+            Id: @DateRangeDefaults.Today,
+            Name: 'Today',
+            StartDate: moment(),
+            EndDate: moment(),
+        }, {
+            Id: @DateRangeDefaults.Yesterday,
+            Name: 'Yesterday',
+            StartDate: moment().subtract(1, 'days'),
+            EndDate: moment().subtract(1, 'days'),
+        }, {
+            Id: @DateRangeDefaults.Last7Days,
+            Name: 'Last 7 Days',
+            StartDate: moment().subtract(6, 'days'),
+            EndDate: moment(),
+        }, {
+            Id: @DateRangeDefaults.Last30Days,
+            Name: 'Last 30 Days',
+            StartDate: moment().subtract(29, 'days'),
+            EndDate: moment(),
+        }, {
+            Id: @DateRangeDefaults.ThisMonth,
+            Name: 'This Month',
+            StartDate: moment().startOf('month'),
+            EndDate: moment().endOf('month'),
+        }, {
+            Id: @DateRangeDefaults.LastMonth,
+            Name: 'Last Month',
+            StartDate: moment().subtract(1, 'month').startOf('month'),
+            EndDate: moment().subtract(1, 'month').endOf('month'),
+        }, {
+            Id: @DateRangeDefaults.ThisQuarter,
+            Name: 'This Quarter',
+            StartDate: moment().startOf('quarter'),
+            EndDate: moment().endOf('quarter'),
+        }, {
+            Id: @DateRangeDefaults.LastQuarter,
+            Name: 'Last Quarter',
+            StartDate: moment().subtract(1, 'quarter').startOf('quarter'),
+            EndDate: moment().subtract(1, 'quarter').endOf('quarter'),
+        }, {
+            Id: @DateRangeDefaults.LastQuarter,
+            Name: 'This Year',
+            StartDate: moment().startOf('year'),
+            EndDate: moment().endOf('year'),
+        }, {
+            Id: @DateRangeDefaults.LastQuarter,
+            Name: 'Last Year',
+            StartDate: moment().subtract(1, 'year').startOf('year'),
+            EndDate: moment().subtract(1, 'year').endOf('year'),
+        }
+    ];
+
+    ProfitWiseWidgets.DateRangeAsObject = function() {
+        var output = {};
+        AQ(ProfitWiseWidgets.DateRanges).each(function(x) {
+            output[x.Name] = [x.StartDate, x.EndDate];
+        });
+        return output;
+    };
+
+    ProfitWiseWidgets.CreateDateRangePicker = function(rootIdentifier, callback, startDate, endDate) {
+        
+        var systemDateRanges = ProfitWiseWidgets.DateRangeAsObject();
+
+        $(".date-range-picker-icon").click(function () {
+            $(this).parent().find('input').click();
+        });
+
+        $(".date-ranger-picker")
+            .daterangepicker({
+                    "parentEl": ".date-ranger-picker-parent",
+                    "startDate": startDate || moment().subtract(6, 'days'),
+                    "endDate": endDate || moment(),
+                    "alwaysShowCalendars": true,
+                    "linkedCalendars": false,
+                    "applyClass": "btn-primary",
+                    "ranges": systemDateRanges,            
+                    "opens": "left",
+                },
+                function (start, end, label) {
+                    if (callback) {
+                        callback(start, end, label);
+                    }
+                });
+    };
+</script>

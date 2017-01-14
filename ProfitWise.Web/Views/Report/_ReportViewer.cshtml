@@ -495,7 +495,8 @@
         self.CopyOfSystemReport = ko.observable(false);
         self.IsSystemReport = ko.observable(false);
 
-        self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
+        self.ReportSelectionCountPreviewModel =
+            new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
 
         self.ReportFilterSummaryModel = new ProfitWiseWidgets.ReportFilterSummaryModel();
         self.ReportFilterSummaryModel.SummaryClickCallback = function() {
@@ -550,14 +551,14 @@
             }
         };
 
-        self.PullValuesFromDateRangePicker = function (startDate, endDate) {
+        self.DateRangePickerCallback = function (startDate, endDate) {
             flow.exec(
                 function () {
                     self.PrepareCopyForEditing(this);
                 },
                 function () {
                     // Taking startDate and endDate from DateRangePicker as moment.js objects
-                    // ... we set everything to midnight, local time
+                    // ... we set everything to midnight, local time and cast to Javascript Date
                     self.StartDate(ProfitWiseFunctions.MomentStartOfDay(startDate).toDate());
                     self.EndDate(ProfitWiseFunctions.MomentStartOfDay(endDate).toDate());
 
@@ -598,8 +599,8 @@
             self.Name(current.Name);
 
             // Store in the local model as Javascript Date objects
-            self.StartDate(current.StartDate.parseDateToStartOfDayLocalTime());
-            self.EndDate(current.EndDate.parseDateToStartOfDayLocalTime());
+            self.StartDate(current.StartDate.parseToJavascriptDate());
+            self.EndDate(current.EndDate.parseToJavascriptDate());
 
             self.LoadDateRangePicker(self.StartDate(), self.EndDate());
 

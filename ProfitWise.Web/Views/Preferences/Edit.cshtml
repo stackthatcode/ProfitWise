@@ -4,7 +4,8 @@
 @{
     Layout = "~/Views/Shared/_AuthenticatedLayout.cshtml";
 }
-@Html.Partial("~/Views/Report/_DatePickerWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_DatePickerWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_DateRangePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
 
 <style>
@@ -34,45 +35,47 @@
     </div>
 </script>
 
-<script type="text/html" id="Order-Start-Date">    
-    <div class="form-group" style="display:inline-block;">
-        <label>Starting Date For Importing Historical Data</label>
-        
-        <div style="width:200px; display:inline-block; margin-left: 20px; top:10px; position:relative;">
-            <div class='input-group date' 
-                 data-bind="dateTimePicker: StartingDateForOrders, 
-                            change: function(value) { },
-                            dateTimePickerOptions: { format: 'MM/DD/YYYY' }">
-
-                <input type='text' class="form-control" 
-                       data-bind="click: function(data, event) { $(event.target).next().click(); }" />
-                
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
-        </div>
-    </div>
-</script>
-
 <script type="text/html" id="Page-Content">
     <div class="row">
         <div class="col-xs-12">
-            <div data-bind="template: { name: 'Order-Start-Date', afterRender: DatePickerRender }"></div>
+            <div data-bind="template: { 
+                                name: 'Date-Range-Picker-Widget-2', 
+                                data: { daterange: TestDateRange, change: TestDateRangeClick }  }">
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="vert-spacer"></div>
+            <div style="height:40px;"></div>
         </div>
-    </div>    
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label>Starting Date For Importing Historical Data</label>
+
+                <div style="display: inline-block; margin-left: 20px; top: 10px; position: relative;"
+                     data-bind="template: {
+                            name: 'Date-Picker-Widget',
+                            data: { value: StartingDateForOrders,
+                                    change: function(value) { console.log(value); } } }"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div style="height: 40px;"></div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-xs-12">
             <label>Use Default Margin in Reports for all $0 CoGS</label>
 
-            <div style="display:inline-block; width:125px; margin-left:30px; position:relative;">
+            <div style="display: inline-block; width: 125px; margin-left: 30px; position: relative;">
                 <select class="form-control">
                     <option>Yes</option>
                     <option>No</option>
@@ -83,7 +86,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div style="height:10px;"></div>
+            <div style="height: 10px;"></div>
         </div>
     </div>
 
@@ -91,12 +94,12 @@
         <div class="col-xs-12">
             <label>Default Margin</label>
 
-            <div style="display:inline-block; width:90px; margin-left:30px; position:relative; top:13px;">
+            <div style="display: inline-block; width: 90px; margin-left: 30px; position: relative; top: 13px;">
                 <div data-bind="template: { name: 'Number-Editor-Widget', data: $root.DefaultMarginEditor }"></div>
             </div>
 
-            <div style="display:inline-block; margin-left:10px; position:relative;">
-                <a href="#" class="btn btn-primary" style="width:100px; display:inline-block;">
+            <div style="display: inline-block; margin-left: 10px; position: relative;">
+                <a href="#" class="btn btn-primary" style="width: 100px; display: inline-block;">
                     Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
                 </a>
             </div>
@@ -105,7 +108,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div style="height:20px;"></div>
+            <div style="height: 20px;"></div>
         </div>
     </div>
 
@@ -113,9 +116,9 @@
         <div class="col-xs-12">
             <label>Bulk apply value to all CoGS Data</label>
 
-            <div style="display:inline-block; margin-left:10px; position:relative;">
+            <div style="display: inline-block; margin-left: 10px; position: relative;">
                 <a href="#" class="btn btn-warning" data-bind="click: BulkEditAllCogsDialogPopup"
-                   style="width:200px; display:inline-block; margin-top:-4px;">
+                   style="width: 200px; display: inline-block; margin-top: -4px;">
                     Bulk Set CoGS Data &nbsp;<i class="glyphicon glyphicon-list"></i>
                 </a>
             </div>
@@ -153,7 +156,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div style="height:20px;"></div>
+            <div style="height: 20px;"></div>
         </div>
     </div>
 
@@ -183,15 +186,20 @@
         var self = this;
         self.DateRangeOptions = ProfitWiseWidgets.DateRanges;
 
-        self.DatePickerRender = function () {
-            //$('#datetimepicker1').datetimepicker();
-            //$('#datetimepicker1').data("DateTimePicker").date(self.StartingDateForOrders());
-        };
-
         // This must be populated with Javascript Date object
         self.StartingDateForOrders = ko.observable(
-                initialValues.StartingDateForOrders.parseDateToStartOfDayLocalTime());
+                initialValues.StartingDateForOrders.parseToJavascriptDate());
+
+        self.TestDateRange = ko.observable({ 
+                startdate: initialValues.StartingDateForOrders.parseToJavascriptDate(), 
+                enddate: initialValues.StartingDateForOrders.parseToJavascriptDate() 
+        });
         
+        self.TestDateRangeClick = function(values) {
+            console.log(values);
+        };
+
+
         self.UseDefaultMargin = ko.observable(initialValues.UseDefaultMargin);
         self.DefaultMargin = ko.observable(initialValues.DefaultMargin);
         self.ProfitRealization = ko.observable(initialValues.ProfitRealization);
@@ -219,47 +227,6 @@
         return self;
     };
 
-    ko.bindingHandlers.dateTimePicker = {
-        init: function (element, valueAccessor, allBindingsAccessor) {
-            //initialize datepicker with some optional options
-            var options = allBindingsAccessor().dateTimePickerOptions || {};
-            $(element).datetimepicker(options);
-
-            //when a user changes the date, update the view model
-            ko.utils.registerEventHandler(element, "dp.change", function (event) {
-                var value = valueAccessor();
-                if (ko.isObservable(value)) {
-                    if (event.date != null && !(event.date instanceof Date)) {
-                        value(event.date.toDate());
-                    } else {
-                        value(event.date);
-                    }
-                }
-
-                if (allBindingsAccessor().change) {
-                    allBindingsAccessor().change(value());
-                }
-            });
-
-            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
-                var picker = $(element).data("DateTimePicker");
-                if (picker) {
-                    picker.destroy();
-                }
-            });
-        },
-        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-            var picker = $(element).data("DateTimePicker");
-            //when the view model is updated, update the widget
-            if (picker) {
-                var koDate = ko.utils.unwrapObservable(valueAccessor());
-
-                //in case return from server datetime i am get in this form for example /Date(93989393)/ then fomat this
-                koDate = (typeof (koDate) !== 'object') ? new Date(parseFloat(koDate.replace(/[^0-9]/g, ''))) : koDate;                
-                picker.date(koDate);
-            }
-        }
-    };
 
     $(document)
         .ready(function () {
@@ -267,6 +234,11 @@
             var model = new ProfitWise.EditPreferencesModel(data);
             
             ko.applyBindings(model);
+
+            model.TestDateRange({
+                startdate: "01/01/2014".parseToJavascriptDate(), 
+                enddate: "12/31/2014".parseToJavascriptDate() 
+            });
         });
 </script>
 

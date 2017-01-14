@@ -38,7 +38,7 @@ String.prototype.trunc = String.prototype.trunc ||
         return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
     };
 
-String.prototype.parseDateToStartOfDayLocalTime = String.prototype.parseDateToStartOfDayLocalTime ||
+String.prototype.parseToJavascriptDate = String.prototype.parseToJavascriptDate ||
     function() {
         return moment(this.substring(0, 10)).toDate();
     };
