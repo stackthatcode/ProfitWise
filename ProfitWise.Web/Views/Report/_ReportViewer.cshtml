@@ -130,8 +130,8 @@
                     <div style="clear: both; height: 20px;"></div>                    
                     
                     <div id="report-date-picker" class="pull-right" data-bind="with: ReportViewerContext">
-                        <input type="hidden" data-bind="value: StartDate"/>
-                        <div data-bind="template: { name: 'Date-Range-Picker-Widget', afterRender: AfterRenderDateRangePicker }"></div>
+                        <div data-bind="template: { name: 'Date-Range-Picker-Widget-2', 
+                                                    data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
                     </div>
 
                     <div class="pull-right">
@@ -488,8 +488,7 @@
 
         self.ReportId = ko.observable();
         self.Name = ko.observable();
-        self.StartDate = ko.observable();
-        self.EndDate = ko.observable();
+        self.DateRange = ko.observable();
 
         self.CopyForEditing = ko.observable(false);
         self.CopyOfSystemReport = ko.observable(false);
@@ -536,34 +535,12 @@
             return self.IsSystemReport() || self.CopyOfSystemReport();
         });
 
-        self.AfterRenderDateRangePicker = function () {
-            ProfitWiseWidgets.CreateDateRangePicker(
-                ".date-ranger-picker", self.PullValuesFromDateRangePicker);
-        };
-
-        // Expects to receive JavaScript Date objects
-        self.LoadDateRangePicker = function (start, end) {
-            var dateRangePickerData = $('.date-ranger-picker').data('daterangepicker');
-
-            if (dateRangePickerData) {
-                dateRangePickerData.setStartDate(start);
-                dateRangePickerData.setEndDate(end);
-            }
-        };
-
-        self.DateRangePickerCallback = function (startDate, endDate) {
+        self.DateRangePickerCallback = function (startdate, enddate) {
             flow.exec(
                 function () {
                     self.PrepareCopyForEditing(this);
                 },
                 function () {
-                    // Taking startDate and endDate from DateRangePicker as moment.js objects
-                    // ... we set everything to midnight, local time and cast to Javascript Date
-                    self.StartDate(ProfitWiseFunctions.MomentStartOfDay(startDate).toDate());
-                    self.EndDate(ProfitWiseFunctions.MomentStartOfDay(endDate).toDate());
-
-                    // Push the corrected dates out to DateRangePicker to make it consistent
-                    self.LoadDateRangePicker(self.StartDate(), self.EndDate());
                     self.Update();
                 }
             );
@@ -599,10 +576,10 @@
             self.Name(current.Name);
 
             // Store in the local model as Javascript Date objects
-            self.StartDate(current.StartDate.parseToJavascriptDate());
-            self.EndDate(current.EndDate.parseToJavascriptDate());
-
-            self.LoadDateRangePicker(self.StartDate(), self.EndDate());
+            self.DateRange({ 
+                startdate: current.StartDate.parseToJavascriptDate(),
+                enddate: current.EndDate.parseToJavascriptDate()
+            });
 
             self.CopyForEditing(current.CopyForEditing);
             self.IsSystemReport(current.IsSystemReport);
@@ -624,8 +601,8 @@
                         reportId: self.ReportId(),
                         groupingId: self.GroupingPopoverModel.Selection(),
                         orderingId: self.OrderingPopoverModel.Selection(),
-                        startDate: self.StartDate(),
-                        endDate: self.EndDate()
+                        startDate: self.DateRange().startdate,
+                        endDate: self.DateRange().enddate,
                     };
 
                     ajax.HttpPost("/ReportService/Update", data, this);

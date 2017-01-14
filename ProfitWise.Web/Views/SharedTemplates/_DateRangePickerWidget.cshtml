@@ -14,18 +14,10 @@
     }
 </style>
 
-<script id="Date-Range-Picker-Widget" type="text/html">
-    <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">        
-        <input type="text" class="date-ranger-picker form-control" style="width: 100%; font-size: 1.0em;" />
-        <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>        
-    </div>
-</script>
-
-
 <script id="Date-Range-Picker-Widget-2" type="text/html">
     <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">
-        <input data-bind="dateRangeTimePicker: $data.daterange, change: $data.change" type="text" 
-                class="form-control" style="width: 100%; font-size: 1.0em;" />
+        <input data-bind="dateRangeTimePicker: $data.daterange, change: $data.change" 
+               type="text" class="form-control" style="width: 100%; font-size: 1.0em;" />
         <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
     </div>
 </script>
@@ -39,32 +31,39 @@
             var systemDateRanges = ProfitWiseWidgets.DateRangeAsObject();
             var value = valueAccessor();
             var dateRange = ko.utils.unwrapObservable(value);
-            
-            console.log(value());
+
+            var startDate = (!dateRange || !dateRange.startDate) ? moment().subtract(6, 'days') : dateRange.startdate;
+            var endDate = (!dateRange || !dateRange.startDate) ? moment() : dateRange.startdate;
+
+            // dateRange is expected to contain "startdate" and "enddate"
             $(element)
                 .daterangepicker({
-                    "parentEl": $(element).parent(),
-                    "startDate": dateRange.startdate || moment().subtract(6, 'days'),
-                    "endDate": dateRange.enddate || moment(),
-                    "alwaysShowCalendars": true,
-                    "linkedCalendars": false,
-                    "applyClass": "btn-primary",
-                    "ranges": systemDateRanges,            
-                    "opens": "left",
-                },
-                function (start, end, label) {
-                    var value = valueAccessor();
-                    if (ko.isObservable(value)) {
+                        "parentEl": $(element).parent(),
+                        "startDate": startDate,
+                        "endDate": endDate,
+                        "alwaysShowCalendars": true,
+                        "linkedCalendars": false,
+                        "applyClass": "btn-primary",
+                        "ranges": systemDateRanges,            
+                        "opens": "left",
+                    },
+                    function (start, end, label) {
+                        var value = valueAccessor();
+                        if (ko.isObservable(value)) {
                             value({
                                 startdate: ProfitWiseFunctions.MomentStartOfDay(start).toDate(),
                                 enddate: ProfitWiseFunctions.MomentStartOfDay(end).toDate(),
                             });
-                    }
+                        }
                     
-                    if (allBindingsAccessor().change) {
-                        allBindingsAccessor().change(value());
-                    }
-                });
+                        if (allBindingsAccessor().change) {
+                            allBindingsAccessor().change(value());
+                        }
+                    });
+            
+            $(element).next().click(function () {
+                $(element).click();
+            });
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 var picker = $(element).data("daterangepicker");
@@ -77,17 +76,15 @@
             //valueAccessor refers to the field specified in dateRangeTimePicker
 
             var picker = $(element).data("daterangepicker");
+            var dateRange = ko.utils.unwrapObservable(valueAccessor());
 
             ////when the view model is updated, update the widget
-            if (picker) {
-                var dateRange = ko.utils.unwrapObservable(valueAccessor());
-
+            if (picker && dateRange) {
                 picker.setStartDate(dateRange.startdate);
                 picker.setEndDate(dateRange.enddate);
             }
         }
     };
-
 
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -150,31 +147,5 @@
             output[x.Name] = [x.StartDate, x.EndDate];
         });
         return output;
-    };
-
-    ProfitWiseWidgets.CreateDateRangePicker = function(rootIdentifier, callback, startDate, endDate) {
-        
-        var systemDateRanges = ProfitWiseWidgets.DateRangeAsObject();
-
-        $(".date-range-picker-icon").click(function () {
-            $(this).parent().find('input').click();
-        });
-
-        $(".date-ranger-picker")
-            .daterangepicker({
-                    "parentEl": ".date-ranger-picker-parent",
-                    "startDate": startDate || moment().subtract(6, 'days'),
-                    "endDate": endDate || moment(),
-                    "alwaysShowCalendars": true,
-                    "linkedCalendars": false,
-                    "applyClass": "btn-primary",
-                    "ranges": systemDateRanges,            
-                    "opens": "left",
-                },
-                function (start, end, label) {
-                    if (callback) {
-                        callback(start, end, label);
-                    }
-                });
     };
 </script>
