@@ -535,12 +535,13 @@
             return self.IsSystemReport() || self.CopyOfSystemReport();
         });
 
-        self.DateRangePickerCallback = function (startdate, enddate) {
+        self.DateRangePickerCallback = function (dateRange) {
             flow.exec(
                 function () {
                     self.PrepareCopyForEditing(this);
                 },
                 function () {
+                    self.DateRange(dateRange);
                     self.Update();
                 }
             );
@@ -596,6 +597,9 @@
         self.Update = function(callback) {
             flow.exec(
                 function () {
+                    console.log("Update");
+                    console.log(self.DateRange());
+
                     var ajax = new ProfitWiseFunctions.Ajax();
                     var data = {
                         reportId: self.ReportId(),

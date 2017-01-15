@@ -48,16 +48,15 @@
                         "opens": "left",
                     },
                     function (start, end, label) {
+                        var newDate = {
+                            startdate: ProfitWiseFunctions.MomentStartOfDay(start).toDate(),
+                            enddate: ProfitWiseFunctions.MomentStartOfDay(end).toDate(),
+                        };
                         var value = valueAccessor();
-                        if (ko.isObservable(value)) {
-                            value({
-                                startdate: ProfitWiseFunctions.MomentStartOfDay(start).toDate(),
-                                enddate: ProfitWiseFunctions.MomentStartOfDay(end).toDate(),
-                            });
-                        }
-                    
+                        value(newDate);
+                        value.valueHasMutated();
                         if (allBindingsAccessor().change) {
-                            allBindingsAccessor().change(value());
+                            allBindingsAccessor().change(newDate);
                         }
                     });
             
