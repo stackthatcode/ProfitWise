@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Attributes;
@@ -42,6 +43,21 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Ping()
         {
             return new JsonNetResult(new { Success = true });
+        }
+
+        [HttpPost]
+        public ActionResult UpdateStartingDate(DateTime startDate)
+        {
+            var shop = HttpContext.PullIdentity().PwShop;
+            if (startDate > shop.StartingDateForOrders)
+            {
+                throw new Exception($"User attempted to set Start Date to {startDate} for shop {shop.PwShopId}");
+            }
+            else
+            {
+                _shopRepository.UpdateStartingDateForOrders(shop.PwShopId, startDate);
+                return JsonNetResult.Success();
+            }
         }
     }
 }

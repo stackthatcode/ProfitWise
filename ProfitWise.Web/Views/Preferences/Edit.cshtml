@@ -37,22 +37,7 @@
 
 <script type="text/html" id="Page-Content">
     <div class="row">
-        <div class="col-xs-12">
-            <div data-bind="template: { 
-                                name: 'Date-Range-Picker-Widget-2', 
-                                data: { daterange: TestDateRange, change: TestDateRangeClick }  }">
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-xs-12">
-            <div style="height:40px;"></div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-5">
             <div class="form-group">
                 <label>Starting Date For Importing Historical Data</label>
 
@@ -60,8 +45,10 @@
                      data-bind="template: {
                             name: 'Date-Picker-Widget',
                             data: { value: StartingDateForOrders,
-                                    change: function(value) { console.log(value); } } }"></div>
+                                    change: StartingDateChange } }"></div>
             </div>
+        </div>
+        <div class="col-xs-7">
         </div>
     </div>
 
@@ -182,28 +169,52 @@
 <!-- KnockoutJS Model -->
 <script>
     var ProfitWise = ProfitWise || {};
-    ProfitWise.EditPreferencesModel = function (initialValues) {
+    ProfitWise.EditPreferencesModel = function (data) {
         var self = this;
         self.DateRangeOptions = ProfitWiseWidgets.DateRanges;
 
         // This must be populated with Javascript Date object
-        self.StartingDateForOrders = ko.observable(
-                initialValues.StartingDateForOrders.parseToJavascriptDate());
+        self.StartingDateForOrders = ko.observable(data.StartingDateForOrders.parseToJavascriptDate());        
+        self.OldStartingDateForOrders = ko.observable(data.StartingDateForOrders.parseToJavascriptDate());
 
-        self.TestDateRange = ko.observable({ 
-                startdate: initialValues.StartingDateForOrders.parseToJavascriptDate(), 
-                enddate: initialValues.StartingDateForOrders.parseToJavascriptDate() 
-        });
-        
-        self.TestDateRangeClick = function(values) {
-            console.log(values);
+        self.StartingDateChange = function(newdate) {
+
+            if (newdate > self.OldStartingDateForOrders()) {
+                ShopifyApp.Modal.alert({
+                    title: "ProfitWise",
+                    message: "The Starting Date for the Historical Data Import can only be set to an earlier date.",
+                    okButton: "Ok"
+                }, function(result){
+                    self.StartingDateForOrders(self.OldStartingDateForOrders());
+                });
+                return;
+            } 
+            if (newdate < self.OldStartingDateForOrders()) {
+                flow.exec(
+                    function() {
+                        var ajax = new ProfitWiseFunctions.Ajax();
+                        ajax.HttpPost("/Preferences/UpdateStartingDate",
+                            { startDate: self.StartingDateForOrders() },
+                            this);
+                    },
+                    function() {
+                        self.OldStartingDateForOrders(self.StartingDateForOrders());
+
+                        ShopifyApp.Modal.alert({
+                            title: "ProfitWise",
+                            message: "Successfully changed Start Date for Historical Data Import. " +
+                                    "Please allow 1 to 2 hours for new Order data to appear",
+                            okButton: "Ok"
+                        });
+                    });
+            }
         };
 
 
-        self.UseDefaultMargin = ko.observable(initialValues.UseDefaultMargin);
-        self.DefaultMargin = ko.observable(initialValues.DefaultMargin);
-        self.ProfitRealization = ko.observable(initialValues.ProfitRealization);
-        self.DateRangeDefault = ko.observable(initialValues.DateRangeDefault);
+        self.UseDefaultMargin = ko.observable(data.UseDefaultMargin);
+        self.DefaultMargin = ko.observable(data.DefaultMargin);
+        self.ProfitRealization = ko.observable(data.ProfitRealization);
+        self.DateRangeDefault = ko.observable(data.DateRangeDefault);
 
         self.DefaultMarginEditor =
             new ProfitWiseWidgets.NumberEditorWidgetModel({
@@ -234,11 +245,6 @@
             var model = new ProfitWise.EditPreferencesModel(data);
             
             ko.applyBindings(model);
-
-            model.TestDateRange({
-                startdate: "01/01/2014".parseToJavascriptDate(), 
-                enddate: "12/31/2014".parseToJavascriptDate() 
-            });
         });
 </script>
 
