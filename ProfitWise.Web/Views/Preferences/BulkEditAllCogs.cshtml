@@ -35,9 +35,10 @@
                    style="color: #777; display: inline-block; margin-top: 8px;">Apply to all Product/Variants Cost of Goods, or only to those with $0 CoGs?</label>
 
             <div class="col-xs-5" style="text-align: left;padding-top:15px;">
-                <select class="form-control">
-                    <option>All Product/Variants</option>
-                    <option>With $0 CoGS only</option>
+                <select class="form-control"
+                        data-bind="value: UpdateAllProductVariants">
+                    <option value="0">With $0 CoGS only</option>
+                    <option value="1">All Product/Variants</option>
                 </select>
             </div>
         </div>
@@ -84,33 +85,39 @@
                 lowconstraint: 0,
                 highconstraint: 100 });
 
-        self.ValidationState = ko.computed(function() {
-        });
-
         self.CancelButtonClick = function() {
             ShopifyApp.Modal.close({ result: false });
         };
 
+        self.UpdateAllProductVariants = ko.observable(0);
+
         self.OkButtonClick = function() {
-            //var cogsAmount = self.CogsAmountEditorModel.PullState();
+            var amount = self.MarginEditorModel.Amount();
+            if (self.UpdateAllProductVariants() == 1) {
+                var result = 
+                    confirm("Are you *absolutely* certain you want to overwrite all Product/Variants" +
+                            " with a Cost of Goods Sold computed at " + amount + "% Margin?");
+                
+                if (result) {
+                    self.ExecuteBulkUpdate();
+                } else {
+                    return;
+                }
+            } else {
+                self.ExecuteBulkUpdate();
+            }
+        };
 
-            //var postData = {
-            //    masterProductId: self.MasterProductId(),
-            //    currencyId: cogsAmount.CurrencyId,
-            //    Amount: cogsAmount.Amount,
-            //};
+        self.ExecuteBulkUpdate = function() {
+            var amount = self.MarginEditorModel.Amount();
+            var allproducts = self.UpdateAllProductVariants() == 1;
 
-            //var settings = new ProfitWiseFunctions.AjaxSettings(true);
-            //var ajax = new ProfitWiseFunctions.Ajax(settings);
-
-            //ajax.HttpPost(
-            //    "/CogsService/BulkUpdateCogs",
-            //    postData,
-            //    function() {
-            //        ShopifyApp.Modal.close({ result: true });
-            //    });
-
-            return false;
+            var settings = new ProfitWiseFunctions.AjaxSettings(true);
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            ajax.HttpPost("/Preferences/BulkEditAllCogs", { amount: amount, allproducts: allproducts },
+                function() {
+                    ShopifyApp.Modal.close({ result: true });
+                });
         };
 
         self.MarginEditorModel.RegisterEnterKeyCallback(function() {

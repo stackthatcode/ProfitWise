@@ -63,36 +63,41 @@
             <label>Use Default Margin in Reports for all $0 CoGS</label>
 
             <div style="display: inline-block; width: 125px; margin-left: 30px; position: relative;">
-                <select class="form-control">
-                    <option>Yes</option>
-                    <option>No</option>
+                <select class="form-control" 
+                        data-bind="value: UseDefaultMargin, event: { change: UseDefaultMarginChange }">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
                 </select>
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-xs-12">
-            <div style="height: 10px;"></div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-xs-12">
-            <label>Default Margin</label>
-
-            <div style="display: inline-block; width: 90px; margin-left: 30px; position: relative; top: 13px;">
-                <div data-bind="template: { name: 'Number-Editor-Widget', data: $root.DefaultMarginEditor }"></div>
-            </div>
-
-            <div style="display: inline-block; margin-left: 10px; position: relative;">
-                <a href="#" class="btn btn-primary" style="width: 100px; display: inline-block;">
-                    Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
-                </a>
+    
+    <div data-bind="visible: ShowDefaultMargin">
+        <div class="row">
+            <div class="col-xs-12">
+                <div style="height: 10px;"></div>
             </div>
         </div>
-    </div>
 
+        <div class="row">
+            <div class="col-xs-12">
+                <label>Default Margin (%)</label>
+
+                <div style="display: inline-block; width: 90px; margin-left: 30px; position: relative; top: 13px;">
+                    <div data-bind="template: { name: 'Number-Editor-Widget', data: $root.DefaultMarginEditorModel }"></div>
+                </div>
+
+                <div style="display: inline-block; margin-left: 10px; position: relative;">
+                    <a href="#" class="btn btn-primary" 
+                       style="width: 100px; display: inline-block;"
+                       data-bind="click: UseDefaultMarginChange">
+                        Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+   
     <div class="row">
         <div class="col-xs-12">
             <div style="height: 20px;"></div>
@@ -126,14 +131,18 @@
                 <div class="radio">
                     <label>
                         <input type="radio" name="optionsRadios"
-                               value="@ProfitRealization.OrderReceived" checked>
+                               data-bind="value:@ProfitRealization.OrderReceived,
+                                            checked: $root.ProfitRealization, 
+                                            event: { change: $root.UpdateProfitRealization }">
                         When the order is created
                     </label>
                 </div>
                 <div class="radio">
                     <label>
                         <input type="radio" name="optionsRadios"
-                               value="@ProfitRealization.PaymentClears">
+                               data-bind="value:@ProfitRealization.PaymentClears,
+                                            checked: $root.ProfitRealization, 
+                                            event: { change: $root.UpdateProfitRealization }">
                         When payment for the order is captured
                     </label>
                 </div>
@@ -153,7 +162,9 @@
             <div class="preference-control-cell" data-bind="foreach: DateRangeOptions">
                 <div class="radio">
                     <label>
-                        <input type="radio" name="defaultDateRadio" data-bind="value: $data.Id" value="option1" checked>
+                        <input type="radio" name="defaultDateRadio" 
+                               data-bind="value: $data.Id, checked: $root.DateRangeDefault, 
+                                            event: { change: $root.UpdateDefaultDateRange }">
                         <span data-bind="text: $data.Name"></span>
                     </label>
                 </div>
@@ -176,9 +187,7 @@
         // This must be populated with Javascript Date object
         self.StartingDateForOrders = ko.observable(data.StartingDateForOrders.parseToJavascriptDate());        
         self.OldStartingDateForOrders = ko.observable(data.StartingDateForOrders.parseToJavascriptDate());
-
         self.StartingDateChange = function(newdate) {
-
             if (newdate > self.OldStartingDateForOrders()) {
                 ShopifyApp.Modal.alert({
                     title: "ProfitWise",
@@ -193,9 +202,9 @@
                 flow.exec(
                     function() {
                         var ajax = new ProfitWiseFunctions.Ajax();
-                        ajax.HttpPost("/Preferences/UpdateStartingDate",
-                            { startDate: self.StartingDateForOrders() },
-                            this);
+                        ajax.HttpPost(
+                            "/Preferences/UpdateStartingDate", 
+                            { startDate: self.StartingDateForOrders() }, this);
                     },
                     function() {
                         self.OldStartingDateForOrders(self.StartingDateForOrders());
@@ -209,21 +218,38 @@
                     });
             }
         };
-
-
+        
         self.UseDefaultMargin = ko.observable(data.UseDefaultMargin);
-        self.DefaultMargin = ko.observable(data.DefaultMargin);
-        self.ProfitRealization = ko.observable(data.ProfitRealization);
-        self.DateRangeDefault = ko.observable(data.DateRangeDefault);
-
-        self.DefaultMarginEditor =
+        self.DefaultMarginEditorModel =
             new ProfitWiseWidgets.NumberEditorWidgetModel({
-                identifier: "number-editor",
+                identifier: "default-margin-editor",
+                defaultamount: data.DefaultMargin,
                 placeholder: "Margin %",
                 lowconstraint: 0,
-                highconstraint: 100
+                highconstraint: 100,
             });
+        self.ShowDefaultMargin = ko.computed(function() {
+            return self.UseDefaultMargin() == 1;
+        });
+        self.UseDefaultMarginChange = function() {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost("/Preferences/UpdateDefaultMargin",
+                    { useDefaultMargin: self.UseDefaultMargin() == 1, 
+                        defaultMargin: self.DefaultMarginEditorModel.Amount() });
+        };
+
+        self.ProfitRealization = ko.observable(data.ProfitRealization);
+        self.UpdateProfitRealization = function() {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost("/Preferences/UpdateProfitRealization", { profitRealizationId: self.ProfitRealization() });
+        };
         
+        self.DateRangeDefault = ko.observable(data.DateRangeDefault);
+        self.UpdateDefaultDateRange = function() {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost("/Preferences/UpdateDefaultDateRange", { dateRangeId: self.DateRangeDefault() });
+        };
+
         self.BulkEditAllCogsDialogPopup = function () {
             var url = ProfitWiseConfig.BaseUrl + '/Preferences/BulkEditAllCogs';
 
@@ -234,7 +260,7 @@
                 height: 420,
             }, self.Refresh);
         };
-
+        
         return self;
     };
 

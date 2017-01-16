@@ -32,18 +32,26 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult BulkEditAllCogs()
         {
-            var model = new BulkEditAllCogsModel
-            {
-                DefaultMargin = 20,
-            };
+            var shop = HttpContext.PullIdentity().PwShop;
+            var model = new BulkEditAllCogsModel { DefaultMargin = shop.DefaultMargin };
             return View(model);
         }
+
+        [HttpPost]
+        public ActionResult BulkEditAllCogs(decimal amount, bool allproducts)
+        {
+            var shop = HttpContext.PullIdentity().PwShop;
+            //var model = new BulkEditAllCogsModel { DefaultMargin = shop.DefaultMargin };
+            return JsonNetResult.Success();
+        }
+
 
         [HttpGet]
         public ActionResult Ping()
         {
             return new JsonNetResult(new { Success = true });
         }
+
 
         [HttpPost]
         public ActionResult UpdateStartingDate(DateTime startDate)
@@ -58,6 +66,30 @@ namespace ProfitWise.Web.Controllers
                 _shopRepository.UpdateStartingDateForOrders(shop.PwShopId, startDate);
                 return JsonNetResult.Success();
             }
+        }
+
+        [HttpPost]
+        public ActionResult UpdateDefaultMargin(bool useDefaultMargin, decimal defaultMargin)
+        {
+            var shop = HttpContext.PullIdentity().PwShop;
+            _shopRepository.UpdateDefaultMargin(shop.PwShopId, useDefaultMargin, defaultMargin);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult UpdateDefaultDateRange(int dateRangeId)
+        {
+            var shop = HttpContext.PullIdentity().PwShop;
+            _shopRepository.UpdateDateRangeDefault(shop.PwShopId, dateRangeId);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult UpdateProfitRealization(int profitRealizationId)
+        {
+            var shop = HttpContext.PullIdentity().PwShop;
+            _shopRepository.UpdateProfitRealization(shop.PwShopId, profitRealizationId);
+            return JsonNetResult.Success();
         }
     }
 }

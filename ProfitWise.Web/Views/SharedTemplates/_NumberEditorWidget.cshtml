@@ -28,8 +28,9 @@
         var self = this;        
         
         self.Identifier = ko.observable(parameters.identifier);
-        self.Amount = ko.observable(numeral(parameters.defaultamount || 0).format('0,0.00'));
         self.PlaceHolder = ko.observable(parameters.placeholder);
+        self.Amount = ko.observable(numeral(parameters.defaultamount || 0).format('0,0.00'));
+
 
         ko.bindingHandlers.formatNumber = {
             init: function(element, valueAccessor) {
@@ -51,9 +52,7 @@
             }
         };
 
-        self.SetFocus = function() {
-             $("#" + self.Identifier()).focus();
-        };
+        self.SetFocus = function() { $("#" + self.Identifier()).focus(); };
 
         // Enter-key Stuff
         self.EnterKeyCallback = function () { };
