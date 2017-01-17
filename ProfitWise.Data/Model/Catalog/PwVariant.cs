@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Catalog
 {
     public class PwVariant
     {

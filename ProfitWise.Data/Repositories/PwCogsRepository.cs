@@ -39,17 +39,18 @@ namespace ProfitWise.Data.Repositories
                 AND IsPrimary = true;";
 
             return _connection
-                    .Query<PwCogsProductSummary>(
-                        query, new
-                        {
-                            PwShopId = this.PwShop.PwShopId,
-                            PwMasterProductId = masterProductId,
-                        })
-                    .FirstOrDefault();
+                .Query<PwCogsProductSummary>(
+                    query, new
+                    {
+                        PwShopId = this.PwShop.PwShopId,
+                        PwMasterProductId = masterProductId,
+                    })
+                .FirstOrDefault();
         }
 
-        public IList<PwCogsProductSummary> 
-                RetrieveProductsFromPicklist(long pickListId, int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
+        public IList<PwCogsProductSummary>
+            RetrieveProductsFromPicklist(long pickListId, int pageNumber, int resultsPerPage, int sortByColumn,
+                bool sortByDirectionDown)
         {
             if (resultsPerPage > 200)
             {
@@ -58,14 +59,14 @@ namespace ProfitWise.Data.Repositories
 
             var startRecord = (pageNumber - 1) * resultsPerPage;
 
-            var sortDirectionWord= (sortByDirectionDown ? "ASC" : "DESC");
+            var sortDirectionWord = (sortByDirectionDown ? "ASC" : "DESC");
 
             var sortByClause =
                 "ORDER BY " +
                 (sortByColumn == 0
                     ? $"t1.Vendor {sortDirectionWord}, t1.Title {sortDirectionWord} "
                     : $"t1.Title {sortDirectionWord}, t1.Vendor {sortDirectionWord} ");
-            
+
             var query =
                 @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
                 FROM profitwiseproduct t1
@@ -104,7 +105,7 @@ namespace ProfitWise.Data.Repositories
                 AND t2.PwMasterProductId IN @MasterProductIds";
 
             return _connection.Query<PwCogsVariant>(
-                query, new { this.PwShopId, MasterProductIds = masterProductIds }).ToList();
+                query, new {this.PwShopId, MasterProductIds = masterProductIds}).ToList();
         }
 
         public void UpdateProductCogsAllVariants(long masterProductId, int currencyId, decimal amount)
@@ -114,8 +115,8 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId
                         AND PwMasterProductId = @masterProductId;";
 
-            _connection.Execute(query, 
-                new { this.PwShopId, masterProductId, currencyId, amount});
+            _connection.Execute(query,
+                new {this.PwShopId, masterProductId, currencyId, amount});
         }
 
         public void UpdateStockedDirectlyByPicklist(long pickListId, bool stockedDirectly)
@@ -140,7 +141,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterProductId = @masterProductId;";
 
-            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterProductId, stockedDirectly });
+            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterProductId, stockedDirectly});
         }
 
         public void UpdateStockedDirectlyByMasterVariantId(long masterVariantId, bool stockedDirectly)
@@ -151,7 +152,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterVariantId = @masterVariantId;";
 
-            _connection.Execute(query, new { PwShopId = this.PwShop.PwShopId, masterVariantId, stockedDirectly });
+            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterVariantId, stockedDirectly});
         }
 
         public void UpdateExcludeByPicklist(long pickListId, bool exclude)
@@ -165,7 +166,7 @@ namespace ProfitWise.Data.Repositories
                     FROM profitwisepicklistmasterproduct 
                     WHERE PwShopId = @pwShopId AND PwPickListId = @pickListId);";
 
-            _connection.Execute(query, new { PwShopId, pickListId, exclude });
+            _connection.Execute(query, new {PwShopId, pickListId, exclude});
         }
 
         public void UpdateExcludeByMasterProductId(long masterProductId, bool exclude)
@@ -176,7 +177,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterProductId = @masterProductId;";
 
-            _connection.Execute(query, new { PwShopId, masterProductId, exclude });
+            _connection.Execute(query, new {PwShopId, masterProductId, exclude});
         }
 
         public void UpdateExcludeByMasterVariantId(long masterVariantId, bool exclude)
@@ -187,7 +188,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterVariantId = @masterVariantId;";
 
-            _connection.Execute(query, new { PwShopId, masterVariantId, exclude });
+            _connection.Execute(query, new {PwShopId, masterVariantId, exclude});
         }
 
 
@@ -216,7 +217,7 @@ namespace ProfitWise.Data.Repositories
                         ORDER BY ProductType;";
 
             return _connection.Query<string>(
-                query, new { PwShopId = this.PwShop.PwShopId }).ToList();
+                query, new {PwShopId = this.PwShop.PwShopId}).ToList();
         }
 
 
@@ -228,56 +229,67 @@ namespace ProfitWise.Data.Repositories
                 @"UPDATE profitwisemastervariant
                 SET CogsCurrencyId = @currencyId, CogsAmount = @amount
                 WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
-            _connection.Execute(
-                query, new { this.PwShopId, masterVariantId, currencyId, amount });
+
+            _connection.Execute(query, new {this.PwShopId, masterVariantId, currencyId, amount});
         }
 
-
-        public const decimal DefaultMargin = 0.20m;
-
-        public void UpdateNewMasterVariantCogsToDefault()
-        {           
+        public void BulkUpdateMasterVariantCogsToDefault(bool zeroCogsOnly)
+        {
             var query =
                 @"UPDATE profitwiseshop t0
                     INNER JOIN profitwisemastervariant t1 
 		                ON t0.PwShopId = t1.PwShopId
 	                INNER JOIN profitwisevariant t2 
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
+		                ON t1.PwShopId = t2.PwShopId 
+                            AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+                            AND t2.IsPrimary = 1
                 SET t1.CogsCurrencyId = t0.CurrencyId, 
                     t1.CogsAmount = t2.HighPrice * @FractionOfHighPrice, 
                     t1.CogsDetail = false
-                WHERE t0.PwShopId = @PwShopId
-                AND t1.CogsAmount IS NULL;";
+                WHERE t0.PwShopId = @PwShopId ";
 
-            var FractionOfHighPrice = 1.00m - DefaultMargin;
-            _connection.Execute(query, new { this.PwShopId, FractionOfHighPrice });
+            if (zeroCogsOnly)
+            {
+                query += "AND t1.CogsAmount IS NULL;";
+            }
+
+            var fractionOfHighPrice = 1.00m - this.PwShop.DefaultMargin;
+            _connection.Execute(query, new {this.PwShopId, FractionOfHighPrice = fractionOfHighPrice});
         }
 
-        // This is the first iteration - next will be more granular i.e. Master Variant Id
-        public void UpdateOrderLinesWithSimpleCogs()
-        {
-            var query = OrderLineSimpleCogsQuery();
-            _connection.Execute(query, new { this.PwShopId });
-        }
-
-        public void UpdateOrderLinesWithSimpleCogs(long pwMasterVariantId)
-        {
-            var query = OrderLineSimpleCogsQuery() + " AND t1.PwMasterVariantId = @pwMasterVariantId";
-            _connection.Execute(query, new { this.PwShopId, PwMasterVariantId = pwMasterVariantId });
-        }
-
-        private static string OrderLineSimpleCogsQuery()
+        public void UpdateOrderLineUnitCogs(
+                bool onlyNullUnitCogs, long? masterProductId = null, long? masterVariantId = null)
         {
             var query =
                 @"UPDATE profitwiseshop t0
                     INNER JOIN profitwisemastervariant t1 
 		                ON t0.PwShopId = t1.PwShopId
-	                INNER JOIN profitwisevariant t2 
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.IsPrimary = 1
-                SET t1.CogsCurrencyId = t0.CurrencyId, t1.CogsAmount = t2.HighPrice * 0.80, t1.CogsDetail = false
-                WHERE t0.PwShopId = @PwShopId
-                AND t1.CogsAmount IS NULL";
-            return query;
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+	                LEFT JOIN exchangerate t4
+		                ON Date(t3.OrderDate) = t4.`Date` 
+			                AND t4.SourceCurrencyId = t1.CogsCurrencyId
+			                AND t4.DestinationCurrencyId = t0.CurrencyId
+                SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0))
+                WHERE t0.PwShopId = 100001 ";
+
+            if (onlyNullUnitCogs)
+            {
+                query += "AND t3.UnitCogs IS NULL ";
+            }
+            if (masterProductId.HasValue)
+            {
+                query += "AND t1.PwMasterProductId = @PwMasterProductId ";
+            }
+            if (masterVariantId.HasValue)
+            {
+                query += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
+            }
+
+            _connection.Execute(
+                query, new { PwShopId, PwMasterProductId = masterProductId, PwMasterVariantId = masterVariantId });
         }
     }
 }

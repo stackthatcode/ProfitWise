@@ -6,6 +6,7 @@ using Castle.Core.Internal;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using Push.Foundation.Utilities.Logging;
 
@@ -45,13 +46,12 @@ namespace ProfitWise.Data.Services
             return masterProduct;
         }
 
-        public PwProduct BuildAndSaveProduct(PwMasterProduct masterProduct,
-                    bool isActive, string title, long? shopifyProductId, string vendor, string tags, string productType)
+        public PwProduct BuildAndSaveProduct(
+                PwMasterProduct masterProduct, bool isActive, string title, long? shopifyProductId, 
+                string vendor, string tags, string productType)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-
-            _pushLogger.Debug(
-                    $"Create new Product: {title} (Id = {shopifyProductId})");
+            _pushLogger.Debug($"Create new Product: {title} (Id = {shopifyProductId})");
 
             // Create the new Product
             PwProduct finalProduct = new PwProduct()
@@ -91,15 +91,16 @@ namespace ProfitWise.Data.Services
             productRepository.UpdateProduct(product); // TODO UPDATE ME!!!
         }
 
-        public PwMasterVariant BuildAndSaveMasterVariant(PwProduct product, 
-                    string title, long? shopifyProductId, long? shopifyVariantId, string sku)
+        public PwMasterVariant BuildAndSaveMasterVariant(
+                PwProduct product, string title, long? shopifyProductId, long? shopifyVariantId, string sku)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var masterProduct = product.ParentMasterProduct;
 
-            _pushLogger.Debug(
-                $"Creating new Master Variant: {title}, {sku} (Id = {shopifyVariantId})");
+            _pushLogger.Debug($"Creating new Master Variant: {title}, {sku} (Id = {shopifyVariantId})");
 
+
+            // SPECIFICATION => intentionally set the new CoGS => $0, and the Currency Id => Shop Currency
             var masterVariant = new PwMasterVariant()
             {
                 PwShopId = this.PwShop.PwShopId,
@@ -108,6 +109,8 @@ namespace ProfitWise.Data.Services
                 Exclude = false,
                 StockedDirectly = StockedDirectlyDefault,
                 Variants = new List<PwVariant>(),
+                CogsAmount = 0,
+                CogsCurrencyId = this.PwShop.CurrencyId,
             };
 
             masterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(masterVariant);

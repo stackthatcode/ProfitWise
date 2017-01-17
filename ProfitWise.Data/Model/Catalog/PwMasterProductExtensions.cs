@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Model.Catalog;
 using Push.Foundation.Utilities.General;
 
 namespace ProfitWise.Data.Model

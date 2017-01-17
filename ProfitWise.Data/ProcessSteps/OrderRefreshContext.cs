@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.ShopifyImport;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Catalog
 {
     public class PwMasterProduct
     {

@@ -153,3 +153,13 @@ UPDATE profitwiseshop SET IsShopEnabled = 0;
 UPDATE profitwiseshop SET IsShopEnabled = 1;
 
 
+
+SELECT * FROM shopifyorderlineitem;
+
+SELECT * FROM profitwisemastervariant;
+
+
+
+
+
+SELECT * FROM exchangerate;

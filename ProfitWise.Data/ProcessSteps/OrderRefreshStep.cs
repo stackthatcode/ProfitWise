@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories;
@@ -217,6 +218,8 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var catalogBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
+            var cogsRepository = _multitenantFactory.MakeCogsRepository(shop);
+            var queryReposity = _multitenantFactory.MakeReportQueryRepository(shop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
@@ -238,7 +241,8 @@ namespace ProfitWise.Data.ProcessSteps
                     WriteOrderToPersistence(importedOrder, context);
                 }
 
-                //cogsRepostory.UpdateOrderLinesWithSimpleCogs();
+                cogsRepository.UpdateOrderLineUnitCogs(true);
+                queryReposity.RefreshReportEntryData();
                 trans.Commit();
             }
         }

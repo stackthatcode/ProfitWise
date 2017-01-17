@@ -15,11 +15,32 @@ SET SQL_SAFE_UPDATES = 0; # Turn off Safe Updates setting
 #SET t1.CogsCurrencyId = t0.CurrencyId, t1.CogsAmount = t2.HighPrice * 0.80, t1.CogsDetail = false
 #WHERE t0.PwShopId = 100001;
 
-
 #$1000 @ 20% Margin = $800
 #$800 @ 20% ROI => $960
 
-## SAVE *** Update all the Order Line CoGS
+
+
+## SAVE *** for testing purposes only - bulk update CoGS => Migrate to the Bulk Update Step
+UPDATE profitwiseshop t0
+	INNER JOIN profitwisemastervariant t1 
+		ON t0.PwShopId = t1.PwShopId
+	INNER JOIN profitwisevariant t2 
+		ON t1.PwShopId = t2.PwShopId 
+			AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+			AND t2.IsPrimary = 1
+SET t1.CogsCurrencyId = t0.CurrencyId, 
+	t1.CogsAmount = t2.HighPrice * 0.80, 
+	t1.CogsDetail = false
+WHERE t1.PwShopId = 100001 
+AND t1.CogsAmount = 0;
+
+
+
+
+## SAVE
+## 1A *** Update all the Order Line CoGS for Order Line Items with NULL UnitCogs
+## 1B *** Update all the Order Line CoGS for Order Line Items tied to MasterVariantId / MasterProductId
+
 UPDATE profitwiseshop t0
     INNER JOIN profitwisemastervariant t1 
 		ON t0.PwShopId = t1.PwShopId
@@ -32,21 +53,26 @@ UPDATE profitwiseshop t0
 			AND t4.SourceCurrencyId = t1.CogsCurrencyId
 			AND t4.DestinationCurrencyId = t0.CurrencyId
 SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0))
-WHERE t0.PwShopId = 100001;
+WHERE t0.PwShopId = 100001 
+AND t1.PwMasterProductId = 8;
+
+#WHERE t0.PwShopId = 100001 AND t3.UnitCogs IS NULL;
 
 
 
-DELETE FROM profitwiseprofitreportentry;
+SELECT * FROM profitwisemastervariant;
 
-# Step #1 - Populate all the Order Lines into Profit Report Entries
+
+-- This deletes all
+DELETE FROM profitwiseprofitreportentry WHERE PwShopId = 100001;
+
 INSERT INTO profitwiseprofitreportentry
 SELECT 	PwShopId, OrderDate, 1 AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
 		PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, Quantity * UnitCogs AS CoGS,
         Quantity AS Quantity
-FROM shopifyorderlineitem;
+FROM shopifyorderlineitem
+WHERE PwShopId = 100001;
 
-
-# Step #2 - Populate all the Refunds into Profit Report Entries
 INSERT INTO profitwiseprofitreportentry
 SELECT 	t1.PwShopId, t1.RefundDate, 2 AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
 		t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, -t1.RestockQuantity * t2.UnitCogs AS CoGS,
@@ -55,15 +81,14 @@ FROM shopifyorderrefund t1
 		INNER JOIN shopifyorderlineitem t2
 			ON t1.PwShopId = t2.PwShopId 
             AND t1.ShopifyOrderId = t2.ShopifyOrderId 
-            AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId;
+            AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId
+WHERE t1.PwShopId = 100001;
 
-
-# Step #3 - Populate all the Adjustments into Profit Report Entries
 INSERT INTO profitwiseprofitreportentry
 SELECT t1.PwShopId, t1.AdjustmentDate, 3 AS EntryType, t1.ShopifyOrderId, t1.ShopifyAdjustmentId AS SourceId, 
 		NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS, NULL AS Quantity
-FROM shopifyorderadjustment t1;
-
+FROM shopifyorderadjustment t1
+WHERE t1.PwShopId = 100001;
 
 
 

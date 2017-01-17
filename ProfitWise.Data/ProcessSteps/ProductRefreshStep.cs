@@ -4,6 +4,7 @@ using System.Linq;
 using Castle.Core.Internal;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
@@ -69,10 +70,6 @@ namespace ProfitWise.Data.ProcessSteps
             var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
             SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
 
-            // Update the CoGS of the new Products (Master Variants)
-            var cogsRepository = _multitenantFactory.MakeCogsRepository(shop);
-            cogsRepository.UpdateNewMasterVariantCogsToDefault();
-
             // Update Batch State
             batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
             batchStateRepository.Update(batchState);
@@ -120,6 +117,7 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
             var repository = _multitenantFactory.MakeProductRepository(shop);
+            var cogsRepository = _multitenantFactory.MakeCogsRepository(shop);
 
             using (var transaction = repository.InitiateTransaction())
             {
@@ -130,8 +128,8 @@ namespace ProfitWise.Data.ProcessSteps
 
                     foreach (var importedVariant in importedProduct.Variants)
                     {
-                        WriteVariantToDatabase(shop, masterProducts, masterProduct, importedVariant, product,
-                            importedProduct);
+                        WriteVariantToDatabase(
+                            shop, masterProducts, masterProduct, importedVariant, product, importedProduct);
                     }
 
                     FlagMissingVariantsAsInactive(shop, masterProducts, importedProduct);
