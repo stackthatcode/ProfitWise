@@ -6,9 +6,9 @@ namespace ProfitWise.Data.Model.Catalog
     public class VariantBuildContext
     {
         public IList<PwMasterProduct> AllMasterProducts { get; set; }
-        public PwMasterProduct MasterProduct { get; set; }
         public PwMasterVariant MasterVariant { get; set; }
-        public PwProduct Product { get; set; }                    
+        public PwProduct Product { get; set; }
+        public PwMasterProduct MasterProduct => Product.ParentMasterProduct;
 
         public string Sku { get; set; }
         public string Title { get; set; }
@@ -26,7 +26,7 @@ namespace ProfitWise.Data.Model.Catalog
                     this Variant importedVariant,
                     bool isActive = false,
                     IList<PwMasterProduct> allMasterProducts = null,
-                    PwMasterProduct masterProduct = null, 
+                    PwProduct product = null, 
                     PwMasterVariant masterVariant = null)
         {
             return new VariantBuildContext
@@ -38,7 +38,7 @@ namespace ProfitWise.Data.Model.Catalog
                 Price = importedVariant.Price,
                 ShopifyProductId = importedVariant.ParentProduct.Id,
                 ShopifyVariantId = importedVariant.Id,
-                MasterProduct = masterProduct,
+                Product = product,
                 MasterVariant = masterVariant,
                 Inventory = importedVariant.Inventory,
                 InventoryTracked = importedVariant.InventoryTracked,
@@ -48,9 +48,7 @@ namespace ProfitWise.Data.Model.Catalog
         public static VariantBuildContext ToVariantBuildContext(
                     this OrderLineItem orderLineItem,
                     bool isActive = false,
-                    IList<PwMasterProduct> allMasterProducts = null,
-                    PwMasterProduct masterProduct = null,
-                    PwMasterVariant masterVariant = null)
+                    IList<PwMasterProduct> allMasterProducts = null)
         {
             return new VariantBuildContext
             {
@@ -61,8 +59,8 @@ namespace ProfitWise.Data.Model.Catalog
                 Price = orderLineItem.Price,
                 ShopifyProductId = orderLineItem.ProductId,
                 ShopifyVariantId = orderLineItem.VariantId,
-                MasterProduct = masterProduct,
-                MasterVariant = masterVariant,
+                Product = null,
+                MasterVariant = null,
                 Inventory = 0,
                 InventoryTracked = false,
             };

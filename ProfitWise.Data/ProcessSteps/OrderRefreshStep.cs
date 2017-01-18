@@ -366,29 +366,29 @@ namespace ProfitWise.Data.ProcessSteps
                 productBuildContext.MasterProducts.Add(masterProduct);
             }
 
-            var product = masterProduct.FindProduct(productBuildContext);            
-            if (product == null)
+            variantBuildContext.Product = masterProduct.FindProduct(productBuildContext);            
+            if (variantBuildContext.Product == null)
             {
                 _pushLogger.Debug(
                     $"Unable to find Product for Title: {productBuildContext.Title} " +
                     $"and Vendor: {productBuildContext.Vendor} and " +
                     $"Shopify Id: {productBuildContext.ShopifyProductId}");
 
-                product = service.BuildAndSaveProduct(masterProduct, productBuildContext);
+                variantBuildContext.Product = service.BuildAndSaveProduct(masterProduct, productBuildContext);
             }
 
-            var masterVariant = masterProduct.FindMasterVariant(variantBuildContext);            
-            if (masterVariant == null)
+            variantBuildContext.MasterVariant = masterProduct.FindMasterVariant(variantBuildContext);            
+            if (variantBuildContext.MasterVariant == null)
             {
                 _pushLogger.Debug(
                     $"Unable to find Master Variant for Title: {variantBuildContext.Title} " +
                     $"and Sku: {variantBuildContext.Sku}");
 
-                masterVariant = service.BuildAndSaveMasterVariant(variantBuildContext);
-                masterProduct.MasterVariants.Add(masterVariant);
+                variantBuildContext.MasterVariant = service.BuildAndSaveMasterVariant(variantBuildContext);
+                masterProduct.MasterVariants.Add(variantBuildContext.MasterVariant);
             }
 
-            var variant = masterVariant.FindVariant(variantBuildContext);            
+            var variant = variantBuildContext.MasterVariant.FindVariant(variantBuildContext);            
             if (variant == null)
             {
                 _pushLogger.Debug(

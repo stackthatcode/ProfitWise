@@ -125,15 +125,13 @@ namespace ProfitWise.Data.ProcessSteps
                 {
                     var productBuildContext = 
                         importedProduct.ToProductBuildContext(masterProducts, isActive: true);
-
                     var product = WriteProductToDatabase(shop, productBuildContext);
-                    var masterProduct = product.ParentMasterProduct;
-
+                    
                     foreach (var importedVariant in importedProduct.Variants)
                     {
                         var variantBuildContext =
                             importedVariant.ToVariantBuildContext(
-                                isActive: true, allMasterProducts: masterProducts, masterProduct: masterProduct);
+                                isActive: true, allMasterProducts: masterProducts, product: product);
                         WriteVariantToDatabase(shop, variantBuildContext);
                     }
 
@@ -212,6 +210,7 @@ namespace ProfitWise.Data.ProcessSteps
         }
 
         
+
         // Ancillary catalog maintenance functions
         public virtual IList<Event> RetrieveAllProductDestroyEvents(
                                 ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDate)

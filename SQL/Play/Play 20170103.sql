@@ -154,11 +154,15 @@ UPDATE profitwiseshop SET IsShopEnabled = 1;
 
 
 
-SELECT * FROM shopifyorderlineitem;
-
 SELECT * FROM profitwisemastervariant;
 
+SELECT * FROM shopifyorderlineitem;
 
+SELECT * FROM profitwiseprofitreportentry WHERE EntryType = 1;
+
+SELECT * FROM profitwisevariant WHERE PwProductId = 111 AND PwVariantId = 515;
+
+SELECT * FROM profitwisemastervariant;
 
 
 
