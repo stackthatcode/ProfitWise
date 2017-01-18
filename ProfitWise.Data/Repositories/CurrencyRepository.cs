@@ -4,6 +4,7 @@ using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Repositories
 {

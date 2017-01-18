@@ -465,6 +465,9 @@
   <ItemGroup>
     <Content Include="Views\SharedTemplates\_DatePickerWidget.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Cogs\_CostOfGoodsSoldEditorWidget.cshtml" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

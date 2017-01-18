@@ -58,7 +58,8 @@ namespace ProfitWise.Data.Services
             return masterProduct;
         }
 
-        public PwProduct BuildAndSaveProduct(PwMasterProduct masterProduct, ProductBuildContext productBuildContext)
+        public PwProduct BuildAndSaveProduct(
+                PwMasterProduct masterProduct, ProductBuildContext productBuildContext)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             _pushLogger.Debug(
@@ -94,7 +95,8 @@ namespace ProfitWise.Data.Services
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             _pushLogger.Debug(
-                $"Creating new Master Variant: {context.Title}, {context.Sku} (Id = {context.ShopifyVariantId})");
+                $"Creating new Master Variant: {context.Title}, {context.Sku} " +
+                $"(Id = {context.ShopifyVariantId})");
 
             // SPECIFICATION => intentionally set the new CoGS => $0, and the Currency Id => Shop Currency
             var masterVariant = new PwMasterVariant()

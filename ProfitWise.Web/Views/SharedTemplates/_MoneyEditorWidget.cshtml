@@ -1,4 +1,5 @@
-﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+﻿@using ProfitWise.Data.Model.System
+<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
 
 <style>
     .currency-popover a {
@@ -18,7 +19,8 @@
 <script type="text/html" id="Money-Editor-Widget-Popover">
     <div class="currency-popover" data-bind="foreach: ProfitWiseFunctions.CurrencyCache">
         <a href="#" data-bind="click: $parent.ChangeCurrencySelection">
-            <span data-bind="text: Abbr" style="display: inline-block; width: 32px;"></span> (<span data-bind="text: Symbol"></span>) 
+            <span data-bind="text: Abbr" style="display: inline-block; width: 32px;"></span> 
+            (<span data-bind="text: Symbol"></span>) 
         </a>
     </div>
 </script>
@@ -31,6 +33,7 @@
                     popover: { options: { placement: 'bottom' , trigger: 'click' , }, 
                             template: 'Money-Editor-Widget-Popover', data: $data }">
         </div>
+
         <input type="text"
                data-bind="formatMoney: Amount,
                         event: {
@@ -55,7 +58,7 @@
         var self = this;
         self.CurrencyCache = ProfitWiseFunctions.CurrencyCache;
 
-        var defaultCurrencyId = 1; // USD
+        var defaultCurrencyId = @Currency.DefaultCurrencyId; // USD
         
         // Populate the input amounts
         self.Identifier = ko.observable(parameters.identifier);
@@ -150,9 +153,7 @@
             self.EditorLostFocusCallback();
         };
 
-        self.SetFocus = function () {
-            $("#" + self.Identifier()).focus();
-        };
+        self.SetFocus = function () { $("#" + self.Identifier()).focus(); };
 
         return self;
     };
