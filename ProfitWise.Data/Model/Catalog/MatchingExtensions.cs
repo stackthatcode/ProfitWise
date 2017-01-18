@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model;
-using ProfitWise.Data.Model.Catalog;
 using Push.Foundation.Utilities.Helpers;
-using Push.Utilities.Helpers;
 
-namespace ProfitWise.Data.Services
+namespace ProfitWise.Data.Model.Catalog
 {
     public static class MatchingExtensions
     {
@@ -14,24 +11,43 @@ namespace ProfitWise.Data.Services
         // when Title and Vendor match. AND, it is impossible for two Products with the same Title and Vendor
         // to exist under different Master Product
         public static PwMasterProduct FindMasterProduct(
-                this IList<PwMasterProduct> masterProducts, string title, string vendor)
+                this IList<PwMasterProduct> masterProducts, ProductBuildContext context)
         {
             var firstOrDefault = masterProducts
                 .SelectMany(x => x.Products)
-                .FirstOrDefault(x => x.Title == title && x.Vendor == vendor);
+                .FirstOrDefault(x => x.Title == context.Title && x.Vendor == context.Vendor);
             return firstOrDefault?.ParentMasterProduct;
         }
 
         public static PwProduct FindProduct(
-                this PwMasterProduct masterProduct, string title, string vendor, long? shopifyProductId)
+                this PwMasterProduct masterProduct, ProductBuildContext context)
         {
-            return
-                masterProduct
-                    .Products
-                    .FirstOrDefault(x => x.Title == title &&
-                                    x.Vendor == vendor &&
-                                    x.ShopifyProductId == shopifyProductId);
+            return masterProduct
+                    .Products.FirstOrDefault(
+                                x => x.Title == context.Title &&
+                                    x.Vendor == context.Vendor &&
+                                    x.ShopifyProductId == context.ShopifyProductId);
         }
+
+        public static PwMasterVariant FindMasterVariant(this PwMasterProduct masterProduct, VariantBuildContext context)
+        {
+            var firstOrDefault = masterProduct
+                .MasterVariants
+                .SelectMany(x => x.Variants)
+                .FirstOrDefault(x => x.Sku == context.Sku && 
+                                    x.Title.VariantTitleCorrection() == context.Title.VariantTitleCorrection());
+
+            return firstOrDefault?.ParentMasterVariant;
+        }
+
+        public static PwVariant FindVariant(this PwMasterVariant masterVariant, VariantBuildContext context)
+        {
+            return masterVariant.Variants.FirstOrDefault(
+                        x => x.Sku == context.Sku && 
+                        x.Title.VariantTitleCorrection() == context.Title.VariantTitleCorrection() && 
+                        x.ShopifyVariantId == context.ShopifyVariantId);
+        }
+
 
         public static IList<PwProduct> FindProductByShopifyId(
                 this IList<PwMasterProduct> masterProducts, long? shopifyProductId)
@@ -46,35 +62,12 @@ namespace ProfitWise.Data.Services
         public static IList<PwVariant> FindVariantsByShopifyId(
                 this IEnumerable<PwMasterVariant> masterVariants, long? shopifyVariantId)
         {
-            return
-                masterVariants
+            return masterVariants
                     .SelectMany(x => x.Variants)
                     .Where(x => x.ShopifyVariantId == shopifyVariantId)
                     .ToList();
         }
 
-        public static PwMasterVariant FindMasterVariant(
-                    this PwMasterProduct masterProduct, string sku, string title)
-        {
-            var firstOrDefault = masterProduct
-                .MasterVariants
-                .SelectMany(x => x.Variants)
-                .FirstOrDefault(x => x.Sku == sku && 
-                                    x.Title.VariantTitleCorrection() == title.VariantTitleCorrection());
-
-            return firstOrDefault?.ParentMasterVariant;
-        }
-
-        public static PwVariant FindVariant(
-                    this PwMasterVariant masterVariant, string sku, string title, long? shopifyVariantId)
-        {
-            return
-                masterVariant.Variants.FirstOrDefault(
-                    x => x.Sku == sku && 
-                        x.Title.VariantTitleCorrection() == title.VariantTitleCorrection() && 
-                        x.ShopifyVariantId == shopifyVariantId);
-        }
-        
 
         private const string VariantDefaultTitle = "Default Title";
 

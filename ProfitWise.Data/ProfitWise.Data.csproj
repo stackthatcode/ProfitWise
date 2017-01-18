@@ -74,6 +74,8 @@
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="Model\Catalog\ProductBuildContext.cs" />
+    <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />
@@ -96,7 +98,6 @@
     <Compile Include="Model\Cogs\ProductSearchFilter.cs" />
     <Compile Include="Model\Cogs\PwCogsVariant.cs" />
     <Compile Include="Model\Cogs\PwCogsProductSummary.cs" />
-    <Compile Include="Model\Catalog\PwMasterProductExtensions.cs" />
     <Compile Include="Model\Catalog\PwMasterVariant.cs" />
     <Compile Include="Model\Catalog\PwMasterProduct.cs" />
     <Compile Include="Model\Reports\SkuSelector.cs" />
@@ -135,7 +136,7 @@
     <Compile Include="Repositories\PwReportRepository.cs" />
     <Compile Include="Services\CurrencyService.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRepository.cs" />
-    <Compile Include="Services\MatchingExtensions.cs" />
+    <Compile Include="Model\Catalog\MatchingExtensions.cs" />
     <Compile Include="Services\CatalogBuilderService.cs" />
     <Compile Include="ProcessSteps\ProductRefreshStep.cs" />
     <Compile Include="ProcessSteps\RefreshServiceConfiguration.cs" />

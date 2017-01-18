@@ -280,13 +280,14 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Debug($"Inserting new Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
             _pushLogger.Trace(Environment.NewLine + translatedOrder.ToString());
 
-            foreach (var lineItemFromShopify in orderFromShopify.LineItems)
+            foreach (var lineItem in orderFromShopify.LineItems)
             {
-                var translatedLineItem =
-                        translatedOrder
-                            .LineItems.First(x => x.ShopifyOrderLineId == lineItemFromShopify.Id);
+                var translatedLineItem = translatedOrder.LineItems.First(x => x.ShopifyOrderLineId == lineItem.Id);
 
-                var pwVariant = FindCreateProductVariant(context, lineItemFromShopify);
+                var productBuildContext = lineItem.ToProductBuildContext(context.MasterProducts);
+                var variantBuildContext = lineItem.ToVariantBuildContext(allMasterProducts: context.MasterProducts);
+
+                var pwVariant = FindCreateProductVariant(context.PwShop, productBuildContext, variantBuildContext);
                 translatedLineItem.SetProfitWiseVariant(pwVariant);
             }
 
@@ -348,66 +349,53 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        public PwVariant FindCreateProductVariant(OrderRefreshContext context, OrderLineItem importedLineItem)
+
+        public PwVariant FindCreateProductVariant(
+                PwShop shop, ProductBuildContext productBuildContext, VariantBuildContext variantBuildContext)
         {
-            var service = _multitenantFactory.MakeCatalogBuilderService(context.PwShop);
-
-            var masterProduct =
-                context.MasterProducts.FindMasterProduct(
-                    importedLineItem.ProductTitle, importedLineItem.Vendor);
-
+            var service = _multitenantFactory.MakeCatalogBuilderService(shop);
+            
+            var masterProduct = productBuildContext.MasterProducts.FindMasterProduct(productBuildContext);
             if (masterProduct == null)
             {
                 _pushLogger.Debug(
-                    $"Unable to find Master Product for Title: {importedLineItem.ProductTitle} " +
-                    $"and Vendor: {importedLineItem.Vendor}");
+                    $"Unable to find Master Product for Title: {productBuildContext.Title} " +
+                    $"and Vendor: {productBuildContext.Vendor}");
+
                 masterProduct = service.BuildAndSaveMasterProduct();
+                productBuildContext.MasterProducts.Add(masterProduct);
             }
 
-            context.MasterProducts.Add(masterProduct);
-
-            var product = masterProduct.FindProduct(
-                importedLineItem.ProductTitle, importedLineItem.Vendor, importedLineItem.ProductId);
-
+            var product = masterProduct.FindProduct(productBuildContext);            
             if (product == null)
             {
                 _pushLogger.Debug(
-                    $"Unable to find Product for Title: {importedLineItem.ProductTitle} " +
-                    $"and Vendor: {importedLineItem.Vendor} and " +
-                    $"Shopify Id: {importedLineItem.ProductId}");
+                    $"Unable to find Product for Title: {productBuildContext.Title} " +
+                    $"and Vendor: {productBuildContext.Vendor} and " +
+                    $"Shopify Id: {productBuildContext.ShopifyProductId}");
 
-                product =
-                    service.BuildAndSaveProduct(
-                        masterProduct, false, importedLineItem.ProductTitle, importedLineItem.ProductId,
-                        importedLineItem.Vendor, "", "");
+                product = service.BuildAndSaveProduct(masterProduct, productBuildContext);
             }
 
-            var masterVariant =
-                masterProduct.FindMasterVariant(importedLineItem.Sku, importedLineItem.VariantTitle);
-
+            var masterVariant = masterProduct.FindMasterVariant(variantBuildContext);            
             if (masterVariant == null)
             {
                 _pushLogger.Debug(
-                    $"Unable to find Master Variant for Title: {importedLineItem.VariantTitle} " +
-                    $"and Sku: {importedLineItem.Sku}");
+                    $"Unable to find Master Variant for Title: {variantBuildContext.Title} " +
+                    $"and Sku: {variantBuildContext.Sku}");
 
-                masterVariant =
-                    service.BuildAndSaveMasterVariant(
-                        product, importedLineItem.VariantTitle, importedLineItem.ProductId,
-                        importedLineItem.VariantId, importedLineItem.Sku);
+                masterVariant = service.BuildAndSaveMasterVariant(variantBuildContext);
                 masterProduct.MasterVariants.Add(masterVariant);
             }
 
-            var variant = masterVariant.FindVariant(importedLineItem.Sku, importedLineItem.VariantTitle, importedLineItem.VariantId);
-
+            var variant = masterVariant.FindVariant(variantBuildContext);            
             if (variant == null)
             {
                 _pushLogger.Debug(
-                    $"Unable to find Variant for Title: {importedLineItem.VariantTitle} " +
-                    $"and Sku: {importedLineItem.Sku} and Shopify Variant Id: {importedLineItem.VariantId}");
-                variant =
-                    service.BuildAndSaveVariant(
-                        masterVariant, false, product, importedLineItem.VariantTitle, importedLineItem.VariantId, importedLineItem.Sku);
+                    $"Unable to find Variant for Title: {variantBuildContext.Title} " +
+                    $"and Sku: {variantBuildContext.Sku} " +
+                    $"and Shopify Variant Id: {variantBuildContext.ShopifyVariantId}");
+                variant = service.BuildAndSaveVariant(variantBuildContext);
             }
 
             return variant;

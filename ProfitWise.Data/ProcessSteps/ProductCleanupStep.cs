@@ -58,8 +58,8 @@ namespace ProfitWise.Data.ProcessSteps
             variantRepository.DeleteOrphanedMasterVariants();
         }
 
-        private void RemoveInactiveWithoutReference(PwShop shop, 
-                IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
+        private void RemoveInactiveWithoutReference(
+                PwShop shop, IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
@@ -103,8 +103,8 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        private void UpdateInactiveVariantPrice(PwShop shop, 
-                IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
+        private void UpdateInactiveVariantPrice(
+                PwShop shop, IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
 

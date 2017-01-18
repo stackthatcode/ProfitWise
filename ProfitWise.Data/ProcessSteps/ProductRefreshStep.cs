@@ -123,114 +123,96 @@ namespace ProfitWise.Data.ProcessSteps
             {
                 foreach (var importedProduct in importedProducts)
                 {
-                    var product = WriteProductToDatabase(shop, masterProducts, importedProduct);
+                    var productBuildContext = 
+                        importedProduct.ToProductBuildContext(masterProducts, isActive: true);
+
+                    var product = WriteProductToDatabase(shop, productBuildContext);
                     var masterProduct = product.ParentMasterProduct;
 
                     foreach (var importedVariant in importedProduct.Variants)
                     {
-                        WriteVariantToDatabase(
-                            shop, masterProducts, masterProduct, importedVariant, product, importedProduct);
+                        var variantBuildContext =
+                            importedVariant.ToVariantBuildContext(
+                                isActive: true, allMasterProducts: masterProducts, masterProduct: masterProduct);
+                        WriteVariantToDatabase(shop, variantBuildContext);
                     }
 
-                    FlagMissingVariantsAsInactive(shop, masterProducts, importedProduct);
+                    FlagMissingVariantsAsInactive(shop, productBuildContext);
                 }
 
                 transaction.Commit();
             }
         }
 
-        private PwProduct WriteProductToDatabase(
-                PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
+        private PwProduct WriteProductToDatabase(PwShop shop, ProductBuildContext context)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
-
-            var masterProduct =
-                masterProducts.FindMasterProduct(importedProduct.Title, importedProduct.Vendor);
-
+            var masterProduct = context.MasterProducts.FindMasterProduct(context);
+                       
             if (masterProduct == null)
             {
-                _pushLogger.Debug(
-                    $"Unable to find Master Product for Title: {importedProduct.Title} " +
-                    $"and Vendor: {importedProduct.Vendor}");
-
+                _pushLogger.Debug($"Unable to find Master Product for Title: {context.Title} and Vendor: {context.Vendor}");
                 masterProduct = service.BuildAndSaveMasterProduct();
-
-                if (!masterProducts.Contains(masterProduct))
-                {
-                    masterProducts.Add(masterProduct);
-                }
+                context.MasterProducts.Add(masterProduct);
             }
 
-            var product = masterProduct.FindProduct(
-                importedProduct.Title, importedProduct.Vendor, importedProduct.Id);
-
+            var product = masterProduct.FindProduct(context);
             if (product == null)
             {
                 _pushLogger.Debug(
-                    $"Unable to find Product for Title: {importedProduct.Title} " +
-                    $"and Vendor: {importedProduct.Vendor} and Shopify Id: {importedProduct.Id}");
+                    $"Unable to find Product for Title: {context.Title} " +
+                    $"and Vendor: {context.Vendor} and Shopify Id: {context.ShopifyProductId}");
 
-                product =
-                    service.BuildAndSaveProduct(
-                        masterProduct, true, importedProduct.Title, importedProduct.Id, importedProduct.Vendor,
-                        importedProduct.Tags, importedProduct.ProductType);
-                
-                service.UpdateActiveShopifyProduct(masterProducts, product.ShopifyProductId);
+                product = service.BuildAndSaveProduct(masterProduct, context);                
+                service.UpdateActiveProduct(context.MasterProducts, product.ShopifyProductId);
             }
             else
             {
-                service.UpdateExistingProduct(product, importedProduct.Tags, importedProduct.ProductType);
+                service.UpdateExistingProduct(product, context.Tags, context.ProductType);
             }
             return product;
         }
 
-        private void WriteVariantToDatabase(
-                PwShop shop, IList<PwMasterProduct> masterProducts, PwMasterProduct masterProduct, 
-                Variant importedVariant, PwProduct product, Product importedProduct)
+        private void WriteVariantToDatabase(PwShop shop, VariantBuildContext context)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
             var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
 
-            var masterVariant =
-                masterProduct.FindMasterVariant(importedVariant.Sku, importedVariant.Title);
-
+            var masterVariant = context.MasterProduct.FindMasterVariant(context);
             if (masterVariant == null)
             {
-                _pushLogger.Debug(
-                    $"Unable to find Master Variant for Title: {importedVariant.Title} " +
-                    $"and Sku: {importedVariant.Sku}");
+                _pushLogger.Debug($"Unable to find Master Variant for Title: {context.Title} and Sku: {context.Sku}");
+                masterVariant = service.BuildAndSaveMasterVariant(context);
 
-                masterVariant =
-                    service.BuildAndSaveMasterVariant(
-                        product, importedVariant.Title, importedProduct.Id, importedVariant.Id,
-                        importedVariant.Sku);
-                masterProduct.MasterVariants.Add(masterVariant);
+                context.MasterProduct.MasterVariants.Add(masterVariant);
+                context.MasterVariant = masterVariant;
             }
 
-            var variant = masterVariant.FindVariant(importedVariant.Sku, importedVariant.Title, importedVariant.Id);
-
+            var variant = masterVariant.FindVariant(context);
             if (variant == null)
             {
                 _pushLogger.Debug(
-                    $"Unable to find Variant for Title: {importedVariant.Title} " +
-                    $"and Sku: {importedVariant.Sku} and Shopify Variant Id: {importedVariant.Id}");
-                variant =
-                    service.BuildAndSaveVariant(masterVariant, true, product, importedVariant.Title,
-                        importedVariant.Id, importedVariant.Sku);
+                    $"Unable to find Variant for Title: {context.Title} " +
+                    $"and Sku: {context.Sku} and Shopify Variant Id: {context.ShopifyVariantId}");
 
-                service.UpdateActiveShopifyVariant(masterProducts, variant.ShopifyVariantId);
+                variant = service.BuildAndSaveVariant(context);
+                
+                service.UpdateActiveShopifyVariant(context.AllMasterProducts, context.ShopifyVariantId);
             }
 
-            var inventory = importedVariant.InventoryTracked ? importedVariant.Inventory : (int?) null;
+            var inventory = context.InventoryTracked ? context.Inventory : (int?) null;
 
-            _pushLogger.Debug($"Updating Variant {variant.PwVariantId} price range: " +
-                              $"{importedVariant.Price} to {importedVariant.Price} and setting inventory to {inventory}");
+            _pushLogger.Debug(
+                $"Updating Variant {variant.PwVariantId} price range: " +
+                $"{context.Price} to {context.Price} and setting inventory to {inventory}");
 
             variantRepository
                 .UpdateVariantPriceAndInventory(
-                    variant.PwVariantId, importedVariant.Price, importedVariant.Price, inventory);
+                    variant.PwVariantId, context.Price, context.Price, inventory);
         }
 
+        
+        // Ancillary catalog maintenance functions
         public virtual IList<Event> RetrieveAllProductDestroyEvents(
                                 ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDate)
         {
@@ -248,17 +230,14 @@ namespace ProfitWise.Data.ProcessSteps
             };
 
             var count = eventApiRepository.RetrieveCount(filter);
-
-            _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
-
             var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
             var results = new List<Event>();
 
+            _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
+
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info(
-                    $"Page {pagenumber} of {numberofpages} pages");
-
+                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
                 var events = eventApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(events);
             }
@@ -273,7 +252,6 @@ namespace ProfitWise.Data.ProcessSteps
             var catalogService = this._multitenantFactory.MakeCatalogBuilderService(shop);
 
             var events = RetrieveAllProductDestroyEvents(shopCredentials, shop, fromDateForDestroy);
-
             foreach (var @event in events)
             {
                 if (@event.Verb == EventVerbs.Destroy && @event.SubjectType == EventTypes.Product)
@@ -295,27 +273,23 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        private void FlagMissingVariantsAsInactive(
-                PwShop shop, IList<PwMasterProduct> masterProducts, Product importedProduct)
+        private void FlagMissingVariantsAsInactive(PwShop shop, ProductBuildContext context)
         {
             // Mark all Variants as InActive that aren't in the import
             var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
             var catalogService = _multitenantFactory.MakeCatalogBuilderService(shop);
 
-            var shopifyProductId = importedProduct.Id;
-            var activeShopifyVariantIds = importedProduct.Variants.Select(x => x.Id);
-
             // Extract
             var allExistingVariants =
-                masterProducts
+                context.MasterProducts
                     .SelectMany(x => x.MasterVariants)
                     .SelectMany(x => x.Variants)
-                    .Where(x => x.ShopifyProductId == shopifyProductId);
+                    .Where(x => x.ShopifyProductId == context.ShopifyProductId);
 
             var missingFromActive =
                 allExistingVariants
                     .Where(x => x.ShopifyVariantId != null)
-                    .Where(x => activeShopifyVariantIds.All(activeId => activeId != x.ShopifyVariantId))
+                    .Where(x => context.ActiveShopifyVariantIds.All(activeId => activeId != x.ShopifyVariantId))
                     .ToList();
 
             missingFromActive.ForEach(variant =>

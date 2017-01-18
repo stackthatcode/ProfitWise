@@ -90,7 +90,7 @@ namespace ProfitWise.Data.Repositories
         }
 
         /// <summary>
-        /// Note: cannot handle more than 200 Master Product Ids
+        /// Note: cannot handle more than 200 Master Product Ids i.e. paging should not exceed that
         /// </summary>
         public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)
         {

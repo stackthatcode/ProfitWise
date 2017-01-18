@@ -29,7 +29,19 @@ namespace ProfitWise.Data.Services
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
-        }        
+        }
+        
+        public IList<PwMasterProduct> RetrieveFullCatalog()
+        {
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
+            var variantDataRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+
+            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
+            var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
+            masterProductCatalog.LoadMasterVariants(masterVariants);
+
+            return masterProductCatalog;
+        }
 
         public PwMasterProduct BuildAndSaveMasterProduct()
         {
@@ -46,24 +58,23 @@ namespace ProfitWise.Data.Services
             return masterProduct;
         }
 
-        public PwProduct BuildAndSaveProduct(
-                PwMasterProduct masterProduct, bool isActive, string title, long? shopifyProductId, 
-                string vendor, string tags, string productType)
+        public PwProduct BuildAndSaveProduct(PwMasterProduct masterProduct, ProductBuildContext productBuildContext)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-            _pushLogger.Debug($"Create new Product: {title} (Id = {shopifyProductId})");
+            _pushLogger.Debug(
+                $"Create new Product: {productBuildContext.Title} (Id = {productBuildContext.ShopifyProductId})");
 
             // Create the new Product
             PwProduct finalProduct = new PwProduct()
             {
                 PwShopId = PwShop.PwShopId,
                 PwMasterProductId = masterProduct.PwMasterProductId,
-                ShopifyProductId = shopifyProductId,
-                Title = title,
-                Vendor = vendor,
-                ProductType = productType,
-                Tags = tags,
-                IsActive = isActive,
+                ShopifyProductId = productBuildContext.ShopifyProductId,
+                Title = productBuildContext.Title,
+                Vendor = productBuildContext.Vendor,
+                ProductType = productBuildContext.ProductType,
+                Tags = productBuildContext.Tags,
+                IsActive = productBuildContext.IsActive,
                 IsPrimary = false,
                 IsPrimaryManual = false,
                 LastUpdated = DateTime.Now,
@@ -79,33 +90,18 @@ namespace ProfitWise.Data.Services
             return finalProduct;
         }
 
-        public void UpdateExistingProduct(PwProduct product, string tags, string productType)
-        {
-            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-            _pushLogger.Debug($"Updating existing Product: {product.Title}");
-
-            product.Tags = tags;
-            product.ProductType = productType;
-            product.LastUpdated = DateTime.Now;
-
-            productRepository.UpdateProduct(product); // TODO UPDATE ME!!!
-        }
-
-        public PwMasterVariant BuildAndSaveMasterVariant(
-                PwProduct product, string title, long? shopifyProductId, long? shopifyVariantId, string sku)
+        public PwMasterVariant BuildAndSaveMasterVariant(VariantBuildContext context)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
-            var masterProduct = product.ParentMasterProduct;
-
-            _pushLogger.Debug($"Creating new Master Variant: {title}, {sku} (Id = {shopifyVariantId})");
-
+            _pushLogger.Debug(
+                $"Creating new Master Variant: {context.Title}, {context.Sku} (Id = {context.ShopifyVariantId})");
 
             // SPECIFICATION => intentionally set the new CoGS => $0, and the Currency Id => Shop Currency
             var masterVariant = new PwMasterVariant()
             {
                 PwShopId = this.PwShop.PwShopId,
-                PwMasterProductId = masterProduct.PwMasterProductId,
-                ParentMasterProduct = masterProduct,
+                PwMasterProductId = context.MasterProduct.PwMasterProductId,
+                ParentMasterProduct = context.MasterProduct,
                 Exclude = false,
                 StockedDirectly = StockedDirectlyDefault,
                 Variants = new List<PwVariant>(),
@@ -118,38 +114,46 @@ namespace ProfitWise.Data.Services
             return masterVariant;
         }
 
-        public PwVariant BuildAndSaveVariant(PwMasterVariant masterVariant, 
-                bool isActive, PwProduct product, string title, long? shopifyVariantId, string sku)
+        public PwVariant BuildAndSaveVariant(VariantBuildContext context)
         {
-            _pushLogger.Debug(
-                $"Creating new Variant: {title}, {sku} (Id = {shopifyVariantId})");
-
+            _pushLogger.Debug($"Creating new Variant: {context.Title}, {context.Sku} (Id = {context.ShopifyVariantId})");
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             
             var newVariant = new PwVariant()
             {
                 PwShopId = this.PwShop.PwShopId,
-                PwProductId = product.PwProductId,  // This is a permanent association :-)
-                PwMasterVariantId = masterVariant.PwMasterVariantId,
-                ParentMasterVariant = masterVariant,
-                ShopifyProductId = product.ShopifyProductId,
-                ShopifyVariantId = shopifyVariantId,
-                Sku = sku,
-                Title = title.VariantTitleCorrection(),
+                PwProductId = context.Product.PwProductId,  // This is a permanent association :-)
+                PwMasterVariantId = context.MasterVariant.PwMasterVariantId,
+                ParentMasterVariant = context.MasterVariant,
+                ShopifyProductId = context.ShopifyProductId,
+                ShopifyVariantId = context.ShopifyVariantId,
+                Sku = context.Sku,
+                Title = context.Title.VariantTitleCorrection(),
                 LowPrice = 0m,      // defaults to "0", updated by 
                 HighPrice = 0m,
                 Inventory = null,
-                IsActive = isActive,
+                IsActive = context.IsActive,
                 IsPrimary = false,
                 IsPrimaryManual = false,
                 LastUpdated = DateTime.Now,
             };
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
-            masterVariant.Variants.Add(newVariant);
-
-            this.UpdatePrimaryVariant(masterVariant);
+            context.MasterVariant.Variants.Add(newVariant);
+            this.UpdatePrimaryVariant(context.MasterVariant);
             return newVariant;
+        }
+
+        public void UpdateExistingProduct(PwProduct product, string tags, string productType)
+        {
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
+            _pushLogger.Debug($"Updating existing Product: {product.Title}");
+
+            product.Tags = tags;
+            product.ProductType = productType;
+            product.LastUpdated = DateTime.Now;
+
+            productRepository.UpdateProduct(product); // TODO UPDATE ME!!!
         }
 
         public void UpdatePrimaryProduct(PwMasterProduct masterProduct)
@@ -160,8 +164,10 @@ namespace ProfitWise.Data.Services
             {
                 return;
             }
+
             var primaryProduct = masterProduct.DeterminePrimaryProduct();
             primaryProduct.IsPrimary = true;
+
             masterProduct.Products
                 .Where(x => x != primaryProduct)
                 .ForEach(x => x.IsPrimary = false);
@@ -193,7 +199,7 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public void UpdateActiveShopifyProduct(IList<PwMasterProduct> allMasterProducts, long? shopifyProductId)
+        public void UpdateActiveProduct(IList<PwMasterProduct> allMasterProducts, long? shopifyProductId)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var products = allMasterProducts.FindProductByShopifyId(shopifyProductId);
@@ -217,10 +223,10 @@ namespace ProfitWise.Data.Services
         public void UpdateActiveShopifyVariant(IList<PwMasterProduct> allMasterProducts, long? shopifyVariantId)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
-            var variants =
-                allMasterProducts
-                    .SelectMany(x => x.MasterVariants)
-                    .FindVariantsByShopifyId(shopifyVariantId);
+            var variants = allMasterProducts
+                .SelectMany(x => x.MasterVariants)
+                .FindVariantsByShopifyId(shopifyVariantId);
+
             if (variants.Count == 1)
             {
                 return;
@@ -238,17 +244,6 @@ namespace ProfitWise.Data.Services
                 variantRepository.UpdateVariantIsActive(variant);
             }
         }
-
-        public IList<PwMasterProduct> RetrieveFullCatalog()
-        {
-            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-            var variantDataRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
-
-            var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
-            var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
-            masterProductCatalog.LoadMasterVariants(masterVariants);
-
-            return masterProductCatalog;
-        }
     }
 }
+
