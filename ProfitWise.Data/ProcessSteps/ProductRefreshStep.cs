@@ -193,8 +193,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Variant for Title: {context.Title} " +
                     $"and Sku: {context.Sku} and Shopify Variant Id: {context.ShopifyVariantId}");
 
-                variant = service.BuildAndSaveVariant(context);
-                
+                variant = service.BuildAndSaveVariant(context);                
                 service.UpdateActiveShopifyVariant(context.AllMasterProducts, context.ShopifyVariantId);
             }
 

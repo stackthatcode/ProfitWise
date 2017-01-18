@@ -100,13 +100,13 @@ namespace ProfitWise.Data.Repositories
         public long InsertMasterVariant(PwMasterVariant masterVariant)
         {
             var query =
-                    @"INSERT INTO profitwisemastervariant 
-                        ( PwShopId, PwMasterProductId, Exclude, StockedDirectly, 
-                        CogsCurrencyId, CogsAmount, CogsDetail) 
-                    VALUES ( @PwShopId, @PwMasterProductId, @Exclude, @StockedDirectly,
-                           @CogsCurrencyId, @CogsAmount, @CogsDetail );
-                    SELECT LAST_INSERT_ID();";
-
+                @"INSERT INTO profitwisemastervariant ( 
+                    PwShopId, PwMasterProductId, Exclude, StockedDirectly, 
+                    CogsTypeId, CogsCurrencyId, CogsAmount, CogsDetail ) 
+                VALUES (
+                    @PwShopId, @PwMasterProductId, @Exclude, @StockedDirectly,
+                    @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsDetail );
+                SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, masterVariant).FirstOrDefault();
         }
 

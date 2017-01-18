@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS `profitwisebatchstate`;
 DROP TABLE IF EXISTS `profitwisemasterproduct`; 
 DROP TABLE IF EXISTS `profitwiseproduct`; 
 DROP TABLE IF EXISTS `profitwisemastervariant`; 
+DROP TABLE IF EXISTS `profitwisemastervariantcogsdetail`;
 DROP TABLE IF EXISTS `profitwisevariant`; 
 
 DROP TABLE IF EXISTS `shopifyorder`; 
@@ -66,11 +67,27 @@ CREATE TABLE `profitwisemastervariant` (
   `Exclude` TINYINT NOT NULL, # Should this variant be excluded from ProfitWise reporting?
   `StockedDirectly` TINYINT NOT NULL, # Is this variant stocked directly (as opposed to drop-shipped)?
   
-  `CogsCurrencyId` INT NULL, # Numeric value representing the currency for the CoGS data for this variant
+  `CogsTypeId` TINYINT NULL,	# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
+  `CogsCurrencyId` INT NULL, 		# Numeric value representing the currency for the CoGS data for this variant
   `CogsAmount` DECIMAL(15, 2) NULL, # CoGS value for this variant
-  `CogsDetail` TINYINT NULL, # Is there detailed CoGS data (weighted average entries) for this variant?
+  `CogsDetail` TINYINT NOT NULL, 	# Is there detailed CoGS data (weighted average entries) for this variant?
   PRIMARY KEY (`PwMasterVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `profitwisemastervariantcogsdetail` (
+  `PwCogsDetailId` BIGINT NOT NULL AUTO_INCREMENT,
+  `PwMasterVariantId` BIGINT NOT NULL, 	# ProfitWise's unique identifier for each variant (may contain multiple "linked" variants)
+  `PwShopId` BIGINT NOT NULL, 			# ProfitWise's shop identifier
+  
+  `CogsDate` DATE NOT NULL, 		# Date of Cogs Entry
+  `CogsTypeId` TINYINT NOT NULL,	# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
+  `CogsCurrencyId` INT NULL, 		# Numeric value representing the currency for the CoGS data for this variant
+  `CogsAmount` DECIMAL(15, 2) NULL, # CoGS value for this variant
+  
+  PRIMARY KEY (`PwCogsDetailId`, `PwMasterVariantId`,`PwShopId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `profitwisevariant` (
   `PwVariantId` BIGINT NOT NULL AUTO_INCREMENT,	# ProfitWise's unique identifier for each variant (maps to a PwMasterVariantId)
@@ -94,7 +111,6 @@ CREATE TABLE `profitwisevariant` (
 
   PRIMARY KEY (`PwVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 
 CREATE TABLE `shopifyorder` (
@@ -157,7 +173,7 @@ CREATE TABLE `shopifyorderadjustment` (
   PRIMARY KEY  (`PwShopId`, `ShopifyAdjustmentId` )
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+	
 
 CREATE TABLE `profitwisepicklist` (
   `PwPickListId` BIGINT NOT NULL AUTO_INCREMENT, # Identifier for the picklist containing a list of products to display

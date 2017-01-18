@@ -31,7 +31,8 @@ UPDATE profitwiseshop t0
 SET t1.CogsCurrencyId = t0.CurrencyId, 
 	t1.CogsAmount = t2.HighPrice * 0.80, 
 	t1.CogsDetail = false
-WHERE t1.PwShopId = 100001 
+WHERE t1.PwShopId = 100001 ;
+
 AND t1.CogsAmount = 0;
 
 
@@ -53,14 +54,15 @@ UPDATE profitwiseshop t0
 			AND t4.SourceCurrencyId = t1.CogsCurrencyId
 			AND t4.DestinationCurrencyId = t0.CurrencyId
 SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0))
-WHERE t0.PwShopId = 100001 
+WHERE t0.PwShopId = 100001;
+
+ 
 AND t1.PwMasterProductId = 8;
 
 #WHERE t0.PwShopId = 100001 AND t3.UnitCogs IS NULL;
 
 
 
-SELECT * FROM profitwisemastervariant;
 
 
 -- This deletes all

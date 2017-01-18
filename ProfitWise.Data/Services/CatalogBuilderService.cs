@@ -105,8 +105,11 @@ namespace ProfitWise.Data.Services
                 Exclude = false,
                 StockedDirectly = StockedDirectlyDefault,
                 Variants = new List<PwVariant>(),
+
+                CogsTypeId = CogsType.FixedAmount,
                 CogsAmount = 0,
                 CogsCurrencyId = this.PwShop.CurrencyId,
+                CogsDetail = false,
             };
 
             masterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(masterVariant);

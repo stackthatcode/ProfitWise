@@ -1,7 +1,7 @@
 ﻿
 <style>
      #product-edit-grid td {
-        height: 85px !important;
+        height: 120px !important;
         font-size: 14px;
         vertical-align: middle !important;
     }
@@ -78,7 +78,7 @@
 
                     <th>Price</th>
                     <th>
-                        <a href="#" data-bind="click: function() { $data.CogsDialogPopup(); }">CoGS</a>
+                        <a href="#" data-bind="click: function() { $data.CogsDialogPopup(); }">Cost of Goods Sold</a>
                     </th>
                     <th>Detail</th>
 
@@ -118,6 +118,11 @@
                 </div>
 
                 <div data-bind="if: EditorVisible">
+                    <select class="form-control" style="font-size:0.8em; margin-top:5px; margin-bottom: 5px;">
+                        <option>Fixed amount</option>
+                        <option>Compute using margin %</option>
+                    </select>
+
                     <span data-bind="template: { name: 'Money-Editor-Widget', data: EditorModel }">
                     </span>
                     <div style="height: 5px;"></div>

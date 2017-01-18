@@ -8,6 +8,8 @@ namespace ProfitWise.Data.Model.Catalog
     {
         public PwMasterVariant()
         {
+            CogsTypeId = CogsType.FixedAmount;
+            CogsDetails = new List<PwCogsDetail>();
             Variants = new List<PwVariant>();
         }
 
@@ -19,11 +21,16 @@ namespace ProfitWise.Data.Model.Catalog
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
 
+        public CogsType? CogsTypeId { get; set; }
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
-        public bool? CogsDetail { get; set; }
+
+        public bool CogsDetail { get; set; }
+
+        public IList<PwCogsDetail> CogsDetails { get; set; }
 
         public IList<PwVariant> Variants { get; set; }
+
 
         public PwVariant DeterminePrimaryVariant()
         {

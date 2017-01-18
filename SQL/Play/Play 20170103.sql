@@ -164,6 +164,14 @@ SELECT * FROM profitwisevariant WHERE PwProductId = 111 AND PwVariantId = 515;
 
 SELECT * FROM profitwisemastervariant;
 
+SELECT * FROM profitwiseproduct;
+
+SELECT * FROM profitwisevariant WHERE LowPrice <> HighPrice;
+
+
+
+SELECT * FROM profitwisemastervariant;
+
 
 
 SELECT * FROM exchangerate;

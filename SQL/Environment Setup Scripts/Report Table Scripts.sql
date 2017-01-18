@@ -105,6 +105,6 @@ CREATE TABLE `profitwiseprofitreportentry` (
   PRIMARY KEY  (`PwShopId`, `EntryDate`, `EntryType`, `ShopifyOrderId`, `SourceId` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE `profitwiseprofitreportentry` ADD INDEX `PwMasterProductId` (`PwMasterProductId`);
+ALTER TABLE `profitwiseprofitreportentry` ADD INDEX `ShopifyOrderId` (`ShopifyOrderId`);
 
 

@@ -74,6 +74,8 @@
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="Model\Catalog\PwCogsDetail.cs" />
+    <Compile Include="Model\Catalog\CogsType.cs" />
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
