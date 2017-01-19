@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Cogs;
 
 
 namespace ProfitWise.Web.Models
@@ -21,8 +22,10 @@ namespace ProfitWise.Web.Models
 
         public MoneyRange Price { get; set; }
 
+        public int CogsTypeId { get; set; }
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
+        public decimal? CogsPercentage { get; set; }
 
         public bool StockedDirectly { get; set; }
         public bool Excluded { get; set; }
@@ -33,8 +36,12 @@ namespace ProfitWise.Web.Models
             {
                 MasterVariantId = variant.PwMasterVariantId,
                 Title = variant.Title,
+
+                CogsTypeId = variant.CogsTypeId,
+                CogsPercentage = variant.CogsPercentage,
                 CogsAmount = variant.CogsAmount,
                 CogsCurrencyId = variant.CogsCurrencyId ?? shopCurrencyId,
+
                 Inventory = variant.Inventory ?? 0,
 
                 Price = new MoneyRange()

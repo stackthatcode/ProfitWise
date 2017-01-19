@@ -1,0 +1,100 @@
+﻿@using ProfitWise.Data.Model.Catalog
+<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+<!-- Requires MoneyEditorWidget, NumberEditorWidget, & SelectorPopoverWidget -->
+
+
+<script type="text/html" id="Cogs-Editor-Widget">
+    <select class="form-control" 
+            style="font-size:0.8em; margin-top:5px; margin-bottom: 5px;"
+            data-bind="options: CogsTypes,
+                    optionsText: 'Text',
+                    optionsValue: 'Value',
+                    value: SelectedCogsType,
+                    event: { change: $data.SetFocus }">
+    </select>
+
+    <div data-bind="visible: !NumberEditorVisible()">
+        <div data-bind="template: { name: 'Money-Editor-Widget', data: MoneyEditor }">
+        </div>
+    </div>
+    
+    <div data-bind="visible: NumberEditorVisible()">
+        <div data-bind="template: { name: 'Number-Editor-Widget', data: NumberEditor }">
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    // Parameters = { defaultcogstype, defaultcurrencyid, defaultamount, defaultpercentage }
+    ProfitWiseWidgets.CogsEditorWidgetModel = function(parameters) {
+        var self = this;
+
+        // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount, defaultcurrencyid }
+        self.MoneyEditor = new ProfitWiseWidgets.MoneyEditorWidgetModel({
+            identifier: "money-" + parameters.identifier,
+            lowconstraint: 0,
+            highconstraint: 999999999,
+            defaultcurrencyid: parameters.defaultcurrencyid,
+            defaultamount: parameters.defaultamount,
+        });
+
+        // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount }
+        self.NumberEditor = new ProfitWiseWidgets.NumberEditorWidgetModel({
+            identifier: "number-" + parameters.identifier,
+            lowconstraint: 0,
+            highconstraint: 100,
+            defaultamount: parameters.defaultpercentage,
+        });
+
+        self.CogsTypes = [
+            { Value: "@CogsType.FixedAmount", Text: "Fixed Amount" },
+            { Value: "@CogsType.MarginPercentage", Text: "Compute by margin %" },
+        ];
+
+        self.SelectedCogsType = ko.observable();
+
+        self.NumberEditorVisible = ko.computed(function() {
+            return self.SelectedCogsType() == '@CogsType.MarginPercentage';
+        });
+
+        self.SetFocus = function() {
+            if (self.NumberEditorVisible()) {
+                self.NumberEditor.SetFocus();
+            } else {
+                self.MoneyEditor.SetFocus();
+            }
+        };
+
+        self.PushState = function(state) {
+            self.SelectedCogsType(state.CogsTypeId);
+            self.MoneyEditor.CurrencyId(state.CogsCurrencyId);
+            self.MoneyEditor.Amount(state.CogsAmount);
+            self.NumberEditor.Amount(state.CogsPercentage);
+        };
+
+        self.PullState = function() {
+            return {
+                CogsTypeId: self.SelectedCogsType(),
+                CogsCurrencyId: self.MoneyEditor.CurrencyId(),
+                CogsAmount: self.MoneyEditor.Amount(),
+                CogsPercentage: self.NumberEditor.Amount(),
+            };
+        };
+
+        // Register to both child controls - this is just a pass-thru
+        self.RegisterEnterKeyCallback = function (callback) {
+            self.MoneyEditor.RegisterEnterKeyCallback(callback);
+            self.NumberEditor.RegisterEnterKeyCallback(callback);
+        };
+
+        // Register to both child controls - this is just a pass-thru
+        self.RegisterEscapeKeyCallback = function (callback) {
+            self.MoneyEditor.RegisterEscapeKeyCallback(callback);
+            self.NumberEditor.RegisterEscapeKeyCallback(callback);
+        };
+
+        return self;
+    };
+</script>

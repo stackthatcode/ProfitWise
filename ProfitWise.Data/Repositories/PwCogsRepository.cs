@@ -6,6 +6,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
@@ -48,9 +49,8 @@ namespace ProfitWise.Data.Repositories
                 .FirstOrDefault();
         }
 
-        public IList<PwCogsProductSummary>
-            RetrieveProductsFromPicklist(long pickListId, int pageNumber, int resultsPerPage, int sortByColumn,
-                bool sortByDirectionDown)
+        public IList<PwCogsProductSummary> RetrieveProductsFromPicklist(
+                long pickListId, int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
         {
             if (resultsPerPage > 200)
             {
@@ -58,7 +58,6 @@ namespace ProfitWise.Data.Repositories
             }
 
             var startRecord = (pageNumber - 1) * resultsPerPage;
-
             var sortDirectionWord = (sortByDirectionDown ? "ASC" : "DESC");
 
             var sortByClause =
@@ -96,8 +95,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t3.Sku, t2.Exclude, t2.StockedDirectly, 
-                    t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, t3.PwVariantId, 
-                    t3.LowPrice, t3.HighPrice, t3.Inventory
+                        t2.CogsTypeId, t2.CogsPercentage, t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, 
+                        t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
                 FROM profitwisemastervariant t2 
 	                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
                 WHERE t2.PwShopId = @PwShopId
@@ -223,14 +222,19 @@ namespace ProfitWise.Data.Repositories
 
 
         // Master Variant Cogs entry
-        public void UpdateMasterVariantCogs(long masterVariantId, int currencyId, decimal amount)
+        public void UpdateMasterVariantCogs(
+                long masterVariantId, int cogsTypeId, int cogsCurrencyId, decimal cogsAmount, decimal cogsPercentage)
         {
             var query =
                 @"UPDATE profitwisemastervariant
-                SET CogsCurrencyId = @currencyId, CogsAmount = @amount
+                SET CogsCurrencyId = @cogsCurrencyId, 
+                    CogsAmount = @cogsAmount,
+                    CogsTypeId = @cogsTypeId,
+                    CogsPercentage = @cogsPercentage                    
                 WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
 
-            _connection.Execute(query, new {this.PwShopId, masterVariantId, currencyId, amount});
+            _connection.Execute(query, 
+                new {this.PwShopId, masterVariantId, cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage });
         }
 
         public void BulkUpdateMasterVariantCogsToDefault(bool zeroCogsOnly)

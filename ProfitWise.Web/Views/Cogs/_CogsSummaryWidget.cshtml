@@ -1,0 +1,57 @@
+﻿@using ProfitWise.Data.Model.Catalog
+
+
+<script type="text/html" id="Cogs-Summary-Widget">
+    <span data-bind="visible: $data.CogsTypeId() == @CogsType.FixedAmount">
+        <a href="#" data-bind="click: Click">
+            <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount(), CogsCurrencyId())">
+            </span>
+        </a>
+    </span>
+    <span data-bind="visible: $data.CogsTypeId() == @CogsType.MarginPercentage">
+        <a href="#" data-bind="click: Click">
+            <span>Computed by </span><span data-bind="text: CogsPercentage"></span><span>% margin</span>
+        </a>
+    </span>
+</script>
+
+<script type="text/javascript">
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.CogsSummaryWidgetModel = function(defaultState) {
+        var self = this;
+        
+        self.CogsTypeId = ko.observable();
+        self.CogsCurrencyId = ko.observable();
+        self.CogsAmount = ko.observable();
+        self.CogsPercentage = ko.observable();
+
+        // TODO - add Cogs Detail
+
+        // These should match/line-up with the default JSON serialization of the database schema
+        self.PushState = function(state) {
+            self.CogsTypeId(state.CogsTypeId);
+            self.CogsCurrencyId(state.CogsCurrencyId);
+            self.CogsAmount(state.CogsAmount);
+            self.CogsPercentage(state.CogsPercentage);
+        };
+
+        self.PullState = function() {
+            return {
+                CogsTypeId: self.CogsTypeId(),
+                CogsCurrencyId: self.CogsCurrencyId(),
+                CogsAmount: self.CogsAmount(),
+                CogsPercentage: self.CogsPercentage(),
+            };
+        };
+
+        self.Click = function() {
+        };
+
+        if (defaultState) {
+            self.PushState(defaultState);
+        }
+
+        return self;
+    };
+</script>

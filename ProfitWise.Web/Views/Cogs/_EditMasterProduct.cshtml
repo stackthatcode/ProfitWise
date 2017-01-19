@@ -111,27 +111,23 @@
 
             <td>
                 <div data-bind="ifnot: EditorVisible">
-                    <a href="#" data-bind="click: ClickOnCogs">
-                        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CurrentCogsAmount(), CurrentCogsCurrencyId())">
-                        </span>
-                    </a>
+                    <span data-bind="template: { name: 'Cogs-Summary-Widget', data: SummaryModel }">
+                    </span>                    
                 </div>
 
                 <div data-bind="if: EditorVisible">
-                    <select class="form-control" style="font-size:0.8em; margin-top:5px; margin-bottom: 5px;">
-                        <option>Fixed amount</option>
-                        <option>Compute using margin %</option>
-                    </select>
-
-                    <span data-bind="template: { name: 'Money-Editor-Widget', data: EditorModel }">
+                    <span data-bind="template: { name: 'Cogs-Editor-Widget', data: EditorModel }">
                     </span>
                     
                     <div style="height: 5px;"></div>
-                    <a href="#" style="font-size: 0.8em; font-weight: 600;"
-                       data-bind="click: CancelAndHide"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+                    
+                    <a href="#" style="font-size: 0.8em; font-weight: 600;" data-bind="click: CancelAndHide">
+                        <span><i class="glyphicon glyphicon-remove"></i> Cancel</span>
+                    </a>
                     <span>|</span>
-                    <a href="#" style="font-size: 0.8em; font-weight: 600;"
-                       data-bind="click: UpdateAndHide"><i class="glyphicon glyphicon-ok"></i> Save</a>
+                    <a href="#" style="font-size: 0.8em; font-weight: 600;" data-bind="click: UpdateAndHide">
+                        <span><i class="glyphicon glyphicon-ok"></i> Save</span>
+                    </a>
                 </div>
             </td>
 
@@ -205,8 +201,7 @@
         };
 
         self.ExitCallback = function() {
-        };
-        
+        };        
 
         self.Refresh = function() {
             self.RetrieveMasterProduct(self.MasterProductId());
@@ -216,37 +211,49 @@
             self.MasterProductTitle(data.MasterProduct.Title);
             
             AQ(data.MasterProduct.MasterVariants)
-                .each(function (item) {
-                    item.CurrentCogsCurrencyId = ko.observable(item.CogsCurrencyId);
-                    item.CurrentCogsAmount = ko.observable(item.CogsAmount);
+                .each(function (item) {                    
                     item.EditorVisible = ko.observable(false);
 
                     item.CurrentExcluded = ko.observable(item.Excluded);
                     item.CurrentStockedDirectly = ko.observable(item.StockedDirectly);
 
-                    item.ClickOnCogs = function () {
-                        var id = item.MasterVariantId;
-                        self.HideCurrentCogsEditor();
-                        self.SelectCogsByMasterVariantId(id);
-                    }
+                    item.OldState = ko.observable();
 
-                    item.EditorModel =
-                        new ProfitWiseWidgets.MoneyEditorWidgetModel(
-                        {
+                    item.EditorModel
+                        = new ProfitWiseWidgets.CogsEditorWidgetModel({
+                            identifier: item.PwMasterVariantId,
+                            defaultcogstype: item.CogsTypeId,
                             defaultcurrencyid: item.CogsCurrencyId, 
                             defaultamount: item.CogsAmount,
-                            lowconstraint: 0,
+                            defaultpercentage: item.CogsPercentage,
                         });
 
-                    item.UpdateAndHide = function () {
-                        item.EditorVisible(false);
-                        self.UpdateVariantCogs(item);
+                    // We'll maintain state in the Summary Model
+                    item.SummaryModel = new ProfitWiseWidgets.CogsSummaryWidgetModel(item);
+                    item.SummaryModel.Click = function() {
+                        item.ClickOnCogs();
+                    };
+
+                    item.ClickOnCogs = function() {
+                        self.HideCurrentCogsEditor();
+                        item.OldState(item.EditorModel.PullState());
+                        item.EditorVisible(true);
+                        item.EditorModel.SetFocus();
                     };
 
                     item.CancelAndHide = function () {
-                        item.EditorModel.PushState(
-                            item.CurrentCogsCurrencyId(), item.CurrentCogsAmount());
+                        item.EditorModel.PushState(item.OldState());
                         item.EditorVisible(false);
+                    };
+
+                    item.UpdateAndHide = function () {
+                        item.EditorVisible(false);
+                        var state = item.EditorModel.PullState();
+
+                        // Save changes to the Summary model and trigger an AJAX update
+                        item.SummaryModel.PushState(state);
+                        state.MasterVariantId = item.MasterVariantId;
+                        self.UpdateVariantCogs(state);
                     };
 
                     item.EditorModel.RegisterEscapeKeyCallback(function () {
@@ -254,12 +261,7 @@
                     });
 
                     item.EditorModel.RegisterEnterKeyCallback(function () {
-                        item.EditorVisible(false);
-                        self.UpdateVariantCogs(item);
-                    });
-
-                    item.EditorModel.RegisterChangeCurrencyCallback(function() {
-                        self.UpdateVariantCogs(item);
+                        item.UpdateAndHide();
                     });
                 });
 
@@ -288,21 +290,11 @@
             }
         }
 
-        self.UpdateVariantCogs = function (item, callback) {
+        self.UpdateVariantCogs = function (data, callback) {
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             
-            // Update observables
-            item.CurrentCogsAmount(
-                ProfitWiseFunctions.ExtractRawNumber(item.EditorModel.Amount()));
-            item.CurrentCogsCurrencyId(item.EditorModel.CurrencyId());
-
-            var data = {
-                masterVariantId: item.MasterVariantId,
-                currencyId: item.CurrentCogsCurrencyId(),
-                amount: item.CurrentCogsAmount(),
-            };
-
+            // Update observables 
             ajax.HttpPost("/CogsService/UpdateCogs", data, callback);
         };
 

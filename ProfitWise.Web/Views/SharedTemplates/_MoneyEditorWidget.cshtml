@@ -27,15 +27,15 @@
 
 <script type="text/html" id="Money-Editor-Widget">
     <div class="input-group popover-container currency-widget">
-        <div style="width: 70px;"
-             class="input-group-addon popover-launcher"
+        <div style="width: 70px;" class="input-group-addon popover-launcher"
              data-bind="text: SelectedCurrencyFriendly, 
                     popover: { options: { placement: 'bottom' , trigger: 'click' , }, 
                             template: 'Money-Editor-Widget-Popover', data: $data }">
         </div>
 
-        <input type="text"
-               data-bind="formatMoney: Amount,
+        <input type="text" class="form-control money-editor-text"
+               data-bind="value: Amount,
+                        attr: { id: $data.Identifier, placeholder: $data.PlaceHolder },
                         event: {
                             focus: function() { 
                                 if (event) { 
@@ -43,9 +43,7 @@
                                 }
                             }, 
                             keyup: InvokeKeyCallback,
-                            blur: InvokeEditorLostFocusCallback }"
-               class="form-control money-editor-text"
-               placeholder="Enter CoGS"
+                            blur: InvokeEditorLostFocusCallback }"               
                maxlength="12">
     </div>
 </script>
@@ -63,26 +61,8 @@
         // Populate the input amounts
         self.Identifier = ko.observable(parameters.identifier);
         self.CurrencyId = ko.observable(parameters.currencyid || defaultCurrencyId);   // Default to Currency Id = 1;
-        self.Amount = ko.observable(numeral(parameters.amount || 0).format('0,0.00'));
-
-        ko.bindingHandlers.formatMoney = {
-            init: function(element, valueAccessor) {
-                var value = valueAccessor();
-                var interceptor =
-                    ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor(
-                    {
-                        knockoutValue: value,
-                        lowConstraint: parameters.lowconstraint,
-                        highConstraint: parameters.highconstraint
-                    });
-
-                if (element.tagName.toLowerCase() == 'input') {
-                    ko.applyBindingsToNode(element, { value: interceptor });
-                } else {
-                    ko.applyBindingsToNode(element, { text: interceptor });
-                }
-            }
-        };
+        self.Amount = ko.observable(numeral(parameters.defaultamount || 0).format('0.00'))
+                .extend({ numeric: { LowConstraint: 0, HighConstraint: 999999999, } });
 
         self.SelectedCurrency = ko.computed(function() {
             return AQ(ProfitWiseFunctions.CurrencyCache)
@@ -153,7 +133,9 @@
             self.EditorLostFocusCallback();
         };
 
-        self.SetFocus = function () { $("#" + self.Identifier()).focus(); };
+        self.SetFocus = function() {
+            $("#" + self.Identifier()).focus();
+        };
 
         return self;
     };

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -89,7 +90,8 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
             
-            ValidateCogs(currencyId, amount);
+            // TODO => Revisit
+            //ValidateCogsByAmounts(currencyId, amount);
 
             cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
             return JsonNetResult.Success();
@@ -167,30 +169,43 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateCogs(long masterVariantId, int currencyId, decimal amount)
+        public ActionResult UpdateCogs(
+                long masterVariantId, int cogsTypeId, int cogsCurrencyId, decimal cogsAmount, decimal cogsPercentage)
         {
+            ValidateCogs(cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage);
+
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
-            cogsRepository.UpdateMasterVariantCogs(masterVariantId, currencyId, amount);
+
+            cogsRepository.UpdateMasterVariantCogs(masterVariantId, cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage);
 
             //cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
-
-            ValidateCogs(currencyId, amount);
 
             return JsonNetResult.Success();
         }
 
-        public void ValidateCogs(int currencyId, decimal amount)
+        public void ValidateCogs(int cogsTypeId, int cogsCurrencyId, decimal cogsAmount, decimal cogsPercentage)
         {
-            if (!_currencyService.CurrencyExists(currencyId))
+            if (cogsTypeId == CogsType.MarginPercentage)
             {
-                throw new Exception($"Unable to locate Currency {currencyId} (Amount: {amount}");
+                if (cogsPercentage < 0m || cogsPercentage > 100m)
+                {
+                    throw new Exception($"Percentage {cogsPercentage} out of acceptable range");
+                }
             }
-            if (amount < 0 || amount > 999999999m)
+            if (cogsTypeId == CogsType.FixedAmount)
             {
-                throw new Exception($"Dollar Amount {amount} out of acceptable range (Currency Id: {currencyId})");
+                if (!_currencyService.CurrencyExists(cogsCurrencyId))
+                {
+                    throw new Exception($"Unable to locate Currency {cogsCurrencyId} (Amount: {cogsAmount}");
+                }
+                if (cogsAmount < 0 || cogsAmount > 999999999m)
+                {
+                    throw new Exception($"Dollar Amount {cogsAmount} out of acceptable range (Currency Id: {cogsCurrencyId})");
+                }
             }
-        }
+        }        
+
 
 
         [HttpPost]

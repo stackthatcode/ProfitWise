@@ -1,8 +1,8 @@
 ﻿namespace ProfitWise.Data.Model.Catalog
 {
-    public enum CogsType
+    public class CogsType
     {
-        FixedAmount = 1,
-        MarginPercentage = 2,
+        public const int FixedAmount = 1;
+        public const int MarginPercentage = 2;
     }
 }

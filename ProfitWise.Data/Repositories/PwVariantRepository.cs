@@ -102,10 +102,10 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO profitwisemastervariant ( 
                     PwShopId, PwMasterProductId, Exclude, StockedDirectly, 
-                    CogsTypeId, CogsCurrencyId, CogsAmount, CogsDetail ) 
+                    CogsTypeId, CogsCurrencyId, CogsAmount, CogsPercentage, CogsDetail ) 
                 VALUES (
                     @PwShopId, @PwMasterProductId, @Exclude, @StockedDirectly,
-                    @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsDetail );
+                    @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsPercentage, @CogsDetail );
                 SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, masterVariant).FirstOrDefault();
         }

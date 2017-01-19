@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using ProfitWise.Data.Services;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Cogs
 {
     public class PwCogsVariant
     {
@@ -12,8 +12,12 @@ namespace ProfitWise.Data.Model
         public string Sku { get; set; }
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
+
+        public int CogsTypeId { get; set; }
+        public decimal CogsPercentage { get; set; }
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
+
         public bool? CogsDetail { get; set; }
 
         public decimal LowPrice { get; set; }

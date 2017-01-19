@@ -12,5 +12,6 @@ namespace ProfitWise.Data.Model.Catalog
         public CogsType CogsTypeId { get; set; }
         public int CogsCurrencyId { get; set; }
         public decimal CogsAmount { get; set; }
+        public decimal? CogsPercentage { get; set; }
     }
 }

@@ -39,37 +39,39 @@ ProfitWiseFunctions.ExtractRawNumber = function (amount) {
     return numeral().unformat(amountAsString);
 };
 
+ko.extenders.numeric = function (target, parameters) {
+    //create a writable computed observable to intercept writes to our observable
+    var result = ko.pureComputed({
+        read: target,  //always return the original observables value
+        write: function (newValue) {
+            var current = target();
+            var newValueAsNum = isNaN(newValue) ? 0 : +newValue;
 
-// Parameters  { knockoutValue, lowConstraint, highConstraint }
-ProfitWiseFunctions.MakeKnockoutNumberOnlyInterceptor =
-    function (parameters) {
-        return ko.computed({
-            read: function () {
-                // Executed after user input
-                var numericValue = ProfitWiseFunctions.ExtractRawNumber(ko.unwrap(parameters.knockoutValue));
-
-                numericValue =
-                    (typeof parameters.lowConstraint !== "undefined" && numericValue < parameters.lowConstraint)
-                        ? parameters.lowConstraint
-                        : numericValue;
-                numericValue =
-                    (typeof parameters.highConstraint !== "undefined" && numericValue > parameters.highConstraint)
-                        ? parameters.highConstraint
-                        : numericValue;
-                
-                var output = numeral(numericValue).format('0,0.00');
-                return output;
-            },
-            write: function (newValue) {
-                // Executed before user input
-                if ($.trim(newValue) == '') {
-                    parameters.knockoutValue("0");
-                } else {
-                    parameters.knockoutValue(numeral().unformat(newValue));
-                }
-                parameters.knockoutValue.valueHasMutated();
+            if (!isNaN(parameters.LowConstraint) && newValueAsNum < parameters.LowConstraint) {
+                newValueAsNum = parameters.LowConstraint;
             }
-        }).extend({ notify: 'always' });
-    };
+            if (!isNaN(parameters.HighConstraint) && newValueAsNum > parameters.HighConstraint) {
+                newValueAsNum = parameters.HighConstraint;
+            }
+            
+            var valueToWrite = numeral(newValueAsNum || 0).format('0.00');
 
+            //only write if it changed
+            if (valueToWrite !== current) {
+                target(valueToWrite);
+            } else {
+                //if the rounded value is the same, but a different value was written, force a notification for the current field
+                if (newValue !== current) {
+                    target.notifySubscribers(valueToWrite);
+                }
+            }
+        }
+    }).extend({ notify: 'always' });
+
+    //initialize with current value to make sure it is rounded appropriately
+    result(target());
+
+    //return the new computed observable
+    return result;
+};
 

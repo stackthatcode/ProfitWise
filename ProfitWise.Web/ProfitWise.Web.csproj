@@ -466,7 +466,10 @@
     <Content Include="Views\SharedTemplates\_DatePickerWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Cogs\_CostOfGoodsSoldEditorWidget.cshtml" />
+    <Content Include="Views\Cogs\_CogsEditorWidget.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Cogs\_CogsSummaryWidget.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
