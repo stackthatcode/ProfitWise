@@ -62,7 +62,8 @@
         self.Identifier = ko.observable(parameters.identifier);
         self.CurrencyId = ko.observable(parameters.currencyid || defaultCurrencyId);   // Default to Currency Id = 1;
         self.Amount = ko.observable(numeral(parameters.defaultamount || 0).format('0.00'))
-                .extend({ numeric: { LowConstraint: 0, HighConstraint: 999999999, } });
+                .extend({ numeric: { LowConstraint: parameters.lowconstraint, 
+                                    HighConstraint: parameters.highconstraint, } });
 
         self.SelectedCurrency = ko.computed(function() {
             return AQ(ProfitWiseFunctions.CurrencyCache)
@@ -92,7 +93,6 @@
                 Amount: self.Amount()
             };
         };
-
         
         // Enter-key Stuff
         self.EnterKeyCallback = function () { };

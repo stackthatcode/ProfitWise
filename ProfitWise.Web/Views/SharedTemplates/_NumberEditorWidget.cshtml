@@ -28,7 +28,7 @@
         self.Identifier = ko.observable(parameters.identifier);
         self.PlaceHolder = ko.observable(parameters.placeholder);
         self.Amount = ko.observable(numeral(parameters.defaultamount || 0).format('0.00'))
-                        .extend({ numeric: { LowConstraint: 0, HighConstraint: 100, } });
+                        .extend({ numeric: { LowConstraint: parameters.lowconstraint, HighConstraint: parameters.highconstraint, } });
 
         self.SetFocus = function() { $("#" + self.Identifier()).focus(); };        
 

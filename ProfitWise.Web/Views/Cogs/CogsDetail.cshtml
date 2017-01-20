@@ -9,6 +9,7 @@
     Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
 }
 
+@Html.Partial("~/Views/SharedTemplates/_DatePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
 @Html.Partial("~/Views/Cogs/_CogsEditorWidget.cshtml")
@@ -19,7 +20,7 @@
     .scrolling-popout-layout {
         width:100%; 
         background-color:#FFF; 
-        overflow:auto; 
+        overflow:visible; 
         padding-top:0px; 
         padding-left:30px; 
         padding-right: 30px;
@@ -74,7 +75,7 @@
         </div>
     </div>
 
-    <div style="position: absolute; overflow: auto; width:100%;">
+    <div style="position: absolute; overflow: visible; width:100%;">
         <div style="height: 140px;"></div>
 
         <div class="scrolling-popout-layout">
@@ -84,15 +85,19 @@
             </div>
             
             <div data-bind="visible: CogsDetail().length > 0">
-                <div data-bind="foreach: CogsDetail" class="detail-grid">
+                <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom: 300px;">
                     <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
                         <div class="row">
                             <div class="col-xs-1" style="padding-top:7px;"><a href="#">Remove</a></div>
-                            <div class="col-xs-9" data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
-
+                            <div class="col-xs-6" data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
+                            <div class="col-xs-5">
+                                <div style="display: inline-block; position: relative;"
+                                     data-bind="template: { name: 'Date-Picker-Widget', data: { value: DetailDate } }"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -113,9 +118,19 @@
 
     ProfitWiseWidgets.CogsDetailRow = function() {
         var self = this;
+        
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        var startingDate = "01/01/2016";
+
+        self.DetailDate = ko.observable(startingDate.parseToJavascriptDate());
 
         self.EditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
-            //identifier: "default",
+            identifier: getRandomInt(1000, 9999),
             defaultcogstype: @CogsType.FixedAmount,
             defaultcurrencyid: @Currency.DefaultCurrencyId,
             defaultamount: 0.00,
@@ -160,7 +175,11 @@
         return self;
     };
 
-    var model = new ProfitWiseWidgets.CogsDetailModel();
-    ko.applyBindings(model);
-    model.LoadCogsDetail();
+    $(document)
+        .ready(function() {
+            var model = new ProfitWiseWidgets.CogsDetailModel();
+            ko.applyBindings(model);
+            model.LoadCogsDetail();
+            ProfitWiseFunctions.PopOverAutoCloseInit();
+        });
 </script>
