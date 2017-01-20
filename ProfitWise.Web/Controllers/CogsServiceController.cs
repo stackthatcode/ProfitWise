@@ -98,6 +98,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+
         [HttpPost]
         public ActionResult StockedDirectlyByPickList(long pickListId, bool newValue)
         {
@@ -172,40 +173,48 @@ namespace ProfitWise.Web.Controllers
         public ActionResult UpdateCogs(
                 long masterVariantId, int cogsTypeId, int cogsCurrencyId, decimal cogsAmount, decimal cogsPercentage)
         {
-            ValidateCogs(cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage);
+            if (!_currencyService.CurrencyExists(cogsCurrencyId))
+            {
+                throw new Exception($"Unable to locate Currency {cogsCurrencyId} (Amount: {cogsAmount}");
+            }
+            cogsAmount = ConstrainAmount(cogsAmount);
+            cogsPercentage = ConstrainPercentage(cogsPercentage);
 
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateMasterVariantCogs(masterVariantId, cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage);
-
             //cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
 
             return JsonNetResult.Success();
         }
 
-        public void ValidateCogs(int cogsTypeId, int cogsCurrencyId, decimal cogsAmount, decimal cogsPercentage)
+        public decimal ConstrainPercentage(decimal cogsPercentage)
         {
-            if (cogsTypeId == CogsType.MarginPercentage)
+            if (cogsPercentage < 0m)
             {
-                if (cogsPercentage < 0m || cogsPercentage > 100m)
-                {
-                    throw new Exception($"Percentage {cogsPercentage} out of acceptable range");
-                }
+                return 0m;
             }
-            if (cogsTypeId == CogsType.FixedAmount)
+            if (cogsPercentage > 100m)
             {
-                if (!_currencyService.CurrencyExists(cogsCurrencyId))
-                {
-                    throw new Exception($"Unable to locate Currency {cogsCurrencyId} (Amount: {cogsAmount}");
-                }
-                if (cogsAmount < 0 || cogsAmount > 999999999m)
-                {
-                    throw new Exception($"Dollar Amount {cogsAmount} out of acceptable range (Currency Id: {cogsCurrencyId})");
-                }
+                return 100m;
             }
-        }        
+            return cogsPercentage;
+        }
 
+        public decimal ConstrainAmount(decimal cogsAmount)
+        {
+            if (cogsAmount < 0m)
+            {
+                return 0m;
+            }
+            if (cogsAmount > 999999999m)
+            {
+                return 100m;
+            }
+            return cogsAmount;
+        }
+ 
 
 
         [HttpPost]

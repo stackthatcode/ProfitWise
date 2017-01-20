@@ -30,7 +30,7 @@
         self.Amount = ko.observable(numeral(parameters.defaultamount || 0).format('0.00'))
                         .extend({ numeric: { LowConstraint: 0, HighConstraint: 100, } });
 
-        self.SetFocus = function() { $("#" + self.Identifier()).focus(); };
+        self.SetFocus = function() { $("#" + self.Identifier()).focus(); };        
 
         // Enter-key Stuff
         self.EnterKeyCallback = function () { };

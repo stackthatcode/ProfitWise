@@ -36,7 +36,19 @@ namespace ProfitWise.Web.Controllers
                 ProductTypes = cogsRepository.RetrieveProductType().ToList(),
                 Vendors = cogsRepository.RetrieveVendors().ToList(),
             };
+            return View(model);
+        }
 
+        [HttpGet]
+        public ActionResult CogsDetail(long? masterVariantId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+
+            var model = new CogsDetailModel
+            {
+                MasterVariantId = masterVariantId
+            };
             return View(model);
         }
 

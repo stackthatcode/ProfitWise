@@ -2,24 +2,42 @@
 <!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
 <!-- Requires MoneyEditorWidget, NumberEditorWidget, & SelectorPopoverWidget -->
 
+<style>
+    .horizontal-cogs-editor .type-dropdown {
+        float: left;
+        width: 180px; 
+    }
+
+    .horizontal-cogs-editor .money-editor,
+    .horizontal-cogs-editor .number-editor {
+        float: left;
+        width: 210px; 
+    }
+
+    .vertical-cogs-editor .type-dropdown {
+        width: 100%; 
+    }
+</style>
 
 <script type="text/html" id="Cogs-Editor-Widget">
-    <select class="form-control" 
-            style="font-size:0.8em; margin-top:5px; margin-bottom: 5px;"
-            data-bind="options: CogsTypes,
-                    optionsText: 'Text',
-                    optionsValue: 'Value',
-                    value: SelectedCogsType,
-                    event: { change: $data.SetFocus }">
-    </select>
+    <div data-bind="attr: { class: $data.CssClass }">
+        <select class="form-control type-dropdown"
+                style="float: left; font-size: 0.9em; margin-bottom: 5px; margin-right: 10px;"
+                data-bind="options: CogsTypes,
+                        optionsText: 'Text',
+                        optionsValue: 'Value',
+                        value: SelectedCogsType,
+                        event: { change: $data.SetFocus }">
+        </select>
 
-    <div data-bind="visible: !NumberEditorVisible()">
-        <div data-bind="template: { name: 'Money-Editor-Widget', data: MoneyEditor }">
+        <div class="money-editor" style="float: left;" data-bind="visible: !NumberEditorVisible()">
+            <div data-bind="template: { name: 'Money-Editor-Widget', data: MoneyEditor }">
+            </div>
         </div>
-    </div>
-    
-    <div data-bind="visible: NumberEditorVisible()">
-        <div data-bind="template: { name: 'Number-Editor-Widget', data: NumberEditor }">
+
+        <div class="number-editor" style="float: left;" data-bind="visible: NumberEditorVisible()">
+            <div data-bind="template: { name: 'Number-Editor-Widget', data: NumberEditor }">
+            </div>
         </div>
     </div>
 </script>
@@ -30,12 +48,19 @@
     // Parameters = { defaultcogstype, defaultcurrencyid, defaultamount, defaultpercentage }
     ProfitWiseWidgets.CogsEditorWidgetModel = function(parameters) {
         var self = this;
+        
+        self.HorizontalEditor = ko.observable(false);
+        self.CssClass = ko.computed(
+            function() {
+                return self.HorizontalEditor() ? "horizontal-cogs-editor" : "";
+            }
+        );
 
         // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount, defaultcurrencyid }
         self.MoneyEditor = new ProfitWiseWidgets.MoneyEditorWidgetModel({
             identifier: "money-" + parameters.identifier,
             lowconstraint: 0,
-            highconstraint: 999999999,
+            highconstraint: 999999999.99,
             defaultcurrencyid: parameters.defaultcurrencyid,
             defaultamount: parameters.defaultamount,
         });

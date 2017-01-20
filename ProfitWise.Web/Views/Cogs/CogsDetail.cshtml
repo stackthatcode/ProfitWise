@@ -1,0 +1,166 @@
+﻿@using ProfitWise.Data.Model.Catalog
+@using ProfitWise.Data.Model.System
+@using ProfitWise.Web.Attributes
+@using ProfitWise.Web.Models
+
+@model CogsDetailModel
+@{
+    Context.PullCommonContext().PageTitle = "Edit CoGS Detail";
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+}
+
+@Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
+@Html.Partial("~/Views/Cogs/_CogsEditorWidget.cshtml")
+@Html.Partial("~/Views/Cogs/_CogsSummaryWidget.cshtml")
+@Html.Partial("~/Views/Cogs/_EditMasterProduct.cshtml")
+
+<style>
+    .scrolling-popout-layout {
+        width:100%; 
+        background-color:#FFF; 
+        overflow:auto; 
+        padding-top:0px; 
+        padding-left:30px; 
+        padding-right: 30px;
+    } 
+    .edit-cogs-grid-header a, .detail-grid a {
+        font-weight: 700;
+    }                                                                              
+</style>
+
+<script type="text/html" id="Cogs-Detail-Main-Template">
+    <div class="fixed-header-container" style="padding-left: 0px; padding-right: 0px;">
+        <div class="standard-header-sleeve" style="height: 140px;">
+
+            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
+            <div class="standard-header" 
+                 style="width:100% !important; min-width: 0 !important; padding-top:20px; padding-right:20px; padding-left:20px; border-bottom: 1px dashed #CCC;">
+                
+                <div class="row">
+                    <div class="col-xs-8 pull-left">
+                        <div style="margin-bottom: 8px;">
+                            <span style="font-size:1.0em; letter-spacing: 0.25em; font-weight:800; color:#777;">
+                                Default Cost of Goods Sold
+                            </span>
+                        </div>
+
+                        <div data-bind="template: { name: 'Cogs-Editor-Widget', data: DefaultEditorModel }"></div>
+                    </div>
+
+                    <div class="col-xs-4" style="text-align:right;">
+                        <a href="#" data-bind="click: CloseClick" style="width:125px;" class="btn btn-default">
+                            <i class="glyphicon glyphicon-ok"></i> &nbsp;Close                            
+                        </a>
+                        &nbsp;
+                        <a href="#" data-bind="click: SaveClick" style="width:125px;" class="btn btn-primary">
+                            <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-xs-12 edit-cogs-grid-header" style="text-align:right; padding-top:20px;">                       
+                        <a href="#"><i class="glyphicon glyphicon-remove"></i> Remove All Detail</a>
+                        &nbsp;
+                        &nbsp;
+                        <a href="#" data-bind="click: AddDetailEntry">
+                            <i class="glyphicon glyphicon-plus"></i> Add Detail Entry
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div style="position: absolute; overflow: auto; width:100%;">
+        <div style="height: 140px;"></div>
+
+        <div class="scrolling-popout-layout">
+            <div data-bind="visible: CogsDetail().length == 0" style="text-align:center; padding-top:60px;">
+                <h1 style="font-weight:800; font-size:2.5em; color:#CCC;">No CoGS Detail</h1>
+                <h4 style="font-weight:100;">Click "Add Detail Entry" to begin</h4>
+            </div>
+            
+            <div data-bind="visible: CogsDetail().length > 0">
+                <div data-bind="foreach: CogsDetail" class="detail-grid">
+                    <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
+                        <div class="row">
+                            <div class="col-xs-1" style="padding-top:7px;"><a href="#">Remove</a></div>
+                            <div class="col-xs-9" data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- KnockoutJS Root Element -->
+<div data-bind="template: { name: 'Cogs-Detail-Main-Template' }"></div>
+
+<style>
+    body {
+        overflow-y: scroll !important;
+        padding: 0px !important;
+    }
+</style>
+
+<script>
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.CogsDetailRow = function() {
+        var self = this;
+
+        self.EditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
+            //identifier: "default",
+            defaultcogstype: @CogsType.FixedAmount,
+            defaultcurrencyid: @Currency.DefaultCurrencyId,
+            defaultamount: 0.00,
+            defaultpercentage: 0.00,
+        });
+        self.EditorModel.HorizontalEditor(true);
+
+        return self;
+    };
+
+    ProfitWiseWidgets.CogsDetailModel = function () {
+        var self = this;
+
+        self.LoadCogsDetail = function () { };
+
+        self.CogsDetail = ko.observableArray();
+        
+        self.AddDetailEntry = function() {
+            var entry = new ProfitWiseWidgets.CogsDetailRow();
+            self.CogsDetail.push(entry);
+            console.log(self.CogsDetail());
+        };
+
+        self.DefaultEditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
+            //identifier: "default",
+            defaultcogstype: @CogsType.FixedAmount,
+            defaultcurrencyid: @Currency.DefaultCurrencyId, 
+            defaultamount: 0.00,
+            defaultpercentage: 0.00,
+        });
+        self.DefaultEditorModel.HorizontalEditor(true);
+        
+        self.CloseClick = function() {
+            ShopifyApp.Modal.close({ result: false });
+        };
+
+        self.SaveClick = function() {
+            ShopifyApp.Modal.close({ result: false });
+            alert("Saving AJAX...");
+        };
+
+        return self;
+    };
+
+    var model = new ProfitWiseWidgets.CogsDetailModel();
+    ko.applyBindings(model);
+    model.LoadCogsDetail();
+</script>

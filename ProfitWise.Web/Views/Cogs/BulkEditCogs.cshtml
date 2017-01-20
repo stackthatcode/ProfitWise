@@ -23,23 +23,22 @@
 
         <div class="form-group" style="height: 32px;">
             <label class="col-xs-3 control-label" style="color: #777;">Current CoGS</label>
-
             <div class="col-xs-7">
-                <span data-bind="template: { name: 'Money-Range-Widget-Horizontal', data: CurrentCogsRange }">
+                <span data-bind="template: { name: 'Money-Range-Widget-Horizontal', 
+                                            data: CurrentCogsRange }">
                 </span>
-
             </div>
             <div class="col-xs-2">
             </div>
         </div>
 
         <div class="form-group" style="height: 32px;">
-            <label class="col-xs-3 control-label" style="color: #777; display: inline-block; margin-top: 8px;">Enter New CoGS</label>
-
+            <label class="col-xs-3 control-label" 
+                   style="color: #777; display: inline-block; margin-top: 8px;">Enter New CoGS</label>
             <div class="col-xs-5" style="text-align: left;">
-                <div data-bind="template: { name: 'Money-Editor-Widget', data: $root.CogsAmountEditorModel }"></div>
+                <div data-bind="template: { name: 'Money-Editor-Widget', 
+                                            data: $root.CogsAmountEditorModel }"></div>
             </div>
-
             <div class="col-xs-4">
             </div>
         </div>
@@ -144,4 +143,3 @@
             ProfitWiseFunctions.PopOverAutoCloseInit();
         });
 </script>
-   

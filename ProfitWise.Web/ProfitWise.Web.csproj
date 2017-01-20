@@ -246,6 +246,7 @@
     <Compile Include="Controllers\ReportServiceController.cs" />
     <Compile Include="Models\BulkEditAllCogsModel.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
+    <Compile Include="Models\CogsDetailModel.cs" />
     <Compile Include="Models\CogsMasterProductModel.cs" />
     <Compile Include="Models\CogsProductGridModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
@@ -470,6 +471,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cogs\_CogsSummaryWidget.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Cogs\CogsDetail.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
