@@ -88,10 +88,10 @@
                 </div>
 
                 <div data-bind="if: EditorVisible">
-                    <span data-bind="template: { name: 'Cogs-Editor-Widget', data: EditorModel }">
-                    </span>
+                    <div style="overflow:visible;" data-bind="template: { name: 'Cogs-Editor-Widget', data: EditorModel }">
+                    </div>
                     
-                    <div style="height: 5px;"></div>
+                    <div style="height: 80px;"></div>
                     
                     <a href="#" style="font-size: 0.8em; font-weight: 600;" data-bind="click: CancelAndHide">
                         <span><i class="glyphicon glyphicon-remove"></i> Cancel</span>
