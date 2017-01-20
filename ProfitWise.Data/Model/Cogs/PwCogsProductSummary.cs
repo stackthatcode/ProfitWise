@@ -20,67 +20,76 @@ namespace ProfitWise.Data.Model.Cogs
 
         public int NumberOfVariants => Variants.Count();
 
+
+        public bool HasNormalizedCogs
+        {
+            get { return Variants.Any(x => x.CogsPercentage != null); }
+        }
+
+        public bool HasPercentages
+        {
+            get { return Variants.Any(x => x.NormalizedCogsAmount != null); }
+        }
+
+        public bool HasCogsDetail
+        {
+            get { return Variants.Any(x => x.CogsDetail != null && x.CogsDetail.Value == true); }
+        }
+
+        public bool HasInventory
+        {
+            get { return Variants.Any(x => x.Inventory != null); }
+        }
+        
         public int NormalizedCurrencyId { get; set; }
 
         public decimal? HighNormalizedCogs
         {
             get
             {
-                if (Variants.All(x => x.NormalizedCogsAmount == null))
-                {
-                    return null;
-                }
-                else
-                {
-                    return Variants
-                            .Where(x => x.NormalizedCogsAmount != null)
-                            .Max(x => x.NormalizedCogsAmount);
-                }
+                return HasNormalizedCogs ?
+                        Variants.Where(x => x.NormalizedCogsAmount != null)
+                                .Max(x => x.NormalizedCogsAmount) : null;
             }
         }
-
         public decimal? LowNormalizedCogs
         {
             get
             {
-                if (Variants.All(x => x.NormalizedCogsAmount == null))
-                {
-                    return null;
-                }
-                else
-                {
-                    return Variants
-                            .Where(x => x.NormalizedCogsAmount != null)
-                            .Min(x => x.NormalizedCogsAmount);
-                }
+                return HasNormalizedCogs ?
+                        Variants.Where(x => x.NormalizedCogsAmount != null)
+                                .Min(x => x.NormalizedCogsAmount) : null;
             }
         }
 
-        public bool HasCogsDetail
-        {
-            get { return Variants.Any(x => x.CogsDetail != null && x.CogsDetail.Value == true); }            
-        }
-
-        public bool IsCogsRange
+        public decimal? HighPercentage
         {
             get
             {
-                if (HighNormalizedCogs == null || LowNormalizedCogs == null)
-                    return false;
-
-                return HighNormalizedCogs.Value != LowNormalizedCogs.Value;
+                return HasNormalizedCogs ?
+                        Variants.Where(x => x.CogsPercentage != null)
+                            .Max(x => x.CogsPercentage) : null;
+            }
+        }
+        public decimal? LowPercentage
+        {
+            get
+            {
+                return HasNormalizedCogs ?
+                        Variants.Where(x => x.CogsPercentage != null)
+                            .Min(x => x.CogsPercentage) : null;
             }
         }
 
-        public bool HasCogs
+        public decimal? HighPrice
         {
-            get { return Variants.Any(x => x.NormalizedCogsAmount != null); }
+            get { return Variants.Max(x => x.HighPrice); }
         }
-        
-        public bool HasInventory
+        public decimal? LowPrice
         {
-            get { return Variants.Any(x => x.Inventory != null); }
+            get { return Variants.Min(x => x.LowPrice); }
         }
+
 
         public int TotalInventory
         {
@@ -91,20 +100,7 @@ namespace ProfitWise.Data.Model.Cogs
                         .Sum(x => x.Inventory.Value);
             }
         }
-
-        public decimal? HighPrice
-        {
-            get
-            {
-                return Variants.Max(x => x.HighPrice);
-            }
-        }
-
-        public decimal? LowPrice
-        {
-            get { return Variants.Min(x => x.LowPrice); }
-        }
-
+        
         public bool IsPriceRange => HighPrice != LowPrice;
 
         public int StockedDirectly

@@ -33,12 +33,12 @@
                         event: { change: $data.SetFocus }">
         </select>
 
-        <div class="money-editor" style="float:left; width:100%;" data-bind="visible: !NumberEditorVisible()">
+        <div class="money-editor" style="float:left;" data-bind="visible: !NumberEditorVisible()">
             <div data-bind="template: { name: 'Money-Editor-Widget', data: MoneyEditor }">
             </div>
         </div>
 
-        <div class="number-editor" style="float:left; width:100%;" data-bind="visible: NumberEditorVisible()">
+        <div class="number-editor" style="float:left;" data-bind="visible: NumberEditorVisible()">
             <div data-bind="template: { name: 'Number-Editor-Widget', data: NumberEditor }">
             </div>
         </div>
