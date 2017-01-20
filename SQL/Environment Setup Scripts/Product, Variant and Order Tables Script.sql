@@ -8,7 +8,6 @@ DROP TABLE IF EXISTS `profitwisebatchstate`;
 DROP TABLE IF EXISTS `profitwisemasterproduct`; 
 DROP TABLE IF EXISTS `profitwiseproduct`; 
 DROP TABLE IF EXISTS `profitwisemastervariant`; 
-DROP TABLE IF EXISTS `profitwisemastervariantcogsdetail`;
 DROP TABLE IF EXISTS `profitwisevariant`; 
 
 DROP TABLE IF EXISTS `shopifyorder`; 
@@ -18,6 +17,9 @@ DROP TABLE IF EXISTS `shopifyorderadjustment`;
 
 DROP TABLE IF EXISTS `profitwisepicklist`;
 DROP TABLE IF EXISTS `profitwisepicklistmasterproduct`;
+
+
+
 
 
 
@@ -75,21 +77,6 @@ CREATE TABLE `profitwisemastervariant` (
   `CogsDetail` TINYINT NOT NULL, 	# Is there detailed CoGS data (weighted average entries) for this variant?
   PRIMARY KEY (`PwMasterVariantId`,`PwShopId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-CREATE TABLE `profitwisemastervariantcogsdetail` (
-  `PwMasterVariantId` BIGINT NOT NULL, 	# ProfitWise's unique identifier for each variant (may contain multiple "linked" variants)
-  `PwShopId` BIGINT NOT NULL, 			# ProfitWise's shop identifier  
-  `CogsDate` DATE NOT NULL, 			# Date of Cogs Entry
-  
-  `CogsTypeId` TINYINT NOT NULL,		# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
-  `CogsCurrencyId` INT NULL, 			# Numeric value representing the currency for the CoGS data for this variant
-  `CogsAmount` DECIMAL(15, 2) NULL, 	# CoGS value for this variant
-  `CogsPercentage` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
-  
-  PRIMARY KEY (`PwMasterVariantId`,`PwShopId`, `CogsDate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE `profitwisevariant` (
   `PwVariantId` BIGINT NOT NULL AUTO_INCREMENT,	# ProfitWise's unique identifier for each variant (maps to a PwMasterVariantId)
@@ -189,6 +176,25 @@ CREATE TABLE `profitwisepicklistmasterproduct` (
     `PwShopId` BIGINT NOT NULL, # ProfitWise's shop identifier
     `PwMasterProductId` BIGINT NOT NULL, # Product (PwMasterProductId) to include in this picklist
     PRIMARY KEY (`PwPickListId`, `PwShopId`, `PwMasterProductId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+## CoGS Detail
+
+DROP TABLE IF EXISTS `profitwisemastervariantcogsdetail`;
+
+CREATE TABLE `profitwisemastervariantcogsdetail` (
+  `PwMasterVariantId` BIGINT NOT NULL, 	# ProfitWise's unique identifier for each variant (may contain multiple "linked" variants)
+  `PwShopId` BIGINT NOT NULL, 			# ProfitWise's shop identifier  
+  `CogsDate` DATE NOT NULL, 			# Date of Cogs Entry
+  
+  `CogsTypeId` TINYINT NOT NULL,		# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
+  `CogsCurrencyId` INT NULL, 			# Numeric value representing the currency for the CoGS data for this variant
+  `CogsAmount` DECIMAL(15, 2) NULL, 	# CoGS value for this variant
+  `CogsPercentage` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
+  
+  PRIMARY KEY (`PwMasterVariantId`,`PwShopId`, `CogsDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

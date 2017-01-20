@@ -1,20 +1,36 @@
 ﻿@using ProfitWise.Data.Model.Catalog
 
-
-<script type="text/html" id="Cogs-Summary-Widget">
+<script type="text/html" id="Cogs-Summary-Widget-Subview">
     <span data-bind="visible: $data.CogsTypeId() == @CogsType.FixedAmount">
-        <a href="#" data-bind="click: Click">
-            <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount(), CogsCurrencyId())">
-            </span>
-        </a>
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount(), CogsCurrencyId())"></span>
     </span>
     <span data-bind="visible: $data.CogsTypeId() == @CogsType.MarginPercentage">
-        <a href="#" data-bind="click: Click">
-            <span>Computed by </span><span data-bind="text: CogsPercentage"></span><span>% margin</span>
-        </a>
+        <span>Computed by </span><span data-bind="text: CogsPercentage"></span><span>% margin</span>
     </span>
 </script>
+<script type="text/html" id="Cogs-Summary-Widget">
+    <div data-bind="visible: CogsDetail()">
+        <div data-bind="template: { name: 'Cogs-Summary-Widget-Subview' }">
+        </div>
+        <div style="height:7px;"></div>
+        <div>
+            <a href="#" data-bind="click: EditDetailCallback">View/Edit Detail</a>
+        </div>
+    </div>
 
+    <div data-bind="visible: !CogsDetail()">
+        <div>
+            <a href="#" data-bind="click: EditCogsCallback">
+                <span data-bind="template: { name: 'Cogs-Summary-Widget-Subview' }">
+                </span>
+            </a>
+        </div>
+        <div style="height:7px;"></div>
+        <div>
+            <a href="#" data-bind="click: EditDetailCallback">Add Detail</a>
+        </div>
+    </div>
+</script>
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -25,8 +41,7 @@
         self.CogsCurrencyId = ko.observable();
         self.CogsAmount = ko.observable();
         self.CogsPercentage = ko.observable();
-
-        // TODO - add Cogs Detail
+        self.CogsDetail = ko.observable();
 
         // These should match/line-up with the default JSON serialization of the database schema
         self.PushState = function(state) {
@@ -34,6 +49,7 @@
             self.CogsCurrencyId(state.CogsCurrencyId);
             self.CogsAmount(state.CogsAmount);
             self.CogsPercentage(state.CogsPercentage);
+            self.CogsDetail(state.CogsDetail);
         };
 
         self.PullState = function() {
@@ -42,10 +58,14 @@
                 CogsCurrencyId: self.CogsCurrencyId(),
                 CogsAmount: self.CogsAmount(),
                 CogsPercentage: self.CogsPercentage(),
+                CogsDetail: self.CogsDetail(),
             };
         };
 
-        self.Click = function() {
+        self.EditCogsCallback = function() {
+        };
+        
+        self.EditDetailCallback = function () {
         };
 
         if (defaultState) {

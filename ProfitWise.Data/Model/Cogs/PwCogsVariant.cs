@@ -32,8 +32,7 @@ namespace ProfitWise.Data.Model.Cogs
         public PwCogsProductSummary Parent { get; set; }
 
 
-        public void PopulateNormalizedCogsAmount(
-                        CurrencyService currencyService, int targetCurrencyId)
+        public void PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
         {
             if (CogsAmount != null && CogsCurrencyId != null)
             {

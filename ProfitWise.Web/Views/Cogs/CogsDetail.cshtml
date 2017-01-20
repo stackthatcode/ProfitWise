@@ -77,7 +77,9 @@
                         </a>
                         &nbsp;
                         &nbsp;
-                        <a href="#"><i class="glyphicon glyphicon-remove"></i> Remove All Detail</a>
+                        <a href="#" data-bind="click: RemoveAllDetail">
+                            <i class="glyphicon glyphicon-remove"></i> Remove All Detail
+                        </a>
                     </div>
                 </div>
             </div>
@@ -101,7 +103,7 @@
                             <div class="col-xs-6" data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
                             <div class="col-xs-3">
                                 <div style="display: inline-block; position: relative;"
-                                     data-bind="template: { name: 'Date-Picker-Widget', data: { value: DetailDate } }"></div>
+                                     data-bind="template: { name: 'Date-Picker-Widget', data: { value: CogsDate } }"></div>
                             </div>
                             <div class="col-xs-3" style="padding-top:7px; text-align: right;">
                                 <a href="#" data-bind="click: $parent.RemoveDetailEntry">
@@ -126,7 +128,7 @@
     ProfitWiseWidgets.CogsDetailRow = function(jsEntryDate) {
         var self = this;
         
-        self.DetailDate = ko.observable(jsEntryDate);
+        self.CogsDate = ko.observable(jsEntryDate);
         
         self.EditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
             identifier: ProfitWiseFunctions.getRandomInt(1000, 9999),
@@ -135,7 +137,19 @@
             CogsAmount: 0.00,
             CogsPercentage: 0.00,
         });
+
         self.EditorModel.HorizontalEditor(true);
+        
+        self.PullState = function() {
+            var output = self.EditorModel.PullState();
+            output.CogsDate = self.CogsDate();
+            return output;
+        };
+        
+        self.PushState = function(cogsDetail) {
+            self.EditorModel.PushState(cogsDetail);
+            self.CogsDate(cogsDetail.CogsDate);
+        };
 
         return self;
     };
@@ -143,11 +157,26 @@
     ProfitWiseWidgets.CogsDetailModel = function (jsDefaultDate) {
         var self = this;
 
-        self.LoadCogsDetail = function () { };
-        
         self.MasterVariantId = ko.observable();
         self.MasterProductId = ko.observable();
         self.CogsDetail = ko.observableArray();
+
+        self.LoadCogsDetail = function (defaults, details) {
+            self.DefaultEditorModel.PushState(defaults);
+
+            AQ(details).each(function(detail) {
+                var entry = new ProfitWiseWidgets.CogsDetailRow();
+                detail.CogsDate = detail.CogsDate.parseToJavascriptDate();
+                entry.PushState(detail);
+                
+                // add to array
+                self.CogsDetail.push(entry);
+            });
+        };        
+        
+        self.RemoveAllDetail = function() {
+            self.CogsDetail.removeAll();
+        };
 
         self.AddDetailEntry = function() {
             var entry = new ProfitWiseWidgets.CogsDetailRow(jsDefaultDate);
@@ -181,7 +210,7 @@
                 AQ(self.CogsDetail())
                     .select(function (item) {
                         var output = item.EditorModel.PullState();
-                        output.CogsDate = item.DetailDate();
+                        output.CogsDate = item.CogsDate();
                         return output;
                     })
                     .toArray();
@@ -202,9 +231,11 @@
                     ShopifyApp.Modal.close({ result: true });
                 });
         };
-
+        
         self.ValidationMessage = ko.computed(function() {
-            var dates = AQ(self.CogsDetail()).select(function(x) { return x.DetailDate().toString() });
+            var dates = 
+                AQ(self.CogsDetail())
+                    .select(function(x) { return x.CogsDate().toString() });
 
             var duplicateDates =
                 dates.any(function(date) {
@@ -230,10 +261,9 @@
 
             var model = new ProfitWiseWidgets.CogsDetailModel(defaultDate);
             model.MasterVariantId(data.MasterVariantId);
-
+            model.LoadCogsDetail(data.Defaults, data.Details);
             ko.applyBindings(model);
 
-            model.LoadCogsDetail();
             ProfitWiseFunctions.PopOverAutoCloseInit();
         });
 </script>

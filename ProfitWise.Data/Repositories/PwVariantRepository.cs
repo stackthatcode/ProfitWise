@@ -27,9 +27,7 @@ namespace ProfitWise.Data.Repositories
             return _connection.BeginTransaction();
         }
 
-        //
-        // TODO => add paging and filtering
-        //
+
         public IList<PwMasterVariant> RetrieveAllMasterVariants(long? pwMasterProductId = null)
         {
             var query =

@@ -91,6 +91,7 @@ namespace ProfitWise.Data.Repositories
 
         /// <summary>
         /// Note: cannot handle more than 200 Master Product Ids i.e. paging should not exceed that
+        /// TODO - the High and Low computations are incorrect here
         /// </summary>
         public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)
         {
@@ -108,8 +109,25 @@ namespace ProfitWise.Data.Repositories
                 query, new {this.PwShopId, MasterProductIds = masterProductIds}).ToList();
         }
 
+        // TODO - the High and Low computations are incorrect here
+        public PwCogsVariant RetrieveVariant(long masterVariantId)
+        {
+            var query =
+                @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t3.Sku, t2.Exclude, t2.StockedDirectly, 
+                        t2.CogsTypeId, t2.CogsPercentage, t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, 
+                        t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
+                FROM profitwisemastervariant t2 
+                        INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
+	            WHERE t2.PwShopId = @PwShopId
+                AND t3.PwShopId = @PwShopId AND t3.IsPrimary = true
+                AND t2.PwMasterVariantId = @masterVariantId";
 
-        
+            return _connection
+                .Query<PwCogsVariant>(query, new { this.PwShopId, masterVariantId })
+                .FirstOrDefault();
+        }
+
+
         // Stocked Directly and Exclude data
         public void UpdateStockedDirectlyByPicklist(long pickListId, bool stockedDirectly)
         {
@@ -271,6 +289,17 @@ namespace ProfitWise.Data.Repositories
 
 
         // CoGS Detail functions
+        public List<PwCogsDetail> RetrieveCogsDetail(long? masterVariantId)
+        {
+            var query =
+                @"SELECT * FROM profitwisemastervariantcogsdetail 
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId
+                ORDER BY CogsDate;";
+
+            return _connection.Query<PwCogsDetail>(
+                query, new { this.PwShop.PwShopId, @masterVariantId }).ToList();
+        }
+
         public void DeleteCogsDetail(long? masterVariantId)
         {
             if (!masterVariantId.HasValue)
@@ -296,7 +325,7 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        // Order Line CoGS propagsation functions...
+        // Order Line CoGS propagation functions...
         public void UpdateOrderLineUnitCogs(
                 bool onlyNullUnitCogs, long? masterProductId = null, long? masterVariantId = null)
         {

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Catalog;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -46,13 +48,29 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
+            var masterVariant = cogsRepository.RetrieveVariant(masterVariantId.Value);
+
+            var defaults = new PwCogsDetail
+            {
+                PwMasterVariantId = masterVariantId.Value,
+                CogsCurrencyId = masterVariant.CogsCurrencyId,
+                CogsTypeId = masterVariant.CogsTypeId,
+                CogsPercentage = masterVariant.CogsPercentage,
+                CogsAmount = masterVariant.CogsAmount,
+               
+            };
+            var details = cogsRepository.RetrieveCogsDetail(masterVariantId);
+
             var model = new CogsDetailModel
             {
+                Defaults = defaults,
+                Details = details,
                 DateDefault = DateTime.Today,
                 MasterVariantId = masterVariantId,
             };
             return View(model);
         }
+
 
         [HttpGet]
         public ActionResult BulkEditCogs(int masterProductId)

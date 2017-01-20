@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -20,7 +21,9 @@ namespace ProfitWise.Web.Controllers
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
 
-        public CogsServiceController(MultitenantFactory factory, CurrencyService currencyService)
+        public CogsServiceController(
+                MultitenantFactory factory, 
+                CurrencyService currencyService)
         {
             _factory = factory;
             _currencyService = currencyService;
@@ -150,7 +153,6 @@ namespace ProfitWise.Web.Controllers
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
             var masterProductSummary = cogsRepository.RetrieveProduct(masterProductId);
-
             if (masterProductSummary == null)
             {
                 return new JsonNetResult(new { MasterProduct = (CogsMasterProductModel)null });
@@ -163,7 +165,6 @@ namespace ProfitWise.Web.Controllers
                 MasterProductId = masterProductSummary.PwMasterProductId,
                 Title = masterProductSummary.Title,
             };
-
             masterProduct.MasterVariants = 
                 masterVariants.Select(x => CogsMasterVariantModel.Build(x, shopCurrencyId)).ToList();
 
@@ -184,7 +185,7 @@ namespace ProfitWise.Web.Controllers
             cogsRepository.UpdateDefaultCogs(
                 masterVariantId, cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage, false);
 
-            //cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
+            // cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
 
             return JsonNetResult.Success();
         }
@@ -261,6 +262,7 @@ namespace ProfitWise.Web.Controllers
                 {
                     foreach (var detail in details)
                     {
+                        detail.PwMasterVariantId = masterVariantId.Value;
                         cogsRepository.InsertCogsDetails(detail);
                     }
                 }
@@ -270,7 +272,6 @@ namespace ProfitWise.Web.Controllers
 
             return JsonNetResult.Success();
         }
-
 
 
         [HttpPost]

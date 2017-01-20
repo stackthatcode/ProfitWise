@@ -13,38 +13,14 @@
         height: 50px;
     }
 
-    #product-edit-grid tr td:nth-child(1), #product-edit-heading tr th:nth-child(1) {
-        width: 35%;
-    }
+    #product-edit-heading tr th { border-bottom: none; }
+    #product-edit-grid tr td:nth-child(1), #product-edit-heading tr th:nth-child(1) { width: 40%; }
+    #product-edit-grid tr td:nth-child(2), #product-edit-heading tr th:nth-child(2) { width: 20%; text-align: center; }
+    #product-edit-grid tr td:nth-child(3), #product-edit-heading tr th:nth-child(3) { width: 20%; text-align: center; }
+    #product-edit-grid tr td:nth-child(4), #product-edit-heading tr th:nth-child(4) { width: 10%; text-align: center; }
+    #product-edit-grid tr td:nth-child(5), #product-edit-heading tr th:nth-child(5) { width: 10%; text-align: center; }
 
-    #product-edit-grid tr td:nth-child(2), #product-edit-heading tr th:nth-child(2) {
-        width: 20%;
-        text-align: center;
-    }
-
-    #product-edit-grid tr td:nth-child(3), #product-edit-heading tr th:nth-child(3) {
-        width: 20%;
-        text-align: center;
-    }
-
-    #product-edit-grid tr td:nth-child(4), #product-edit-heading tr th:nth-child(4) {
-        width: 10%;
-        text-align: center;
-    }
-
-    #product-edit-grid tr td:nth-child(5), #product-edit-heading tr th:nth-child(5) {
-        width: 7.5%;
-        text-align: center;
-    }
-
-    #product-edit-grid tr td:nth-child(6), #product-edit-heading tr th:nth-child(6) {
-        width: 7.5%;
-        text-align: center;
-    }
-
-    input[type='text'] {
-        width: 100px;
-    }
+    input[type='text'] { width: 100px; }
 </style>
 
 
@@ -62,7 +38,7 @@
     </div>
 
     <div class="row" data-bind="visible: $data.Grid().length > 0">
-        <div class="col-xs-12">
+        <div class="col-xs-12" style="height:57px; border-bottom:1px solid #CCC;">
             <table class="table" id="product-edit-heading" style="margin-bottom: 0px;">
                 <thead>
                 <tr>
@@ -75,15 +51,11 @@
                                 data: { ColumnIndex: 1, ColumnName: 'Title', Model: $data.SortingModel } }">
                         </span>
                     </th>
-
-                    <th>Price</th>
-                    <th>
-                        <a href="#" data-bind="click: function() { $data.CogsDialogPopup(); }">Cost of Goods Sold</a>
-                    </th>
-                    <th>Detail</th>
-
+                    <th>Price</th>                    
+                    <th><a href="#" data-bind="click: function() { $data.CogsDialogPopup(); }">Cost of Goods Sold</a></th>
+                    
                     <th style="text-align: center;">
-                        <a href="#" data-bind="click: function() { $data.StockedDirectlyDialogPopup(); }">Stocked Directly</a>
+                        <a href="#" data-bind="click: function() { $data.StockedDirectlyDialogPopup(); }">Stocked<br />Directly</a>
                     </th>
                     <th style="text-align: center;">
                         <a href="#" data-bind="click: function() { $data.ExcludedDialogPopup(); }">Exclude</a>
@@ -130,14 +102,10 @@
                     </a>
                 </div>
             </td>
-
-            <td><a href="#" data-bind="click: EditCogsDetail">Add Detail</a></td>
-
             <td>
                 <input type="checkbox"
                        data-bind="click: $parent.StockedDirectlyCheckboxClick, checked: $data.CurrentStockedDirectly"/>
             </td>
-
             <td>
                 <input type="checkbox"
                        data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.CurrentExcluded"/>
@@ -215,7 +183,8 @@
 
                     item.CurrentExcluded = ko.observable(item.Excluded);
                     item.CurrentStockedDirectly = ko.observable(item.StockedDirectly);
-
+                    
+                    // Used for undo functions
                     item.OldState = ko.observable();
                     
                     item.EditorModel
@@ -229,15 +198,14 @@
 
                     // We'll maintain state in the Summary Model
                     item.SummaryModel = new ProfitWiseWidgets.CogsSummaryWidgetModel(item);
-                    item.SummaryModel.Click = function() {
-                        item.ClickOnCogs();
-                    };
-
-                    item.ClickOnCogs = function() {
+                    item.SummaryModel.EditCogsCallback = function() {
                         self.HideCurrentCogsEditor();
                         item.OldState(item.EditorModel.PullState());
                         item.EditorVisible(true);
                         item.EditorModel.SetFocus();
+                    };
+                    item.SummaryModel.EditDetailCallback = function () {
+                        self.CogsDetailDialogPopup(item.MasterVariantId);
                     };
 
                     item.CancelAndHide = function () {
@@ -254,10 +222,6 @@
                         state.MasterVariantId = item.MasterVariantId;
                         self.UpdateVariantCogs(state);
                     };
-
-                    item.EditCogsDetail = function() {
-                        self.CogsDetailDialogPopup(item.MasterVariantId);
-                    }
 
                     item.EditorModel.RegisterEscapeKeyCallback(function () {
                         item.CancelAndHide();

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using ProfitWise.Data.Model.Catalog;
 
 namespace ProfitWise.Web.Models
 {
@@ -6,5 +8,7 @@ namespace ProfitWise.Web.Models
     {
         public long? MasterVariantId { get; set; }
         public DateTime DateDefault { get; set; }
+        public PwCogsDetail Defaults { get; set; }
+        public List<PwCogsDetail> Details { get; set; }
     }
 }
