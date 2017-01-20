@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -214,7 +215,14 @@ namespace ProfitWise.Web.Controllers
             }
             return cogsAmount;
         }
- 
+
+        [HttpPost]
+        public ActionResult UpdateCogsDetails(PwCogsDetail defaults, List<PwCogsDetail> details)
+        {
+
+            return JsonNetResult.Success();
+        }
+
 
 
         [HttpPost]

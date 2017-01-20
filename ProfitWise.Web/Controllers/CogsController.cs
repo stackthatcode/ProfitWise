@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -47,6 +48,7 @@ namespace ProfitWise.Web.Controllers
 
             var model = new CogsDetailModel
             {
+                DateDefault = DateTime.Today,
                 MasterVariantId = masterVariantId
             };
             return View(model);

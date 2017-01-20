@@ -2,6 +2,7 @@
 @using ProfitWise.Data.Model.System
 @using ProfitWise.Web.Attributes
 @using ProfitWise.Web.Models
+@using Push.Foundation.Web.Json
 
 @model CogsDetailModel
 @{
@@ -22,8 +23,8 @@
         background-color:#FFF; 
         overflow:visible; 
         padding-top:0px; 
-        padding-left:30px; 
-        padding-right: 30px;
+        padding-left:20px; 
+        padding-right: 20px;
     } 
     .edit-cogs-grid-header a, .detail-grid a {
         font-weight: 700;
@@ -61,13 +62,16 @@
                 </div>
                 
                 <div class="row">
-                    <div class="col-xs-12 edit-cogs-grid-header" style="text-align:right; padding-top:20px;">                       
-                        <a href="#"><i class="glyphicon glyphicon-remove"></i> Remove All Detail</a>
-                        &nbsp;
-                        &nbsp;
+                    <div class="col-xs-6" style="padding-top:20px;">
+                        <span style="color:#F99; font-weight:700;" data-bind="text: ValidationMessage"></span>
+                    </div>
+                    <div class="col-xs-6 edit-cogs-grid-header" style="text-align:right; padding-top:20px;">                       
                         <a href="#" data-bind="click: AddDetailEntry">
                             <i class="glyphicon glyphicon-plus"></i> Add Detail Entry
                         </a>
+                        &nbsp;
+                        &nbsp;
+                        <a href="#"><i class="glyphicon glyphicon-remove"></i> Remove All Detail</a>
                     </div>
                 </div>
             </div>
@@ -88,11 +92,15 @@
                 <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom: 300px;">
                     <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
                         <div class="row">
-                            <div class="col-xs-1" style="padding-top:7px;"><a href="#">Remove</a></div>
                             <div class="col-xs-6" data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
-                            <div class="col-xs-5">
+                            <div class="col-xs-3">
                                 <div style="display: inline-block; position: relative;"
                                      data-bind="template: { name: 'Date-Picker-Widget', data: { value: DetailDate } }"></div>
+                            </div>
+                            <div class="col-xs-3" style="padding-top:7px; text-align: right;">
+                                <a href="#" data-bind="click: $parent.RemoveDetailEntry">
+                                    <i class="glyphicon glyphicon-remove"></i> Remove
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -141,7 +149,7 @@
         return self;
     };
 
-    ProfitWiseWidgets.CogsDetailModel = function () {
+    ProfitWiseWidgets.CogsDetailModel = function (defaultDate) {
         var self = this;
 
         self.LoadCogsDetail = function () { };
@@ -150,9 +158,14 @@
         
         self.AddDetailEntry = function() {
             var entry = new ProfitWiseWidgets.CogsDetailRow();
+            entry.DetailDate(defaultDate);
             self.CogsDetail.push(entry);
             console.log(self.CogsDetail());
         };
+
+        self.RemoveDetailEntry = function(item) {
+            self.CogsDetail.remove(item);
+        }
 
         self.DefaultEditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
             //identifier: "default",
@@ -172,13 +185,34 @@
             alert("Saving AJAX...");
         };
 
+        self.ValidationMessage = ko.computed(function() {            
+            var dates = AQ(self.CogsDetail()).select(function(x) { return x.DetailDate().toString() });            
+            
+            var duplicateDates =
+                dates.any(function(date) { 
+                    var count = dates.where(function(x) { return x == date; }).count();
+                    return count > 1;
+                });
+            
+            if (duplicateDates) {
+                return "One or more entries are on the same date";
+            } else {
+                return null;
+            }
+        });
+
         return self;
     };
 
+
     $(document)
         .ready(function() {
-            var model = new ProfitWiseWidgets.CogsDetailModel();
+            var data = @Html.Raw(Model.SerializeToJson());
+            var defaultDate = data.DateDefault.parseToJavascriptDate();
+
+            var model = new ProfitWiseWidgets.CogsDetailModel(defaultDate);
             ko.applyBindings(model);
+
             model.LoadCogsDetail();
             ProfitWiseFunctions.PopOverAutoCloseInit();
         });
