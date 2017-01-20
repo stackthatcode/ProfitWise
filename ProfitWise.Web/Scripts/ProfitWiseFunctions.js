@@ -53,6 +53,13 @@ ProfitWiseFunctions.MomentStartOfDay =
     };
 
 
+ProfitWiseFunctions.getRandomInt = function(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+
 // Relies upon .popover-container for enclosing parent & .popover-launcher for the triggering element
 ProfitWiseFunctions.PopOverCloseAll = function() {
     $('div.popover:visible')
@@ -95,7 +102,7 @@ ProfitWiseFunctions.AjaxSettings = function (modal) {
     if (modal) {
         errorCallback = function () {
             alert(ProfitWiseShopify.ErrorMessage);
-            window.reload();
+            location.reload();
         }
     } else {
         errorCallback = function () {

@@ -49,7 +49,7 @@ namespace ProfitWise.Web.Controllers
             var model = new CogsDetailModel
             {
                 DateDefault = DateTime.Today,
-                MasterVariantId = masterVariantId
+                MasterVariantId = masterVariantId,
             };
             return View(model);
         }

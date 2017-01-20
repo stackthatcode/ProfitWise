@@ -78,17 +78,16 @@ CREATE TABLE `profitwisemastervariant` (
 
 
 CREATE TABLE `profitwisemastervariantcogsdetail` (
-  `PwCogsDetailId` BIGINT NOT NULL AUTO_INCREMENT,
   `PwMasterVariantId` BIGINT NOT NULL, 	# ProfitWise's unique identifier for each variant (may contain multiple "linked" variants)
-  `PwShopId` BIGINT NOT NULL, 			# ProfitWise's shop identifier
-  
+  `PwShopId` BIGINT NOT NULL, 			# ProfitWise's shop identifier  
   `CogsDate` DATE NOT NULL, 			# Date of Cogs Entry
+  
   `CogsTypeId` TINYINT NOT NULL,		# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
   `CogsCurrencyId` INT NULL, 			# Numeric value representing the currency for the CoGS data for this variant
   `CogsAmount` DECIMAL(15, 2) NULL, 	# CoGS value for this variant
   `CogsPercentage` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
   
-  PRIMARY KEY (`PwCogsDetailId`, `PwMasterVariantId`,`PwShopId`)
+  PRIMARY KEY (`PwMasterVariantId`,`PwShopId`, `CogsDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

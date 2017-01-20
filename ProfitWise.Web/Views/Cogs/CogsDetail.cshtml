@@ -1,12 +1,13 @@
 ﻿@using ProfitWise.Data.Model.Catalog
-@using ProfitWise.Data.Model.System
 @using ProfitWise.Web.Attributes
 @using ProfitWise.Web.Models
 @using Push.Foundation.Web.Json
 
 @model CogsDetailModel
 @{
-    Context.PullCommonContext().PageTitle = "Edit CoGS Detail";
+    var commonContext = Context.PullCommonContext();
+    commonContext.PageTitle = "Edit CoGS Detail";
+    var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
     Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
 }
 
@@ -18,6 +19,11 @@
 @Html.Partial("~/Views/Cogs/_EditMasterProduct.cshtml")
 
 <style>
+    body {
+        overflow-y: scroll !important;
+        padding: 0px !important;
+    }
+
     .scrolling-popout-layout {
         width:100%; 
         background-color:#FFF; 
@@ -28,7 +34,7 @@
     } 
     .edit-cogs-grid-header a, .detail-grid a {
         font-weight: 700;
-    }                                                                              
+    }
 </style>
 
 <script type="text/html" id="Cogs-Detail-Main-Template">
@@ -63,7 +69,7 @@
                 
                 <div class="row">
                     <div class="col-xs-6" style="padding-top:20px;">
-                        <span style="color:#F99; font-weight:700;" data-bind="text: ValidationMessage"></span>
+                        <span style="color:#F66; font-weight:700;" data-bind="text: ValidationMessage"></span>
                     </div>
                     <div class="col-xs-6 edit-cogs-grid-header" style="text-align:right; padding-top:20px;">                       
                         <a href="#" data-bind="click: AddDetailEntry">
@@ -114,86 +120,98 @@
 <!-- KnockoutJS Root Element -->
 <div data-bind="template: { name: 'Cogs-Detail-Main-Template' }"></div>
 
-<style>
-    body {
-        overflow-y: scroll !important;
-        padding: 0px !important;
-    }
-</style>
-
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.CogsDetailRow = function() {
+    ProfitWiseWidgets.CogsDetailRow = function(jsEntryDate) {
         var self = this;
         
-        function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
-
-        var startingDate = "01/01/2016";
-
-        self.DetailDate = ko.observable(startingDate.parseToJavascriptDate());
-
+        self.DetailDate = ko.observable(jsEntryDate);
+        
         self.EditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
-            identifier: getRandomInt(1000, 9999),
-            defaultcogstype: @CogsType.FixedAmount,
-            defaultcurrencyid: @Currency.DefaultCurrencyId,
-            defaultamount: 0.00,
-            defaultpercentage: 0.00,
+            identifier: ProfitWiseFunctions.getRandomInt(1000, 9999),
+            CogsTypeId: @CogsType.FixedAmount,
+            CogsCurrencyId: @defaultCurrencyId,
+            CogsAmount: 0.00,
+            CogsPercentage: 0.00,
         });
         self.EditorModel.HorizontalEditor(true);
 
         return self;
     };
 
-    ProfitWiseWidgets.CogsDetailModel = function (defaultDate) {
+    ProfitWiseWidgets.CogsDetailModel = function (jsDefaultDate) {
         var self = this;
 
         self.LoadCogsDetail = function () { };
-
-        self.CogsDetail = ko.observableArray();
         
-        self.AddDetailEntry = function() {
-            var entry = new ProfitWiseWidgets.CogsDetailRow();
-            entry.DetailDate(defaultDate);
-            self.CogsDetail.push(entry);
-            console.log(self.CogsDetail());
-        };
+        self.MasterVariantId = ko.observable();
+        self.MasterProductId = ko.observable();
+        self.CogsDetail = ko.observableArray();
 
+        self.AddDetailEntry = function() {
+            var entry = new ProfitWiseWidgets.CogsDetailRow(jsDefaultDate);
+            self.CogsDetail.push(entry);
+        };
+        
         self.RemoveDetailEntry = function(item) {
             self.CogsDetail.remove(item);
-        }
-
-        self.DefaultEditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
-            //identifier: "default",
-            defaultcogstype: @CogsType.FixedAmount,
-            defaultcurrencyid: @Currency.DefaultCurrencyId, 
-            defaultamount: 0.00,
-            defaultpercentage: 0.00,
-        });
-        self.DefaultEditorModel.HorizontalEditor(true);
+        };
         
+        self.DefaultEditorModel =
+            new ProfitWiseWidgets.CogsEditorWidgetModel({
+                identifier: "default-editor",
+                CogsTypeId: @CogsType.FixedAmount,
+                CogsCurrencyId: @defaultCurrencyId,
+                CogsAmount: 0.00,
+                CogsPercentage: 0.00,
+            });
+        self.DefaultEditorModel.HorizontalEditor(true);
+
         self.CloseClick = function() {
             ShopifyApp.Modal.close({ result: false });
         };
 
         self.SaveClick = function() {
-            ShopifyApp.Modal.close({ result: false });
-            alert("Saving AJAX...");
+            if (self.ValidationMessage()) {
+                return;
+            }
+
+            var details =
+                AQ(self.CogsDetail())
+                    .select(function (item) {
+                        var output = item.EditorModel.PullState();
+                        output.CogsDate = item.DetailDate();
+                        return output;
+                    })
+                    .toArray();
+
+            var data = {
+                masterVariantId: self.MasterVariantId(),
+                defaults: self.DefaultEditorModel.PullState(),
+                details: details,
+            };
+
+            flow.exec(
+                function () {
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    ajax.HttpPost("/CogsService/CogsDetails", data, this);
+                },
+                function () {
+                    ShopifyApp.Modal.close({ result: true });
+                });
         };
 
-        self.ValidationMessage = ko.computed(function() {            
-            var dates = AQ(self.CogsDetail()).select(function(x) { return x.DetailDate().toString() });            
-            
+        self.ValidationMessage = ko.computed(function() {
+            var dates = AQ(self.CogsDetail()).select(function(x) { return x.DetailDate().toString() });
+
             var duplicateDates =
-                dates.any(function(date) { 
+                dates.any(function(date) {
                     var count = dates.where(function(x) { return x == date; }).count();
                     return count > 1;
                 });
-            
+
             if (duplicateDates) {
                 return "One or more entries are on the same date";
             } else {
@@ -211,6 +229,8 @@
             var defaultDate = data.DateDefault.parseToJavascriptDate();
 
             var model = new ProfitWiseWidgets.CogsDetailModel(defaultDate);
+            model.MasterVariantId(data.MasterVariantId);
+
             ko.applyBindings(model);
 
             model.LoadCogsDetail();

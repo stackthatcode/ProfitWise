@@ -45,7 +45,7 @@
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    // Parameters = { defaultcogstype, defaultcurrencyid, defaultamount, defaultpercentage }
+    // Parameters = { CogsTypeId, CogsCurrencyId, CogsAmount, CogsPercentage }
     ProfitWiseWidgets.CogsEditorWidgetModel = function(parameters) {
         var self = this;
         
@@ -56,13 +56,13 @@
             }
         );
 
-        // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount, defaultcurrencyid }
+        // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount, CogsCurrencyId }
         self.MoneyEditor = new ProfitWiseWidgets.MoneyEditorWidgetModel({
             identifier: "money-" + parameters.identifier,
             lowconstraint: 0,
             highconstraint: 999999999.99,
-            defaultcurrencyid: parameters.defaultcurrencyid,
-            defaultamount: parameters.defaultamount,
+            defaultcurrencyid: parameters.CogsCurrencyId,
+            defaultamount: parameters.CogsAmount,
         });
         
         // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount }
@@ -70,7 +70,7 @@
             identifier: "number-" + parameters.identifier,
             lowconstraint: 0,
             highconstraint: 100,
-            defaultamount: parameters.defaultpercentage,
+            defaultamount: parameters.CogsPercentage,
         });
 
         self.CogsTypes = [
@@ -78,7 +78,7 @@
             { Value: "@CogsType.MarginPercentage", Text: "Compute by margin %" },
         ];
 
-        self.SelectedCogsType = ko.observable();
+        self.SelectedCogsType = ko.observable(parameters.CogsTypeId);
 
         self.NumberEditorVisible = ko.computed(function() {
             return self.SelectedCogsType() == '@CogsType.MarginPercentage';

@@ -217,14 +217,14 @@
                     item.CurrentStockedDirectly = ko.observable(item.StockedDirectly);
 
                     item.OldState = ko.observable();
-
+                    
                     item.EditorModel
                         = new ProfitWiseWidgets.CogsEditorWidgetModel({
                             identifier: item.PwMasterVariantId,
-                            defaultcogstype: item.CogsTypeId,
-                            defaultcurrencyid: item.CogsCurrencyId, 
-                            defaultamount: item.CogsAmount,
-                            defaultpercentage: item.CogsPercentage,
+                            CogsTypeId: item.CogsTypeId,
+                            CogsCurrencyId: item.CogsCurrencyId,
+                            CogsAmount: item.CogsAmount,
+                            CogsPercentage: item.CogsPercentage,
                         });
 
                     // We'll maintain state in the Summary Model

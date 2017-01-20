@@ -172,26 +172,39 @@ namespace ProfitWise.Web.Controllers
 
         [HttpPost]
         public ActionResult UpdateCogs(
-                long masterVariantId, int cogsTypeId, int cogsCurrencyId, decimal cogsAmount, decimal cogsPercentage)
+                long masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, decimal? cogsPercentage)
         {
-            if (!_currencyService.CurrencyExists(cogsCurrencyId))
-            {
-                throw new Exception($"Unable to locate Currency {cogsCurrencyId} (Amount: {cogsAmount}");
-            }
+            ValidateCurrency(cogsTypeId, cogsCurrencyId);
             cogsAmount = ConstrainAmount(cogsAmount);
             cogsPercentage = ConstrainPercentage(cogsPercentage);
 
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            cogsRepository.UpdateMasterVariantCogs(masterVariantId, cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage);
+            cogsRepository.UpdateDefaultCogs(
+                masterVariantId, cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage, false);
+
             //cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
 
             return JsonNetResult.Success();
         }
 
-        public decimal ConstrainPercentage(decimal cogsPercentage)
+        public void ValidateCurrency(int cogsTypeId, int? cogsCurrencyId)
         {
+            if (cogsTypeId != CogsType.FixedAmount) return;
+
+            if (!cogsCurrencyId.HasValue || !_currencyService.CurrencyExists(cogsCurrencyId.Value))
+            {
+                throw new Exception($"Unable to locate Currency {cogsCurrencyId}");
+            }
+        }
+
+        public decimal? ConstrainPercentage(decimal? cogsPercentage)
+        {
+            if (!cogsPercentage.HasValue)
+            {
+                return cogsPercentage;
+            }
             if (cogsPercentage < 0m)
             {
                 return 0m;
@@ -203,8 +216,12 @@ namespace ProfitWise.Web.Controllers
             return cogsPercentage;
         }
 
-        public decimal ConstrainAmount(decimal cogsAmount)
+        public decimal? ConstrainAmount(decimal? cogsAmount)
         {
+            if (!cogsAmount.HasValue)
+            {
+                return cogsAmount;
+            }
             if (cogsAmount < 0m)
             {
                 return 0m;
@@ -217,8 +234,33 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateCogsDetails(PwCogsDetail defaults, List<PwCogsDetail> details)
+        public ActionResult CogsDetails(
+                long? masterVariantId, long? masterProductId, 
+                PwCogsDetail defaults, List<PwCogsDetail> details)
         {
+            var userIdentity = HttpContext.PullIdentity();
+            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+
+            ValidateCurrency(defaults.CogsTypeId, defaults.CogsCurrencyId);
+
+            using (var transaction = cogsRepository.InitiateTransaction())
+            {
+                var hasDetails = details != null && details.Any();
+                cogsRepository.UpdateDefaultCogs(
+                    masterVariantId,
+                    defaults.CogsTypeId,
+                    defaults.CogsCurrencyId,
+                    ConstrainAmount(defaults.CogsAmount),
+                    ConstrainPercentage(defaults.CogsPercentage),
+                    hasDetails);
+
+                if (hasDetails)
+                {
+
+                }
+
+                transaction.Commit();
+            }
 
             return JsonNetResult.Success();
         }
