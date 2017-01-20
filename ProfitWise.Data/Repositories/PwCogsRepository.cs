@@ -6,6 +6,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 
@@ -269,29 +270,29 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-
-        public void DeleteCogsDetail(long? masterVariantId, long? masterProductId)
+        // CoGS Detail functions
+        public void DeleteCogsDetail(long? masterVariantId)
         {
-            if (!masterVariantId.HasValue && !masterProductId.HasValue)
+            if (!masterVariantId.HasValue)
             {
-                throw new ArgumentNullException("Both input parameters are null!");
+                throw new ArgumentNullException();
             }
 
-            var query = @"DELETE FROM profitwisemastervariantcogsdetail WHERE PwShopId = @PwShopId ";
-
-            if (masterProductId.HasValue)
-            {
-                query += "AND PwMasterVariantId = @masterVariantId;";
-            }
-            if (masterVariantId.HasValue)
-            {
-                query += "AND PwMasterProductId = @masterProductId;";
-            }
-
-            _connection.Execute(query, new {this.PwShopId, masterVariantId, masterProductId });
+            var query = 
+                @"DELETE FROM profitwisemastervariantcogsdetail 
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
+            _connection.Execute(query, new {this.PwShopId, masterVariantId});
         }
-        
 
+        public void InsertCogsDetails(PwCogsDetail detail)
+        {
+            detail.PwShopId = this.PwShopId;
+            var query = 
+                @"INSERT INTO profitwisemastervariantcogsdetail 
+                VALUES ( @PwMasterVariantId, @PwShopId, 
+                        @CogsDate, @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsPercentage );";
+            _connection.Execute(query, detail);
+        }
 
 
 

@@ -246,6 +246,7 @@ namespace ProfitWise.Web.Controllers
             using (var transaction = cogsRepository.InitiateTransaction())
             {
                 var hasDetails = details != null && details.Any();
+
                 cogsRepository.UpdateDefaultCogs(
                     masterVariantId,
                     defaults.CogsTypeId,
@@ -254,9 +255,14 @@ namespace ProfitWise.Web.Controllers
                     ConstrainPercentage(defaults.CogsPercentage),
                     hasDetails);
 
+                cogsRepository.DeleteCogsDetail(masterVariantId);
+                
                 if (hasDetails)
                 {
-
+                    foreach (var detail in details)
+                    {
+                        cogsRepository.InsertCogsDetails(detail);
+                    }
                 }
 
                 transaction.Commit();
