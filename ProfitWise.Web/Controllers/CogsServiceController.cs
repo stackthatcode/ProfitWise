@@ -179,6 +179,16 @@ namespace ProfitWise.Web.Controllers
             cogsAmount = ConstrainAmount(cogsAmount);
             cogsPercentage = ConstrainPercentage(cogsPercentage);
 
+            if (cogsTypeId == CogsType.FixedAmount)
+            {
+                cogsPercentage = null;
+            }
+            if (cogsTypeId == CogsType.MarginPercentage)
+            {
+                cogsCurrencyId = null;
+                cogsAmount = null;
+            }
+
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
@@ -249,12 +259,12 @@ namespace ProfitWise.Web.Controllers
                 var hasDetails = details != null && details.Any();
 
                 cogsRepository.UpdateDefaultCogs(
-                    masterVariantId,
-                    defaults.CogsTypeId,
-                    defaults.CogsCurrencyId,
-                    ConstrainAmount(defaults.CogsAmount),
-                    ConstrainPercentage(defaults.CogsPercentage),
-                    hasDetails);
+                        masterVariantId,
+                        defaults.CogsTypeId,
+                        defaults.CogsCurrencyId,
+                        ConstrainAmount(defaults.CogsAmount),
+                        ConstrainPercentage(defaults.CogsPercentage),
+                        hasDetails);
 
                 cogsRepository.DeleteCogsDetail(masterVariantId);
                 
