@@ -237,9 +237,9 @@ namespace ProfitWise.Web.Controllers
             {
                 return 0m;
             }
-            if (cogsAmount > 999999999m)
+            if (cogsAmount > 999999999.99m)
             {
-                return 100m;
+                return 999999999.99m;
             }
             return cogsAmount;
         }

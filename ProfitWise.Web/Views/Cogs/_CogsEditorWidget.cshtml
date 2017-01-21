@@ -23,9 +23,9 @@
 </style>
 
 <script type="text/html" id="Cogs-Editor-Widget">
-    <div data-bind="attr: { class: $data.CssClass }">
+    <div data-bind="attr: { class: $data.CssClass }" style="width:100%;">
         <select class="form-control type-dropdown"
-                style="float: left; font-size: 0.9em; margin-bottom: 5px; margin-right: 10px;"
+                style="font-size: 0.9em; margin-bottom: 5px; margin-right: 10px;"
                 data-bind="options: CogsTypes,
                         optionsText: 'Text',
                         optionsValue: 'Value',
@@ -33,12 +33,12 @@
                         event: { change: $data.SetFocus }">
         </select>
 
-        <div class="money-editor" style="float:left;" data-bind="visible: !NumberEditorVisible()">
+        <div class="money-editor"  data-bind="visible: !NumberEditorVisible()">
             <div data-bind="template: { name: 'Money-Editor-Widget', data: MoneyEditor }">
             </div>
         </div>
 
-        <div class="number-editor" style="float:left;" data-bind="visible: NumberEditorVisible()">
+        <div class="number-editor" data-bind="visible: NumberEditorVisible()">
             <div data-bind="template: { name: 'Number-Editor-Widget', data: NumberEditor }">
             </div>
         </div>
