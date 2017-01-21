@@ -4,6 +4,7 @@ using ProfitWise.Data.Model.Cogs;
 
 namespace ProfitWise.Web.Models
 {
+    // TODO - this is an entirely unnecessary structure - do away with it!
     public class CogsProductGridModel
     {
         public long MasterProductId { get; set; }
@@ -12,9 +13,18 @@ namespace ProfitWise.Web.Models
         public int InventoryCount { get; set; }
         public int VariantCount { get; set; }
         public MoneyRange Price { get; set; }
-        public MoneyRange Cogs { get; set; }
+
+        public int NormalizedCurrencyId { get; set; }
+        public bool HasNormalizedCogs { get; set; }
+        public bool HasPercentages { get; set; }
+        public decimal? HighNormalizedCogs { get; set; }
+        public decimal? LowNormalizedCogs { get; set; }
+        public decimal? HighPercentage { get; set; }
+        public decimal? LowPercentage { get; set; }
+
         public int StockedDirectlyCount { get; set; }
         public int ExcludedCount { get; set; }
+        public bool HasCogsDetail { get; set; }
     }
 
     public static class CogsGridModelExtension
@@ -37,13 +47,15 @@ namespace ProfitWise.Web.Models
                         AmountHigh = product.HighPrice,
                         IncludesAverages = false,
                     },
-                    Cogs = new MoneyRange
-                    {
-                        CurrencyId = currencyId,
-                        AmountLow = product.LowNormalizedCogs,
-                        AmountHigh = product.HighNormalizedCogs,
-                        IncludesAverages = product.HasCogsDetail,
-                    },
+                    HasCogsDetail = product.HasCogsDetail,
+                    NormalizedCurrencyId = product.NormalizedCurrencyId,
+                    HasNormalizedCogs = product.HasNormalizedCogs,
+                    HasPercentages = product.HasPercentages,
+                    HighNormalizedCogs = product.HighNormalizedCogs,
+                    LowNormalizedCogs = product.LowNormalizedCogs,
+                    HighPercentage = product.HighPercentage,
+                    LowPercentage = product.LowPercentage,
+
                     ExcludedCount = product.Excluded,
                     InventoryCount = product.TotalInventory,
                     StockedDirectlyCount = product.StockedDirectly,

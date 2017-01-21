@@ -1,0 +1,36 @@
+﻿<!-- Requires KnockoutJS Bootstrap integration plugin Knockstrap -->
+
+
+<script type="text/html" id="Cogs-Product-Summary-Widget">
+    <!-- NormalizedCurrencyId, HasNormalizedCogs, HasPercentages,
+            HighNormalizedCogs, LowNormalizedCogs, HighPercentage, LowPercentage -->
+
+    <span data-bind="if: HasNormalizedCogs && !HasPercentages">
+        <span data-bind="if: LowNormalizedCogs == HighNormalizedCogs">
+            <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(LowNormalizedCogs, NormalizedCurrencyId)"></span>
+        </span>
+
+        <span data-bind="ifnot: LowNormalizedCogs == HighNormalizedCogs">
+            <span data-bind="text: ProfitWiseFunctions.FormatCurrency(LowNormalizedCogs, NormalizedCurrencyId)"></span>
+            to <br/>
+            <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(HighNormalizedCogs, NormalizedCurrencyId)"></span>
+        </span>
+    </span>
+    <span data-bind="if: !HasNormalizedCogs && HasPercentages">
+        <span data-bind="if: LowPercentage == HighPercentage">
+            <span data-bind="text: LowPercentage"></span>%
+        </span>
+
+        <span data-bind="ifnot: LowPercentage == HighPercentage">
+            <span data-bind="text: LowPercentage"></span>%
+            to
+            <span data-bind="text: HighPercentage"></span>%
+        </span>
+    </span>
+
+    <span data-bind="if: HasNormalizedCogs && HasPercentages">Mixed Percentages and Fixed Amounts</span>
+
+    <br/>
+    <span style="font-size: 0.70em" data-bind="if: HasCogsDetail">(include details)</span>
+</script>
+

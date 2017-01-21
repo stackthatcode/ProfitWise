@@ -470,10 +470,13 @@
     <Content Include="Views\Cogs\_CogsEditorWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Cogs\_CogsSummaryWidget.cshtml" />
+    <Content Include="Views\Cogs\_CogsVariantSummaryWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cogs\CogsDetail.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Cogs\_CogsProductSummaryWidget.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

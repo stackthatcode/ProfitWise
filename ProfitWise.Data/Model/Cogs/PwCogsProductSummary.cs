@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Services;
 
 
@@ -23,12 +24,12 @@ namespace ProfitWise.Data.Model.Cogs
 
         public bool HasNormalizedCogs
         {
-            get { return Variants.Any(x => x.CogsPercentage != null); }
+            get { return Variants.Any(x => x.CogsTypeId == CogsType.FixedAmount); }
         }
 
         public bool HasPercentages
         {
-            get { return Variants.Any(x => x.NormalizedCogsAmount != null); }
+            get { return Variants.Any(x => x.CogsTypeId == CogsType.MarginPercentage); }
         }
 
         public bool HasCogsDetail
@@ -48,7 +49,7 @@ namespace ProfitWise.Data.Model.Cogs
             get
             {
                 return HasNormalizedCogs ?
-                        Variants.Where(x => x.NormalizedCogsAmount != null)
+                        Variants.Where(x => x.CogsTypeId == CogsType.FixedAmount)
                                 .Max(x => x.NormalizedCogsAmount) : null;
             }
         }
@@ -57,7 +58,7 @@ namespace ProfitWise.Data.Model.Cogs
             get
             {
                 return HasNormalizedCogs ?
-                        Variants.Where(x => x.NormalizedCogsAmount != null)
+                        Variants.Where(x => x.CogsTypeId == CogsType.FixedAmount)
                                 .Min(x => x.NormalizedCogsAmount) : null;
             }
         }
@@ -66,8 +67,8 @@ namespace ProfitWise.Data.Model.Cogs
         {
             get
             {
-                return HasNormalizedCogs ?
-                        Variants.Where(x => x.CogsPercentage != null)
+                return HasPercentages ?
+                        Variants.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
                             .Max(x => x.CogsPercentage) : null;
             }
         }
@@ -75,8 +76,8 @@ namespace ProfitWise.Data.Model.Cogs
         {
             get
             {
-                return HasNormalizedCogs ?
-                        Variants.Where(x => x.CogsPercentage != null)
+                return HasPercentages ?
+                        Variants.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
                             .Min(x => x.CogsPercentage) : null;
             }
         }

@@ -51,7 +51,7 @@
     // Parameters = { CogsTypeId, CogsCurrencyId, CogsAmount, CogsPercentage }
     ProfitWiseWidgets.CogsEditorWidgetModel = function(parameters) {
         var self = this;
-        
+
         self.HorizontalEditor = ko.observable(false);
         self.CssClass = ko.computed(
             function() {
@@ -67,7 +67,7 @@
             defaultcurrencyid: parameters.CogsCurrencyId,
             defaultamount: parameters.CogsAmount,
         });
-        
+
         // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount }
         self.NumberEditor = new ProfitWiseWidgets.NumberEditorWidgetModel({
             identifier: "number-" + parameters.identifier,
@@ -106,8 +106,8 @@
             return {
                 CogsTypeId: self.SelectedCogsType(),
                 CogsCurrencyId: self.MoneyEditor.CurrencyId(),
-                CogsAmount: self.MoneyEditor.Amount(),
-                CogsPercentage: self.NumberEditor.Amount(),
+                CogsAmount: self.SelectedCogsType() == @CogsType.FixedAmount ? self.MoneyEditor.Amount() : null,
+                CogsPercentage: self.SelectedCogsType() == @CogsType.MarginPercentage ? self.NumberEditor.Amount() : null,
             };
         };
 

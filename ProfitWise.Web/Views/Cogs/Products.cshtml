@@ -59,7 +59,8 @@
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
 @Html.Partial("~/Views/Cogs/_CogsEditorWidget.cshtml")
-@Html.Partial("~/Views/Cogs/_CogsSummaryWidget.cshtml") 
+@Html.Partial("~/Views/Cogs/_CogsProductSummaryWidget.cshtml") 
+@Html.Partial("~/Views/Cogs/_CogsVariantSummaryWidget.cshtml")
 @Html.Partial("~/Views/Cogs/_EditMasterProduct.cshtml")
 
 <script type="text/html" id="Product-Search-Header">
@@ -150,9 +151,8 @@
             <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
 
             <td>
-                <a href="#" data-bind="click: $root.BulkEditPopUp">
-                    <span data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Cogs }">
-                        </span>
+                <a href="#" data-bind="click: $root.ShowVariantCogsEditor">
+                    <span data-bind="template: { name: 'Cogs-Product-Summary-Widget', data: $data }"></span>
                 </a>
             </td>
 
@@ -387,7 +387,7 @@
                 resultsPaging,
                 function (data) {
                     self.CurrentGrid.removeAll();
-
+                    
                     if (data.products.length == 0) {
                         self.ShowNoProductsFound(true);
                     } else {
