@@ -33,11 +33,11 @@ namespace ProfitWise.Data.Services
             var defaultsWithConstraints =
                 defaults
                     .CloneWithConstraints(ApplyConstraintsToDetail)
-                    .AttachKeys(masterVariantId, masterProductId);
+                    .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId);
 
             var detailsWithConstraints =
                     details?.Select(x => x.CloneWithConstraints(ApplyConstraintsToDetail)
-                                        .AttachKeys(masterVariantId, masterProductId))
+                                        .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId))
                             .ToList();
 
             var context = new CogsUpdateServiceContext
@@ -78,7 +78,7 @@ namespace ProfitWise.Data.Services
                 var orderUpdateContexts = MakeUpdateOrderContexts(context);
                 foreach (var orderUpdateContext in orderUpdateContexts)
                 {
-                    cogsUpdateRepository.UpdateUnitCogsByFixedAmount(orderUpdateContext);
+                    cogsUpdateRepository.UpdateOrderLineUnitCogs(orderUpdateContext);
                 }
 
                 // Update the Report Entries
@@ -88,22 +88,48 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public IList<CogsUpdateOrderContext> MakeUpdateOrderContexts(CogsUpdateServiceContext input)
+        public IList<CogsUpdateOrderContext> MakeUpdateOrderContexts(CogsUpdateServiceContext sourceContext)
         {
-            if (!input.HasDetails)
+            if (!sourceContext.HasDetails)
             {
-                var output = new CogsUpdateOrderContext
+                return new List<CogsUpdateOrderContext> {
+                        new CogsUpdateOrderContext
+                        {
+                            Cogs = sourceContext.Defaults,
+                            DestinationCurrencyId = this.PwShop.CurrencyId,
+                            StartDate = null,
+                            EndDate = null,
+                        }
+                    };
+            }
+            else
+            {
+                var output = new List<CogsUpdateOrderContext>()
                 {
-                    Cogs = input.Defaults,
-                    DestinationCurrencyId = this.PwShop.CurrencyId,
-                    StartDate = null,
-                    EndDate = null,
+                    new CogsUpdateOrderContext
+                    {
+                        Cogs = sourceContext.Defaults,
+                        DestinationCurrencyId = this.PwShop.CurrencyId,
+                        StartDate = null,
+                        EndDate = sourceContext.FirstDetail.CogsDate.AddDays(-1),
+                    }
                 };
 
-                return new[] {output};
-            }
+                foreach (var detail in sourceContext.Details)
+                {
+                    var nextDetail = sourceContext.NextDetail(detail);
+                    output.Add(
+                        new CogsUpdateOrderContext
+                        {
+                            Cogs = detail,
+                            DestinationCurrencyId = this.PwShop.CurrencyId,
+                            StartDate = detail.CogsDate,
+                            EndDate = nextDetail?.CogsDate.AddDays(-1),
+                        });
+                }
 
-            throw new NotImplementedException();
+                return output;
+            }
         }
 
 

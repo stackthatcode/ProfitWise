@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Model.Cogs
 {

@@ -175,15 +175,12 @@ namespace ProfitWise.Web.Controllers
 
 
 
-
+        // TODO - revisit
         [HttpPost]
         public ActionResult BulkUpdateCogs(long pwMasterProductId, int currencyId, decimal amount)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
-
-            // TODO => Revisit
-            //ValidateCogsByAmounts(currencyId, amount);
 
             cogsRepository.UpdateProductCogsAllVariants(pwMasterProductId, currencyId, amount);
             return JsonNetResult.Success();

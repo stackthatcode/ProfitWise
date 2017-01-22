@@ -180,6 +180,9 @@
         };
 
         self.AddDetailEntry = function() {
+            if (self.CogsDetail().length >= 10) {
+                return;
+            }
             var entry = new ProfitWiseWidgets.CogsDetailRow(jsDefaultDate);
             self.CogsDetail.push(entry);
         };

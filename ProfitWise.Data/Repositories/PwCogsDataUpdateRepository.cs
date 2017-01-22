@@ -21,14 +21,24 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
-        // Order Line CoGS propagation functions...
-        public void UpdateUnitCogsByFixedAmount(CogsUpdateOrderContext context)
+        public void UpdateOrderLineUnitCogs(CogsUpdateOrderContext context)
         {
             if (context.PwMasterProductId == null && context.PwMasterVariantId == null)
             {
                 throw new ArgumentNullException("Both PwMasterProductId and PwMasterVariantId can't be null");
             }
+            if (context.CogsTypeId == CogsType.FixedAmount)
+            {
+                UpdateOrderLineUnitCogsFixedAmount(context);
+            }
+            if (context.CogsTypeId == CogsType.MarginPercentage)
+            {
+                UpdateOrderLineUnitCogsPercentage(context);
+            }
+        }
 
+        public void UpdateOrderLineUnitCogsFixedAmount(CogsUpdateOrderContext context)
+        {
             var query =
                 @"UPDATE profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
@@ -39,47 +49,49 @@ namespace ProfitWise.Data.Repositories
 		                ON Date(t3.OrderDate) = t4.`Date` 
 			                AND t4.SourceCurrencyId = @CogsCurrencyId
 			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
-                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) ";
-
-            var whereClause = " WHERE t1.PwShopId = @PwShopId ";
-            if (context.PwMasterProductId.HasValue)
-            {
-                whereClause += "AND t1.PwMasterProductId = @PwMasterProductId ";
-            }
-            if (context.PwMasterVariantId.HasValue)
-            {
-                whereClause += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
-            }
+                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) 
+                WHERE t1.PwShopId = @PwShopId " +
+                WhereClauseGenerator(context);
 
             _connection.Execute(query, context);
         }
 
-        public void UpdateUnitCogsByPercentage(CogsUpdateOrderContext context)
+        public void UpdateOrderLineUnitCogsPercentage(CogsUpdateOrderContext context)
         {
-            if (context.PwMasterProductId == null && context.PwMasterVariantId == null)
-            {
-                throw new ArgumentNullException("Both PwMasterProductId and PwMasterVariantId can't be null");
-            }
-
             var query =
                 @"UPDATE profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
 		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	               
-                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) ";
+                SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
+                WHERE t1.PwShopId = @PwShopId " + 
+                WhereClauseGenerator(context);
 
-            var whereClause = " WHERE t1.PwShopId = @PwShopId ";
+            _connection.Execute(query, context);
+        }
+
+
+        public string WhereClauseGenerator(CogsUpdateOrderContext context)
+        {
+            var output = "";
             if (context.PwMasterProductId.HasValue)
             {
-                whereClause += "AND t1.PwMasterProductId = @PwMasterProductId ";
+                output += "AND t1.PwMasterProductId = @PwMasterProductId ";
             }
             if (context.PwMasterVariantId.HasValue)
             {
-                whereClause += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
+                output += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
             }
-
-            _connection.Execute(query, context);
+            if (context.StartDate.HasValue)
+            {
+                output += "AND t3.OrderDate >= @StartDate ";
+            }
+            if (context.EndDate.HasValue)
+            {
+                output += "AND t3.OrderDate <= @EndDate ";
+            }
+            return output;
         }
 
         // Report Entry query
