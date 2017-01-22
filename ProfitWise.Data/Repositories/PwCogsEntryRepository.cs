@@ -95,7 +95,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t3.Sku, t2.Exclude, t2.StockedDirectly, 
-                        t2.CogsTypeId, t2.CogsPercentage, t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, 
+                        t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, 
                         t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
                 FROM profitwisemastervariant t2 
 	                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
@@ -112,7 +112,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t3.Sku, t2.Exclude, t2.StockedDirectly, 
-                        t2.CogsTypeId, t2.CogsPercentage, t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, 
+                        t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, 
                         t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
                 FROM profitwisemastervariant t2 
                         INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
@@ -234,12 +234,12 @@ namespace ProfitWise.Data.Repositories
         public void UpdateDefaultCogs(PwCogsDetail input, bool hasDetail)
         {
             UpdateDefaultCogs(input.PwMasterVariantId, input.CogsTypeId, input.CogsCurrencyId,
-                    input.CogsAmount, input.CogsPercentage, hasDetail);
+                    input.CogsAmount, input.CogsMarginPercent, hasDetail);
         } 
        
         public void UpdateDefaultCogs(
                 long? masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, 
-                decimal? cogsPercentage, bool cogsDetail)
+                decimal? cogsMarginPercent, bool cogsDetail)
         {
             if (cogsTypeId != CogsType.FixedAmount && cogsTypeId != CogsType.MarginPercentage)
             {
@@ -251,13 +251,13 @@ namespace ProfitWise.Data.Repositories
                 SET CogsCurrencyId = @cogsCurrencyId, 
                     CogsAmount = @cogsAmount,
                     CogsTypeId = @cogsTypeId,
-                    CogsPercentage = @cogsPercentage,
+                    CogsMarginPercent = @cogsMarginPercent,
                     CogsDetail = @cogsDetail                   
                 WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
 
             _connection.Execute(
                 query, new { this.PwShopId, masterVariantId,
-                            cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage, cogsDetail });
+                            cogsTypeId, cogsCurrencyId, cogsAmount, cogsMarginPercent, cogsDetail });
         }
 
         public void UpdateProductCogsAllVariants(long masterProductId, int currencyId, decimal amount)
@@ -331,7 +331,7 @@ namespace ProfitWise.Data.Repositories
             var query = 
                 @"INSERT INTO profitwisemastervariantcogsdetail 
                 VALUES ( @PwMasterVariantId, @PwShopId, 
-                        @CogsDate, @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsPercentage );";
+                        @CogsDate, @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsMarginPercent );";
             _connection.Execute(query, detail);
         }
 

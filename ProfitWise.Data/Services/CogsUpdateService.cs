@@ -75,8 +75,11 @@ namespace ProfitWise.Data.Services
                 }
 
                 // Update the Order Lines
-                cogsUpdateRepository
-                    .UpdateUnitCogsByFixedAmount(context.PwMasterProductId, context.PwMasterVariantId);
+                var orderUpdateContexts = MakeUpdateOrderContexts(context);
+                foreach (var orderUpdateContext in orderUpdateContexts)
+                {
+                    cogsUpdateRepository.UpdateUnitCogsByFixedAmount(orderUpdateContext);
+                }
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
@@ -91,10 +94,8 @@ namespace ProfitWise.Data.Services
             {
                 var output = new CogsUpdateOrderContext
                 {
-                    PwShop = this.PwShop,
-                    PwMasterVariantId = input.PwMasterVariantId,
-                    PwMasterProductId = input.PwMasterProductId,
                     Cogs = input.Defaults,
+                    DestinationCurrencyId = this.PwShop.CurrencyId,
                     StartDate = null,
                     EndDate = null,
                 };
@@ -110,10 +111,10 @@ namespace ProfitWise.Data.Services
         {
             ValidateCurrency(detail.CogsTypeId, detail.CogsCurrencyId);
             detail.CogsAmount = ConstrainAmount(detail.CogsAmount);
-            detail.CogsPercentage = ConstrainPercentage(detail.CogsPercentage);
+            detail.CogsMarginPercent = ConstrainPercentage(detail.CogsMarginPercent);
             if (detail.CogsTypeId == CogsType.FixedAmount)
             {
-                detail.CogsPercentage = null;
+                detail.CogsMarginPercent = null;
             }
             if (detail.CogsTypeId == CogsType.MarginPercentage)
             {
@@ -132,21 +133,21 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public decimal? ConstrainPercentage(decimal? cogsPercentage)
+        public decimal? ConstrainPercentage(decimal? cogsMarginPercent)
         {
-            if (!cogsPercentage.HasValue)
+            if (!cogsMarginPercent.HasValue)
             {
-                return cogsPercentage;
+                return cogsMarginPercent;
             }
-            if (cogsPercentage < 0m)
+            if (cogsMarginPercent < 0m)
             {
                 return 0m;
             }
-            if (cogsPercentage > 100m)
+            if (cogsMarginPercent > 100m)
             {
                 return 100m;
             }
-            return cogsPercentage;
+            return cogsMarginPercent;
         }
 
         public decimal? ConstrainAmount(decimal? cogsAmount)

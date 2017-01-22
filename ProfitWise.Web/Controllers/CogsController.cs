@@ -55,7 +55,7 @@ namespace ProfitWise.Web.Controllers
                 PwMasterVariantId = pwMasterVariantId.Value,
                 CogsCurrencyId = masterVariant.CogsCurrencyId,
                 CogsTypeId = masterVariant.CogsTypeId,
-                CogsPercentage = masterVariant.CogsPercentage,
+                CogsMarginPercent = masterVariant.CogsMarginPercent,
                 CogsAmount = masterVariant.CogsAmount,
                
             };

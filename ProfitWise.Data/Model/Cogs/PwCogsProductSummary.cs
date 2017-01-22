@@ -68,7 +68,7 @@ namespace ProfitWise.Data.Model.Cogs
             {
                 return HasPercentages ?
                         Variants.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
-                            .Max(x => x.CogsPercentage) : null;
+                            .Max(x => x.CogsMarginPercent) : null;
             }
         }
         public decimal? LowPercentage
@@ -77,7 +77,7 @@ namespace ProfitWise.Data.Model.Cogs
             {
                 return HasPercentages ?
                         Variants.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
-                            .Min(x => x.CogsPercentage) : null;
+                            .Min(x => x.CogsMarginPercent) : null;
             }
         }
 

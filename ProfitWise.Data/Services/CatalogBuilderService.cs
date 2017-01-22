@@ -112,7 +112,7 @@ namespace ProfitWise.Data.Services
                 CogsTypeId = CogsType.FixedAmount,
                 CogsAmount = 0,
                 CogsCurrencyId = this.PwShop.CurrencyId,
-                CogsPercentage = null,
+                CogsMarginPercent = null,
                 CogsDetail = false,
             };
 

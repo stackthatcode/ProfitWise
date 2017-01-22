@@ -4,7 +4,6 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 
@@ -100,10 +99,10 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO profitwisemastervariant ( 
                     PwShopId, PwMasterProductId, Exclude, StockedDirectly, 
-                    CogsTypeId, CogsCurrencyId, CogsAmount, CogsPercentage, CogsDetail ) 
+                    CogsTypeId, CogsCurrencyId, CogsAmount, CogsMarginPercent, CogsDetail ) 
                 VALUES (
                     @PwShopId, @PwMasterProductId, @Exclude, @StockedDirectly,
-                    @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsPercentage, @CogsDetail );
+                    @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsMarginPercent, @CogsDetail );
                 SELECT LAST_INSERT_ID();";
             return _connection.Query<long>(query, masterVariant).FirstOrDefault();
         }

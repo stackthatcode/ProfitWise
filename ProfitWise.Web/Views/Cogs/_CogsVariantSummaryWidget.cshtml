@@ -5,7 +5,7 @@
         <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount(), CogsCurrencyId())"></span>
     </span>
     <span data-bind="visible: $data.CogsTypeId() == @CogsType.MarginPercentage">
-        <span>Computed by </span><span data-bind="text: CogsPercentage"></span><span>% margin</span>
+        <span>Computed by </span><span data-bind="text: CogsMarginPercent"></span><span>% margin</span>
     </span>
 </script>
 <script type="text/html" id="Cogs-Summary-Widget">
@@ -40,7 +40,7 @@
         self.CogsTypeId = ko.observable();
         self.CogsCurrencyId = ko.observable();
         self.CogsAmount = ko.observable();
-        self.CogsPercentage = ko.observable();
+        self.CogsMarginPercent = ko.observable();
         self.CogsDetail = ko.observable();
         
         // These should match/line-up with the default JSON serialization of the database schema
@@ -48,7 +48,7 @@
             self.CogsTypeId(state.CogsTypeId);
             self.CogsCurrencyId(state.CogsCurrencyId);
             self.CogsAmount(state.CogsAmount);
-            self.CogsPercentage(state.CogsPercentage);
+            self.CogsMarginPercent(state.CogsMarginPercent);
             self.CogsDetail(state.CogsDetail);
         };
 
@@ -57,7 +57,7 @@
                 CogsTypeId: self.CogsTypeId(),
                 CogsCurrencyId: self.CogsCurrencyId(),
                 CogsAmount: self.CogsAmount(),
-                CogsPercentage: self.CogsPercentage(),
+                CogsMarginPercent: self.CogsMarginPercent(),
                 CogsDetail: self.CogsDetail(),
             };
         };

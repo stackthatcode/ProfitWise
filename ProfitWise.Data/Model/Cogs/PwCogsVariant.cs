@@ -14,7 +14,7 @@ namespace ProfitWise.Data.Model.Cogs
         public bool StockedDirectly { get; set; }
 
         public int CogsTypeId { get; set; }
-        public decimal? CogsPercentage { get; set; }
+        public decimal? CogsMarginPercent { get; set; }
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
 

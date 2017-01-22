@@ -48,7 +48,7 @@
 <script type="text/javascript">
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    // Parameters = { CogsTypeId, CogsCurrencyId, CogsAmount, CogsPercentage }
+    // Parameters = { CogsTypeId, CogsCurrencyId, CogsAmount, CogsMarginPercent }
     ProfitWiseWidgets.CogsEditorWidgetModel = function(parameters) {
         var self = this;
 
@@ -73,7 +73,7 @@
             identifier: "number-" + parameters.identifier,
             lowconstraint: 0,
             highconstraint: 100,
-            defaultamount: parameters.CogsPercentage,
+            defaultamount: parameters.CogsMarginPercent,
         });
 
         self.CogsTypes = [
@@ -99,7 +99,7 @@
             self.SelectedCogsType(state.CogsTypeId);
             self.MoneyEditor.CurrencyId(state.CogsCurrencyId);
             self.MoneyEditor.Amount(state.CogsAmount);
-            self.NumberEditor.Amount(state.CogsPercentage);
+            self.NumberEditor.Amount(state.CogsMarginPercent);
         };
 
         self.PullState = function() {
@@ -107,7 +107,7 @@
                 CogsTypeId: self.SelectedCogsType(),
                 CogsCurrencyId: self.MoneyEditor.CurrencyId(),
                 CogsAmount: self.SelectedCogsType() == @CogsType.FixedAmount ? self.MoneyEditor.Amount() : null,
-                CogsPercentage: self.SelectedCogsType() == @CogsType.MarginPercentage ? self.NumberEditor.Amount() : null,
+                CogsMarginPercent: self.SelectedCogsType() == @CogsType.MarginPercentage ? self.NumberEditor.Amount() : null,
             };
         };
 

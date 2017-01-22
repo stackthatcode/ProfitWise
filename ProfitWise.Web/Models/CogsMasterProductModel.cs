@@ -25,7 +25,7 @@ namespace ProfitWise.Web.Models
         public int CogsTypeId { get; set; }
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
-        public decimal? CogsPercentage { get; set; }
+        public decimal? CogsMarginPercent { get; set; }
         public bool CogsDetail { get; set; }
 
         public bool StockedDirectly { get; set; }
@@ -39,7 +39,7 @@ namespace ProfitWise.Web.Models
                 Title = variant.Title,
 
                 CogsTypeId = variant.CogsTypeId,
-                CogsPercentage = variant.CogsPercentage,
+                CogsMarginPercent = variant.CogsMarginPercent,
                 CogsAmount = variant.CogsAmount,
                 CogsCurrencyId = variant.CogsCurrencyId ?? shopCurrencyId,
                 CogsDetail = variant.CogsDetail??false,

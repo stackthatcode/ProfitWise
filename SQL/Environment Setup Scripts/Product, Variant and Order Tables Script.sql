@@ -72,7 +72,7 @@ CREATE TABLE `profitwisemastervariant` (
   `CogsTypeId` TINYINT NULL,			# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
   `CogsCurrencyId` INT NULL, 			# Numeric value representing the currency for the CoGS data for this variant
   `CogsAmount` DECIMAL(15, 2) NULL, 	# CoGS value for this variant
-  `CogsPercentage` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
+  `CogsMarginPercent` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
   
   `CogsDetail` TINYINT NOT NULL, 	# Is there detailed CoGS data (weighted average entries) for this variant?
   PRIMARY KEY (`PwMasterVariantId`,`PwShopId`)
@@ -192,7 +192,7 @@ CREATE TABLE `profitwisemastervariantcogsdetail` (
   `CogsTypeId` TINYINT NOT NULL,		# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
   `CogsCurrencyId` INT NULL, 			# Numeric value representing the currency for the CoGS data for this variant
   `CogsAmount` DECIMAL(15, 2) NULL, 	# CoGS value for this variant
-  `CogsPercentage` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
+  `CogsMargin` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
   
   PRIMARY KEY (`PwMasterVariantId`,`PwShopId`, `CogsDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
