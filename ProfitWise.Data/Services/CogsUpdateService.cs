@@ -27,7 +27,7 @@ namespace ProfitWise.Data.Services
             _currencyService = currencyService;
         }
 
-        public CogsUpdateContext MakeUpdateContext(
+        public CogsUpdateServiceContext MakeUpdateContext(
                 long? masterVariantId, long? masterProductId, PwCogsDetail defaults, IList<PwCogsDetail> details)
         {
             var defaultsWithConstraints =
@@ -40,7 +40,7 @@ namespace ProfitWise.Data.Services
                                         .AttachKeys(masterVariantId, masterProductId))
                             .ToList();
 
-            var context = new CogsUpdateContext
+            var context = new CogsUpdateServiceContext
             {
                 PwMasterVariantId = masterVariantId,
                 PwMasterProductId = masterProductId,
@@ -51,8 +51,7 @@ namespace ProfitWise.Data.Services
             return context;
         }
 
-
-        public void UpdateCogsForMasterVariant(CogsUpdateContext context)
+        public void UpdateCogsForMasterVariant(CogsUpdateServiceContext context)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
@@ -86,6 +85,25 @@ namespace ProfitWise.Data.Services
             }
         }
 
+        public IList<CogsUpdateOrderContext> MakeUpdateOrderContexts(CogsUpdateServiceContext input)
+        {
+            if (!input.HasDetails)
+            {
+                var output = new CogsUpdateOrderContext
+                {
+                    PwShop = this.PwShop,
+                    PwMasterVariantId = input.PwMasterVariantId,
+                    PwMasterProductId = input.PwMasterProductId,
+                    Cogs = input.Defaults,
+                    StartDate = null,
+                    EndDate = null,
+                };
+
+                return new[] {output};
+            }
+
+            throw new NotImplementedException();
+        }
 
 
         public void ApplyConstraintsToDetail(PwCogsDetail detail)

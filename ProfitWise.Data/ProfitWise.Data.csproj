@@ -74,11 +74,12 @@
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="Model\Cogs\CogsUpdateOrderContext.cs" />
     <Compile Include="Model\Cogs\PwCogsDetail.cs" />
     <Compile Include="Model\Cogs\CogsType.cs" />
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
-    <Compile Include="Model\Cogs\CogsUpdateContext.cs" />
+    <Compile Include="Model\Cogs\CogsUpdateServiceContext.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />

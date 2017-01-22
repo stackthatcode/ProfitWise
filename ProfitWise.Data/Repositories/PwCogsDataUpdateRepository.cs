@@ -3,6 +3,7 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
@@ -21,72 +22,64 @@ namespace ProfitWise.Data.Repositories
         }
 
         // Order Line CoGS propagation functions...
-        public void UpdateUnitCogsByFixedAmount(
-                long? pwMasterProductId = null, long? pwMasterVariantId = null)
+        public void UpdateUnitCogsByFixedAmount(CogsUpdateOrderContext context)
         {
-            if (pwMasterProductId == null && pwMasterVariantId == null)
+            if (context.PwMasterProductId == null && context.PwMasterVariantId == null)
             {
-                throw new ArgumentNullException("Both pwMasterProductId and pwMasterVariantId can't be null");
+                throw new ArgumentNullException("Both PwMasterProductId and PwMasterVariantId can't be null");
             }
 
             var query =
-                @"UPDATE profitwiseshop t0
-                    INNER JOIN profitwisemastervariant t1 
-		                ON t0.PwShopId = t1.PwShopId
+                @"UPDATE profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
 		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
 	                LEFT JOIN exchangerate t4
 		                ON Date(t3.OrderDate) = t4.`Date` 
-			                AND t4.SourceCurrencyId = t1.CogsCurrencyId
-			                AND t4.DestinationCurrencyId = t0.CurrencyId
-                SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0)) ";
+			                AND t4.SourceCurrencyId = @CogsCurrencyId
+			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
+                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) ";
 
-            var whereClause = " WHERE t0.PwShopId = @PwShopId ";
-            if (pwMasterProductId.HasValue)
+            var whereClause = " WHERE t1.PwShopId = @PwShopId ";
+            if (context.PwMasterProductId.HasValue)
             {
-                whereClause += "AND t1.PwMasterProductId = @pwMasterProductId ";
+                whereClause += "AND t1.PwMasterProductId = @PwMasterProductId ";
             }
-            if (pwMasterVariantId.HasValue)
+            if (context.PwMasterVariantId.HasValue)
             {
-                whereClause += "AND t1.PwMasterVariantId = @pwMasterVariantId ";
+                whereClause += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
             }
 
-            _connection.Execute(
-                query, new { PwShopId, pwMasterProductId, pwMasterVariantId });
+            _connection.Execute(query, context);
         }
 
-        public void UpdateUnitCogsByPercentage(
-        long? pwMasterProductId = null, long? pwMasterVariantId = null)
+        public void UpdateUnitCogsByPercentage(CogsUpdateOrderContext context)
         {
-            if (pwMasterProductId == null && pwMasterVariantId == null)
+            if (context.PwMasterProductId == null && context.PwMasterVariantId == null)
             {
-                throw new ArgumentNullException("Both pwMasterProductId and pwMasterVariantId can't be null");
+                throw new ArgumentNullException("Both PwMasterProductId and PwMasterVariantId can't be null");
             }
 
             var query =
-                @"UPDATE profitwiseshop t0
-                    INNER JOIN profitwisemastervariant t1 
-		                ON t0.PwShopId = t1.PwShopId
+                @"UPDATE profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
-		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	                
-                SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0)) ";
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	               
+                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) ";
 
-            var whereClause = " WHERE t0.PwShopId = @PwShopId ";
-            if (pwMasterProductId.HasValue)
+            var whereClause = " WHERE t1.PwShopId = @PwShopId ";
+            if (context.PwMasterProductId.HasValue)
             {
-                whereClause += "AND t1.PwMasterProductId = @pwMasterProductId ";
+                whereClause += "AND t1.PwMasterProductId = @PwMasterProductId ";
             }
-            if (pwMasterVariantId.HasValue)
+            if (context.PwMasterVariantId.HasValue)
             {
-                whereClause += "AND t1.PwMasterVariantId = @pwMasterVariantId ";
+                whereClause += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
             }
 
-            _connection.Execute(
-                query, new { PwShopId, pwMasterProductId, pwMasterVariantId });
+            _connection.Execute(query, context);
         }
 
         // Report Entry query

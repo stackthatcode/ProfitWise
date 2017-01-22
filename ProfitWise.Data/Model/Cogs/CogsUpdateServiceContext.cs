@@ -2,7 +2,7 @@
 
 namespace ProfitWise.Data.Model.Cogs
 {
-    public class CogsUpdateContext
+    public class CogsUpdateServiceContext
     {
         public long? PwMasterProductId { get; set; }
         public long? PwMasterVariantId { get; set; }

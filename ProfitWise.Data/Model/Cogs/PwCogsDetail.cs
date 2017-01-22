@@ -14,14 +14,16 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal? CogsAmount { get; set; }
         public decimal? CogsPercentage { get; set; }
 
+
         public PwCogsDetail CloneWithConstraints(Action<PwCogsDetail> constraint)
         {
             var output = new PwCogsDetail
             {
+                PwShopId = this.PwShopId,
+
                 PwMasterVariantId = this.PwMasterVariantId,
                 PwMasterProductId = this.PwMasterProductId,
 
-                PwShopId = this.PwShopId,
                 CogsDate = this.CogsDate,
                 CogsTypeId = this.CogsTypeId,
                 CogsAmount = this.CogsAmount,
