@@ -117,7 +117,7 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
             var repository = _multitenantFactory.MakeProductRepository(shop);
-            var cogsRepository = _multitenantFactory.MakeCogsRepository(shop);
+            var cogsRepository = _multitenantFactory.MakeCogsEntryRepository(shop);
 
             using (var transaction = repository.InitiateTransaction())
             {

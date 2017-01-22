@@ -12,7 +12,8 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwProductRepository> _productRepositoryFactory;
         private readonly Func<PwVariantRepository> _variantRepositoryFactory;
         private readonly Func<CatalogBuilderService> _productVariantServiceFactory;
-        private readonly Func<PwCogsRepository> _cogsRepositoryFactory;
+        private readonly Func<PwCogsEntryRepository> _cogsEntryRepositoryFactory;
+        private readonly Func<PwCogsDataUpdateRepository> _cogsDataUpdateRepositoryFactory;
         private readonly Func<PwPickListRepository> _pickListRepositoryFactory;
         private readonly Func<PwReportRepository> _reportRepositoryFactory;
         private readonly Func<PwReportFilterRepository> _filterRepositoryFactory;
@@ -25,25 +26,26 @@ namespace ProfitWise.Data.Factories
             Func<PwProductRepository> productRepositoryFactory,
             Func<PwVariantRepository> variantRepositoryFactory,
             Func<CatalogBuilderService> productVariantServiceFactory,
-            Func<PwCogsRepository> cogsRepositoryFactory, 
+            Func<PwCogsEntryRepository> cogsEntryRepositoryFactory, 
             Func<PwPickListRepository> pickListRepositoryFactory,
             Func<PwReportRepository> reportRepositoryFactory, 
             Func<PwReportFilterRepository> filterRepositoryFactory, 
             Func<PwReportQueryRepository> reportQueryRepositoryFactory,
-            Func<CogsUpdateService> orderCogsUpdateServiceFactory
-            )
+            Func<CogsUpdateService> orderCogsUpdateServiceFactory, 
+            Func<PwCogsDataUpdateRepository> cogsDataUpdateRepositoryFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
             _productRepositoryFactory = productRepositoryFactory;
             _variantRepositoryFactory = variantRepositoryFactory;
             _productVariantServiceFactory = productVariantServiceFactory;
-            _cogsRepositoryFactory = cogsRepositoryFactory;
+            _cogsEntryRepositoryFactory = cogsEntryRepositoryFactory;
             _pickListRepositoryFactory = pickListRepositoryFactory;
             _reportRepositoryFactory = reportRepositoryFactory;
             _filterRepositoryFactory = filterRepositoryFactory;
             _reportQueryRepositoryFactory = reportQueryRepositoryFactory;
             _orderCogsUpdateServiceFactory = orderCogsUpdateServiceFactory;
+            _cogsDataUpdateRepositoryFactory = cogsDataUpdateRepositoryFactory;
         }
 
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
@@ -80,9 +82,16 @@ namespace ProfitWise.Data.Factories
             return service;
         }
 
-        public virtual PwCogsRepository MakeCogsRepository(PwShop shop)
+        public virtual PwCogsEntryRepository MakeCogsEntryRepository(PwShop shop)
         {
-            var repository = _cogsRepositoryFactory();
+            var repository = _cogsEntryRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual PwCogsDataUpdateRepository MakeCogsDataUpdateRepository(PwShop shop)
+        {
+            var repository = _cogsDataUpdateRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }

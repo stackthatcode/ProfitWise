@@ -31,7 +31,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Products()
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
             
             var model = new EditProductCogsModel()
             {
@@ -45,12 +45,13 @@ namespace ProfitWise.Web.Controllers
         public ActionResult CogsDetail(long? pwMasterVariantId)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             var masterVariant = cogsRepository.RetrieveVariant(pwMasterVariantId.Value);
 
             var defaults = new PwCogsDetail
             {
+                PwShopId = userIdentity.PwShop.PwShopId,
                 PwMasterVariantId = pwMasterVariantId.Value,
                 CogsCurrencyId = masterVariant.CogsCurrencyId,
                 CogsTypeId = masterVariant.CogsTypeId,
@@ -70,12 +71,13 @@ namespace ProfitWise.Web.Controllers
             return View(model);
         }
 
-
         [HttpGet]
         public ActionResult BulkEditCogs(int pwMasterProductId)
         {            
             return View(RetrieveProduct(pwMasterProductId));
         }
+
+
         
         [HttpGet]
         public ActionResult StockedPicklistPopup(int pickListId)
@@ -110,7 +112,7 @@ namespace ProfitWise.Web.Controllers
         private PwCogsProductSummary RetrieveProduct(int pwMasterProductId)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             var product = cogsRepository.RetrieveProduct(pwMasterProductId);
             product.Variants = cogsRepository.RetrieveVariants(new List<long> { pwMasterProductId });

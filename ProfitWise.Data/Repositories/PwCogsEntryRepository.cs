@@ -5,19 +5,17 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
-using ProfitWise.Data.Model;
-using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopRequired))]
-    public class PwCogsRepository : IShopFilter
+    public class PwCogsEntryRepository : IShopFilter
     {
         private readonly MySqlConnection _connection;
 
-        public PwCogsRepository(MySqlConnection connection)
+        public PwCogsEntryRepository(MySqlConnection connection)
         {
             _connection = connection;
         }
@@ -243,6 +241,11 @@ namespace ProfitWise.Data.Repositories
                 long? masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, 
                 decimal? cogsPercentage, bool cogsDetail)
         {
+            if (cogsTypeId != CogsType.FixedAmount && cogsTypeId != CogsType.MarginPercentage)
+            {
+                throw new ArgumentException("Invalid cogstypeId");
+            }
+
             var query =
                 @"UPDATE profitwisemastervariant
                 SET CogsCurrencyId = @cogsCurrencyId, 
@@ -320,6 +323,10 @@ namespace ProfitWise.Data.Repositories
 
         public void InsertCogsDetails(PwCogsDetail detail)
         {
+            if (detail.CogsTypeId != CogsType.FixedAmount && detail.CogsTypeId != CogsType.MarginPercentage)
+            {
+                throw new ArgumentException("Invalid CogsTypeId");
+            }
             detail.PwShopId = this.PwShopId;
             var query = 
                 @"INSERT INTO profitwisemastervariantcogsdetail 
@@ -330,41 +337,6 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        // Order Line CoGS propagation functions...
-        public void UpdateOrderLineUnitCogs(
-                bool onlyNullUnitCogs, long? masterProductId = null, long? masterVariantId = null)
-        {
-            var query =
-                @"UPDATE profitwiseshop t0
-                    INNER JOIN profitwisemastervariant t1 
-		                ON t0.PwShopId = t1.PwShopId
-	                INNER JOIN profitwisevariant t2
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
-	                INNER JOIN shopifyorderlineitem t3
-		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-	                LEFT JOIN exchangerate t4
-		                ON Date(t3.OrderDate) = t4.`Date` 
-			                AND t4.SourceCurrencyId = t1.CogsCurrencyId
-			                AND t4.DestinationCurrencyId = t0.CurrencyId
-                SET t3.UnitCogs = (t1.CogsAmount * IFNULL(t4.Rate, 0))
-                WHERE t0.PwShopId = 100001 ";
-
-            if (onlyNullUnitCogs)
-            {
-                query += "AND t3.UnitCogs IS NULL ";
-            }
-            if (masterProductId.HasValue)
-            {
-                query += "AND t1.PwMasterProductId = @PwMasterProductId ";
-            }
-            if (masterVariantId.HasValue)
-            {
-                query += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
-            }
-
-            _connection.Execute(
-                query, new { PwShopId, PwMasterProductId = masterProductId, PwMasterVariantId = masterVariantId });
-        }
     }
 }
 

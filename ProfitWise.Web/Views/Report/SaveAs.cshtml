@@ -1,7 +1,8 @@
-﻿@using Push.Foundation.Web.Json
+﻿@using ProfitWise.Web.Attributes
+@using Push.Foundation.Web.Json
 @model ProfitWise.Web.Models.SaveAsModel
 @{
-    ViewBag.CommonContext.PageTitle = "Report Save As";
+    Context.PullCommonContext().PageTitle = "Report Save As";
     Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
 }
 

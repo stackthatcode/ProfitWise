@@ -218,7 +218,7 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var catalogBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
-            var cogsRepository = _multitenantFactory.MakeCogsRepository(shop);
+            var cogsRepository = _multitenantFactory.MakeCogsEntryRepository(shop);
             var queryReposity = _multitenantFactory.MakeReportQueryRepository(shop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
@@ -241,8 +241,11 @@ namespace ProfitWise.Data.ProcessSteps
                     WriteOrderToPersistence(importedOrder, context);
                 }
 
-                cogsRepository.UpdateOrderLineUnitCogs(true);
-                queryReposity.RefreshReportEntryData();
+                // TODO - need something specific to these Orders
+                //cogsRepository.UpdateOrderLineUnitCogs(true);
+                //queryReposity.RefreshReportEntryData();
+
+
                 trans.Commit();
             }
         }

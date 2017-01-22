@@ -4,7 +4,8 @@ namespace ProfitWise.Data.Model.Cogs
 {
     public class PwCogsDetail
     {
-        public long PwMasterVariantId { get; set; }
+        public long? PwMasterVariantId { get; set; }
+        public long? PwMasterProductId { get; set; }
         public long PwShopId { get; set; }
         public DateTime CogsDate { get; set; }
 
@@ -18,6 +19,8 @@ namespace ProfitWise.Data.Model.Cogs
             var output = new PwCogsDetail
             {
                 PwMasterVariantId = this.PwMasterVariantId,
+                PwMasterProductId = this.PwMasterProductId,
+
                 PwShopId = this.PwShopId,
                 CogsDate = this.CogsDate,
                 CogsTypeId = this.CogsTypeId,
@@ -28,6 +31,13 @@ namespace ProfitWise.Data.Model.Cogs
 
             constraint(output);
             return output;
+        }
+
+        public PwCogsDetail AttachKeys(long? pwMasterVariantId, long? pwMasterProductId)
+        {
+            this.PwMasterVariantId = pwMasterVariantId;
+            this.PwMasterProductId = pwMasterProductId;
+            return this;
         }
     }
 }

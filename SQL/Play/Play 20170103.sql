@@ -176,14 +176,16 @@ DELETE FROM profitwisemastervariantcogsdetail;
 
 SELECT * FROM profitwisemastervariantcogsdetail;
 
+SELECT * FROM profitwisemastervariant
+
+SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 126;
+
+UPDATE profitwisemastervariant SET CogsTypeId = 1, CogsAmount = 0;
 
 
-SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 17;
+SELECT * FROM profitwisemastervariant;
 
-
-
-SELECT * FROM exchangerate;
-
+SELECT * FROM profitwiseprofitreportentry;
 
 
 

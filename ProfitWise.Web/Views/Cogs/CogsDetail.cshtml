@@ -206,7 +206,8 @@
             if (self.ValidationMessage()) {
                 return;
             }
-
+            
+            var defaults = self.DefaultEditorModel.PullState();
             var details =
                 AQ(self.CogsDetail())
                     .select(function (item) {
@@ -218,7 +219,7 @@
 
             var data = {
                 pwMasterVariantId: self.PwMasterVariantId(),
-                defaults: self.DefaultEditorModel.PullState(),
+                defaults: defaults,
                 details: details,
             };
 
@@ -226,7 +227,7 @@
                 function () {
                     var settings = new ProfitWiseFunctions.AjaxSettings(true);
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpPost("/CogsService/UpdateSimpleCogs", data, this);
+                    ajax.HttpPost("/CogsService/UpdateCogsDetails", data, this);
                 },
                 function () {
                     ShopifyApp.Modal.close({ result: true });

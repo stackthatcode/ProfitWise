@@ -61,7 +61,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult RetrieveResults(SearchResultSelection resultSelection)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
             var recordCount = pickListRepository.Count(resultSelection.PickListId);
 
@@ -90,7 +90,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var shopCurrencyId = userIdentity.PwShop.CurrencyId;
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             var masterProductSummary = cogsRepository.RetrieveProduct(pwMasterProductId);
             if (masterProductSummary == null)
@@ -117,7 +117,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult StockedDirectlyByPickList(long pickListId, bool newValue)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateStockedDirectlyByPicklist(pickListId, newValue);
             return JsonNetResult.Success();
@@ -127,7 +127,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult StockedDirectlyByMasterProductId(long pwMasterProductId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateStockedDirectlyByMasterProductId(pwMasterProductId, value);
             return JsonNetResult.Success();
@@ -137,7 +137,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult ExcludeByPickList(long pickListId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateExcludeByPicklist(pickListId, value);
             return JsonNetResult.Success();
@@ -147,7 +147,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult ExcludeByMasterProductId(long pwMasterProductId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateExcludeByMasterProductId(pwMasterProductId, value);
             return JsonNetResult.Success();
@@ -157,7 +157,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult ExcludeByMasterVariantId(long pwMasterVariantId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateExcludeByMasterVariantId(pwMasterVariantId, value);
             return JsonNetResult.Success();
@@ -167,7 +167,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult StockedDirectlyByMasterVariantId(long pwMasterVariantId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateStockedDirectlyByMasterVariantId(pwMasterVariantId, value);
             return JsonNetResult.Success();
@@ -180,7 +180,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult BulkUpdateCogs(long pwMasterProductId, int currencyId, decimal amount)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             // TODO => Revisit
             //ValidateCogsByAmounts(currencyId, amount);

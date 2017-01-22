@@ -123,6 +123,7 @@
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
+    <Compile Include="Repositories\PwCogsDataUpdateRepository.cs" />
     <Compile Include="Repositories\SystemStateRepository.cs" />
     <Compile Include="Repositories\PwReportQueryRepository.cs" />
     <Compile Include="Repositories\PwReportFilterRepository.cs" />
@@ -135,7 +136,7 @@
     <Compile Include="ProcessSteps\OrderRefreshStep.cs" />
     <Compile Include="ProcessSteps\ProductCleanupStep.cs" />
     <Compile Include="Repositories\CurrencyRepository.cs" />
-    <Compile Include="Repositories\PwCogsRepository.cs" />
+    <Compile Include="Repositories\PwCogsEntryRepository.cs" />
     <Compile Include="Repositories\PwReportRepository.cs" />
     <Compile Include="Services\CurrencyService.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRepository.cs" />

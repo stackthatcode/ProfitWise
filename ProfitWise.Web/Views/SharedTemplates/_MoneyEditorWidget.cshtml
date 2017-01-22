@@ -67,12 +67,16 @@
 
         self.SelectedCurrency = ko.computed(function() {
             return AQ(ProfitWiseFunctions.CurrencyCache)
-                .first(function (item) {
+                .firstOrDefault(function (item) {
                     return item.Id == self.CurrencyId();
                 });
         });
         
         self.SelectedCurrencyFriendly = ko.computed(function () {
+            if (self.SelectedCurrency() == null )
+            {
+                return "";
+            }
             return self.SelectedCurrency().Abbr + " (" + self.SelectedCurrency().Symbol + ")";
         });
 
