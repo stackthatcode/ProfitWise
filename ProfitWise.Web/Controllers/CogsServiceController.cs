@@ -86,23 +86,23 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult RetrieveMasterProduct(long masterProductId)
+        public ActionResult RetrieveMasterProduct(long pwMasterProductId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var shopCurrencyId = userIdentity.PwShop.CurrencyId;
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            var masterProductSummary = cogsRepository.RetrieveProduct(masterProductId);
+            var masterProductSummary = cogsRepository.RetrieveProduct(pwMasterProductId);
             if (masterProductSummary == null)
             {
                 return new JsonNetResult(new { MasterProduct = (CogsMasterProductModel)null });
             }
 
-            var masterVariants = cogsRepository.RetrieveVariants(new[] { masterProductId });
+            var masterVariants = cogsRepository.RetrieveVariants(new[] { pwMasterProductId });
 
             var masterProduct = new CogsMasterProductModel()
             {
-                MasterProductId = masterProductSummary.PwMasterProductId,
+                PwMasterProductId = masterProductSummary.PwMasterProductId,
                 Title = masterProductSummary.Title,
             };
             masterProduct.MasterVariants =
@@ -124,12 +124,12 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult StockedDirectlyByMasterProductId(long masterProductId, bool value)
+        public ActionResult StockedDirectlyByMasterProductId(long pwMasterProductId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            cogsRepository.UpdateStockedDirectlyByMasterProductId(masterProductId, value);
+            cogsRepository.UpdateStockedDirectlyByMasterProductId(pwMasterProductId, value);
             return JsonNetResult.Success();
         }
 
@@ -144,32 +144,32 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ExcludeByMasterProductId(long masterProductId, bool value)
+        public ActionResult ExcludeByMasterProductId(long pwMasterProductId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            cogsRepository.UpdateExcludeByMasterProductId(masterProductId, value);
+            cogsRepository.UpdateExcludeByMasterProductId(pwMasterProductId, value);
             return JsonNetResult.Success();
         }
 
         [HttpPost]
-        public ActionResult ExcludeByMasterVariantId(long masterVariantId, bool value)
+        public ActionResult ExcludeByMasterVariantId(long pwMasterVariantId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            cogsRepository.UpdateExcludeByMasterVariantId(masterVariantId, value);
+            cogsRepository.UpdateExcludeByMasterVariantId(pwMasterVariantId, value);
             return JsonNetResult.Success();
         }
 
         [HttpPost]
-        public ActionResult StockedDirectlyByMasterVariantId(long masterVariantId, bool value)
+        public ActionResult StockedDirectlyByMasterVariantId(long pwMasterVariantId, bool value)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            cogsRepository.UpdateStockedDirectlyByMasterVariantId(masterVariantId, value);
+            cogsRepository.UpdateStockedDirectlyByMasterVariantId(pwMasterVariantId, value);
             return JsonNetResult.Success();
         }
 
@@ -177,7 +177,7 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult BulkUpdateCogs(long masterProductId, int currencyId, decimal amount)
+        public ActionResult BulkUpdateCogs(long pwMasterProductId, int currencyId, decimal amount)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
@@ -185,7 +185,7 @@ namespace ProfitWise.Web.Controllers
             // TODO => Revisit
             //ValidateCogsByAmounts(currencyId, amount);
 
-            cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
+            cogsRepository.UpdateProductCogsAllVariants(pwMasterProductId, currencyId, amount);
             return JsonNetResult.Success();
         }
 
@@ -201,11 +201,11 @@ namespace ProfitWise.Web.Controllers
 
         [HttpPost]
         public ActionResult UpdateCogsDetails(
-                long? masterVariantId, long? masterProductId, PwCogsDetail defaults, List<PwCogsDetail> details)
+                long? pwMasterVariantId, long? pwMasterProductId, PwCogsDetail defaults, List<PwCogsDetail> details)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsService = _factory.MakeCogsUpdateService(userIdentity.PwShop);
-            var context = cogsService.MakeUpdateContext(masterVariantId, masterProductId, defaults, details);
+            var context = cogsService.MakeUpdateContext(pwMasterVariantId, pwMasterProductId, defaults, details);
             cogsService.UpdateCogsForMasterVariant(context);
             return JsonNetResult.Success();
         }

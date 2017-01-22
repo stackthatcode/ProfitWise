@@ -42,39 +42,39 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult CogsDetail(long? masterVariantId)
+        public ActionResult CogsDetail(long? pwMasterVariantId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            var masterVariant = cogsRepository.RetrieveVariant(masterVariantId.Value);
+            var masterVariant = cogsRepository.RetrieveVariant(pwMasterVariantId.Value);
 
             var defaults = new PwCogsDetail
             {
-                PwMasterVariantId = masterVariantId.Value,
+                PwMasterVariantId = pwMasterVariantId.Value,
                 CogsCurrencyId = masterVariant.CogsCurrencyId,
                 CogsTypeId = masterVariant.CogsTypeId,
                 CogsPercentage = masterVariant.CogsPercentage,
                 CogsAmount = masterVariant.CogsAmount,
                
             };
-            var details = cogsRepository.RetrieveCogsDetail(masterVariantId);
+            var details = cogsRepository.RetrieveCogsDetail(pwMasterVariantId);
 
             var model = new CogsDetailModel
             {
                 Defaults = defaults,
                 Details = details,
                 DateDefault = DateTime.Today,
-                MasterVariantId = masterVariantId,
+                PwMasterVariantId = pwMasterVariantId,
             };
             return View(model);
         }
 
 
         [HttpGet]
-        public ActionResult BulkEditCogs(int masterProductId)
+        public ActionResult BulkEditCogs(int pwMasterProductId)
         {            
-            return View(RetrieveProduct(masterProductId));
+            return View(RetrieveProduct(pwMasterProductId));
         }
         
         [HttpGet]
@@ -84,9 +84,9 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult StockedProductPopup(int masterProductId)
+        public ActionResult StockedProductPopup(int pwMasterProductId)
         {
-            return View(RetrieveProduct(masterProductId));
+            return View(RetrieveProduct(pwMasterProductId));
         }
 
         [HttpGet]
@@ -96,9 +96,9 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult ExcludedProductPopup(int masterProductId)
+        public ActionResult ExcludedProductPopup(int pwMasterProductId)
         {
-            return View(RetrieveProduct(masterProductId));
+            return View(RetrieveProduct(pwMasterProductId));
         }
 
         [HttpGet]
@@ -107,13 +107,13 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { Success = true });
         }
 
-        private PwCogsProductSummary RetrieveProduct(int masterProductId)
+        private PwCogsProductSummary RetrieveProduct(int pwMasterProductId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
 
-            var product = cogsRepository.RetrieveProduct(masterProductId);
-            product.Variants = cogsRepository.RetrieveVariants(new List<long> { masterProductId });
+            var product = cogsRepository.RetrieveProduct(pwMasterProductId);
+            product.Variants = cogsRepository.RetrieveVariants(new List<long> { pwMasterProductId });
             product.PopulateNormalizedCogsAmount(_currencyService, userIdentity.PwShop.CurrencyId);
 
             return product;

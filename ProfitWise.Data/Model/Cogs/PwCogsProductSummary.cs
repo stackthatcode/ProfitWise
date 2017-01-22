@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Services;
 
 

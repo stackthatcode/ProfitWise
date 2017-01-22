@@ -7,7 +7,7 @@ namespace ProfitWise.Web.Models
     // TODO - this is an entirely unnecessary structure - do away with it!
     public class CogsProductGridModel
     {
-        public long MasterProductId { get; set; }
+        public long PwMasterProductId { get; set; }
         public string Vendor { get; set; }
         public string ProductTitle { get; set; }
         public int InventoryCount { get; set; }
@@ -37,7 +37,7 @@ namespace ProfitWise.Web.Models
             {
                 output.Add(new CogsProductGridModel()
                 {
-                    MasterProductId = product.PwMasterProductId,
+                    PwMasterProductId = product.PwMasterProductId,
                     ProductTitle = product.Title,
                     Vendor = product.Vendor,
                     Price = new MoneyRange

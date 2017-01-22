@@ -25,7 +25,7 @@
 </div>
 
 <script>
-    var masterProductId = @Model.PwMasterProductId;
+    var pwMasterProductId = @Model.PwMasterProductId;
     var productTitle = '@Model.Title';
     var variantCount = @Model.Variants.Count;
 
@@ -36,7 +36,7 @@
             ProfitWise.StockedDirectlyModel = function() {
                 var self = this;
 
-                self.MasterProductId = ko.observable();
+                self.PwMasterProductId = ko.observable();
                 self.ProductTitle = ko.observable();
                 self.VariantCount = ko.observable();
                 
@@ -52,7 +52,7 @@
                     var settings = new ProfitWiseFunctions.AjaxSettings(true);
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
                     var data = {
-                        masterProductId: self.MasterProductId(),
+                        pwMasterProductId: self.PwMasterProductId(),
                         value: value,
                     };
 
@@ -65,7 +65,7 @@
 
             var model = new ProfitWise.StockedDirectlyModel();
             
-            model.MasterProductId(masterProductId);
+            model.PwMasterProductId(pwMasterProductId);
             model.ProductTitle(productTitle);
             model.VariantCount(variantCount);
 

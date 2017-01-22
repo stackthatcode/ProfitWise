@@ -9,13 +9,13 @@ namespace ProfitWise.Web.Models
     public class CogsMasterProductModel
     {
         public string Title { get; set; }
-        public long MasterProductId { get; set; }
+        public long PwMasterProductId { get; set; }
         public List<CogsMasterVariantModel> MasterVariants { get; set; }
     }
 
     public class CogsMasterVariantModel
     {
-        public long MasterVariantId { get; set; }
+        public long PwMasterVariantId { get; set; }
         public string Title { get; set; }
         public string Sku { get; set; }
         public int Inventory { get; set; }
@@ -35,7 +35,7 @@ namespace ProfitWise.Web.Models
         {
             return new CogsMasterVariantModel()
             {
-                MasterVariantId = variant.PwMasterVariantId,
+                PwMasterVariantId = variant.PwMasterVariantId,
                 Title = variant.Title,
 
                 CogsTypeId = variant.CogsTypeId,

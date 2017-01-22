@@ -158,8 +158,8 @@
     ProfitWiseWidgets.CogsDetailModel = function (jsDefaultDate) {
         var self = this;
 
-        self.MasterVariantId = ko.observable();
-        self.MasterProductId = ko.observable();
+        self.PwMasterVariantId = ko.observable();
+        self.PwMasterProductId = ko.observable();
         self.CogsDetail = ko.observableArray();
 
         self.LoadCogsDetail = function (defaults, details) {
@@ -217,7 +217,7 @@
                     .toArray();
 
             var data = {
-                masterVariantId: self.MasterVariantId(),
+                pwMasterVariantId: self.PwMasterVariantId(),
                 defaults: self.DefaultEditorModel.PullState(),
                 details: details,
             };
@@ -260,7 +260,7 @@
             var defaultDate = data.DateDefault.parseToJavascriptDate();
 
             var model = new ProfitWiseWidgets.CogsDetailModel(defaultDate);
-            model.MasterVariantId(data.MasterVariantId);
+            model.PwMasterVariantId(data.PwMasterVariantId);
             model.LoadCogsDetail(data.Defaults, data.Details);
             ko.applyBindings(model);
 

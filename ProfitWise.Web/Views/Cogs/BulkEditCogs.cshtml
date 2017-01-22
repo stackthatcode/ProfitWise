@@ -78,7 +78,7 @@
             ProfitWise.BulkEditProductVariantCogsModel = function() {
                 var self = this;
 
-                self.MasterProductId = ko.observable();
+                self.PwMasterProductId = ko.observable();
                 self.ProductTitle = ko.observable();
                 self.CurrentCogsRange = ko.observable();
                 
@@ -93,7 +93,7 @@
                     var cogsAmount = self.CogsAmountEditorModel.PullState();
 
                     var postData = {
-                        masterProductId: self.MasterProductId(),
+                        pwMasterProductId: self.PwMasterProductId(),
                         currencyId: cogsAmount.CurrencyId,
                         Amount: cogsAmount.Amount,
                     };
@@ -122,7 +122,7 @@
             var model = new ProfitWise.BulkEditProductVariantCogsModel();
 
             // Load Product data into the model
-            model.MasterProductId(data.PwMasterProductId);
+            model.PwMasterProductId(data.PwMasterProductId);
             model.ProductTitle(data.Title);
 
             // Load the Cogs Range model

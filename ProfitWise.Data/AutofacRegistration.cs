@@ -19,6 +19,7 @@ namespace ProfitWise.Data
             builder.RegisterType<ExecutionTime>();
 
             builder.RegisterType<MultitenantFactory>();
+
             builder.RegisterType<ShopifyOrderRepository>();
             builder.RegisterType<PwShopRepository>();
             builder.RegisterType<PwBatchStateRepository>();
@@ -43,7 +44,8 @@ namespace ProfitWise.Data
             builder.RegisterType<CatalogBuilderService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<CurrencyService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ShopSynchronizationService>().EnableClassInterceptorsWithRegistry(registry);
-            
+            builder.RegisterType<CogsUpdateService>().EnableClassInterceptorsWithRegistry(registry);
+
             builder.RegisterType<RefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<CurrencyProcess>().EnableClassInterceptorsWithRegistry(registry);
 

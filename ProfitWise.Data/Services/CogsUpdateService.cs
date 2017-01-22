@@ -33,11 +33,11 @@ namespace ProfitWise.Data.Services
 
             var defaultsWithConstraints = defaults.CloneWithConstraints(ApplyConstraintsToDetail);
             var detailsWithConstraints =
-                    details.Select(x => x.CloneWithConstraints(ApplyConstraintsToDetail)).ToList();
+                    details?.Select(x => x.CloneWithConstraints(ApplyConstraintsToDetail)).ToList();
 
             var context = new CogsUpdateContext
             {
-                MasterVariantId = masterVariantId,                
+                PwMasterVariantId = masterVariantId,                
                 Defaults = defaultsWithConstraints,
                 Details = detailsWithConstraints,
             };
@@ -58,12 +58,12 @@ namespace ProfitWise.Data.Services
                 // Save the Detail Entries
                 if (context.HasDetails)
                 {
-                    cogsRepository.DeleteCogsDetail(context.MasterVariantId);
+                    cogsRepository.DeleteCogsDetail(context.PwMasterVariantId);
 
                     foreach (var detail in context.Details)
                     {
                         var detailWithConstraints = detail.CloneWithConstraints(ApplyConstraintsToDetail);
-                        detailWithConstraints.PwMasterVariantId = context.MasterVariantId.Value;
+                        detailWithConstraints.PwMasterVariantId = context.PwMasterVariantId.Value;
                         cogsRepository.InsertCogsDetails(detailWithConstraints);
                     }
                 }

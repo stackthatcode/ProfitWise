@@ -140,7 +140,7 @@
                 <a href="#" data-bind="text: ProductTitle, click: $root.ShowVariantCogsEditor"></a>
 
                 <!-- Debug mode -->
-                <div>Master Product ID: <span data-bind="text: MasterProductId"></span></div>
+                <div>Master Product ID: <span data-bind="text: PwMasterProductId"></span></div>
             </td>
             
             <td>
@@ -248,7 +248,7 @@
         self.BulkEditPopUp = function (model) {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/Cogs/BulkEditCogs?masterProductId=' + model.MasterProductId;
+                    '/Cogs/BulkEditCogs?pwMasterProductId=' + model.PwMasterProductId;
 
             ProfitWiseShopify.LaunchModal({
                 src: url,
@@ -280,7 +280,7 @@
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             var data = {
-                masterProductId: model.MasterProductId,
+                pwMasterProductId: model.PwMasterProductId,
                 value: !self.StockedDirectlyIsChecked(model),
             };
 
@@ -290,7 +290,7 @@
         self.StockedDirectlyGridLinkClick = function (model) {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/Cogs/StockedProductPopup?masterProductId=' + model.MasterProductId;
+                    '/Cogs/StockedProductPopup?pwMasterProductId=' + model.PwMasterProductId;
 
             ProfitWiseShopify.LaunchModal({
                 src: url,
@@ -323,7 +323,7 @@
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             var data = {
-                masterProductId: model.MasterProductId,
+                pwMasterProductId: model.PwMasterProductId,
                 value: !self.ExcludedIsChecked(model),
             };
 
@@ -333,7 +333,7 @@
         self.ExcludedGridLinkClick = function (model) {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/Cogs/ExcludedProductPopup?masterProductId=' + model.MasterProductId;
+                    '/Cogs/ExcludedProductPopup?pwMasterProductId=' + model.PwMasterProductId;
 
             ProfitWiseShopify.LaunchModal({
                 src: url,
@@ -387,7 +387,7 @@
                 resultsPaging,
                 function (data) {
                     self.CurrentGrid.removeAll();
-                    
+                    console.log(data);
                     if (data.products.length == 0) {
                         self.ShowNoProductsFound(true);
                     } else {
@@ -424,8 +424,8 @@
 
         self.ShowVariantCogsEditor = function(model) {
             self.LastScrollTop = $(document).scrollTop();
-            self.EditProductId(model.MasterProductId);
-            self.ProductVariantEditorModel.RetrieveMasterProduct(model.MasterProductId);
+            self.EditProductId(model.PwMasterProductId);
+            self.ProductVariantEditorModel.RetrieveMasterProduct(model.PwMasterProductId);
             $('html,body').animate({ scrollTop: 0 });
         };
 
