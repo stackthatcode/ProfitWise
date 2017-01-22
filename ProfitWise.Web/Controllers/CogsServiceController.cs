@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
-using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -21,14 +19,13 @@ namespace ProfitWise.Web.Controllers
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
 
-        public CogsServiceController(
-                MultitenantFactory factory, 
-                CurrencyService currencyService)
+        public CogsServiceController(MultitenantFactory factory, CurrencyService currencyService)
         {
             _factory = factory;
             _currencyService = currencyService;
         }
         
+
         [HttpPost]
         public ActionResult Search(CogsSearchParameters parameters)
         {
@@ -88,21 +85,34 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { products = model, totalRecords = recordCount });
         }
 
-        [HttpPost]
-        public ActionResult BulkUpdateCogs(long masterProductId, int currencyId, decimal amount)
+        [HttpGet]
+        public ActionResult RetrieveMasterProduct(long masterProductId)
         {
             var userIdentity = HttpContext.PullIdentity();
+            var shopCurrencyId = userIdentity.PwShop.CurrencyId;
             var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
-            
-            // TODO => Revisit
-            //ValidateCogsByAmounts(currencyId, amount);
 
-            cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
-            return JsonNetResult.Success();
+            var masterProductSummary = cogsRepository.RetrieveProduct(masterProductId);
+            if (masterProductSummary == null)
+            {
+                return new JsonNetResult(new { MasterProduct = (CogsMasterProductModel)null });
+            }
+
+            var masterVariants = cogsRepository.RetrieveVariants(new[] { masterProductId });
+
+            var masterProduct = new CogsMasterProductModel()
+            {
+                MasterProductId = masterProductSummary.PwMasterProductId,
+                Title = masterProductSummary.Title,
+            };
+            masterProduct.MasterVariants =
+                masterVariants.Select(x => CogsMasterVariantModel.Build(x, shopCurrencyId)).ToList();
+
+            return new JsonNetResult(new { MasterProduct = masterProduct });
         }
 
 
-
+        // Stocked Directly and Exclude functions
         [HttpPost]
         public ActionResult StockedDirectlyByPickList(long pickListId, bool newValue)
         {
@@ -143,147 +153,6 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
-
-        // Returns PwCogsProduct
-        [HttpGet]
-        public ActionResult RetrieveMasterProduct(long masterProductId)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var shopCurrencyId = userIdentity.PwShop.CurrencyId;
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
-
-            var masterProductSummary = cogsRepository.RetrieveProduct(masterProductId);
-            if (masterProductSummary == null)
-            {
-                return new JsonNetResult(new { MasterProduct = (CogsMasterProductModel)null });
-            }
-
-            var masterVariants = cogsRepository.RetrieveVariants(new[] { masterProductId });
-
-            var masterProduct = new CogsMasterProductModel()
-            {
-                MasterProductId = masterProductSummary.PwMasterProductId,
-                Title = masterProductSummary.Title,
-            };
-            masterProduct.MasterVariants = 
-                masterVariants.Select(x => CogsMasterVariantModel.Build(x, shopCurrencyId)).ToList();
-
-            return new JsonNetResult(new { MasterProduct = masterProduct });
-        }
-
-        [HttpPost]
-        public ActionResult UpdateCogs(
-                long masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, decimal? cogsPercentage)
-        {
-            ValidateCurrency(cogsTypeId, cogsCurrencyId);
-            cogsAmount = ConstrainAmount(cogsAmount);
-            cogsPercentage = ConstrainPercentage(cogsPercentage);
-
-            if (cogsTypeId == CogsType.FixedAmount)
-            {
-                cogsPercentage = null;
-            }
-            if (cogsTypeId == CogsType.MarginPercentage)
-            {
-                cogsCurrencyId = null;
-                cogsAmount = null;
-            }
-
-            var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
-
-            cogsRepository.UpdateDefaultCogs(
-                masterVariantId, cogsTypeId, cogsCurrencyId, cogsAmount, cogsPercentage, false);
-
-            // cogsRepository.UpdateOrderLinesWithSimpleCogs(masterVariantId);
-
-            return JsonNetResult.Success();
-        }
-
-        public void ValidateCurrency(int cogsTypeId, int? cogsCurrencyId)
-        {
-            if (cogsTypeId != CogsType.FixedAmount) return;
-
-            if (!cogsCurrencyId.HasValue || !_currencyService.CurrencyExists(cogsCurrencyId.Value))
-            {
-                throw new Exception($"Unable to locate Currency {cogsCurrencyId}");
-            }
-        }
-
-        public decimal? ConstrainPercentage(decimal? cogsPercentage)
-        {
-            if (!cogsPercentage.HasValue)
-            {
-                return cogsPercentage;
-            }
-            if (cogsPercentage < 0m)
-            {
-                return 0m;
-            }
-            if (cogsPercentage > 100m)
-            {
-                return 100m;
-            }
-            return cogsPercentage;
-        }
-
-        public decimal? ConstrainAmount(decimal? cogsAmount)
-        {
-            if (!cogsAmount.HasValue)
-            {
-                return cogsAmount;
-            }
-            if (cogsAmount < 0m)
-            {
-                return 0m;
-            }
-            if (cogsAmount > 999999999.99m)
-            {
-                return 999999999.99m;
-            }
-            return cogsAmount;
-        }
-
-        [HttpPost]
-        public ActionResult CogsDetails(
-                long? masterVariantId, long? masterProductId, 
-                PwCogsDetail defaults, List<PwCogsDetail> details)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
-
-            ValidateCurrency(defaults.CogsTypeId, defaults.CogsCurrencyId);
-
-            using (var transaction = cogsRepository.InitiateTransaction())
-            {
-                var hasDetails = details != null && details.Any();
-
-                cogsRepository.UpdateDefaultCogs(
-                        masterVariantId,
-                        defaults.CogsTypeId,
-                        defaults.CogsCurrencyId,
-                        ConstrainAmount(defaults.CogsAmount),
-                        ConstrainPercentage(defaults.CogsPercentage),
-                        hasDetails);
-
-                cogsRepository.DeleteCogsDetail(masterVariantId);
-                
-                if (hasDetails)
-                {
-                    foreach (var detail in details)
-                    {
-                        detail.PwMasterVariantId = masterVariantId.Value;
-                        cogsRepository.InsertCogsDetails(detail);
-                    }
-                }
-
-                transaction.Commit();
-            }
-
-            return JsonNetResult.Success();
-        }
-
-
         [HttpPost]
         public ActionResult ExcludeByMasterVariantId(long masterVariantId, bool value)
         {
@@ -303,6 +172,44 @@ namespace ProfitWise.Web.Controllers
             cogsRepository.UpdateStockedDirectlyByMasterVariantId(masterVariantId, value);
             return JsonNetResult.Success();
         }
+
+
+
+
+        [HttpPost]
+        public ActionResult BulkUpdateCogs(long masterProductId, int currencyId, decimal amount)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var cogsRepository = _factory.MakeCogsRepository(userIdentity.PwShop);
+
+            // TODO => Revisit
+            //ValidateCogsByAmounts(currencyId, amount);
+
+            cogsRepository.UpdateProductCogsAllVariants(masterProductId, currencyId, amount);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult UpdateSimpleCogs(PwCogsDetail simpleCogs)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
+            var context = service.MakeUpdateContext(simpleCogs.PwMasterVariantId, null, simpleCogs, null);
+            service.UpdateCogsForMasterVariant(context);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult UpdateCogsDetails(
+                long? masterVariantId, long? masterProductId, PwCogsDetail defaults, List<PwCogsDetail> details)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var cogsService = _factory.MakeCogsUpdateService(userIdentity.PwShop);
+            var context = cogsService.MakeUpdateContext(masterVariantId, masterProductId, defaults, details);
+            cogsService.UpdateCogsForMasterVariant(context);
+            return JsonNetResult.Success();
+        }
+
     }
 }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
@@ -18,6 +17,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwReportRepository> _reportRepositoryFactory;
         private readonly Func<PwReportFilterRepository> _filterRepositoryFactory;
         private readonly Func<PwReportQueryRepository> _reportQueryRepositoryFactory;
+        private readonly Func<CogsUpdateService> _orderCogsUpdateServiceFactory;
 
         public MultitenantFactory(
             Func<ShopifyOrderRepository> orderRepositoryFactory,
@@ -27,7 +27,11 @@ namespace ProfitWise.Data.Factories
             Func<CatalogBuilderService> productVariantServiceFactory,
             Func<PwCogsRepository> cogsRepositoryFactory, 
             Func<PwPickListRepository> pickListRepositoryFactory,
-            Func<PwReportRepository> reportRepositoryFactory, Func<PwReportFilterRepository> filterRepositoryFactory, Func<PwReportQueryRepository> reportQueryRepositoryFactory)
+            Func<PwReportRepository> reportRepositoryFactory, 
+            Func<PwReportFilterRepository> filterRepositoryFactory, 
+            Func<PwReportQueryRepository> reportQueryRepositoryFactory,
+            Func<CogsUpdateService> orderCogsUpdateServiceFactory
+            )
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -39,6 +43,7 @@ namespace ProfitWise.Data.Factories
             _reportRepositoryFactory = reportRepositoryFactory;
             _filterRepositoryFactory = filterRepositoryFactory;
             _reportQueryRepositoryFactory = reportQueryRepositoryFactory;
+            _orderCogsUpdateServiceFactory = orderCogsUpdateServiceFactory;
         }
 
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
@@ -106,6 +111,13 @@ namespace ProfitWise.Data.Factories
         public virtual PwReportQueryRepository MakeReportQueryRepository(PwShop shop)
         {
             var repository = _reportQueryRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual CogsUpdateService MakeCogsUpdateService(PwShop shop)
+        {
+            var repository = _orderCogsUpdateServiceFactory();
             repository.PwShop = shop;
             return repository;
         }

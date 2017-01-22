@@ -154,7 +154,8 @@ UPDATE profitwiseshop SET IsShopEnabled = 1;
 
 
 
-SELECT * FROM profitwisemastervariant;
+SELECT * FROM profitwisemastervariant WHERE CogsDetail = 1;
+
 
 SELECT * FROM shopifyorderlineitem;
 
@@ -162,16 +163,27 @@ SELECT * FROM profitwiseprofitreportentry WHERE EntryType = 1;
 
 SELECT * FROM profitwisevariant WHERE PwProductId = 111 AND PwVariantId = 515;
 
-SELECT * FROM profitwisemastervariant;
+SELECT * FROM profitwisemastervariant WHERE CogsCurrencyId IS NULL;
+
+UPDATE profitwisemastervariant SET CogsCurrencyId = 1;
+
 
 SELECT * FROM profitwiseproduct;
 
 SELECT * FROM profitwisevariant WHERE LowPrice <> HighPrice;
 
+DELETE FROM profitwisemastervariantcogsdetail;
+
+SELECT * FROM profitwisemastervariantcogsdetail;
 
 
-SELECT * FROM profitwisemastervariant;
+
+SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 17;
 
 
 
 SELECT * FROM exchangerate;
+
+
+
+

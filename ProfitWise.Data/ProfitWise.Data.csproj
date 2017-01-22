@@ -74,10 +74,11 @@
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
-    <Compile Include="Model\Catalog\PwCogsDetail.cs" />
-    <Compile Include="Model\Catalog\CogsType.cs" />
+    <Compile Include="Model\Cogs\PwCogsDetail.cs" />
+    <Compile Include="Model\Cogs\CogsType.cs" />
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
+    <Compile Include="Model\Cogs\CogsUpdateContext.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Repositories\ShopifyOrderRepository.cs" />
     <Compile Include="Repositories\PwShopRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CogsUpdateService.cs" />
     <Compile Include="Services\ProfitReportService.cs" />
     <Compile Include="Services\ShopSynchronizationService.cs" />
     <Compile Include="Services\TimeZoneExtensions.cs" />

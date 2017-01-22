@@ -1,4 +1,4 @@
-﻿namespace ProfitWise.Data.Model.Catalog
+﻿namespace ProfitWise.Data.Model.Cogs
 {
     public class CogsType
     {

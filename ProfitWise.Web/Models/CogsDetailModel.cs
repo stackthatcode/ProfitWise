@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ProfitWise.Data.Model.Catalog;
+using ProfitWise.Data.Model.Cogs;
 
 namespace ProfitWise.Web.Models
 {

@@ -233,7 +233,12 @@ namespace ProfitWise.Data.Repositories
 
 
         // Master Variant Cogs Defaults
-        // TODO: this will be overhauled...
+        public void UpdateDefaultCogs(PwCogsDetail input, bool hasDetail)
+        {
+            UpdateDefaultCogs(input.PwMasterVariantId, input.CogsTypeId, input.CogsCurrencyId,
+                    input.CogsAmount, input.CogsPercentage, hasDetail);
+        } 
+       
         public void UpdateDefaultCogs(
                 long? masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, 
                 decimal? cogsPercentage, bool cogsDetail)

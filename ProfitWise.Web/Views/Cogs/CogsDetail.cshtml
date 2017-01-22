@@ -1,4 +1,5 @@
 ﻿@using ProfitWise.Data.Model.Catalog
+@using ProfitWise.Data.Model.Cogs
 @using ProfitWise.Web.Attributes
 @using ProfitWise.Web.Models
 @using Push.Foundation.Web.Json
@@ -225,7 +226,7 @@
                 function () {
                     var settings = new ProfitWiseFunctions.AjaxSettings(true);
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpPost("/CogsService/CogsDetails", data, this);
+                    ajax.HttpPost("/CogsService/UpdateSimpleCogs", data, this);
                 },
                 function () {
                     ShopifyApp.Modal.close({ result: true });

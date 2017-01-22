@@ -1,4 +1,4 @@
-﻿@using ProfitWise.Data.Model.Catalog
+﻿@using ProfitWise.Data.Model.Cogs
 
 <script type="text/html" id="Cogs-Summary-Widget-Subview">
     <span data-bind="visible: $data.CogsTypeId() == @CogsType.FixedAmount">
@@ -42,7 +42,7 @@
         self.CogsAmount = ko.observable();
         self.CogsPercentage = ko.observable();
         self.CogsDetail = ko.observable();
-
+        
         // These should match/line-up with the default JSON serialization of the database schema
         self.PushState = function(state) {
             self.CogsTypeId(state.CogsTypeId);
