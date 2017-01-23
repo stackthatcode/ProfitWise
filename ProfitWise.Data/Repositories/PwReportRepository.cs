@@ -51,7 +51,7 @@ namespace ProfitWise.Data.Repositories
 
         public List<PwReport> RetrieveSystemDefinedReports()
         {
-            List<PwReport> systemDefinedReports = new List<PwReport>()
+            List<PwReport> systemDefinedReports = new List<PwReport>();
             {
                 PwSystemReportFactory.OverallProfitability(),
                 PwSystemReportFactory.TestReport(),

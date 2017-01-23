@@ -100,7 +100,6 @@ namespace ProfitWise.Web.Controllers
                 {
                     repository.DeleteReport(sourceReport.PwReportId);
                     filterRepository.DeleteFilters(sourceReport.PwReportId);
-
                 }
             }
             
@@ -118,7 +117,6 @@ namespace ProfitWise.Web.Controllers
             var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var reportToSave = repository.RetrieveReport(reportId);
-
             if (!reportToSave.CopyForEditing)
             {
                 return new JsonNetResult(

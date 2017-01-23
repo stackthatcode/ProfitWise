@@ -1,6 +1,12 @@
 ﻿@using ProfitWise.Data.Model.Profit
 @using ProfitWise.Data.Model.Reports
+@using ProfitWise.Web.Attributes
 @using Push.Foundation.Web.Json
+
+@{
+    var commonContext = Context.PullCommonContext();
+    var dateRangeDefault = commonContext.IdentitySnapshot.PwShop.DateRangeDefault;
+}
 
 <style>
     table#product-types td {
@@ -523,7 +529,7 @@
             self.Update();
         };
 
-        self.OrderingPopoverModel.PopOverLaunchCallback = function () {
+        self.OrderingPopoverModel.PopOverLaunchCallback = function() {
             self.PrepareCopyForEditing();
         };
 
@@ -535,12 +541,12 @@
             return self.IsSystemReport() || self.CopyOfSystemReport();
         });
 
-        self.DateRangePickerCallback = function (dateRange) {
+        self.DateRangePickerCallback = function(dateRange) {
             flow.exec(
-                function () {
+                function() {
                     self.PrepareCopyForEditing(this);
                 },
-                function () {
+                function() {
                     self.DateRange(dateRange);
                     self.Update();
                 }
@@ -549,7 +555,7 @@
 
         self.PrepareCopyForEditing = function(callback) {
             flow.exec(
-                function () {
+                function() {
                     if (self.CopyForEditing()) {
                         if (callback) {
                             callback();
@@ -560,7 +566,7 @@
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpPost("/ReportService/CopyForEditing", { reportId: self.ReportId() }, this);
                 },
-                function (data) {
+                function(data) {
                     self.PopulateModel(data);
                     if (callback) {
                         callback();
@@ -569,18 +575,31 @@
             );
         };
 
-        self.PopulateModel = function (data) {
+        self.PopulateModel = function(data) {
             var current = data.current;
             var original = data.original;
 
             self.ReportId(current.PwReportId);
             self.Name(current.Name);
 
-            // Store in the local model as Javascript Date objects
-            self.DateRange({ 
-                startdate: current.StartDate.parseToJavascriptDate(),
-                enddate: current.EndDate.parseToJavascriptDate()
-            });
+            // Store in the local model as Javascript Date objects           
+            var dateRangeDefaultId = @dateRangeDefault;
+            var overallProfitabilityId = @PwSystemReportFactory.OverallProfitabilityId;
+
+            if (current.PwReportId == overallProfitabilityId) {
+                var dateRange = ProfitWiseWidgets.DateRangeById(dateRangeDefaultId);
+                self.DateRange({
+                    startdate: dateRange.StartDate.toDate(),
+                    enddate: dateRange.EndDate.toDate(),
+                });
+            } else {
+                self.DateRange({
+                    startdate: current.StartDate.parseToJavascriptDate(),
+                    enddate: current.EndDate.parseToJavascriptDate()
+                });
+            };
+
+            console.log(self.DateRange());
 
             self.CopyForEditing(current.CopyForEditing);
             self.IsSystemReport(current.IsSystemReport);
@@ -1024,7 +1043,7 @@
         };
 
         self.ReportDetailContext = new ProfitWiseWidgets.ReportDetailContext();
-        
+
         // State changes to the Report Selection
         self.SelectReportByReportId = function (id) {
             var report =

@@ -140,6 +140,13 @@
         }
     ];
 
+    ProfitWiseWidgets.DateRangeById = function(id) {
+        return AQ(ProfitWiseWidgets.DateRanges)
+            .firstOrDefault(function(item) {
+                return item.Id == id;
+            });
+    }
+
     ProfitWiseWidgets.DateRangeAsObject = function() {
         var output = {};
         AQ(ProfitWiseWidgets.DateRanges).each(function(x) {
