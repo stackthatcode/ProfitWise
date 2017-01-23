@@ -16,7 +16,8 @@ namespace ProfitWise.Web.Controllers
         private readonly PwShopRepository _shopRepository;
 
         public PreferencesController(
-                MultitenantFactory factory, PwShopRepository shopRepository)
+                MultitenantFactory factory, 
+                PwShopRepository shopRepository)
         {
             _factory = factory;
             _shopRepository = shopRepository;
@@ -28,23 +29,7 @@ namespace ProfitWise.Web.Controllers
             var shop = HttpContext.PullIdentity().PwShop;
             return View(shop);
         }
-
-        [HttpGet]
-        public ActionResult BulkEditAllCogs()
-        {
-            var shop = HttpContext.PullIdentity().PwShop;
-            var model = new BulkEditAllCogsModel { DefaultMargin = shop.DefaultMargin };
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult BulkEditAllCogs(decimal amount, bool allproducts)
-        {
-            var shop = HttpContext.PullIdentity().PwShop;
-            //var model = new BulkEditAllCogsModel { DefaultMargin = shop.DefaultMargin };
-            return JsonNetResult.Success();
-        }
-
+        
 
         [HttpGet]
         public ActionResult Ping()
@@ -73,6 +58,12 @@ namespace ProfitWise.Web.Controllers
         {
             var shop = HttpContext.PullIdentity().PwShop;
             _shopRepository.UpdateDefaultMargin(shop.PwShopId, useDefaultMargin, defaultMargin);
+
+            // Update the in-memory copy thereof...
+            shop.UseDefaultMargin = useDefaultMargin;
+            shop.DefaultMargin = defaultMargin;
+            var cogsRepository = _factory.MakeCogsDataUpdateRepository(shop);
+            cogsRepository.RefreshReportEntryData();
             return JsonNetResult.Success();
         }
 

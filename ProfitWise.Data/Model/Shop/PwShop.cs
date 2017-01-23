@@ -19,6 +19,8 @@ namespace ProfitWise.Data.Model.Shop
         public DateTime? StartingDateForOrders { get; set; }
         public bool UseDefaultMargin { get; set; }
         public decimal DefaultMargin { get; set; }
+        public decimal DefaultCogsPercent => UseDefaultMargin ? (100m - DefaultMargin) / 100m : 0m;
+
         public int ProfitRealization { get; set; }
         public int DateRangeDefault { get; set; }
 
