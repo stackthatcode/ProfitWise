@@ -21,31 +21,32 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
-        public void UpdateOrderLineUnitCogs(CogsUpdateOrderContext context)
+
+        // Order Line update queries
+        public void UpdateOrderLines(CogsUpdateOrderContext context)
         {
-            if (context.PwMasterVariantId == null)
+            if (context.PwMasterVariantId == null && context.PwMasterProductId == null)
             {
-                throw new ArgumentNullException("PwMasterVariantId can't be null");
+                throw new ArgumentNullException("PwMasterVariantId and PwMasterProductId can't both be null");
             }
             if (context.CogsTypeId == CogsType.FixedAmount)
             {
-                UpdateOrderLineUnitCogsFixedAmount(context);
+                UpdateOrderLineFixedAmount(context);
             }
             if (context.CogsTypeId == CogsType.MarginPercentage)
             {
-                UpdateOrderLineUnitCogsPercentage(context);
+                UpdateOrderLinePercentage(context);
             }
         }
 
-        public void UpdateOrderLineUnitCogsFixedAmount(CogsUpdateOrderContext context)
+        public void UpdateOrderLineFixedAmount(CogsUpdateOrderContext context)
         {
             var query =
                 @"UPDATE profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
-		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-	           
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	           
                     LEFT JOIN exchangerate t4
 		                ON Date(t3.OrderDate) = t4.`Date` 
 			                AND t4.SourceCurrencyId = @CogsCurrencyId
@@ -57,7 +58,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, context);
         }
 
-        public void UpdateOrderLineUnitCogsPercentage(CogsUpdateOrderContext context)
+        public void UpdateOrderLinePercentage(CogsUpdateOrderContext context)
         {
             var query =
                 @"UPDATE profitwisemastervariant t1 
@@ -73,14 +74,49 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, context);
         }
 
+        public void UpdateOrderLineFixedAmount(CogsUpdateOrderContextPickList context)
+        {
+            var query =
+                @"UPDATE profitwisepicklistmasterproduct t0
+                    INNER JOIN profitwisemastervariant t1 
+                        ON t0.PwShopId = t1.PwShopId AND t0.PwMasterProductId = t1.PwMasterProductId
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	           
+                    LEFT JOIN exchangerate t4
+		                ON Date(t3.OrderDate) = t4.`Date` 
+			                AND t4.SourceCurrencyId = @CogsCurrencyId
+			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
+                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) 
+                WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
+                
+            _connection.Execute(query, context);
+        }
+
+        public void UpdateOrderLinePercentage(CogsUpdateOrderContextPickList context)
+        {
+            var query =
+                @"UPDATE profitwisepicklistmasterproduct t0
+                    INNER JOIN profitwisemastervariant t1 
+                        ON t0.PwShopId = t1.PwShopId AND t0.PwMasterProductId = t1.PwMasterProductId
+	                INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
+	                INNER JOIN shopifyorderlineitem t3
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+                SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
+                WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
+
+            _connection.Execute(query, context);
+        }
 
         public string WhereClauseGenerator(CogsUpdateOrderContext context)
         {
             var output = "";
-            //if (context.PwMasterProductId.HasValue)
-            //{
-            //    output += "AND t1.PwMasterProductId = @PwMasterProductId ";
-            //}
+            if (context.PwMasterProductId.HasValue)
+            {
+                output += "AND t1.PwMasterProductId = @PwMasterProductId ";
+            }
             if (context.PwMasterVariantId.HasValue)
             {
                 output += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
@@ -95,6 +131,7 @@ namespace ProfitWise.Data.Repositories
             }
             return output;
         }
+        
 
         // Report Entry query
         public void RefreshReportEntryData()

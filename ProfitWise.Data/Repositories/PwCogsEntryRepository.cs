@@ -231,13 +231,13 @@ namespace ProfitWise.Data.Repositories
 
 
         // Master Variant Cogs Defaults
-        public void UpdateDefaultCogs(PwCogsDetail input, bool hasDetail)
+        public void UpdateMasterVariantDefaultCogs(PwCogsDetail input, bool hasDetail)
         {
-            UpdateDefaultCogs(input.PwMasterVariantId, input.CogsTypeId, input.CogsCurrencyId,
+            UpdateMasterVariantDefaultCogs(input.PwMasterVariantId, input.CogsTypeId, input.CogsCurrencyId,
                     input.CogsAmount, input.CogsMarginPercent, hasDetail);
         } 
        
-        public void UpdateDefaultCogs(
+        public void UpdateMasterVariantDefaultCogs(
                 long? masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, 
                 decimal? cogsMarginPercent, bool cogsDetail)
         {
@@ -259,9 +259,35 @@ namespace ProfitWise.Data.Repositories
                 query, new { this.PwShopId, masterVariantId,
                             cogsTypeId, cogsCurrencyId, cogsAmount, cogsMarginPercent, cogsDetail });
         }
-        
 
-        
+        public void UpdatePickListDefaultCogs(long pickListId, PwCogsDetail input)
+        {
+            var query =
+                @"UPDATE profitwisemastervariant t1
+                    INNER JOIN profitwisepicklistmasterproduct t2
+                        ON t1.PwMasterProductId = t2.PwMasterProductId                        
+                SET CogsCurrencyId = @CogsCurrencyId, 
+                    CogsAmount = @CogsAmount,
+                    CogsTypeId = @CogsTypeId,
+                    CogsMarginPercent = @CogsMarginPercent,
+                    CogsDetail = @CogsDetail                   
+                WHERE t1.PwShopId = @PwShopId 
+                AND t2.PwShopId = @PwShopId 
+                AND PwPickListId = @pickListId;";
+
+            _connection.Execute(
+                query, new
+                {
+                    this.PwShopId,
+                    pickListId,
+                    input.CogsTypeId,
+                    input.CogsCurrencyId,
+                    input.CogsAmount,
+                    input.CogsMarginPercent,
+                    CogsDetail = false,
+                });
+        }
+
 
         // CoGS Detail functions
         public List<PwCogsDetail> RetrieveCogsDetail(long? masterVariantId)
@@ -301,9 +327,6 @@ namespace ProfitWise.Data.Repositories
                         @CogsDate, @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsMarginPercent );";
             _connection.Execute(query, detail);
         }
-
-
-
     }
 }
 

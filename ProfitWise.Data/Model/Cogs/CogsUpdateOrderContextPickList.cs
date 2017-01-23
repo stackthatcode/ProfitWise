@@ -1,17 +1,12 @@
-﻿using System;
-
-namespace ProfitWise.Data.Model.Cogs
+﻿namespace ProfitWise.Data.Model.Cogs
 {
-
     // Largely a pass-thru context with some additional properties that will be used to for the SQL update
-    public class CogsUpdateOrderContext
+    public class CogsUpdateOrderContextPickList
     {
-        public PwCogsDetail Cogs { get; set; }
-
         public long PwShopId => Cogs.PwShopId;
-        public long? PwMasterVariantId => Cogs.PwMasterVariantId;
-        public long? PwMasterProductId { get; set; }
         public long? PwPickListId { get; set; }
+
+        public PwCogsDetail Cogs { get; set; }
 
         public int CogsTypeId => Cogs.CogsTypeId;
         public int? CogsCurrencyId => Cogs.CogsCurrencyId;
@@ -19,7 +14,5 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal CogsPercentOfUnitPrice => Cogs.CogsPercentOfUnitPrice;
 
         public int DestinationCurrencyId { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
     }
 }
