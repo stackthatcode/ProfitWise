@@ -99,7 +99,7 @@
 
                     <th>Inventory</th>
                     <th>Price</th>
-                    <th>CoGS</th>
+                    <th><a href="#" data-bind="click: BulkEditPopUp">CoGS</a></th>
 
                     <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked<br />Directly</a></th>
                     <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
@@ -151,7 +151,7 @@
             <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
 
             <td>
-                <a href="#" data-bind="click: $root.BulkEditPopUp">
+                <a href="#" data-bind="click: $root.ShowVariantCogsEditor">
                     <span data-bind="template: { name: 'Cogs-Product-Summary-Widget', data: $data }"></span>
                 </a>
             </td>

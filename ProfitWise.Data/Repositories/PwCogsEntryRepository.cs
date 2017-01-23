@@ -259,42 +259,9 @@ namespace ProfitWise.Data.Repositories
                 query, new { this.PwShopId, masterVariantId,
                             cogsTypeId, cogsCurrencyId, cogsAmount, cogsMarginPercent, cogsDetail });
         }
+        
 
-        public void UpdateProductCogsAllVariants(long masterProductId, int currencyId, decimal amount)
-        {
-            var query = @"UPDATE profitwisemastervariant
-                        SET CogsAmount = @amount, CogsCurrencyId = @currencyId
-                        WHERE PwShopId = @PwShopId
-                        AND PwMasterProductId = @masterProductId;";
-
-            _connection.Execute(query,
-                new { this.PwShopId, masterProductId, currencyId, amount });
-        }
-
-        public void BulkUpdateMasterVariantCogsToDefault(bool zeroCogsOnly)
-        {
-            var query =
-                @"UPDATE profitwiseshop t0
-                    INNER JOIN profitwisemastervariant t1 
-		                ON t0.PwShopId = t1.PwShopId
-	                INNER JOIN profitwisevariant t2 
-		                ON t1.PwShopId = t2.PwShopId 
-                            AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-                            AND t2.IsPrimary = 1
-                SET t1.CogsCurrencyId = t0.CurrencyId, 
-                    t1.CogsAmount = t2.HighPrice * @FractionOfHighPrice, 
-                    t1.CogsDetail = false
-                WHERE t0.PwShopId = @PwShopId ";
-
-            if (zeroCogsOnly)
-            {
-                query += "AND t1.CogsAmount IS NULL;";
-            }
-
-            var fractionOfHighPrice = 1.00m - this.PwShop.DefaultMargin;
-            _connection.Execute(query, new {this.PwShopId, FractionOfHighPrice = fractionOfHighPrice});
-        }
-
+        
 
         // CoGS Detail functions
         public List<PwCogsDetail> RetrieveCogsDetail(long? masterVariantId)

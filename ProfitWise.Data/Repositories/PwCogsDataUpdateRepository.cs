@@ -45,7 +45,8 @@ namespace ProfitWise.Data.Repositories
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
 		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-	                LEFT JOIN exchangerate t4
+	           
+                    LEFT JOIN exchangerate t4
 		                ON Date(t3.OrderDate) = t4.`Date` 
 			                AND t4.SourceCurrencyId = @CogsCurrencyId
 			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
@@ -64,6 +65,7 @@ namespace ProfitWise.Data.Repositories
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
 		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	               
+                
                 SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
                 WHERE t1.PwShopId = @PwShopId " + 
                 WhereClauseGenerator(context);

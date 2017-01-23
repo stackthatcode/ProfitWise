@@ -176,14 +176,12 @@ namespace ProfitWise.Web.Controllers
 
 
 
-        // TODO - revisit
         [HttpPost]
-        public ActionResult BulkUpdateCogs(long pwMasterProductId, int currencyId, decimal amount)
+        public ActionResult BulkUpdateCogs(long picklistId, PwCogsDetail cogs)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
+            var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
 
-            cogsRepository.UpdateProductCogsAllVariants(pwMasterProductId, currencyId, amount);
             return JsonNetResult.Success();
         }
 
@@ -215,7 +213,6 @@ namespace ProfitWise.Web.Controllers
             }
             throw new ArgumentNullException("Both Master pwMasterVariantId and pwMasterProductId are null");
         }
-
     }
 }
 

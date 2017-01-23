@@ -51,6 +51,51 @@ namespace ProfitWise.Data.Services
             return context;
         }
 
+        public IList<CogsUpdateOrderContext> MakeUpdateOrderContexts(CogsUpdateServiceContext sourceContext)
+        {
+            if (!sourceContext.HasDetails)
+            {
+                return new List<CogsUpdateOrderContext> {
+                        new CogsUpdateOrderContext
+                        {
+                            Cogs = sourceContext.Defaults,
+                            DestinationCurrencyId = this.PwShop.CurrencyId,
+                            StartDate = null,
+                            EndDate = null,
+                        }
+                    };
+            }
+            else
+            {
+                var output = new List<CogsUpdateOrderContext>()
+                {
+                    new CogsUpdateOrderContext
+                    {
+                        Cogs = sourceContext.Defaults,
+                        DestinationCurrencyId = this.PwShop.CurrencyId,
+                        StartDate = null,
+                        EndDate = sourceContext.FirstDetail.CogsDate.AddDays(-1),
+                    }
+                };
+
+                foreach (var detail in sourceContext.Details)
+                {
+                    var nextDetail = sourceContext.NextDetail(detail);
+                    output.Add(
+                        new CogsUpdateOrderContext
+                        {
+                            Cogs = detail,
+                            DestinationCurrencyId = this.PwShop.CurrencyId,
+                            StartDate = detail.CogsDate,
+                            EndDate = nextDetail?.CogsDate.AddDays(-1),
+                        });
+                }
+
+                return output;
+            }
+        }
+
+
         public void UpdateCogsForMasterVariant(
                     long? masterVariantId, PwCogsDetail defaults, IList<PwCogsDetail> details)
         {
@@ -120,50 +165,6 @@ namespace ProfitWise.Data.Services
             foreach (var orderUpdateContext in orderUpdateContexts)
             {
                 cogsUpdateRepository.UpdateOrderLineUnitCogs(orderUpdateContext);
-            }
-        }
-
-        public IList<CogsUpdateOrderContext> MakeUpdateOrderContexts(CogsUpdateServiceContext sourceContext)
-        {
-            if (!sourceContext.HasDetails)
-            {
-                return new List<CogsUpdateOrderContext> {
-                        new CogsUpdateOrderContext
-                        {
-                            Cogs = sourceContext.Defaults,
-                            DestinationCurrencyId = this.PwShop.CurrencyId,
-                            StartDate = null,
-                            EndDate = null,
-                        }
-                    };
-            }
-            else
-            {
-                var output = new List<CogsUpdateOrderContext>()
-                {
-                    new CogsUpdateOrderContext
-                    {
-                        Cogs = sourceContext.Defaults,
-                        DestinationCurrencyId = this.PwShop.CurrencyId,
-                        StartDate = null,
-                        EndDate = sourceContext.FirstDetail.CogsDate.AddDays(-1),
-                    }
-                };
-
-                foreach (var detail in sourceContext.Details)
-                {
-                    var nextDetail = sourceContext.NextDetail(detail);
-                    output.Add(
-                        new CogsUpdateOrderContext
-                        {
-                            Cogs = detail,
-                            DestinationCurrencyId = this.PwShop.CurrencyId,
-                            StartDate = detail.CogsDate,
-                            EndDate = nextDetail?.CogsDate.AddDays(-1),
-                        });
-                }
-
-                return output;
             }
         }
 

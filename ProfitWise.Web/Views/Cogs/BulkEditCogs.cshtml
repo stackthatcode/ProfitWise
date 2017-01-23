@@ -101,7 +101,7 @@
             var model = new ProfitWise.BulkEditCogsModel(data);
 
             ko.applyBindings(model);
-
+            model.EditorModel.SetFocus();
             ProfitWiseFunctions.PopOverAutoCloseInit();
         });
 </script>
