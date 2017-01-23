@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -42,33 +41,43 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult CogsDetail(long? pwMasterVariantId)
+        public ActionResult CogsDetail(long? pwMasterVariantId, long? pwMasterProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
-            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
-
-            var masterVariant = cogsRepository.RetrieveVariant(pwMasterVariantId.Value);
-
-            var defaults = new PwCogsDetail
+            if (pwMasterVariantId.HasValue)
             {
-                PwShopId = userIdentity.PwShop.PwShopId,
-                PwMasterVariantId = pwMasterVariantId.Value,
-                CogsCurrencyId = masterVariant.CogsCurrencyId,
-                CogsTypeId = masterVariant.CogsTypeId,
-                CogsMarginPercent = masterVariant.CogsMarginPercent,
-                CogsAmount = masterVariant.CogsAmount,
-               
-            };
-            var details = cogsRepository.RetrieveCogsDetail(pwMasterVariantId);
+                var userIdentity = HttpContext.PullIdentity();
+                var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
+                var masterVariant = cogsRepository.RetrieveVariant(pwMasterVariantId.Value);
 
-            var model = new CogsDetailModel
+                var defaults = new PwCogsDetail
+                {
+                    PwShopId = userIdentity.PwShop.PwShopId,
+                    PwMasterVariantId = pwMasterVariantId.Value,
+                    CogsCurrencyId = masterVariant.CogsCurrencyId,
+                    CogsTypeId = masterVariant.CogsTypeId,
+                    CogsMarginPercent = masterVariant.CogsMarginPercent,
+                    CogsAmount = masterVariant.CogsAmount,
+
+                };
+                var details = cogsRepository.RetrieveCogsDetail(pwMasterVariantId);
+
+                var model = new CogsDetailModel
+                {
+                    Defaults = defaults,
+                    Details = details,
+                    DateDefault = DateTime.Today,
+                    PwMasterVariantId = pwMasterVariantId,
+                };
+                return View(model);
+            }
+            else
             {
-                Defaults = defaults,
-                Details = details,
-                DateDefault = DateTime.Today,
-                PwMasterVariantId = pwMasterVariantId,
-            };
-            return View(model);
+                return View(new CogsDetailModel
+                {
+                    PwMasterProductId = pwMasterProductId,
+                    DateDefault = DateTime.Today,
+                });
+            }
         }
 
         [HttpGet]

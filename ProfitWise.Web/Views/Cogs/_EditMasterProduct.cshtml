@@ -52,7 +52,7 @@
                         </span>
                     </th>
                     <th>Price</th>                    
-                    <th><a href="#" data-bind="click: function() { $data.CogsDialogPopup(); }">Cost of Goods Sold</a></th>
+                    <th><a href="#" data-bind="click: function() { $data.CogsDetailForProduct(); }">Cost of Goods Sold</a></th>
                     
                     <th style="text-align: center;">
                         <a href="#" data-bind="click: function() { $data.StockedDirectlyDialogPopup(); }">Stocked<br />Directly</a>
@@ -121,6 +121,7 @@
     ProfitWise.ProductVariantCogsEditorModel = function () {
         self.PwMasterProductId = ko.observable(null);
         self.MasterProductTitle = ko.observable("");
+
         self.Grid = ko.observable([]);
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
 
@@ -148,23 +149,26 @@
             return self.Grid().length + " Variant(s)";
         });
 
-        self.RetrieveMasterProduct = function (pwMasterProductId, callback) {
-            self.PwMasterProductId(pwMasterProductId);
-            var settings = new ProfitWiseFunctions.AjaxSettings();
-            var ajax = new ProfitWiseFunctions.Ajax(settings);
-            var url = "/CogsService/RetrieveMasterProduct?pwMasterProductId=" + self.PwMasterProductId();
+        self.RetrieveMasterProduct = function (pwMasterProductId, callback) {            
+            flow.exec(
+                function () {
+                    self.PwMasterProductId(pwMasterProductId);
+                    var settings = new ProfitWiseFunctions.AjaxSettings();
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    var url = "/CogsService/RetrieveMasterProduct?pwMasterProductId=" + self.PwMasterProductId();
+                    ajax.HttpGet(url, this);
+                },
+                function (data) {
+                    if (!data.MasterProduct) {
+                        self.ExitCallback();
+                        return;
+                    }
 
-            ajax.HttpGet(url, function (data) {
-                if (!data.MasterProduct) {
-                    self.ExitCallback();
-                    return;
-                }
-
-                self.LoadMasterProduct(data);
-                if (callback) {
-                    callback();
-                }
-            });
+                    self.LoadMasterProduct(data);
+                    if (callback) {
+                        callback();
+                    }
+                });
         };
 
         self.ExitCallback = function() {
@@ -204,8 +208,14 @@
                         item.EditorVisible(true);
                         item.EditorModel.SetFocus();
                     };
+                    
                     item.SummaryModel.EditDetailCallback = function () {
-                        self.CogsDetailDialogPopup(item.PwMasterVariantId);
+                        var dialogTitle =
+                                item.Sku ?
+                                    item.Sku + " - " + item.Title :
+                                    self.MasterProductTitle() + " - " + item.Title;
+
+                        self.CogsDetailDialogPopup(item.PwMasterVariantId, null, dialogTitle);
                     };
 
                     item.CancelAndHide = function () {
@@ -321,27 +331,19 @@
             }, self.Refresh);
         };
 
-        self.CogsDialogPopup = function() {
-            var url =
-                ProfitWiseConfig.BaseUrl +
-                    '/Cogs/BulkEditCogs?pwMasterProductId=' + self.PwMasterProductId();
-
-            ProfitWiseShopify.LaunchModal({
-                src: url,
-                title: 'Bulk Edit all Variant CoGS',
-                width: 'small',
-                height: 380,
-            }, self.Refresh);
+        self.CogsDetailForProduct = function () {
+            self.CogsDetailDialogPopup(
+                null, self.PwMasterProductId(), "All Variants of " + self.MasterProductTitle());
         };
+        
 
-        self.CogsDetailDialogPopup = function (pwMasterVariantId) {
-            var url =
-                ProfitWiseConfig.BaseUrl +
-                    '/Cogs/CogsDetail?pwMasterVariantId=' + pwMasterVariantId;
+        self.CogsDetailDialogPopup = function (pwMasterVariantId, pwMasterProductId, dialogTitle) {
+            var url = ProfitWiseConfig.BaseUrl +
+                '/Cogs/CogsDetail?pwMasterVariantId=' + pwMasterVariantId + "&pwMasterProductId=" + pwMasterProductId;
             
             ProfitWiseShopify.LaunchModal({
                 src: url,
-                title: 'Edit CoGS Detail',
+                title: 'Edit CoGS Detail: ' + dialogTitle,
                 width: 'large',
                 height: 500,
             }, self.Refresh);

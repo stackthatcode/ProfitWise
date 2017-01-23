@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -191,8 +192,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
-            var context = service.MakeUpdateContext(simpleCogs.PwMasterVariantId, null, simpleCogs, null);
-            service.UpdateCogsForMasterVariant(context);
+            service.UpdateCogsForMasterVariant(simpleCogs.PwMasterVariantId, simpleCogs, null);
             return JsonNetResult.Success();
         }
 
@@ -202,9 +202,18 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsService = _factory.MakeCogsUpdateService(userIdentity.PwShop);
-            var context = cogsService.MakeUpdateContext(pwMasterVariantId, pwMasterProductId, defaults, details);
-            cogsService.UpdateCogsForMasterVariant(context);
-            return JsonNetResult.Success();
+            
+            if (pwMasterVariantId.HasValue)
+            {
+                cogsService.UpdateCogsForMasterVariant(pwMasterVariantId, defaults, details);
+                return JsonNetResult.Success();
+            }
+            if (pwMasterProductId.HasValue)
+            {
+                cogsService.UpdateCogsForMasterProduct(pwMasterProductId, defaults, details);
+                return JsonNetResult.Success();
+            }
+            throw new ArgumentNullException("Both Master pwMasterVariantId and pwMasterProductId are null");
         }
 
     }

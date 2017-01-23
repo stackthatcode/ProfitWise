@@ -27,23 +27,23 @@ namespace ProfitWise.Data.Services
             _currencyService = currencyService;
         }
 
+    
         public CogsUpdateServiceContext MakeUpdateContext(
-                long? masterVariantId, long? masterProductId, PwCogsDetail defaults, IList<PwCogsDetail> details)
+                long? masterVariantId, PwCogsDetail defaults, IList<PwCogsDetail> details)
         {
             var defaultsWithConstraints =
                 defaults
                     .CloneWithConstraints(ApplyConstraintsToDetail)
-                    .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId);
-
+                    .AttachKeys(this.PwShop.PwShopId, masterVariantId);
+            
             var detailsWithConstraints =
                     details?.Select(x => x.CloneWithConstraints(ApplyConstraintsToDetail)
-                                        .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId))
+                                        .AttachKeys(this.PwShop.PwShopId, masterVariantId))                                        
                             .ToList();
 
             var context = new CogsUpdateServiceContext
             {
                 PwMasterVariantId = masterVariantId,
-                PwMasterProductId = masterProductId,
                 Defaults = defaultsWithConstraints,
                 Details = detailsWithConstraints,
             };
@@ -51,40 +51,75 @@ namespace ProfitWise.Data.Services
             return context;
         }
 
-        public void UpdateCogsForMasterVariant(CogsUpdateServiceContext context)
+        public void UpdateCogsForMasterVariant(
+                    long? masterVariantId, PwCogsDetail defaults, IList<PwCogsDetail> details)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
-    
+
             using (var transaction = cogsEntryRepository.InitiateTransaction())
             {
-                // Save the Master Variant CoGS Defaults
-                cogsEntryRepository.UpdateDefaultCogs(context.Defaults, context.HasDetails);
+                // Write the CoGS Entries
+                var context = MakeUpdateContext(masterVariantId, defaults, details);
+                UpdateCogsForMasterVariant(context);
 
-                // Save the Detail Entries
-                if (context.HasDetails)
+                // Update the Report Entries
+                cogsUpdateRepository.RefreshReportEntryData();
+
+                transaction.Commit();
+            }
+        }
+
+        public void UpdateCogsForMasterProduct(
+                    long? masterProductId, PwCogsDetail defaults, IList<PwCogsDetail> details)
+        {
+            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
+            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
+
+            var masterVariants = cogsEntryRepository.RetrieveVariants(new[] { masterProductId.Value });
+
+            using (var transaction = cogsEntryRepository.InitiateTransaction())
+            {
+                foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
                 {
-                    cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
-
-                    foreach (var detail in context.Details)
-                    {
-                        var detailWithConstraints = detail.CloneWithConstraints(ApplyConstraintsToDetail);
-                        detailWithConstraints.PwMasterVariantId = context.PwMasterVariantId.Value;
-                        cogsEntryRepository.InsertCogsDetails(detailWithConstraints);
-                    }
-                }
-
-                // Update the Order Lines
-                var orderUpdateContexts = MakeUpdateOrderContexts(context);
-                foreach (var orderUpdateContext in orderUpdateContexts)
-                {
-                    cogsUpdateRepository.UpdateOrderLineUnitCogs(orderUpdateContext);
+                    // Write the CoGS Entries
+                    var context = MakeUpdateContext(masterVariantId, defaults, details);
+                    UpdateCogsForMasterVariant(context);
                 }
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
 
                 transaction.Commit();
+            }
+        }
+
+        private void UpdateCogsForMasterVariant(CogsUpdateServiceContext context)
+        {
+            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
+            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
+
+            // Save the Master Variant CoGS Defaults
+            cogsEntryRepository.UpdateDefaultCogs(context.Defaults, context.HasDetails);
+
+            // Save the Detail Entries
+            if (context.HasDetails)
+            {
+                cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
+
+                foreach (var detail in context.Details)
+                {
+                    var detailWithConstraints = detail.CloneWithConstraints(ApplyConstraintsToDetail);
+                    detailWithConstraints.PwMasterVariantId = context.PwMasterVariantId.Value;
+                    cogsEntryRepository.InsertCogsDetails(detailWithConstraints);
+                }
+            }
+
+            // Update the Order Lines
+            var orderUpdateContexts = MakeUpdateOrderContexts(context);
+            foreach (var orderUpdateContext in orderUpdateContexts)
+            {
+                cogsUpdateRepository.UpdateOrderLineUnitCogs(orderUpdateContext);
             }
         }
 

@@ -23,9 +23,9 @@ namespace ProfitWise.Data.Repositories
 
         public void UpdateOrderLineUnitCogs(CogsUpdateOrderContext context)
         {
-            if (context.PwMasterProductId == null && context.PwMasterVariantId == null)
+            if (context.PwMasterVariantId == null)
             {
-                throw new ArgumentNullException("Both PwMasterProductId and PwMasterVariantId can't be null");
+                throw new ArgumentNullException("PwMasterVariantId can't be null");
             }
             if (context.CogsTypeId == CogsType.FixedAmount)
             {
@@ -75,10 +75,10 @@ namespace ProfitWise.Data.Repositories
         public string WhereClauseGenerator(CogsUpdateOrderContext context)
         {
             var output = "";
-            if (context.PwMasterProductId.HasValue)
-            {
-                output += "AND t1.PwMasterProductId = @PwMasterProductId ";
-            }
+            //if (context.PwMasterProductId.HasValue)
+            //{
+            //    output += "AND t1.PwMasterProductId = @PwMasterProductId ";
+            //}
             if (context.PwMasterVariantId.HasValue)
             {
                 output += "AND t1.PwMasterVariantId = @PwMasterVariantId ";

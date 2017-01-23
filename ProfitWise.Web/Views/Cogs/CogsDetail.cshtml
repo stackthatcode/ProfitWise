@@ -1,5 +1,4 @@
-﻿@using ProfitWise.Data.Model.Catalog
-@using ProfitWise.Data.Model.Cogs
+﻿@using ProfitWise.Data.Model.Cogs
 @using ProfitWise.Web.Attributes
 @using ProfitWise.Web.Models
 @using Push.Foundation.Web.Json
@@ -163,8 +162,11 @@
         self.CogsDetail = ko.observableArray();
 
         self.LoadCogsDetail = function (defaults, details) {
+            if (!defaults && !details) {
+                return;
+            }
+            
             self.DefaultEditorModel.PushState(defaults);
-
             AQ(details).each(function(detail) {
                 var entry = new ProfitWiseWidgets.CogsDetailRow();
                 detail.CogsDate = detail.CogsDate.parseToJavascriptDate();
@@ -222,6 +224,7 @@
 
             var data = {
                 pwMasterVariantId: self.PwMasterVariantId(),
+                pwMasterProductId: self.PwMasterProductId(),
                 defaults: defaults,
                 details: details,
             };
@@ -265,6 +268,7 @@
 
             var model = new ProfitWiseWidgets.CogsDetailModel(defaultDate);
             model.PwMasterVariantId(data.PwMasterVariantId);
+            model.PwMasterProductId(data.PwMasterProductId);
             model.LoadCogsDetail(data.Defaults, data.Details);
             ko.applyBindings(model);
 

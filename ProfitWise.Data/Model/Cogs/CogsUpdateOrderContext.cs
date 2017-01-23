@@ -9,7 +9,6 @@ namespace ProfitWise.Data.Model.Cogs
         public PwCogsDetail Cogs { get; set; }
 
         public long PwShopId => Cogs.PwShopId;
-        public long? PwMasterProductId => Cogs.PwMasterProductId;
         public long? PwMasterVariantId => Cogs.PwMasterVariantId;
 
         public int CogsTypeId => Cogs.CogsTypeId;
