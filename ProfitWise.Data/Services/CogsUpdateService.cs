@@ -28,7 +28,8 @@ namespace ProfitWise.Data.Services
         }
 
     
-        public CogsUpdateServiceContext MakeUpdateContext(
+        // Context translation
+        public CogsUpdateServiceContext MakeUpdateEntryContext(
                 long? masterVariantId, long? masterProductId, PwCogsDetail defaults, IList<PwCogsDetail> details)
         {
             var defaultsWithConstraints =
@@ -100,6 +101,7 @@ namespace ProfitWise.Data.Services
         }
 
 
+        // Update methods
         public void UpdateCogsForPickList(long pickListId, PwCogsDetail cogs)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
@@ -141,10 +143,10 @@ namespace ProfitWise.Data.Services
 
             using (var transaction = cogsEntryRepository.InitiateTransaction())
             {
-                var context = MakeUpdateContext(masterVariantId, null, defaults, details);
+                var context = MakeUpdateEntryContext(masterVariantId, null, defaults, details);
 
                 // Write the CoGS Entries
-                UpdateCogsByContext(context);
+                UpdateCogsEntryByContext(context);
 
                 // Update the Order Lines for each division of Detail
                 UpdateOrderLines(context);
@@ -173,12 +175,12 @@ namespace ProfitWise.Data.Services
                 foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
                 {
                     // Write the CoGS Entries
-                    var context = MakeUpdateContext(masterVariantId, masterProductId, defaults, details);
-                    UpdateCogsByContext(context);
+                    var context = MakeUpdateEntryContext(masterVariantId, masterProductId, defaults, details);
+                    UpdateCogsEntryByContext(context);
                 }
 
                 // Update the Order Lines for each division of Detail
-                var orderLineContext = MakeUpdateContext(null, masterProductId, defaults, details);
+                var orderLineContext = MakeUpdateEntryContext(null, masterProductId, defaults, details);
                 UpdateOrderLines(orderLineContext);
 
                 // Update the Report Entries
@@ -188,18 +190,19 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        private void UpdateCogsByContext(CogsUpdateServiceContext context)
+        private void UpdateCogsEntryByContext(CogsUpdateServiceContext context)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             
             // Save the Master Variant CoGS Defaults
             cogsEntryRepository.UpdateMasterVariantDefaultCogs(context.Defaults, context.HasDetails);
 
+            // IF they removed all Detail, this ensures everything is clear...
+            cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
+
             // Save the Detail Entries
             if (context.HasDetails)
             {
-                cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
-
                 foreach (var detail in context.Details)
                 {
                     var detailWithConstraints = detail.CloneWithConstraints(ApplyConstraintsToDetail);
@@ -221,6 +224,7 @@ namespace ProfitWise.Data.Services
         }
 
 
+        // Constraints
         public void ApplyConstraintsToDetail(PwCogsDetail detail)
         {
             ValidateCurrency(detail.CogsTypeId, detail.CogsCurrencyId);

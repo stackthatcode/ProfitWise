@@ -145,7 +145,7 @@ namespace ProfitWise.Data.Repositories
                         Quantity AS Quantity
                 FROM shopifyorderlineitem
                 WHERE PwShopId = @PwShopId;
-
+                
                 INSERT INTO profitwiseprofitreportentry
                 SELECT 	t1.PwShopId, t1.RefundDate, 2 AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
 		                t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, -t1.RestockQuantity * t2.UnitCogs AS CoGS,
@@ -156,7 +156,7 @@ namespace ProfitWise.Data.Repositories
                             AND t1.ShopifyOrderId = t2.ShopifyOrderId 
                             AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId
                 WHERE t1.PwShopId = @PwShopId;
-
+                
                 INSERT INTO profitwiseprofitreportentry
                 SELECT t1.PwShopId, t1.AdjustmentDate, 3 AS EntryType, t1.ShopifyOrderId, t1.ShopifyAdjustmentId AS SourceId, 
 		                NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS, NULL AS Quantity

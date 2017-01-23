@@ -52,6 +52,8 @@
     ProfitWiseWidgets.CogsEditorWidgetModel = function(parameters) {
         var self = this;
 
+        self.DefaultCurrencyId = ko.observable(parameters.DefaultCurrencyId);
+
         self.HorizontalEditor = ko.observable(false);
         self.CssClass = ko.computed(
             function() {
@@ -97,7 +99,7 @@
 
         self.PushState = function(state) {
             self.SelectedCogsType(state.CogsTypeId);
-            self.MoneyEditor.CurrencyId(state.CogsCurrencyId);
+            self.MoneyEditor.CurrencyId(state.CogsCurrencyId || self.DefaultCurrencyId());
             self.MoneyEditor.Amount(state.CogsAmount);
             self.NumberEditor.Amount(state.CogsMarginPercent);
         };
