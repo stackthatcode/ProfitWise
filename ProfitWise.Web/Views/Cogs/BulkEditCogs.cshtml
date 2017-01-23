@@ -1,43 +1,29 @@
-﻿@using ProfitWise.Web.Attributes
+﻿@using ProfitWise.Data.Model.Cogs
+@using ProfitWise.Web.Attributes
 @using Push.Foundation.Web.Json
-@model ProfitWise.Data.Model.Cogs.PwCogsProductSummary
+
+@model ProfitWise.Web.Models.BulkEditAllCogsModel
+
 @{
-    Context.PullCommonContext().PageTitle = "Bulk Edit Product Variant CoGS";
     Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    var commonContext = Context.PullCommonContext();
+    commonContext.PageTitle = "Bulk Edit CoGS for Current Search";
+    var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
 }
 
+@Html.Partial("~/Views/Cogs/_CogsEditorWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")
-@Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
+
 
 <script type="text/html" id="Main-Template">
     <form class="form-horizontal" onsubmit="return false;">
-        <div class="form-group" style="height: 32px;">
-            <label class="col-xs-3 control-label" style="color: #777;">Current Product</label>
 
-            <div class="col-xs-7 overflow-gracefully">
-                <span data-bind="text: ProductTitle"></span>
-            </div>
-            <div class="col-xs-2">
-            </div>
-        </div>
-
-        <div class="form-group" style="height: 32px;">
-            <label class="col-xs-3 control-label" style="color: #777;">Current CoGS</label>
-            <div class="col-xs-7">
-                <span data-bind="template: { name: 'Money-Range-Widget-Horizontal', 
-                                            data: CurrentCogsRange }">
-                </span>
-            </div>
-            <div class="col-xs-2">
-            </div>
-        </div>
-
-        <div class="form-group" style="height: 32px;">
+        <div class="form-group" style="height: 100px;">
             <label class="col-xs-3 control-label" 
                    style="color: #777; display: inline-block; margin-top: 8px;">Enter New CoGS</label>
             <div class="col-xs-5" style="text-align: left;">
-                <div data-bind="template: { name: 'Money-Editor-Widget', 
-                                            data: $root.CogsAmountEditorModel }"></div>
+                <div data-bind="template: { name: 'Cogs-Editor-Widget', data: $root.EditorModel }"></div>
             </div>
             <div class="col-xs-4">
             </div>
@@ -47,7 +33,7 @@
 
         <div class="form-group">
             <div class="col-xs-12">
-                <div class="alert alert-warning" role="alert">
+                <div class="alert alert-danger" role="alert">
                     <strong>WARNING!</strong> Clicking "OK" will overwrite all CoGS data for all Variants
                 </div>
             </div>
@@ -68,77 +54,54 @@
 </div>
 
 <script>
-    // Data pass via PwCogsProduct C# object
-    var data = @Html.Raw(Model.SerializeToJson());
+    var ProfitWise = ProfitWise || {};
+
+    ProfitWise.BulkEditCogsModel = function(data) {
+        var self = this;
+        
+        self.PickListId = ko.observable(data.PickListId);
+
+        self.EditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
+            identifier: ProfitWiseFunctions.getRandomInt(1000, 9999),
+            CogsTypeId: @CogsType.MarginPercentage,
+            CogsCurrencyId: @defaultCurrencyId,
+            CogsAmount: 0.00,
+            CogsMarginPercent: data.DefaultMargin,
+        });
+        self.EditorModel.HorizontalEditor(false);
+        
+        // TODO - wirein Enter and Escape keys
+
+        self.CancelButtonClick = function() {
+            ShopifyApp.Modal.close({ result: false });
+        };
+
+        self.OkButtonClick = function() {
+            var state = self.EditorModel.PullState();
+            console.log(self.PickListId(), state);
+
+            //var settings = new ProfitWiseFunctions.AjaxSettings(true);
+            //var ajax = new ProfitWiseFunctions.Ajax(settings);
+            //ajax.HttpPost(
+            //    "/CogsService/BulkUpdateCogs", 
+            //    postData,
+            //    function() {
+            //        ShopifyApp.Modal.close({ result: true });
+            //    });
+
+            return false;
+        };
+    };
 
     $(document)
         .ready(function () {
-            var ProfitWise = ProfitWise || {};
-
-            ProfitWise.BulkEditProductVariantCogsModel = function() {
-                var self = this;
-
-                self.PwMasterProductId = ko.observable();
-                self.ProductTitle = ko.observable();
-                self.CurrentCogsRange = ko.observable();
-                
-                self.ValidationState = ko.computed(function() {
-                });
-
-                self.CancelButtonClick = function() {
-                    ShopifyApp.Modal.close({ result: false });
-                };
-
-                self.OkButtonClick = function() {
-                    var cogsAmount = self.CogsAmountEditorModel.PullState();
-
-                    var postData = {
-                        pwMasterProductId: self.PwMasterProductId(),
-                        currencyId: cogsAmount.CurrencyId,
-                        Amount: cogsAmount.Amount,
-                    };
-
-                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
-                    var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpPost(
-                        "/CogsService/BulkUpdateCogs", 
-                        postData,
-                        function() {
-                            ShopifyApp.Modal.close({ result: true });
-                        });
-
-                    return false;
-                };
-
-                self.CogsAmountEditorModel =                         
-                    new ProfitWiseWidgets
-                        .MoneyEditorWidgetModel({ lowconstraint: 0 });
-
-                self.CogsAmountEditorModel.RegisterEnterKeyCallback(function() {
-                    return self.OkButtonClick();
-                });
-            };
-
-            var model = new ProfitWise.BulkEditProductVariantCogsModel();
-
-            // Load Product data into the model
-            model.PwMasterProductId(data.PwMasterProductId);
-            model.ProductTitle(data.Title);
-
-            // Load the Cogs Range model
-            model.CurrentCogsRange({
-                CurrencyId : data.NormalizedCurrencyId,
-                AmountLow : data.LowNormalizedCogs,
-                AmountHigh : data.HighNormalizedCogs,
-                IncludesAverages : data.HasCogsDetail,
-            });
-
-            // Load the Cogs Amount money editor
-            model.CogsAmountEditorModel.PushState(data.NormalizedCurrencyId, data.LowNormalizedCogs);
+            
+            // Data pass via PwCogsProduct C# object
+            var data = @Html.Raw(Model.SerializeToJson());    
+            var model = new ProfitWise.BulkEditCogsModel(data);
 
             ko.applyBindings(model);
 
-            // Do we need this...?
             ProfitWiseFunctions.PopOverAutoCloseInit();
         });
 </script>

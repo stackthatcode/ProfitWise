@@ -151,7 +151,7 @@
             <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
 
             <td>
-                <a href="#" data-bind="click: $root.ShowVariantCogsEditor">
+                <a href="#" data-bind="click: $root.BulkEditPopUp">
                     <span data-bind="template: { name: 'Cogs-Product-Summary-Widget', data: $data }"></span>
                 </a>
             </td>
@@ -245,14 +245,14 @@
         self.SortingModel.Callback = function() { self.LoadDataForCurrentPage(); };
 
         // *** Launch Bulk Edit Popup *** //
-        self.BulkEditPopUp = function (model) {
+        self.BulkEditPopUp = function () {
             var url =
                 ProfitWiseConfig.BaseUrl +
-                    '/Cogs/BulkEditCogs?pwMasterProductId=' + model.PwMasterProductId;
+                    '/Cogs/BulkEditCogs?pickListId=' + self.PickListId();
 
             ProfitWiseShopify.LaunchModal({
                 src: url,
-                title: 'Bulk Edit all Variant CoGS',
+                title: 'Bulk Edit CoGS for Current Search',
                 width: 'small',
                 height: 380,
             }, self.LoadDataForCurrentPage);
@@ -260,7 +260,7 @@
 
         // *** Stocked Directly interactivity *** //
         self.StockedDirectlyPickListPopup = function () {
-            var url =
+            var url = 
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/StockedPicklistPopup?pickListId=' + self.PickListId();
 
@@ -346,25 +346,27 @@
 
         // *** Search for Products *** //
         self.SearchForProducts = function () {
-            var filters = [];
-            ko.utils.arrayForEach(
-                self.FilterModel.SelectedFiltersForSearch(),
-                function(item) {
-                    filters.push({
-                        Type: item.Type(),
-                        Value: item.Value(),
-                    });
-                });
+            flow.exec(                
+                function() {
+                    var filters = [];
+                    ko.utils.arrayForEach(
+                        self.FilterModel.SelectedFiltersForSearch(),
+                        function(item) {
+                            filters.push({
+                                Type: item.Type(),
+                                Value: item.Value(),
+                            });
+                        });
 
-            var search = {
-                Text: self.FilterModel.SearchText(),
-                Filters: filters,
-            };
+                    var search = {
+                        Text: self.FilterModel.SearchText(),
+                        Filters: filters,
+                    };
 
-            var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpPost(
-                "/CogsService/Search",
-                search,
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/CogsService/Search", search, this);
+
+                },
                 function(data) {
                     self.PickListId(data.PickListId);
                     self.PagingModel.PageNumber(1);
@@ -372,22 +374,23 @@
                 });
         };
 
-        self.LoadDataForCurrentPage = function () {
-            var resultsPaging = {
-                PickListId: self.PickListId(),
-                PageNumber: self.PagingModel.PageNumber(),
-                PageSize: self.PagingModel.PageSize(),
-                SortByColumn: self.SortingModel.SelectedColumnIndex(),
-                SortByDirectionDown: self.SortingModel.SortByDirectionDown(),
-            };
+        self.LoadDataForCurrentPage = function () {            
+            flow.exec(
+                function() {
+                    var resultsPaging = {
+                        PickListId: self.PickListId(),
+                        PageNumber: self.PagingModel.PageNumber(),
+                        PageSize: self.PagingModel.PageSize(),
+                        SortByColumn: self.SortingModel.SelectedColumnIndex(),
+                        SortByDirectionDown: self.SortingModel.SortByDirectionDown(),
+                    };
 
-            var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpPost(
-                "/CogsService/RetrieveResults",
-                resultsPaging,
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/CogsService/RetrieveResults", resultsPaging, this);
+                },
                 function (data) {
                     self.CurrentGrid.removeAll();
-                    console.log(data);
+                    
                     if (data.products.length == 0) {
                         self.ShowNoProductsFound(true);
                     } else {

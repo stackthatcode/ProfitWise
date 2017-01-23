@@ -81,9 +81,15 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult BulkEditCogs(int pwMasterProductId)
-        {            
-            return View(RetrieveProduct(pwMasterProductId));
+        public ActionResult BulkEditCogs(long pickListId)
+        {
+            var identity = this.HttpContext.PullIdentity();
+            var model = new BulkEditAllCogsModel()
+            {
+                PickListId = pickListId,
+                DefaultMargin = identity.PwShop.DefaultMargin,
+            };
+            return View(model);
         }
 
 
