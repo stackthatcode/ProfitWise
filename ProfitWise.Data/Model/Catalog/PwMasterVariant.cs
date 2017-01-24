@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Model.Cogs;
+using Push.Foundation.Utilities.General;
 
 namespace ProfitWise.Data.Model.Catalog
 {
@@ -10,6 +11,7 @@ namespace ProfitWise.Data.Model.Catalog
         public PwMasterVariant()
         {
             CogsTypeId = CogsType.FixedAmount;
+            CogsDetail = false;
             CogsDetails = new List<PwCogsDetail>();
             Variants = new List<PwVariant>();
         }
@@ -22,7 +24,7 @@ namespace ProfitWise.Data.Model.Catalog
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
 
-        public int? CogsTypeId { get; set; }
+        public int CogsTypeId { get; set; }
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
         public decimal? CogsMarginPercent { get; set; }
@@ -55,6 +57,24 @@ namespace ProfitWise.Data.Model.Catalog
             }
 
             return Variants.OrderByDescending(x => x.LastUpdated).First();
+        }
+    }
+
+    public static class PwMasterVariantExtensions
+    {
+        public static void LoadCogsDetail(
+                this IList<PwMasterVariant> masterVariants, IList<PwCogsDetail> details)
+        {
+            masterVariants
+                .Where(x => x.CogsDetail)
+                .ForEach(
+                    masterVariant =>
+                    {
+                        masterVariant.CogsDetails
+                            = details
+                                    .Where(detail => detail.PwMasterVariantId == masterVariant.PwMasterVariantId)
+                                    .ToList();
+                    });
         }
     }
 }

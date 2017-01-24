@@ -21,25 +21,24 @@ namespace ProfitWise.Data.Repositories
             _connection = connection;
         }
 
-
         // Order Line update queries
-        public void UpdateOrderLines(CogsUpdateOrderContext context)
+        public void UpdateOrderLines(OrderLineCogsContext lineContext)
         {
-            if (context.PwMasterVariantId == null && context.PwMasterProductId == null)
+            if (lineContext.PwMasterVariantId == null && lineContext.PwMasterProductId == null)
             {
                 throw new ArgumentNullException("PwMasterVariantId and PwMasterProductId can't both be null");
             }
-            if (context.CogsTypeId == CogsType.FixedAmount)
+            if (lineContext.CogsTypeId == CogsType.FixedAmount)
             {
-                UpdateOrderLineFixedAmount(context);
+                UpdateOrderLineFixedAmount(lineContext);
             }
-            if (context.CogsTypeId == CogsType.MarginPercentage)
+            if (lineContext.CogsTypeId == CogsType.MarginPercentage)
             {
-                UpdateOrderLinePercentage(context);
+                UpdateOrderLinePercentage(lineContext);
             }
         }
 
-        public void UpdateOrderLineFixedAmount(CogsUpdateOrderContext context)
+        public void UpdateOrderLineFixedAmount(OrderLineCogsContext lineContext)
         {
             var query =
                 @"UPDATE profitwisemastervariant t1 
@@ -53,12 +52,12 @@ namespace ProfitWise.Data.Repositories
 			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
                 SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) 
                 WHERE t1.PwShopId = @PwShopId " +
-                WhereClauseGenerator(context);
+                WhereClauseGenerator(lineContext);
 
-            _connection.Execute(query, context);
+            _connection.Execute(query, lineContext);
         }
 
-        public void UpdateOrderLinePercentage(CogsUpdateOrderContext context)
+        public void UpdateOrderLinePercentage(OrderLineCogsContext lineContext)
         {
             var query =
                 @"UPDATE profitwisemastervariant t1 
@@ -69,12 +68,12 @@ namespace ProfitWise.Data.Repositories
                 
                 SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
                 WHERE t1.PwShopId = @PwShopId " + 
-                WhereClauseGenerator(context);
+                WhereClauseGenerator(lineContext);
 
-            _connection.Execute(query, context);
+            _connection.Execute(query, lineContext);
         }
 
-        public void UpdateOrderLineFixedAmount(CogsUpdateOrderContextPickList context)
+        public void UpdateOrderLineFixedAmount(OrderLineCogsContextPickList context)
         {
             var query =
                 @"UPDATE profitwisepicklistmasterproduct t0
@@ -94,7 +93,7 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, context);
         }
 
-        public void UpdateOrderLinePercentage(CogsUpdateOrderContextPickList context)
+        public void UpdateOrderLinePercentage(OrderLineCogsContextPickList context)
         {
             var query =
                 @"UPDATE profitwisepicklistmasterproduct t0
@@ -110,25 +109,19 @@ namespace ProfitWise.Data.Repositories
             _connection.Execute(query, context);
         }
 
-        public string WhereClauseGenerator(CogsUpdateOrderContext context)
+        public string WhereClauseGenerator(OrderLineCogsContext lineContext)
         {
             var output = "";
-            if (context.PwMasterProductId.HasValue)
+            if (lineContext.PwMasterProductId.HasValue)
             {
                 output += "AND t1.PwMasterProductId = @PwMasterProductId ";
             }
-            if (context.PwMasterVariantId.HasValue)
+            if (lineContext.PwMasterVariantId.HasValue)
             {
                 output += "AND t1.PwMasterVariantId = @PwMasterVariantId ";
             }
-            if (context.StartDate.HasValue)
-            {
-                output += "AND t3.OrderDate >= @StartDate ";
-            }
-            if (context.EndDate.HasValue)
-            {
-                output += "AND t3.OrderDate <= @EndDate ";
-            }
+            output += "AND t3.OrderDate >= @StartDate ";
+            output += "AND t3.OrderDate <= @EndDate ";
             return output;
         }
         
@@ -164,7 +157,6 @@ namespace ProfitWise.Data.Repositories
                                     AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId
                         WHERE t1.PwShopId = @PwShopId;";
 
-
             query += @"INSERT INTO profitwiseprofitreportentry
                         SELECT t1.PwShopId, t1.AdjustmentDate, 3 AS EntryType, t1.ShopifyOrderId, 
                             t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS, NULL AS Quantity
@@ -172,6 +164,5 @@ namespace ProfitWise.Data.Repositories
 
             _connection.Execute(query, new { PwShopId, DefaultCogsPercent = PwShop.DefaultCogsPercent });
         }
-
     }
 }

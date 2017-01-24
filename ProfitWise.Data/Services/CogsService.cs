@@ -4,22 +4,25 @@ using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
+using ProfitWise.Data.Model.ShopifyImport;
 using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Services
 {
     [Intercept(typeof(ShopRequired))]
-    public class CogsUpdateService
+    public class CogsService
     {
         private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly CurrencyService _currencyService;
 
+
         public PwShop PwShop { get; set; }
 
-        public CogsUpdateService(
+        public CogsService(
                 IPushLogger logger, MultitenantFactory multitenantFactory, CurrencyService currencyService)
         {
             _pushLogger = logger;
@@ -28,8 +31,8 @@ namespace ProfitWise.Data.Services
         }
 
     
-        // Context translation
-        public CogsUpdateServiceContext MakeUpdateEntryContext(
+        // Translates Cogs Defaults and Details to uniform representation for saving Cogs data entry to database
+        public CogsDataEntryUpdateContext MakeDataEntryUpdateContext(
                 long? masterVariantId, long? masterProductId, PwCogsDetail defaults, IList<PwCogsDetail> details)
         {
             var defaultsWithConstraints =
@@ -38,11 +41,11 @@ namespace ProfitWise.Data.Services
                     .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId);
             
             var detailsWithConstraints =
-                    details?.Select(x => x.CloneWithConstraints(ApplyConstraintsToDetail)
-                                        .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId))                                        
-                            .ToList();
+                details?.Select(x => x.CloneWithConstraints(ApplyConstraintsToDetail)
+                                    .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId))                                        
+                        .ToList();
 
-            var context = new CogsUpdateServiceContext
+            var context = new CogsDataEntryUpdateContext
             {
                 PwMasterProductId = masterProductId,
                 PwMasterVariantId = masterVariantId,
@@ -53,30 +56,49 @@ namespace ProfitWise.Data.Services
             return context;
         }
 
-        public IList<CogsUpdateOrderContext> MakeUpdateOrderContexts(CogsUpdateServiceContext sourceContext)
+        // Translates Defaults and Details into a flattened sequence that can be processed as a list
+        public IList<OrderLineCogsContext> MakeOrderLineUpdateContexts(PwMasterVariant masterVariant)
+        {
+            var defaults = new PwCogsDetail()
+            {
+                CogsTypeId = masterVariant.CogsTypeId,
+                CogsAmount = masterVariant.CogsAmount,
+                CogsCurrencyId = masterVariant.CogsCurrencyId,
+                CogsMarginPercent = masterVariant.CogsMarginPercent,
+            };
+
+            // We're only creating this to leverage the same function for creating OrderLineUpdateContexts
+            var entryContext =
+                MakeDataEntryUpdateContext(
+                    masterVariant.PwMasterVariantId, masterVariant.PwMasterProductId, defaults, masterVariant.CogsDetails);
+
+            return MakeOrderLineUpdateContexts(entryContext);
+        }
+
+        public IList<OrderLineCogsContext> MakeOrderLineUpdateContexts(CogsDataEntryUpdateContext sourceContext)
         {
             if (!sourceContext.HasDetails)
             {
-                return new List<CogsUpdateOrderContext> {
-                        new CogsUpdateOrderContext
+                return new List<OrderLineCogsContext> {
+                        new OrderLineCogsContext
                         {
                             Cogs = sourceContext.Defaults,
                             DestinationCurrencyId = this.PwShop.CurrencyId,
-                            StartDate = null,
-                            EndDate = null,
+                            StartDate = DateTime.MinValue,
+                            EndDate = DateTime.MaxValue,
                             PwMasterProductId = sourceContext.PwMasterProductId,
                         }
                     };
             }
             else
             {
-                var output = new List<CogsUpdateOrderContext>()
+                var output = new List<OrderLineCogsContext>()
                 {
-                    new CogsUpdateOrderContext
+                    new OrderLineCogsContext
                     {
                         Cogs = sourceContext.Defaults,
                         DestinationCurrencyId = this.PwShop.CurrencyId,
-                        StartDate = null,
+                        StartDate = DateTime.MinValue,
                         EndDate = sourceContext.FirstDetail.CogsDate.AddDays(-1),
                         PwMasterProductId = sourceContext.PwMasterProductId,
                     }
@@ -85,15 +107,14 @@ namespace ProfitWise.Data.Services
                 foreach (var detail in sourceContext.Details)
                 {
                     var nextDetail = sourceContext.NextDetail(detail);
-                    output.Add(
-                        new CogsUpdateOrderContext
-                        {
-                            Cogs = detail,
-                            DestinationCurrencyId = this.PwShop.CurrencyId,
-                            StartDate = detail.CogsDate,
-                            EndDate = nextDetail?.CogsDate.AddDays(-1),
-                            PwMasterProductId = sourceContext.PwMasterProductId,
-                        });
+                    output.Add(new OrderLineCogsContext
+                                {
+                                    Cogs = detail,
+                                    DestinationCurrencyId = this.PwShop.CurrencyId,
+                                    StartDate = detail.CogsDate,
+                                    EndDate = nextDetail?.CogsDate.AddDays(-1) ?? DateTime.MaxValue,
+                                    PwMasterProductId = sourceContext.PwMasterProductId,
+                                });
                 }
 
                 return output;
@@ -101,7 +122,8 @@ namespace ProfitWise.Data.Services
         }
 
 
-        // Update methods
+
+        // Update interface methods
         public void UpdateCogsForPickList(long pickListId, PwCogsDetail cogs)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
@@ -113,7 +135,7 @@ namespace ProfitWise.Data.Services
                 cogsEntryRepository.UpdatePickListDefaultCogs(pickListId, cogs);
 
                 // Update the Order Lines for the Pick List
-                var context = new CogsUpdateOrderContextPickList()
+                var context = new OrderLineCogsContextPickList()
                 { 
                     Cogs = cogs.CloneWithConstraints(ApplyConstraintsToDetail),
                     PwPickListId = pickListId,
@@ -138,18 +160,25 @@ namespace ProfitWise.Data.Services
         public void UpdateCogsForMasterVariant(
                     long? masterVariantId, PwCogsDetail defaults, IList<PwCogsDetail> details)
         {
+            if (!masterVariantId.HasValue)
+            {
+                throw new ArgumentNullException("masterVariantId");
+            }
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
 
             using (var transaction = cogsEntryRepository.InitiateTransaction())
             {
-                var context = MakeUpdateEntryContext(masterVariantId, null, defaults, details);
-
                 // Write the CoGS Entries
-                UpdateCogsEntryByContext(context);
+                var dataEntryContext = MakeDataEntryUpdateContext(masterVariantId, null, defaults, details);
+                UpdateCogsEntryByContext(dataEntryContext);
 
                 // Update the Order Lines for each division of Detail
-                UpdateOrderLines(context);
+                var orderLineContexts = MakeOrderLineUpdateContexts(dataEntryContext);
+                foreach (var orderLineContext in orderLineContexts)
+                {
+                    UpdateOrderLines(orderLineContext);
+                }
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
@@ -169,28 +198,34 @@ namespace ProfitWise.Data.Services
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
 
             var masterVariants = cogsEntryRepository.RetrieveVariants(new[] { masterProductId.Value });
-
             using (var transaction = cogsEntryRepository.InitiateTransaction())
             {
+                // First we'll save the CoGS data entry for all child Master Variants
                 foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
                 {
                     // Write the CoGS Entries
-                    var context = MakeUpdateEntryContext(masterVariantId, masterProductId, defaults, details);
-                    UpdateCogsEntryByContext(context);
+                    var masterVariantContext = MakeDataEntryUpdateContext(masterVariantId, masterProductId, defaults, details);
+                    UpdateCogsEntryByContext(masterVariantContext);
                 }
 
-                // Update the Order Lines for each division of Detail
-                var orderLineContext = MakeUpdateEntryContext(null, masterProductId, defaults, details);
-                UpdateOrderLines(orderLineContext);
+                // Next, create a data entry context (for Master Product)...
+                var masterProductContext = MakeDataEntryUpdateContext(null, masterProductId, defaults, details);
+
+                // ... to translate into Order Line update contexts
+                var orderLineContexts = MakeOrderLineUpdateContexts(masterProductContext);
+                foreach (var orderLineContext in orderLineContexts)
+                {
+                    UpdateOrderLines(orderLineContext);
+                }
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
-
                 transaction.Commit();
             }
         }
 
-        private void UpdateCogsEntryByContext(CogsUpdateServiceContext context)
+        // Update worker methods
+        private void UpdateCogsEntryByContext(CogsDataEntryUpdateContext context)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             
@@ -212,20 +247,43 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        private void UpdateOrderLines(CogsUpdateServiceContext context)
+        private void UpdateOrderLines(OrderLineCogsContext context)
         {
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
-            var orderUpdateContexts = MakeUpdateOrderContexts(context);
+            cogsUpdateRepository.UpdateOrderLines(context);
+        }
 
-            foreach (var orderUpdateContext in orderUpdateContexts)
+
+        // In-memory computation for the Order Refresh Step
+        public decimal CalculateUnitCogs(IList<OrderLineCogsContext> contexts, ShopifyOrderLineItem lineItem)
+        {
+            var context = contexts.SelectContextByDate(lineItem.OrderDate);
+            if (context == null)
             {
-                cogsUpdateRepository.UpdateOrderLines(orderUpdateContext);
+                throw new Exception($"Unable to locate OrderLineCogsContext for Order Line {lineItem.ShopifyOrderLineId}");
+            }
+
+            if (context.CogsTypeId == CogsType.FixedAmount)
+            {
+                if (!context.CogsAmount.HasValue)
+                    throw new Exception("Missing CogsAmount");
+                if (!context.CogsCurrencyId.HasValue)
+                    throw new Exception("Missing CogsCurrencyId");
+
+                return _currencyService.Convert(
+                        context.CogsAmount.Value, context.CogsCurrencyId.Value,
+                        context.DestinationCurrencyId, lineItem.OrderDate);
+            }
+            else
+            {
+                return lineItem.UnitPrice * context.CogsPercentOfUnitPrice;
             }
         }
 
 
+
         // Constraints
-        public void ApplyConstraintsToDetail(PwCogsDetail detail)
+        private void ApplyConstraintsToDetail(PwCogsDetail detail)
         {
             ValidateCurrency(detail.CogsTypeId, detail.CogsCurrencyId);
             detail.CogsAmount = ConstrainAmount(detail.CogsAmount);
@@ -241,7 +299,7 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public void ValidateCurrency(int cogsTypeId, int? cogsCurrencyId)
+        private void ValidateCurrency(int cogsTypeId, int? cogsCurrencyId)
         {
             if (cogsTypeId != CogsType.FixedAmount) return;
 
@@ -251,7 +309,7 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public decimal? ConstrainPercentage(decimal? cogsMarginPercent)
+        private decimal? ConstrainPercentage(decimal? cogsMarginPercent)
         {
             if (!cogsMarginPercent.HasValue)
             {
@@ -268,7 +326,7 @@ namespace ProfitWise.Data.Services
             return cogsMarginPercent;
         }
 
-        public decimal? ConstrainAmount(decimal? cogsAmount)
+        private decimal? ConstrainAmount(decimal? cogsAmount)
         {
             if (!cogsAmount.HasValue)
             {

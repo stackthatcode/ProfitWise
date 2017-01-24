@@ -51,11 +51,12 @@ namespace ProfitWise.Data.Repositories
 
         public List<PwReport> RetrieveSystemDefinedReports()
         {
-            List<PwReport> systemDefinedReports = new List<PwReport>();
+            List<PwReport> systemDefinedReports = new List<PwReport>()
             {
                 PwSystemReportFactory.OverallProfitability(),
                 PwSystemReportFactory.TestReport(),
             };
+
             systemDefinedReports.ForEach(x => x.PwShopId = this.PwShopId);
             return systemDefinedReports.OrderBy(x => x.Name).ToList();
         }

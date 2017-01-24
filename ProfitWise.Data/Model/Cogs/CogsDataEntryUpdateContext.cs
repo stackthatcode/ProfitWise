@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProfitWise.Data.Model.Cogs
 {
-    public class CogsUpdateServiceContext
+    public class CogsDataEntryUpdateContext
     {
         public long? PwMasterProductId { get; set; }
         public long? PwMasterVariantId { get; set; }

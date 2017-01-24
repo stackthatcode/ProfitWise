@@ -218,8 +218,8 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var catalogBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
-            var cogsRepository = _multitenantFactory.MakeCogsEntryRepository(shop);
-            var queryReposity = _multitenantFactory.MakeReportQueryRepository(shop);
+            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(shop);
+            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(shop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
@@ -241,10 +241,7 @@ namespace ProfitWise.Data.ProcessSteps
                     WriteOrderToPersistence(importedOrder, context);
                 }
 
-                // TODO - need something specific to these Orders
-                //cogsRepository.UpdateOrderLineUnitCogs(true);
-                //queryReposity.RefreshReportEntryData();
-
+                cogsUpdateRepository.RefreshReportEntryData();
 
                 trans.Commit();
             }
@@ -261,8 +258,7 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Debug(orderFromShopify.ToString());
             }
 
-            // If the Order is Void then Delete the Order
-            
+            // If the Order is Void then Delete the Order            
             _pushLogger.Debug($"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} to ProfitWise data model");
 
             if (existingOrder == null)
@@ -278,6 +274,8 @@ namespace ProfitWise.Data.ProcessSteps
         public void InsertOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
         {
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
+            var cogsService = _multitenantFactory.MakeCogsUpdateService(context.PwShop);
+
             var translatedOrder = orderFromShopify.ToShopifyOrder(context.PwShop.PwShopId);
 
             _pushLogger.Debug($"Inserting new Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
@@ -292,6 +290,14 @@ namespace ProfitWise.Data.ProcessSteps
 
                 var pwVariant = FindCreateProductVariant(context.PwShop, productBuildContext, variantBuildContext);
                 translatedLineItem.SetProfitWiseVariant(pwVariant);
+
+                // In-memory CoGS computation
+                var cogsContexts = cogsService.MakeOrderLineUpdateContexts(pwVariant.ParentMasterVariant);
+                var unitCogs = cogsService.CalculateUnitCogs(cogsContexts, translatedLineItem);
+
+                _pushLogger.Debug(
+                    $"Computed CoGS for new Order Line Item: {translatedLineItem.ShopifyOrderLineId} " + 
+                    $" - {unitCogs}");
             }
 
             orderRepository.InsertOrder(translatedOrder);

@@ -25,21 +25,25 @@ namespace ProfitWise.Data.Services
         // TODO => migrate to Preferences
         private const bool StockedDirectlyDefault = true;
 
-        public CatalogBuilderService(
-                    IPushLogger logger, MultitenantFactory multitenantFactory)
+        public CatalogBuilderService(IPushLogger logger, MultitenantFactory multitenantFactory)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
         }
         
+
         public IList<PwMasterProduct> RetrieveFullCatalog()
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var variantDataRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+            var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
 
             var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
             var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
+            var cogsDetails = cogsRepository.RetrieveCogsDetailAll();
+
             masterProductCatalog.LoadMasterVariants(masterVariants);
+            masterVariants.LoadCogsDetail(cogsDetails);
 
             return masterProductCatalog;
         }
@@ -150,6 +154,7 @@ namespace ProfitWise.Data.Services
             this.UpdatePrimaryVariant(context.MasterVariant);
             return newVariant;
         }
+
 
         public void UpdateExistingProduct(PwProduct product, string tags, string productType)
         {

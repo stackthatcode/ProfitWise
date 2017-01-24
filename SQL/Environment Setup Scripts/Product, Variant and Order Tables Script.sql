@@ -131,7 +131,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `TotalDiscount` decimal(15,2) DEFAULT NULL, # Total discount applied to this line item
   `TotalAfterAllDiscounts` decimal(15,2) DEFAULT NULL, # Revenue before Refunds 
   `NetQuantity` INT(6) NOT NULL,
-  `UnitCogs` decimal(15,2) DEFAULT NULL,	# Cost of Goods Sold per Unit, in Store Currency
+  `UnitCogs` decimal(15,2) NOT NULL,	# Cost of Goods Sold per Unit, in Store Currency
   
   PRIMARY KEY  (`PwShopId`, `ShopifyOrderId`, `ShopifyOrderLineId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -192,7 +192,7 @@ CREATE TABLE `profitwisemastervariantcogsdetail` (
   `CogsTypeId` TINYINT NOT NULL,		# Possible Values { 1 => Fixed Amount, 2 => Compute by Margin % } 
   `CogsCurrencyId` INT NULL, 			# Numeric value representing the currency for the CoGS data for this variant
   `CogsAmount` DECIMAL(15, 2) NULL, 	# CoGS value for this variant
-  `CogsMargin` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
+  `CogsMarginPercent` DECIMAL(4, 2) NULL, 	# CoGS value for this variant
   
   PRIMARY KEY (`PwMasterVariantId`,`PwShopId`, `CogsDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

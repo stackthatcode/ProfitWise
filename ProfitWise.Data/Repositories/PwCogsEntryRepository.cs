@@ -301,6 +301,15 @@ namespace ProfitWise.Data.Repositories
                 query, new { this.PwShop.PwShopId, @masterVariantId }).ToList();
         }
 
+        public List<PwCogsDetail> RetrieveCogsDetailAll()
+        {
+            var query =
+                @"SELECT * FROM profitwisemastervariantcogsdetail 
+                WHERE PwShopId = @PwShopId ORDER BY CogsDate;";
+
+            return _connection.Query<PwCogsDetail>(query, new { this.PwShop.PwShopId }).ToList();
+        }
+
         public void DeleteCogsDetail(long? masterVariantId)
         {
             if (!masterVariantId.HasValue)

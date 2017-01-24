@@ -175,7 +175,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-
+        // CoGS update methods
         [HttpPost]
         public ActionResult BulkUpdateCogs(long picklistId, PwCogsDetail cogs)
         {
@@ -191,16 +191,6 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
             service.UpdateCogsForMasterVariant(simpleCogs.PwMasterVariantId, simpleCogs, null);
-            return JsonNetResult.Success();
-        }
-
-
-        [HttpPost]
-        public ActionResult UpdateCogsForPickList(long pickListId, PwCogsDetail simpleCogs)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
-            service.UpdateCogsForPickList(pickListId, simpleCogs);
             return JsonNetResult.Success();
         }
 
@@ -222,6 +212,15 @@ namespace ProfitWise.Web.Controllers
                 return JsonNetResult.Success();
             }
             throw new ArgumentNullException("Both Master pwMasterVariantId and pwMasterProductId are null");
+        }
+
+        [HttpPost]
+        public ActionResult UpdateCogsForPickList(long pickListId, PwCogsDetail simpleCogs)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
+            service.UpdateCogsForPickList(pickListId, simpleCogs);
+            return JsonNetResult.Success();
         }
     }
 }

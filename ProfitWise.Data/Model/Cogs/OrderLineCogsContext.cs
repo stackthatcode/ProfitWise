@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ProfitWise.Data.Model.ShopifyImport;
 
 namespace ProfitWise.Data.Model.Cogs
 {
 
     // Largely a pass-thru context with some additional properties that will be used to for the SQL update
-    public class CogsUpdateOrderContext
+    public class OrderLineCogsContext
     {
         public PwCogsDetail Cogs { get; set; }
 
@@ -19,7 +22,15 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal CogsPercentOfUnitPrice => Cogs.CogsPercentOfUnitPrice;
 
         public int DestinationCurrencyId { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
+
+    public static class OrderLineUpdateContextExtensions
+    {
+        public static OrderLineCogsContext SelectContextByDate(this IList<OrderLineCogsContext> contexts, DateTime orderDate)
+        {
+            return contexts.FirstOrDefault(x => x.StartDate <= orderDate && x.EndDate > orderDate);
+        }
     }
 }
