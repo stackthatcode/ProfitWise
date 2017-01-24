@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Model.Catalog;
 using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.ShopifyImport
@@ -58,7 +59,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 OrderNumber = order.Name,
                 OrderDate = order.CreatedAt.Date,
                 OrderLevelDiscount = order.OrderDiscount,
-                FinancialStatus = order.FinancialStatus,
+                FinancialStatus = order.FinancialStatus.ToFinancialStatus(),
                 Tags = order.Tags,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,

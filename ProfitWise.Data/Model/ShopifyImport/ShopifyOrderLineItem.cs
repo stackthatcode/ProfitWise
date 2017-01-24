@@ -13,11 +13,13 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
         public ShopifyOrder ParentOrder { get; set; }
         public IList<ShopifyOrderLineRefund> Refunds { get; set; }
-
         public DateTime OrderDateTimestamp { get; set; }
-        public DateTime OrderDate { get; set; }
-        //public bool Cancelled => ParentOrder.Cancelled;
 
+
+        // OrderDate and FinancialStatus are cached in SQL for query simplicity + speed i.e. avoiding JOINS
+        public DateTime OrderDate { get; set; }    
+        public int FinancialStatus => ParentOrder.FinancialStatus;    
+        
         public long? PwProductId { get; set; }
         public long? PwVariantId { get; set; }
 

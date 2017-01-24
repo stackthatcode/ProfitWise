@@ -74,6 +74,7 @@
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="Model\Catalog\FinancialStatus.cs" />
     <Compile Include="Model\Cogs\OrderLineCogsContextPickList.cs" />
     <Compile Include="Model\Cogs\OrderLineCogsContext.cs" />
     <Compile Include="Model\Cogs\PwCogsDetail.cs" />

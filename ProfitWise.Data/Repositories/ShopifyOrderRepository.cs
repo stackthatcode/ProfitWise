@@ -140,18 +140,21 @@ namespace ProfitWise.Data.Repositories
             lineitem.PwShopId = PwShop.PwShopId;
             var query =
                 @"INSERT INTO shopifyorderlineitem ( 
-                    PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, PwProductId, PwVariantId, 
+                    PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDate, FinancialStatus, PwProductId, PwVariantId, 
                     Quantity, UnitPrice, TotalDiscount, TotalAfterAllDiscounts, NetQuantity, UnitCogs )
                 VALUES ( 
-                    @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @PwProductId, @PwVariantId,
+                    @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDate, @FinancialStatus, @PwProductId, @PwVariantId,
                     @Quantity, @UnitPrice, @TotalDiscount, @TotalAfterAllDiscounts, @NetQuantity, @UnitCogs )";
             _connection.Execute(query, lineitem);
         }
 
-        public virtual void UpdateLineItemNetTotal(ShopifyOrderLineItem lineItem)
+        public virtual void UpdateLineItemNetTotalAndStatus(ShopifyOrderLineItem lineItem)
         {
             lineItem.PwShopId = PwShop.PwShopId;
-            var query = @"UPDATE shopifyorderlineitem SET TotalAfterAllDiscounts = @TotalAfterAllDiscounts, NetQuantity = @NetQuantity
+            var query = @"UPDATE shopifyorderlineitem 
+                            SET TotalAfterAllDiscounts = @TotalAfterAllDiscounts, 
+                                NetQuantity = @NetQuantity,
+                                FinancialStatus = @FinancialStatus
                             WHERE PwShopId = @PwShopId AND ShopifyOrderLineId = @ShopifyOrderLineId";
             _connection.Execute(query, lineItem);
         }

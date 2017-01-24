@@ -218,7 +218,6 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var catalogBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
-            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(shop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(shop);
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
@@ -240,7 +239,7 @@ namespace ProfitWise.Data.ProcessSteps
                 {
                     WriteOrderToPersistence(importedOrder, context);
                 }
-
+                
                 cogsUpdateRepository.RefreshReportEntryData();
 
                 trans.Commit();
@@ -333,7 +332,7 @@ namespace ProfitWise.Data.ProcessSteps
             foreach (var importedLineItem in importedOrder.LineItems)
             {
                 _pushLogger.Debug($"Updating existing Line Item Net Total: {importedLineItem.ShopifyOrderLineId}");
-                orderRepository.UpdateLineItemNetTotal(importedLineItem);
+                orderRepository.UpdateLineItemNetTotalAndStatus(importedLineItem);
 
                 var existingLineItem =
                     existingOrder.LineItems.First(x => x.ShopifyOrderLineId == importedLineItem.ShopifyOrderLineId);

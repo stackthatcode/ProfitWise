@@ -109,7 +109,7 @@ CREATE TABLE `shopifyorder` (
   `OrderNumber` varchar(128) DEFAULT NULL, # Shopify order number
   `OrderDate` DATE NOT NULL, # Date-time simplified to Date-only for easy joins
   `OrderLevelDiscount` decimal(15,2) DEFAULT NULL, # Discount applied at the order-level  
-  `FinancialStatus` varchar(25) DEFAULT NULL, # Financial settlement status of this order
+  `FinancialStatus` TINYINT NOT NULL, # Financial settlement status of this order
   `Tags` varchar(500) DEFAULT NULL, # Tags for this order
   `CreatedAt` timestamp NOT NULL, # Date-time when this order was created
   `UpdatedAt` timestamp NOT NULL, # Date-time when this order was last updated in Shopify
@@ -124,6 +124,7 @@ CREATE TABLE `shopifyorderlineitem` (
   `ShopifyOrderLineId` BIGINT NOT NULL, # Shopify identifier for order line item
   `OrderDateTimestamp` timestamp NOT NULL, # Date-time for associated order
   `OrderDate` DATE NOT NULL, # Date-time simplified to Date-only for easy joins
+  `FinancialStatus` TINYINT NOT NULL,
   `PwProductId` BIGINT NOT NULL, # Product (PwProductId) for this line item
   `PwVariantId` BIGINT NOT NULL, # Variant (PwVariantId) for this line item
   `Quantity` int(6) unsigned NOT NULL, # Quantity for this line item

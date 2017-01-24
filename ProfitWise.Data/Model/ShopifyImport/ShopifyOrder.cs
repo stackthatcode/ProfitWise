@@ -30,7 +30,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public decimal NetSales => GrossSales - TotalLineItemRefunds - TotalDiscounts + TotalAdjustments;
 
 
-        public string FinancialStatus { get; set; }
+        public int FinancialStatus { get; set; }
         public string Tags { get; set;  }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
