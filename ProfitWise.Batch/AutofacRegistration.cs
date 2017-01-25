@@ -39,29 +39,25 @@ namespace ProfitWise.Batch
 
             // SQL connections
             // ... load configuration into local variables
-            var mysqlConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             var hangFileConnectionString = ConfigurationManager.ConnectionStrings["HangFireConnection"].ConnectionString;
 
             // ... and register configuration
             builder
-                .Register<MySqlConnection>(ctx =>
+                .Register(ctx =>
                 {
-                    var connectionstring = mysqlConnectionString;
-                    var connection = new MySqlConnection(connectionstring);
+                    var connectionstring = connectionString;
+                    var connection = new SqlConnection(connectionstring);
                     connection.Open();
                     return connection;
                 })
-                .As<MySqlConnection>()
+                .As<SqlConnection>()
                 .As<DbConnection>()
                 .As<IDbConnection>()
                 .InstancePerLifetimeScope();
 
 
-            builder.Register<SqlConnection>(ctx =>
-            {
-                var connectionString = hangFileConnectionString;
-                return new SqlConnection(connectionString);
-            });
+            builder.Register<SqlConnection>(ctx => new SqlConnection(hangFileConnectionString));
 
             builder.Register(x => new RefreshServiceConfiguration()
             {

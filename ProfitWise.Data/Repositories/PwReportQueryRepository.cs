@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -14,13 +15,13 @@ namespace ProfitWise.Data.Repositories
 {
     public class PwReportQueryRepository
     {
-        private readonly MySqlConnection _connection;
+        private readonly IDbConnection _connection;
         private readonly MultitenantFactory _factory;
         private readonly IPushLogger _logger;
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
-        public PwReportQueryRepository(MySqlConnection connection, MultitenantFactory factory, IPushLogger logger)
+        public PwReportQueryRepository(IDbConnection connection, MultitenantFactory factory, IPushLogger logger)
         {
             _connection = connection;
             _factory = factory;

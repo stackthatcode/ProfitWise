@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using Dapper;
@@ -8,9 +9,9 @@ namespace ProfitWise.Data.Repositories
 {
     public class PwShopRepository
     {
-        private readonly MySqlConnection _connection;
+        private readonly IDbConnection _connection;
 
-        public PwShopRepository(MySqlConnection connection)
+        public PwShopRepository(IDbConnection connection)
         {
             _connection = connection;
         }

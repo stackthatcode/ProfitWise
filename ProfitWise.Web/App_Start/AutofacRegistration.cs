@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
@@ -40,18 +41,19 @@ namespace ProfitWise.Web
 
 
             // Database connection string...
-            var mysqlConnectionString = 
+            var connectionString = 
                 ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+
             // ... and register configuration
             builder
-                .Register<MySqlConnection>(ctx =>
+                .Register(ctx =>
                 {
-                    var connectionstring = mysqlConnectionString;
-                    var connection = new MySqlConnection(connectionstring);
+                    var connectionstring = connectionString;
+                    var connection = new SqlConnection(connectionstring);
                     connection.Open();
                     return connection;
                 })
-                .AsSelf()
+                .As<SqlConnection>()
                 .As<DbConnection>()
                 .As<IDbConnection>()
                 .InstancePerLifetimeScope();

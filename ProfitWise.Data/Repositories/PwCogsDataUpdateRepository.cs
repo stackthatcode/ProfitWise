@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -12,12 +13,12 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwCogsDataUpdateRepository : IShopFilter
     {
-        private readonly MySqlConnection _connection;
+        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
 
-        public PwCogsDataUpdateRepository(MySqlConnection connection)
+        public PwCogsDataUpdateRepository(IDbConnection connection)
         {
             _connection = connection;
         }

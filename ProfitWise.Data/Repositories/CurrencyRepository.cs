@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -10,14 +11,14 @@ namespace ProfitWise.Data.Repositories
 {
     public class CurrencyRepository
     {
-        private readonly MySqlConnection _connection;
+        private readonly IDbConnection _connection;
 
-        public CurrencyRepository(MySqlConnection connection)
+        public CurrencyRepository(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public MySqlTransaction InitiateTransaction()
+        public IDbTransaction InitiateTransaction()
         {
             return _connection.BeginTransaction();
         }

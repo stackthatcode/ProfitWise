@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
@@ -13,15 +14,15 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwVariantRepository : IShopFilter
     {
-        private readonly MySqlConnection _connection;
+        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
 
-        public PwVariantRepository(MySqlConnection connection)
+        public PwVariantRepository(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public MySqlTransaction InitiateTransaction()
+        public IDbTransaction InitiateTransaction()
         {
             return _connection.BeginTransaction();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
@@ -13,9 +14,9 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwCogsEntryRepository : IShopFilter
     {
-        private readonly MySqlConnection _connection;
+        private readonly IDbConnection _connection;
 
-        public PwCogsEntryRepository(MySqlConnection connection)
+        public PwCogsEntryRepository(IDbConnection connection)
         {
             _connection = connection;
         }
@@ -24,7 +25,7 @@ namespace ProfitWise.Data.Repositories
         public long PwShopId => PwShop.PwShopId;
 
 
-        public MySqlTransaction InitiateTransaction()
+        public IDbTransaction InitiateTransaction()
         {
             return _connection.BeginTransaction();
         }

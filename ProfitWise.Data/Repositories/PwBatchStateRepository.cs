@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -10,10 +11,10 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwBatchStateRepository : IShopFilter
     {
-        private readonly MySqlConnection _connection;
+        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
 
-        public PwBatchStateRepository(MySqlConnection connection)
+        public PwBatchStateRepository(IDbConnection connection)
         {
             _connection = connection;
         }
