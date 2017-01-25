@@ -43,6 +43,7 @@ namespace ProfitWise.Data.Repositories
                         ORDER BY Date, SourceCurrencyId ASC;";
             return _connection.Query<ExchangeRate>(query, new { date }).ToList();
         }
+
         public List<ExchangeRate> RetrieveExchangeRateFromDate(DateTime minimumDate)
         {
             var query = @"SELECT * FROM exchangerate 

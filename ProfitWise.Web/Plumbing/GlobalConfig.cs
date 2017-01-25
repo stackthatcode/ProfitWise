@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Web;
 using System.Web.Mvc;
 
 namespace ProfitWise.Web.Plumbing
@@ -14,7 +15,7 @@ namespace ProfitWise.Web.Plumbing
         public static RedirectResult Redirect(string destinationUrl, string returnUrl = null)
         {
             var url = $"{BaseUrl}" + $"{destinationUrl}" +
-                    (returnUrl != null ? "?returnUrl={WebUtility.UrlEncode(returnUrl)}" : "");
+                    (returnUrl != null ? $"?returnUrl={HttpUtility.UrlEncode(returnUrl)}" : "");
             return new RedirectResult(url);
         }
     }

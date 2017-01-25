@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
+using ProfitWise.Data.Processes;
 using Push.Foundation.Utilities.Logging;
 
 
@@ -14,15 +15,29 @@ namespace ProfitWise.Batch
             Bootstrap.ConfigureApp();
 
             using (var container = AutofacRegistration.Build())
+            using (var scope = container.BeginLifetimeScope())
+            {
+                //var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
+                var userId = "57f0da58-6e74-41d5-90a9-736d09aa3b2f";
+
+                var refreshProcess = scope.Resolve<RefreshProcess>();
+                refreshProcess.Execute(userId);
+            }
+        }
+
+        public static void NewBatchStuff()
+        {
+            using (var container = AutofacRegistration.Build())
             {
                 var executionLoops = new List<Task>();
                 var counter = 0;
+
                 while (++counter <= 10)
                 {
                     var context = new ExecutionLoopContext
                     {
                         TaskId = counter,
-                        DelayMilliseconds = 1000, 
+                        DelayMilliseconds = 1000,
                     };
 
                     var loop = Task.Run(() => ExecutionLoop(container, context));

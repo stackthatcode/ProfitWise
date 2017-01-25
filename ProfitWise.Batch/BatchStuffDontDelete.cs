@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 
-namespace ProfitWise.Batch._TempHoldingCell
+namespace ProfitWise.Batch
 {
     class BatchStuffDontDelete
     {

@@ -206,11 +206,20 @@ namespace ProfitWise.Web.Controllers
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             Response.SuppressFormsAuthenticationRedirect = true;
             Response.TrySkipIisCustomErrors = true;
+           
+            var url = GlobalConfig.BaseUrl + $"/ShopifyAuth/Login";
 
-            var shop = returnUrl.ExtractQueryParameter("shop");            
-            var url = GlobalConfig.BaseUrl + 
-                $"/ShopifyAuth/Login?shop={shop}&returnUrl={HttpUtility.UrlEncode(returnUrl)}";            
+            if (returnUrl != null)
+            {
+                url += $"?returnUrl={HttpUtility.UrlEncode(returnUrl)}";
 
+                var shop = returnUrl.ExtractQueryParameter("shop");
+
+                if (shop != null)
+                {
+                    url += $"&shop={shop}";
+                }
+            }
             var model = 
                 new AuthorizationProblemModel(url)
                 {

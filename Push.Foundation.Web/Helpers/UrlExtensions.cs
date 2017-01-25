@@ -23,8 +23,15 @@ namespace Push.Foundation.Web.Helpers
         public static string ExtractQueryParameter(this string input, string name)
         {
             var queryString = input.ExtractQueryString();
-            var queryStringCollection = HttpUtility.ParseQueryString(queryString);
-            return queryStringCollection[name];
+            if (queryString == null)
+            {
+                return "";
+            }
+            else
+            {
+                var queryStringCollection = HttpUtility.ParseQueryString(queryString);
+                return queryStringCollection[name];
+            }
         }
     }
 }
