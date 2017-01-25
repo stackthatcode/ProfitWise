@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Core.Internal;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
@@ -85,7 +84,8 @@ namespace ProfitWise.Data.ProcessSteps
             if (batchState.ProductsLastUpdated != null)
             {
                 var lastUpdatedInShopifyTime =
-                    _timeZoneTranslator.TranslateToTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
+                    _timeZoneTranslator
+                        .TranslateToTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
                         .AddMinutes(-MinutesFudgeFactor);
 
                 filter.UpdatedAtMin = lastUpdatedInShopifyTime;
@@ -117,8 +117,7 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
             var repository = _multitenantFactory.MakeProductRepository(shop);
-            var cogsRepository = _multitenantFactory.MakeCogsEntryRepository(shop);
-
+            
             using (var transaction = repository.InitiateTransaction())
             {
                 foreach (var importedProduct in importedProducts)

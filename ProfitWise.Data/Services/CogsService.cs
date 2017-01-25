@@ -255,7 +255,8 @@ namespace ProfitWise.Data.Services
 
 
         // In-memory computation for the Order Refresh Step
-        public decimal CalculateUnitCogs(IList<OrderLineCogsContext> contexts, ShopifyOrderLineItem lineItem)
+        public decimal CalculateUnitCogs(
+                IList<OrderLineCogsContext> contexts, ShopifyOrderLineItem lineItem)
         {
             var context = contexts.SelectContextByDate(lineItem.OrderDate);
             if (context == null)

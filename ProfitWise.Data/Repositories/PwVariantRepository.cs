@@ -31,6 +31,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
+                        t1.CogsTypeId, t1.CogsCurrencyId, t1.CogsAmount, t1.CogsMarginPercent, t1.CogsDetail,                        
                         t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyProductId, t2.ShopifyVariantId, 
                         t2.Sku, t2.Title, t2.LowPrice, t2.HighPrice, t2.IsActive, t2.IsPrimary
                 FROM profitwisemastervariant t1
@@ -59,6 +60,9 @@ namespace ProfitWise.Data.Repositories
                 var masterVariant = 
                     output.FirstOrDefault(x => x.PwMasterVariantId == row.PwMasterVariantId);
 
+                // Bool true is stored in the dynamic object as such
+                var dynamicTrue = (sbyte) 1;
+
                 if (masterVariant == null)
                 {
                     masterVariant = new PwMasterVariant();
@@ -66,8 +70,15 @@ namespace ProfitWise.Data.Repositories
                     masterVariant.PwShopId = row.PwShopId;
                     masterVariant.PwMasterProductId = row.PwMasterProductId;
                     masterVariant.Variants = new List<PwVariant>();
-                    masterVariant.Exclude = row.Exclude == (sbyte)1;
-                    masterVariant.StockedDirectly = row.StockedDirectly == (sbyte)1;
+                    masterVariant.Exclude = row.Exclude == dynamicTrue;
+                    masterVariant.StockedDirectly = row.StockedDirectly == dynamicTrue;
+
+                    masterVariant.CogsTypeId = row.CogsTypeId;
+                    masterVariant.CogsCurrencyId = row.CogsCurrencyId;
+                    masterVariant.CogsAmount = row.CogsAmount;
+                    masterVariant.CogsMarginPercent = row.CogsMarginPercent;
+                    masterVariant.CogsDetail = row.CogsDetail == dynamicTrue;
+
                     output.Add(masterVariant);
                 }
 
@@ -84,8 +95,8 @@ namespace ProfitWise.Data.Repositories
                     variant.Title = row.Title;
                     variant.LowPrice = row.LowPrice;
                     variant.HighPrice = row.HighPrice;
-                    variant.IsActive = row.IsActive == (sbyte)1;
-                    variant.IsPrimary = row.IsPrimary == (sbyte)1;
+                    variant.IsActive = row.IsActive == dynamicTrue;
+                    variant.IsPrimary = row.IsPrimary == dynamicTrue;
                     variant.ParentMasterVariant = masterVariant;
                     masterVariant.Variants.Add(variant);
                 }

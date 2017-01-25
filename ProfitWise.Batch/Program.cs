@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Autofac;
-using ProfitWise.Data.Processes;
-using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 
 
@@ -12,84 +12,65 @@ namespace ProfitWise.Batch
         static void Main(string[] args)
         {
             Bootstrap.ConfigureApp();
+
             using (var container = AutofacRegistration.Build())
             {
-                //ExchangeRateProcess(container);
+                var executionLoops = new List<Task>();
+                var counter = 0;
+                while (++counter <= 10)
+                {
+                    var context = new ExecutionLoopContext
+                    {
+                        TaskId = counter,
+                        DelayMilliseconds = 1000, 
+                    };
 
-                RefreshServiceForSingleUser(container, args);
+                    var loop = Task.Run(() => ExecutionLoop(container, context));
+                    executionLoops.Add(loop);
+                }
 
-                Console.Write("Please hit enter...");
+                Task.WaitAll(executionLoops.ToArray());
+                Console.WriteLine("ProfitWise.Batch - started...");
                 Console.ReadLine();
             }
         }
         
-        private static void RefreshServiceForSingleUser(IContainer container, string[] args)
+        public static async void ExecutionLoop(IContainer container, ExecutionLoopContext context)
         {
-            using (var scope = container.BeginLifetimeScope())
-            {
-                //var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
-                var userId = "57f0da58-6e74-41d5-90a9-736d09aa3b2f";
-
-                var refreshProcess = scope.Resolve<RefreshProcess>();
-                refreshProcess.Execute(userId);
-            }
-
-        }
-
-        private static void ExchangeRateProcess(IContainer container)
-        {
-            using (var scope = container.BeginLifetimeScope())
-            {
-                var exchangeRateProcess = scope.Resolve<CurrencyProcess>();
-                exchangeRateProcess.Execute();
-            }
-        }
-
-
-
-        private static void InvokeRefreshServices(IContainer container, string[] args)
-        {
-            var logger = container.Resolve<IPushLogger>();
-            try
-            {
-                logger.Info("Hello! - Executing InvokeRefreshServices" + Environment.NewLine);
-                SimulateRefreshServiceFor1000Users(container);
-            }
-            catch (Exception e)
-            {
-                logger.Error(e);
-
-                // Add notification service call here
-                logger.Fatal(e.Message);
-            }
-        }
-
-        private static void SimulateRefreshServiceFor1000Users(IContainer container)
-        {
-            int artificialUserId = 1000;
-            while (artificialUserId < 2000)
+            Console.WriteLine($"New WorkerThread {context.TaskId}");
+            while (true)
             {
                 using (var scope = container.BeginLifetimeScope())
                 {
-                    var refreshProcess = scope.Resolve<RefreshProcess>();
-                    refreshProcess.Execute(artificialUserId.ToString());
+                    WorkerTaskInner(scope, context);
+
+                    //var random = new Random();
+                    await Task.Delay(context.DelayMilliseconds);
                 }
-                artificialUserId++;
             }
         }
-        
-        private static void TestTimeZoneTranslation(IContainer container)
-        {
-            var translator = container.Resolve<TimeZoneTranslator>();
-            var result =
-                translator.TranslateToTimeZone(
-                    new DateTime(2016, 9, 9, 6, 30, 0),
-                    "(GMT-06:00) Central Time (US & Canada)");
-            var result2 =
-                translator.TranslateToTimeZone(
-                    new DateTime(2016, 9, 9, 6, 30, 0),
-                    "(GMT-05:00) America/New_York");
-        }
 
+        public static async void WorkerTaskInner(ILifetimeScope scope, ExecutionLoopContext context)
+        {
+            var logger = scope.Resolve<IPushLogger>();
+            try
+            {
+                // ...
+
+                Console.WriteLine($"WorkerThread {context.TaskId} - checking in");
+            }
+            catch (Exception ex)
+            {
+                logger.Fatal(ex);
+            }
+        }
+    }
+
+    public class ExecutionLoopContext
+    {
+        public int DelayMilliseconds { get; set; }
+        public int TaskId { get; set; }
     }
 }
+
+

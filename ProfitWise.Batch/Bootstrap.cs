@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
-using Push.Utilities.General;
 
 namespace ProfitWise.Batch
 {

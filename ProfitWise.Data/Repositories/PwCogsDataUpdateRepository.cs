@@ -154,7 +154,7 @@ namespace ProfitWise.Data.Repositories
             }
             else
             {
-                adjustmentQuery += @"WHERE PwShopId = @PwShopId; ";
+                adjustmentQuery += @"WHERE t1.PwShopId = @PwShopId; ";
             }
             return adjustmentQuery;
         }

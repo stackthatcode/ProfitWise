@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.ShopifyImport;

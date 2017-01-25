@@ -65,6 +65,11 @@ namespace Push.Foundation.Utilities.Logging
         {
             GetLogger.Fatal(_messageFormatter(message));
         }
+
+        public void Fatal(Exception exception)
+        {
+            GetLogger.Fatal(_messageFormatter(exception.FullStackTraceDump()));
+        }
     }
 }
  

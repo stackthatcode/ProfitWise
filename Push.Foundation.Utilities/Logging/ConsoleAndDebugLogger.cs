@@ -47,5 +47,11 @@ namespace Push.Foundation.Utilities.Logging
             Console.WriteLine(message);
             System.Diagnostics.Debug.WriteLine(message);
         }
+
+        public void Fatal(Exception exception)
+        {
+            Console.WriteLine(exception.StackTrace);
+            System.Diagnostics.Debug.WriteLine(exception.StackTrace);
+        }
     }
 }

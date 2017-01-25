@@ -80,6 +80,9 @@ namespace ProfitWise.Web.Controllers
         {
             var shop = HttpContext.PullIdentity().PwShop;
             _shopRepository.UpdateProfitRealization(shop.PwShopId, profitRealizationId);
+
+            var cogsRepository = _factory.MakeCogsDataUpdateRepository(shop);
+            cogsRepository.RefreshReportEntryData();
             return JsonNetResult.Success();
         }
     }
