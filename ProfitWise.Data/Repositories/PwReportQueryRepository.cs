@@ -344,28 +344,87 @@ namespace ProfitWise.Data.Repositories
                 long reportId, DateTime startDate, DateTime endDate, List<string> filterKeys,
                 ReportGrouping grouping, PeriodType periodType)
         {
+            var innerQuery = DatePeriodTotalsInnerQuery(filterKeys, grouping, periodType);
+
+            // NOTE: for MySQL go back prior to 1/26/2017 for structuring of this query without CTE
+            var cteQueryStart =
+                @"WITH InnerQuery ( Year, Quarter, Month, Week, Day, GroupingKey, GroupingName, NetSales, CoGS ) AS 
+               (" + innerQuery + ")";
+
+            var cteBody = 
+                @" GroupingKey, GroupingName, SUM(NetSales) AS TotalRevenue, SUM(CoGS) AS TotalCogs 
+                FROM Inner Query ";
+
+            string query = "";
+            if (periodType == PeriodType.Year)
+            {
+                query = @"SELECT Year, " + cteBody +
+                        @"GROUP BY Year, GroupingKey, GroupingName ORDER BY Year;";
+            }
+            else if (periodType == PeriodType.Quarter)
+            {
+                query = @"SELECT Year, Quarter, " + cteBody + 
+                        @"GROUP BY Year, Quarter, GroupingKey, GroupingName
+                        ORDER BY Year, Quarter;";
+            }
+            else if (periodType == PeriodType.Month)
+            {
+                query = @"SELECT Year, Quarter, Month, " + cteBody + 
+                        @"GROUP BY Year, Quarter, Month, GroupingKey, GroupingName
+                        ORDER BY Year, Quarter, Month;";
+            }
+            else if (periodType == PeriodType.Week)
+            {
+                query = @"SELECT Year, Quarter, Month, Week, " + cteBody +
+                    @"GROUP BY Year, Quarter, Month, Week, GroupingKey, GroupingName
+                    ORDER BY Year, Quarter, Month, Week;";
+            }
+            else // DataGranularity.Day
+            {
+                query = @"SELECT Year, Quarter, Month, Week, Day, " + cteBody +
+                     @"GROUP BY Year, Quarter, Month, Week, Day, GroupingKey, GroupingName
+                    ORDER BY Year, Quarter, Month, Week, Day;";
+            }
+            
+            var output = Connection
+                .Query<DatePeriodTotal>(
+                    query,
+                    new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate, FilterKeys = filterKeys, })
+                .ToList();
+
+            // ... and finally decorate these values
+            output.ForEach(x =>
+            {
+                x.GroupingType = grouping;
+                x.PeriodType = periodType;
+            });
+            return output;
+        }
+
+        private static string DatePeriodTotalsInnerQuery(List<string> filterKeys, ReportGrouping grouping, PeriodType periodType)
+        {
             string dateHeader;
             if (periodType == PeriodType.Year)
             {
-                dateHeader = $@"t4.y AS Year, ";
+                dateHeader = $@"t4.y AS Year, NULL AS Quarter, NULL AS Month, NULL AS Week, NULL AS Day, ";
             }
             else if (periodType == PeriodType.Quarter)
             {
                 dateHeader =
-                    $@"t4.y AS Year, t4.q AS Quarter, ";
+                    $@"t4.y AS Year, t4.q AS Quarter, NULL AS Month, NULL AS Week, NULL AS Day, ";
             }
             else if (periodType == PeriodType.Month)
             {
                 dateHeader =
-                    $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, ";
+                    $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, NULL AS Week, NULL AS Day, ";
             }
             else if (periodType == PeriodType.Week)
             {
                 dateHeader =
-                    $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, t4.w AS Week, ";
+                    $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, t4.w AS Week, NULL AS Day, ";
             }
-            else   // DataGranularity.Day
-            {   
+            else // DataGranularity.Day
+            {
                 dateHeader =
                     $@"t4.y AS Year, t4.q AS Quarter, t4.m AS Month, t4.w AS Week, t4.d AS Day, ";
             }
@@ -377,7 +436,8 @@ namespace ProfitWise.Data.Repositories
             }
             else if (grouping == ReportGrouping.Variant)
             {
-                groupingHeader = $@"t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, ";
+                groupingHeader =
+                    $@"t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, ";
             }
             else if (grouping == ReportGrouping.ProductType)
             {
@@ -393,7 +453,7 @@ namespace ProfitWise.Data.Repositories
             }
 
             var queryGuts =
-                @"SUM(t3.NetSales) AS TotalRevenue, SUM(t3.CoGS) AS TotalCogs
+                @"t3.NetSales AS TotalRevenue, t3.CoGS AS TotalCogs
                 FROM profitwisereportquerystub t1
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
@@ -424,54 +484,8 @@ namespace ProfitWise.Data.Repositories
                     filterClause = "AND t1.Vendor in @FilterKeys ";
                 }
             }
-
-            string groupAndOrderClause;
-            if (periodType == PeriodType.Year)
-            {
-                groupAndOrderClause = 
-                    @"GROUP BY Year, GroupingKey, GroupingName
-                    ORDER BY Year;";
-            }
-            else if (periodType == PeriodType.Quarter)
-            {
-                groupAndOrderClause =
-                    @"GROUP BY Year, Quarter, GroupingKey, GroupingName
-                    ORDER BY Year, Quarter;";
-            }
-            else if (periodType == PeriodType.Month)
-            {
-                groupAndOrderClause =
-                    @"GROUP BY Year, Quarter, Month, GroupingKey, GroupingName
-                    ORDER BY Year, Quarter, Month;";
-            }
-            else if (periodType == PeriodType.Week)
-            {
-                groupAndOrderClause =
-                    @"GROUP BY Year, Quarter, Month, Week, GroupingKey, GroupingName
-                    ORDER BY Year, Quarter, Month, Week;";
-            }
-            else // DataGranularity.Day
-            {
-                groupAndOrderClause =
-                     @"GROUP BY Year, Quarter, Month, Week, Day, GroupingKey, GroupingName
-                    ORDER BY Year, Quarter, Month, Week, Day;";
-            }
-
-            var query = @"SELECT " + dateHeader + groupingHeader + queryGuts + filterClause + groupAndOrderClause;
-
-            var output = Connection
-                .Query<DatePeriodTotal>(
-                    query,
-                    new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate, FilterKeys = filterKeys, })
-                .ToList();
-
-            // ... and finally decorate these values
-            output.ForEach(x =>
-            {
-                x.GroupingType = grouping;
-                x.PeriodType = periodType;
-            });
-            return output;
+            var innerQuery = @"SELECT " + dateHeader + groupingHeader + queryGuts + filterClause;
+            return innerQuery;
         }
 
 
