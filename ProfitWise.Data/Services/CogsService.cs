@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Factories;
@@ -127,9 +128,9 @@ namespace ProfitWise.Data.Services
         public void UpdateCogsForPickList(long pickListId, PwCogsDetail cogs)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
-            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);            
+            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
 
-            using (var transaction = cogsEntryRepository.InitiateTransaction())
+            using (var trans = new TransactionScope())
             {
                 // Update Pick List Default Cogs
                 cogsEntryRepository.UpdatePickListDefaultCogs(pickListId, cogs);
@@ -153,7 +154,7 @@ namespace ProfitWise.Data.Services
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
 
-                transaction.Commit();
+                trans.Complete();
             }
         }
 
@@ -167,7 +168,7 @@ namespace ProfitWise.Data.Services
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
 
-            using (var transaction = cogsEntryRepository.InitiateTransaction())
+            using (var trans = new TransactionScope())
             {
                 // Write the CoGS Entries
                 var dataEntryContext = MakeDataEntryUpdateContext(masterVariantId, null, defaults, details);
@@ -183,7 +184,7 @@ namespace ProfitWise.Data.Services
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
 
-                transaction.Commit();
+                trans.Complete();
             }
         }
 
@@ -198,7 +199,7 @@ namespace ProfitWise.Data.Services
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
 
             var masterVariants = cogsEntryRepository.RetrieveVariants(new[] { masterProductId.Value });
-            using (var transaction = cogsEntryRepository.InitiateTransaction())
+            using (var trans = new TransactionScope())
             {
                 // First we'll save the CoGS data entry for all child Master Variants
                 foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
@@ -220,7 +221,7 @@ namespace ProfitWise.Data.Services
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
-                transaction.Commit();
+                trans.Complete();
             }
         }
 

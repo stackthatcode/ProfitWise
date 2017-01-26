@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
@@ -221,7 +222,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
-            using (var trans = orderRepository.InitiateTransaction())
+            using (var trans = new TransactionScope())
             {
                 var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();                
                 var orderIdList = importedOrders.Select(x => x.Id).ToList();
@@ -241,7 +242,7 @@ namespace ProfitWise.Data.ProcessSteps
                 
                 cogsUpdateRepository.RefreshReportEntryData();
 
-                trans.Commit();
+                trans.Complete();
             }
         }
 

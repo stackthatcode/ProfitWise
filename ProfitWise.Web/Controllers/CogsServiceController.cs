@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -35,7 +36,7 @@ namespace ProfitWise.Web.Controllers
 
             long pickListId;
 
-            using (var transaction = pickListRepository.InitiateTransaction())
+            using (var trans = new TransactionScope())
             {
                 pickListId = pickListRepository.Provision();
 
@@ -52,7 +53,7 @@ namespace ProfitWise.Web.Controllers
                     }
                 }
 
-                transaction.Commit();
+                trans.Complete();
             }
             
             return new JsonNetResult(new { PickListId = pickListId});

@@ -23,8 +23,11 @@ namespace ProfitWise.Batch
                     //var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
                     var userId = "57f0da58-6e74-41d5-90a9-736d09aa3b2f";
 
-                    var refreshProcess = scope.Resolve<RefreshProcess>();
-                    refreshProcess.Execute(userId);
+                    var currencyProcess = scope.Resolve<CurrencyProcess>();
+                    currencyProcess.Execute();
+
+                    //var refreshProcess = scope.Resolve<RefreshProcess>();
+                    //refreshProcess.Execute(userId);
                 }
                 catch (Exception e)
                 {

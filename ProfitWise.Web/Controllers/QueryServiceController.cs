@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -80,7 +81,7 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
-            using (var transaction = repository.InitiateTransaction())
+            using (var trans = new TransactionScope())
             {
                 var shopCurrencyId = userIdentity.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
@@ -101,7 +102,7 @@ namespace ProfitWise.Web.Controllers
                     seriesDataset = BuildSeriesWithGrouping(userIdentity.PwShop, report, summary);
                 }
 
-                transaction.Commit();
+                trans.Complete();
 
                 var flattenedSeries = new List<ReportSeries>();
                 foreach (var series in seriesDataset)
@@ -136,7 +137,7 @@ namespace ProfitWise.Web.Controllers
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
-            using (var transaction = repository.InitiateTransaction())
+            using (var trans = new TransactionScope())
             {
                 var shopCurrencyId = userIdentity.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
@@ -175,7 +176,7 @@ namespace ProfitWise.Web.Controllers
                         }
                     };
 
-                transaction.Commit();
+                trans.Complete();
                 return new JsonNetResult(
                     new { rows = totals, count = totalCounts, currency = shopCurrencyId, series = series });
             }

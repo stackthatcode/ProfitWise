@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
@@ -117,8 +118,8 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
             var repository = _multitenantFactory.MakeProductRepository(shop);
-            
-            using (var transaction = repository.InitiateTransaction())
+
+            using (var trans = new TransactionScope())
             {
                 foreach (var importedProduct in importedProducts)
                 {
@@ -137,7 +138,7 @@ namespace ProfitWise.Data.ProcessSteps
                     FlagMissingVariantsAsInactive(shop, productBuildContext);
                 }
 
-                transaction.Commit();
+                trans.Complete();
             }
         }
 

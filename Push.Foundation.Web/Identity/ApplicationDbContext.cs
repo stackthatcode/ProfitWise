@@ -5,7 +5,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Push.Foundation.Web.Identity
 {
- //   [DbConfigurationType(typeof(MySql.Data.Entity.MySqlEFConfiguration))]
+    //[DbConfigurationType(typeof(MySql.Data.Entity.MySqlEFConfiguration))]
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public Guid UniqueIdentifier { get; private set; }
@@ -13,6 +13,7 @@ namespace Push.Foundation.Web.Identity
         public ApplicationDbContext(DbConnection connection) 
                 : base(connection, contextOwnsConnection: false)
         {
+            Database.SetInitializer<ApplicationDbContext>(null);
             UniqueIdentifier = Guid.NewGuid();
         }
     }
