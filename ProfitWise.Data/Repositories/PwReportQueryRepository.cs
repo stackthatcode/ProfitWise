@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
@@ -15,17 +16,26 @@ namespace ProfitWise.Data.Repositories
 {
     public class PwReportQueryRepository
     {
-        private readonly IDbConnection _connection;
         private readonly MultitenantFactory _factory;
-        private readonly IPushLogger _logger;
+
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
-        public PwReportQueryRepository(IDbConnection connection, MultitenantFactory factory, IPushLogger logger)
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+
+        public PwReportQueryRepository(
+                ConnectionWrapper connectionWrapper, 
+                MultitenantFactory factory)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
             _factory = factory;
-            _logger = logger;
+        }
+
+        public IDbTransaction InitiateTransaction()
+        {
+            return _connectionWrapper.StartTransactionForScope();
         }
 
 
@@ -40,7 +50,7 @@ namespace ProfitWise.Data.Repositories
 
             query += ReportFilterClauseGenerator(reportId);
 
-            return _connection
+            return Connection
                 .Query<ProductAndVariantCount>(query, new { PwShopId, PwReportId = reportId })
                 .FirstOrDefault();
         }
@@ -53,11 +63,12 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId ";
             query += ReportFilterClauseGenerator(reportId);
             query += @" GROUP BY PwMasterProductId, Title, Vendor, ProductType 
-                        ORDER BY Title LIMIT @startRecord, @pageSize";
+                        ORDER BY Title OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            //  ORDER BY Title LIMIT @startRecord, @pageSize"; // MySQL
 
             var startRecord = (pageNumber - 1) * pageSize;
 
-            return _connection
+            return Connection
                 .Query<PwReportSelectionMasterProduct>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize, })
                 .ToList();
         }
@@ -69,11 +80,12 @@ namespace ProfitWise.Data.Repositories
                 FROM vw_MasterProductAndVariantSearch   
                 WHERE PwShopId = @PwShopId ";
             query += ReportFilterClauseGenerator(reportId);
-            query += @" ORDER BY ProductTitle, VariantTitle LIMIT @startRecord, @pageSize";
+            query += @" ORDER BY ProductTitle, VariantTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            //query += @" ORDER BY ProductTitle, VariantTitle LIMIT @startRecord, @pageSize"; //MySQL
 
             var startRecord = (pageNumber - 1) * pageSize;
 
-            return _connection
+            return Connection
                 .Query<PwReportSelectionMasterVariant>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize })
                 .ToList();
         }
@@ -115,7 +127,7 @@ namespace ProfitWise.Data.Repositories
             var deleteQuery =
                 @"DELETE FROM profitwisereportquerystub
                 WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
-            _connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
+            Connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
 
             var createQuery =
                 @"INSERT INTO profitwisereportquerystub
@@ -126,7 +138,7 @@ namespace ProfitWise.Data.Repositories
                 ReportFilterClauseGenerator(reportId) +
                 @" GROUP BY PwMasterVariantId,  PwMasterProductId, 
                     Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
-            _connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
+            Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
         }
 
         public List<PwReportSearchStub> RetrieveSearchStubs(long reportId)
@@ -141,7 +153,7 @@ namespace ProfitWise.Data.Repositories
                 AND t2.PwShopId = @PwShopId";
 
             var results =
-                _connection
+                Connection
                     .Query<PwReportSearchStub>(
                         query, new { PwShopId, reportId }).ToList();
             return results;
@@ -156,14 +168,14 @@ namespace ProfitWise.Data.Repositories
             var filterCountQuery =
                 @"SELECT COUNT(PwFilterId) FROM profitwisereportfilter
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            var filterCount = _connection.Query<int>(filterCountQuery, new { this.PwShopId, reportId }).First();
+            var filterCount = Connection.Query<int>(filterCountQuery, new { this.PwShopId, reportId }).First();
             return filterCount;
         }
 
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
         {            
             var totalsQuery = @"SELECT " + QueryGutsForTotals();
-            var totals = _connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
+            var totals = Connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
 
             var numberOfOrdersQuery =
                 @"SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 
@@ -179,7 +191,7 @@ namespace ProfitWise.Data.Repositories
                             AND t3.EntryType = 1 
                 WHERE t1.PwReportId = @PwReportId AND t1.PwShopId = @PwShopId ";
             
-            var orderCount = _connection.Query<int>(numberOfOrdersQuery, queryContext).First();
+            var orderCount = Connection.Query<int>(numberOfOrdersQuery, queryContext).First();
             totals.TotalOrders = orderCount;
             return totals;
         }
@@ -222,7 +234,7 @@ namespace ProfitWise.Data.Repositories
             if (queryContext.Grouping == ReportGrouping.Vendor)
                 query = "SELECT COUNT(DISTINCT(t1.Vendor)) " + queryGuts;
 
-            return _connection.Query<int>(query, queryContext).First();
+            return Connection.Query<int>(query, queryContext).First();
         }
 
         public List<GroupedTotal> RetreiveTotalsByProduct(TotalQueryContext queryContext)
@@ -233,7 +245,7 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.PwMasterProductId, t1.ProductTitle " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return _connection
+            return Connection
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Product);
         }
@@ -243,10 +255,11 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
-                @"GROUP BY t1.PwMasterVariantId, GroupingName " +
+                //@"GROUP BY t1.PwMasterVariantId, GroupingName " + // MySQL
+                @"GROUP BY t1.PwMasterVariantId, CONCAT(t1.Sku, ' - ', t1.VariantTitle) " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return _connection
+            return Connection
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Variant);
         }
@@ -259,7 +272,7 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.ProductType " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return _connection
+            return Connection
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.ProductType);
         }
@@ -272,7 +285,7 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.Vendor " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return _connection
+            return Connection
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Vendor);
         }
@@ -319,7 +332,9 @@ namespace ProfitWise.Data.Repositories
             if (queryContext.Ordering == ColumnOrdering.QuantitySoldAscending)
                 orderByClause = "ORDER BY TotalNumberSold ASC ";
 
-            return orderByClause + "LIMIT @StartingIndex, @PageSize";
+            return orderByClause + "OFFSET @StartingIndex ROWS FETCH NEXT @PageSize ROWS ONLY;";
+
+            //return orderByClause + "LIMIT @StartingIndex, @PageSize"; // MySQL
         }
 
 
@@ -442,9 +457,9 @@ namespace ProfitWise.Data.Repositories
                     ORDER BY Year, Quarter, Month, Week, Day;";
             }
 
-            var query = @"SELECT " + dateHeader + dateHeader + groupingHeader + queryGuts + filterClause + groupAndOrderClause;
+            var query = @"SELECT " + dateHeader + groupingHeader + queryGuts + filterClause + groupAndOrderClause;
 
-            var output = _connection
+            var output = Connection
                 .Query<DatePeriodTotal>(
                     query,
                     new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate, FilterKeys = filterKeys, })
@@ -474,7 +489,7 @@ namespace ProfitWise.Data.Repositories
                 AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
                 GROUP BY t3.EntryDate ORDER BY t3.EntryDate";
             
-            return _connection.Query<DateTotal>(
+            return Connection.Query<DateTotal>(
                     query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
                 .ToList();
         }

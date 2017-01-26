@@ -4,8 +4,8 @@ using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 
@@ -14,21 +14,24 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwCogsEntryRepository : IShopFilter
     {
-        private readonly IDbConnection _connection;
-
-        public PwCogsEntryRepository(IDbConnection connection)
-        {
-            _connection = connection;
-        }
-
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+        public PwCogsEntryRepository(ConnectionWrapper connectionWrapper)
+        {
+            _connectionWrapper = connectionWrapper;
+        }
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connection.BeginTransaction();
+            return _connectionWrapper.StartTransactionForScope();
         }
+
+
+
 
         public PwCogsProductSummary RetrieveProduct(long masterProductId)
         {
@@ -39,7 +42,7 @@ namespace ProfitWise.Data.Repositories
                 AND PwMasterProductId = @PwMasterProductId
                 AND IsPrimary = true;";
 
-            return _connection
+            return Connection
                 .Query<PwCogsProductSummary>(
                     query, new
                     {
@@ -75,9 +78,11 @@ namespace ProfitWise.Data.Repositories
                 AND t1.PwMasterProductId IN ( 
 	                SELECT PwMasterProductId FROM profitwisepicklistmasterproduct 
                     WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId ) " +
-                sortByClause + " LIMIT @StartRecord, @ResultsPerPage;";
+                sortByClause + " OFFSET @StartRecord ROWS FETCH NEXT @ResultsPerPage ROWS ONLY;";
 
-            return _connection.Query<PwCogsProductSummary>(
+            // sortByClause + " LIMIT @StartRecord, @ResultsPerPage;"; //MySQL
+
+            return Connection.Query<PwCogsProductSummary>(
                 query,
                 new
                 {
@@ -104,7 +109,7 @@ namespace ProfitWise.Data.Repositories
                 AND t3.PwShopId = @PwShopId AND t3.IsPrimary = true
                 AND t2.PwMasterProductId IN @MasterProductIds";
 
-            return _connection.Query<PwCogsVariant>(
+            return Connection.Query<PwCogsVariant>(
                 query, new {this.PwShopId, MasterProductIds = masterProductIds}).ToList();
         }
 
@@ -121,7 +126,7 @@ namespace ProfitWise.Data.Repositories
                 AND t3.PwShopId = @PwShopId AND t3.IsPrimary = true
                 AND t2.PwMasterVariantId = @masterVariantId";
 
-            return _connection
+            return Connection
                 .Query<PwCogsVariant>(query, new { this.PwShopId, masterVariantId })
                 .FirstOrDefault();
         }
@@ -139,7 +144,7 @@ namespace ProfitWise.Data.Repositories
                     FROM profitwisepicklistmasterproduct 
                     WHERE PwShopId = @pwShopId AND PwPickListId = @pickListId);";
 
-            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId, stockedDirectly});
+            Connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId, stockedDirectly});
         }
 
         public void UpdateStockedDirectlyByMasterProductId(long masterProductId, bool stockedDirectly)
@@ -150,7 +155,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterProductId = @masterProductId;";
 
-            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterProductId, stockedDirectly});
+            Connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterProductId, stockedDirectly});
         }
 
         public void UpdateStockedDirectlyByMasterVariantId(long masterVariantId, bool stockedDirectly)
@@ -161,7 +166,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterVariantId = @masterVariantId;";
 
-            _connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterVariantId, stockedDirectly});
+            Connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, masterVariantId, stockedDirectly});
         }
 
         public void UpdateExcludeByPicklist(long pickListId, bool exclude)
@@ -175,7 +180,7 @@ namespace ProfitWise.Data.Repositories
                     FROM profitwisepicklistmasterproduct 
                     WHERE PwShopId = @pwShopId AND PwPickListId = @pickListId);";
 
-            _connection.Execute(query, new {PwShopId, pickListId, exclude});
+            Connection.Execute(query, new {PwShopId, pickListId, exclude});
         }
 
         public void UpdateExcludeByMasterProductId(long masterProductId, bool exclude)
@@ -186,7 +191,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterProductId = @masterProductId;";
 
-            _connection.Execute(query, new {PwShopId, masterProductId, exclude});
+            Connection.Execute(query, new {PwShopId, masterProductId, exclude});
         }
 
         public void UpdateExcludeByMasterVariantId(long masterVariantId, bool exclude)
@@ -197,7 +202,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId
                 AND PwMasterVariantId = @masterVariantId;";
 
-            _connection.Execute(query, new {PwShopId, masterVariantId, exclude});
+            Connection.Execute(query, new {PwShopId, masterVariantId, exclude});
         }
 
 
@@ -212,7 +217,7 @@ namespace ProfitWise.Data.Repositories
                         AND Vendor <> ''
                         ORDER BY Vendor;";
 
-            return _connection.Query<string>(
+            return Connection.Query<string>(
                 query, new {PwShopId = this.PwShop.PwShopId}).ToList();
         }
 
@@ -225,7 +230,7 @@ namespace ProfitWise.Data.Repositories
                         AND ProductType <> ''
                         ORDER BY ProductType;";
 
-            return _connection.Query<string>(
+            return Connection.Query<string>(
                 query, new {PwShopId = this.PwShop.PwShopId}).ToList();
         }
 
@@ -256,7 +261,7 @@ namespace ProfitWise.Data.Repositories
                     CogsDetail = @cogsDetail                   
                 WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
 
-            _connection.Execute(
+            Connection.Execute(
                 query, new { this.PwShopId, masterVariantId,
                             cogsTypeId, cogsCurrencyId, cogsAmount, cogsMarginPercent, cogsDetail });
         }
@@ -276,7 +281,7 @@ namespace ProfitWise.Data.Repositories
                 AND t2.PwShopId = @PwShopId 
                 AND PwPickListId = @pickListId;";
 
-            _connection.Execute(
+            Connection.Execute(
                 query, new
                 {
                     this.PwShopId,
@@ -298,7 +303,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId
                 ORDER BY CogsDate;";
 
-            return _connection.Query<PwCogsDetail>(
+            return Connection.Query<PwCogsDetail>(
                 query, new { this.PwShop.PwShopId, @masterVariantId }).ToList();
         }
 
@@ -308,7 +313,7 @@ namespace ProfitWise.Data.Repositories
                 @"SELECT * FROM profitwisemastervariantcogsdetail 
                 WHERE PwShopId = @PwShopId ORDER BY CogsDate;";
 
-            return _connection.Query<PwCogsDetail>(query, new { this.PwShop.PwShopId }).ToList();
+            return Connection.Query<PwCogsDetail>(query, new { this.PwShop.PwShopId }).ToList();
         }
 
         public void DeleteCogsDetail(long? masterVariantId)
@@ -321,7 +326,7 @@ namespace ProfitWise.Data.Repositories
             var query = 
                 @"DELETE FROM profitwisemastervariantcogsdetail 
                 WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
-            _connection.Execute(query, new {this.PwShopId, masterVariantId});
+            Connection.Execute(query, new {this.PwShopId, masterVariantId});
         }
 
         public void InsertCogsDetails(PwCogsDetail detail)
@@ -335,7 +340,7 @@ namespace ProfitWise.Data.Repositories
                 @"INSERT INTO profitwisemastervariantcogsdetail 
                 VALUES ( @PwMasterVariantId, @PwShopId, 
                         @CogsDate, @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsMarginPercent );";
-            _connection.Execute(query, detail);
+            Connection.Execute(query, detail);
         }
     }
 }

@@ -87,7 +87,7 @@ namespace ProfitWise.Web.Controllers
 
                 _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
 
-                using (var transaction = new TransactionScope())
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     // The User exists already - good! Even so, copy the latest set of Claims to Persistence
                     await PushCookieClaimsToPersistence(externalLoginInfo);
@@ -111,7 +111,7 @@ namespace ProfitWise.Web.Controllers
             var userName = externalLoginInfo.DefaultUserName;
             ApplicationUser user = null;
 
-            using (var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 user = await _userManager.FindByNameAsync(userName);
 

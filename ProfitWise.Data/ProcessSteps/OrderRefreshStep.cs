@@ -222,7 +222,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             _pushLogger.Info($"{importedOrders.Count} Orders to process");
 
-            using (var trans = new TransactionScope())
+            using (var trans = catalogBuilderService.InitiateTransaction())
             {
                 var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();                
                 var orderIdList = importedOrders.Select(x => x.Id).ToList();
@@ -242,7 +242,7 @@ namespace ProfitWise.Data.ProcessSteps
                 
                 cogsUpdateRepository.RefreshReportEntryData();
 
-                trans.Complete();
+                trans.Commit();
             }
         }
 

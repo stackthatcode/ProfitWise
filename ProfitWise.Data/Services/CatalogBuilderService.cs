@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Transactions;
 using Autofac.Extras.DynamicProxy2;
 using Castle.Core.Internal;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 using Push.Foundation.Utilities.Logging;
+using Push.Utilities.General;
 
 
 namespace ProfitWise.Data.Services
@@ -19,24 +23,38 @@ namespace ProfitWise.Data.Services
     {
         private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
+        private readonly ConnectionWrapper _connectionWrapper;
 
         public PwShop PwShop { get; set; }
 
         // TODO => migrate to Preferences
         private const bool StockedDirectlyDefault = true;
 
-        public CatalogBuilderService(IPushLogger logger, MultitenantFactory multitenantFactory)
+        public CatalogBuilderService(
+                IPushLogger logger, 
+                MultitenantFactory multitenantFactory,
+                ConnectionWrapper connectionWrapper)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
+            _connectionWrapper = connectionWrapper;
         }
-        
+
+
+        public IDbTransaction InitiateTransaction()
+        {
+            return _connectionWrapper.StartTransactionForScope();            
+        }
+
+        public IDbTransaction Transaction { get; set; }
+
+
 
         public IList<PwMasterProduct> RetrieveFullCatalog()
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var variantDataRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
-            var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+            var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);            
 
             var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
             var masterVariants = variantDataRepository.RetrieveAllMasterVariants();

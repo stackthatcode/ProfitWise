@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Shop;
 
@@ -10,13 +11,20 @@ namespace ProfitWise.Data.Repositories
 {
     public class PwReportFilterRepository
     {
-        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
-        public PwReportFilterRepository(IDbConnection connection)
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+        public PwReportFilterRepository(ConnectionWrapper connectionWrapper)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
+        }
+
+        public IDbTransaction InitiateTransaction()
+        {
+            return _connectionWrapper.StartTransactionForScope();
         }
 
 
@@ -29,7 +37,7 @@ namespace ProfitWise.Data.Repositories
                 FROM profitwiseproduct
                 WHERE PwShopId = @PwShopId AND IsPrimary = 1 
                 GROUP BY ProductType;";
-            return _connection.Query<PwProductTypeSummary>(query, new { PwShopId }).ToList();
+            return Connection.Query<PwProductTypeSummary>(query, new { PwShopId }).ToList();
         }
 
         public IList<PwProductVendorSummary> RetrieveVendorSummary(long pwReportId)
@@ -50,7 +58,7 @@ namespace ProfitWise.Data.Repositories
 
             query += " GROUP BY Vendor;";
 
-            return _connection
+            return Connection
                     .Query<PwProductVendorSummary>(
                             query, new { PwShopId, @pwReportId, productTypeFilter }).ToList();
         }
@@ -84,7 +92,7 @@ namespace ProfitWise.Data.Repositories
 
             query += " GROUP BY t1.PwMasterProductId, t1.Vendor, t1.Title;";
 
-            return _connection.Query<PwProductSummary>(
+            return Connection.Query<PwProductSummary>(
                             query, new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter }).ToList();
         }
 
@@ -127,7 +135,7 @@ namespace ProfitWise.Data.Repositories
             }
 
             query += " ORDER BY t1.Title, t3.Title, t3.Sku";
-            return _connection
+            return Connection
                 .Query<PwProductSkuSummary>(query,
                             new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter, productFilter })
                 .ToList();
@@ -142,7 +150,7 @@ namespace ProfitWise.Data.Repositories
                 @"SELECT * FROM profitwisereportfilter 
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId
                 ORDER BY DisplayOrder;";
-            return _connection.Query<PwReportFilter>(query, new { PwShopId, reportId }).ToList();
+            return Connection.Query<PwReportFilter>(query, new { PwShopId, reportId }).ToList();
         }
 
         public PwReportFilter RetrieveFilter(long reportId, long filterId)
@@ -150,7 +158,7 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT * FROM profitwisereportfilter 
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId AND PwFilterId = @filterId";
-            return _connection
+            return Connection
                     .Query<PwReportFilter>(query, new { PwShopId, reportId, filterId })
                     .FirstOrDefault();
         }
@@ -160,7 +168,7 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT MAX(DisplayOrder) FROM profitwisereportfilter 
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            return _connection
+            return Connection
                     .Query<int?>(query, new { PwShopId, reportId })
                     .FirstOrDefault();
         }
@@ -171,7 +179,7 @@ namespace ProfitWise.Data.Repositories
                 @"SELECT MAX(PwFilterId) FROM profitwisereportfilter 
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
 
-            return _connection
+            return Connection
                     .Query<int?>(query, new { PwShopId, reportId })
                     .FirstOrDefault();
         }
@@ -185,7 +193,7 @@ namespace ProfitWise.Data.Repositories
             filter.PwFilterId = (RetrieveMaxFilterId(filter.PwReportId) ?? 0) + 1;
             filter.DisplayOrder = (RetrieveMaxFilterOrder(filter.PwReportId) ?? 0) + 1;
 
-            _connection.Execute(query, filter);
+            Connection.Execute(query, filter);
 
             return RetrieveFilter(filter.PwReportId, filter.PwFilterId);
         }
@@ -198,7 +206,7 @@ namespace ProfitWise.Data.Repositories
                 SELECT @destinationReportId, @PwShopId, PwFilterId, FilterType, NumberKey, StringKey, Title, Description, DisplayOrder
                 FROM profitwisereportfilter WHERE PwShopId = @PwShopId AND PwReportId = @sourceReportId";
 
-            _connection.Execute(query, new { PwShopId, sourceReportId, destinationReportId });
+            Connection.Execute(query, new { PwShopId, sourceReportId, destinationReportId });
         }
 
         public void DeleteFilter(long reportId, int filterType, string key)
@@ -217,7 +225,7 @@ namespace ProfitWise.Data.Repositories
                 query += " AND StringKey = @key";
             }
 
-            _connection.Execute(query,
+            Connection.Execute(query,
                  new { reportId, this.PwShopId, filterType, key });
         }
 
@@ -228,7 +236,7 @@ namespace ProfitWise.Data.Repositories
                         AND PwReportId = @reportId 
                         AND PwFilterId = @filterId";
 
-            _connection.Execute(query, new { reportId, this.PwShopId, filterId });
+            Connection.Execute(query, new { reportId, this.PwShopId, filterId });
         }
 
         public void DeleteFilters(long reportId, int filterType)
@@ -238,7 +246,7 @@ namespace ProfitWise.Data.Repositories
                         AND PwReportId = @reportId 
                         AND FilterType = @filterType";
 
-            _connection.Execute(query, new { reportId, this.PwShopId, filterType });
+            Connection.Execute(query, new { reportId, this.PwShopId, filterType });
         }
 
         public void DeleteFilters(long reportId)
@@ -247,7 +255,7 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId 
                         AND PwReportId = @reportId";
 
-            _connection.Execute(query, new { reportId, this.PwShopId });
+            Connection.Execute(query, new { reportId, this.PwShopId });
         }
 
     }

@@ -2,8 +2,8 @@
 using System.Data;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Shop;
@@ -13,15 +13,24 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwCogsDataUpdateRepository : IShopFilter
     {
-        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
 
-        public PwCogsDataUpdateRepository(IDbConnection connection)
+
+        public PwCogsDataUpdateRepository(ConnectionWrapper connectionWrapper)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
         }
+
+        public IDbTransaction InitiateTransaction()
+        {
+            return _connectionWrapper.StartTransactionForScope();
+        }
+
+
 
         // Order Line update queries
         public void UpdateOrderLines(OrderLineCogsContext lineContext)
@@ -56,7 +65,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE t1.PwShopId = @PwShopId " +
                 WhereClauseGenerator(lineContext);
 
-            _connection.Execute(query, lineContext);
+            Connection.Execute(query, lineContext);
         }
 
         public void UpdateOrderLinePercentage(OrderLineCogsContext lineContext)
@@ -72,7 +81,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE t1.PwShopId = @PwShopId " + 
                 WhereClauseGenerator(lineContext);
 
-            _connection.Execute(query, lineContext);
+            Connection.Execute(query, lineContext);
         }
 
         public void UpdateOrderLineFixedAmount(OrderLineCogsContextPickList context)
@@ -92,7 +101,7 @@ namespace ProfitWise.Data.Repositories
                 SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) 
                 WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
                 
-            _connection.Execute(query, context);
+            Connection.Execute(query, context);
         }
 
         public void UpdateOrderLinePercentage(OrderLineCogsContextPickList context)
@@ -108,7 +117,7 @@ namespace ProfitWise.Data.Repositories
                 SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
                 WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
 
-            _connection.Execute(query, context);
+            Connection.Execute(query, context);
         }
 
         public string WhereClauseGenerator(OrderLineCogsContext lineContext)
@@ -137,7 +146,7 @@ namespace ProfitWise.Data.Repositories
                 RefreshInsertRefundQuery() +
                 RefreshInsertAdjustmentQuery();
 
-            _connection.Execute(query, new { PwShopId, DefaultCogsPercent = PwShop.DefaultCogsPercent });
+            Connection.Execute(query, new { PwShopId, DefaultCogsPercent = PwShop.DefaultCogsPercent });
         }
 
         private string RefreshInsertAdjustmentQuery()

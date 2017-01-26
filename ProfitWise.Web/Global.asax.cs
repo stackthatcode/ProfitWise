@@ -15,6 +15,7 @@ namespace ProfitWise.Web
     {
         protected void Application_Start()
         {
+            // Everything here is starting after Startup class has executed...
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

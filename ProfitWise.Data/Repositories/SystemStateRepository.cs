@@ -3,35 +3,39 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Repositories
 {
     public class SystemStateRepository
     {
-        private readonly IDbConnection _connection;
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
 
-        public SystemStateRepository(IDbConnection connection)
+
+        public SystemStateRepository(ConnectionWrapper connectionWrapper)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
         }
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connection.BeginTransaction();
+            return _connectionWrapper.StartTransactionForScope();
         }
+
 
 
         public SystemState Retrieve()
         {
             var query = @"SELECT * FROM systemstate";
-            return _connection.Query<SystemState>(query).First();
+            return Connection.Query<SystemState>(query).First();
         }
 
         public void UpdateExchangeRateLastDate(DateTime date)
         {
             var query = @"UPDATE systemstate SET ExchangeRateLastDate = @date;";
-            _connection.Execute(query, new { date });
+            Connection.Execute(query, new { date });
         }        
     }
 }

@@ -69,7 +69,7 @@ CREATE TABLE [dbo].[shopifyorderlineitem](
 	[PwShopId] [bigint] NOT NULL,
 	[ShopifyOrderId] [bigint] NOT NULL,
 	[ShopifyOrderLineId] [bigint] NOT NULL,
-	[OrderDateTimestamp] [datetime] NOT NULL,
+	[OrderDateTimestamp] [datetime] NULL,
 	[OrderDate] [date] NOT NULL,
 	[FinancialStatus] [smallint] NOT NULL,
 	[PwProductId] [bigint] NOT NULL,

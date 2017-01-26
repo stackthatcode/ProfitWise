@@ -4,7 +4,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
 {
     public class ShopifyOrderAdjustment
     {
-        public int PwShopId { get; set; }
+        public long PwShopId { get; set; }
         public long? ShopifyAdjustmentId { get; set; }
         public DateTime AdjustmentDate { get; set; }
         public long ShopifyOrderId { get; set; }

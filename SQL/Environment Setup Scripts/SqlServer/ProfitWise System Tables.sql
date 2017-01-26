@@ -98,6 +98,7 @@ END
 GO
 
 
+INSERT INTO systemstate VALUES (NULL);
 
 INSERT INTO currency VALUES ( 1, 'USD', '$', 'United States dollars' );
 INSERT INTO currency VALUES ( 2, 'EUR', '€', 'Euros' );

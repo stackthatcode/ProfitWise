@@ -4,6 +4,7 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
@@ -11,19 +12,29 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwBatchStateRepository : IShopFilter
     {
-        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
 
-        public PwBatchStateRepository(IDbConnection connection)
+        private readonly ConnectionWrapper _connectionWrapper;
+        
+        public PwBatchStateRepository(ConnectionWrapper connectionWrapper)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
         }
+
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+        public IDbTransaction InitiateTransaction()
+        {
+            return _connectionWrapper.StartTransactionForScope();
+        }
+
+
 
         public PwBatchState Retrieve()
         {
             var query = @"SELECT * FROM profitwisebatchstate WHERE PwShopId = @PwShopId";
             return
-                _connection
+                Connection
                     .Query<PwBatchState>(query, new {PwShopId = PwShop.PwShopId})
                     .FirstOrDefault();
         }
@@ -31,7 +42,7 @@ namespace ProfitWise.Data.Repositories
         public void Insert(PwBatchState state)
         {
             var query = @"INSERT INTO profitwisebatchstate VALUES (@PwShopId, @ProductsLastUpdated, @OrderDatasetStart, @OrderDatasetEnd)";
-            _connection.Execute(query, state);
+            Connection.Execute(query, state);
         }
 
         public void Update(PwBatchState state)
@@ -41,7 +52,7 @@ namespace ProfitWise.Data.Repositories
                             OrderDatasetStart = @OrderDatasetStart, 
                             OrderDatasetEnd = @OrderDatasetEnd
                             WHERE PwShopId = @PwShopId";
-            _connection.Execute(query, state);
+            Connection.Execute(query, state);
         }
     }
 }

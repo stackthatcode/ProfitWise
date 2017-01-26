@@ -7,7 +7,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
 {
     public class ShopifyOrderLineItem
     {
-        public int PwShopId { get; set; }
+        public long PwShopId { get; set; }
         public long ShopifyOrderLineId { get; set; }
         public long ShopifyOrderId { get; set; }
 

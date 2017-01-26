@@ -5,6 +5,7 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
@@ -14,20 +15,23 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwReportRepository : IShopFilter
     {
-        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
 
-        public PwReportRepository(IDbConnection connection)
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+        public PwReportRepository(ConnectionWrapper connectionWrapper)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
         }
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connection.BeginTransaction();
+            return _connectionWrapper.StartTransactionForScope();
         }
-        
+
+
 
         public List<PwReport> RetrieveUserDefinedReports()
         {
@@ -35,7 +39,7 @@ namespace ProfitWise.Data.Repositories
                     @"SELECT * FROM profitwisereport 
                     WHERE PwShopId = @PwShopId 
                     AND CopyForEditing = 0;";
-            var results = _connection.Query<PwReport>(query, new {PwShopId}).ToList();
+            var results = Connection.Query<PwReport>(query, new {PwShopId}).ToList();
             return results.OrderBy(x => x.Name).ToList();
         }
 
@@ -45,7 +49,7 @@ namespace ProfitWise.Data.Repositories
                     @"SELECT COUNT(*) FROM profitwisereport 
                     WHERE PwShopId = @PwShopId 
                     AND CopyForEditing = 0;";
-            var results = _connection.Query<int>(query, new { PwShopId });
+            var results = Connection.Query<int>(query, new { PwShopId });
             return results.First();
         }
 
@@ -73,7 +77,7 @@ namespace ProfitWise.Data.Repositories
 
             var query = @"SELECT * FROM profitwisereport 
                         WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            return _connection
+            return Connection
                     .Query<PwReport>(query, new { PwShopId, reportId })
                     .FirstOrDefault();
         }
@@ -109,7 +113,7 @@ namespace ProfitWise.Data.Repositories
                         WHERE PwShopId = @PwShopId 
                         AND CopyForEditing = 0
                         AND Name = @name;";
-            return _connection
+            return Connection
                     .Query<PwReport>(query, new { PwShopId, reportId, name })
                     .Any();
         }
@@ -123,11 +127,11 @@ namespace ProfitWise.Data.Repositories
                     GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
                 VALUES ( 
                     @PwShopId, @Name, @IsSystemReport, @CopyForEditing, @OriginalReportId, @StartDate, @EndDate,
-                    @GroupingId, @OrderingId, NOW(), NOW() );
+                    @GroupingId, @OrderingId, getdate(), getdate() );
                 
-                SELECT LAST_INSERT_ID();";
+                SELECT SCOPE_IDENTITY();";
 
-            return _connection.Query<long>(query, report).First();
+            return Connection.Query<long>(query, report).First();
         }
 
         public void UpdateReport(PwReport report)
@@ -145,7 +149,7 @@ namespace ProfitWise.Data.Repositories
                         OrderingId = @OrderingId,
                         LastAccessedDate = @LastAccessedDate                     
                         WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId;";
-            _connection.Execute(query, report );
+            Connection.Execute(query, report );
         }
 
         public void DeleteReport(long reportId)
@@ -153,7 +157,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"DELETE FROM profitwisereport            
                         WHERE PwShopId = @PwShopId 
                         AND PwReportId = @reportId;";
-            _connection.Execute(query, new { PwShopId, reportId });
+            Connection.Execute(query, new { PwShopId, reportId });
         }
 
     }

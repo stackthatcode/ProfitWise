@@ -117,9 +117,9 @@ namespace ProfitWise.Data.ProcessSteps
         {
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
-            var repository = _multitenantFactory.MakeProductRepository(shop);
+            var service = _multitenantFactory.MakeCatalogBuilderService(shop);
 
-            using (var trans = new TransactionScope())
+            using (var trans = service.InitiateTransaction())
             {
                 foreach (var importedProduct in importedProducts)
                 {
@@ -138,7 +138,7 @@ namespace ProfitWise.Data.ProcessSteps
                     FlagMissingVariantsAsInactive(shop, productBuildContext);
                 }
 
-                trans.Complete();
+                trans.Commit();
             }
         }
 

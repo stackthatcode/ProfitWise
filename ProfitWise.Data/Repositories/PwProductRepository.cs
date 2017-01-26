@@ -5,6 +5,7 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
@@ -14,18 +15,22 @@ namespace ProfitWise.Data.Repositories
     [Intercept(typeof(ShopRequired))]
     public class PwProductRepository : IShopFilter
     {
-        private readonly IDbConnection _connection;
         public PwShop PwShop { get; set; }
+        public long PwShopId => PwShop.PwShopId;
 
-        public PwProductRepository(IDbConnection connection)
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+        public PwProductRepository(ConnectionWrapper connectionWrapper)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
         }
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connection.BeginTransaction();
+            return _connectionWrapper.StartTransactionForScope();
         }
+
 
         //
         // TODO => add paging and filtering
@@ -60,9 +65,10 @@ namespace ProfitWise.Data.Repositories
             var query =
                     @"INSERT INTO profitwisemasterproduct ( PwShopId )
                     VALUES ( @PwShopId );
-                    SELECT LAST_INSERT_ID();";
+                    SELECT SCOPE_IDENTITY();";
 
-            return _connection.Query<long>(query, masterProduct).FirstOrDefault();
+            return Connection
+                .Query<long>(query, masterProduct, _connectionWrapper.Transaction).FirstOrDefault();
         }
 
         public void DeleteMasterProduct(PwMasterProduct masterProduct)
@@ -71,7 +77,7 @@ namespace ProfitWise.Data.Repositories
                 @"DELETE FROM profitwisemasterproduct " +
                 @"WHERE PwShopId = @PwShopId AND PwMasterProductId = @PwMasterProductId;";
 
-            _connection.Execute(query);
+            Connection.Execute(query, _connectionWrapper.Transaction);
         }
 
 
@@ -79,15 +85,17 @@ namespace ProfitWise.Data.Repositories
         public IList<PwProduct> RetrieveAllProducts()
         {
             var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId";
-            return _connection
-                    .Query<PwProduct>(query, new { @PwShopId = this.PwShop.PwShopId } ).ToList();
+            return Connection.Query<PwProduct>(
+                query, new { @PwShopId = this.PwShop.PwShopId }, _connectionWrapper.Transaction).ToList();
         }
 
         public PwProduct RetrieveProduct(long pwProductId)
         {
             var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
-            return _connection
-                    .Query<PwProduct>(query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId })
+            return Connection
+                    .Query<PwProduct>(
+                                query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId },
+                                _connectionWrapper.Transaction)
                     .FirstOrDefault();
         }
 
@@ -98,8 +106,8 @@ namespace ProfitWise.Data.Repositories
                             IsActive, IsPrimary, IsPrimaryManual, LastUpdated ) 
                         VALUES ( @PwShopId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @Tags,
                             @IsActive, @IsPrimary, @IsPrimaryManual, @LastUpdated );
-                        SELECT LAST_INSERT_ID();";
-            return _connection.Query<long>(query, product).FirstOrDefault();
+                        SELECT SCOPE_IDENTITY();";
+            return Connection.Query<long>(query, product, _connectionWrapper.Transaction).FirstOrDefault();
         }
 
         public void UpdateProduct(PwProduct product)
@@ -109,7 +117,7 @@ namespace ProfitWise.Data.Repositories
                                 ProductType = @ProductType,
                                 LastUpdated = @LastUpdated
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
-            _connection.Execute(query, product);
+            Connection.Execute(query, product, _connectionWrapper.Transaction);
         }
 
         public void UpdateProductIsActive(PwProduct product)
@@ -117,7 +125,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseproduct
                             SET IsActive = @IsActive
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
-            _connection.Execute(query, product);
+            Connection.Execute(query, product, _connectionWrapper.Transaction);
         }
 
         public void UpdateProductIsPrimary(PwProduct product)
@@ -125,7 +133,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseproduct
                             SET IsPrimary = @IsPrimary
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
-            _connection.Execute(query, product);
+            Connection.Execute(query, product, _connectionWrapper.Transaction);
         }
 
 
@@ -134,21 +142,22 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseproduct SET IsActive = @IsActive
                             WHERE PwShopId = @PwShopId 
                             AND ShopifyProductId = @shopifyProductId";
-            _connection.Execute(query, 
+            Connection.Execute(query, 
                     new
                     {
                         @PwShopId = this.PwShop.PwShopId,
                         ShopifyProductId = shopifyProductId,
                         IsActive = isActive,
-                    });
+                    }, _connectionWrapper.Transaction);
         }
 
         public PwProduct DeleteProduct(long pwProductId)
         {
             var query = @"DELETE FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
-            return _connection
+            return Connection
                     .Query<PwProduct>(
-                        query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId })
+                        query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId }, 
+                        _connectionWrapper.Transaction)
                     .FirstOrDefault();
         }
 
@@ -157,7 +166,8 @@ namespace ProfitWise.Data.Repositories
             var query = @"DELETE FROM profitwisemasterproduct
                         WHERE PwShopId = @PwShopId AND PwMasterProductId NOT IN 
                             (SELECT PwMasterProductId FROM profitwiseproduct);";
-            _connection.Execute(query, new {@PwShopId = this.PwShop.PwShopId,});
+            Connection.Execute(query, new {@PwShopId = this.PwShop.PwShopId,}, 
+                                _connectionWrapper.Transaction);
         }
     }
 }

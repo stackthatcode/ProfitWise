@@ -57,7 +57,7 @@ namespace ProfitWise.Batch
                 .InstancePerLifetimeScope();
 
 
-            builder.Register<SqlConnection>(ctx => new SqlConnection(hangFileConnectionString));
+            //builder.Register<SqlConnection>(ctx => new SqlConnection(hangFileConnectionString));
 
             builder.Register(x => new RefreshServiceConfiguration()
             {

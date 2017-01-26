@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
@@ -55,6 +56,9 @@ namespace ProfitWise.Data
             builder.RegisterType<FixerApiConfig>();
             builder.RegisterType<FixerApiRepository>();
             builder.RegisterType<FixerApiRequestFactory>();
+
+            // Critical piece for all database infrastructure to work smoothly
+            builder.RegisterType<ConnectionWrapper>().InstancePerLifetimeScope();
 
             // Chicago, by default!
             builder.Register(x => new TimeZoneTranslator(6, 0));

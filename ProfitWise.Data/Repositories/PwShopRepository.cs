@@ -1,25 +1,34 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using MySql.Data.MySqlClient;
 using Dapper;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
 {
     public class PwShopRepository
     {
-        private readonly IDbConnection _connection;
 
-        public PwShopRepository(IDbConnection connection)
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+        public PwShopRepository(ConnectionWrapper connectionWrapper)
         {
-            _connection = connection;
+            _connectionWrapper = connectionWrapper;
         }
+
+        public IDbTransaction InitiateTransaction()
+        {
+            return _connectionWrapper.StartTransactionForScope();
+        }
+
+
 
         public PwShop RetrieveByShopId(int pwShopId)
         {
             var query = @"SELECT * FROM profitwiseshop WHERE PwShopId = @PwShopId";
-            return _connection
+            return Connection
                 .Query<PwShop>(query, new {@PwShopId = pwShopId })
                 .FirstOrDefault();
         }
@@ -27,7 +36,7 @@ namespace ProfitWise.Data.Repositories
         public PwShop RetrieveByUserId(string shopOwnerUserId)
         {
             var query = @"SELECT * FROM profitwiseshop WHERE ShopOwnerUserId = @ShopOwnerUserId";
-            return _connection
+            return Connection
                 .Query<PwShop>(query, new { ShopOwnerUserId = shopOwnerUserId })
                 .FirstOrDefault();
         }
@@ -37,15 +46,15 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"INSERT INTO 
                     profitwiseshop (
-                        ShopOwnerUserId, ShopifyShopId, TimeZone, CurrencyId, 
+                        ShopOwnerUserId, ShopifyShopId, CurrencyId, TimeZone, 
                         IsAccessTokenValid, IsShopEnabled, IsDataLoaded,
                         StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, DateRangeDefault 
                 ) VALUES (
                         @ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @TimeZone,
                         @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded,
                         @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, @DateRangeDefault );
-                SELECT LAST_INSERT_ID();";
-            return _connection
+                SELECT SCOPE_IDENTITY();";
+            return Connection
                 .Query<int>(query, shop)
                 .First();
         }
@@ -56,7 +65,7 @@ namespace ProfitWise.Data.Repositories
                         SET CurrencyId = @CurrencyId,
                             TimeZone = @TimeZone
                         WHERE PwShopId = @PwShopId";
-            _connection.Execute(query, shop);
+            Connection.Execute(query, shop);
         }
 
         public void UpdateIsAccessTokenValid(int pwShopId, bool isAccessTokenValid)
@@ -64,7 +73,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseshop 
                         SET IsAccessTokenValid = @isAccessTokenValid
                         WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, isAccessTokenValid });
+            Connection.Execute(query, new { pwShopId, isAccessTokenValid });
         }
 
         public void UpdateIsShopEnabled(int pwShopId, bool isShopEnabled)
@@ -72,7 +81,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseshop 
                         SET IsShopEnabled = @isShopEnabled
                         WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, isShopEnabled });
+            Connection.Execute(query, new { pwShopId, isShopEnabled });
         }
 
         public void UpdateIsDataLoaded(int pwShopId, bool isDataLoaded)
@@ -80,7 +89,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseshop 
                         SET IsDataLoaded = @isDataLoaded
                         WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, isDataLoaded });
+            Connection.Execute(query, new { pwShopId, isDataLoaded });
         }
 
 
@@ -90,7 +99,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseshop 
                         SET StartingDateForOrders = @startingDateForOrders
                         WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, startingDateForOrders });
+            Connection.Execute(query, new { pwShopId, startingDateForOrders });
         }
 
         public void UpdateDefaultMargin(int pwShopId, bool useDefaultMargin, decimal defaultMargin)
@@ -99,7 +108,7 @@ namespace ProfitWise.Data.Repositories
                         SET UseDefaultMargin = @useDefaultMargin,
                             DefaultMargin = @defaultMargin  
                         WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, useDefaultMargin, defaultMargin });
+            Connection.Execute(query, new { pwShopId, useDefaultMargin, defaultMargin });
         }
 
         public void UpdateProfitRealization(int pwShopId, int profitRealization)
@@ -107,7 +116,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseshop 
                         SET ProfitRealization = @profitRealization
                         WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, profitRealization });
+            Connection.Execute(query, new { pwShopId, profitRealization });
         }
 
         public void UpdateDateRangeDefault(int pwShopId, int dateRangeDefault)
@@ -115,7 +124,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"UPDATE profitwiseshop 
                         SET DateRangeDefault = @dateRangeDefault
                         WHERE PwShopId = @pwShopId";
-            _connection.Execute(query, new { pwShopId, dateRangeDefault });
+            Connection.Execute(query, new { pwShopId, dateRangeDefault });
         }
     }
 }

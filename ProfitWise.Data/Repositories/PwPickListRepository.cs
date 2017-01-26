@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Utility;
@@ -13,29 +14,32 @@ namespace ProfitWise.Data.Repositories
 {
     public class PwPickListRepository
     {
-        private readonly IDbConnection _connection;
-
-        public PwPickListRepository(IDbConnection connection)
-        {
-            _connection = connection;
-        }
-
         public PwShop PwShop { get; set; }
+        public long PwShopId => PwShop.PwShopId;
 
+        private readonly ConnectionWrapper _connectionWrapper;
+        private IDbConnection Connection => _connectionWrapper.DbConn;
+
+        public PwPickListRepository(ConnectionWrapper connectionWrapper)
+        {
+            _connectionWrapper = connectionWrapper;
+        }
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connection.BeginTransaction();
+            return _connectionWrapper.StartTransactionForScope();
         }
+
+
 
         public long Provision()
         {
             var query =
                 @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate) 
                     VALUES (@PwShopId, @createdDate);
-                SELECT LAST_INSERT_ID();";
+                SELECT SCOPE_IDENTITY();";
 
-            return _connection.Query<long>(query,
+            return Connection.Query<long>(query,
                     new { PwShopId = this.PwShop.PwShopId, createdDate = DateTime.Now }).First();
         }
 
@@ -48,7 +52,7 @@ namespace ProfitWise.Data.Repositories
                 DELETE FROM profitwisepicklist
                 WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId;";
 
-            return _connection.Query<long>(
+            return Connection.Query<long>(
                 query, new { PwShopId = this.PwShop.PwShopId, pickListId }).FirstOrDefault();
         }
 
@@ -62,7 +66,7 @@ namespace ProfitWise.Data.Repositories
                 
                 DELETE FROM profitwisepicklist WHERE PwShopId = @PwShopId AND CreatedDate <= @cutoffDate;";
 
-            return _connection.Query<long>(
+            return Connection.Query<long>(
                 query, new { PwShopId = this.PwShop.PwShopId, cutoffDate }).FirstOrDefault();
         }
 
@@ -107,7 +111,7 @@ namespace ProfitWise.Data.Repositories
                 query += PickListClauseHelper("term4");
             }
 
-            _connection.Execute(
+            Connection.Execute(
                 query,
                 new { PwShopId = this.PwShop.PwShopId, @PwPickListId = pickListId, term0, term1, term2, term3, term4 });
         }
@@ -180,7 +184,7 @@ namespace ProfitWise.Data.Repositories
                     FROM profitwiseproduct
                     WHERE PwShopId = @PwShopId " + filterClause + ");";
 
-            _connection.Execute(query, new
+            Connection.Execute(query, new
             {
                 PwShopId = this.PwShop.PwShopId,
                 @PwPickListId = pickListId,
@@ -206,7 +210,7 @@ namespace ProfitWise.Data.Repositories
                     WHERE PwShopId = @PwShopId
                     AND CogsAmount IS NULL );";
 
-            _connection.Execute(query, new { PwShopId = PwShop.PwShopId, PwPickListId = pickListId });
+            Connection.Execute(query, new { PwShopId = PwShop.PwShopId, PwPickListId = pickListId });
         }
         
 
@@ -217,7 +221,7 @@ namespace ProfitWise.Data.Repositories
                         FROM profitwisepicklistmasterproduct 
                         WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId";
 
-            return _connection.Query<int>(query, new { PwShopId = PwShop.PwShopId, pickListId }).First();
+            return Connection.Query<int>(query, new { PwShopId = PwShop.PwShopId, pickListId }).First();
         }
 
 

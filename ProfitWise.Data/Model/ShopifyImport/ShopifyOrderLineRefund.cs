@@ -4,7 +4,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
 {
     public class ShopifyOrderLineRefund
     {
-        public int PwShopId { get; set; }
+        public long PwShopId { get; set; }
         public long ShopifyRefundId { get; set; }
 
         public long ShopifyOrderId { get; set; }
