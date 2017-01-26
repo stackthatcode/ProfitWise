@@ -56,7 +56,7 @@ namespace ProfitWise.Data.Repositories
             else
             {
                 rawoutput = Connection.Query<dynamic>(
-                    query, new { @PwShopId = this.PwShop.PwShopId, });
+                    query, new { @PwShopId = this.PwShop.PwShopId, }, _connectionWrapper.Transaction);
             }
 
             var output = new List<PwMasterVariant>();

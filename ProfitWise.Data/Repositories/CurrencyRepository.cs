@@ -27,14 +27,14 @@ namespace ProfitWise.Data.Repositories
         public IList<Currency> RetrieveCurrency()
         {
             var query = @"SELECT * FROM currency ORDER BY CurrencyId ASC;";
-            return _connection.DbConn.Query<Currency>(query).ToList();
+            return _connection.DbConn.Query<Currency>(query, new { }, _connection.Transaction).ToList();
         }
 
         public List<ExchangeRate> RetrieveExchangeRates()
         {
             var query = @"SELECT * FROM exchangerate 
                         ORDER BY Date, SourceCurrencyId ASC;";
-            return _connection.DbConn.Query<ExchangeRate>(query).ToList();
+            return _connection.DbConn.Query<ExchangeRate>(query, new {}, _connection.Transaction).ToList();
         }
 
         public List<ExchangeRate> RetrieveExchangeRateByDate(DateTime date)
@@ -42,7 +42,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM exchangerate 
                         WHERE Date = @date
                         ORDER BY Date, SourceCurrencyId ASC;";
-            return _connection.DbConn.Query<ExchangeRate>(query, new { date }).ToList();
+            return _connection.DbConn.Query<ExchangeRate>(query, new { date }, _connection.Transaction).ToList();
         }
 
         public List<ExchangeRate> RetrieveExchangeRateFromDate(DateTime minimumDate)
@@ -50,20 +50,21 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM exchangerate 
                         WHERE Date >= @minimumDate
                         ORDER BY Date, SourceCurrencyId ASC;";
-            return _connection.DbConn.Query<ExchangeRate>(query, new { minimumDate }).ToList();
+            return _connection.DbConn.Query<ExchangeRate>(
+                    query, new { minimumDate }, _connection.Transaction).ToList();
         }
 
         public void InsertExchangeRate(ExchangeRate exchangeRate)
         {
             var query = @"INSERT INTO exchangerate
                         VALUES ( @SourceCurrencyId, @DestinationCurrencyId, @Date, @Rate )";
-            _connection.DbConn.Execute(query, exchangeRate);
+            _connection.DbConn.Execute(query, exchangeRate, _connection.Transaction);
         }
 
         public void DeleteForDate(DateTime date)
         {
             var query = @"DELETE FROM exchangerate WHERE Date = @date;";
-            _connection.DbConn.Execute(query, new { @date });
+            _connection.DbConn.Execute(query, new { @date }, _connection.Transaction);
         }
     }
 }

@@ -65,7 +65,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE t1.PwShopId = @PwShopId " +
                 WhereClauseGenerator(lineContext);
 
-            Connection.Execute(query, lineContext);
+            Connection.Execute(query, lineContext, _connectionWrapper.Transaction);
         }
 
         public void UpdateOrderLinePercentage(OrderLineCogsContext lineContext)
@@ -81,7 +81,7 @@ namespace ProfitWise.Data.Repositories
                 WHERE t1.PwShopId = @PwShopId " + 
                 WhereClauseGenerator(lineContext);
 
-            Connection.Execute(query, lineContext);
+            Connection.Execute(query, lineContext, _connectionWrapper.Transaction);
         }
 
         public void UpdateOrderLineFixedAmount(OrderLineCogsContextPickList context)
@@ -101,7 +101,7 @@ namespace ProfitWise.Data.Repositories
                 SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) 
                 WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
                 
-            Connection.Execute(query, context);
+            Connection.Execute(query, context, _connectionWrapper.Transaction);
         }
 
         public void UpdateOrderLinePercentage(OrderLineCogsContextPickList context)
@@ -117,7 +117,7 @@ namespace ProfitWise.Data.Repositories
                 SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
                 WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
 
-            Connection.Execute(query, context);
+            Connection.Execute(query, context, _connectionWrapper.Transaction);
         }
 
         public string WhereClauseGenerator(OrderLineCogsContext lineContext)
@@ -146,7 +146,8 @@ namespace ProfitWise.Data.Repositories
                 RefreshInsertRefundQuery() +
                 RefreshInsertAdjustmentQuery();
 
-            Connection.Execute(query, new { PwShopId, DefaultCogsPercent = PwShop.DefaultCogsPercent });
+            Connection.Execute(query, 
+                new { PwShopId, DefaultCogsPercent = PwShop.DefaultCogsPercent }, _connectionWrapper.Transaction);
         }
 
         private string RefreshInsertAdjustmentQuery()
@@ -178,7 +179,10 @@ namespace ProfitWise.Data.Repositories
             if (PwShop.UseDefaultMargin)
             {
                 refundQuery +=
-                    "IF (UnitCogs = 0 OR UnitCogs IS NULL, -t1.RestockQuantity * UnitPrice * @DefaultCogsPercent , -t1.RestockQuantity * UnitCogs) AS CoGS, ";
+                    @"CASE WHEN (UnitCogs = 0 OR UnitCogs IS NULL) THEN -t1.RestockQuantity * UnitPrice * @DefaultCogsPercent
+                    ELSE -t1.RestockQuantity * UnitCogs END AS CoGS, ";
+
+                // MySQL "IF (UnitCogs = 0 OR UnitCogs IS NULL, -t1.RestockQuantity * UnitPrice * @DefaultCogsPercent , -t1.RestockQuantity * UnitCogs) AS CoGS, ";
             }
             else
             {
@@ -211,7 +215,11 @@ namespace ProfitWise.Data.Repositories
             if (PwShop.UseDefaultMargin)
             {
                 orderQuery +=
-                    "IF (UnitCogs = 0 OR UnitCogs IS NULL,  Quantity * UnitPrice * @DefaultCogsPercent , Quantity * UnitCogs) AS CoGS, ";
+                    @"CASE WHEN (UnitCogs = 0 OR UnitCogs IS NULL) THEN Quantity * UnitPrice * @DefaultCogsPercent 
+                    ELSE Quantity * UnitCogs END AS CoGS, ";
+
+                // MySQL "IF (UnitCogs = 0 OR UnitCogs IS NULL,  Quantity * UnitPrice * @DefaultCogsPercent , Quantity * UnitCogs) AS CoGS, ";
+
             }
             else
             {

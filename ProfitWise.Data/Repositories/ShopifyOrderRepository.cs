@@ -39,7 +39,7 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM shopifyorder WHERE PwShopId";
             return
                 Connection
-                    .Query<ShopifyOrder>(query, new { PwShopId })
+                    .Query<ShopifyOrder>(query, new { PwShopId }, _connectionWrapper.Transaction)
                     .FirstOrDefault();
         }
 
@@ -47,14 +47,18 @@ namespace ProfitWise.Data.Repositories
         {
             var query = @"SELECT * FROM shopifyorder WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
             return Connection
-                    .Query<ShopifyOrder>(query, new { PwShopId = PwShopId, shopifyOrderId })
+                    .Query<ShopifyOrder>(
+                            query, new { PwShopId = PwShopId, shopifyOrderId },
+                            _connectionWrapper.Transaction)
                     .FirstOrDefault();
         }
 
         public virtual IList<ShopifyOrder> RetrieveOrdersFullDepth(IList<long> orderIdList)
         {
             var query = @"SELECT * FROM shopifyorder WHERE ShopifyOrderId IN @orderIdList";
-            var orders = Connection.Query<ShopifyOrder>(query, new {orderIdList}).ToList();
+            var orders = 
+                Connection.Query<ShopifyOrder>(
+                    query, new {orderIdList}, _connectionWrapper.Transaction).ToList();
 
             var lineItems = this.RetrieveLineItems(orderIdList);
             var refunds = this.RetrieveRefunds(orderIdList);
@@ -81,7 +85,7 @@ namespace ProfitWise.Data.Repositories
                                 @CreatedAt, 
                                 @UpdatedAt,
                                 @Cancelled )";
-            Connection.Execute(query, order);
+            Connection.Execute(query, order, _connectionWrapper.Transaction);
         }
 
         public virtual void UpdateOrder(ShopifyOrder order)
@@ -94,14 +98,15 @@ namespace ProfitWise.Data.Repositories
                                 UpdatedAt = @UpdatedAt,
                                 Cancelled = @Cancelled
                             WHERE PwShopId = @PwShopId AND ShopifyOrderId = @ShopifyOrderId";
-            Connection.Execute(query, order);
+            Connection.Execute(query, order, _connectionWrapper.Transaction);
         }
 
         public virtual void DeleteOrderFullDepth(long shopifyOrderId)
         {
             var query = @"DELETE FROM shopifyorder 
                         WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
-            Connection.Execute(query, new { PwShopId = PwShopId, shopifyOrderId });
+            Connection.Execute(
+                query, new { PwShopId = PwShopId, shopifyOrderId }, _connectionWrapper.Transaction);
 
             DeleteRefunds(shopifyOrderId);
             DeleteLineItems(shopifyOrderId);
@@ -113,10 +118,10 @@ namespace ProfitWise.Data.Repositories
             var orderIdList = orders.Select(x => x.ShopifyOrderId).ToList();
 
             var query = @"DELETE FROM shopifyorderlineitem WHERE ShopifyOrderId IN @orderIdList";
-            Connection.Execute(query, new { orderIdList });
+            Connection.Execute(query, new { orderIdList }, _connectionWrapper.Transaction);
 
             var query2 = @"DELETE FROM shopifyorder WHERE ShopifyOrderId IN @orderIdList";
-            Connection.Execute(query2, new { orderIdList });
+            Connection.Execute(query2, new { orderIdList }, _connectionWrapper.Transaction);
         }        
 
 
@@ -127,7 +132,8 @@ namespace ProfitWise.Data.Repositories
             var query = 
                 @"SELECT * FROM shopifyorderlineitem WHERE PwShopId = @PwShopId AND shopifyOrderId = @shopifyOrderId";
             return Connection
-                    .Query<ShopifyOrderLineItem>(query, new { PwShopId = PwShopId, shopifyOrderId })
+                    .Query<ShopifyOrderLineItem>(
+                            query, new { PwShopId = PwShopId, shopifyOrderId }, _connectionWrapper.Transaction)
                     .ToList();
         }
 
@@ -135,7 +141,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query = 
                 @"SELECT * FROM shopifyorderlineitem WHERE PwShopId = @PwShopId AND ShopifyOrderId IN @orderIdList";
-            return Connection.Query<ShopifyOrderLineItem>(query, new {PwShopId, orderIdList }).ToList();
+            return Connection.Query<ShopifyOrderLineItem>(query, new {PwShopId, orderIdList }, _connectionWrapper.Transaction).ToList();
         }
 
         public virtual void InsertLineItem(ShopifyOrderLineItem lineitem)
@@ -149,7 +155,7 @@ namespace ProfitWise.Data.Repositories
                 VALUES ( 
                     @PwShopId, @ShopifyOrderId, @ShopifyOrderLineId, @OrderDateTimestamp, @OrderDate, @FinancialStatus, @PwProductId, @PwVariantId,
                     @Quantity, @UnitPrice, @TotalDiscount, @TotalAfterAllDiscounts, @NetQuantity, @UnitCogs )";
-            Connection.Execute(query, lineitem);
+            Connection.Execute(query, lineitem, _connectionWrapper.Transaction);
         }
 
         public virtual void UpdateLineItemNetTotalAndStatus(ShopifyOrderLineItem lineItem)
@@ -160,14 +166,14 @@ namespace ProfitWise.Data.Repositories
                                 NetQuantity = @NetQuantity,
                                 FinancialStatus = @FinancialStatus
                             WHERE PwShopId = @PwShopId AND ShopifyOrderLineId = @ShopifyOrderLineId";
-            Connection.Execute(query, lineItem);
+            Connection.Execute(query, lineItem, _connectionWrapper.Transaction);
         }
 
         public virtual void DeleteLineItems(long shopifyOrderId)
         {
             var query =
                 @"DELETE FROM shopifyorderlineitem WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
-            Connection.Execute(query, new { PwShopId = PwShopId, shopifyOrderId });
+            Connection.Execute(query, new { PwShopId = PwShopId, shopifyOrderId }, _connectionWrapper.Transaction);
         }
 
 
@@ -178,7 +184,8 @@ namespace ProfitWise.Data.Repositories
             var query = 
                 @"SELECT * FROM shopifyorderrefund WHERE PwShopId = @PwShopId AND shopifyOrderId = @shopifyOrderId";
             return Connection
-                    .Query<ShopifyOrderLineRefund>(query, new { PwShopId = PwShopId, shopifyOrderId })
+                    .Query<ShopifyOrderLineRefund>(
+                        query, new { PwShopId = PwShopId, shopifyOrderId }, _connectionWrapper.Transaction)
                     .ToList();
         }
 
@@ -186,7 +193,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query = 
                 @"SELECT * FROM shopifyorderrefund WHERE PwShopId = @PwShopId AND ShopifyOrderId IN @orderIdList";
-            return Connection.Query<ShopifyOrderLineRefund>(query, new { PwShopId, orderIdList }).ToList();
+            return Connection.Query<ShopifyOrderLineRefund>(
+                    query, new { PwShopId, orderIdList }, _connectionWrapper.Transaction).ToList();
         }
 
         public virtual void InsertRefund(ShopifyOrderLineRefund refund)
@@ -199,14 +207,14 @@ namespace ProfitWise.Data.Repositories
                 VALUES ( 
                     @PwShopId, @ShopifyRefundId, @ShopifyOrderId, @ShopifyOrderLineId, @RefundDate, 
                     @PwProductId, @PwVariantId, @Amount, @RestockQuantity )";
-            Connection.Execute(query, refund);
+            Connection.Execute(query, refund, _connectionWrapper.Transaction);
         }
 
         public virtual void DeleteRefunds(long shopifyOrderId)
         {
             var query =
                 @"DELETE FROM shopifyorderrefund WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
-            Connection.Execute(query, new { PwShopId = PwShopId, shopifyOrderId });
+            Connection.Execute(query, new { PwShopId = PwShopId, shopifyOrderId }, _connectionWrapper.Transaction);
         }
 
 
@@ -217,7 +225,8 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT * FROM shopifyorderadjustment WHERE PwShopId = @PwShopId AND shopifyOrderId = @shopifyOrderId";
             return Connection
-                    .Query<ShopifyOrderAdjustment>(query, new { PwShopId = PwShopId, shopifyOrderId })
+                    .Query<ShopifyOrderAdjustment>(
+                        query, new { PwShopId = PwShopId, shopifyOrderId }, _connectionWrapper.Transaction)
                     .ToList();
         }
 
@@ -225,7 +234,8 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT * FROM shopifyorderadjustment WHERE PwShopId = @PwShopId AND ShopifyOrderId IN @orderIdList";
-            return Connection.Query<ShopifyOrderAdjustment>(query, new { PwShopId, orderIdList }).ToList();
+            return Connection.Query<ShopifyOrderAdjustment>(
+                query, new { PwShopId, orderIdList }, _connectionWrapper.Transaction).ToList();
         }
 
         public virtual void InsertAdjustment(ShopifyOrderAdjustment refund)
@@ -238,14 +248,14 @@ namespace ProfitWise.Data.Repositories
                 VALUES ( 
                     @PwShopId, @ShopifyAdjustmentId, @AdjustmentDate, @ShopifyOrderId, @Amount, 
                     @TaxAmount, @Kind, @Reason )";
-            Connection.Execute(query, refund);
+            Connection.Execute(query, refund, _connectionWrapper.Transaction);
         }
 
         public virtual void DeleteAdjustments(long shopifyOrderId)
         {
             var query =
                 @"DELETE FROM shopifyorderadjustment WHERE PwShopId = @PwShopId AND ShopifyOrderId = @shopifyOrderId";
-            Connection.Execute(query, new { PwShopId = PwShopId, shopifyOrderId });
+            Connection.Execute(query, new { PwShopId = PwShopId, shopifyOrderId }, _connectionWrapper.Transaction);
         }
 
 
@@ -257,7 +267,7 @@ namespace ProfitWise.Data.Repositories
                         ORDER BY ShopifyOrderId ASC, ShopifyOrderLineId ASC";
             return Connection
                     .Query<OrderLineItemSubset>(
-                            query, new {PwShopId = PwShopId})
+                            query, new {PwShopId = PwShopId}, _connectionWrapper.Transaction)
                     .ToList();
         }
     }
