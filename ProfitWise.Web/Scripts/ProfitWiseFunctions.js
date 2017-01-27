@@ -102,7 +102,7 @@ ProfitWiseFunctions.AjaxSettings = function (modal) {
     if (modal) {
         errorCallback = function () {
             alert(ProfitWiseShopify.ErrorMessage);
-            location.reload();
+            //location.reload();
         }
     } else {
         errorCallback = function () {

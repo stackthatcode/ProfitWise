@@ -52,16 +52,17 @@ namespace ProfitWise.Data.Repositories
         public void UpdateOrderLineFixedAmount(OrderLineCogsContext lineContext)
         {
             var query =
-                @"UPDATE profitwisemastervariant t1 
+                @"UPDATE t3
+                SET t3.UnitCogs = (@CogsAmount * ISNULL(t4.Rate, 0))                 
+                FROM profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
 		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	           
                     LEFT JOIN exchangerate t4
-		                ON Date(t3.OrderDate) = t4.`Date` 
+		                ON t3.OrderDate = t4.[Date] 
 			                AND t4.SourceCurrencyId = @CogsCurrencyId
 			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
-                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) 
                 WHERE t1.PwShopId = @PwShopId " +
                 WhereClauseGenerator(lineContext);
 
@@ -71,13 +72,13 @@ namespace ProfitWise.Data.Repositories
         public void UpdateOrderLinePercentage(OrderLineCogsContext lineContext)
         {
             var query =
-                @"UPDATE profitwisemastervariant t1 
+                @"UPDATE t3 
+                SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
+                FROM profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
-		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	               
-                
-                SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
+		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	                               
                 WHERE t1.PwShopId = @PwShopId " + 
                 WhereClauseGenerator(lineContext);
 
@@ -87,7 +88,9 @@ namespace ProfitWise.Data.Repositories
         public void UpdateOrderLineFixedAmount(OrderLineCogsContextPickList context)
         {
             var query =
-                @"UPDATE profitwisepicklistmasterproduct t0
+                @"UPDATE t3
+                SET t3.UnitCogs = (@CogsAmount * ISNULL(t4.Rate, 0)) 
+                FROM profitwisepicklistmasterproduct t0
                     INNER JOIN profitwisemastervariant t1 
                         ON t0.PwShopId = t1.PwShopId AND t0.PwMasterProductId = t1.PwMasterProductId
 	                INNER JOIN profitwisevariant t2
@@ -95,10 +98,9 @@ namespace ProfitWise.Data.Repositories
 	                INNER JOIN shopifyorderlineitem t3
 		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId	           
                     LEFT JOIN exchangerate t4
-		                ON Date(t3.OrderDate) = t4.`Date` 
+		                ON t3.OrderDate = t4.[Date] 
 			                AND t4.SourceCurrencyId = @CogsCurrencyId
 			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
-                SET t3.UnitCogs = (@CogsAmount * IFNULL(t4.Rate, 0)) 
                 WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
                 
             Connection.Execute(query, context, _connectionWrapper.Transaction);
@@ -107,14 +109,15 @@ namespace ProfitWise.Data.Repositories
         public void UpdateOrderLinePercentage(OrderLineCogsContextPickList context)
         {
             var query =
-                @"UPDATE profitwisepicklistmasterproduct t0
+                @"UPDATE t3
+                SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
+                FROM profitwisepicklistmasterproduct t0
                     INNER JOIN profitwisemastervariant t1 
                         ON t0.PwShopId = t1.PwShopId AND t0.PwMasterProductId = t1.PwMasterProductId
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
 	                INNER JOIN shopifyorderlineitem t3
 		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-                SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
                 WHERE t1.PwShopId = @PwShopId AND t0.PwPickListId = @PwPickListId";
 
             Connection.Execute(query, context, _connectionWrapper.Transaction);

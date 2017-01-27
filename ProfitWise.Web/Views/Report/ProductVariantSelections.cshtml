@@ -82,8 +82,9 @@
         
         self.LoadDataForCurrentPage = function () {
             flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
+                function () {
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
 
                     var urlBase = self.IsProductSelection()
                         ? "/QueryService/ProductSelectionsByPage"

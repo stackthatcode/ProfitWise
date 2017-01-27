@@ -21,6 +21,10 @@ namespace ProfitWise.Data.Services
         private readonly CurrencyService _currencyService;
 
 
+        public readonly DateTime MaximumCogsDate = new DateTime(2000, 1, 1);
+        public readonly DateTime MinimumCogsDate = new DateTime(2099, 12, 31);
+
+
         public PwShop PwShop { get; set; }
 
         public CogsService(
@@ -85,8 +89,8 @@ namespace ProfitWise.Data.Services
                         {
                             Cogs = sourceContext.Defaults,
                             DestinationCurrencyId = this.PwShop.CurrencyId,
-                            StartDate = DateTime.MinValue,
-                            EndDate = DateTime.MaxValue,
+                            StartDate = MinimumCogsDate,
+                            EndDate = MaximumCogsDate,
                             PwMasterProductId = sourceContext.PwMasterProductId,
                         }
                     };
@@ -99,7 +103,7 @@ namespace ProfitWise.Data.Services
                     {
                         Cogs = sourceContext.Defaults,
                         DestinationCurrencyId = this.PwShop.CurrencyId,
-                        StartDate = DateTime.MinValue,
+                        StartDate = MinimumCogsDate,
                         EndDate = sourceContext.FirstDetail.CogsDate.AddDays(-1),
                         PwMasterProductId = sourceContext.PwMasterProductId,
                     }
@@ -113,7 +117,7 @@ namespace ProfitWise.Data.Services
                                     Cogs = detail,
                                     DestinationCurrencyId = this.PwShop.CurrencyId,
                                     StartDate = detail.CogsDate,
-                                    EndDate = nextDetail?.CogsDate.AddDays(-1) ?? DateTime.MaxValue,
+                                    EndDate = nextDetail?.CogsDate.AddDays(-1) ?? MaximumCogsDate,
                                     PwMasterProductId = sourceContext.PwMasterProductId,
                                 });
                 }
@@ -121,7 +125,6 @@ namespace ProfitWise.Data.Services
                 return output;
             }
         }
-
 
 
         // Update interface methods

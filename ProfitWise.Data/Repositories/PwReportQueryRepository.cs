@@ -58,12 +58,12 @@ namespace ProfitWise.Data.Repositories
         public List<PwReportSelectionMasterProduct> RetrieveProductSelections(long reportId, int pageNumber, int pageSize)
         {
             var query =
-                @"SELECT PwShopId, PwMasterProductId, ProductTitle AS Title, Vendor, ProductType
+                @"SELECT PwMasterProductId, ProductTitle AS Title, Vendor, ProductType
                 FROM vw_MasterProductAndVariantSearch   
                 WHERE PwShopId = @PwShopId ";
             query += ReportFilterClauseGenerator(reportId);
-            query += @" GROUP BY PwMasterProductId, Title, Vendor, ProductType 
-                        ORDER BY Title OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            query += @" GROUP BY PwMasterProductId, ProductTitle, Vendor, ProductType 
+                        ORDER BY ProductTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
             //  ORDER BY Title LIMIT @startRecord, @pageSize"; // MySQL
 
             var startRecord = (pageNumber - 1) * pageSize;
@@ -76,7 +76,7 @@ namespace ProfitWise.Data.Repositories
         public List<PwReportSelectionMasterVariant> RetrieveVariantSelections(long reportId, int pageNumber, int pageSize)
         {
             var query =
-                @"SELECT PwShopId, PwMasterProductId, ProductTitle, PwMasterVariantId, VariantTitle, Sku, Vendor
+                @"SELECT PwMasterProductId, ProductTitle, PwMasterVariantId, VariantTitle, Sku, Vendor
                 FROM vw_MasterProductAndVariantSearch   
                 WHERE PwShopId = @PwShopId ";
             query += ReportFilterClauseGenerator(reportId);
@@ -292,20 +292,21 @@ namespace ProfitWise.Data.Repositories
 
         public string QueryGutsForTotals()
         {
-            return @"SUM(t3.NetSales) As TotalRevenue,
-                    SUM(t3.Quantity) AS TotalQuantitySold,
-		            SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
-                    100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) AS AverageMargin
-                    FROM profitwisereportquerystub t1
-		                INNER JOIN profitwisevariant t2
-		                    ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                    INNER JOIN profitwiseprofitreportentry t3
-		                    ON t1.PwShopId = t3.PwShopId
-                                AND t2.PwProductId = t3.PwProductId 
-                                AND t2.PwVariantId = t3.PwVariantId
-                                AND t3.EntryDate >= @StartDate
-                                AND t3.EntryDate <= @EndDate             
-                    WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
+            return 
+                @"SUM(t3.NetSales) As TotalRevenue,
+                SUM(t3.Quantity) AS TotalQuantitySold,
+		        SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
+                CASE WHEN SUM(t3.NetSales) = 0 THEN 0 ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin
+                FROM profitwisereportquerystub t1
+		            INNER JOIN profitwisevariant t2
+		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN profitwiseprofitreportentry t3
+		                ON t1.PwShopId = t3.PwShopId
+                            AND t2.PwProductId = t3.PwProductId 
+                            AND t2.PwVariantId = t3.PwVariantId
+                            AND t3.EntryDate >= @StartDate
+                            AND t3.EntryDate <= @EndDate             
+                WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
         }
 
         public string OrderingAndPagingForTotals(TotalQueryContext queryContext)
@@ -353,35 +354,35 @@ namespace ProfitWise.Data.Repositories
 
             var cteBody = 
                 @" GroupingKey, GroupingName, SUM(NetSales) AS TotalRevenue, SUM(CoGS) AS TotalCogs 
-                FROM Inner Query ";
+                FROM InnerQuery ";
 
             string query = "";
             if (periodType == PeriodType.Year)
             {
-                query = @"SELECT Year, " + cteBody +
+                query = cteQueryStart + @"SELECT Year, " + cteBody +
                         @"GROUP BY Year, GroupingKey, GroupingName ORDER BY Year;";
             }
             else if (periodType == PeriodType.Quarter)
             {
-                query = @"SELECT Year, Quarter, " + cteBody + 
+                query = cteQueryStart + @"SELECT Year, Quarter, " + cteBody + 
                         @"GROUP BY Year, Quarter, GroupingKey, GroupingName
                         ORDER BY Year, Quarter;";
             }
             else if (periodType == PeriodType.Month)
             {
-                query = @"SELECT Year, Quarter, Month, " + cteBody + 
+                query = cteQueryStart + @"SELECT Year, Quarter, Month, " + cteBody + 
                         @"GROUP BY Year, Quarter, Month, GroupingKey, GroupingName
                         ORDER BY Year, Quarter, Month;";
             }
             else if (periodType == PeriodType.Week)
             {
-                query = @"SELECT Year, Quarter, Month, Week, " + cteBody +
+                query = cteQueryStart + @"SELECT Year, Quarter, Month, Week, " + cteBody +
                     @"GROUP BY Year, Quarter, Month, Week, GroupingKey, GroupingName
                     ORDER BY Year, Quarter, Month, Week;";
             }
             else // DataGranularity.Day
             {
-                query = @"SELECT Year, Quarter, Month, Week, Day, " + cteBody +
+                query = cteQueryStart + @"SELECT Year, Quarter, Month, Week, Day, " + cteBody +
                      @"GROUP BY Year, Quarter, Month, Week, Day, GroupingKey, GroupingName
                     ORDER BY Year, Quarter, Month, Week, Day;";
             }
@@ -488,9 +489,7 @@ namespace ProfitWise.Data.Repositories
             return innerQuery;
         }
 
-
-        public List<DateTotal> RetrieveDateTotals(
-                long reportId, DateTime startDate, DateTime endDate)
+        public List<DateTotal> RetrieveDateTotals(long reportId, DateTime startDate, DateTime endDate)
         {
             var query =
                 @"SELECT t3.EntryDate AS OrderDate, SUM(t3.NetSales) AS TotalRevenue, SUM(t3.CoGS) AS TotalCogs

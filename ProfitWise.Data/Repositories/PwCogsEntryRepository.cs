@@ -40,7 +40,7 @@ namespace ProfitWise.Data.Repositories
                 FROM profitwiseproduct
                 WHERE PwShopId = @PwShopId
                 AND PwMasterProductId = @PwMasterProductId
-                AND IsPrimary = true;";
+                AND IsPrimary = 1;";
 
             return Connection
                 .Query<PwCogsProductSummary>(
@@ -74,7 +74,7 @@ namespace ProfitWise.Data.Repositories
                 FROM profitwiseproduct t1
                     INNER JOIN profitwisemasterproduct t2
                         ON t1.PwMasterProductId = t2.PwMasterProductId
-                WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = true AND t2.PwShopId = @PwShopId
+                WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = 1 AND t2.PwShopId = @PwShopId
                 AND t1.PwMasterProductId IN ( 
 	                SELECT PwMasterProductId FROM profitwisepicklistmasterproduct 
                     WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId ) " +
@@ -107,7 +107,7 @@ namespace ProfitWise.Data.Repositories
                 FROM profitwisemastervariant t2 
 	                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
                 WHERE t2.PwShopId = @PwShopId
-                AND t3.PwShopId = @PwShopId AND t3.IsPrimary = true
+                AND t3.PwShopId = @PwShopId AND t3.IsPrimary = 1
                 AND t2.PwMasterProductId IN @MasterProductIds";
 
             return Connection.Query<PwCogsVariant>(
@@ -125,7 +125,7 @@ namespace ProfitWise.Data.Repositories
                 FROM profitwisemastervariant t2 
                         INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
 	            WHERE t2.PwShopId = @PwShopId
-                AND t3.PwShopId = @PwShopId AND t3.IsPrimary = true
+                AND t3.PwShopId = @PwShopId AND t3.IsPrimary = 1
                 AND t2.PwMasterVariantId = @masterVariantId";
 
             return Connection

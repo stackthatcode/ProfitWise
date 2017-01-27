@@ -53,10 +53,10 @@ CREATE TABLE [dbo].[calendar_table](
 	[monthName] [nvarchar](9) NULL,
 	[dayName] [nvarchar](9) NULL,
 	[w] [smallint] NULL,
-	[isWeekday] [binary](1) NULL,
-	[isHoliday] [binary](1) NULL,
+	[isWeekday] [smallint] NULL,
+	[isHoliday] [smallint] NULL,
 	[holidayDescr] [nvarchar](32) NULL,
-	[isPayday] [binary](1) NULL,
+	[isPayday] [smallint] NULL,
  CONSTRAINT [PK_calendar_table_dt] PRIMARY KEY CLUSTERED 
 (
 	[dt] ASC
