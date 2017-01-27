@@ -13,6 +13,8 @@ namespace ProfitWise.Web
             AuthConfig.Configure(app, autofacContainer);
             DefaultSecurityDataConfig.Execute(autofacContainer);
 
+            HangFireStartup.Configure(app);
+
             // Hangfire Configuration - TODO - move this into the ContainerBuilder
             //var connectionString = ConfigurationManager.ConnectionStrings["HangFire"].ConnectionString;
             //GlobalConfiguration.Configuration.UseSqlServerStorage(connectionString);

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Web.Mvc;
+using Hangfire;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -83,6 +85,13 @@ namespace ProfitWise.Web.Controllers
 
             var cogsRepository = _factory.MakeCogsDataUpdateRepository(shop);
             cogsRepository.RefreshReportEntryData();
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult HangFireTest()
+        {
+            BackgroundJob.Enqueue(() => ProcessHooks.HelloWorld());
             return JsonNetResult.Success();
         }
     }

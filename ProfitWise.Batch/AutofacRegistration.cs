@@ -5,7 +5,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Autofac;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Services;
@@ -27,26 +26,18 @@ namespace ProfitWise.Batch
             var builder = new ContainerBuilder();
 
 
-            // Infrastructure setup & configuration binding
+            // Logging and metering interceptor
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
             var registry = new InceptorRegistry();
             registry.Add(typeof(ErrorForensics));
 
 
-            // ProfitWise.Data registration
-            ProfitWise.Data.AutofacRegistration.Build(builder);
-
-
-            // SQL connections
-            // ... load configuration into local variables
-            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            var hangFileConnectionString = ConfigurationManager.ConnectionStrings["HangFireConnection"].ConnectionString;
-
-            // ... and register configuration
-            builder
-                .Register(ctx =>
+            // ProfitWise.Data registration - which invokes downstream dependent registrations
+            Data.AutofacRegistration.Build(builder);
+            builder.Register(ctx =>
                 {
-                    var connectionstring = connectionString;
+                    var connectionstring = 
+                        ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
                     var connection = new SqlConnection(connectionstring);
                     connection.Open();
                     return connection;
@@ -57,8 +48,7 @@ namespace ProfitWise.Batch
                 .InstancePerLifetimeScope();
 
 
-            //builder.Register<SqlConnection>(ctx => new SqlConnection(hangFileConnectionString));
-
+            // Configure the paging rates of the Refresh Services
             builder.Register(x => new RefreshServiceConfiguration()
             {
                 MaxOrderRate =
@@ -68,11 +58,8 @@ namespace ProfitWise.Batch
             });
 
 
-
-            // Push.Shopify registration
+            // Push.Shopify API configuration
             Push.Shopify.AutofacRegistration.Build(builder);
-
-            // Inject our own HttpClientFacadeConfig for Shopify
             builder.Register(x => new ShopifyClientConfig()
             {
                 RetryLimit =
@@ -85,7 +72,8 @@ namespace ProfitWise.Batch
                     ConfigurationManager.AppSettings.GetAndTryParseAsBool("ShopifyRetriesEnabled", true)
             });
 
-            // Inject our own HttpClientFacadeConfig for Shopify
+
+            // Exchange Rate API configuration
             builder.Register(x => new FixerApiConfig()
             {
                 RetryLimit =
@@ -98,9 +86,9 @@ namespace ProfitWise.Batch
                     ConfigurationManager.AppSettings.GetAndTryParseAsBool("FixerApiRetriesEnabled", true)
             });
 
+            // Timezone
             var machineTimeZone = ConfigurationManager.AppSettings["Machine_TimeZone"];
-            builder.Register(x => new TimeZoneTranslator(machineTimeZone));
-            
+            builder.Register(x => new TimeZoneTranslator(machineTimeZone));            
 
             // Push.Foundation.Web Identity Stuff
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
@@ -109,9 +97,6 @@ namespace ProfitWise.Batch
 
 
             AddDiagnostics(builder);
-
-
-            // TODO => find an appropriate hook to prevent from running in production(!!!)
             //ProfitWise.DataMocks.AutofacRegistration.Build(builder);
 
             // Fin!

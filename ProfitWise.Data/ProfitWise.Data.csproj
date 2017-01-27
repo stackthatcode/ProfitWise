@@ -76,6 +76,9 @@
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
+    <Compile Include="HangFire\ProcessHooks.cs" />
+    <Compile Include="HangFire\QueueChannel.cs" />
+    <Compile Include="HangFire\Queues.cs" />
     <Compile Include="Model\Catalog\FinancialStatus.cs" />
     <Compile Include="Model\Cogs\OrderLineCogsContextPickList.cs" />
     <Compile Include="Model\Cogs\OrderLineCogsContext.cs" />
@@ -136,7 +139,7 @@
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Aspect\IShopFilter.cs" />
     <Compile Include="Processes\CurrencyProcess.cs" />
-    <Compile Include="Processes\RefreshProcess.cs" />
+    <Compile Include="Processes\ShopRefreshProcess.cs" />
     <Compile Include="ProcessSteps\OrderRefreshContext.cs" />
     <Compile Include="ProcessSteps\OrderRefreshStep.cs" />
     <Compile Include="ProcessSteps\ProductCleanupStep.cs" />

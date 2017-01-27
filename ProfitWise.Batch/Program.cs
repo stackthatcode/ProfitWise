@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
+using Hangfire;
+using Hangfire.SqlServer;
 using ProfitWise.Data.Processes;
 using Push.Foundation.Utilities.Logging;
 
@@ -11,6 +13,32 @@ namespace ProfitWise.Batch
     class Program
     {
         static void Main(string[] args)
+        {
+            HangFireBackgroundServiceTest();
+        }
+
+        public static void HangFireBackgroundServiceTest()
+        {
+            var options = new SqlServerStorageOptions
+            {
+                QueuePollInterval = TimeSpan.FromSeconds(1) // Default value
+            };
+            GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection", options);
+
+            var backgroundServerOptions = new BackgroundJobServerOptions()
+            {
+                SchedulePollingInterval = new TimeSpan(0, 0, 0, 1)
+            };
+
+            using (var server = new BackgroundJobServer(backgroundServerOptions))
+            {
+                Console.WriteLine("Hangfire Server started. Press any key to exit...");
+                Console.ReadKey();
+            }
+        }
+
+
+        public static void StandaloneRefreshProcess()
         {
             Bootstrap.ConfigureApp();
 
@@ -26,7 +54,7 @@ namespace ProfitWise.Batch
                     //var currencyProcess = scope.Resolve<CurrencyProcess>();
                     //currencyProcess.Execute();
 
-                    var refreshProcess = scope.Resolve<RefreshProcess>();
+                    var refreshProcess = scope.Resolve<ShopRefreshProcess>();
                     refreshProcess.Execute(userId);
                 }
                 catch (Exception e)

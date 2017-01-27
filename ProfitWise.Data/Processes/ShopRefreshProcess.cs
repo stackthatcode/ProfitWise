@@ -9,7 +9,7 @@ using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Data.Processes
 {
-    public class RefreshProcess
+    public class ShopRefreshProcess
     {
         private readonly IShopifyCredentialService _shopifyCredentialService;
         private readonly ShopRefreshService _shopRefreshStep;
@@ -20,7 +20,7 @@ namespace ProfitWise.Data.Processes
         private readonly IPushLogger _pushLogger;
 
 
-        public RefreshProcess(
+        public ShopRefreshProcess(
                 IShopifyCredentialService shopifyCredentialService,
                 ShopRefreshService shopRefreshStep,
                 ProductRefreshStep productRefreshStep,
