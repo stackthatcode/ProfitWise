@@ -8,7 +8,6 @@ namespace ProfitWise.Batch
 {
     class BatchStuffDontDelete
     {
-
         private static void RefreshServiceForSingleUser(IContainer container, string[] args)
         {
             using (var scope = container.BeginLifetimeScope())
@@ -19,18 +18,8 @@ namespace ProfitWise.Batch
                 var refreshProcess = scope.Resolve<RefreshProcess>();
                 refreshProcess.Execute(userId);
             }
-
         }
-
-        private static void ExchangeRateProcess(IContainer container)
-        {
-            using (var scope = container.BeginLifetimeScope())
-            {
-                var exchangeRateProcess = scope.Resolve<CurrencyProcess>();
-                exchangeRateProcess.Execute();
-            }
-        }
-
+        
         private static void InvokeRefreshServices(IContainer container, string[] args)
         {
             var logger = container.Resolve<IPushLogger>();
@@ -65,15 +54,15 @@ namespace ProfitWise.Batch
         private static void TestTimeZoneTranslation(IContainer container)
         {
             var translator = container.Resolve<TimeZoneTranslator>();
+
             var result =
                 translator.TranslateToTimeZone(
-                    new DateTime(2016, 9, 9, 6, 30, 0),
-                    "(GMT-06:00) Central Time (US & Canada)");
+                    new DateTime(2016, 9, 9, 6, 30, 0), "(GMT-06:00) Central Time (US & Canada)");
+
             var result2 =
                 translator.TranslateToTimeZone(
-                    new DateTime(2016, 9, 9, 6, 30, 0),
-                    "(GMT-05:00) America/New_York");
-        }
-        
+                    new DateTime(2016, 9, 9, 6, 30, 0), "(GMT-05:00) America/New_York");
+        }        
     }
 }
+
