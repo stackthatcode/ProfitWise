@@ -8,7 +8,7 @@ namespace Push.Foundation.Utilities.Logging
         private readonly string _loggerName;
         private readonly Func<string, string> _messageFormatter = x => x;
 
-        public static Func<IPushLogger> RegistrationFactory(string loggerName, Func<string, string> formatter = null)
+        public static Func<IPushLogger> LoggerFactory(string loggerName, Func<string, string> formatter = null)
         {
             IPushLogger logger = new NLoggerImpl(loggerName, formatter);            
             return () => logger;
@@ -23,12 +23,15 @@ namespace Push.Foundation.Utilities.Logging
             }
         }
 
-        public Logger GetLogger
-        {
-            get { return LogManager.GetLogger(_loggerName); }
-        }
+        // Get the actual NLog Logger
+        public Logger GetLogger => LogManager.GetLogger(_loggerName);
 
         public bool IsTraceEnabled => GetLogger.IsTraceEnabled;
+        public bool IsDebugEnabled => GetLogger.IsDebugEnabled;
+        public bool IsInfoEnabled => GetLogger.IsInfoEnabled;
+        public bool IsWarnEnabled => GetLogger.IsWarnEnabled;
+        public bool IsErrorEnabled => GetLogger.IsErrorEnabled;
+        public bool IsFatalEnabled => GetLogger.IsFatalEnabled;
 
 
         public void Trace(string message)

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
 using Hangfire;
+using Hangfire.Logging;
 using Hangfire.SqlServer;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
 using Push.Foundation.Utilities.Logging;
 
@@ -14,20 +16,24 @@ namespace ProfitWise.Batch
     {
         static void Main(string[] args)
         {
+            Bootstrap.ConfigureApp();
             HangFireBackgroundServiceTest();
         }
+        
 
         public static void HangFireBackgroundServiceTest()
         {
+            LogProvider.SetCurrentLogProvider(new HangFireLogProvider());
+
             var options = new SqlServerStorageOptions
             {
-                QueuePollInterval = TimeSpan.FromSeconds(1) // Default value
+                QueuePollInterval = TimeSpan.FromSeconds(1),
             };
             GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection", options);
 
             var backgroundServerOptions = new BackgroundJobServerOptions()
             {
-                SchedulePollingInterval = new TimeSpan(0, 0, 0, 1)
+                SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),                
             };
 
             using (var server = new BackgroundJobServer(backgroundServerOptions))

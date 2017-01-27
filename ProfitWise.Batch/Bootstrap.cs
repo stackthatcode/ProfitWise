@@ -19,7 +19,7 @@ namespace ProfitWise.Batch
                 return prefix + x;
             };
 
-            LoggerSingleton.Get = NLoggerImpl.RegistrationFactory("ProfitWise.Batch", formatter);
+            LoggerSingleton.Get = NLoggerImpl.LoggerFactory("ProfitWise.Batch", formatter);
         }
     }
 }

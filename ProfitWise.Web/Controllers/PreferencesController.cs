@@ -94,6 +94,16 @@ namespace ProfitWise.Web.Controllers
             BackgroundJob.Enqueue(() => ProcessHooks.HelloWorld());
             return JsonNetResult.Success();
         }
+
+        //HangFireError
+
+        [HttpPost]
+        public ActionResult HangFireError()
+        {
+            BackgroundJob.Enqueue(() => ProcessHooks.ErrorWorld());
+            return JsonNetResult.Success();
+        }
+
     }
 }
 

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace ProfitWise.Data.Services
 {
-    public class ProfitReportService
+    public class HangFireService
     {
+
+
     }
 }

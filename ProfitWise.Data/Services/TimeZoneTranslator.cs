@@ -1,5 +1,5 @@
 ﻿using System;
-using Push.Shopify.TimeZone;
+using ProfitWise.Data.Utility;
 
 namespace ProfitWise.Data.Services
 {

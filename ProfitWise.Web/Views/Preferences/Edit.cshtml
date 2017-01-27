@@ -170,6 +170,13 @@
                    style="display: inline-block;" data-bind="click: TestHangFireClick">
                     Test HangFire &nbsp;<i class="glyphicon glyphicon-flash"></i>
                 </a>
+                
+                &nbsp;
+
+                <a href="#" class="btn btn-danger"
+                   style="display: inline-block;" data-bind="click: ErrorHangFireClick">
+                    Error HangFire &nbsp;<i class="glyphicon glyphicon-trash"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -252,14 +259,17 @@
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/UpdateDefaultDateRange", { dateRangeId: self.DateRangeDefault() });
         };
-
         
         self.TestHangFireClick = function() {
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/HangFireTest", {}, 
-                        function () { console.log("Test HangFire Job was successfully queued!"); });
+                        function () { console.log("HangFireTest was successfully queued!"); });
         };
-
+        self.ErrorHangFireClick = function() {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost("/Preferences/HangFireError", {}, 
+                        function () { console.log("HangFireError was successfully queued!"); });
+        };
         return self;
     };
 

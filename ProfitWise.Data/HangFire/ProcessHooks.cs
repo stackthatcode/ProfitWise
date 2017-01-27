@@ -10,5 +10,10 @@ namespace ProfitWise.Data.HangFire
         {
             Console.WriteLine("Testing this HangFire stuff...");
         }
+
+        public static void ErrorWorld()
+        {
+            throw new Exception("Boom! Testing HangFire's logging capabilities...");
+        }
     }
 }

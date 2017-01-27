@@ -1,9 +1,5 @@
-﻿using System;
-using Hangfire;
-using Hangfire.SqlServer;
-using Microsoft.Owin;
+﻿using Hangfire;
 using Owin;
-using ProfitWise.Web;
 
 namespace ProfitWise.Web
 {
@@ -11,11 +7,9 @@ namespace ProfitWise.Web
     {
         public static void Configure(IAppBuilder app)
         {
-            var options = new SqlServerStorageOptions
-            {
-                QueuePollInterval = TimeSpan.FromSeconds(1) // Default value
-            };
-            GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection", options);
+            GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection");
+
+            // TODO - enable Dashboard in the Admin App
         }
     }
 }

@@ -5,6 +5,11 @@ namespace Push.Foundation.Utilities.Logging
     public class ConsoleAndDebugLogger : IPushLogger
     {
         public bool IsTraceEnabled => true;
+        public bool IsDebugEnabled => true;
+        public bool IsInfoEnabled => true;
+        public bool IsWarnEnabled => true;
+        public bool IsErrorEnabled => true;
+        public bool IsFatalEnabled => true;
 
         public void Trace(string message)
         {
@@ -53,5 +58,6 @@ namespace Push.Foundation.Utilities.Logging
             Console.WriteLine(exception.StackTrace);
             System.Diagnostics.Debug.WriteLine(exception.StackTrace);
         }
+
     }
 }

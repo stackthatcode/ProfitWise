@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Push.Shopify.TimeZone
+namespace ProfitWise.Data.Utility
 {
     public static class TimeZoneParsingExtensions
     {
