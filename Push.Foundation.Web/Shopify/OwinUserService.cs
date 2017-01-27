@@ -6,12 +6,12 @@ using Push.Foundation.Web.Identity;
 
 namespace Push.Foundation.Web.Shopify
 {
-    public class UserService
+    public class OwinUserService
     {
         private readonly ApplicationUserManager _userManager;
         private readonly IPushLogger _logger;
 
-        public UserService(ApplicationUserManager userManager, IPushLogger logger)
+        public OwinUserService(ApplicationUserManager userManager, IPushLogger logger)
         {
             _userManager = userManager;
             _logger = logger;

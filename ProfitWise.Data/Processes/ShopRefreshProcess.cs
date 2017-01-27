@@ -41,8 +41,8 @@ namespace ProfitWise.Data.Processes
         {
             _pushLogger.Info($"Starting Refresh Process for UserId: {userId}");
             _pushLogger.Info($"Retrieving Shopify Credentials Claims for {userId}");
-            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
 
+            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
             if (shopifyFromClaims.Success == false)
             {
                 throw new Exception(
@@ -70,6 +70,7 @@ namespace ProfitWise.Data.Processes
                     var shop = _pwShopRepository.RetrieveByUserId(userId);
                     _pwShopRepository.UpdateIsAccessTokenValid(shop.PwShopId, false);
                 }
+                throw;
             }
 
             _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");

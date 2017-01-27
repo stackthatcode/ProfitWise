@@ -25,7 +25,7 @@ namespace ProfitWise.Web.Controllers
         private readonly IShopifyCredentialService _credentialService;
 
         private readonly ShopSynchronizationService _shopSynchronizationService;
-        private readonly UserService _userService;
+        private readonly OwinUserService _userService;
         private readonly IPushLogger _logger;
         
 
@@ -34,9 +34,9 @@ namespace ProfitWise.Web.Controllers
                 ApplicationUserManager userManager,
                 ApplicationSignInManager signInManager,
                 IShopifyCredentialService credentialService,
-                UserService userService,
-                IPushLogger logger, 
-                ShopSynchronizationService shopSynchronizationService)
+                ShopSynchronizationService shopSynchronizationService,
+                OwinUserService userService,
+                IPushLogger logger)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
@@ -74,27 +74,12 @@ namespace ProfitWise.Web.Controllers
 
             // Sign in the user with this external login provider if the user already has a login
             var externalLoginCookieResult =
-                await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
+                        await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
 
             if (externalLoginCookieResult == SignInStatus.Success)
             {
-                var user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);                
-                if (_shopSynchronizationService.IsShopExistingButDisabled(user.Id))
-                {
-                    _logger.Error($"Attempt to login to disabled PwShop by {externalLoginInfo.DefaultUserName}");
-                    return RedirectToAction("SevereAuthorizationFailure", new { returnUrl });
-                }
-
-                _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
-
-                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-                {
-                    // The User exists already - good! Even so, copy the latest set of Claims to Persistence
-                    await PushCookieClaimsToPersistence(externalLoginInfo);
-                    transaction.Complete();
-                }
-
-                return RedirectToLocal(returnUrl);
+                // Found a login, update the Claims and carry on!
+                return await UpdateClaimsForExistingUser(returnUrl, externalLoginInfo);
             }
             else
             {
@@ -103,8 +88,32 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
-        private async Task<ActionResult> 
-                    CreateNewUserAndSignIn(string returnUrl, ExternalLoginInfo externalLoginInfo)
+        private async Task<ActionResult> UpdateClaimsForExistingUser(
+                            string returnUrl, ExternalLoginInfo externalLoginInfo)
+        {
+            var user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
+
+            // Er, shouldn't this be soley handled by the Identity Processor Attribute?              
+            if (_shopSynchronizationService.IsShopExistingButDisabled(user.Id))
+            {
+                _logger.Error($"Attempt to login to disabled PwShop by {externalLoginInfo.DefaultUserName}");
+                return RedirectToAction("SevereAuthorizationFailure", new { returnUrl });
+            }
+
+            _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
+
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                // The User exists already - good! Even so, copy the latest set of Claims to Persistence
+                PushCookieClaimsToPersistence(externalLoginInfo);
+                transaction.Complete();
+            }
+
+            return RedirectToLocal(returnUrl);
+        }
+
+        private async Task<ActionResult> CreateNewUserAndSignIn(
+                        string returnUrl, ExternalLoginInfo externalLoginInfo)
         {
             // It appears that the User does not exist yet
             var email = externalLoginInfo.Email;
@@ -113,9 +122,8 @@ namespace ProfitWise.Web.Controllers
 
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                user = await _userManager.FindByNameAsync(userName);
-
                 // If User doesn't exist, create a new one
+                user = await _userManager.FindByNameAsync(userName);
                 if (user == null)
                 {
                     user = new ApplicationUser {UserName = userName, Email = email,};
@@ -126,7 +134,7 @@ namespace ProfitWise.Web.Controllers
                 }
 
                 // Save the Shopify Domain and Access Token to Persistence
-                await PushCookieClaimsToPersistence(externalLoginInfo);
+                PushCookieClaimsToPersistence(externalLoginInfo);
                 transaction.Complete();
             }
 
@@ -138,24 +146,21 @@ namespace ProfitWise.Web.Controllers
             return RedirectToLocal(returnUrl);
         }
 
-        private async Task PushCookieClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
+
+        private void PushCookieClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
-            ApplicationUser user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
+            // Matches ASP.NET User with the User identified by the external cookie
+            var user = _credentialService.SetUserCredentials(externalLoginInfo);
 
-            var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
-            var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
-            var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
-
-            // Push the Domain and the Access Token
-            _credentialService.SetUserCredentials(user.Id, domainClaim.Value, accessTokenClaim.Value);
-
+            // WARNING: (TODO) => this does not participate in the enclosing/ambient TransactionScope
             // Update the Shop with the latest serialized Shop from the OAuth handshake
+            var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
             var shop = new Shop(shopSerialised.Value);
             _shopSynchronizationService.RefreshShop(user.Id, shop);
 
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
-        
+
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))

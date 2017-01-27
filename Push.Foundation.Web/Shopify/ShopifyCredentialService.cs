@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
@@ -90,13 +88,28 @@ namespace Push.Foundation.Web.Shopify
             _claimsRepository.RemoveClaim(userId, SecurityConfig.UserImpersonationClaim);
         }
 
-        public void SetUserCredentials(string userId, string shopName, string unencryptedAccessToken)
+        public ApplicationUser SetUserCredentials(ExternalLoginInfo externalLoginInfo)
         {
+            var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
+            var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
+            
+            // Push the Domain and the Access Token
+            return SetUserCredentials(externalLoginInfo.DefaultUserName, domainClaim.Value, accessTokenClaim.Value);
+        }
+
+        public ApplicationUser SetUserCredentials(string defaultUserName, string shopName, string unencryptedAccessToken)
+        {
+            var user = _userManager.FindByName(defaultUserName);
+            var userId = user.Id;
+
+            // Clear out old, potentially invalid Claims
             _claimsRepository.RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
             _claimsRepository.RemoveClaim(userId, SecurityConfig.ShopifyDomainClaim);
 
             _claimsRepository.AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, _encryptionService.Encrypt(unencryptedAccessToken));
             _claimsRepository.AddClaim(userId, SecurityConfig.ShopifyDomainClaim, shopName);
+
+            return user;
         }
 
         public void SetAdminImpersonation(string adminUserId, string shopOwnerId)

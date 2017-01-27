@@ -28,13 +28,17 @@ namespace ProfitWise.Batch
             var options = new SqlServerStorageOptions
             {
                 QueuePollInterval = TimeSpan.FromSeconds(1),
+                PrepareSchemaIfNecessary = false,                
             };
             GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection", options);
 
-            var backgroundServerOptions = new BackgroundJobServerOptions()
-            {
-                SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),                
-            };
+            var backgroundServerOptions 
+                = new BackgroundJobServerOptions()
+                    {
+                        SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),                
+                    };
+
+            BackgroundJob.Delete("50");
 
             using (var server = new BackgroundJobServer(backgroundServerOptions))
             {
@@ -74,68 +78,6 @@ namespace ProfitWise.Batch
                 Console.ReadLine();
             }
         }
-
-        public static void NewBatchStuff()
-        {
-            using (var container = AutofacRegistration.Build())
-            {
-                var executionLoops = new List<Task>();
-                var counter = 0;
-
-                while (++counter <= 10)
-                {
-                    var context = new ExecutionLoopContext
-                    {
-                        TaskId = counter,
-                        DelayMilliseconds = 1000,
-                    };
-
-                    var loop = Task.Run(() => ExecutionLoop(container, context));
-                    executionLoops.Add(loop);
-                }
-
-                Task.WaitAll(executionLoops.ToArray());
-                Console.WriteLine("ProfitWise.Batch - started...");
-                Console.ReadLine();
-            }
-        }
-        
-        public static async void ExecutionLoop(IContainer container, ExecutionLoopContext context)
-        {
-            Console.WriteLine($"New WorkerThread {context.TaskId}");
-            while (true)
-            {
-                using (var scope = container.BeginLifetimeScope())
-                {
-                    WorkerTaskInner(scope, context);
-
-                    //var random = new Random();
-                    await Task.Delay(context.DelayMilliseconds);
-                }
-            }
-        }
-
-        public static async void WorkerTaskInner(ILifetimeScope scope, ExecutionLoopContext context)
-        {
-            var logger = scope.Resolve<IPushLogger>();
-            try
-            {
-                // ...
-
-                Console.WriteLine($"WorkerThread {context.TaskId} - checking in");
-            }
-            catch (Exception ex)
-            {
-                logger.Fatal(ex);
-            }
-        }
-    }
-
-    public class ExecutionLoopContext
-    {
-        public int DelayMilliseconds { get; set; }
-        public int TaskId { get; set; }
-    }
+    }    
 }
-
 

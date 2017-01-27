@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using ProfitWise.Data.Model.Shop;
+﻿using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Model;
@@ -29,7 +28,8 @@ namespace ProfitWise.Data.Services
             return (pwShop != null && pwShop.IsShopEnabled == false);
         }
 
-        // ShopOwnerUserId is an ASP.NET User Id
+        // Either creates a new Shop record, or updates existing with Currency and TimeZone
+        // NOTE: ShopOwnerUserId is an ASP.NET User Id
         public void RefreshShop(string shopOwnerUserId, Shop shop)
         {
             var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);

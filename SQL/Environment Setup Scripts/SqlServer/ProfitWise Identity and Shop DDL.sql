@@ -117,7 +117,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseshop]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[profitwiseshop](
-	[PwShopId] [bigint] IDENTITY(100002,1) NOT NULL,
+	[PwShopId] [bigint] IDENTITY(100005,1) NOT NULL,
 	[ShopOwnerUserId] [nvarchar](128) NOT NULL,
 	[ShopifyShopId] [bigint] NULL,
 	[CurrencyId] [int] NULL,

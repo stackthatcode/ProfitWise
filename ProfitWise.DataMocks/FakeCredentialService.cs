@@ -1,5 +1,7 @@
 ﻿using System;
 using Autofac.Extras.DynamicProxy2;
+using Microsoft.AspNet.Identity.Owin;
+using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Aspect;
 
@@ -49,6 +51,16 @@ namespace ProfitWise.DataMocks
         }
 
         public void AddClaim(string userId, string claimId, string claimValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ApplicationUser SetUserCredentials(ExternalLoginInfo externalLoginInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        ApplicationUser IShopifyCredentialService.SetUserCredentials(string defaultUserName, string shopName, string unencryptedAccessToken)
         {
             throw new NotImplementedException();
         }
