@@ -86,6 +86,7 @@
     <Compile Include="Factories\MultitenantFactory.cs" />
     <Compile Include="HangFire\HangFireLogger.cs" />
     <Compile Include="HangFire\HangFireLogProvider.cs" />
+    <Compile Include="HangFire\JobActivator.cs" />
     <Compile Include="HangFire\ProcessHooks.cs" />
     <Compile Include="HangFire\QueueChannel.cs" />
     <Compile Include="HangFire\Queues.cs" />

@@ -8,6 +8,18 @@ namespace ProfitWise.Batch
     {
         public static void ConfigureApp()
         {
+            var container = AutofacRegistration.Build();
+            ConfigureHangFire();
+            ConfigureLogging();
+        }
+
+        private static void ConfigureHangFire()
+        {
+        }
+
+
+        private static void ConfigureLogging()
+        {
             Func<string, string> formatter = x =>
             {
                 var stackFrame = new StackFrame(2);

@@ -2,7 +2,7 @@
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Interfaces;
 
-namespace ProfitWise.DataMocks
+namespace ProfitWise.DataMocks.MockShopifyStore
 {
     public class AutofacRegistration
     {

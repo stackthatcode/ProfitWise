@@ -61,17 +61,17 @@ namespace Push.Shopify.Repositories
 
             foreach (var product in parent.products)
             {
-                var resultProduct = 
-                    new Product()
+                var resultProduct =
+                    new Product
                     {
                         Id = product.id,
                         Title = product.title,
                         Tags = product.tags,
                         Vendor = product.vendor,
                         ProductType = product.product_type,
+                        Variants = new List<Variant>(),
                     };
 
-                resultProduct.Variants = new List<Variant>();
 
                 foreach (var variant in product.variants)
                 {

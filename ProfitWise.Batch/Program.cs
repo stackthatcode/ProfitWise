@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Autofac;
 using Hangfire;
 using Hangfire.Logging;

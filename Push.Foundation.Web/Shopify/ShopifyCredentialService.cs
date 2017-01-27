@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 using IEncryptionService = Push.Foundation.Web.Security.IEncryptionService;
@@ -12,18 +11,15 @@ namespace Push.Foundation.Web.Shopify
     {
         private readonly ApplicationUserManager _userManager;
         private readonly IEncryptionService _encryptionService;
-        private readonly IPushLogger _pushLogger;
         private readonly ClaimsRepository _claimsRepository;
 
         public ShopifyCredentialService(
                 ApplicationUserManager userManager, 
                 IEncryptionService encryptionService,
-                IPushLogger pushLogger,
                 ClaimsRepository claimsRepository)
         {
             _userManager = userManager;
             _encryptionService = encryptionService;
-            _pushLogger = pushLogger;
             _claimsRepository = claimsRepository;
         }
 

@@ -7,8 +7,8 @@
     <ProjectGuid>{5451AD2D-AACD-4050-9A53-CFED81F062DC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProfitWise.DataMocks</RootNamespace>
-    <AssemblyName>ProfitWise.DataMocks</AssemblyName>
+    <RootNamespace>ProfitWise.TestData</RootNamespace>
+    <AssemblyName>ProfitWise.TestData</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -85,11 +85,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacRegistration.cs" />
-    <Compile Include="FakeEventApiRepository.cs" />
-    <Compile Include="FakeOrderApiRepository.cs" />
-    <Compile Include="FakeProductApiRepository.cs" />
-    <Compile Include="FakeShopApiRepository.cs" />
-    <Compile Include="FakeCredentialService.cs" />
+    <Compile Include="MockShopifyStore\FakeEventApiRepository.cs" />
+    <Compile Include="MockShopifyStore\FakeOrderApiRepository.cs" />
+    <Compile Include="MockShopifyStore\FakeProductApiRepository.cs" />
+    <Compile Include="MockShopifyStore\FakeShopApiRepository.cs" />
+    <Compile Include="MockShopifyStore\FakeCredentialService.cs" />
     <Compile Include="HelperExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
