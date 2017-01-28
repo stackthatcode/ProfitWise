@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using Hangfire;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
+using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -91,16 +92,8 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult HangFireTest()
         {
-            var identifier = BackgroundJob.Enqueue(() => ProcessHooks.HelloWorld());
-            return JsonNetResult.Success();
-        }
-
-        //HangFireError
-
-        [HttpPost]
-        public ActionResult HangFireError()
-        {
-            BackgroundJob.Enqueue(() => ProcessHooks.ErrorWorld());
+            var userId = HttpContext.PullIdentity().UserId;
+            var identifier = BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.Execute(userId));
             return JsonNetResult.Success();
         }
 

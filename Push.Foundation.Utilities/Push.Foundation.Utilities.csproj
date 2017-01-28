@@ -93,6 +93,7 @@
     <Compile Include="Helpers\TimeZoneParsingExtensions.cs" />
     <Compile Include="Logging\ConsoleAndDebugLogger.cs" />
     <Compile Include="Logging\ExtensionMethods.cs" />
+    <Compile Include="Logging\Formatters.cs" />
     <Compile Include="Logging\IPushLogger.cs" />
     <Compile Include="Logging\InsulatedExecution.cs" />
     <Compile Include="Logging\LoggerSingleton.cs" />

@@ -26,7 +26,8 @@ namespace ProfitWise.Data.Processes
                 ProductRefreshStep productRefreshStep,
                 OrderRefreshStep orderRefreshStep,
                 ProductCleanupStep productCleanupStep,
-                IPushLogger logger, PwShopRepository pwShopRepository)
+                IPushLogger logger, 
+                PwShopRepository pwShopRepository)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _orderRefreshStep = orderRefreshStep;
@@ -38,6 +39,18 @@ namespace ProfitWise.Data.Processes
         }
 
         public void Execute(string userId)
+        {
+            try
+            {
+                ExecuteInner(userId);
+            }
+            catch (Exception e)
+            {
+                _pushLogger.Error(e);
+            }
+        }
+
+        public void ExecuteInner(string userId)
         {
             _pushLogger.Info($"Starting Refresh Process for UserId: {userId}");
             _pushLogger.Info($"Retrieving Shopify Credentials Claims for {userId}");

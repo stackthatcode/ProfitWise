@@ -14,14 +14,14 @@ namespace ProfitWise.Batch
     {
         static void Main(string[] args)
         {
-            Bootstrap.ConfigureApp();
-            HangFireBackgroundServiceTest();
+            //HangFireBackgroundServiceTest();
+            //TestOrderCreator.Execute();
         }
         
-
+        // Aleks is working on this - go ahead and ignore
         public static void HangFireBackgroundServiceTest()
         {
-            LogProvider.SetCurrentLogProvider(new HangFireLogProvider());
+            Bootstrapper.ConfigureApp();
 
             var options = new SqlServerStorageOptions
             {
@@ -45,33 +45,20 @@ namespace ProfitWise.Batch
             }
         }
 
-
+        
         public static void StandaloneRefreshProcess()
         {
-            Bootstrap.ConfigureApp();
-
-            using (var container = AutofacRegistration.Build())
+            using (var container = Bootstrapper.ConfigureApp())
             using (var scope = container.BeginLifetimeScope())
-            {
-                var logger = container.Resolve<IPushLogger>();
-                try
-                {
-                    //var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
-                    var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
+            {                
+                //var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
+                var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
 
-                    //var currencyProcess = scope.Resolve<CurrencyProcess>();
-                    //currencyProcess.Execute();
+                //var currencyProcess = scope.Resolve<CurrencyProcess>();
+                //currencyProcess.Execute();
 
-                    var refreshProcess = scope.Resolve<ShopRefreshProcess>();
-                    refreshProcess.Execute(userId);
-                }
-                catch (Exception e)
-                {
-                    logger.Error(e);
-
-                    // Add notification service call here
-                    logger.Fatal(e.Message);
-                }
+                var refreshProcess = scope.Resolve<ShopRefreshProcess>();
+                refreshProcess.Execute(userId);
 
                 Console.ReadLine();
             }

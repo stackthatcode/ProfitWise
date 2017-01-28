@@ -1,10 +1,11 @@
 ﻿using Autofac;
+using ProfitWise.DataMocks;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Interfaces;
 
-namespace ProfitWise.DataMocks.MockShopifyStore
+namespace ProfitWise.TestData.MockShopifyStore
 {
-    public class AutofacRegistration
+    public class FakeApiAutofacRegistration
     {
         public static void Build(ContainerBuilder builder)
         {

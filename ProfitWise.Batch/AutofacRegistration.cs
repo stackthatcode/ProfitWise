@@ -34,6 +34,7 @@ namespace ProfitWise.Batch
 
             // ProfitWise.Data registration - which invokes downstream dependent registrations
             Data.AutofacRegistration.Build(builder);
+
             builder.Register(ctx =>
                 {
                     var connectionstring = 
@@ -60,6 +61,7 @@ namespace ProfitWise.Batch
 
             // Push.Shopify API configuration
             Push.Shopify.AutofacRegistration.Build(builder);
+
             builder.Register(x => new ShopifyClientConfig()
             {
                 RetryLimit =
@@ -93,12 +95,12 @@ namespace ProfitWise.Batch
             // Push.Foundation.Web Identity Stuff
             var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
             var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
+
             Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
 
 
             AddDiagnostics(builder);
-            //ProfitWise.DataMocks.AutofacRegistration.Build(builder);
-
+            
             // Fin!
             return builder.Build();
         }

@@ -84,7 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutofacRegistration.cs" />
+    <Compile Include="MockShopifyStore\FakeApiAutofacRegistration.cs" />
     <Compile Include="MockShopifyStore\FakeEventApiRepository.cs" />
     <Compile Include="MockShopifyStore\FakeOrderApiRepository.cs" />
     <Compile Include="MockShopifyStore\FakeProductApiRepository.cs" />
@@ -92,6 +92,8 @@
     <Compile Include="MockShopifyStore\FakeCredentialService.cs" />
     <Compile Include="HelperExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestDataBuilder\AutofacRegistration.cs" />
+    <Compile Include="TestDataBuilder\OrderMakerProcess.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Push.Foundation.Web\Push.Foundation.Web.csproj">

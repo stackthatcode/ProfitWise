@@ -68,6 +68,10 @@
       <HintPath>..\packages\FluentAssertions.4.1.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Hangfire.Autofac, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Autofac.2.2.0\lib\net45\Hangfire.Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Hangfire.Core, Version=1.5.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hangfire.Core.1.5.7\lib\net45\Hangfire.Core.dll</HintPath>
       <Private>True</Private>
@@ -125,7 +129,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacRegistration.cs" />
-    <Compile Include="Bootstrap.cs" />
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="TestOrderCreator.cs" />
     <Compile Include="_TempHoldingCell\NaughtyShopifyHttpClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,9 +143,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ProfitWise.DataMocks\ProfitWise.DataMocks.csproj">
+    <ProjectReference Include="..\ProfitWise.DataMocks\ProfitWise.TestData.csproj">
       <Project>{5451ad2d-aacd-4050-9a53-cfed81f062dc}</Project>
-      <Name>ProfitWise.DataMocks</Name>
+      <Name>ProfitWise.TestData</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">
       <Project>{CE56511C-1D8F-4537-96B9-EF03DA326F90}</Project>
