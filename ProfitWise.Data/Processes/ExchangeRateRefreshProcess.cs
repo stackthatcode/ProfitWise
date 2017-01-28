@@ -11,7 +11,7 @@ using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Processes
 {
-    public class CurrencyProcess
+    public class ExchangeRateRefreshProcess
     {
         private readonly CurrencyService _currencyService;
         private readonly SystemStateRepository _systemStateRepository;
@@ -24,7 +24,7 @@ namespace ProfitWise.Data.Processes
         public readonly DateTime ExchangeRateStartDate = new DateTime(2010, 01, 01);
         public const int ProfitWiseBaseCurrency = 1; // Corresponds to USD
 
-        public CurrencyProcess(
+        public ExchangeRateRefreshProcess(
                 CurrencyService currencyService,
                 SystemStateRepository systemStateRepository,
                 CurrencyRepository currencyRepository,

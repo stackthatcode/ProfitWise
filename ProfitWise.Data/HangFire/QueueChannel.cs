@@ -2,8 +2,7 @@
 {
     public class QueueChannel
     {
-        public readonly string[] RapidResponse = { Queues.InitialShopRefresh };
-        public readonly string[] Routine = { Queues.RoutineShopRefresh };
-        public readonly string[] System = { Queues.ExchangeRateRefresh, Queues.CleanupService };
+        public static readonly string[] Routine = { Queues.RoutineShopRefresh };
+        public static readonly string[] System = { Queues.ExchangeRateRefresh, Queues.CleanupService };
     }
 }

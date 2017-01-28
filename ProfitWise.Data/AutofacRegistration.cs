@@ -3,12 +3,14 @@ using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Utilities.CastleProxies;
+
 
 namespace ProfitWise.Data
 {
@@ -47,9 +49,10 @@ namespace ProfitWise.Data
             builder.RegisterType<CurrencyService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<ShopSynchronizationService>().EnableClassInterceptorsWithRegistry(registry);
             builder.RegisterType<CogsService>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<HangFireService>();
 
             builder.RegisterType<ShopRefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<CurrencyProcess>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ExchangeRateRefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ShopRequired>();
 

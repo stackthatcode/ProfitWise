@@ -14,29 +14,29 @@ namespace ProfitWise.Batch
     {
         static void Main(string[] args)
         {
-            //HangFireBackgroundServiceTest();
-            //TestOrderCreator.Execute();
-        }
-        
-        // Aleks is working on this - go ahead and ignore
-        public static void HangFireBackgroundServiceTest()
-        {
             Bootstrapper.ConfigureApp();
 
-            var options = new SqlServerStorageOptions
-            {
-                QueuePollInterval = TimeSpan.FromSeconds(1),
-                PrepareSchemaIfNecessary = false,                
-            };
-            GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection", options);
+            HangFireScheduleTest();
+            HangFireBackgroundService();
+            
+            //TestOrderCreator.Execute();
+        }
 
+        public static void HangFireScheduleTest()
+        {
+            var service = new HangFireService(LoggerSingleton.Get());
+            service.ScheduleRoutineShopRefresh("f4a8b3bb-2aec-4c2a-ab49-ba90bd047273");
+        }
+
+        // Aleks is working on this - go ahead and ignore
+        public static void HangFireBackgroundService()
+        {
             var backgroundServerOptions 
                 = new BackgroundJobServerOptions()
                     {
-                        SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),                
-                    };
-
-            BackgroundJob.Delete("50");
+                        SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),   
+                        Queues = QueueChannel.Routine,
+                };
 
             using (var server = new BackgroundJobServer(backgroundServerOptions))
             {

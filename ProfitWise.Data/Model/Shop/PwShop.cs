@@ -25,6 +25,12 @@ namespace ProfitWise.Data.Model.Shop
         public int DateRangeDefault { get; set; }
 
 
+        // TODO - wire this into configuration settings?
+        public static DateTime InitialOrderStartDate()
+        {
+            return DateTime.Today.AddMonths(-2);
+        }
+
         public static PwShop Make(
                 string shopifyUserId, long shopId, int shopCurrencyId, string shopTimeZone)
         {
@@ -39,7 +45,7 @@ namespace ProfitWise.Data.Model.Shop
                 IsShopEnabled = true,
                 IsDataLoaded = false,
 
-                StartingDateForOrders = DateTime.Today.AddYears(-2),
+                StartingDateForOrders = InitialOrderStartDate(),
                 UseDefaultMargin = true,
                 DefaultMargin = 20.0m,
                 ProfitRealization = Preferences.ProfitRealization.OrderReceived,

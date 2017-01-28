@@ -2,9 +2,9 @@
 {
     public class Queues
     {
-        public const string InitialShopRefresh = "InitialShopRefresh";
-        public const string RoutineShopRefresh = "RoutineShopRefresh";
-        public const string ExchangeRateRefresh = "ExchangeRateRefresh";
-        public const string CleanupService = "CleanupService";
+        public const string InitialShopRefresh = "initialshoprefresh";
+        public const string RoutineShopRefresh = "routineshoprefresh";
+        public const string ExchangeRateRefresh = "exchangeraterefresh";
+        public const string CleanupService = "cleanupservice";
     }
 }

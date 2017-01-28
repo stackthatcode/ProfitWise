@@ -21,8 +21,8 @@ namespace ProfitWise.Data.Services
         private readonly CurrencyService _currencyService;
 
 
-        public readonly DateTime MaximumCogsDate = new DateTime(2000, 1, 1);
-        public readonly DateTime MinimumCogsDate = new DateTime(2099, 12, 31);
+        public readonly DateTime MaximumCogsDate = new DateTime(2099, 12, 31);
+        public readonly DateTime MinimumCogsDate = new DateTime(2000, 1, 1);
 
 
         public PwShop PwShop { get; set; }

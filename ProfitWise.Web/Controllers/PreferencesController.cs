@@ -18,9 +18,7 @@ namespace ProfitWise.Web.Controllers
         private readonly MultitenantFactory _factory;
         private readonly PwShopRepository _shopRepository;
 
-        public PreferencesController(
-                MultitenantFactory factory, 
-                PwShopRepository shopRepository)
+        public PreferencesController(MultitenantFactory factory, PwShopRepository shopRepository)
         {
             _factory = factory;
             _shopRepository = shopRepository;

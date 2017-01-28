@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
@@ -16,6 +18,7 @@ namespace ProfitWise.Data.Processes
         private readonly ProductRefreshStep _productRefreshStep;
         private readonly OrderRefreshStep _orderRefreshStep;
         private readonly ProductCleanupStep _productCleanupStep;
+        private readonly HangFireService _hangFireService;
         private readonly PwShopRepository _pwShopRepository;
         private readonly IPushLogger _pushLogger;
 
@@ -26,18 +29,21 @@ namespace ProfitWise.Data.Processes
                 ProductRefreshStep productRefreshStep,
                 OrderRefreshStep orderRefreshStep,
                 ProductCleanupStep productCleanupStep,
+                HangFireService hangFireService,
                 IPushLogger logger, 
                 PwShopRepository pwShopRepository)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _orderRefreshStep = orderRefreshStep;
             _productCleanupStep = productCleanupStep;
+            _hangFireService = hangFireService;
             _productRefreshStep = productRefreshStep;
             _pushLogger = logger;
             _pwShopRepository = pwShopRepository;
             _shopRefreshStep = shopRefreshStep;
         }
 
+        // TODO - add retry constraint
         public void Execute(string userId)
         {
             try
@@ -47,6 +53,7 @@ namespace ProfitWise.Data.Processes
             catch (Exception e)
             {
                 _pushLogger.Error(e);
+                throw;  // Need to do this so HangFire reschedules
             }
         }
 
@@ -75,6 +82,10 @@ namespace ProfitWise.Data.Processes
                 _productRefreshStep.Execute(shopifyClientCredentials);
                 _orderRefreshStep.Execute(shopifyClientCredentials);
                 _productCleanupStep.Execute(shopifyClientCredentials);
+
+                // UPDATE - that statement VVVV is not true
+                // If it's already scheduled, this will only perform an update
+                //_hangFireService.ScheduleRoutineShopRefresh(userId);
             }
             catch (BadHttpStatusCodeException exception)
             {

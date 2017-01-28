@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
@@ -26,6 +27,7 @@ namespace ProfitWise.Web.Controllers
 
         private readonly ShopSynchronizationService _shopSynchronizationService;
         private readonly OwinUserService _userService;
+        private readonly HangFireService _hangFireService;
         private readonly IPushLogger _logger;
         
 
@@ -36,6 +38,7 @@ namespace ProfitWise.Web.Controllers
                 IShopifyCredentialService credentialService,
                 ShopSynchronizationService shopSynchronizationService,
                 OwinUserService userService,
+                HangFireService hangFireService,
                 IPushLogger logger)
         {
             _authenticationManager = authenticationManager;
@@ -43,6 +46,7 @@ namespace ProfitWise.Web.Controllers
             _signInManager = signInManager;
             _credentialService = credentialService;
             _userService = userService;
+            _hangFireService = hangFireService;
             _logger = logger;
             _shopSynchronizationService = shopSynchronizationService;
         }
@@ -135,6 +139,8 @@ namespace ProfitWise.Web.Controllers
 
                 // Save the Shopify Domain and Access Token to Persistence
                 PushCookieClaimsToPersistence(externalLoginInfo);
+
+                _hangFireService.TriggerInitialShopRefresh(user.Id);
                 transaction.Complete();
             }
 
