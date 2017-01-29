@@ -46,9 +46,8 @@ namespace ProfitWise.Data.ProcessSteps
             var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
 
             // Update Shop with the latest
-            _shopSynchronizationService.UpdateShopTimeZoneAndCurrency(
-                shop, shopCurrencyId, shopFromShopify.TimeZone);
-
+            _shopSynchronizationService.RefreshShop(shopifyCredentials.ShopOwnerUserId, shopFromShopify);
+            
             // Ensure the proper Batch State exists for Shop
             var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(shop);
             var batchState = profitWiseBatchStateRepository.Retrieve();

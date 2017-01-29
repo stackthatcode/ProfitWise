@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Autofac;
+using Hangfire;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Services;
@@ -46,7 +47,7 @@ namespace ProfitWise.Batch
                 .As<SqlConnection>()
                 .As<DbConnection>()
                 .As<IDbConnection>()
-                .InstancePerLifetimeScope();
+                .InstancePerBackgroundJob();
 
 
             // Configure the paging rates of the Refresh Services

@@ -18,11 +18,6 @@ GO
 DROP TABLE IF EXISTS [dbo].[AspNetUsers]
 GO
 
-DROP TABLE IF EXISTS [dbo].[profitwiseshop]
-GO
-
-DROP TABLE IF EXISTS [dbo].[profitwisebatchstate]
-GO
 
 
 SET ANSI_NULLS ON
@@ -112,6 +107,14 @@ CREATE TABLE [dbo].[AspNetUsers](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 END
+GO
+
+
+
+DROP TABLE IF EXISTS [dbo].[profitwiseshop]
+GO
+
+DROP TABLE IF EXISTS [dbo].[profitwisebatchstate]
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseshop]') AND type in (N'U'))

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Hangfire;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.ExchangeRateApis;
@@ -40,20 +41,20 @@ namespace ProfitWise.Data
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));
 
-            builder.RegisterType<ShopRefreshService>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<OrderRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ProductRefreshStep>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ProductCleanupStep>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ShopRefreshService>();
+            builder.RegisterType<OrderRefreshStep>();
+            builder.RegisterType<ProductRefreshStep>();
+            builder.RegisterType<ProductCleanupStep>();
 
-            builder.RegisterType<CatalogBuilderService>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<CurrencyService>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ShopSynchronizationService>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<CogsService>().EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<CatalogBuilderService>();
+            builder.RegisterType<CurrencyService>();
+            builder.RegisterType<ShopSynchronizationService>();
+            builder.RegisterType<CogsService>();
             builder.RegisterType<HangFireService>();
 
-            builder.RegisterType<ShopRefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ExchangeRateRefreshProcess>().EnableClassInterceptorsWithRegistry(registry);
-
+            builder.RegisterType<ShopRefreshProcess>();
+            builder.RegisterType<ExchangeRateRefreshProcess>();
+            
             builder.RegisterType<ShopRequired>();
 
             builder.RegisterType<FixerApiConfig>();
@@ -61,7 +62,7 @@ namespace ProfitWise.Data
             builder.RegisterType<FixerApiRequestFactory>();
 
             // Critical piece for all database infrastructure to work smoothly
-            builder.RegisterType<ConnectionWrapper>().InstancePerLifetimeScope();
+            builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJob();
 
             // Chicago, by default!
             builder.Register(x => new TimeZoneTranslator(6, 0));

@@ -55,43 +55,48 @@ namespace ProfitWise.Data.Services
             }
         }
         
+        private static readonly object cacheLoadLock = new object();
+
         public void LoadExchangeRateCache(DateTime? minimumDate = null)
         {
-            if (DateTime.Now < _cacheRefreshAllowed)
+            lock (cacheLoadLock)
             {
-                _logger.Trace($"LoadExchangeRateCache not allowed until {_cacheRefreshAllowed}");
-                return;
-            }
-
-            var loggableMinimumDate = minimumDate == null ? "" : "from " + minimumDate;
-            _logger.Info($"Loading Exchange Rates cache {loggableMinimumDate}");
-
-            var rates =
-                minimumDate.HasValue
-                    ? _repository.RetrieveExchangeRateFromDate(minimumDate.Value)
-                    : _repository.RetrieveExchangeRates();
-
-            foreach (var rate in rates)
-            {
-                if (!_ratecache.ContainsKey(rate.Date))
+                if (DateTime.Now < _cacheRefreshAllowed)
                 {
-                    _ratecache[rate.Date] = new List<ExchangeRate>();
+                    _logger.Trace($"LoadExchangeRateCache not allowed until {_cacheRefreshAllowed}");
+                    return;
                 }
-                _ratecache[rate.Date].Add(rate);
-            }
 
-            if (!_ratecache.Any())
-            {
-                _logger.Info("Exchange Rate cache empty - no SQL data present");
-            }
-            else
-            { 
-                _logger.Info(
-                    $"Exchange Rates cached from {_ratecache.Keys.Min()} through {_ratecache.Keys.Max()}");
-            }
+                var loggableMinimumDate = minimumDate == null ? "" : "from " + minimumDate;
+                _logger.Info($"Loading Exchange Rates cache {loggableMinimumDate}");
 
-            _cacheRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
-            _logger.Info($"CacheRefreshAllowed set to {_cacheRefreshAllowed}");
+                var rates =
+                    minimumDate.HasValue
+                        ? _repository.RetrieveExchangeRateFromDate(minimumDate.Value)
+                        : _repository.RetrieveExchangeRates();
+
+                foreach (var rate in rates)
+                {
+                    if (!_ratecache.ContainsKey(rate.Date))
+                    {
+                        _ratecache[rate.Date] = new List<ExchangeRate>();
+                    }
+                    _ratecache[rate.Date].Add(rate);
+                }
+
+                if (!_ratecache.Any())
+                {
+                    _logger.Info("Exchange Rate cache empty - no SQL data present");
+                }
+                else
+                {
+                    _logger.Info(
+                        $"Exchange Rates cached from {_ratecache.Keys.Min()} through {_ratecache.Keys.Max()}");
+                }
+
+                _cacheRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
+                _logger.Info($"CacheRefreshAllowed set to {_cacheRefreshAllowed}");
+            }
         }
 
         public DateTime? LatestExchangeRateDate => 

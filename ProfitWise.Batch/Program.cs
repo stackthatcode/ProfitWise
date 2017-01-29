@@ -1,8 +1,6 @@
 ﻿using System;
 using Autofac;
 using Hangfire;
-using Hangfire.Logging;
-using Hangfire.SqlServer;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
 using Push.Foundation.Utilities.Logging;
@@ -15,7 +13,6 @@ namespace ProfitWise.Batch
         static void Main(string[] args)
         {
             Bootstrapper.ConfigureApp();
-
             HangFireScheduleTest();
             HangFireBackgroundService();
             
@@ -25,7 +22,17 @@ namespace ProfitWise.Batch
         public static void HangFireScheduleTest()
         {
             var service = new HangFireService(LoggerSingleton.Get());
-            service.ScheduleRoutineShopRefresh("f4a8b3bb-2aec-4c2a-ab49-ba90bd047273");
+
+            string jobNumberOne = "Job1", jobNumberTwo = "Job2";
+            string userId = "f4a8b3bb-2aec-4c2a-ab49-ba90bd047273";
+
+            RecurringJob.AddOrUpdate<ShopRefreshProcess>(
+                jobNumberOne, x => x.Execute(userId), Cron.Minutely, queue: Queues.RoutineShopRefresh);
+
+            RecurringJob.AddOrUpdate<ShopRefreshProcess>(
+                jobNumberTwo, x => x.Execute(userId), Cron.Minutely, queue: Queues.RoutineShopRefresh);
+
+            //service.KillRecurringJob("ShopRefreshProcess:f4a8b3bb-2aec-4c2a-ab49-ba90bd047273");
         }
 
         // Aleks is working on this - go ahead and ignore

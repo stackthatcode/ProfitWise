@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
@@ -20,6 +21,7 @@ namespace ProfitWise.Data.Processes
         private readonly ProductCleanupStep _productCleanupStep;
         private readonly HangFireService _hangFireService;
         private readonly PwShopRepository _pwShopRepository;
+        private readonly ConnectionWrapper _connectionWrapper;
         private readonly IPushLogger _pushLogger;
 
 
@@ -31,7 +33,8 @@ namespace ProfitWise.Data.Processes
                 ProductCleanupStep productCleanupStep,
                 HangFireService hangFireService,
                 IPushLogger logger, 
-                PwShopRepository pwShopRepository)
+                PwShopRepository pwShopRepository,
+                ConnectionWrapper connectionWrapper)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _orderRefreshStep = orderRefreshStep;
@@ -41,6 +44,7 @@ namespace ProfitWise.Data.Processes
             _pushLogger = logger;
             _pwShopRepository = pwShopRepository;
             _shopRefreshStep = shopRefreshStep;
+            _connectionWrapper = connectionWrapper;
         }
 
         // TODO - add retry constraint
@@ -60,7 +64,10 @@ namespace ProfitWise.Data.Processes
         public void ExecuteInner(string userId)
         {
             _pushLogger.Info($"Starting Refresh Process for UserId: {userId}");
-            _pushLogger.Info($"Retrieving Shopify Credentials Claims for {userId}");
+            _pushLogger.Debug($"Retrieving Shopify Credentials Claims for {userId}");
+
+            var id = _connectionWrapper.Identifier;
+            _pushLogger.Debug($"Connection Wrapper Id: {id}");
 
             var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
             if (shopifyFromClaims.Success == false)
@@ -83,7 +90,6 @@ namespace ProfitWise.Data.Processes
                 _orderRefreshStep.Execute(shopifyClientCredentials);
                 _productCleanupStep.Execute(shopifyClientCredentials);
 
-                // UPDATE - that statement VVVV is not true
                 // If it's already scheduled, this will only perform an update
                 //_hangFireService.ScheduleRoutineShopRefresh(userId);
             }
