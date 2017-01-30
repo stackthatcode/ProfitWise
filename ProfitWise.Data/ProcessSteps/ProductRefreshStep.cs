@@ -44,7 +44,19 @@ namespace ProfitWise.Data.ProcessSteps
             _timeZoneTranslator = timeZoneTranslator;
         }
 
+
+        private readonly object _lock = new object();
+
         public virtual void Execute(ShopifyCredentials shopCredentials)
+        {
+            lock (_lock)
+            {
+                ExecuteAuxillary(shopCredentials);
+            }
+        }
+
+
+        private void ExecuteAuxillary(ShopifyCredentials shopCredentials)
         {
             var processStepStartTime = DateTime.Now;
 

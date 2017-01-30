@@ -18,10 +18,11 @@ namespace ProfitWise.Data.ProcessSteps
             SetRandomScopeId();
         }
 
+        static readonly Random Generator = new Random();
+
         public void SetRandomScopeId()
         {
-            var generator = new Random();
-            int traceId = generator.Next(1000, 9999);
+            int traceId = Generator.Next(1000, 9999);
             this.ScopedPrefix = $"TraceId:{traceId}";
         }        
 

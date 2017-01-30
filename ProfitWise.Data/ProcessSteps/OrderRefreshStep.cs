@@ -320,6 +320,7 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
+
         public void UpdateOrderToPersistence(
                 Order orderFromShopify, ShopifyOrder existingOrder, OrderRefreshContext context)
         {
@@ -356,7 +357,6 @@ namespace ProfitWise.Data.ProcessSteps
                 orderRepository.InsertAdjustment(adjustment);
             }
         }
-
 
         public PwVariant FindCreateProductVariant(
                 PwShop shop, ProductBuildContext productBuildContext, VariantBuildContext variantBuildContext)
