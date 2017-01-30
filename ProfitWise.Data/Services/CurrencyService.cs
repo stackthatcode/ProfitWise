@@ -16,31 +16,46 @@ namespace ProfitWise.Data.Services
         private static Dictionary<DateTime, List<ExchangeRate>> _ratecache;
         
         private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(0, 0, 15, 0);
-        private static DateTime _cacheRefreshAllowed = DateTime.Now.Add(-CacheRefreshLockInterval);
 
+        // This sets the next allowed time to the past, thus guaraneteeing a refresh
+        private static DateTime _nextRateRefreshAllowed = DateTime.Now.Add(-CacheRefreshLockInterval);
+
+        private static readonly object ExchangeRateLock = new object();
+        private static readonly object CurrencyLock = new object();
+
+        private static bool _currencyCachedLoaded;
+        private static bool _rateCacheLoaded;
+
+        static CurrencyService()
+        {
+            _currencyCachedLoaded = false;
+            _rateCacheLoaded = false;
+        }
 
         public CurrencyService(CurrencyRepository repository, IPushLogger logger)
         {
             _repository = repository;
             _logger = logger;
-        }
 
-        private static readonly object ExchangeRateLock = new object();
-        private static readonly object CurrencyLock = new object();
+        }
 
         private List<Currency> CurrencyCache
         {
             get
             {
-                if (_currencycache == null)
+                if (!_currencyCachedLoaded)
                 {
                     lock (CurrencyLock)
                     {
-                        _logger.Info($"Loading Currency cache");
-                        _currencycache = new List<Currency>();
-                        foreach (var currency in _repository.RetrieveCurrency())
+                        if (_currencycache == null)
                         {
-                            _currencycache.Add(currency);
+                            _logger.Info($"Loading Currency cache");
+                            _currencycache = new List<Currency>();
+                            foreach (var currency in _repository.RetrieveCurrency())
+                            {
+                                _currencycache.Add(currency);
+                            }
+                            _currencyCachedLoaded = true;
                         }
                     }
                 }
@@ -52,74 +67,58 @@ namespace ProfitWise.Data.Services
         {
             get
             {
-                if (_ratecache == null)
+                if (!_rateCacheLoaded || DateTime.Now > _nextRateRefreshAllowed)
                 {
-                    _ratecache = new Dictionary<DateTime, List<ExchangeRate>>();
-                    LoadExchangeRateCache();
+                    lock (ExchangeRateLock)
+                    {
+                        LoadExchangeRateCache();
+                    }
                 }
                 return _ratecache;
             }
         }
         
-        public void LoadExchangeRateCache(DateTime? minimumDate = null)
+        public void LoadExchangeRateCache()
         {
-            lock (ExchangeRateLock)
+            IList<ExchangeRate> rates;
+
+            if (_ratecache == null)
             {
-                if (DateTime.Now < _cacheRefreshAllowed)
-                {
-                    _logger.Trace($"LoadExchangeRateCache not allowed until {_cacheRefreshAllowed}");
-                    return;
-                }
-
-                var loggableMinimumDate = minimumDate == null ? "" : "from " + minimumDate;
-                _logger.Info($"Loading Exchange Rates cache {loggableMinimumDate}");
-
-                var rates =
-                    minimumDate.HasValue
-                        ? _repository.RetrieveExchangeRateFromDate(minimumDate.Value)
-                        : _repository.RetrieveExchangeRates();
-
-                foreach (var rate in rates)
-                {
-                    if (!_ratecache.ContainsKey(rate.Date))
-                    {
-                        _ratecache[rate.Date] = new List<ExchangeRate>();
-                    }
-                    _ratecache[rate.Date].Add(rate);
-                }
-
-                if (!_ratecache.Any())
-                {
-                    _logger.Info("Exchange Rate cache empty - no SQL data present");
-                }
-                else
-                {
-                    _logger.Info(
-                        $"Exchange Rates cached from {_ratecache.Keys.Min()} through {_ratecache.Keys.Max()}");
-                }
-
-                _cacheRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
-                _logger.Info($"CacheRefreshAllowed set to {_cacheRefreshAllowed}");
+                _logger.Info($"Loading Exchange Rates (ALL)");
+                _ratecache = new Dictionary<DateTime, List<ExchangeRate>>();
+                rates = _repository.RetrieveExchangeRates();
             }
-        }
-
-        public DateTime? LatestExchangeRateDate => 
-            RateCache.Keys.Count == 0 ? (DateTime?)null : RateCache.Keys.Max();
-
-        private void VerifyAndRefreshRateCache(DateTime date)
-        {
-            if (RateCache.Count == 0 || !RateCache.ContainsKey(date))
+            else
             {
-                _logger.Trace($"Exchange Rates refresh triggered for {date}");
-                var minimumDate = _ratecache.Keys.Max().AddDays(1);
-                LoadExchangeRateCache(minimumDate);
+                _logger.Info($"Loading Exchange Rates from ");
+                var minimumDate =  _ratecache.Keys.Max().AddDays(1);
+                rates = _repository.RetrieveExchangeRateFromDate(minimumDate);
             }
+
+            foreach (var rate in rates)
+            {
+                if (!_ratecache.ContainsKey(rate.Date))
+                {
+                    _ratecache[rate.Date] = new List<ExchangeRate>();
+                }
+                _ratecache[rate.Date].Add(rate);
+            }
+
+            if (!_ratecache.Any())
+            {
+                throw new Exception("Exchange Rate cache empty - no SQL data present");
+            }
+
+            _rateCacheLoaded = true;
+            _logger.Info($"Exchange Rates cached from {_ratecache.Keys.Min()} through {_ratecache.Keys.Max()}");
+            _nextRateRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
+            _logger.Info($"Next Rate Refresh allowed at: {_nextRateRefreshAllowed}");
         }
+        
+
 
         public decimal Convert(decimal amount, int sourceCurrencyId, int destinationCurrencyId, DateTime date)
-        {
-            VerifyAndRefreshRateCache(date);
-
+        {            
             var rateEntry = 
                 !RateCache.ContainsKey(date)
                     ? RateCache[_ratecache.Keys.Max()]
@@ -134,6 +133,8 @@ namespace ProfitWise.Data.Services
             return finalCurrencyAmount;
         }
 
+
+        // Currency methods...
         public IList<Currency> AllCurrencies()
         {
             return CurrencyCache;
