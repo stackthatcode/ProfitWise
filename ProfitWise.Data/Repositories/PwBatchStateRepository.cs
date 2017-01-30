@@ -28,7 +28,6 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-
         public PwBatchState Retrieve()
         {
             var query = @"SELECT * FROM profitwisebatchstate WHERE PwShopId = @PwShopId";
@@ -40,7 +39,9 @@ namespace ProfitWise.Data.Repositories
 
         public void Insert(PwBatchState state)
         {
-            var query = @"INSERT INTO profitwisebatchstate VALUES (@PwShopId, @ProductsLastUpdated, @OrderDatasetStart, @OrderDatasetEnd)";
+            var query = @"INSERT INTO profitwisebatchstate VALUES (
+                            @PwShopId, @ProductsLastUpdated, @OrderDatasetStart, 
+                            @OrderDatasetEnd, @InitialRefreshJobId, @RoutineRefreshJobId)";
             Connection.Execute(query, state);
         }
 
@@ -51,7 +52,23 @@ namespace ProfitWise.Data.Repositories
                             OrderDatasetStart = @OrderDatasetStart, 
                             OrderDatasetEnd = @OrderDatasetEnd
                             WHERE PwShopId = @PwShopId";
-            Connection.Execute(query, state);
+            Connection.Execute(query, state); 
+        }
+
+        public void UpdateInitialRefreshJobId(string initialRefreshJobId)
+        {
+            var query = @"UPDATE profitwisebatchstate 
+                        SET InitialRefreshJobId = @initialRefreshJobId
+                        WHERE PwShopId = @PwShopId";
+            Connection.Execute(query, new { PwShop.PwShopId, initialRefreshJobId });
+        }
+
+        public void UpdateRoutineRefreshJobId(string routineRefreshJobId)
+        {
+            var query = @"UPDATE profitwisebatchstate 
+                        SET RoutineRefreshJobId = @routineRefreshJobId 
+                        WHERE PwShopId = @PwShopId";
+            Connection.Execute(query, new { PwShop.PwShopId, routineRefreshJobId });
         }
     }
 }

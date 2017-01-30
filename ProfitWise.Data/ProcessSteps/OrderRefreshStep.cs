@@ -220,7 +220,7 @@ namespace ProfitWise.Data.ProcessSteps
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(shop);
 
-            _pushLogger.Info($"{importedOrders.Count} Orders to process");
+            _pushLogger.Info($"Shop: {shop.PwShopId} - {importedOrders.Count} Orders to process");
 
             using (var trans = catalogBuilderService.InitiateTransaction())
             {

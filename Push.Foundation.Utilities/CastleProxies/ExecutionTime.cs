@@ -29,7 +29,7 @@ namespace Push.Foundation.Utilities.CastleProxies
             //    : invocation.InvocationTarget.GetType().Name;
 
             TimeSpan ts = stopWatch.Elapsed;
-            _pushLogger.Info($"{invocation.TargetType.Name}.{invocation.Method.Name} - metered execution time {ts.ToFormattedString()}");
+            _pushLogger.Debug($"{invocation.TargetType.Name}.{invocation.Method.Name} - metered execution time {ts.ToFormattedString()}");
         }
     }
 }

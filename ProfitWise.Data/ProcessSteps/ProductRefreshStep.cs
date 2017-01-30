@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Transactions;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
@@ -25,7 +24,6 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly PwShopRepository _shopRepository;
         private readonly TimeZoneTranslator _timeZoneTranslator;
 
-
         // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
         public const int MinutesFudgeFactor = 75;
 
@@ -46,10 +44,9 @@ namespace ProfitWise.Data.ProcessSteps
             _timeZoneTranslator = timeZoneTranslator;
         }
 
-
         public virtual void Execute(ShopifyCredentials shopCredentials)
         {
-            DateTime processStepStartTime = DateTime.Now;
+            var processStepStartTime = DateTime.Now;
 
             // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);

@@ -91,7 +91,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult HangFireTest()
         {
             var userId = HttpContext.PullIdentity().UserId;
-            var identifier = BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.Execute(userId));
+            var identifier = BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.RoutineShopRefresh(userId));
             return JsonNetResult.Success();
         }
 

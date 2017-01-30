@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using ProfitWise.TestData.TestDataBuilder;
 
-namespace ProfitWise.Batch
+namespace ProfitWise.Batch._TempHoldingCell
 {
     public class TestOrderCreator
     {
@@ -12,7 +12,6 @@ namespace ProfitWise.Batch
             using (var scope = container.BeginLifetimeScope())
             {
                 var userId = "b805025c-d8ff-4a9e-80e7-01e42ddcdf78";
-
                 var orderMakerProcess = scope.Resolve<OrderMakerProcess>();
                 orderMakerProcess.Execute(userId);
             }

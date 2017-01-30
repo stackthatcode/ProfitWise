@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Net;
+using Hangfire;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
-using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.HttpClient;
+
 
 namespace ProfitWise.Data.Processes
 {
@@ -48,7 +49,10 @@ namespace ProfitWise.Data.Processes
         }
 
         // TODO - add retry constraint
-        public void Execute(string userId)
+        // TODO - add a concurrency constraint
+
+        [Queue(Queues.InitialShopRefresh)]
+        public void InitialShopRefresh(string userId)
         {
             try
             {
@@ -56,12 +60,28 @@ namespace ProfitWise.Data.Processes
             }
             catch (Exception e)
             {
+                _pushLogger.Error($"InitialShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
                 throw;  // Need to do this so HangFire reschedules
             }
         }
 
-        public void ExecuteInner(string userId)
+        [Queue(Queues.RoutineShopRefresh)]
+        public void RoutineShopRefresh(string userId)
+        {
+            try
+            {
+                ExecuteInner(userId);
+            }
+            catch (Exception e)
+            {
+                _pushLogger.Error($"RoutineShopRefresh failure for User Id: {userId}");
+                _pushLogger.Error(e);
+                throw;  // Need to do this so HangFire reschedules
+            }
+        }
+
+        private void ExecuteInner(string userId)
         {
             _pushLogger.Info($"Starting Refresh Process for UserId: {userId}");
             _pushLogger.Debug($"Retrieving Shopify Credentials Claims for {userId}");
@@ -91,7 +111,7 @@ namespace ProfitWise.Data.Processes
                 _productCleanupStep.Execute(shopifyClientCredentials);
 
                 // If it's already scheduled, this will only perform an update
-                //_hangFireService.ScheduleRoutineShopRefresh(userId);
+                _hangFireService.ScheduleRoutineShopRefresh(userId);
             }
             catch (BadHttpStatusCodeException exception)
             {

@@ -50,7 +50,7 @@ namespace Push.Foundation.Web.Http
             var hostname = request.RequestUri.Host;
             ProcessIntentionalDelay(hostname);
 
-            _pushLogger.Info($"Invoking HTTP {request.Method} on {request.RequestUri.AbsoluteUri}");
+            _pushLogger.Debug($"Invoking HTTP {request.Method} on {request.RequestUri.AbsoluteUri}");
             _hostLastExecutionTime[hostname] = DateTime.Now;
             var response = _httpClient.ProcessRequest(request);
 
@@ -80,7 +80,7 @@ namespace Push.Foundation.Web.Http
                 if (timeSinceLastExecution < throttlingDelay)
                 {
                     var remainingTimeToDelay = throttlingDelay - timeSinceLastExecution;
-                    _pushLogger.Info($"Intentional delay before next call: {remainingTimeToDelay} ms");
+                    _pushLogger.Debug($"Intentional delay before next call: {remainingTimeToDelay} ms");
                     System.Threading.Thread.Sleep(remainingTimeToDelay);
                 }
             }

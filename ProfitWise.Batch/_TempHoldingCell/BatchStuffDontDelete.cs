@@ -16,7 +16,7 @@ namespace ProfitWise.Batch
                 var userId = "57f0da58-6e74-41d5-90a9-736d09aa3b2f";
 
                 var refreshProcess = scope.Resolve<ShopRefreshProcess>();
-                refreshProcess.Execute(userId);
+                refreshProcess.RoutineShopRefresh(userId);
             }
         }
         
@@ -45,7 +45,7 @@ namespace ProfitWise.Batch
                 using (var scope = container.BeginLifetimeScope())
                 {
                     var refreshProcess = scope.Resolve<ShopRefreshProcess>();
-                    refreshProcess.Execute(artificialUserId.ToString());
+                    refreshProcess.RoutineShopRefresh(artificialUserId.ToString());
                 }
                 artificialUserId++;
             }

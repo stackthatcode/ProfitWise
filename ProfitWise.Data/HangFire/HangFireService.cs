@@ -1,49 +1,61 @@
-﻿using Hangfire;
+using Hangfire;
+using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
+using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.Logging;
+
 
 namespace ProfitWise.Data.HangFire
 {
     public class HangFireService
     {
         private readonly IPushLogger _logger;
+        private readonly PwShopRepository _shopRepository;
+        private readonly MultitenantFactory _multitenantFactory;
 
-        public HangFireService(IPushLogger logger)
+        public HangFireService(
+                IPushLogger logger, 
+                PwShopRepository shopRepository, 
+                MultitenantFactory multitenantFactory)
         {
             _logger = logger;
+            _shopRepository = shopRepository;
+            _multitenantFactory = multitenantFactory;
         }
-
-        private string ShopRefreshProcessId(string userId)
-        {
-            return $"ShopRefreshProcess:{userId}";
-        }
-
-        private const string ExchangeRateRefreshId = "ExchangeRateRefresh";
-
+        
 
         public string TriggerInitialShopRefresh(string userId)
         {
             _logger.Info($"Scheduling Initial Shop Refresh for User {userId}");
-            return BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.Execute(userId));
+            var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
+            
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+            batchRepository.UpdateInitialRefreshJobId(jobId);
+            return jobId;
         }
 
         public string ScheduleRoutineShopRefresh(string userId)
         {
-            var jobIdentifier = ShopRefreshProcessId(userId);
-            _logger.Info($"Scheduling Routine Shop Refresh for User {userId} / Job Id {jobIdentifier}");
+            var jobId = $"ShopRefreshProcess:{userId}"; 
+            _logger.Info($"Scheduling Routine Shop Refresh for User {userId} / Job Id {jobId}");
 
-            RecurringJob.AddOrUpdate<ShopRefreshProcess>(
-                jobIdentifier, x => x.Execute(userId), Cron.Minutely, queue: Queues.RoutineShopRefresh);
+            RecurringJob
+                .AddOrUpdate<ShopRefreshProcess>(
+                    jobId, x => x.RoutineShopRefresh(userId), Cron.Minutely);
 
-            return jobIdentifier;
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+            batchRepository.UpdateRoutineRefreshJobId(jobId);
+            return jobId;
         }
 
         public void ScheduleExchangeRateRefresh()
         {
+            var jobId = "ExchangeRateRefresh";
             _logger.Info($"Scheduling ExchangeRateRefreshProcess");
-            
-            RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(
-                ExchangeRateRefreshId, x => x.Execute(), Cron.Minutely, queue: Queues.ExchangeRateRefresh);
+
+            RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(jobId, x => x.Execute(), Cron.Minutely);
         }
 
         public void KillRecurringJob(string jobId)

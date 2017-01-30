@@ -18,6 +18,12 @@ GO
 DROP TABLE IF EXISTS [dbo].[AspNetUsers]
 GO
 
+DROP TABLE IF EXISTS [dbo].[profitwiseshop]
+GO
+
+DROP TABLE IF EXISTS [dbo].[profitwisebatchstate]
+GO
+
 
 
 SET ANSI_NULLS ON
@@ -55,7 +61,6 @@ CREATE TABLE [dbo].[AspNetUserClaims](
 END
 GO
 
-
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AspNetUserLogins]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[AspNetUserLogins](
@@ -86,6 +91,14 @@ CREATE TABLE [dbo].[AspNetUserRoles](
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[AspNetUserRoles] WHERE RoleId IN ( 'ADMIN', 'USER' ))
+BEGIN
+	INSERT INTO [dbo].[AspNetUserRoles]  VALUES ('2fe92131-c529-4819-8ecd-f6fbb3011ddb', 'ADMIN');
+	INSERT INTO [dbo].[AspNetUserRoles]  VALUES ('d884c7fd-86b8-4acf-8fdf-c0e2c7efd009', 'USER');
+END
+
+
+
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AspNetUsers]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[AspNetUsers](
@@ -110,12 +123,6 @@ END
 GO
 
 
-
-DROP TABLE IF EXISTS [dbo].[profitwiseshop]
-GO
-
-DROP TABLE IF EXISTS [dbo].[profitwisebatchstate]
-GO
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseshop]') AND type in (N'U'))
 BEGIN
@@ -148,6 +155,8 @@ CREATE TABLE [dbo].[profitwisebatchstate](
 	[ProductsLastUpdated] [datetime] NULL,
 	[OrderDatasetStart] [datetime] NULL,
 	[OrderDatasetEnd] [datetime] NULL,
+	[InitialRefreshJobId] [nvarchar](128),
+	[RoutineRefreshJobId] [nvarchar](128),
  CONSTRAINT [PK_profitwisebatchstate_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC
@@ -155,5 +164,3 @@ CREATE TABLE [dbo].[profitwisebatchstate](
 ) ON [PRIMARY]
 END
 GO
-
-

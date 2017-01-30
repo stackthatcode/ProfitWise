@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
+using Hangfire;
 using ProfitWise.Data.ExchangeRateApis;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
@@ -24,6 +26,7 @@ namespace ProfitWise.Data.Processes
         public readonly DateTime ExchangeRateStartDate = new DateTime(2010, 01, 01);
         public const int ProfitWiseBaseCurrency = 1; // Corresponds to USD
 
+
         public ExchangeRateRefreshProcess(
                 CurrencyService currencyService,
                 SystemStateRepository systemStateRepository,
@@ -38,6 +41,8 @@ namespace ProfitWise.Data.Processes
             _pushLogger = pushLogger;
         }
 
+
+        [Queue(Queues.ExchangeRateRefresh)]
         public void Execute()
         {
             var systemState = _systemStateRepository.Retrieve();

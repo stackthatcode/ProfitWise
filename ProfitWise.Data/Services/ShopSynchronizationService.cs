@@ -1,4 +1,5 @@
-﻿using ProfitWise.Data.Model.Shop;
+﻿using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Model;
@@ -9,15 +10,18 @@ namespace ProfitWise.Data.Services
     {
         private readonly CurrencyService _currencyService;
         private readonly PwShopRepository _pwShopRepository;
+        private readonly MultitenantFactory _factory;
         private readonly IPushLogger _logger;
 
         public ShopSynchronizationService(
                     CurrencyService currencyService, 
                     PwShopRepository pwShopRepository, 
+                    MultitenantFactory factory,
                     IPushLogger logger)
         {
             _currencyService = currencyService;
             _pwShopRepository = pwShopRepository;
+            _factory = factory;
             _logger = logger;
         }
 
@@ -44,6 +48,17 @@ namespace ProfitWise.Data.Services
                              $"CurrencyId: {newShop.CurrencyId}, " +
                              $"ShopifyShopId: {newShop.ShopifyShopId}, " +
                              $"StartingDateForOrders: {newShop.StartingDateForOrders}");
+
+
+                // Ensure the proper Batch State exists for Shop
+                var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(newShop);
+                var state = new PwBatchState
+                {
+                    PwShopId = newShop.PwShopId,
+                };
+                profitWiseBatchStateRepository.Insert(state);
+
+                _logger.Info($"Created Batch State for Shop - UserId: {newShop.ShopOwnerUserId}");
             }
             else
             {
@@ -58,9 +73,9 @@ namespace ProfitWise.Data.Services
             _pwShopRepository.Update(pwShop);
             _pwShopRepository.UpdateIsAccessTokenValid(pwShop.PwShopId, true);
 
-            _logger.Info($"Updated Shop - UserId: {pwShop.ShopOwnerUserId}, " +
-                        $"CurrencyId: {pwShop.CurrencyId}, " +
-                        $"TimeZone: {pwShop.TimeZone} - and set IsAccessTokenValid = true");
+            _logger.Debug($"Updated Shop - UserId: {pwShop.ShopOwnerUserId}, " +
+                            $"CurrencyId: {pwShop.CurrencyId}, " +
+                            $"TimeZone: {pwShop.TimeZone} - and set IsAccessTokenValid = true");
         }
     }
 }

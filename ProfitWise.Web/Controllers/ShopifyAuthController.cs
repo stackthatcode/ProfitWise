@@ -16,6 +16,7 @@ using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Shopify;
 using Push.Shopify.Model;
 
+
 namespace ProfitWise.Web.Controllers
 {
     public class ShopifyAuthController : Controller
@@ -24,12 +25,10 @@ namespace ProfitWise.Web.Controllers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IShopifyCredentialService _credentialService;
-
         private readonly ShopSynchronizationService _shopSynchronizationService;
         private readonly OwinUserService _userService;
         private readonly HangFireService _hangFireService;
-        private readonly IPushLogger _logger;
-        
+        private readonly IPushLogger _logger;        
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
@@ -50,6 +49,7 @@ namespace ProfitWise.Web.Controllers
             _logger = logger;
             _shopSynchronizationService = shopSynchronizationService;
         }
+
 
         [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
@@ -93,7 +93,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         private async Task<ActionResult> UpdateClaimsForExistingUser(
-                            string returnUrl, ExternalLoginInfo externalLoginInfo)
+                        string returnUrl, ExternalLoginInfo externalLoginInfo)
         {
             var user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
 
@@ -143,7 +143,7 @@ namespace ProfitWise.Web.Controllers
                 _hangFireService.TriggerInitialShopRefresh(user.Id);
                 transaction.Complete();
             }
-
+            
             _logger.Info($"Created new User for {email}/{userName} - added to {SecurityConfig.UserRole} Roles and added Login");
 
             // Finally Sign-in Manager
@@ -151,7 +151,6 @@ namespace ProfitWise.Web.Controllers
 
             return RedirectToLocal(returnUrl);
         }
-
 
         private void PushCookieClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
         {
@@ -177,9 +176,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-
         // Error pages...
-
         [HttpGet]
         [AllowAnonymous]
         public ActionResult UnauthorizedAccess(string returnUrl)
@@ -188,6 +185,7 @@ namespace ProfitWise.Web.Controllers
                 returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.");
         }
 
+        [HttpGet]
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure(string returnUrl)
         {
@@ -196,6 +194,7 @@ namespace ProfitWise.Web.Controllers
                 "It appears that something went wrong while authorizing your Shopify Account.");            
         }
 
+        [HttpGet]
         [AllowAnonymous]
         public ActionResult AccessTokenRefresh(string returnUrl)
         {
@@ -204,6 +203,7 @@ namespace ProfitWise.Web.Controllers
                 "It appears your Shopify Access has expired or is invalid.");
         }
 
+        [HttpGet]
         [AllowAnonymous]
         public ActionResult SevereAuthorizationFailure(string returnUrl)
         {

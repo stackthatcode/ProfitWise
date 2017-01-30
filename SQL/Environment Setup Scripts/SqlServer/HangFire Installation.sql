@@ -1,4 +1,19 @@
-﻿
+﻿-- ProfitWise clean-up script
+
+DROP TABLE IF EXISTS HangFire.AggregatedCounter;
+DROP TABLE IF EXISTS HangFire.Counter;
+DROP TABLE IF EXISTS HangFire.Hash;
+DROP TABLE IF EXISTS HangFire.State;
+DROP TABLE IF EXISTS HangFire.List;
+DROP TABLE IF EXISTS HangFire.JobQueue;
+DROP TABLE IF EXISTS HangFire.JobParameter;
+DROP TABLE IF EXISTS HangFire.Job;
+DROP TABLE IF EXISTS HangFire.[Schema];
+DROP TABLE IF EXISTS HangFire.[Server];
+DROP TABLE IF EXISTS HangFire.[Set];
+
+
+
 -- This file is part of Hangfire.
 -- Copyright © 2013-2014 Sergey Odinokov.
 -- 

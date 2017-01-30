@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
-using MySql.Data.MySqlClient;
+using ProfitWise.Data.Database;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Utilities.Logging;
@@ -57,6 +57,9 @@ namespace ProfitWise.Web
                 .As<DbConnection>()
                 .As<IDbConnection>()
                 .InstancePerLifetimeScope();
+
+            // Critical piece for all database infrastructure to work smoothly
+            builder.RegisterType<ConnectionWrapper>().InstancePerLifetimeScope();
 
 
             // Error forensics interceptors

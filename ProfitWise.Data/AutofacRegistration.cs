@@ -61,9 +61,6 @@ namespace ProfitWise.Data
             builder.RegisterType<FixerApiRepository>();
             builder.RegisterType<FixerApiRequestFactory>();
 
-            // Critical piece for all database infrastructure to work smoothly
-            builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJob();
-
             // Chicago, by default!
             builder.Register(x => new TimeZoneTranslator(6, 0));
         }
