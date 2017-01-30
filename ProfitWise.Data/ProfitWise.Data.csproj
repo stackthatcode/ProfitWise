@@ -144,6 +144,7 @@
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
+    <Compile Include="ProcessSteps\BatchLogger.cs" />
     <Compile Include="Repositories\PwCogsDataUpdateRepository.cs" />
     <Compile Include="Repositories\SystemStateRepository.cs" />
     <Compile Include="Repositories\PwReportQueryRepository.cs" />

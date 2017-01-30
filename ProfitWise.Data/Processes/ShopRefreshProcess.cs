@@ -5,7 +5,6 @@ using ProfitWise.Data.Database;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
-using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.HttpClient;
@@ -23,7 +22,7 @@ namespace ProfitWise.Data.Processes
         private readonly HangFireService _hangFireService;
         private readonly PwShopRepository _pwShopRepository;
         private readonly ConnectionWrapper _connectionWrapper;
-        private readonly IPushLogger _pushLogger;
+        private readonly BatchLogger _pushLogger;
 
 
         public ShopRefreshProcess(
@@ -33,7 +32,7 @@ namespace ProfitWise.Data.Processes
                 OrderRefreshStep orderRefreshStep,
                 ProductCleanupStep productCleanupStep,
                 HangFireService hangFireService,
-                IPushLogger logger, 
+                BatchLogger logger, 
                 PwShopRepository pwShopRepository,
                 ConnectionWrapper connectionWrapper)
         {

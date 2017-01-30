@@ -12,14 +12,14 @@ namespace ProfitWise.Data.ProcessSteps
 {
     public class ProductCleanupStep
     {
-        private readonly IPushLogger _pushLogger;
+        private readonly BatchLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _configuration;
         private readonly PwShopRepository _shopRepository;
 
 
         public ProductCleanupStep(
-                IPushLogger logger,
+                BatchLogger logger,
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration configuration,
                 PwShopRepository shopRepository)

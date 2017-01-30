@@ -19,7 +19,7 @@ namespace ProfitWise.Data.ProcessSteps
 {
     public class OrderRefreshStep
     {
-        private readonly IPushLogger _pushLogger;
+        private readonly BatchLogger _pushLogger;
         private readonly ShopifyOrderDiagnosticShim _diagnostic;
         private readonly TimeZoneTranslator _timeZoneTranslator;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
@@ -36,7 +36,7 @@ namespace ProfitWise.Data.ProcessSteps
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration refreshServiceConfiguration,
                 PwShopRepository shopRepository,
-                IPushLogger logger,
+                BatchLogger logger,
                 ShopifyOrderDiagnosticShim diagnostic,
                 TimeZoneTranslator timeZoneTranslator
             )
@@ -80,7 +80,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void RoutineUpdateWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
-            _pushLogger.Info($"Routine Order refresh for {shop.PwShopId}");
+            _pushLogger.Info($"Routine Order Refresh");
 
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
@@ -105,7 +105,7 @@ namespace ProfitWise.Data.ProcessSteps
             var postBatchState = batchStateRepository.Retrieve();
             postBatchState.OrderDatasetEnd = DateTime.Now.AddMinutes(-15); // Fudge factor for clock disparities
             batchStateRepository.Update(postBatchState);
-            _pushLogger.Info("Complete: " + postBatchState.ToString());
+            _pushLogger.Info("Complete: " + postBatchState);
         }
         
         private void EarlierStartDateWorker(ShopifyCredentials shopCredentials, PwShop shop)
@@ -195,7 +195,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
+                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
                 var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
 
                 WriteOrdersToPersistence(importedOrders, shop);

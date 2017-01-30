@@ -25,6 +25,7 @@ namespace ProfitWise.Data.Model.Shop
         public int DateRangeDefault { get; set; }
 
 
+
         // TODO - wire this into configuration settings?
         public static DateTime InitialOrderStartDate()
         {

@@ -17,7 +17,7 @@ namespace ProfitWise.Data.ProcessSteps
 {
     public class ProductRefreshStep
     {
-        private readonly IPushLogger _pushLogger;
+        private readonly BatchLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _configuration;
@@ -29,7 +29,7 @@ namespace ProfitWise.Data.ProcessSteps
 
 
         public ProductRefreshStep(
-                IPushLogger logger,
+                BatchLogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration configuration,

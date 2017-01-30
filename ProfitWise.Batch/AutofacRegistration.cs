@@ -30,6 +30,12 @@ namespace ProfitWise.Batch
 
             // Logging and metering interceptor
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
+
+            // This registration ensures that within a Background Job, always the same logger will be 
+            // used - thus the ScopePrefix need only be set once. :-)
+            builder.RegisterType<BatchLogger>().InstancePerBackgroundJob();
+
+
             var registry = new InceptorRegistry();
             registry.Add(typeof(ErrorForensics));
 
