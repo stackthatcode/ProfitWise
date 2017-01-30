@@ -28,7 +28,10 @@ namespace ProfitWise.Data.HangFire
         {
             _logger.Info($"Scheduling Initial Shop Refresh for User {userId}");
             var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
-            
+
+            // TODO - remove this!!!
+            var jobId2 = BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
+
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             batchRepository.UpdateInitialRefreshJobId(jobId);

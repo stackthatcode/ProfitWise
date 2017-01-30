@@ -25,17 +25,23 @@ namespace ProfitWise.Data.Services
             _logger = logger;
         }
 
+        private static readonly object ExchangeRateLock = new object();
+        private static readonly object CurrencyLock = new object();
+
         private List<Currency> CurrencyCache
         {
             get
             {
                 if (_currencycache == null)
                 {
-                    _logger.Info($"Loading Currency cache");
-                    _currencycache = new List<Currency>();
-                    foreach (var currency in _repository.RetrieveCurrency())
+                    lock (CurrencyLock)
                     {
-                        _currencycache.Add(currency);
+                        _logger.Info($"Loading Currency cache");
+                        _currencycache = new List<Currency>();
+                        foreach (var currency in _repository.RetrieveCurrency())
+                        {
+                            _currencycache.Add(currency);
+                        }
                     }
                 }
                 return _currencycache;
@@ -55,11 +61,9 @@ namespace ProfitWise.Data.Services
             }
         }
         
-        private static readonly object cacheLoadLock = new object();
-
         public void LoadExchangeRateCache(DateTime? minimumDate = null)
         {
-            lock (cacheLoadLock)
+            lock (ExchangeRateLock)
             {
                 if (DateTime.Now < _cacheRefreshAllowed)
                 {
@@ -104,7 +108,7 @@ namespace ProfitWise.Data.Services
 
         private void VerifyAndRefreshRateCache(DateTime date)
         {
-            if (!RateCache.ContainsKey(date))
+            if (RateCache.Count == 0 || !RateCache.ContainsKey(date))
             {
                 _logger.Trace($"Exchange Rates refresh triggered for {date}");
                 var minimumDate = _ratecache.Keys.Max().AddDays(1);

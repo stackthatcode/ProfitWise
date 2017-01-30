@@ -23,13 +23,7 @@ namespace ProfitWise.Data.ProcessSteps
             var generator = new Random();
             int traceId = generator.Next(1000, 9999);
             this.ScopedPrefix = $"TraceId:{traceId}";
-        }
-
-
-        public void SetScopedPrefix(PwShop shop)
-        {
-            ScopedPrefix = $"PwShopId: {shop.PwShopId}";
-        }
+        }        
 
         private string MessageBuilder(string content)
             

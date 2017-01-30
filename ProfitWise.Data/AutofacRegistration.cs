@@ -1,7 +1,5 @@
 ﻿using Autofac;
-using Hangfire;
 using ProfitWise.Data.Aspect;
-using ProfitWise.Data.Database;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;

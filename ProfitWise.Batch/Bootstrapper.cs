@@ -4,6 +4,7 @@ using Hangfire;
 using Hangfire.Logging;
 using Hangfire.SqlServer;
 using ProfitWise.Data.HangFire;
+using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Batch
@@ -28,6 +29,13 @@ namespace ProfitWise.Batch
                 PrepareSchemaIfNecessary = false,
             };
             GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection", options);
+
+            // Preload Currency Cache to avoid contention
+            //using (var scope = container.BeginLifetimeScope())
+            //{
+            //    var service = container.Resolve<CurrencyService>();
+            //    service.LoadExchangeRateCache();
+            //}
 
             return container;
         }
