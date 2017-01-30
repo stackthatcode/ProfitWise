@@ -159,28 +159,6 @@
             <div style="height: 40px;"></div>
         </div>
     </div>
-    
-    <!-- TODO - eliminate for Production deployment -->
-    <div class="row">
-        <div class="col-xs-12">
-            <label>Invoke test of HangFire queueing functionality</label>
-
-            <div style="display: inline-block; margin-left: 30px; position: relative;">
-                <a href="#" class="btn btn-danger"
-                   style="display: inline-block;" data-bind="click: TestHangFireClick">
-                    Test HangFire &nbsp;<i class="glyphicon glyphicon-flash"></i>
-                </a>
-                
-                &nbsp;
-
-                <a href="#" class="btn btn-danger"
-                   style="display: inline-block;" data-bind="click: ErrorHangFireClick">
-                    Error HangFire &nbsp;<i class="glyphicon glyphicon-trash"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-
 </script>
 
 <!-- KnockoutJS Root View -->
@@ -260,16 +238,6 @@
             ajax.HttpPost("/Preferences/UpdateDefaultDateRange", { dateRangeId: self.DateRangeDefault() });
         };
         
-        self.TestHangFireClick = function() {
-            var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpPost("/Preferences/HangFireTest", {}, 
-                        function () { console.log("HangFireTest was successfully queued!"); });
-        };
-        self.ErrorHangFireClick = function() {
-            var ajax = new ProfitWiseFunctions.Ajax();
-            ajax.HttpPost("/Preferences/HangFireError", {}, 
-                        function () { console.log("HangFireError was successfully queued!"); });
-        };
         return self;
     };
 

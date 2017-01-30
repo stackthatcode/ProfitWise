@@ -11,35 +11,38 @@ namespace ProfitWise.Batch
     {
         static void Main(string[] args)
         {
-            Bootstrapper.ConfigureApp();
+            //var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
+            //StandaloneRefreshProcess(userId);
+
             HangFireBackgroundService();
 
-            //HangFireScheduleTest();
-            //TestOrderCreator.Execute();
+            //ScheduleExchangeRateJob();
         }
 
-        public static void HangFireScheduleTest()
+
+        public static void ScheduleExchangeRateJob()
         {
-            string jobNumberOne = "Job1", jobNumberTwo = "Job2";
-            string userId = "f4a8b3bb-2aec-4c2a-ab49-ba90bd047273";
-
-            RecurringJob.AddOrUpdate<ShopRefreshProcess>(
-                jobNumberOne, x => x.RoutineShopRefresh(userId), Cron.Minutely, queue: Queues.RoutineShopRefresh);
-
-            RecurringJob.AddOrUpdate<ShopRefreshProcess>(
-                jobNumberTwo, x => x.RoutineShopRefresh(userId), Cron.Minutely, queue: Queues.RoutineShopRefresh);
-
-            //service.KillRecurringJob("ShopRefreshProcess:f4a8b3bb-2aec-4c2a-ab49-ba90bd047273");
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<HangFireService>();
+                service.ScheduleExchangeRateRefresh();
+                Console.ReadLine();
+            }
         }
 
         // Aleks is working on this - go ahead and ignore
         public static void HangFireBackgroundService()
         {
+            Bootstrapper.ConfigureApp(true);
             var backgroundServerOptions 
                 = new BackgroundJobServerOptions()
                     {
                         SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),   
-                        Queues = new [] { Queues.InitialShopRefresh, Queues.RoutineShopRefresh },
+                        Queues = new []
+                        {
+                            Queues.InitialShopRefresh, Queues.RoutineShopRefresh, Queues.ExchangeRateRefresh
+                        },
                     };
 
             using (var server = new BackgroundJobServer(backgroundServerOptions))
@@ -49,23 +52,17 @@ namespace ProfitWise.Batch
             }
         }
         
-        public static void StandaloneRefreshProcess(IContainer container)
+        public static void StandaloneRefreshProcess(string userId)
         {
+            var container = Bootstrapper.ConfigureApp(false);
             using (var scope = container.BeginLifetimeScope())
-            {                
-                //var userId = "d56850fb-3fe7-4c66-a59d-20f755f5f1f4";
-                var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
-
-                //var currencyProcess = scope.Resolve<CurrencyProcess>();
-                //currencyProcess.Execute();
-
+            {   
                 var refreshProcess = scope.Resolve<ShopRefreshProcess>();
                 refreshProcess.RoutineShopRefresh(userId);
 
                 Console.ReadLine();
             }
         }
-
     }
 }
 

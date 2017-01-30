@@ -46,10 +46,9 @@ namespace ProfitWise.Data.Processes
             _shopRefreshStep = shopRefreshStep;
             _connectionWrapper = connectionWrapper;
         }
+        
 
-        // TODO - add retry constraint
-        // TODO - add a concurrency constraint
-
+        [AutomaticRetry(Attempts = 3)]
         [Queue(Queues.InitialShopRefresh)]
         public void InitialShopRefresh(string userId)
         {
@@ -65,6 +64,7 @@ namespace ProfitWise.Data.Processes
             }
         }
 
+        [AutomaticRetry(Attempts = 3)]
         [Queue(Queues.RoutineShopRefresh)]
         public void RoutineShopRefresh(string userId)
         {

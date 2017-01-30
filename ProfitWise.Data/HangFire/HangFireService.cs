@@ -1,7 +1,9 @@
+using System.Configuration;
 using Hangfire;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 
 
@@ -12,6 +14,15 @@ namespace ProfitWise.Data.HangFire
         private readonly IPushLogger _logger;
         private readonly PwShopRepository _shopRepository;
         private readonly MultitenantFactory _multitenantFactory;
+        
+        private readonly string 
+            _shopRefreshInterval = ConfigurationManager.AppSettings
+                    .GetAndTryParseAsString("ShopRefreshInterval", "0 * * * *");
+
+        private readonly string 
+            _exchangeRefreshInterval = ConfigurationManager.AppSettings
+                .GetAndTryParseAsString("ExchangeRefreshInterval", "0 2 * * *");
+
 
         public HangFireService(
                 IPushLogger logger, 
@@ -28,10 +39,7 @@ namespace ProfitWise.Data.HangFire
         {
             _logger.Info($"Scheduling Initial Shop Refresh for User {userId}");
             var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
-
-            // TODO - remove this!!!
-            var jobId2 = BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
-
+            
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             batchRepository.UpdateInitialRefreshJobId(jobId);
@@ -45,7 +53,7 @@ namespace ProfitWise.Data.HangFire
 
             RecurringJob
                 .AddOrUpdate<ShopRefreshProcess>(
-                    jobId, x => x.RoutineShopRefresh(userId), Cron.Minutely);
+                    jobId, x => x.RoutineShopRefresh(userId), _shopRefreshInterval);
 
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
@@ -58,7 +66,8 @@ namespace ProfitWise.Data.HangFire
             var jobId = "ExchangeRateRefresh";
             _logger.Info($"Scheduling ExchangeRateRefreshProcess");
 
-            RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(jobId, x => x.Execute(), Cron.Minutely);
+            RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(
+                    jobId, x => x.Execute(), _exchangeRefreshInterval);
         }
 
         public void KillRecurringJob(string jobId)

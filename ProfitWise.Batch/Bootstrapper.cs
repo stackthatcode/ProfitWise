@@ -11,9 +11,9 @@ namespace ProfitWise.Batch
 {
     public class Bootstrapper
     {
-        public static IContainer ConfigureApp()
+        public static IContainer ConfigureApp(bool runningHangFire = false)
         {
-            var container = AutofacRegistration.Build();
+            var container = AutofacRegistration.Build(runningHangFire);
 
             // Logger wiring
             LoggerSingleton.Get =
@@ -30,14 +30,16 @@ namespace ProfitWise.Batch
             };
             GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection", options);
 
-            // Preload Currency Cache to avoid contention
-            //using (var scope = container.BeginLifetimeScope())
-            //{
-            //    var service = container.Resolve<CurrencyService>();
-            //    service.LoadExchangeRateCache();
-            //}
-
             return container;
         }
+
+
+        // Preload Currency Cache to avoid contention
+        //using (var scope = container.BeginLifetimeScope())
+        //{
+        //    var service = container.Resolve<CurrencyService>();
+        //    service.LoadExchangeRateCache();
+        //}
+
     }
 }

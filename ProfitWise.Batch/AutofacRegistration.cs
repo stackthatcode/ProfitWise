@@ -22,42 +22,62 @@ namespace ProfitWise.Batch
 {
     public class AutofacRegistration
     {
-        public static IContainer Build()
+        public static IContainer Build(bool runningHangFire = false)
         {
             // Autofac registration sequence
             var builder = new ContainerBuilder();
 
 
+            // ProfitWise.Data registration - which invokes downstream dependent registrations
+            Data.AutofacRegistration.Build(builder);
+
+
             // Logging and metering interceptor
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
 
-            // This registration ensures that within a Background Job, always the same logger will be 
-            // used - thus the ScopePrefix need only be set once. :-)
-            builder.RegisterType<BatchLogger>().InstancePerBackgroundJob();
+            if (runningHangFire)
+            {
+                // This registration ensures that within a Background Job, always the same logger will be 
+                // used - thus the ScopePrefix need only be set once. :-)
+                builder.RegisterType<BatchLogger>().InstancePerBackgroundJob();
+                builder.Register(ctx =>
+                    {
+                        var connectionstring =
+                            ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+                        var connection = new SqlConnection(connectionstring);
+                        connection.Open();
+                        return connection;
+                    })
+                    .As<SqlConnection>()
+                    .As<DbConnection>()
+                    .As<IDbConnection>()
+                    .InstancePerBackgroundJob();
+
+                // Critical piece for all database infrastructure to work smoothly
+                builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJob();
+            }
+            else
+            {
+                builder.RegisterType<BatchLogger>();
+                builder.Register(ctx =>
+                    {
+                        var connectionstring =
+                            ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+                        var connection = new SqlConnection(connectionstring);
+                        connection.Open();
+                        return connection;
+                    })
+                    .As<SqlConnection>()
+                    .As<DbConnection>()
+                    .As<IDbConnection>();
+
+                builder.RegisterType<ConnectionWrapper>();
+            }
 
 
             var registry = new InceptorRegistry();
             registry.Add(typeof(ErrorForensics));
 
-
-            // ProfitWise.Data registration - which invokes downstream dependent registrations
-            Data.AutofacRegistration.Build(builder);
-
-            builder.Register(ctx =>
-                {
-                    var connectionstring = 
-                        ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-                    var connection = new SqlConnection(connectionstring);
-                    connection.Open();
-                    return connection;
-                })
-                .As<SqlConnection>()
-                .As<DbConnection>()
-                .As<IDbConnection>()
-                .InstancePerBackgroundJob();
-
-            // Critical piece for all database infrastructure to work smoothly
-            builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJob();
 
 
             // Configure the paging rates of the Refresh Services

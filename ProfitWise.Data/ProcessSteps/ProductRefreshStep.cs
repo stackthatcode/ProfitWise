@@ -27,6 +27,8 @@ namespace ProfitWise.Data.ProcessSteps
         // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
         public const int MinutesFudgeFactor = 75;
 
+        private readonly object _productWriteLock = new object();
+
 
         public ProductRefreshStep(
                 BatchLogger logger,
@@ -45,14 +47,10 @@ namespace ProfitWise.Data.ProcessSteps
         }
 
 
-        private readonly object _lock = new object();
-
         public virtual void Execute(ShopifyCredentials shopCredentials)
         {
-            lock (_lock)
-            {
-                ExecuteAuxillary(shopCredentials);
-            }
+
+            ExecuteAuxillary(shopCredentials);
         }
 
 
@@ -68,14 +66,14 @@ namespace ProfitWise.Data.ProcessSteps
             // Load Batch State
             var batchState = batchStateRepository.Retrieve();
 
-            // Retrieve existing catalog from ProfitWise
-            var masterProducts = service.RetrieveFullCatalog();
-
             // Write Products to our database
-            WriteAllProductsFromShopify(shop, masterProducts, shopCredentials, batchState);
+            WriteAllProductsFromShopify(shop, shopCredentials, batchState);
 
             // Delete all Products with "destroy" Events
             // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
+
+            // Retrieve existing catalog from ProfitWise
+            var masterProducts = service.RetrieveFullCatalog();
             var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
             SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
 
@@ -85,8 +83,7 @@ namespace ProfitWise.Data.ProcessSteps
         }
 
         public virtual IList<Product> WriteAllProductsFromShopify(
-                PwShop shop, IList<PwMasterProduct> masterProducts, 
-                ShopifyCredentials shopCredentials, PwBatchState batchState)
+                PwShop shop, ShopifyCredentials shopCredentials, PwBatchState batchState)
         {
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
             var filter = new ProductFilter();
@@ -115,14 +112,16 @@ namespace ProfitWise.Data.ProcessSteps
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
 
-                WriteProductsToDatabase(shop, products, masterProducts);
+                lock (_productWriteLock)
+                {
+                    WriteProductsToDatabase(shop, products);
+                }
             }
 
             return results;
         }
 
-        private void WriteProductsToDatabase(
-                    PwShop shop, IList<Product> importedProducts, IList<PwMasterProduct> masterProducts)
+        private void WriteProductsToDatabase(PwShop shop, IList<Product> importedProducts)
         {
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
@@ -130,6 +129,8 @@ namespace ProfitWise.Data.ProcessSteps
 
             using (var trans = service.InitiateTransaction())
             {
+                var masterProducts = service.RetrieveFullCatalog();
+
                 foreach (var importedProduct in importedProducts)
                 {
                     var productBuildContext = 

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Web.Mvc;
-using Hangfire;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.HangFire;
-using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Attributes;
-using ProfitWise.Web.Models;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -85,16 +81,7 @@ namespace ProfitWise.Web.Controllers
             var cogsRepository = _factory.MakeCogsDataUpdateRepository(shop);
             cogsRepository.RefreshReportEntryData();
             return JsonNetResult.Success();
-        }
-
-        [HttpPost]
-        public ActionResult HangFireTest()
-        {
-            var userId = HttpContext.PullIdentity().UserId;
-            var identifier = BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.RoutineShopRefresh(userId));
-            return JsonNetResult.Success();
-        }
-
+        }        
     }
 }
 

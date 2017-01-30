@@ -138,6 +138,11 @@ CREATE TABLE [dbo].[profitwiseproduct](
 END
 GO
 
+CREATE UNIQUE INDEX uq_profitwiseproduct
+  ON dbo.[profitwiseproduct]([PwShopId], [ShopifyProductId], [Title])
+  WHERE [ShopifyProductId] IS NOT NULL;
+
+
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisemasterproduct]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[profitwisemasterproduct](
