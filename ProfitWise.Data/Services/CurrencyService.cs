@@ -10,11 +10,14 @@ namespace ProfitWise.Data.Services
 {
     public class CurrencyService
     {
-        private readonly CurrencyRepository _repository;
+        private readonly ExchangeRateRepository _repository;
         private readonly IPushLogger _logger;
         private static List<Currency> _currencycache;
         private static Dictionary<DateTime, List<ExchangeRate>> _ratecache;
-        
+
+
+        private const int MaxDaysOfRateProjection = 30;
+
         private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(0, 0, 15, 0);
 
         // This sets the next allowed time to the past, thus guaraneteeing a refresh
@@ -32,7 +35,7 @@ namespace ProfitWise.Data.Services
             _rateCacheLoaded = false;
         }
 
-        public CurrencyService(CurrencyRepository repository, IPushLogger logger)
+        public CurrencyService(ExchangeRateRepository repository, IPushLogger logger)
         {
             _repository = repository;
             _logger = logger;
@@ -78,6 +81,7 @@ namespace ProfitWise.Data.Services
             }
         }
         
+        // Cache loading function
         public void LoadExchangeRateCache()
         {
             IList<ExchangeRate> rates;
@@ -116,13 +120,41 @@ namespace ProfitWise.Data.Services
         }
         
 
+        // Conversion method
+        public decimal Convert(
+                decimal amount, int sourceCurrencyId, int destinationCurrencyId, DateTime date)
+        {
+            List<ExchangeRate> rateEntry;
 
-        public decimal Convert(decimal amount, int sourceCurrencyId, int destinationCurrencyId, DateTime date)
-        {            
-            var rateEntry = 
-                !RateCache.ContainsKey(date)
-                    ? RateCache[_ratecache.Keys.Max()]
-                    : RateCache[date];
+            if (!RateCache.Any())
+            {
+                throw new Exception("No Exchange Rate data present");
+            }
+
+            if (RateCache.ContainsKey(date))
+            {
+                rateEntry = RateCache[date];
+            }
+            else
+            {
+                var maxDate = _ratecache.Keys.Max();
+                var minDate = _ratecache.Keys.Min();
+
+                if (date > maxDate.AddDays(MaxDaysOfRateProjection))
+                {
+                    throw new Exception(
+                        $"Exchange Rate data terminates at {maxDate} - unable to locate for {date}");
+                }
+                if (date < minDate.AddDays(-MaxDaysOfRateProjection))
+                {
+                    throw new Exception(
+                        $"Exchange Rate data starts at {minDate} - unable to locate for {date}");
+                }
+
+                rateEntry = (date > maxDate) ?
+                        RateCache[maxDate] :
+                        RateCache[minDate];
+            }
 
             var conversionBySource = rateEntry.First(x => x.DestinationCurrencyId == sourceCurrencyId);
             var conversionByDestination = rateEntry.First(x => x.DestinationCurrencyId == destinationCurrencyId);

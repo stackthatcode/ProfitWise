@@ -16,27 +16,23 @@ namespace ProfitWise.Data.Processes
     public class ExchangeRateRefreshProcess
     {
         private readonly CurrencyService _currencyService;
-        private readonly SystemStateRepository _systemStateRepository;
-        private readonly CurrencyRepository _currencyRepository;
+        private readonly ExchangeRateRepository _exchangeRateRepository;
         private readonly FixerApiRepository _fixerApiRepository;
         private readonly IPushLogger _pushLogger;
 
 
-        // *** TODO - update to 2006-01-01
-        public readonly DateTime ExchangeRateStartDate = new DateTime(2010, 01, 01);
+        public readonly DateTime DefaultStartDateOfDataset = new DateTime(2006, 01, 01);
         public const int ProfitWiseBaseCurrency = 1; // Corresponds to USD
 
 
         public ExchangeRateRefreshProcess(
                 CurrencyService currencyService,
-                SystemStateRepository systemStateRepository,
-                CurrencyRepository currencyRepository,
+                ExchangeRateRepository exchangeRateRepository,
                 FixerApiRepository fixerApiRepository,
                 IPushLogger pushLogger)
         {
             _currencyService = currencyService;
-            _systemStateRepository = systemStateRepository;
-            _currencyRepository = currencyRepository;
+            _exchangeRateRepository = exchangeRateRepository;
             _fixerApiRepository = fixerApiRepository;
             _pushLogger = pushLogger;
         }
@@ -45,12 +41,9 @@ namespace ProfitWise.Data.Processes
         [Queue(Queues.ExchangeRateRefresh)]
         public void Execute()
         {
-            var systemState = _systemStateRepository.Retrieve();
-
-            // Note: pay attention to null-coalescing...
-            var startDate = systemState.ExchangeRateLastDate?.AddDays(1) ?? ExchangeRateStartDate;
+            var lastDate = _exchangeRateRepository.LatestExchangeRateDate();
+            var startDate = lastDate?.AddDays(1) ?? DefaultStartDateOfDataset;
             var endDate = DateTime.Today;
-
              
             if (startDate > endDate)
             {
@@ -72,27 +65,7 @@ namespace ProfitWise.Data.Processes
                     WriteRatesForDate(date, rates);
                     date = date.AddDays(1);
                 }
-            }
-
-            // ** additional padding to save from when the System is missing Exchange Rate data
-            var paddingDate = endDate.AddDays(1);
-            var lastRates = _currencyRepository.RetrieveExchangeRateByDate(endDate);
-
-            var endDatePadding = endDate.AddDays(30);
-            _pushLogger.Info($"Inserting Exchange Rate padding from {endDate} through {endDatePadding}");
-            while (paddingDate <= endDatePadding)
-            {
-                _pushLogger.Debug($"Projecting Exchange Rates from {endDate} for {paddingDate}");
-
-                _currencyRepository.DeleteForDate(paddingDate);
-
-                foreach (var rate in lastRates)
-                {
-                    rate.Date = paddingDate;
-                    _currencyRepository.InsertExchangeRate(rate);
-                }
-                paddingDate = paddingDate.AddDays(1);
-            }
+            }            
         }
 
         private void WriteRatesForDate(DateTime date, List<ExchangeRate> rates)
@@ -100,12 +73,12 @@ namespace ProfitWise.Data.Processes
             using (var trans = new TransactionScope())
             {
                 // Clear out the date
-                _currencyRepository.DeleteForDate(date);
+                _exchangeRateRepository.DeleteForDate(date);
                 _pushLogger.Info($"Writing Exchange Rates for {date}");
 
                 foreach (var rate in ExtrapolateFullSetOfExchangeRate(date, rates))
                 {
-                    _currencyRepository.InsertExchangeRate(
+                    _exchangeRateRepository.InsertExchangeRate(
                         new ExchangeRate()
                         {
                             Date = date,
@@ -115,13 +88,11 @@ namespace ProfitWise.Data.Processes
                         });
                 }
                 
-                _systemStateRepository.UpdateExchangeRateLastDate(date);
                 trans.Complete();
             }
         }
 
-        private List<ExchangeRate> 
-                ExtrapolateFullSetOfExchangeRate(DateTime date, List<ExchangeRate> canonicalListOfRates)
+        private List<ExchangeRate> ExtrapolateFullSetOfExchangeRate(DateTime date, List<ExchangeRate> canonicalListOfRates)
         {
             var output = new List<ExchangeRate>();
             var sourceCurrencies = canonicalListOfRates.Select(x => x.DestinationCurrencyId).ToList();

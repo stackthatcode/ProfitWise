@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Autofac;
+using Autofac.Builder;
 using Hangfire;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.ExchangeRateApis;
@@ -35,45 +36,26 @@ namespace ProfitWise.Batch
             // Logging and metering interceptor
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
 
-            if (runningHangFire)
-            {
-                // This registration ensures that within a Background Job, always the same logger will be 
-                // used - thus the ScopePrefix need only be set once. :-)
-                builder.RegisterType<BatchLogger>().InstancePerBackgroundJob();
-                builder.Register(ctx =>
-                    {
-                        var connectionstring =
-                            ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-                        var connection = new SqlConnection(connectionstring);
-                        connection.Open();
-                        return connection;
-                    })
-                    .As<SqlConnection>()
-                    .As<DbConnection>()
-                    .As<IDbConnection>()
-                    .InstancePerBackgroundJob();
 
-                // Critical piece for all database infrastructure to work smoothly
-                builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJob();
-            }
-            else
-            {
-                builder.RegisterType<BatchLogger>();
-                builder.Register(ctx =>
-                    {
-                        var connectionstring =
-                            ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-                        var connection = new SqlConnection(connectionstring);
-                        connection.Open();
-                        return connection;
-                    })
-                    .As<SqlConnection>()
-                    .As<DbConnection>()
-                    .As<IDbConnection>();
+            // This registration ensures that within a Background Job, always the same logger will be 
+            // used - thus the ScopePrefix need only be set once. :-)
+            builder.RegisterType<BatchLogger>().InstancePerBackgroundJobIfTrue(runningHangFire);
+            builder.Register(ctx =>
+                {
+                    var connectionstring =
+                        ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+                    var connection = new SqlConnection(connectionstring);
+                    connection.Open();
+                    return connection;
+                })
+                .As<SqlConnection>()
+                .As<DbConnection>()
+                .As<IDbConnection>()
+                .InstancePerBackgroundJobIfTrue(runningHangFire);
 
-                builder.RegisterType<ConnectionWrapper>();
-            }
-
+            // Critical piece for all database infrastructure to work smoothly
+            builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJobIfTrue(runningHangFire);
+            
 
             var registry = new InceptorRegistry();
             registry.Add(typeof(ErrorForensics));
@@ -154,6 +136,16 @@ namespace ProfitWise.Batch
                 PwShopId = shop,
                 OrderIds = orderIds,
             });
+        }
+    }
+
+    public static class AutofacExtension
+    {
+        public static IRegistrationBuilder<T1, T2, T3> 
+                InstancePerBackgroundJobIfTrue<T1, T2, T3>(
+                    this IRegistrationBuilder<T1, T2, T3>  input, bool expression)
+        {
+            return expression ? input.InstancePerBackgroundJob() : input;
         }
     }
 }

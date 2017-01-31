@@ -158,7 +158,7 @@
     <Compile Include="ProcessSteps\OrderRefreshContext.cs" />
     <Compile Include="ProcessSteps\OrderRefreshStep.cs" />
     <Compile Include="ProcessSteps\ProductCleanupStep.cs" />
-    <Compile Include="Repositories\CurrencyRepository.cs" />
+    <Compile Include="Repositories\ExchangeRateRepository.cs" />
     <Compile Include="Repositories\PwCogsEntryRepository.cs" />
     <Compile Include="Repositories\PwReportRepository.cs" />
     <Compile Include="Services\CurrencyService.cs" />

@@ -9,11 +9,11 @@ using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Repositories
 {
-    public class CurrencyRepository
+    public class ExchangeRateRepository
     {
         private readonly ConnectionWrapper _connection;
 
-        public CurrencyRepository(ConnectionWrapper connection)
+        public ExchangeRateRepository(ConnectionWrapper connection)
         {
             _connection = connection;
         }
@@ -23,18 +23,26 @@ namespace ProfitWise.Data.Repositories
             return _connection.StartTransactionForScope();
         }
 
-
         public IList<Currency> RetrieveCurrency()
         {
             var query = @"SELECT * FROM currency ORDER BY CurrencyId ASC;";
             return _connection.DbConn.Query<Currency>(query, new { }, _connection.Transaction).ToList();
         }
 
+        public DateTime? LatestExchangeRateDate()
+        {
+            var query = @"SELECT MAX(Date) FROM exchangerate;";
+            return _connection.DbConn.Query<DateTime ?>(
+                    query, new { }, _connection.Transaction).FirstOrDefault();
+        }
+
+
         public List<ExchangeRate> RetrieveExchangeRates()
         {
             var query = @"SELECT * FROM exchangerate 
                         ORDER BY Date, SourceCurrencyId ASC;";
-            return _connection.DbConn.Query<ExchangeRate>(query, new {}, _connection.Transaction).ToList();
+            return _connection.DbConn.Query<ExchangeRate>(
+                    query, new {}, _connection.Transaction).ToList();
         }
 
         public List<ExchangeRate> RetrieveExchangeRateByDate(DateTime date)

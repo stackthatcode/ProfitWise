@@ -12,7 +12,7 @@ namespace ProfitWise.Batch
         static void Main(string[] args)
         {
             //var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
-            //StandaloneRefreshProcess(userId);
+            //OrderRefreshProcess(userId);
 
             HangFireBackgroundService();
 
@@ -52,7 +52,7 @@ namespace ProfitWise.Batch
             }
         }
         
-        public static void StandaloneRefreshProcess(string userId)
+        public static void OrderRefreshProcess(string userId)
         {
             var container = Bootstrapper.ConfigureApp(false);
             using (var scope = container.BeginLifetimeScope())

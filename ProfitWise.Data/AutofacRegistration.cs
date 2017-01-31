@@ -28,7 +28,7 @@ namespace ProfitWise.Data
             builder.RegisterType<PwProductRepository>();
             builder.RegisterType<PwVariantRepository>();
             builder.RegisterType<PwCogsEntryRepository>();
-            builder.RegisterType<CurrencyRepository>();
+            builder.RegisterType<ExchangeRateRepository>();
             builder.RegisterType<PwPickListRepository>();
             builder.RegisterType<PwReportRepository>();
             builder.RegisterType<PwReportFilterRepository>();
