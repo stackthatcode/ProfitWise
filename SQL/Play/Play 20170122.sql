@@ -7,6 +7,7 @@ SELECT * FROM profitwisevariant WHERE PwMasterVariantId = 449;
 
 SELECT * FROM profitwiseprofitreportentry;
 
+
 SELECT * FROM shopifyorderlineitem WHERE PwVariantId = 449;
 
 SELECT * FROM profitwisepicklistmasterproduct;
@@ -29,6 +30,7 @@ SELECT * FROM profitwisemastervariantcogsdetail;
 SELECT * FROM profitwiseshop;
 
 
+SELECT * FROM calendar_table;
 
 UPDATE shopifyorderlineitem SET UnitCogs = 0;
 
@@ -48,6 +50,8 @@ SELECT * FROM profitwiseprofitreportentry;
 
 SELECT * FROM shopifyorderlineitem;
 
+
+SELECT * FROM 
 
 
 SELECT * FROM profitwisevariant WHERE IsPrimary = 1;

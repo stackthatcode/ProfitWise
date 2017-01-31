@@ -29,9 +29,9 @@ CREATE TABLE ints ( i tinyint );
 INSERT INTO ints VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
  
 INSERT INTO calendar_table (dt)
-SELECT DATE('2010-01-01') + INTERVAL a.i*10000 + b.i*1000 + c.i*100 + d.i*10 + e.i DAY
+SELECT DATE('2006-01-01') + INTERVAL a.i*10000 + b.i*1000 + c.i*100 + d.i*10 + e.i DAY
 FROM ints a JOIN ints b JOIN ints c JOIN ints d JOIN ints e
-WHERE (a.i*10000 + b.i*1000 + c.i*100 + d.i*10 + e.i) <= 11322
+WHERE (a.i*10000 + b.i*1000 + c.i*100 + d.i*10 + e.i) <= 22644
 ORDER BY 1;
 
 
