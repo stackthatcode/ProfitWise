@@ -35,10 +35,11 @@ namespace ProfitWise.Test.OrderLoader
                 var productApiRepository = factory.MakeProductApiRepository(credentials);
 
                 var filter = new ProductFilter();
-                var count = productApiRepository.RetrieveCount(filter);
+                var products = productApiRepository.Retrieve(filter);
 
                 // Step #2 - prepare a plan to upload random Orders
 
+                
 
                 // Step #3 - Insert Orders into Shopify API
             }
