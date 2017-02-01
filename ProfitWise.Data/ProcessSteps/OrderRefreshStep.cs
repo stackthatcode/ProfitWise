@@ -193,8 +193,8 @@ namespace ProfitWise.Data.ProcessSteps
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
                 var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages - {importedOrders.Count} Orders to process");
 
                 WriteOrdersToPersistence(importedOrders, shop);
 
@@ -217,8 +217,6 @@ namespace ProfitWise.Data.ProcessSteps
             var catalogBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(shop);
-
-            _pushLogger.Info($"Shop: {shop.PwShopId} - {importedOrders.Count} Orders to process");
 
             using (var trans = catalogBuilderService.InitiateTransaction())
             {
