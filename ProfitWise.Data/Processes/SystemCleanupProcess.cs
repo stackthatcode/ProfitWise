@@ -2,6 +2,7 @@
 using System.Configuration;
 using Hangfire;
 using ProfitWise.Data.HangFire;
+using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
@@ -12,11 +13,11 @@ namespace ProfitWise.Data.Processes
     public class SystemCleanupProcess
     {
         private readonly SystemRepository _systemRepository;
-        private readonly IPushLogger _pushLogger;
+        private readonly BatchLogger _pushLogger;
         
 
         public SystemCleanupProcess(
-                IPushLogger pushLogger, SystemRepository systemRepository)
+                BatchLogger pushLogger, SystemRepository systemRepository)
         {
             _pushLogger = pushLogger;
             _systemRepository = systemRepository;

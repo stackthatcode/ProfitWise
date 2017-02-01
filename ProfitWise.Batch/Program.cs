@@ -14,24 +14,25 @@ namespace ProfitWise.Batch
             //var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
             //OrderRefreshProcess(userId);
 
-            HangFireBackgroundService();
-
-            //ScheduleExchangeRateJob();
-
             //var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
-            //ScheduleInitialShopRefresh(userId);
+            //ScheduleInitialShopRefresh(userId);            
+
+            //ScheduleBackgroundSystemJobs();
+
+            HangFireBackgroundService();
         }
 
 
-        public static void ScheduleExchangeRateJob()
+        public static void ScheduleBackgroundSystemJobs()
         {
             var container = Bootstrapper.ConfigureApp(false);
             using (var scope = container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<HangFireService>();
                 service.ScheduleExchangeRateRefresh();
-                Console.ReadLine();
+                service.ScheduleSystemCleanupProcess();
 
+                Console.ReadLine();
             }
         }
 
@@ -55,10 +56,7 @@ namespace ProfitWise.Batch
                 = new BackgroundJobServerOptions()
                     {
                         SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),   
-                        Queues = new []
-                        {
-                            ProfitWiseQueues.InitialShopRefresh, ProfitWiseQueues.RoutineShopRefresh, ProfitWiseQueues.ExchangeRateRefresh
-                        },
+                        Queues = QueueChannel.All,
                     };
 
             using (var server = new BackgroundJobServer(backgroundServerOptions))

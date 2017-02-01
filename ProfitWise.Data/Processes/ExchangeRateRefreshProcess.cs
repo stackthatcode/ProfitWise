@@ -6,6 +6,7 @@ using Hangfire;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
@@ -18,7 +19,7 @@ namespace ProfitWise.Data.Processes
         private readonly CurrencyService _currencyService;
         private readonly ExchangeRateRepository _exchangeRateRepository;
         private readonly FixerApiRepository _fixerApiRepository;
-        private readonly IPushLogger _pushLogger;
+        private readonly BatchLogger _pushLogger;
 
 
         public readonly DateTime DefaultStartDateOfDataset = new DateTime(2006, 01, 01);
@@ -29,7 +30,7 @@ namespace ProfitWise.Data.Processes
                 CurrencyService currencyService,
                 ExchangeRateRepository exchangeRateRepository,
                 FixerApiRepository fixerApiRepository,
-                IPushLogger pushLogger)
+                BatchLogger pushLogger)
         {
             _currencyService = currencyService;
             _exchangeRateRepository = exchangeRateRepository;

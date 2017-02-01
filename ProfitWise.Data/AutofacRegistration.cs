@@ -39,11 +39,11 @@ namespace ProfitWise.Data
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));
             
-            builder.RegisterType<ShopRefreshService>();
             builder.RegisterType<OrderRefreshStep>();
             builder.RegisterType<ProductRefreshStep>();
             builder.RegisterType<ProductCleanupStep>();
 
+            builder.RegisterType<ShopRefreshService>();
             builder.RegisterType<CatalogBuilderService>();
             builder.RegisterType<CurrencyService>();
             builder.RegisterType<ShopSynchronizationService>();
@@ -52,6 +52,7 @@ namespace ProfitWise.Data
 
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();
+            builder.RegisterType<SystemCleanupProcess>();
             
             builder.RegisterType<ShopRequired>();
 

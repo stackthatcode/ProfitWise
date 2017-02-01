@@ -23,6 +23,10 @@ namespace ProfitWise.Data.HangFire
             _exchangeRefreshInterval = ConfigurationManager.AppSettings
                 .GetAndTryParseAsString("ExchangeRefreshInterval", "0 2 * * *");
 
+        private readonly string
+            _cleanupServiceInterval = ConfigurationManager.AppSettings
+                .GetAndTryParseAsString("CleanupServiceInterval", "* * * * *");
+
 
         public HangFireService(
                 IPushLogger logger, 
@@ -68,6 +72,15 @@ namespace ProfitWise.Data.HangFire
 
             RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(
                     jobId, x => x.Execute(), _exchangeRefreshInterval);
+        }
+
+        public void ScheduleSystemCleanupProcess()
+        {
+            var jobId = "SystemCleanupProcess";
+            _logger.Info($"Scheduling SystemCleanupProcess");
+
+            RecurringJob.AddOrUpdate<SystemCleanupProcess>(
+                    jobId, x => x.Execute(), _cleanupServiceInterval);
         }
 
         public void KillRecurringJob(string jobId)
