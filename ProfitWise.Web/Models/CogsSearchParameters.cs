@@ -9,6 +9,6 @@ namespace ProfitWise.Web.Models
  
         public IList<ProductSearchFilter> Filters { get; set; }
 
-        public SearchResultSelection ResultSelection { get; set; }
+        public long? CurrentPickListId { get; set; }
     }
 }

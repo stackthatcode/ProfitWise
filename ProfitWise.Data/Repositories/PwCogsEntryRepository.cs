@@ -60,6 +60,11 @@ namespace ProfitWise.Data.Repositories
                 throw new ArgumentException("Maximum number of results per page is 200");
             }
 
+            var touchQuery =
+                @"UPDATE profitwisepicklist SET LastAccessed = getdate() 
+                WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId";
+            Connection.Execute(touchQuery, new { PwShopId, pickListId});
+
             var startRecord = (pageNumber - 1) * resultsPerPage;
             var sortDirectionWord = (sortByDirectionDown ? "ASC" : "DESC");
 

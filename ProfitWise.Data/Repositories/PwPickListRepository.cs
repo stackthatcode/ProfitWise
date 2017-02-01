@@ -32,7 +32,7 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        public long Provision()
+        public long CreateNew()
         {
             var query =
                 @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate, LastAccessed) 
@@ -70,6 +70,17 @@ namespace ProfitWise.Data.Repositories
 
             return Connection.Query<long>(
                 query, new { PwShopId = this.PwShop.PwShopId, cutoffDate }).FirstOrDefault();
+        }
+
+        public void Delete(long pickListId)
+        {
+            var query =
+                @"DELETE FROM profitwisepicklistmasterproduct 
+                WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId;
+                DELETE FROM profitwisepicklist 
+                WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId;";
+
+            Connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId});
         }
 
 
@@ -227,6 +238,14 @@ namespace ProfitWise.Data.Repositories
         }
 
 
+        public bool Exists(long pickListId)
+        {
+            var query = @"SELECT * FROM profitwisepicklist
+                        WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId";
+
+            return Connection.Query<object>(
+                query, new { PwShopId = PwShop.PwShopId, pickListId }).Any();
+        }
 
     }
 }

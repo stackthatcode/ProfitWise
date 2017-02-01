@@ -34,29 +34,34 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
 
-            long pickListId;
+            long newPickListId;
 
             using (var trans = new TransactionScope())
             {
-                pickListId = pickListRepository.Provision();
+                if (parameters.CurrentPickListId.HasValue)
+                {
+                    pickListRepository.Delete(parameters.CurrentPickListId.Value);
+                }
+
+                newPickListId = pickListRepository.CreateNew();
 
                 var terms = (parameters.Text ?? "").SplitBy(',');
-                pickListRepository.Populate(pickListId, terms);
+                pickListRepository.Populate(newPickListId, terms);
 
                 if (parameters.Filters != null && parameters.Filters.Count > 0)
                 {
-                    pickListRepository.Filter(pickListId, parameters.Filters);
+                    pickListRepository.Filter(newPickListId, parameters.Filters);
 
                     if (parameters.Filters.Any(x => x.Type == ProductSearchFilterType.MissingCogs))
                     {
-                        pickListRepository.FilterMissingCogs(pickListId);
+                        pickListRepository.FilterMissingCogs(newPickListId);
                     }
                 }
 
                 trans.Complete();
             }
             
-            return new JsonNetResult(new { PickListId = pickListId});
+            return new JsonNetResult(new { PickListId = newPickListId});
         }
 
         [HttpPost]
@@ -65,6 +70,13 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
+
+
+            if (!pickListRepository.Exists(resultSelection.PickListId))
+            {
+                return new JsonNetResult(new { pickListValid = false, });
+            }
+
             var recordCount = pickListRepository.Count(resultSelection.PickListId);
 
             // Pull the Search Results by Pick List page number
@@ -84,7 +96,7 @@ namespace ProfitWise.Web.Controllers
 
             // Notice: we're using the Shop Currency to represent the price
             var model = products.ToCogsGridModel(userIdentity.PwShop.CurrencyId);
-            return new JsonNetResult(new { products = model, totalRecords = recordCount });
+            return new JsonNetResult(new { pickListValid = true, products = model, totalRecords = recordCount });
         }
 
         [HttpGet]

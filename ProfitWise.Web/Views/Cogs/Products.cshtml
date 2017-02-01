@@ -361,6 +361,7 @@
                     var search = {
                         Text: self.FilterModel.SearchText(),
                         Filters: filters,
+                        CurrentPickListId: self.PickListId(),
                     };
 
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -389,6 +390,13 @@
                     ajax.HttpPost("/CogsService/RetrieveResults", resultsPaging, this);
                 },
                 function (data) {
+                    if (!data.pickListValid) {
+                        ShopifyApp.Modal.alert(
+                            "Your query appears to have expired. The page will refresh so you can re-enter parameters.",
+                            function(result) { location.reload(); });
+                        return;
+                    };                      
+
                     self.CurrentGrid.removeAll();
                     
                     if (data.products.length == 0) {
