@@ -49,7 +49,7 @@ namespace ProfitWise.Data.Processes
         
 
         [AutomaticRetry(Attempts = 3)]
-        [Queue(Queues.InitialShopRefresh)]
+        [Queue(ProfitWiseQueues.InitialShopRefresh)]
         public void InitialShopRefresh(string userId)
         {
             try
@@ -65,7 +65,7 @@ namespace ProfitWise.Data.Processes
         }
 
         [AutomaticRetry(Attempts = 3)]
-        [Queue(Queues.RoutineShopRefresh)]
+        [Queue(ProfitWiseQueues.RoutineShopRefresh)]
         public void RoutineShopRefresh(string userId)
         {
             try

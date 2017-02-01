@@ -38,7 +38,7 @@ namespace ProfitWise.Data.Processes
         }
 
 
-        [Queue(Queues.ExchangeRateRefresh)]
+        [Queue(ProfitWiseQueues.ExchangeRateRefresh)]
         public void Execute()
         {
             var lastDate = _exchangeRateRepository.LatestExchangeRateDate();

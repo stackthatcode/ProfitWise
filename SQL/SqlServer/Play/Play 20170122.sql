@@ -16,5 +16,3 @@ SELECT * FROM profitwiseproduct WHERE ShopifyProductId = 376514360;
 SELECT * FROM profitwisemasterproduct WHERE PwMasterProductId = 297;
 
 
-DELETE FROM profitwisepicklist;
-

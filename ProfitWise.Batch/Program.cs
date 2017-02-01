@@ -57,7 +57,7 @@ namespace ProfitWise.Batch
                         SchedulePollingInterval = new TimeSpan(0, 0, 0, 1),   
                         Queues = new []
                         {
-                            Queues.InitialShopRefresh, Queues.RoutineShopRefresh, Queues.ExchangeRateRefresh
+                            ProfitWiseQueues.InitialShopRefresh, ProfitWiseQueues.RoutineShopRefresh, ProfitWiseQueues.ExchangeRateRefresh
                         },
                     };
 

@@ -56,22 +56,6 @@ namespace ProfitWise.Data.Repositories
                 query, new { PwShopId = this.PwShop.PwShopId, pickListId }).FirstOrDefault();
         }
 
-
-        // TODO - this is where the deletion logic appears
-        public long UnprovisionByDate(DateTime cutoffDate)
-        {
-            var query =
-                @"DELETE FROM profitwisepicklistmasterproduct 
-                WHERE PwShopId = PwShopId AND PwPickListId IN 
-	                (   SELECT PwPickListId FROM profitwisepicklist 
-                        WHERE PwShopId = @PwShopId AND CreatedDate <= @cutoffDate );
-                
-                DELETE FROM profitwisepicklist WHERE PwShopId = @PwShopId AND CreatedDate <= @cutoffDate;";
-
-            return Connection.Query<long>(
-                query, new { PwShopId = this.PwShop.PwShopId, cutoffDate }).FirstOrDefault();
-        }
-
         public void Delete(long pickListId)
         {
             var query =
@@ -82,7 +66,6 @@ namespace ProfitWise.Data.Repositories
 
             Connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId});
         }
-
 
 
         // Pick List population/filter operations

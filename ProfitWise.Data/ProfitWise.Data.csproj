@@ -92,7 +92,7 @@
     <Compile Include="HangFire\HangFireLogger.cs" />
     <Compile Include="HangFire\HangFireLogProvider.cs" />
     <Compile Include="HangFire\QueueChannel.cs" />
-    <Compile Include="HangFire\Queues.cs" />
+    <Compile Include="HangFire\ProfitWiseQueues.cs" />
     <Compile Include="Model\Catalog\FinancialStatus.cs" />
     <Compile Include="Model\Cogs\OrderLineCogsContextPickList.cs" />
     <Compile Include="Model\Cogs\OrderLineCogsContext.cs" />
@@ -145,9 +145,10 @@
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
+    <Compile Include="Processes\SystemCleanupProcess.cs" />
     <Compile Include="ProcessSteps\BatchLogger.cs" />
     <Compile Include="Repositories\PwCogsDataUpdateRepository.cs" />
-    <Compile Include="Repositories\SystemStateRepository.cs" />
+    <Compile Include="Repositories\SystemRepository.cs" />
     <Compile Include="Repositories\PwReportQueryRepository.cs" />
     <Compile Include="Repositories\PwReportFilterRepository.cs" />
     <Compile Include="Repositories\PwPickListRepository.cs" />

@@ -1,6 +1,6 @@
 ﻿namespace ProfitWise.Data.HangFire
 {
-    public class Queues
+    public class ProfitWiseQueues
     {
         public const string InitialShopRefresh = "initialshoprefresh";
         public const string RoutineShopRefresh = "routineshoprefresh";

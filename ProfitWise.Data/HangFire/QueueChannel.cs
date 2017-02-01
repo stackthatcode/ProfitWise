@@ -2,7 +2,13 @@
 {
     public class QueueChannel
     {
-        public static readonly string[] Routine = { Queues.RoutineShopRefresh };
-        public static readonly string[] System = { Queues.ExchangeRateRefresh, Queues.CleanupService };
+        public static readonly 
+            string[] All =
+                {
+                    ProfitWiseQueues.InitialShopRefresh,
+                    ProfitWiseQueues.RoutineShopRefresh,
+                    ProfitWiseQueues.ExchangeRateRefresh,
+                    ProfitWiseQueues.CleanupService,
+                };
     }
 }
