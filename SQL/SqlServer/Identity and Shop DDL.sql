@@ -45,6 +45,18 @@ CREATE TABLE [dbo].[AspNetRoles](
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[AspNetRoles] WHERE [Id] IN ( 'ADMIN' ))
+BEGIN
+	INSERT INTO [dbo].[AspNetRoles]  VALUES ('2fe92131-c529-4819-8ecd-f6fbb3011ddb', 'ADMIN');
+END
+
+IF NOT EXISTS (SELECT * FROM [dbo].[AspNetRoles] WHERE [Id] IN ( 'USER' ))
+BEGIN
+	INSERT INTO [dbo].[AspNetRoles]  VALUES ('d884c7fd-86b8-4acf-8fdf-c0e2c7efd009', 'USER');
+END
+
+
+
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AspNetUserClaims]') AND type in (N'U'))
 BEGIN
@@ -90,12 +102,6 @@ CREATE TABLE [dbo].[AspNetUserRoles](
 ) ON [PRIMARY]
 END
 GO
-
-IF NOT EXISTS (SELECT * FROM [dbo].[AspNetUserRoles] WHERE RoleId IN ( 'ADMIN', 'USER' ))
-BEGIN
-	INSERT INTO [dbo].[AspNetUserRoles]  VALUES ('2fe92131-c529-4819-8ecd-f6fbb3011ddb', 'ADMIN');
-	INSERT INTO [dbo].[AspNetUserRoles]  VALUES ('d884c7fd-86b8-4acf-8fdf-c0e2c7efd009', 'USER');
-END
 
 
 

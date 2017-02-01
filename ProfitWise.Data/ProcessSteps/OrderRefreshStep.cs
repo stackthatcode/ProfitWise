@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Transactions;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
@@ -9,7 +8,6 @@ using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
-using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;

@@ -71,6 +71,12 @@ CREATE TABLE [dbo].[profitwisevariant](
 END
 GO
 
+-- This logic alone is worthy of discussion...
+CREATE UNIQUE INDEX uq_profitwisevariant
+  ON dbo.[profitwisevariant]([PwShopId], [PwProductId], [ShopifyVariantId], [Sku], [Title])
+  WHERE [ShopifyVariantId] IS NOT NULL;
+
+
 
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisemastervariant]') AND type in (N'U'))
@@ -141,8 +147,17 @@ END
 GO
 
 CREATE UNIQUE INDEX uq_profitwiseproduct
-  ON dbo.[profitwiseproduct]([PwShopId], [ShopifyProductId], [Title])
-  WHERE [ShopifyProductId] IS NOT NULL;
+	ON dbo.[profitwiseproduct]([PwShopId], [ShopifyProductId], [Title], [Vendor])
+	WHERE [ShopifyProductId] IS NOT NULL;
+
+ALTER TABLE [profitwiseproduct] 
+	ALTER COLUMN [Title] [nvarchar](200)
+	COLLATE SQL_Latin1_General_CP1_CS_AS
+
+ALTER TABLE [profitwiseproduct] 
+	ALTER COLUMN [Vendor] [nvarchar](100)
+	COLLATE SQL_Latin1_General_CP1_CS_AS
+
 
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisemasterproduct]') AND type in (N'U'))

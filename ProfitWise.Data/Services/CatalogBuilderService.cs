@@ -186,6 +186,8 @@ namespace ProfitWise.Data.Services
             productRepository.UpdateProduct(product); // TODO UPDATE ME!!!
         }
 
+
+
         public void UpdatePrimaryProduct(PwMasterProduct masterProduct)
         {
             var repository = _multitenantFactory.MakeProductRepository(this.PwShop);

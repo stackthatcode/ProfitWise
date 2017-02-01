@@ -17,6 +17,9 @@ namespace ProfitWise.Batch
             HangFireBackgroundService();
 
             //ScheduleExchangeRateJob();
+
+            //var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
+            //ScheduleInitialShopRefresh(userId);
         }
 
 
@@ -28,8 +31,21 @@ namespace ProfitWise.Batch
                 var service = scope.Resolve<HangFireService>();
                 service.ScheduleExchangeRateRefresh();
                 Console.ReadLine();
+
             }
         }
+
+        public static void ScheduleInitialShopRefresh(string userId)
+        {
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<HangFireService>();
+                service.TriggerInitialShopRefresh(userId);
+                Console.ReadLine();
+            }
+        }
+        
 
         // Aleks is working on this - go ahead and ignore
         public static void HangFireBackgroundService()

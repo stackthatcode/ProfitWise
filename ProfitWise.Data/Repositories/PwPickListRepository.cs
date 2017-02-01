@@ -35,7 +35,7 @@ namespace ProfitWise.Data.Repositories
         public long Provision()
         {
             var query =
-                @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate, LastAccessedDate) 
+                @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate, LastAccessed) 
                     VALUES (@PwShopId, @createdDate, @createdDate);
                 SELECT SCOPE_IDENTITY();";
 
@@ -56,6 +56,8 @@ namespace ProfitWise.Data.Repositories
                 query, new { PwShopId = this.PwShop.PwShopId, pickListId }).FirstOrDefault();
         }
 
+
+        // TODO - this is where the deletion logic appears
         public long UnprovisionByDate(DateTime cutoffDate)
         {
             var query =
