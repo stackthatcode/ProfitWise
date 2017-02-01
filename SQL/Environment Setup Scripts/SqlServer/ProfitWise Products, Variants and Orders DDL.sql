@@ -71,6 +71,8 @@ CREATE TABLE [dbo].[profitwisevariant](
 END
 GO
 
+
+
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisemastervariant]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[profitwisemastervariant](
@@ -180,6 +182,7 @@ CREATE TABLE [dbo].[profitwisepicklist](
 	[PwPickListId] [bigint] IDENTITY(100001,1) NOT NULL,
 	[PwShopId] [bigint] NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
+	[LastAccessed] [datetime] NOT NULL,
  CONSTRAINT [PK_profitwisepicklist_PwPickListId] PRIMARY KEY CLUSTERED 
 (
 	[PwPickListId] ASC

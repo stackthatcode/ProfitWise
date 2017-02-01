@@ -35,8 +35,8 @@ namespace ProfitWise.Data.Repositories
         public long Provision()
         {
             var query =
-                @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate) 
-                    VALUES (@PwShopId, @createdDate);
+                @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate, LastAccessedDate) 
+                    VALUES (@PwShopId, @createdDate, @createdDate);
                 SELECT SCOPE_IDENTITY();";
 
             return Connection.Query<long>(query,

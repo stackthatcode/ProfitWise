@@ -49,7 +49,6 @@ namespace ProfitWise.Data.Services
                              $"ShopifyShopId: {newShop.ShopifyShopId}, " +
                              $"StartingDateForOrders: {newShop.StartingDateForOrders}");
 
-
                 // Ensure the proper Batch State exists for Shop
                 var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(newShop);
                 var state = new PwBatchState
