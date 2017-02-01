@@ -9,6 +9,7 @@ namespace ProfitWise.Data.Model.Shop
         public string ShopOwnerUserId { get; set; }
         public long ShopifyShopId { get; set; }
 
+        public string Domain { get; set; }
         public int CurrencyId { get; set; }
         public string TimeZone { get; set; }
 
@@ -33,7 +34,7 @@ namespace ProfitWise.Data.Model.Shop
         }
 
         public static PwShop Make(
-                string shopifyUserId, long shopId, int shopCurrencyId, string shopTimeZone)
+                string shopifyUserId, long shopId, int shopCurrencyId, string shopTimeZone, string shopDomain)
         {
             var newShop = new PwShop
             {
@@ -41,6 +42,7 @@ namespace ProfitWise.Data.Model.Shop
                 ShopifyShopId = shopId,         // Long integer unique identifier
                 CurrencyId = shopCurrencyId,
                 TimeZone = shopTimeZone,
+                Domain = shopDomain,
 
                 IsAccessTokenValid = true,
                 IsShopEnabled = true,

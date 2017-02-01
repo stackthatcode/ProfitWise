@@ -136,6 +136,7 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[PwShopId] [bigint] IDENTITY(100001,1) NOT NULL,
 	[ShopOwnerUserId] [nvarchar](128) NOT NULL,
 	[ShopifyShopId] [bigint] NULL,
+	[Domain] [nvarchar](100) NULL,
 	[CurrencyId] [int] NULL,
 	[TimeZone] [nvarchar](50) NULL,
 	[IsAccessTokenValid] [smallint] NOT NULL,

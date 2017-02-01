@@ -41,7 +41,8 @@ namespace ProfitWise.Data.Services
 
             if (pwShop == null)
             {
-                var newShop = PwShop.Make(shopOwnerUserId, shop.Id, currencyId, shop.TimeZone);
+                var newShop = 
+                    PwShop.Make(shopOwnerUserId, shop.Id, currencyId, shop.TimeZone, shop.Domain);
                 newShop.PwShopId = _pwShopRepository.Insert(newShop);
 
                 _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}, " +

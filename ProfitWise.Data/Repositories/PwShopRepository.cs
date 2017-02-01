@@ -44,15 +44,14 @@ namespace ProfitWise.Data.Repositories
         public int Insert(PwShop shop)
         {
             var query =
-                @"INSERT INTO 
-                    profitwiseshop (
-                        ShopOwnerUserId, ShopifyShopId, CurrencyId, TimeZone, 
-                        IsAccessTokenValid, IsShopEnabled, IsDataLoaded,
-                        StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, DateRangeDefault 
+                @"INSERT INTO profitwiseshop (
+                    ShopOwnerUserId, ShopifyShopId, Domain, CurrencyId, TimeZone, 
+                    IsAccessTokenValid, IsShopEnabled, IsDataLoaded,
+                    StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, DateRangeDefault 
                 ) VALUES (
-                        @ShopOwnerUserId, @ShopifyShopId, @CurrencyId, @TimeZone,
-                        @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded,
-                        @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, @DateRangeDefault );
+                    @ShopOwnerUserId, @ShopifyShopId, @Domain, @CurrencyId, @TimeZone,
+                    @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded,
+                    @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, @DateRangeDefault );
                 SELECT SCOPE_IDENTITY();";
             return Connection
                 .Query<int>(query, shop)

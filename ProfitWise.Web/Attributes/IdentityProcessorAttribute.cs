@@ -24,6 +24,7 @@ namespace ProfitWise.Web.Attributes
 
             // Pull the User ID from OWIN plumbing...
             var currentUrl = filterContext.HttpContext.Request.Url.PathAndQuery;
+            var shopParameter = filterContext.HttpContext.Request.QueryString["shop"];
             var userId = filterContext.HttpContext.User.ExtractUserId();
 
             if (userId == null)
@@ -64,6 +65,14 @@ namespace ProfitWise.Web.Attributes
                     $"Shop does not exist for User {userId}: '{result.Message}' - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
                 filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
+                return;
+            }
+
+            if (shopParameter != null && shopParameter != pwShop.Domain)
+            {
+                logger.Error($"Currently logged in as {pwShop.Domain}, while accessing App from {shopParameter}");
+                AuthConfig.GlobalSignOut(signInManager);
+                filterContext.Result = GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, currentUrl);
                 return;
             }
 
