@@ -154,6 +154,11 @@ ALTER TABLE [profitwiseproduct]
 	ALTER COLUMN [Vendor] [nvarchar](100)
 	COLLATE SQL_Latin1_General_CP1_CS_AS
 
+ALTER TABLE [profitwiseproduct] 
+	ALTER COLUMN [ProductType] [nvarchar](100)
+	COLLATE SQL_Latin1_General_CP1_CS_AS
+
+
 
 CREATE UNIQUE INDEX uq_profitwiseproduct
 	ON dbo.[profitwiseproduct]([PwShopId], [ShopifyProductId], [Title], [Vendor])
