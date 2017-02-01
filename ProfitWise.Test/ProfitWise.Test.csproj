@@ -35,7 +35,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Drawing" />
     <Reference Include="WebDriver, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriver.3.0.1\lib\net40\WebDriver.dll</HintPath>
@@ -59,12 +72,30 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ProfitWiseTestingChrome.cs" />
+    <Compile Include="Automation\ProfitWiseTestingChrome.cs" />
+    <Compile Include="OrderLoader\Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SeleniumExtensions.cs" />
+    <Compile Include="Automation\SeleniumExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProfitWise.Batch\ProfitWise.Batch.csproj">
+      <Project>{6bba037f-da5c-48e3-8d74-af67b93ac37f}</Project>
+      <Name>ProfitWise.Batch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Push.Foundation.Web\Push.Foundation.Web.csproj">
+      <Project>{09B408FF-DD25-46D4-ABE6-012BAAC51296}</Project>
+      <Name>Push.Foundation.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Push.Shopify\Push.Shopify.csproj">
+      <Project>{98704840-5BBD-4175-AE04-45A40CD48ADB}</Project>
+      <Name>Push.Shopify</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

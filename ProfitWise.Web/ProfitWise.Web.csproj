@@ -423,7 +423,7 @@
     <Content Include="Views\Report\_ReportEditorFilters.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_ReportSelectionCountPreview.cshtml" />
+    <Content Include="Views\Report\_ProductVariantCountWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\ProductVariantSelections.cshtml" />

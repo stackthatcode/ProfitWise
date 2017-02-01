@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 
-
-namespace SeleniumExtensions
+namespace ProfitWise.Test
 {
     public static class WebDriverExtensions
     {

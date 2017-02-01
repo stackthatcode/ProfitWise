@@ -1,31 +1,28 @@
 ﻿using System;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
-using System.Threading;
-using SeleniumExtensions;
 
-namespace ProfitWise.Test.Chrome
+namespace ProfitWise.Test.Automation
 {
     [TestClass]
     public class ProfitWiseTestingChrome
     {
-
         static IWebDriver driverGC;
 
-        [AssemblyInitialize]
+        //[AssemblyInitialize]
+        [TestInitialize]
         public static void SetUp(TestContext context)
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--start-maximized");
             driverGC = new ChromeDriver(options);
-
         }
 
 
         //Google Chrome test procedures
-
 
         //[TestMethod]
         //public void GCRemoveProfitWiseIfInstalled()
@@ -60,7 +57,6 @@ namespace ProfitWise.Test.Chrome
         // 
         //
         //}
-
 
 
         [TestMethod]

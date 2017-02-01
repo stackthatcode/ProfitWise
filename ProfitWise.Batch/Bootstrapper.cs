@@ -4,7 +4,6 @@ using Hangfire;
 using Hangfire.Logging;
 using Hangfire.SqlServer;
 using ProfitWise.Data.HangFire;
-using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Batch

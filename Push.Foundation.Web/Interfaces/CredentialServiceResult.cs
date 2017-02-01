@@ -3,8 +3,7 @@
     public class CredentialServiceResult
     {
         public CredentialServiceResult()
-        {
-            
+        {            
         }
 
         public CredentialServiceResult(bool success, string message)

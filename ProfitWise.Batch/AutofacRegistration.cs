@@ -65,10 +65,8 @@ namespace ProfitWise.Batch
             // Configure the paging rates of the Refresh Services
             builder.Register(x => new RefreshServiceConfiguration()
             {
-                MaxOrderRate =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxOrderRate", 50),
-                MaxProductRate =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProductRate", 100),
+                MaxOrderRate = ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxOrderRate", 50),
+                MaxProductRate = ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProductRate", 100),
             });
 
 
@@ -77,14 +75,10 @@ namespace ProfitWise.Batch
 
             builder.Register(x => new ShopifyClientConfig()
             {
-                RetryLimit =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyRetryLimit", 3),
-                Timeout =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyHttpTimeout", 60000),
-                ThrottlingDelay =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyThrottlingDelay", 500),
-                RetriesEnabled = 
-                    ConfigurationManager.AppSettings.GetAndTryParseAsBool("ShopifyRetriesEnabled", true)
+                RetryLimit = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyRetryLimit", 3),
+                Timeout = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyHttpTimeout", 60000),
+                ThrottlingDelay = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyThrottlingDelay", 500),
+                RetriesEnabled = ConfigurationManager.AppSettings.GetAndTryParseAsBool("ShopifyRetriesEnabled", true)
             });
 
 
