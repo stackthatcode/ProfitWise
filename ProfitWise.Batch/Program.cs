@@ -47,8 +47,6 @@ namespace ProfitWise.Batch
             }
         }
         
-
-        // Aleks is working on this - go ahead and ignore
         public static void HangFireBackgroundService()
         {
             Bootstrapper.ConfigureApp(true);

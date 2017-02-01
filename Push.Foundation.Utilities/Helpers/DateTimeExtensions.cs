@@ -59,5 +59,41 @@ namespace Push.Foundation.Utilities.Helpers
             // Return the week of our adjusted day
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday);
         }
+
+
+        
+        public static DateTime FirstOfMonth(this DateTime input)
+        {
+            return new DateTime(input.Year, input.Month, 1);
+        }
+        public static DateTime LastOfMonth(this DateTime input)
+        {
+            return input.FirstOfMonth().AddMonths(1).AddDays(-1);
+        }
+
+        public static int QuarterNumber(this DateTime input)
+        {
+            return (input.Month - 1) / 3 + 1;
+        }
+
+        public static DateTime FirstOfQuarter(this DateTime input)
+        {
+            return new DateTime(input.Year, (input.QuarterNumber() - 1) * 3 + 1, 1);
+        }
+
+        public static DateTime LastOfQuarter(this DateTime input)
+        {
+            return input.FirstOfQuarter().AddMonths(3).AddDays(-1);
+        }
+
+        public static DateTime FirstOfYear(this DateTime input)
+        {
+            return new DateTime(input.Year, 1, 1);
+        }
+
+        public static DateTime LastOfYear(this DateTime input)
+        {
+            return input.FirstOfYear().AddYears(1).AddDays(-1);
+        }
     }
 }

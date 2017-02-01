@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Model.Preferences;
 
 namespace ProfitWise.Data.Model.Reports
 {
@@ -130,15 +131,15 @@ namespace ProfitWise.Data.Model.Reports
             return reportId == OverallProfitabilityId || reportId == TestReportId;
         }
 
-        public static PwReport OverallProfitability()
+        public static PwReport OverallProfitability(DateRange dateRange)
         {
             return new PwReport
             {
                 PwReportId = OverallProfitabilityId,
                 OriginalReportId = OverallProfitabilityId,
                 Name = "Overall Profitability",
-                StartDate = DateTime.Today.AddDays(-7),
-                EndDate = DateTime.Today,
+                StartDate = dateRange.StartDate,
+                EndDate = dateRange.EndDate,
                 GroupingId = ReportGrouping.Overall,
                 OrderingId = ReportOrdering.ProfitabilityDescending,
                 IsSystemReport = true,

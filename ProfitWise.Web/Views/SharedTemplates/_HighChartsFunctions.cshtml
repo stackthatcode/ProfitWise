@@ -1,0 +1,92 @@
+﻿
+<script id="HighChart-Load-Column-Chart">
+    ProfitWiseWidgets.LoadColumnChart = function (id, title, seriesData, drilldownData, currencyId, drilldownFunc) {
+        var events = drilldownFunc ?  { drilldown: drilldownFunc } : null;
+
+        $(id).highcharts({
+            chart: { type: 'column', events: events },
+            xAxis: { type: 'category' },
+            yAxis: { title: { text: 'Total profits' } },
+            lang: { drillUpText: '◁ Back' },
+            legend: { enabled: true },
+            title: { text: '' },
+
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: false,
+                        formatter: function() {
+                            return ProfitWiseFunctions.FormatCurrency(this.y, currencyId);
+                        }
+                    }
+                }
+            },
+
+            tooltip: {
+                formatter: function() {
+                    return '<span style="font-size:11px">' + this.series.name + '</span><br>' +
+                        '<span style="color:' + this.point.color + '>' + this.point.name + '</span>: ' +
+                        ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
+                }
+            },
+
+            series: seriesData,
+            drilldown: { series: drilldownData, }
+        });
+    };
+
+
+    ProfitWiseWidgets.LoadPieChart = function (id, title, keyedDataset, currencyId) {
+        var pieChartData =
+            AQ(keyedDataset)
+                .select(function (item) {
+                    return {
+                        name: item.GroupingName,
+                        y: item.TotalProfit,
+                    }
+                })
+                .toArray();
+
+        Highcharts.chart(id, {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                formatter: function () {
+                    return this.point.name +
+                        ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () {
+                            return this.point.name.trunc(15) +
+                                ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
+                        },
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Profits',
+                colorByPoint: true,
+                data: pieChartData,
+            }]
+        });
+    };
+
+</script>
+

@@ -101,6 +101,7 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\CogsDataEntryUpdateContext.cs" />
+    <Compile Include="Model\Preferences\DateRange.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />

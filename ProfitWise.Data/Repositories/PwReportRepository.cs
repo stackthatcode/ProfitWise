@@ -7,6 +7,7 @@ using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 
@@ -56,9 +57,14 @@ namespace ProfitWise.Data.Repositories
 
         public List<PwReport> RetrieveSystemDefinedReports()
         {
+            var dateRange = 
+                DateRangeDefaults
+                    .Factory()
+                    .FirstOrDefault(x => x.Id == this.PwShop.DateRangeDefault);
+            
             List<PwReport> systemDefinedReports = new List<PwReport>()
             {
-                PwSystemReportFactory.OverallProfitability(),
+                PwSystemReportFactory.OverallProfitability(dateRange),
                 PwSystemReportFactory.TestReport(),
             };
 
