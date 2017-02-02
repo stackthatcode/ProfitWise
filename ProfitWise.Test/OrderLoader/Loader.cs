@@ -91,15 +91,13 @@ namespace ProfitWise.Test.OrderLoader
                 //                            "price": 74.99,
                 //                            "grams": "1300",
                 //                            "quantity": 3,
-                //                            "tax_lines": [
-                //                              {
-                //                                "price": 13.5,
-                //                                "rate": 0.06,
-                //                                "title": "State tax"
-                //                              }
                 //                                         ]
                 //                          }
                 //                            ],
+                //                                   "customer": {
+                //                                "id": 5341483533
+                //                                          },
+                //                              "financial_status": "paid"
                 //    "transactions": [
                 //      {
                 //		  "test": "true",
@@ -108,7 +106,7 @@ namespace ProfitWise.Test.OrderLoader
                 //        "amount": 238.47
                 //      }
                 //                     ],
-                //    "total_tax": 13.5,
+                //    "total_tax": 0.0,
                 //    "currency": "USD"
                 //   }
                 //}
@@ -118,7 +116,7 @@ namespace ProfitWise.Test.OrderLoader
 
             }
 
-       }
+        }
 
         private Random gen = new Random();
         DateTime RandomDay()
