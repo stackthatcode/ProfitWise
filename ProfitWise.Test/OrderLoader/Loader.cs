@@ -6,6 +6,7 @@ using Push.Shopify.HttpClient;
 using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 using System;
+using System.Collections.Generic;
 using Push.Foundation.Utilities.Json;
 
 namespace ProfitWise.Test.OrderLoader
@@ -46,21 +47,22 @@ namespace ProfitWise.Test.OrderLoader
 
                 var numOrders = 5000;
 
+                var line_items = new List<object>();
+
+                // for each item I'm creating....
+                line_items.Add(new
+                {
+                    title = "Product title",
+                    price = 74.99,
+                    grams = "1300",
+                    quantity = 3
+                });
 
                 var order = new
                 {
                     order = new
                     {
-                        line_items = new[]
-                        {
-                            new
-                            {
-                                title = "Product title",
-                                price = 74.99,
-                                grams = "1300",
-                                quantity = 3
-                            }
-                        },
+                        line_items = line_items,
                         customer = new {
                             id = 5341483533
                         },
@@ -81,7 +83,7 @@ namespace ProfitWise.Test.OrderLoader
 
                 var json = order.SerializeToJson();
                 System.IO.File.WriteAllText(@"C:\Dev\ProfitWise\Logs\jsondump.txt", json);
-                orderApiRepository.Insert(json);
+             //   orderApiRepository.Insert(json);
 
                 return;
 
