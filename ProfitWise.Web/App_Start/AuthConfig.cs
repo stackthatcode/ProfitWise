@@ -100,6 +100,7 @@ namespace ProfitWise.Web
             };
 
             shopify_options.Scope.Add("read_orders");
+            shopify_options.Scope.Add("write_orders");
             shopify_options.Scope.Add("read_products");
             app.UseShopifyAuthentication(shopify_options);
         }

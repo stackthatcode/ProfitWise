@@ -55,7 +55,6 @@ namespace Push.Shopify.Repositories
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
 
-
             var path = string.Format("/admin/orders.json?" + querystring);
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
@@ -181,5 +180,14 @@ namespace Push.Shopify.Repositories
 
             return results;
         }
+
+
+        public void Insert(string orderJson)
+        {
+            var path = "/admin/orders.json";
+            var request = _requestFactory.HttpPost(ShopifyCredentials, path, orderJson);
+            var clientResponse = _client.ExecuteRequest(request);
+        }
+
     }
 }

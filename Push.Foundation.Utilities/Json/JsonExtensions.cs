@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 
-namespace Push.Foundation.Web.Json
+namespace Push.Foundation.Utilities.Json
 {
     public static class JsonExtensions
     {

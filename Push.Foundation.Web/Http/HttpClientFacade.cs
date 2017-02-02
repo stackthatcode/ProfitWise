@@ -58,13 +58,16 @@ namespace Push.Foundation.Web.Http
             {
                 throw new TooManyHttpRequestsException(response.Body);
             }
-            if (response.StatusCode != HttpStatusCode.OK && _configuration.ThrowExceptionOnBadHttpStatusCode)
+            if (response.StatusCode != HttpStatusCode.OK 
+                    && response.StatusCode != HttpStatusCode.Created
+                    && response.StatusCode != HttpStatusCode.Accepted
+                    && _configuration.ThrowExceptionOnBadHttpStatusCode)
             {
                 throw new BadHttpStatusCodeException(response.StatusCode, response.Body);
             }
             
             var executionTime = DateTime.Now - _hostLastExecutionTime[hostname];
-            _pushLogger.Debug(string.Format("Call performance - {0} ms", executionTime));
+            _pushLogger.Debug($"Call performance - {executionTime} ms");
             return response;
         }
 

@@ -88,6 +88,10 @@
       <Project>{6bba037f-da5c-48e3-8d74-af67b93ac37f}</Project>
       <Name>ProfitWise.Batch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Push.Foundation.Utilities\Push.Foundation.Utilities.csproj">
+      <Project>{4E08819B-BAB3-46EE-9479-141AF7A4057D}</Project>
+      <Name>Push.Foundation.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Push.Foundation.Web\Push.Foundation.Web.csproj">
       <Project>{09B408FF-DD25-46D4-ABE6-012BAAC51296}</Project>
       <Name>Push.Foundation.Web</Name>

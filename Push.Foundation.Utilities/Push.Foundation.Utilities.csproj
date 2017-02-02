@@ -91,6 +91,7 @@
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\TimeFormatExtensions.cs" />
     <Compile Include="Helpers\TimeZoneParsingExtensions.cs" />
+    <Compile Include="Json\JsonExtensions.cs" />
     <Compile Include="Logging\ConsoleAndDebugLogger.cs" />
     <Compile Include="Logging\ExtensionMethods.cs" />
     <Compile Include="Logging\Formatters.cs" />

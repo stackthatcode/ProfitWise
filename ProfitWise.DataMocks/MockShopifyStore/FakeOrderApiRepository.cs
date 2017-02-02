@@ -81,5 +81,10 @@ namespace ProfitWise.DataMocks
         {
             return Orders.Skip((page - 1)*limit).Take(limit).ToList();
         }
+
+        public void Insert(string orderJson)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

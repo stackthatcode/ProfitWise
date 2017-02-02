@@ -6,6 +6,7 @@ using Push.Shopify.HttpClient;
 using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 using System;
+using Push.Foundation.Utilities.Json;
 
 namespace ProfitWise.Test.OrderLoader
 {
@@ -17,8 +18,8 @@ namespace ProfitWise.Test.OrderLoader
         {
             var container = ProfitWise.Batch.AutofacRegistration.Build();
 
-            // Aleks: var userId = "7ab46e72-3b1c-4db1-88d4-f8a6b8f3e57a";
-            var userId = "c5223b47-aa25-4261-9639-68d749bdc38b";
+            var userId = "7ab46e72-3b1c-4db1-88d4-f8a6b8f3e57a";
+            // Jeremy: var userId = "c5223b47-aa25-4261-9639-68d749bdc38b";
 
             using (var scope = container.BeginLifetimeScope())
             {
@@ -35,6 +36,7 @@ namespace ProfitWise.Test.OrderLoader
                 };
 
                 var productApiRepository = factory.MakeProductApiRepository(credentials);
+                var orderApiRepository = factory.MakeOrderApiRepository(credentials);
 
                 var filter = new ProductFilter();
                 var products = productApiRepository.Retrieve(filter);
@@ -42,11 +44,50 @@ namespace ProfitWise.Test.OrderLoader
 
                 // Step #2 - prepare a plan to upload random Orders
 
+                var numOrders = 5000;
+
+
+                var order = new
+                {
+                    order = new
+                    {
+                        line_items = new[]
+                        {
+                            new
+                            {
+                                title = "Product title",
+                                price = 74.99,
+                                grams = "1300",
+                                quantity = 3
+                            }
+                        },
+                        customer = new {
+                            id = 5341483533
+                        },
+                        financial_status = "paid",
+                        transactions = new []
+                        {
+			                new {
+				                test = "true",
+				                kind = "sale",
+				                status = "success",
+				                amount = 238.47m
+                            }
+		                 },
+                         total_tax = "0",
+                         currency = "USD"
+                    }
+                };
+
+                var json = order.SerializeToJson();
+                System.IO.File.WriteAllText(@"C:\Dev\ProfitWise\Logs\jsondump.txt", json);
+                orderApiRepository.Insert(json);
+
+                return;
 
                 //Create 5000 orders
-                for (int i = 1; i < 5000; i = i + 1)
+                for (int i = 1; i < numOrders; i = i + 1)
                 {
-
                     var randomDate = RandomDay();
 
                     Random rnd = new Random();
@@ -61,55 +102,27 @@ namespace ProfitWise.Test.OrderLoader
 
                         //Pick random product index
                         var productNum = rnd.Next(0, numProducts-1);
+                        var product = products[productNum];
 
                         //Pick random variant index from selected product
-                        var variantNum = rnd.Next(0, products[productNum].Variants.Count-1);
+                        var variantNum = rnd.Next(0, product.Variants.Count-1);
+                        var variant = product.Variants[variantNum];
 
                         //Set values to be inserted into order line item
-                        var variantId = products[productNum].Variants[variantNum].Id;
-                        var price = products[productNum].Variants[variantNum].Price;
-                        var sku = products[productNum].Variants[variantNum].Sku;
-                        var title = products[productNum].Variants[variantNum].Title;
-
-
-
+                        var variantId = variant.Id;
+                        var price = variant.Price;
+                        var sku = variant.Sku;
+                        var title = variant.Title;
                     }
-
                 }
 
 
                 // Step #3 - Insert Orders into Shopify API
+                
 
                 //This is a sample of what we need to generate:
                 //
-                //POST / admin / orders.json
-                //{
-                //  "order": {
-                //             "line_items": [
-                //                          {
-                //                            "title": "Product title",
-                //                            "price": 74.99,
-                //                            "grams": "1300",
-                //                            "quantity": 3,
-                //                                         ]
-                //                          }
-                //                            ],
-                //                                   "customer": {
-                //                                "id": 5341483533
-                //                                          },
-                //                              "financial_status": "paid"
-                //    "transactions": [
-                //      {
-                //		  "test": "true",
-                //        "kind": "sale",
-                //        "status": "success",
-                //        "amount": 238.47
-                //      }
-                //                     ],
-                //    "total_tax": 0.0,
-                //    "currency": "USD"
-                //   }
-                //}
+
 
 
 

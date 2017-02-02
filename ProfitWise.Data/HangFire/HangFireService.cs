@@ -1,3 +1,4 @@
+using System;
 using System.Configuration;
 using Hangfire;
 using ProfitWise.Data.Factories;
@@ -26,6 +27,14 @@ namespace ProfitWise.Data.HangFire
         private readonly string
             _cleanupServiceInterval = ConfigurationManager.AppSettings
                 .GetAndTryParseAsString("CleanupServiceInterval", "* * * * *");
+
+        private readonly string
+            _machineTimeZone = ConfigurationManager.AppSettings
+                .GetAndTryParseAsString("Machine_TimeZone", "(GMT-06:00) Central Time (US &amp; Canada)");
+
+        private TimeZoneInfo HangFireTimeZone =>
+            TimeZoneInfo.FindSystemTimeZoneById(_machineTimeZone) ??
+            TimeZoneInfo.Local;
 
 
         public HangFireService(

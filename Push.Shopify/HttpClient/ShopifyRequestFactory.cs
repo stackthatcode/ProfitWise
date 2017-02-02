@@ -1,8 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Text;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Http;
-using Push.Utilities.Helpers;
 
 namespace Push.Shopify.HttpClient
 {
@@ -19,6 +20,22 @@ namespace Push.Shopify.HttpClient
         {
             var request = FactoryWorker(credentials, path);
             request.Method = "GET";
+            return request;
+        }
+
+        public HttpWebRequest HttpPost(ShopifyCredentials credentials, string path, string content)
+        {
+            var request = FactoryWorker(credentials, path);
+            request.Method = "POST";
+
+            var byteArray = Encoding.ASCII.GetBytes(content);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json";
+
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+
             return request;
         }
 
