@@ -9,19 +9,53 @@ namespace ProfitWise.Batch
 {
     class Program
     {
+        private const string HangFireBackgroundServiceOption = "1";
+        private const string ScheduleInitialShopRefreshOption = "2";
+        private const string ScheduleBackgroundSystemJobsOption = "3";
+
         static void Main(string[] args)
         {
-            //var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
-            //OrderRefreshProcess(userId);
+            Console.WriteLine("ProfitWise.Batch v1.0 - Push Automated Commerce LLC");
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Console.WriteLine("");
 
-            //var userId = "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f";
-            //ScheduleInitialShopRefresh(userId);            
 
-            //ScheduleBackgroundSystemJobs();
+            var choice = SolicitUserInput();
 
-            HangFireBackgroundService();
+            if (choice.Trim() == HangFireBackgroundServiceOption)
+            {
+                HangFireBackgroundService();
+                return;
+            }
+            if (choice.Trim() == ScheduleBackgroundSystemJobsOption)
+            {
+                ScheduleBackgroundSystemJobs();
+                return;
+            }
+            if (choice.Trim() == ScheduleInitialShopRefreshOption)
+            {
+                ScheduleInitialShopRefresh();
+                return;
+            }
+
+            Console.WriteLine("Invalid option - exiting. Bye!");
         }
 
+        public static void ExitWithAnyKey()
+        {
+            Console.WriteLine("Hit any key to exit... FIN");
+            Console.ReadKey();
+        }
+
+        public static string SolicitUserInput()
+        {
+            Console.WriteLine("Please select from the following options and hit enter");
+            Console.WriteLine($"{HangFireBackgroundServiceOption} - Run HangFire Background Service");
+            Console.WriteLine($"{ScheduleInitialShopRefreshOption} - Schedule an Initial Shop Refresh");
+            Console.WriteLine($"{ScheduleBackgroundSystemJobsOption} - Schedule the default ProfitWise System Jobs");
+            Console.WriteLine("");
+            return Console.ReadLine();
+        }
 
         public static void ScheduleBackgroundSystemJobs()
         {
@@ -32,19 +66,27 @@ namespace ProfitWise.Batch
                 service.ScheduleExchangeRateRefresh();
                 service.ScheduleSystemCleanupProcess();
 
-                Console.ReadLine();
+                ExitWithAnyKey();
             }
         }
 
-        public static void ScheduleInitialShopRefresh(string userId)
+        public static void ScheduleInitialShopRefresh()
         {
+            Console.WriteLine("");
+            Console.WriteLine("Please enter the User Id:");
+            var userId = Console.ReadLine();
+            userId = userId == "" ? "ff692d3d-26ef-4a0f-aa90-0e24b4cfe26f" : userId;
+            Console.WriteLine($"Using User Id: {userId}");
+
             var container = Bootstrapper.ConfigureApp(false);
             using (var scope = container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<HangFireService>();
                 service.TriggerInitialShopRefresh(userId);
-                Console.ReadLine();
+                
             }
+
+            ExitWithAnyKey(); 
         }
         
         public static void HangFireBackgroundService()

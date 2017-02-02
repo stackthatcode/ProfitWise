@@ -33,7 +33,7 @@ namespace ProfitWise.Data.HangFire
                 .GetAndTryParseAsString("Machine_TimeZone", "(GMT-06:00) Central Time (US &amp; Canada)");
 
         private TimeZoneInfo HangFireTimeZone =>
-            TimeZoneInfo.FindSystemTimeZoneById(_machineTimeZone) ??
+            //TimeZoneInfo.FindSystemTimeZoneById(_machineTimeZone) ??  // Doesn't work???
             TimeZoneInfo.Local;
 
 
@@ -66,7 +66,7 @@ namespace ProfitWise.Data.HangFire
 
             RecurringJob
                 .AddOrUpdate<ShopRefreshProcess>(
-                    jobId, x => x.RoutineShopRefresh(userId), _shopRefreshInterval);
+                    jobId, x => x.RoutineShopRefresh(userId), _shopRefreshInterval, HangFireTimeZone);
 
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
@@ -80,7 +80,7 @@ namespace ProfitWise.Data.HangFire
             _logger.Info($"Scheduling ExchangeRateRefreshProcess");
 
             RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(
-                    jobId, x => x.Execute(), _exchangeRefreshInterval);
+                    jobId, x => x.Execute(), _exchangeRefreshInterval, HangFireTimeZone);
         }
 
         public void ScheduleSystemCleanupProcess()
@@ -89,7 +89,7 @@ namespace ProfitWise.Data.HangFire
             _logger.Info($"Scheduling SystemCleanupProcess");
 
             RecurringJob.AddOrUpdate<SystemCleanupProcess>(
-                    jobId, x => x.Execute(), _cleanupServiceInterval);
+                    jobId, x => x.Execute(), _cleanupServiceInterval, HangFireTimeZone);
         }
 
         public void KillRecurringJob(string jobId)
