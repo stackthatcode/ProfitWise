@@ -65,10 +65,13 @@ namespace ProfitWise.Test.OrderLoader
                         //Pick random variant index from selected product
                         var variantNum = rnd.Next(0, products[productNum].Variants.Count-1);
 
-                        //Set VariantId to be inserted into order line item
+                        //Set values to be inserted into order line item
                         var variantId = products[productNum].Variants[variantNum].Id;
+                        var price = products[productNum].Variants[variantNum].Price;
+                        var sku = products[productNum].Variants[variantNum].Sku;
+                        var title = products[productNum].Variants[variantNum].Title;
 
-                        
+
 
                     }
 
