@@ -15,7 +15,7 @@ namespace Push.Shopify.Model
         public OrderFilter()
         {
             Status = "any";
-            OrderByClause = "created_at asc";
+            OrderByClause = "processed_at asc";
         }
 
         private ShopifySortOrder _shopifySortOrder;
@@ -36,20 +36,20 @@ namespace Push.Shopify.Model
 
         public string Status { get; set;  }
 
-        public DateTime? CreatedAtMin { get; set; }
-        public DateTime? CreatedAtMax { get; set; }
+        public DateTime? ProcessedAtMin { get; set; }
+        public DateTime? ProcessedAtMax { get; set; }
         public DateTime? UpdatedAtMin { get; set; }
 
 
         public override string ToString()
         {
-            return $"Order Filter dump: CreatedAtMin: {CreatedAtMin} - CreatedAtMax: {CreatedAtMax} - UpdatedAtMin: {UpdatedAtMin}";
+            return $"Order Filter dump: ProcessedAtMin: {ProcessedAtMin} - ProcessedAtMax: {ProcessedAtMax} - UpdatedAtMin: {UpdatedAtMin}";
         }
 
 
-        public OrderFilter OrderByCreatedAtDescending()
+        public OrderFilter OrderByProcessAtDescending()
         {
-            _orderByClause = "created_at desc";
+            _orderByClause = "processed_at desc";
             _shopifySortOrder = ShopifySortOrder.Descending;
             return this;
         }
@@ -70,15 +70,15 @@ namespace Push.Shopify.Model
                     .Add("status", this.Status)
                     .Add("order", this.OrderByClause);
 
-            if (CreatedAtMin != null)
+            if (ProcessedAtMin != null)
             {
-                builder.Add("created_at_min",
-                    CreatedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+                builder.Add("processed_at_min",
+                    ProcessedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
             }
-            if (CreatedAtMax != null)
+            if (ProcessedAtMax != null)
             {
-                builder.Add("created_at_max",
-                     CreatedAtMax.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+                builder.Add("processed_at_max",
+                     ProcessedAtMax.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
             }
             if (UpdatedAtMin != null)
             {

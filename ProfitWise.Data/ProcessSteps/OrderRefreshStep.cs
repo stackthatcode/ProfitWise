@@ -126,10 +126,10 @@ namespace ProfitWise.Data.ProcessSteps
 
             var filter = new OrderFilter()
                 {
-                    CreatedAtMin = createdAtMinShopifyTime,
-                    CreatedAtMax = createdAtMaxShopifyTime,
+                    ProcessedAtMin = createdAtMinShopifyTime,
+                    ProcessedAtMax = createdAtMaxShopifyTime,
                 }
-                .OrderByCreatedAtDescending();
+                .OrderByProcessAtDescending();
 
             RefreshOrders(filter, shopCredentials, shop);
 
@@ -157,8 +157,8 @@ namespace ProfitWise.Data.ProcessSteps
 
             var filter = new OrderFilter()
                 {
-                    CreatedAtMin = createdAtMinShopifyTime
-                }.OrderByCreatedAtDescending();
+                    ProcessedAtMin = createdAtMinShopifyTime
+                }.OrderByProcessAtDescending();
 
 
             // Set the Batch State Order End point to now... 

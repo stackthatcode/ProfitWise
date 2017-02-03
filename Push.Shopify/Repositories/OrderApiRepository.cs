@@ -83,7 +83,7 @@ namespace Push.Shopify.Repositories
                             Name = order.name,
                             SubTotal = order.subtotal_price,
                             TotalTax = order.total_tax,
-                            CreatedAt = order.created_at,
+                            CreatedAt = order.processed_at,
                             UpdatedAt = order.updated_at,
                             LineItems = new List<OrderLineItem>(),
                             Refunds = new List<Refund>(),

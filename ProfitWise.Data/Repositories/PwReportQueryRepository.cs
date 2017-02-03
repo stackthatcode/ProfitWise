@@ -251,10 +251,10 @@ namespace ProfitWise.Data.Repositories
         public List<GroupedTotal> RetreiveTotalsByVariant(TotalQueryContext queryContext)
         {
             var query =
-                @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.VariantTitle) AS GroupingName, " +
+                @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
                 //@"GROUP BY t1.PwMasterVariantId, GroupingName " + // MySQL
-                @"GROUP BY t1.PwMasterVariantId, CONCAT(t1.Sku, ' - ', t1.VariantTitle) " +
+                @"GROUP BY t1.PwMasterVariantId, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) " +
                 OrderingAndPagingForTotals(queryContext);
 
             return Connection

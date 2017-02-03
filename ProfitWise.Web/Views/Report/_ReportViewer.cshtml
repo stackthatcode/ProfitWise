@@ -221,6 +221,7 @@
                                 data: { ColumnIndex: 3, ColumnName: 'CoGS', Model: SortingModel } }"></th>
                     <th data-bind="template: { name: 'Sortable-Column-Header',
                                 data: { ColumnIndex: 4, ColumnName: 'Profit', Model: SortingModel } }"></th>
+                    <th>Profit %</th>
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: Data">
@@ -237,6 +238,10 @@
                               data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.Currency())"></span></td>
                     <td><span class="overflow-gracefully" 
                               data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.Currency())"></span></td>
+                    <td>
+                        <span class="overflow-gracefully"
+                              data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage)"></span>%
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -983,7 +988,7 @@
 
         // TODO - add configurable interval
         self.InitializeLastAccessedCheck = function () {
-            setInterval(self.LastAccessedCheck, 5000);
+            //setInterval(self.LastAccessedCheck, 15000);
         };
 
         self.LastAccessedCheck = function () {

@@ -129,7 +129,8 @@ namespace ProfitWise.Web.Controllers
 
         [HttpPost]
         public ActionResult Detail(
-                long reportId, ReportGrouping grouping, ColumnOrdering ordering, int pageNumber = 1, int pageSize = 50)
+                long reportId, ReportGrouping grouping, ColumnOrdering ordering, 
+                int pageNumber = 1, int pageSize = 50)
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);           
@@ -154,6 +155,17 @@ namespace ProfitWise.Web.Controllers
                 };
 
                 var totals = queryRepository.RetrieveTotalsByContext(queryContext);
+
+                var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
+                var allProfit = executiveSummary.TotalProfit;
+
+                // Compute Profit % for each line item
+                foreach (var groupTotal in totals)
+                {
+                    groupTotal.ProfitPercentage =
+                        allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
+                }
+
                 var totalCounts = queryRepository.RetreiveTotalCounts(queryContext);
 
                 // Top-level series...

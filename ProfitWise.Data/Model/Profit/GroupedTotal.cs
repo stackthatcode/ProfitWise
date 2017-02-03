@@ -45,36 +45,40 @@ namespace ProfitWise.Data.Model.Profit
         public int TotalQuantitySold { get; set; }
         public int TotalOrders { get; set; }
         public decimal AverageMargin { get; set; }
+
+        // Needs to be manually computed
+        public decimal ProfitPercentage { get; set; }
     }
 
     public static class GroupedTotalExtensions
     {
         public static List<GroupedTotal> 
                     AppendAllOthersAsDifferenceOfSummary(
-                        this List<GroupedTotal> input,
-                        GroupedTotal summary, 
+                        this List<GroupedTotal> visibleItems,
+                        GroupedTotal summaryOfAllItems, 
                         string allOthersName = "All Others")
         {
-            if (input.Count < 10)
+            if (visibleItems.Count < 10)
             {
-                return input;
+                return visibleItems;
             }
 
-            if (input.Sum(x => x.TotalRevenue) == summary.TotalRevenue &&
-                input.Sum(x => x.TotalCogs) == summary.TotalCogs &&
-                input.Sum(x => x.TotalQuantitySold) == summary.TotalQuantitySold)
+            if (visibleItems.Sum(x => x.TotalRevenue) == summaryOfAllItems.TotalRevenue &&
+                visibleItems.Sum(x => x.TotalCogs) == summaryOfAllItems.TotalCogs &&
+                visibleItems.Sum(x => x.TotalQuantitySold) == summaryOfAllItems.TotalQuantitySold)
             {
-                return input;
+                return visibleItems;
             }
 
-            input.Add(new GroupedTotal()
+            visibleItems.Add(new GroupedTotal()
             {
                 GroupingName = allOthersName,
-                TotalRevenue = summary.TotalRevenue - input.Sum(x => x.TotalRevenue),
-                TotalCogs = summary.TotalCogs - input.Sum(x => x.TotalCogs),
-                TotalQuantitySold = summary.TotalQuantitySold - input.Sum(x => x.TotalQuantitySold)
+                TotalRevenue = summaryOfAllItems.TotalRevenue - visibleItems.Sum(x => x.TotalRevenue),
+                TotalCogs = summaryOfAllItems.TotalCogs - visibleItems.Sum(x => x.TotalCogs),
+                TotalQuantitySold = summaryOfAllItems.TotalQuantitySold - visibleItems.Sum(x => x.TotalQuantitySold),
+                TotalProfit = summaryOfAllItems.TotalProfit - visibleItems.Sum(x => x.TotalProfit),
             });
-            return input;
+            return visibleItems;
         }
 
         public static List<GroupedTotal> AssignGrouping(this List<GroupedTotal> input, ReportGrouping grouping)
