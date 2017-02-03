@@ -105,7 +105,7 @@
             <p>Add or remove filters from Report, then hit "Ok" to view the updated results.</p>
 
             <div style="overflow-y:auto; height:300px;">
-                <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen', data: FilterSummaryModel }"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen', data: FilterBullpenModel }"></div>
             </div>
         </div>
     </div>
@@ -192,9 +192,9 @@
         self.SkuFilterModel.RegisterSearchTextFunction(
                 function (item, searchText) {
                     return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
-                                    ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
-                                    ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
-                                    ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
                 });        
 
         var filterModelByFilterType = function (filterType) {
@@ -218,10 +218,10 @@
             return self.SelectedFilterModel() ? self.SelectedFilterModel().FilterType() : "";
         });
 
-        // Filter Summary and Selection Preview models...
+        // Filter Bullpen and Selection Preview models...
         self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();        
-        self.FilterSummaryModel = new ProfitWiseWidgets.FilterSummaryModel();
-        self.FilterSummaryModel.RegisterRemoveCallback(function (filterType, key) {
+        self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
+        self.FilterBullpenModel.RegisterRemoveCallback(function (filterType, key) {
             var filterModel = filterModelByFilterType(filterType);
             filterModel
                 .SelectionModel
@@ -265,7 +265,7 @@
         self.RefreshFilterSummaryAndCount = function (callback) {
             flow.exec(
                 function () {
-                    self.FilterSummaryModel.Refresh(this);
+                    self.FilterBullpenModel.Refresh(this);
                 },
                 function () {
                     self.ProductCountModel.Refresh(this);
@@ -279,7 +279,7 @@
 
         self.RefreshSelectionsFromSummary = function (filterType) {
             var filtersByType =
-                self.FilterSummaryModel.GetFiltersByType(filterType);
+                self.FilterBullpenModel.GetFiltersByType(filterType);
 
             var filterKeys =
                 AQ(filtersByType)
@@ -301,7 +301,7 @@
                     self.SkuFilterModel.ReportId(reportId);
 
                     self.ProductCountModel.ReportId(reportId);
-                    self.FilterSummaryModel.ReportId(reportId);
+                    self.FilterBullpenModel.ReportId(reportId);
                     
                     self.RefreshFilterSummaryAndCount(this);
                 },

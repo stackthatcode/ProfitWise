@@ -11,12 +11,12 @@
 @Html.Partial("~/Views/SharedTemplates/_DateRangePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_HighChartsFunctions.cshtml")
 
+@Html.Partial("~/Views/Report/_FilterBullpenWidget.cshtml")
 @Html.Partial("~/Views/Report/_FilterPagingWidget.cshtml")
+@Html.Partial("~/Views/Report/_FilterTemplates.cshtml")
 @Html.Partial("~/Views/Report/_ProductCountWidget.cshtml")
-@Html.Partial("~/Views/Report/_ReportFilterWidgets.cshtml")
-@Html.Partial("~/Views/Report/_ReportEditorFilters.cshtml")
-@Html.Partial("~/Views/Report/_ReportViewer.cshtml")
 @Html.Partial("~/Views/Report/_ReportEditor.cshtml")
+@Html.Partial("~/Views/Report/_ReportViewer.cshtml")
 
 <style>
     .modal-backdrop { z-index: 900; }
@@ -43,6 +43,7 @@
     // Requires a reference to a InFilterEditMode observable
     ProfitWiseWidgets.ReportManagerModel = function () {
         var self = this;
+
         self.InFilterEditMode = ko.observable(false);
 
         self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel();
@@ -63,10 +64,6 @@
             self.InFilterEditMode(false);
         };
 
-        self.RegisterSelectReportCallback = function (callback) {
-            self.ReportViewerModel.SelectReportCallback = callback;
-        };
-        
         self.Initialize = function (callback) {
             self.InFilterEditMode(false);
             flow.exec(

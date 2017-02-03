@@ -2,12 +2,6 @@
 @using ProfitWise.Data.Model.Reports
 @using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
-@using Push.Foundation.Web.Json
-
-@{
-    var commonContext = Context.PullCommonContext();
-    var dateRangeDefault = commonContext.IdentitySnapshot.PwShop.DateRangeDefault;
-}
 
 <style>
     table#product-types td {
@@ -89,12 +83,13 @@
         <div class="standard-header-sleeve" style="height: 190px;">
             
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header std-inner-padding top-border-facade" style="overflow: visible; padding-top:20px;">
+            <div class="standard-header std-inner-padding top-border-facade" 
+                 style="overflow: visible; padding-top:20px;">
 
                 <div class="col-xs-6 no-side-padding">
-                    <div data-bind="if: ReportViewerContext.ReportLoaded()">
+                    <div data-bind="if: ReportInterfaceModel.ReportLoaded()">
                         <div data-bind="template: { name: 'Report-Viewer-Context-Summary', 
-                                                    data: $data.ReportViewerContext }">
+                                                    data: $data.ReportInterfaceModel }">
                         </div>
                     </div>
                 </div>
@@ -107,7 +102,7 @@
                                                             SelectReportClick: $data.SelectReportClick} }">
                     </div>
                     
-                    <div class="pull-right" data-bind="with: ReportViewerContext">
+                    <div class="pull-right" data-bind="with: ReportInterfaceModel">
                         <div data-bind="if: OnlySaveAsAllowed">
 
                             <div class="pull-right" style="margin-right: 7px;">
@@ -136,7 +131,7 @@
 
                     <div style="clear: both; height: 20px;"></div>                    
                     
-                    <div id="report-date-picker" class="pull-right" data-bind="with: ReportViewerContext">
+                    <div id="report-date-picker" class="pull-right" data-bind="with: ReportInterfaceModel">
                         <div data-bind="template: { name: 'Date-Range-Picker-Widget-2', 
                                                     data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
                     </div>
@@ -154,8 +149,6 @@
 
     <div id="report-viewer-body" class="container page-content-sleeve" style="min-width:1200px;">
         <div class="page-content std-inner-padding">
-
-            <!-- TODO : allow injection of external template -->
             <div style="position: relative; width: 100%;">
                 <div data-bind="template: { name: 'Report-Viewer-Dashboard' }"></div>           
             </div>
@@ -169,13 +162,13 @@
         </div>
     </div>
     <div data-bind="if: ReportSummaryContext.DatasetLoaded() && SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportViewerContext -->
+        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
         <div style="min-height: 600px" 
              data-bind="template: { name: 'Report-Viewer-Summary-Section', data: $data }">
         </div>
     </div>
     <div data-bind="if: ReportSummaryContext.DatasetLoaded() && !SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportViewerContext -->
+        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
         <div style="min-height: 600px"
              data-bind="template: { name: 'Report-Viewer-Detail-Section', data: $data }">
         </div>
@@ -288,11 +281,11 @@
             <div style="text-align:center;">
                 <h4 style="font-weight:700; color:#AAA;">Profits by Time Period</h4>
                 <span>Grouped by </span>
-                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.GroupingPopoverModel }">
+                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportInterfaceModel.GroupingPopoverModel }">
                 </span>
                 <!--<span>/</span>
                 <span>Ordered by </span>
-                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportViewerContext.OrderingPopoverModel }">
+                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportInterfaceModel.OrderingPopoverModel }">
                 </span>-->
             </div>
             <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
@@ -431,7 +424,7 @@
 
             <div style="height: 25px;">
                 <span>Filtered by</span>
-                <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: FilterSummaryModel }"></span>
+                <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: FilterBullpenModel }"></span>
             </div>
         </div>
     </div>
@@ -474,7 +467,7 @@
 </script>
 
 <!-- View Model -->
-<script id="Report-Viewer-Context">
+<script id="Report-Interface-Model">
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
     ProfitWiseWidgets.ReportGroupingOptionsFactory = function() {
@@ -485,7 +478,7 @@
         return @Html.Raw(@PwReportExtensions.AllOrderingToNamedObject().SerializeToJson());
     };
 
-    ProfitWiseWidgets.ReportViewerContext = function() {
+    ProfitWiseWidgets.ReportInterfaceModel = function() {
         var self = this;
 
         self.ReportId = ko.observable();
@@ -497,8 +490,8 @@
         self.IsSystemReport = ko.observable(false);
 
         self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
-        self.FilterSummaryModel = new ProfitWiseWidgets.FilterSummaryModel();
-        self.FilterSummaryModel.SummaryClickCallback = function() {
+        self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
+        self.FilterBullpenModel.SummaryClickCallback = function() {
                 self.EditFilterClickCallback();
             }
 
@@ -570,44 +563,26 @@
             self.ReportId(current.PwReportId);
             self.Name(current.Name);
 
-            // Store in the local model as Javascript Date objects           
-            var dateRangeDefaultId = @dateRangeDefault;
-            var overallProfitabilityId = @PwSystemReportFactory.OverallProfitabilityId;
-
-            if (current.PwReportId == overallProfitabilityId) {
-                var dateRange = ProfitWiseWidgets.DateRangeById(dateRangeDefaultId);
-
-                console.log(dateRange);
-
-                self.DateRange({
-                    startdate: dateRange.StartDate.parseToJavascriptDate(),
-                    enddate: dateRange.EndDate.parseToJavascriptDate(),
-                });
-            } else {
-                self.DateRange({
-                    startdate: current.StartDate.parseToJavascriptDate(),
-                    enddate: current.EndDate.parseToJavascriptDate()
-                });
-            };
+            // Store in the local model as Javascript Date objects, parsed from C# DateTime string        
+            self.DateRange({
+                startdate: current.StartDate.parseToJavascriptDate(),
+                enddate: current.EndDate.parseToJavascriptDate()
+            });
 
             self.CopyForEditing(current.CopyForEditing);
             self.IsSystemReport(current.IsSystemReport);
+            self.CopyOfSystemReport(current.CopyForEditing && original.IsSystemReport);
 
             self.GroupingPopoverModel.Selection(current.GroupingId);
             self.OrderingPopoverModel.Selection(current.OrderingId);
 
             self.ProductCountModel.ReportId(current.PwReportId);
-            self.FilterSummaryModel.ReportId(current.PwReportId);
-
-            self.CopyOfSystemReport(current.CopyForEditing && original.IsSystemReport);
+            self.FilterBullpenModel.ReportId(current.PwReportId);
         };
 
         self.Update = function(callback) {
             flow.exec(
                 function () {
-                    //console.log("Update");
-                    //console.log(self.DateRange());
-
                     var ajax = new ProfitWiseFunctions.Ajax();
                     var data = {
                         reportId: self.ReportId(),
@@ -641,7 +616,7 @@
                     self.ProductCountModel.Refresh(this);
                 },
                 function () {
-                    self.FilterSummaryModel.Refresh(this);
+                    self.FilterBullpenModel.Refresh(this);
                 },
                 function () {
                     if (callback) {
@@ -888,10 +863,10 @@
                             item.CurrentlySelected =
                                 ko.computed(
                                     function () {
-                                        if (!self.ReportViewerContext.ReportLoaded()) {
+                                        if (!self.ReportInterfaceModel.ReportLoaded()) {
                                             return false;
                                         }
-                                        return self.ReportViewerContext.ReportId() == item.PwReportId;
+                                        return self.ReportInterfaceModel.ReportId() == item.PwReportId;
                                     });
                         });
 
@@ -902,14 +877,12 @@
                 });
         };
 
-        // Data for the Top Header
-        self.ReportViewerContext = new ProfitWiseWidgets.ReportViewerContext();
-
-        self.ReportViewerContext.TriggerReportListRefresh = function (callback) {
+        // Model that contains all the functionality for the top header
+        self.ReportInterfaceModel = new ProfitWiseWidgets.ReportInterfaceModel();
+        self.ReportInterfaceModel.TriggerReportListRefresh = function (callback) {
             self.RefreshReportList(callback);
         };
-
-        self.ReportViewerContext.EditFilterClickCallback = function () {
+        self.ReportInterfaceModel.EditFilterClickCallback = function () {
             self.EditReportClick();
         };
 
@@ -922,7 +895,7 @@
         };
 
         self.RefreshReportData = function (callback) {
-            var reportId = self.ReportViewerContext.ReportId();
+            var reportId = self.ReportInterfaceModel.ReportId();
             if (self.SummaryActive()) {
                 self.ReportSummaryContext.LoadDataset(reportId, callback);
             } else {
@@ -931,7 +904,7 @@
             }
         };
 
-        self.ReportViewerContext.TriggerReportDataRefresh = function(reportId, callback) {
+        self.ReportInterfaceModel.TriggerReportDataRefresh = function(reportId, callback) {
              self.RefreshReportData(callback);
         }
 
@@ -970,10 +943,10 @@
         self.SelectReport = function(reportId) {
             flow.exec(
                 function () {
-                    self.ReportViewerContext.LoadReport(reportId, this);
+                    self.ReportInterfaceModel.LoadReport(reportId, this);
                 },
                 function () {
-                    self.ReportViewerContext.TriggerReportDataRefresh(reportId);
+                    self.ReportInterfaceModel.TriggerReportDataRefresh(reportId);
                 }
             );
         };
@@ -982,10 +955,10 @@
         self.EditReportClick = function () {
             flow.exec(
                 function() {
-                    self.ReportViewerContext.MakeCopyForEditing(this);
+                    self.ReportInterfaceModel.MakeCopyForEditing(this);
                 },
                 function() {
-                    self.EditReportCallback(self.ReportViewerContext.ReportId());
+                    self.EditReportCallback(self.ReportInterfaceModel.ReportId());
                 });
         };
 

@@ -420,7 +420,7 @@
     <Content Include="Views\Report\_FilterPagingWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_ReportEditorFilters.cshtml" />
+    <Content Include="Views\Report\_FilterTemplates.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\_ProductCountWidget.cshtml" />
@@ -432,7 +432,7 @@
     <Content Include="Views\Report\_ReportViewer.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_ReportFilterWidgets.cshtml" />
+    <Content Include="Views\Report\_FilterBullpenWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\SharedTemplates\_DateRangePickerWidget.cshtml" />
