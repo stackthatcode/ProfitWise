@@ -100,12 +100,12 @@
         <div class="col-xs-5 no-side-padding" style="background-color:white; height: 300px; padding-left:45px; ">
             <div style="font-size:1.10em; height:40px; padding-top:8px; font-weight: 700;">Select Filters to add to your Report</div>
             
-            <div data-bind="template: { name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
+            <div data-bind="template: { name: 'Report-Selection-Preview', data: ProductCountModel }"></div>
 
             <p>Add or remove filters from Report, then hit "Ok" to view the updated results.</p>
 
             <div style="overflow-y:auto; height:300px;">
-                <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen', data: ReportFilterSummaryModel }"></div>
+                <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen', data: FilterSummaryModel }"></div>
             </div>
         </div>
     </div>
@@ -219,14 +219,14 @@
         });
 
         // Filter Summary and Selection Preview models...
-        self.ReportSelectionCountPreviewModel = new ProfitWiseWidgets.ReportSelectionCountPreviewModel();        
-        self.ReportFilterSummaryModel = new ProfitWiseWidgets.ReportFilterSummaryModel();
-        self.ReportFilterSummaryModel.RegisterRemoveCallback(function (filterType, key) {
+        self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();        
+        self.FilterSummaryModel = new ProfitWiseWidgets.FilterSummaryModel();
+        self.FilterSummaryModel.RegisterRemoveCallback(function (filterType, key) {
             var filterModel = filterModelByFilterType(filterType);
             filterModel
                 .SelectionModel
                 .SetCheckedItemByKey(key, false);
-            self.ReportSelectionCountPreviewModel.Refresh();
+            self.ProductCountModel.Refresh();
         });
 
         // Assumes the following interfaces: Refresh(reportId, callback), FilterType
@@ -265,10 +265,10 @@
         self.RefreshFilterSummaryAndCount = function (callback) {
             flow.exec(
                 function () {
-                    self.ReportFilterSummaryModel.Refresh(this);
+                    self.FilterSummaryModel.Refresh(this);
                 },
                 function () {
-                    self.ReportSelectionCountPreviewModel.Refresh(this);
+                    self.ProductCountModel.Refresh(this);
                 },
                 function () {
                     if (callback) {
@@ -279,7 +279,7 @@
 
         self.RefreshSelectionsFromSummary = function (filterType) {
             var filtersByType =
-                self.ReportFilterSummaryModel.GetFiltersByType(filterType);
+                self.FilterSummaryModel.GetFiltersByType(filterType);
 
             var filterKeys =
                 AQ(filtersByType)
@@ -300,8 +300,8 @@
                     self.MasterProductFilterModel.ReportId(reportId);
                     self.SkuFilterModel.ReportId(reportId);
 
-                    self.ReportSelectionCountPreviewModel.ReportId(reportId);
-                    self.ReportFilterSummaryModel.ReportId(reportId);
+                    self.ProductCountModel.ReportId(reportId);
+                    self.FilterSummaryModel.ReportId(reportId);
                     
                     self.RefreshFilterSummaryAndCount(this);
                 },

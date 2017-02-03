@@ -25,15 +25,16 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.SelectorPopoverWidgetModel = function () {
+    ProfitWiseWidgets.SelectorPopoverModel = function (parameters) {
         var self = this;
 
-        self.OptionsText = ko.observable();
-        self.OptionsValue = ko.observable();
-        self.Options = ko.observableArray([]);
+        self.OptionsText = ko.observable(parameters.OptionsText);
+        self.OptionsValue = ko.observable(parameters.OptionsValue);
+        self.Options = ko.observableArray(parameters.Options || []);
+        self.PromptText = ko.observable();
+
         self.Selection = ko.observable();
         self.EditSelection = ko.observable();
-        self.PromptText = ko.observable();
 
         self.SelectedOption = ko.computed(function () {
             return AQ(self.Options())
@@ -46,19 +47,21 @@
             return output;
         });
 
-        self.PopOverLaunchCallback = function() { };
-
+        self.PopOverLaunchCallback = parameters.PopOverLaunchCallback;
         self.PopOverLaunch = function () {
             self.EditSelection(self.Selection());
-            self.PopOverLaunchCallback(this);
+            if (self.PopOverLaunchCallback) {
+                self.PopOverLaunchCallback(this);
+            }
         };
 
-        self.OkCallback = function() {};
-
+        self.OkCallback = parameters.OkCallback;
         self.OkButtonClick = function () {
             self.Selection(self.EditSelection());
             ProfitWiseFunctions.PopOverCloseAll();
-            self.OkCallback();
+            if (self.OkCallback) {
+                self.OkCallback();
+            }   
         };
     };
 </script>

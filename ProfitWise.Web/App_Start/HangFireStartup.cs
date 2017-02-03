@@ -9,7 +9,9 @@ namespace ProfitWise.Web
         {
             GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection");
 
-            // TODO - enable Dashboard in the Admin App
+            app.UseHangfireDashboard("/hangfire");
+
+            // TODO - add filter that only allows Admins to view
         }
     }
 }

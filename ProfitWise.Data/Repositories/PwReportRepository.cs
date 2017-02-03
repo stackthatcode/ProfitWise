@@ -153,10 +153,20 @@ namespace ProfitWise.Data.Repositories
                         EndDate = @EndDate,
                         GroupingId = @GroupingId,
                         OrderingId = @OrderingId,
-                        LastAccessedDate = @LastAccessedDate                     
+                        LastAccessedDate = getdate()                     
                         WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId;";
             Connection.Execute(query, report );
         }
+
+        public void UpdateReportLastAccessed(long reportId)
+        {
+            var query = @"UPDATE profitwisereport SET 
+                        LastAccessedDate = getdate()                     
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+
+            Connection.Execute(query, new { this.PwShopId, reportId });
+        }
+
 
         public void DeleteReport(long reportId)
         {

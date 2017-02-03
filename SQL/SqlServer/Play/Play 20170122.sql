@@ -19,7 +19,6 @@ SELECT * FROM profitwiseshop;
 
 SELECT * FROM AspNetUserClaims;
 
-
 SELECT * FROM [AspNetUsers];
 
 

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
-using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Repositories
 {

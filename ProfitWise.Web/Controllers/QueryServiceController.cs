@@ -5,7 +5,6 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
@@ -51,6 +50,8 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
+            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
+            reportRepository.UpdateReportLastAccessed(reportId);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
             var selections = repository.RetrieveProductSelections(reportId, pageNumber, pageSize);
@@ -65,6 +66,8 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
+            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
+            reportRepository.UpdateReportLastAccessed(reportId);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
             var selections = repository.RetrieveVariantSelections(reportId, pageNumber, pageSize);
@@ -73,12 +76,13 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new {Selections = selections, RecordCounts = counts});
         }
 
-
         [HttpPost]
         public ActionResult Summary(long reportId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            repository.UpdateReportLastAccessed(reportId);
+
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             using (var trans = new TransactionScope())
@@ -135,6 +139,8 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            repository.UpdateReportLastAccessed(reportId);
+
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             using (var trans = new TransactionScope())
@@ -182,20 +188,15 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
-        public string DrilldownUrlBuilder(
-                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
-        {
-            return $"/QueryService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
-                   $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&"+
-                   $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
-        }
-
         [HttpGet]
         public ActionResult Drilldown(
                 long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
+
+            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
+            reportRepository.UpdateReportLastAccessed(reportId);
 
             var keyFilters = new List<string>() {key};
             var periodType = (end - start).ToDefaultGranularity();
@@ -232,6 +233,15 @@ namespace ProfitWise.Web.Controllers
             };
 
             return new JsonNetResult(output);
+        }
+
+
+        private string DrilldownUrlBuilder(
+                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
+        {
+            return $"/QueryService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
+                   $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&" +
+                   $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
         }
 
 

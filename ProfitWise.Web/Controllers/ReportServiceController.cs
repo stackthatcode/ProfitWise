@@ -43,6 +43,9 @@ namespace ProfitWise.Web.Controllers
 
             var current = repository.RetrieveReport(reportId);
             var original = repository.RetrieveReport(current.OriginalReportId);
+
+            repository.UpdateReportLastAccessed(reportId);
+
             return new JsonNetResult(new { current = current, original = original ?? current });
         }
 
@@ -68,18 +71,18 @@ namespace ProfitWise.Web.Controllers
             }
 
             var successMessage = "Report successfully saved";
-            var sourceReport = repository.RetrieveReport(reportId);            
+            var currentReport = repository.RetrieveReport(reportId);            
 
             var finalReportId = (long?) null;
-            if (sourceReport.CopyForEditing)
+            if (currentReport.CopyForEditing)
             {
-                sourceReport.PrepareToSavePermanent(name);
-                finalReportId = sourceReport.PwReportId;
-                repository.UpdateReport(sourceReport);
+                currentReport.PrepareToSavePermanent(name);
+                finalReportId = currentReport.PwReportId;
+                repository.UpdateReport(currentReport);
 
                 if (deleteOriginal)
                 {
-                    var originalReport = repository.RetrieveReport(sourceReport.OriginalReportId);
+                    var originalReport = repository.RetrieveReport(currentReport.OriginalReportId);
                     if (!originalReport.IsSystemReport)
                     {
                         repository.DeleteReport(originalReport.PwReportId);
@@ -90,16 +93,16 @@ namespace ProfitWise.Web.Controllers
             else
             {
                 // This is not an edit copy, therefore, we'll make a copy of it
-                var copy = sourceReport.MakeCopyForEditing();
+                var copy = currentReport.MakeCopyForEditing();
                 copy.PrepareToSavePermanent(name);
                 finalReportId = repository.InsertReport(copy);
 
-                filterRepository.CloneFilters(sourceReport.PwReportId, finalReportId.Value);
+                filterRepository.CloneFilters(currentReport.PwReportId, finalReportId.Value);
 
-                if (deleteOriginal && !sourceReport.IsSystemReport)
+                if (deleteOriginal && !currentReport.IsSystemReport)
                 {
-                    repository.DeleteReport(sourceReport.PwReportId);
-                    filterRepository.DeleteFilters(sourceReport.PwReportId);
+                    repository.DeleteReport(currentReport.PwReportId);
+                    filterRepository.DeleteFilters(currentReport.PwReportId);
                 }
             }
             

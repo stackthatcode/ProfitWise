@@ -427,11 +427,11 @@
         </div>
 
         <div style="font-size: 1.0em; color: #666;">
-            <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ReportSelectionCountPreviewModel }"></div>
+            <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ProductCountModel }"></div>
 
             <div style="height: 25px;">
                 <span>Filtered by</span>
-                <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: ReportFilterSummaryModel }"></span>
+                <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: FilterSummaryModel }"></span>
             </div>
         </div>
     </div>
@@ -496,38 +496,30 @@
         self.CopyOfSystemReport = ko.observable(false);
         self.IsSystemReport = ko.observable(false);
 
-        self.ReportSelectionCountPreviewModel =
-            new ProfitWiseWidgets.ReportSelectionCountPreviewModel();
+        self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
+        self.FilterSummaryModel = new ProfitWiseWidgets.FilterSummaryModel();
+        self.FilterSummaryModel.SummaryClickCallback = function() {
+                self.EditFilterClickCallback();
+            }
 
-        self.ReportFilterSummaryModel = new ProfitWiseWidgets.ReportFilterSummaryModel();
-        self.ReportFilterSummaryModel.SummaryClickCallback = function() {
-            self.EditFilterClickCallback();
-        }
+        self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
+                OptionsValue: "GroupingId",
+                OptionsText: "Description",
+                Options : ProfitWiseWidgets.ReportGroupingOptionsFactory(),
+                PromptText: "Select a method for grouping data",
+                OkCallback: function() { self.Update(); },
+                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
+            });
 
-        self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
-        self.GroupingPopoverModel.Options(ProfitWiseWidgets.ReportGroupingOptionsFactory());
-        self.GroupingPopoverModel.PromptText("Select a method for grouping data");
-        self.GroupingPopoverModel.OptionsValue("GroupingId");
-        self.GroupingPopoverModel.OptionsText("Description");
-        self.GroupingPopoverModel.OkCallback = function() {
-            self.Update();
-        };
-        self.GroupingPopoverModel.PopOverLaunchCallback = function() {
-            self.PrepareCopyForEditing();
-        };
+        self.OrderingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
+                OptionsValue: "OrderingId",
+                OptionsText: "Description",
+                Options : ProfitWiseWidgets.ReportOrderingOptionsFactory(),
+                PromptText: "Select a method for ordering data",
+                OkCallback: function() { self.Update(); },
+                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
+            });
 
-        self.OrderingPopoverModel = new ProfitWiseWidgets.SelectorPopoverWidgetModel();
-        self.OrderingPopoverModel.Options(ProfitWiseWidgets.ReportOrderingOptionsFactory());
-        self.OrderingPopoverModel.PromptText("Select a method for ordering data");
-        self.OrderingPopoverModel.OptionsValue("OrderingId");
-        self.OrderingPopoverModel.OptionsText("Description");
-        self.OrderingPopoverModel.OkCallback = function() {
-            self.Update();
-        };
-
-        self.OrderingPopoverModel.PopOverLaunchCallback = function() {
-            self.PrepareCopyForEditing();
-        };
 
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
@@ -540,7 +532,7 @@
         self.DateRangePickerCallback = function(dateRange) {
             flow.exec(
                 function() {
-                    self.PrepareCopyForEditing(this);
+                    self.MakeCopyForEditing(this);
                 },
                 function() {
                     self.DateRange(dateRange);
@@ -549,7 +541,7 @@
             );
         };
 
-        self.PrepareCopyForEditing = function(callback) {
+        self.MakeCopyForEditing = function(callback) {
             flow.exec(
                 function() {
                     if (self.CopyForEditing()) {
@@ -604,8 +596,8 @@
             self.GroupingPopoverModel.Selection(current.GroupingId);
             self.OrderingPopoverModel.Selection(current.OrderingId);
 
-            self.ReportSelectionCountPreviewModel.ReportId(current.PwReportId);
-            self.ReportFilterSummaryModel.ReportId(current.PwReportId);
+            self.ProductCountModel.ReportId(current.PwReportId);
+            self.FilterSummaryModel.ReportId(current.PwReportId);
 
             self.CopyOfSystemReport(current.CopyForEditing && original.IsSystemReport);
         };
@@ -613,8 +605,8 @@
         self.Update = function(callback) {
             flow.exec(
                 function () {
-                    console.log("Update");
-                    console.log(self.DateRange());
+                    //console.log("Update");
+                    //console.log(self.DateRange());
 
                     var ajax = new ProfitWiseFunctions.Ajax();
                     var data = {
@@ -646,11 +638,10 @@
                 },
                 function (data) {
                     self.PopulateModel(data);
-
-                    self.ReportSelectionCountPreviewModel.Refresh(this);
+                    self.ProductCountModel.Refresh(this);
                 },
                 function () {
-                    self.ReportFilterSummaryModel.Refresh(this);
+                    self.FilterSummaryModel.Refresh(this);
                 },
                 function () {
                     if (callback) {
@@ -991,7 +982,7 @@
         self.EditReportClick = function () {
             flow.exec(
                 function() {
-                    self.ReportViewerContext.PrepareCopyForEditing(this);
+                    self.ReportViewerContext.MakeCopyForEditing(this);
                 },
                 function() {
                     self.EditReportCallback(self.ReportViewerContext.ReportId());
