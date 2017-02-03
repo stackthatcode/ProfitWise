@@ -8,6 +8,7 @@ using Push.Shopify.Model;
 using System;
 using System.Collections.Generic;
 using Push.Foundation.Utilities.Json;
+using System.Linq;
 
 namespace ProfitWise.Test.OrderLoader
 {
@@ -19,8 +20,10 @@ namespace ProfitWise.Test.OrderLoader
         {
             var container = ProfitWise.Batch.AutofacRegistration.Build();
 
-            var userId = "7ab46e72-3b1c-4db1-88d4-f8a6b8f3e57a";
-            // Jeremy: var userId = "c5223b47-aa25-4261-9639-68d749bdc38b";
+            //Use the userId for the "Super Deal Plus" test store
+
+            //var userId = "7ab46e72-3b1c-4db1-88d4-f8a6b8f3e57a";
+            var userId = "e7365926-19d9-4b7c-8fce-c134a3d62874";
 
             using (var scope = container.BeginLifetimeScope())
             {
@@ -43,91 +46,86 @@ namespace ProfitWise.Test.OrderLoader
                 var products = productApiRepository.Retrieve(filter);
                 var numProducts = products.Count;
 
-                // Step #2 - prepare a plan to upload random Orders
-
-                var numOrders = 5000;
-
-                var line_items = new List<object>();
-
-                // for each item I'm creating....
-                line_items.Add(new
-                {
-                    title = "Product title",
-                    price = 74.99,
-                    grams = "1300",
-                    quantity = 3
-                });
-
-                var order = new
-                {
-                    order = new
-                    {
-                        line_items = line_items,
-                        customer = new {
-                            id = 5341483533
-                        },
-                        financial_status = "paid",
-                        transactions = new []
-                        {
-			                new {
-				                test = "true",
-				                kind = "sale",
-				                status = "success",
-				                amount = 238.47m
-                            }
-		                 },
-                         total_tax = "0",
-                         currency = "USD"
-                    }
-                };
-
-                var json = order.SerializeToJson();
-                System.IO.File.WriteAllText(@"C:\Dev\ProfitWise\Logs\jsondump.txt", json);
-             //   orderApiRepository.Insert(json);
-
-                return;
+                var numOrders = 5;
 
                 //Create 5000 orders
-                for (int i = 1; i < numOrders; i = i + 1)
+                for (int i = 1; i < numOrders+1; i = i + 1)
                 {
+
                     var randomDate = RandomDay();
 
                     Random rnd = new Random();
                     //Set number of line items to random # 1-10
                     int numLineItems = rnd.Next(1, 10);
 
+                    var line_items = new List<object>();
+                    var orderAmount = 0.0m;
+
                     //create 1-10 line items
-                    for (int li = 1; li < numLineItems; li = li + 1)
+                    for (int li = 1; li < numLineItems+1; li = li + 1)
                     {
                         //Set line item quantity to random # 1-10
                         int quantity = rnd.Next(1, 10);
 
                         //Pick random product index
-                        var productNum = rnd.Next(0, numProducts-1);
+                        var productNum = rnd.Next(0, numProducts - 1);
                         var product = products[productNum];
 
                         //Pick random variant index from selected product
-                        var variantNum = rnd.Next(0, product.Variants.Count-1);
+                        var variantNum = rnd.Next(0, product.Variants.Count - 1);
                         var variant = product.Variants[variantNum];
 
-                        //Set values to be inserted into order line item
-                        var variantId = variant.Id;
-                        var price = variant.Price;
-                        var sku = variant.Sku;
-                        var title = variant.Title;
+
+
+                        line_items.Add(new
+                        {
+                            product_id = product.Id,
+                            title = product.Title,
+                            variant_title = variant.Title,
+                            variant_id = variant.Id,
+                            vendor = product.Vendor,
+                            sku = variant.Sku,
+                            price = variant.Price,
+                            quantity = quantity
+                        });
+
+                        orderAmount = orderAmount + (variant.Price*quantity);
+
                     }
+                    
+
+                    var order = new
+                    {
+                        order = new
+                        {
+                            line_items = line_items,
+                            customer = new
+                            {
+                                id = 5341483533,
+                                email = "johndoe@fakedomain.com"
+                            },
+                            financial_status = "paid",
+                            transactions = new[]
+                                 {
+                                    new {
+                                        test = "true",
+                                        kind = "sale",
+                                        status = "success",
+                                        amount = orderAmount
+                                    }
+                                 },
+                            total_tax = "0",
+                            currency = "USD",
+                            processed_at = randomDate
+                        }
+                    };
+
+                    var json = order.SerializeToJson();
+                    System.IO.File.WriteAllText(@"C:\Dev\ProfitWise\Logs\JSonDump\jsondump"+i+".txt", json);
+                    orderApiRepository.Insert(json);
+
+
                 }
-
-
-                // Step #3 - Insert Orders into Shopify API
-                
-
-                //This is a sample of what we need to generate:
-                //
-
-
-
-
 
             }
 
