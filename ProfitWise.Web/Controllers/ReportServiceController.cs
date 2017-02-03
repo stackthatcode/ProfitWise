@@ -44,8 +44,6 @@ namespace ProfitWise.Web.Controllers
             var current = repository.RetrieveReport(reportId);
             var original = repository.RetrieveReport(current.OriginalReportId);
 
-            repository.UpdateReportLastAccessed(reportId);
-
             return new JsonNetResult(new { current = current, original = original ?? current });
         }
 
@@ -185,6 +183,23 @@ namespace ProfitWise.Web.Controllers
             
             repository.UpdateReport(report);
             return JsonNetResult.Success();
+        }
+
+
+        [HttpPost]
+        public ActionResult Accessed(long reportId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
+            if (!repository.ReportExists(reportId))
+            {
+                return new JsonNetResult(new {exists = false});
+            }
+            else
+            {
+                repository.UpdateReportLastAccessed(reportId);
+                return new JsonNetResult(new { exists = true });
+            }
         }
 
         [HttpPost]

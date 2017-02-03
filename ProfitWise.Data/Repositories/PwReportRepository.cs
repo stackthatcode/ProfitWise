@@ -31,8 +31,7 @@ namespace ProfitWise.Data.Repositories
         {
             return _connectionWrapper.StartTransactionForScope();
         }
-
-
+        
 
         public List<PwReport> RetrieveUserDefinedReports()
         {
@@ -54,6 +53,14 @@ namespace ProfitWise.Data.Repositories
             return results.First();
         }
 
+        public List<long> RetrieveSystemDefinedReportsIds()
+        {
+            return new List<long>
+            {
+                PwSystemReportFactory.OverallProfitabilityId,
+                PwSystemReportFactory.TestReportId,
+            };
+        }
 
         public List<PwReport> RetrieveSystemDefinedReports()
         {
@@ -86,6 +93,20 @@ namespace ProfitWise.Data.Repositories
             return Connection
                     .Query<PwReport>(query, new { PwShopId, reportId })
                     .FirstOrDefault();
+        }
+
+        public bool ReportExists(long reportId)
+        {
+            if (RetrieveSystemDefinedReportsIds().Any(x => x == reportId))
+            {
+                return true;
+            }
+
+            var query = @"SELECT PwReportId FROM profitwisereport 
+                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
+            return Connection
+                    .Query<PwReport>(query, new { PwShopId, reportId })
+                    .Any();
         }
 
         public string RetrieveAvailableDefaultName()
@@ -123,7 +144,6 @@ namespace ProfitWise.Data.Repositories
                     .Query<PwReport>(query, new { PwShopId, reportId, name })
                     .Any();
         }
-
 
         public long InsertReport(PwReport report)
         {

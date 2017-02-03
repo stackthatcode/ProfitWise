@@ -38,8 +38,7 @@
 <!-- KnockoutJS Model -->
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};    
-    var OverallProfitabilityReportId = @PwSystemReportFactory.OverallProfitabilityId;
-
+    
     // Requires a reference to a InFilterEditMode observable
     ProfitWiseWidgets.ReportManagerModel = function () {
         var self = this;
@@ -66,16 +65,7 @@
 
         self.Initialize = function (callback) {
             self.InFilterEditMode(false);
-            flow.exec(
-                function() {
-                    self.ReportViewerModel.RefreshReportList(this);
-                }, 
-                function() {
-                    self.ReportViewerModel.SelectReportByReportId(OverallProfitabilityReportId);
-                    if (callback) {
-                        callback();
-                    }
-                });
+            self.ReportViewerModel.Initialize();
         };
 
         return self;

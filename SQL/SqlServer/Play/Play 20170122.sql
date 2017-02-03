@@ -3,7 +3,13 @@ USE profitwise;
 
 SELECT * FROM profitwisepicklist;
 
+SELECT * FROM profitwiseshop;
+
+SELECT * FROM profitwisereport;
+
 SELECT * FROM [profitwisebatchstate];
+
+SELECT * FROM profitwisereportquerystub;
 
 SELECT * FROM HangFire.Job;
 

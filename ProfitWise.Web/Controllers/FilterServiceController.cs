@@ -111,11 +111,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Filters(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
-
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            var userIdentity = HttpContext.PullIdentity();            
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             var filters = repository.RetrieveFilters(reportId);
 
@@ -136,10 +132,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult AddFilter(long reportId, int filterType, string key, string title)
         {
             var userIdentity = HttpContext.PullIdentity();
-
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var filter = new PwReportFilter()
@@ -160,11 +153,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult RemoveFilter(long reportId, int filterType, string key)
         {
-            var userIdentity = HttpContext.PullIdentity();
-
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            var userIdentity = HttpContext.PullIdentity();            
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             repository.DeleteFilter(reportId, filterType, key);
             return JsonNetResult.Success();
@@ -173,11 +162,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult RemoveFilterById(long reportId, long filterId)
         {
-            var userIdentity = HttpContext.PullIdentity();
-
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            var userIdentity = HttpContext.PullIdentity();            
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             repository.DeleteFilterById(reportId, filterId);
             return JsonNetResult.Success();
@@ -186,11 +171,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult RemoveFilterByType(long reportId, int filterType)
         {
-            var userIdentity = HttpContext.PullIdentity();
-
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            var userIdentity = HttpContext.PullIdentity();            
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             repository.DeleteFilters(reportId, filterType);
             return JsonNetResult.Success();

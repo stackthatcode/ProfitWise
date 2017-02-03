@@ -467,238 +467,6 @@
 </script>
 
 <!-- View Model -->
-<script id="Report-Interface-Model">
-    ProfitWiseWidgets = ProfitWiseWidgets || {};
-
-    ProfitWiseWidgets.ReportGroupingOptionsFactory = function() {
-        return @Html.Raw(@PwReportExtensions.AllGroupingToNamedObject().SerializeToJson());
-    };
-
-    ProfitWiseWidgets.ReportOrderingOptionsFactory = function() {
-        return @Html.Raw(@PwReportExtensions.AllOrderingToNamedObject().SerializeToJson());
-    };
-
-    ProfitWiseWidgets.ReportInterfaceModel = function() {
-        var self = this;
-
-        self.ReportId = ko.observable();
-        self.Name = ko.observable();
-        self.DateRange = ko.observable();
-
-        self.CopyForEditing = ko.observable(false);
-        self.CopyOfSystemReport = ko.observable(false);
-        self.IsSystemReport = ko.observable(false);
-
-        self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
-        self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
-        self.FilterBullpenModel.SummaryClickCallback = function() {
-                self.EditFilterClickCallback();
-            }
-
-        self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
-                OptionsValue: "GroupingId",
-                OptionsText: "Description",
-                Options : ProfitWiseWidgets.ReportGroupingOptionsFactory(),
-                PromptText: "Select a method for grouping data",
-                OkCallback: function() { self.Update(); },
-                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
-            });
-
-        self.OrderingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
-                OptionsValue: "OrderingId",
-                OptionsText: "Description",
-                Options : ProfitWiseWidgets.ReportOrderingOptionsFactory(),
-                PromptText: "Select a method for ordering data",
-                OkCallback: function() { self.Update(); },
-                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
-            });
-
-
-        self.ReportLoaded = ko.computed(function() {
-            return self.ReportId() != null;
-        });
-
-        self.OnlySaveAsAllowed = ko.computed(function() {
-            return self.IsSystemReport() || self.CopyOfSystemReport();
-        });
-
-        self.DateRangePickerCallback = function(dateRange) {
-            flow.exec(
-                function() {
-                    self.MakeCopyForEditing(this);
-                },
-                function() {
-                    self.DateRange(dateRange);
-                    self.Update();
-                }
-            );
-        };
-
-        self.MakeCopyForEditing = function(callback) {
-            flow.exec(
-                function() {
-                    if (self.CopyForEditing()) {
-                        if (callback) {
-                            callback();
-                        }
-                        return;
-                    }
-
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/ReportService/CopyForEditing", { reportId: self.ReportId() }, this);
-                },
-                function(data) {
-                    self.PopulateModel(data);
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-
-        self.PopulateModel = function(data) {
-            var current = data.current;
-            var original = data.original;
-
-            self.ReportId(current.PwReportId);
-            self.Name(current.Name);
-
-            // Store in the local model as Javascript Date objects, parsed from C# DateTime string        
-            self.DateRange({
-                startdate: current.StartDate.parseToJavascriptDate(),
-                enddate: current.EndDate.parseToJavascriptDate()
-            });
-
-            self.CopyForEditing(current.CopyForEditing);
-            self.IsSystemReport(current.IsSystemReport);
-            self.CopyOfSystemReport(current.CopyForEditing && original.IsSystemReport);
-
-            self.GroupingPopoverModel.Selection(current.GroupingId);
-            self.OrderingPopoverModel.Selection(current.OrderingId);
-
-            self.ProductCountModel.ReportId(current.PwReportId);
-            self.FilterBullpenModel.ReportId(current.PwReportId);
-        };
-
-        self.Update = function(callback) {
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    var data = {
-                        reportId: self.ReportId(),
-                        groupingId: self.GroupingPopoverModel.Selection(),
-                        orderingId: self.OrderingPopoverModel.Selection(),
-                        startDate: self.DateRange().startdate,
-                        endDate: self.DateRange().enddate,
-                    };
-
-                    ajax.HttpPost("/ReportService/Update", data, this);
-                },
-                function() {
-                    self.TriggerReportDataRefresh(self.ReportId(), this);
-                },
-                function () {
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-
-        self.LoadReport = function(reportId, callback) {
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
-                },
-                function (data) {
-                    self.PopulateModel(data);
-                    self.ProductCountModel.Refresh(this);
-                },
-                function () {
-                    self.FilterBullpenModel.Refresh(this);
-                },
-                function () {
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-
-        self.Save = function() {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/ReportService/Save?reportId=" + self.ReportId(), null, this);
-                },
-                function (data) {
-                    self.LoadReport(data.reportId, this);
-                },
-                function() {
-                    self.TriggerReportListRefresh(this);
-                },
-                function() {
-                    self.TriggerReportDataRefresh(self.ReportId());
-                }
-            );
-        };
-
-        self.SaveAs = function () {
-            flow.exec(
-                function() {
-                    var url = ProfitWiseConfig.BaseUrl + '/Report/SaveAs?reportId=' + self.ReportId();
-                    ProfitWiseShopify.LaunchModal({
-                            src: url,
-                            title: 'Report Save As...',
-                            width: 'small',
-                            height: 265,
-                        },
-                        this);
-                },
-                function(data) {
-                    self.ReportId(data.reportId);
-                    self.LoadReport(self.ReportId(), this);
-                },
-                function() {
-                    self.TriggerReportListRefresh(this);
-                },
-                function () {
-                    self.TriggerReportDataRefresh(self.ReportId());
-                });
-        };
-
-        self.Delete = function() {
-            flow.exec(
-                function () {
-                    ShopifyApp.Modal.confirm(
-                        "Are you sure you want to delete the Report named '" + self.Name() + "'?", this);
-                },
-                function (result) {
-                    if (!result) {
-                        return;
-                    }
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/ReportService/Delete?reportId=" + self.ReportId(), null, this);
-                },
-                function () {
-                    self.TriggerReportListRefresh(this);
-                },
-                function () {
-                    self.LoadReport(OverallProfitabilityReportId, this);
-                }
-            );
-        }
-
-        self.TriggerReportListRefresh = function(callback) { };
-
-        self.EditFilterClickCallback = function() { };
-
-        self.TriggerReportDataRefresh = function() { };
-
-        return self;
-    };
-</script>
 <script id="Report-Summary-Context">
     ProfitWiseWidgets.ReportSummaryContext = function() {
         var self = this;
@@ -834,6 +602,240 @@
         return self;
     };
 </script>
+
+<script id="Report-Interface-Model">
+    ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.ReportGroupingOptionsFactory = function() {
+        return @Html.Raw(@PwReportExtensions.AllGroupingToNamedObject().SerializeToJson());
+    };
+
+    ProfitWiseWidgets.ReportOrderingOptionsFactory = function() {
+        return @Html.Raw(@PwReportExtensions.AllOrderingToNamedObject().SerializeToJson());
+    };
+
+    ProfitWiseWidgets.ReportInterfaceModel = function() {
+        var self = this;
+
+        self.ReportId = ko.observable();
+        self.Name = ko.observable();
+        self.DateRange = ko.observable();
+
+        self.CopyForEditing = ko.observable(false);
+        self.CopyOfSystemReport = ko.observable(false);
+        self.IsSystemReport = ko.observable(false);
+
+        self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
+        self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
+        self.FilterBullpenModel.SummaryClickCallback = function() {
+                self.EditFilterClickCallback();
+            }
+
+        self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
+                OptionsValue: "GroupingId",
+                OptionsText: "Description",
+                Options : ProfitWiseWidgets.ReportGroupingOptionsFactory(),
+                PromptText: "Select a method for grouping data",
+                OkCallback: function() { self.Update(); },
+                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
+            });
+
+        self.OrderingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
+                OptionsValue: "OrderingId",
+                OptionsText: "Description",
+                Options : ProfitWiseWidgets.ReportOrderingOptionsFactory(),
+                PromptText: "Select a method for ordering data",
+                OkCallback: function() { self.Update(); },
+                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
+            });
+
+
+        self.ReportLoaded = ko.computed(function() {
+            return self.ReportId() != null;
+        });
+
+        self.OnlySaveAsAllowed = ko.computed(function() {
+            return self.IsSystemReport() || self.CopyOfSystemReport();
+        });
+
+        self.DateRangePickerCallback = function(dateRange) {
+            flow.exec(
+                function() {
+                    self.MakeCopyForEditing(this);
+                },
+                function() {
+                    self.DateRange(dateRange);
+                    self.Update();
+                }
+            );
+        };
+
+        self.MakeCopyForEditing = function(callback) {
+            flow.exec(
+                function() {
+                    if (self.CopyForEditing()) {
+                        if (callback) {
+                            callback();
+                        }
+                        return;
+                    }
+
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ReportService/CopyForEditing", { reportId: self.ReportId() }, this);
+                },
+                function(data) {
+                    self.PopulateModel(data);
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+        self.PopulateModel = function(data) {
+            var current = data.current;
+            var original = data.original;
+
+            self.ReportId(current.PwReportId);
+            self.Name(current.Name);
+
+            // Store in the local model as Javascript Date objects, parsed from C# DateTime string
+            self.DateRange({
+                startdate: current.StartDate.parseToJavascriptDate(),
+                enddate: current.EndDate.parseToJavascriptDate()
+            });
+
+            self.CopyForEditing(current.CopyForEditing);
+            self.IsSystemReport(current.IsSystemReport);
+            self.CopyOfSystemReport(current.CopyForEditing && original.IsSystemReport);
+
+            self.GroupingPopoverModel.Selection(current.GroupingId);
+            self.OrderingPopoverModel.Selection(current.OrderingId);
+
+            self.ProductCountModel.ReportId(current.PwReportId);
+            self.FilterBullpenModel.ReportId(current.PwReportId);
+        };
+
+        self.Update = function(callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var data = {
+                        reportId: self.ReportId(),
+                        groupingId: self.GroupingPopoverModel.Selection(),
+                        orderingId: self.OrderingPopoverModel.Selection(),
+                        startDate: self.DateRange().startdate,
+                        endDate: self.DateRange().enddate,
+                    };
+
+                    ajax.HttpPost("/ReportService/Update", data, this);
+                },
+                function() {
+                    self.TriggerReportDataRefresh(self.ReportId(), this);
+                },
+                function () {
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+        self.LoadReport = function(reportId, callback) {
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
+                },
+                function (data) {
+                    self.PopulateModel(data);
+                    self.ProductCountModel.Refresh(this);
+                },
+                function () {
+                    self.FilterBullpenModel.Refresh(this);
+                },
+                function () {
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
+        };
+
+        self.Save = function() {
+            flow.exec(
+                function() {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ReportService/Save?reportId=" + self.ReportId(), null, this);
+                },
+                function (data) {
+                    self.LoadReport(data.reportId, this);
+                },
+                function() {
+                    self.TriggerReportListRefresh(this);
+                },
+                function() {
+                    self.TriggerReportDataRefresh(self.ReportId());
+                }
+            );
+        };
+
+        self.SaveAs = function () {
+            flow.exec(
+                function() {
+                    var url = ProfitWiseConfig.BaseUrl + '/Report/SaveAs?reportId=' + self.ReportId();
+                    ProfitWiseShopify.LaunchModal({
+                            src: url,
+                            title: 'Report Save As...',
+                            width: 'small',
+                            height: 265,
+                        },
+                        this);
+                },
+                function(data) {
+                    self.ReportId(data.reportId);
+                    self.LoadReport(self.ReportId(), this);
+                },
+                function() {
+                    self.TriggerReportListRefresh(this);
+                },
+                function () {
+                    self.TriggerReportDataRefresh(self.ReportId());
+                });
+        };
+
+        self.Delete = function() {
+            flow.exec(
+                function () {
+                    ShopifyApp.Modal.confirm(
+                        "Are you sure you want to delete the Report named '" + self.Name() + "'?", this);
+                },
+                function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ReportService/Delete?reportId=" + self.ReportId(), null, this);
+                },
+                function () {
+                    self.TriggerReportListRefresh(this);
+                },
+                function () {
+                    self.LoadReport(OverallProfitabilityReportId, this);
+                }
+            );
+        }
+
+        self.TriggerReportListRefresh = function(callback) { };
+
+        self.EditFilterClickCallback = function() { };
+
+        self.TriggerReportDataRefresh = function() { };
+
+        return self;
+    };
+</script>
+
 <script id="Report-Viewer-Model">
     ProfitWiseWidgets.ReportViewerModel = function () {
         var self = this;
@@ -963,6 +965,41 @@
         };
 
         self.EditReportCallback = function (reportId) { };
+
+        self.Initialize = function(callback) {
+            flow.exec(
+                function () {
+                    self.RefreshReportList(this);
+                },
+                function () {
+                    self.SelectReportByReportId(@PwSystemReportFactory.OverallProfitabilityId);
+                    self.InitializeLastAccessedCheck();
+                    if (callback) {
+                        callback();
+                    }
+                });
+        };
+
+
+        // TODO - add configurable interval
+        self.InitializeLastAccessedCheck = function () {
+            setInterval(self.LastAccessedCheck, 5000);
+        };
+
+        self.LastAccessedCheck = function () {
+            flow.exec(
+                function() {
+                    var reportId = self.ReportInterfaceModel.ReportId();
+                    console.log("Refreshing Last Accessed: " + reportId);
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ReportService/Accessed", { reportId: reportId }, this);
+                },
+                function(data) {
+                    if (!data.exists) {
+                        location.reload();
+                    }
+                });
+        };
 
         return self;
     };

@@ -50,9 +50,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            
             var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
             var selections = repository.RetrieveProductSelections(reportId, pageNumber, pageSize);
             var counts = repository.RetrieveReportRecordCount(reportId);
@@ -66,9 +64,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            
             var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
             var selections = repository.RetrieveVariantSelections(reportId, pageNumber, pageSize);
             var counts = repository.RetrieveReportRecordCount(reportId);
@@ -80,9 +76,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Summary(long reportId)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
-            repository.UpdateReportLastAccessed(reportId);
-
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);            
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             using (var trans = new TransactionScope())
@@ -138,9 +132,7 @@ namespace ProfitWise.Web.Controllers
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering, int pageNumber = 1, int pageSize = 50)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
-            repository.UpdateReportLastAccessed(reportId);
-
+            var repository = _factory.MakeReportRepository(userIdentity.PwShop);           
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
 
             using (var trans = new TransactionScope())
@@ -194,10 +186,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-            reportRepository.UpdateReportLastAccessed(reportId);
-
+            
             var keyFilters = new List<string>() {key};
             var periodType = (end - start).ToDefaultGranularity();
 
