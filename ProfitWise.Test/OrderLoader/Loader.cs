@@ -48,7 +48,7 @@ namespace ProfitWise.Test.OrderLoader
 
                 var numOrders = 5;
 
-                //Create 5000 orders
+                //Create orders
                 for (int i = 1; i < numOrders+1; i = i + 1)
                 {
 
