@@ -16,7 +16,7 @@ namespace ProfitWise.Test.OrderLoader
     public class Loader
     {
         [TestMethod]
-        public void Execute()
+        public void CreateOrders()
         {
             var container = ProfitWise.Batch.AutofacRegistration.Build();
 
@@ -46,7 +46,7 @@ namespace ProfitWise.Test.OrderLoader
                 var products = productApiRepository.Retrieve(filter);
                 var numProducts = products.Count;
 
-                var numOrders = 15000;
+                var numOrders = 5;
 
                 //Create orders
                 for (int i = 1; i < numOrders+1; i = i + 1)
