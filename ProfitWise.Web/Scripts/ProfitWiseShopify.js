@@ -35,9 +35,9 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             linkBuilder("", "Profitability Dashboard"),
                             linkBuilder("/Preferences/Edit", "Edit Preferences"),
                             linkBuilder("/Cogs/Products", "Edit Product CoGS"),
-                            linkBuilder("/Error/ThrowAnonymousError", "Error Page - Anon (Remove for Prod)"),
-                            linkBuilder("/Error/ThrowAuthenticatedError", "Error Page - Authed (Remove for Prod)"),
-                            linkBuilder("/Bullshit/NonsenseUrl", "Not Found - 404 (Remove for Prod)"),
+                            //linkBuilder("/Error/ThrowAnonymousError", "Error Page - Anon (Remove for Prod)"),
+                            //linkBuilder("/Error/ThrowAuthenticatedError", "Error Page - Authed (Remove for Prod)"),
+                            //linkBuilder("/Bullshit/NonsenseUrl", "Not Found - 404 (Remove for Prod)"),
                         ]
                     },
                     {
