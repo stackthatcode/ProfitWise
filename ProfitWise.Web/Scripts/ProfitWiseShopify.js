@@ -37,15 +37,15 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             linkBuilder("/Cogs/Products", "Edit Product CoGS"),
                             //linkBuilder("/Error/ThrowAnonymousError", "Error Page - Anon (Remove for Prod)"),
                             //linkBuilder("/Error/ThrowAuthenticatedError", "Error Page - Authed (Remove for Prod)"),
-                            //linkBuilder("/Bullshit/NonsenseUrl", "Not Found - 404 (Remove for Prod)"),
+                            //linkBuilder("/Testing/NonsenseUrl", "Not Found - 404 (Remove for Prod)"),
                         ]
                     },
                     {
                         label: "Support",
                         type: "dropdown",
                         links: [
-                            linkBuilder("/UserAuxiliary/About", "About ProfitWise"),
-                            linkBuilder("/UserAuxiliary/Contact", "Contact Us"),
+                            linkBuilder("/Content/About", "About ProfitWise"),
+                            linkBuilder("/Content/Contact", "Contact Us"),
                         ]
                     },
                 ]

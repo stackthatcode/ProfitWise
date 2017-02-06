@@ -479,6 +479,12 @@
   <ItemGroup>
     <Content Include="Views\Content\Welcome.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Content\Contact.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Content\About.cshtml" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
