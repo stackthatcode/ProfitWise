@@ -16,14 +16,14 @@ namespace ProfitWise.Test.OrderLoader
     public class Loader
     {
         [TestMethod]
-        public void Execute()
+        public void CreateOrders()
         {
             var container = ProfitWise.Batch.AutofacRegistration.Build();
 
-            //Use the userId for the "Super Deal Plus" test store
+            //Use the userId for the "Super Deals Plus" test store
 
             //var userId = "7ab46e72-3b1c-4db1-88d4-f8a6b8f3e57a";
-            var userId = "e7365926-19d9-4b7c-8fce-c134a3d62874";
+            var userId = "4ee36897-ebcd-44fe-a87f-8ead367e93a4";
 
             using (var scope = container.BeginLifetimeScope())
             {

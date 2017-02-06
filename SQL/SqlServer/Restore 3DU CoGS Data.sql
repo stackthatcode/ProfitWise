@@ -1,3 +1,4 @@
+use ProfitWise;
 SET IDENTITY_INSERT profitwiseproduct ON;
 INSERT INTO profitwiseproduct (PwProductId, PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, Tags, IsActive, IsPrimary, IsPrimaryManual, LastUpdated) VALUES (1,100001,1,5504045445,'3D Print Clean Replacement Filter Cartridge','3D Print Clean','Accessories','',1,1,0,'2017-01-09 22:26:14');
 INSERT INTO profitwiseproduct (PwProductId, PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, Tags, IsActive, IsPrimary, IsPrimaryManual, LastUpdated) VALUES (2,100001,2,459573760,'3D Universe ABS Filament 1.75mm (1 kg)','3D Universe','Filament','1.75 mm, ABS',1,1,0,'2017-01-09 22:26:14');
