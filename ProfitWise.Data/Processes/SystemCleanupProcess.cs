@@ -37,6 +37,16 @@ namespace ProfitWise.Data.Processes
 
             _pushLogger.Info("System Clean-up Service for Pick List - FIN");
 
+            // Report Data clean-up, too
+            var reportDataExpirationSeconds =
+                ConfigurationManager.AppSettings
+                    .GetAndTryParseAsInt("ReportDataExpirationSeconds", 15 * 60);
+
+            var reportDataCutOffDate = DateTime.Now.AddSeconds(-reportDataExpirationSeconds);
+
+            _systemRepository.CleanupReportData(reportDataCutOffDate);
+
+            _pushLogger.Info("System Clean-up Service for Report Data - FIN");
 
         }
     }

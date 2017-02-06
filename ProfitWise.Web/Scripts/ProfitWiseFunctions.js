@@ -115,6 +115,7 @@ ProfitWiseFunctions.AjaxSettings = function (modal) {
         Timeout: 60000,
         WaitingLayerSelector: "#spinner-layer",
         ErrorCallbackFunction: errorCallback,
+        UseSpinner: true,
     };
 };
 
@@ -179,10 +180,14 @@ ProfitWiseFunctions.Ajax = function (settings) {
     };
 
     self.ShowLoading = function () {
-        $(self.Settings.WaitingLayerSelector).show();
+        if (self.Settings.UseSpinner) {
+            $(self.Settings.WaitingLayerSelector).show();
+        }
     };
 
     self.HideLoading = function () {
-        $(self.Settings.WaitingLayerSelector).hide();
+        if (self.Settings.UseSpinner) {
+            $(self.Settings.WaitingLayerSelector).hide();
+        }
     };
 };

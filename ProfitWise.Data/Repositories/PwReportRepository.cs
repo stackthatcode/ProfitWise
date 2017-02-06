@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
@@ -10,6 +12,7 @@ using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
+using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -21,6 +24,7 @@ namespace ProfitWise.Data.Repositories
 
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
+
 
         public PwReportRepository(ConnectionWrapper connectionWrapper)
         {
@@ -195,7 +199,6 @@ namespace ProfitWise.Data.Repositories
                         AND PwReportId = @reportId;";
             Connection.Execute(query, new { PwShopId, reportId });
         }
-
     }
 }
 

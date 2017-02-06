@@ -24,7 +24,6 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-
         // TODO - this is where the deletion logic appears
         public long DeletePickListByDate(DateTime cutoffDate)
         {
@@ -38,6 +37,24 @@ namespace ProfitWise.Data.Repositories
 
             return Connection.Query<long>(
                 query, new { cutoffDate }).FirstOrDefault();
+        }
+
+        public void CleanupReportData(DateTime cutoffDate)
+        {
+            var query =
+                @"  DELETE FROM profitwisereportquerystub WHERE PwReportId IN 
+                    ( SELECT PwReportId FROM profitwisereport 
+                    WHERE LastAccessedDate < @cutoffDate AND CopyForEditing = 1)
+
+                    DELETE FROM profitwisereportfilter WHERE PwReportId IN 
+                    ( SELECT PwReportId FROM profitwisereport 
+                    WHERE LastAccessedDate < @cutoffDate AND CopyForEditing = 1)
+
+                    DELETE FROM profitwisereport WHERE PwReportId IN 
+                    ( SELECT PwReportId FROM profitwisereport 
+                    WHERE LastAccessedDate < @cutoffDate AND CopyForEditing = 1)";
+
+            Connection.Execute(query, new { cutoffDate }, _connectionWrapper.Transaction);
         }
     }
 }
