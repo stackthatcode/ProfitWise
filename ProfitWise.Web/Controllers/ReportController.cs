@@ -8,6 +8,7 @@ namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
     [IdentityProcessor]
+    [RequiresStoreData]
     public class ReportController : Controller
     {
         private readonly MultitenantFactory _factory;

@@ -1,6 +1,5 @@
 ﻿using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
-using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 

@@ -101,6 +101,9 @@ namespace ProfitWise.Web
             builder.RegisterType<PreferencesController>()
                  .InstancePerDependency()
                  .EnableClassInterceptorsWithRegistry(registry);
+            builder.RegisterType<ContentController>()
+                 .InstancePerDependency()
+                 .EnableClassInterceptorsWithRegistry(registry);
             
 
             var container = builder.Build();

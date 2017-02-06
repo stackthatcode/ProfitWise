@@ -228,7 +228,9 @@
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
+    <Compile Include="Attributes\RequiresStoreDataAttribute.cs" />
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
+    <Compile Include="Controllers\ContentController.cs" />
     <Compile Include="Controllers\QueryServiceController.cs" />
     <Compile Include="Controllers\FilterServiceController.cs" />
     <Compile Include="Controllers\CogsServiceController.cs" />
@@ -252,6 +254,7 @@
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />
     <Compile Include="Models\ProductVariantSelectionModel.cs" />
+    <Compile Include="Models\WelcomeModel.cs" />
     <Compile Include="Plumbing\GlobalConfig.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />
     <Compile Include="Controllers\AdminAuthController.cs" />
@@ -472,6 +475,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\SharedTemplates\_HighChartsFunctions.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Content\Welcome.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

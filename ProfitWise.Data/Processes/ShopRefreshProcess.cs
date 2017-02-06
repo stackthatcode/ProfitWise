@@ -109,6 +109,10 @@ namespace ProfitWise.Data.Processes
                 _orderRefreshStep.Execute(shopifyClientCredentials);
                 _productCleanupStep.Execute(shopifyClientCredentials);
 
+                // Change the store's status...
+                var shop = _pwShopRepository.RetrieveByUserId(shopifyClientCredentials.ShopOwnerUserId);
+                _pwShopRepository.UpdateIsDataLoaded(shop.PwShopId, true);
+
                 // If it's already scheduled, this will only perform an update
                 _hangFireService.ScheduleRoutineShopRefresh(userId);
             }

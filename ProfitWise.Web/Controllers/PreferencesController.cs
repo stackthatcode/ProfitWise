@@ -81,7 +81,15 @@ namespace ProfitWise.Web.Controllers
             var cogsRepository = _factory.MakeCogsDataUpdateRepository(shop);
             cogsRepository.RefreshReportEntryData();
             return JsonNetResult.Success();
-        }        
+        }
+
+
+        [HttpGet]
+        public ActionResult StoreDataReady()
+        {
+            var storeDataLoaded = this.HttpContext.PullIdentity().PwShop.IsDataLoaded;
+            return new JsonNetResult(new { storeDataLoaded });
+        }
     }
 }
 

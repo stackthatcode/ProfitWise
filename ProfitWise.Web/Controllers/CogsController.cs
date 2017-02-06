@@ -14,6 +14,7 @@ namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
     [IdentityProcessor]
+    [RequiresStoreData]
     public class CogsController : Controller
     {
         private readonly MultitenantFactory _factory;
