@@ -1,11 +1,7 @@
 USE ProfitWise
 GO
 
-
-DELETE FROM profitwisereportquerystub
-DELETE FROM profitwisereportfilter
-DELETE FROM profitwisereport
-
+SELECT * FROM profitwisereportquerystub;
 
 
 DELETE FROM profitwisereportquerystub WHERE PwReportId IN 

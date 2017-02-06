@@ -22,6 +22,13 @@ namespace ProfitWise.Data.Database
             return Transaction;
         }
 
+        public void CommitTranscation()
+        {
+            Transaction.Commit();
+            Transaction.Dispose();
+            Transaction = null;
+        }
+
         public void Dispose()
         {
             Transaction?.Dispose();

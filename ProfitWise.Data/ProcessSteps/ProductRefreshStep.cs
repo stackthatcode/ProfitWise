@@ -7,7 +7,6 @@ using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
-using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -26,9 +25,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
         public const int MinutesFudgeFactor = 75;
-
-        private readonly object _productWriteLock = new object();
-
+        
 
         public ProductRefreshStep(
                 BatchLogger logger,
@@ -112,10 +109,7 @@ namespace ProfitWise.Data.ProcessSteps
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
 
-                lock (_productWriteLock)
-                {
-                    WriteProductsToDatabase(shop, products);
-                }
+                WriteProductsToDatabase(shop, products);
             }
 
             return results;
@@ -126,17 +120,17 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
+            var masterProducts = service.RetrieveFullCatalog();
 
-            using (var trans = service.InitiateTransaction())
+            foreach (var importedProduct in importedProducts)
             {
-                var masterProducts = service.RetrieveFullCatalog();
-
-                foreach (var importedProduct in importedProducts)
+                using (var transaction = service.InitiateTransaction())
                 {
                     var productBuildContext = 
                         importedProduct.ToProductBuildContext(masterProducts, isActive: true);
+
                     var product = WriteProductToDatabase(shop, productBuildContext);
-                    
+                
                     foreach (var importedVariant in importedProduct.Variants)
                     {
                         var variantBuildContext =
@@ -146,20 +140,23 @@ namespace ProfitWise.Data.ProcessSteps
                     }
 
                     FlagMissingVariantsAsInactive(shop, productBuildContext);
-                }
 
-                trans.Commit();
+                    service.CommitTransaction();
+                }
             }
         }
+
 
         private PwProduct WriteProductToDatabase(PwShop shop, ProductBuildContext context)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
             var masterProduct = context.MasterProducts.FindMasterProduct(context);
-                       
+
             if (masterProduct == null)
             {
-                _pushLogger.Debug($"Unable to find Master Product for Title: {context.Title} and Vendor: {context.Vendor}");
+                _pushLogger.Debug(
+                    $"Unable to find Master Product for Title: {context.Title} and Vendor: {context.Vendor}");
+
                 masterProduct = service.BuildAndSaveMasterProduct();
                 context.MasterProducts.Add(masterProduct);
             }
@@ -171,7 +168,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Product for Title: {context.Title} " +
                     $"and Vendor: {context.Vendor} and Shopify Id: {context.ShopifyProductId}");
 
-                product = service.BuildAndSaveProduct(masterProduct, context);                
+                product = service.BuildAndSaveProduct(masterProduct, context);
                 service.UpdateActiveProduct(context.MasterProducts, product.ShopifyProductId);
             }
             else

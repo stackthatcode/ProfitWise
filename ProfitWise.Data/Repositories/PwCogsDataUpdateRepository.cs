@@ -109,8 +109,7 @@ namespace ProfitWise.Data.Repositories
         public void UpdateOrderLinePercentage(OrderLineCogsContextPickList context)
         {
             var query =
-                @"UPDATE t3
-                SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
+                @"UPDATE t3 SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
                 FROM profitwisepicklistmasterproduct t0
                     INNER JOIN profitwisemastervariant t1 
                         ON t0.PwShopId = t1.PwShopId AND t0.PwMasterProductId = t1.PwMasterProductId

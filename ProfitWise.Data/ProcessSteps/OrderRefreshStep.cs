@@ -36,9 +36,7 @@ namespace ProfitWise.Data.ProcessSteps
                 PwShopRepository shopRepository,
                 BatchLogger logger,
                 ShopifyOrderDiagnosticShim diagnostic,
-                TimeZoneTranslator timeZoneTranslator
-            )
-
+                TimeZoneTranslator timeZoneTranslator)
         {
             _pushLogger = logger;
             _diagnostic = diagnostic;
@@ -218,28 +216,23 @@ namespace ProfitWise.Data.ProcessSteps
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(shop);
 
-            using (var trans = catalogBuilderService.InitiateTransaction())
+            var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();                
+            var orderIdList = importedOrders.Select(x => x.Id).ToList();
+            var existingOrders = orderRepository.RetrieveOrdersFullDepth(orderIdList);
+
+            var context = new OrderRefreshContext
             {
-                var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();                
-                var orderIdList = importedOrders.Select(x => x.Id).ToList();
-                var existingOrders = orderRepository.RetrieveOrdersFullDepth(orderIdList);
-
-                var context = new OrderRefreshContext
-                {
-                    PwShop = shop,
-                    MasterProducts = masterProductCatalog,
-                    CurrentExistingOrders = existingOrders,
-                };
+                PwShop = shop,
+                MasterProducts = masterProductCatalog,
+                CurrentExistingOrders = existingOrders,
+            };
                 
-                foreach (var importedOrder in importedOrders)
-                {
-                    WriteOrderToPersistence(importedOrder, context);
-                }
-                
-                cogsUpdateRepository.RefreshReportEntryData();
-
-                trans.Commit();
+            foreach (var importedOrder in importedOrders)
+            {
+                WriteOrderToPersistence(importedOrder, context);
             }
+                
+            cogsUpdateRepository.RefreshReportEntryData();            
         }
 
         private void WriteOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
@@ -254,16 +247,24 @@ namespace ProfitWise.Data.ProcessSteps
             }
 
             // If the Order is Void then Delete the Order            
-            _pushLogger.Debug($"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} to ProfitWise data model");
+            _pushLogger.Debug(
+                $"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} to ProfitWise data model");
 
-            if (existingOrder == null)
+            var repository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
+
+            using (var transaction = repository.InitiateTransaction())
             {
-                InsertOrderToPersistence(orderFromShopify, context);
+                if (existingOrder == null)
+                {
+                    InsertOrderToPersistence(orderFromShopify, context);
+                }
+                else
+                {
+                    UpdateOrderToPersistence(orderFromShopify, existingOrder, context);
+                }
+
+                repository.CommitTransaction();
             }
-            else
-            {
-                UpdateOrderToPersistence(orderFromShopify, existingOrder, context);
-            }                 
         }
 
         public void InsertOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
@@ -315,7 +316,6 @@ namespace ProfitWise.Data.ProcessSteps
                 orderRepository.InsertAdjustment(adjustment);
             }
         }
-
 
         public void UpdateOrderToPersistence(
                 Order orderFromShopify, ShopifyOrder existingOrder, OrderRefreshContext context)

@@ -32,6 +32,11 @@ namespace ProfitWise.Data.Repositories
             return _connectionWrapper.StartTransactionForScope();
         }
 
+        public void CommitTransaction()
+        {
+            _connectionWrapper.CommitTranscation();
+        }
+
 
         // Orders
         public virtual ShopifyOrder RetrieveOrders()

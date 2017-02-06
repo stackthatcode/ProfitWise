@@ -1,4 +1,7 @@
-﻿-- ProfitWise clean-up script
+﻿USE ProfitWise
+GO
+
+-- ProfitWise clean-up script
 
 DROP TABLE IF EXISTS HangFire.AggregatedCounter;
 DROP TABLE IF EXISTS HangFire.Counter;

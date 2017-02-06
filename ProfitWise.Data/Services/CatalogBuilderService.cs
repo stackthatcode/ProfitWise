@@ -41,13 +41,17 @@ namespace ProfitWise.Data.Services
         }
 
 
+        public IDbTransaction Transaction { get; set; }
+
         public IDbTransaction InitiateTransaction()
         {
             return _connectionWrapper.StartTransactionForScope();            
         }
 
-        public IDbTransaction Transaction { get; set; }
-
+        public void CommitTransaction()
+        {
+            _connectionWrapper.CommitTranscation();
+        }
 
 
         public IList<PwMasterProduct> RetrieveFullCatalog()
