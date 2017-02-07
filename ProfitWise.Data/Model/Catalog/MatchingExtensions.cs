@@ -6,7 +6,6 @@ namespace ProfitWise.Data.Model.Catalog
 {
     public static class MatchingExtensions
     {
-
         // This expresses one of the Golden Rules - the System will auto-consolidate Products only
         // when Title and Vendor match. AND, it is impossible for two Products with the same Title and Vendor
         // to exist under different Master Product

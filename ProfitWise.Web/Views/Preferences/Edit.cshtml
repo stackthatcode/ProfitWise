@@ -1,13 +1,16 @@
 ﻿@using ProfitWise.Data.Model.Preferences
+@using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
-@using Push.Foundation.Web.Json
+
 @model ProfitWise.Data.Model.Shop.PwShop
 @{
     Layout = "~/Views/Shared/_AuthenticatedLayout.cshtml";
+    Context.PullCommonContext().PageTitle = "Edit Preferences";
 }
 @Html.Partial("~/Views/SharedTemplates/_DatePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_DateRangePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
+
 
 <style>
     .vert-spacer { height:65px; }

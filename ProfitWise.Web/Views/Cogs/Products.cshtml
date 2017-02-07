@@ -1,6 +1,23 @@
-﻿@using Push.Foundation.Utilities.Json
-@using Push.Foundation.Web.Json
+﻿@using ProfitWise.Web.Attributes
+@using Push.Foundation.Utilities.Json
 @model ProfitWise.Web.Models.EditProductCogsModel
+@{
+    Context.PullCommonContext().PageTitle = "Manage Products and CoGS";
+}
+
+<!-- KnockoutJS Templates -->
+@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_ProductFilterWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
+
+@Html.Partial("~/Views/Cogs/_CogsEditorWidget.cshtml")
+@Html.Partial("~/Views/Cogs/_CogsProductSummaryWidget.cshtml") 
+@Html.Partial("~/Views/Cogs/_CogsVariantSummaryWidget.cshtml")
+@Html.Partial("~/Views/Cogs/_EditProductCogsView.cshtml")
+@Html.Partial("~/Views/Cogs/_EditProductConsolidationView.cshtml")
 
 <style>
     table.table td {
@@ -51,18 +68,6 @@
         width: 100px;
     }
 </style>
-
-<!-- KnockoutJS Templates -->
-@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
-@Html.Partial("~/Views/SharedTemplates/_ProductFilterWidget.cshtml")
-@Html.Partial("~/Views/SharedTemplates/_MoneyRangeWidget.cshtml")
-@Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")
-@Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
-@Html.Partial("~/Views/SharedTemplates/_SortColumnHeaderWidget.cshtml")
-@Html.Partial("~/Views/Cogs/_CogsEditorWidget.cshtml")
-@Html.Partial("~/Views/Cogs/_CogsProductSummaryWidget.cshtml") 
-@Html.Partial("~/Views/Cogs/_CogsVariantSummaryWidget.cshtml")
-@Html.Partial("~/Views/Cogs/_EditMasterProduct.cshtml")
 
 <script type="text/html" id="Product-Search-Header">
     <!-- Filtering and Paging -->
@@ -138,7 +143,7 @@
             </td>
 
             <td class="overflow-gracefully">
-                <a href="#" data-bind="text: ProductTitle, click: $root.ShowVariantCogsEditor"></a>
+                <a href="#" data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor"></a>
 
                 <!-- Debug mode -->
                 <div>Master Product ID: <span data-bind="text: PwMasterProductId"></span></div>
@@ -152,7 +157,7 @@
             <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
 
             <td>
-                <a href="#" data-bind="click: $root.ShowVariantCogsEditor">
+                <a href="#" data-bind="click: $root.DrilldownToCogsEditor">
                     <span data-bind="template: { name: 'Cogs-Product-Summary-Widget', data: $data }"></span>
                 </a>
             </td>
@@ -194,10 +199,13 @@
         <div class="standard-header-sleeve" style="height: 210px; min-width:1140px;">
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header top-border-facade std-inner-padding">
-                <div data-bind="if: EditProductId">
-                    <div data-bind="template: { name: 'Product-Edit-Header', data: $root.ProductVariantEditorModel }"></div>
+                <div data-bind="if: CogsEditorVisible">
+                    <div data-bind="template: { name: 'Product-Edit-Header', data: $root.EditProductCogsModel }"></div>
                 </div>
-                <div data-bind="ifnot: EditProductId">
+                <div data-bind="if: ConsolidationEditorVisible">
+                    <div data-bind="template: { name: 'Product-Consolidation-Header', data: $root.EditProductConsolidationModel }"></div>
+                </div>
+                <div data-bind="if: SearchVisible">
                     <div data-bind="template: { name: 'Product-Search-Header', data: $root }"></div>
                 </div>
             </div>
@@ -206,10 +214,13 @@
 
     <div class="page-content-sleeve">
         <div class="page-content std-inner-padding" style="margin-top: 209px; min-height: 300px; min-width:1140px;">
-            <div data-bind="if: EditProductId">
-                <div data-bind="template: { name: 'Product-Edit-Body', data: $root.ProductVariantEditorModel }"></div>
+            <div data-bind="if: CogsEditorVisible">
+                <div data-bind="template: { name: 'Product-Edit-Body', data: $root.EditProductCogsModel }"></div>
             </div>
-            <div data-bind="ifnot: EditProductId">
+            <div data-bind="if: ConsolidationEditorVisible">
+                <div data-bind="template: { name: 'Product-Consolidation-Body', data: $root.EditProductConsolidationModel }"></div>
+            </div>
+            <div data-bind="if: SearchVisible">
                 <div data-bind="template: { name: 'Product-Search-Body', data: $data }"></div>
             </div>
         </div>
@@ -227,7 +238,7 @@
 
     ProfitWise = ProfitWise || {};
 
-    ProfitWise.EditProductCogsModel = function () {
+    ProfitWise.ProductSearchModel = function () {
         var self = this;
 
         self.PickListId = ko.observable();
@@ -244,7 +255,7 @@
 
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
         self.SortingModel.Callback = function() { self.LoadDataForCurrentPage(); };
-
+        
         // *** Launch Bulk Edit Popup *** //
         self.BulkEditPopUp = function () {
             var url =
@@ -413,32 +424,63 @@
         };
 
 
-        //** Edit Product Variant Cogs functions **//
+        //** Larger interface state management for visibility  **//
         self.EditProductId = ko.observable(null);
-        
-        self.ProductVariantEditorModel = new ProfitWise.ProductVariantCogsEditorModel();        
-        self.ProductVariantEditorModel.ExitCallback = function() {
-            self.HideVariantCogsEditor();
+
+        self.CogsEditorVisible = ko.observable(false);
+        self.ConsolidationEditorVisible = ko.observable(false);
+        self.SearchVisible = ko.computed(function() {
+            return !self.CogsEditorVisible() && !self.ConsolidationEditorVisible();
+        });
+
+        self.ReturnToProductSearch = function() {
+            self.ConsolidationEditorVisible(false);
+            self.CogsEditorVisible(false);
+            self.EditProductId(null);
+            self.LoadDataForCurrentPage();
         };
 
+        self.DrilldownToCogsEditor = function(model) {
+            self.EditProductId(model.PwMasterProductId);
+            self.LastScrollTop = $(document).scrollTop();
+            self.ShowCogsEditor();
+        };
+
+        self.ShowCogsEditor = function() {
+            self.CogsEditorVisible(true);
+            self.ConsolidationEditorVisible(false);
+            
+            self.EditProductCogsModel.RetrieveMasterProduct(self.EditProductId());
+            $('html,body').animate({ scrollTop: 0 });
+        };
+
+        self.ShowConsolidationEditor = function() {
+            self.CogsEditorVisible(false);
+            self.ConsolidationEditorVisible(true);
+
+            self.EditProductConsolidationModel.RetrieveMasterProduct(self.EditProductId());
+            $('html,body').animate({ scrollTop: 0 });
+        };
+
+        // Wire state-management delegates into sub-models
+        self.EditProductCogsModel = new ProfitWise.EditProductCogsModel({
+                    exitcallback: self.ReturnToProductSearch,
+                    editconsolidationcallback: self.ShowConsolidationEditor,
+                });
+
+        self.EditProductConsolidationModel = new ProfitWise.EditProductConsolidationModel({
+                    exitcallback: self.ReturnToProductSearch,
+                    editcogscallback: self.ShowCogsEditor,
+                });
+
+        
+        // JQuery and scrolling helper functions
         self.LastScrollTop = null;
         self.ResetToLastScrollTop = function() {
             if (self.LastScrollTop != null) {
                 $(document).scrollTop(self.LastScrollTop);
                 self.LastScrollTop = null;
             } 
-        };
-
-        self.HideVariantCogsEditor = function() {
-            self.EditProductId(null);
-            self.LoadDataForCurrentPage();
-        };
-
-        self.ShowVariantCogsEditor = function(model) {
-            self.LastScrollTop = $(document).scrollTop();
-            self.EditProductId(model.PwMasterProductId);
-            self.ProductVariantEditorModel.RetrieveMasterProduct(model.PwMasterProductId);
-            $('html,body').animate({ scrollTop: 0 });
         };
 
         self.JQueryInit = function() {
@@ -449,7 +491,7 @@
             ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");            
             ProfitWiseFunctions.PopOverAutoCloseInit();
 
-            self.ProductVariantEditorModel.JQueryInit();
+            self.EditProductCogsModel.JQueryInit();
         };
 
         return self;
@@ -457,7 +499,7 @@
 
     $(document)
         .ready(function () {
-            var model = new ProfitWise.EditProductCogsModel();
+            var model = new ProfitWise.ProductSearchModel();
             model.SearchForProducts();
             ko.applyBindings(model);
             model.JQueryInit();

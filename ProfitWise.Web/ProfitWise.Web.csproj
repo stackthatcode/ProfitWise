@@ -414,7 +414,7 @@
     <Content Include="Views\SharedTemplates\_SortColumnHeaderWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Cogs\_EditMasterProduct.cshtml" />
+    <Content Include="Views\Cogs\_EditProductCogsView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\_ReportEditor.cshtml" />
@@ -484,6 +484,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Content\About.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Cogs\_EditProductConsolidationView.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -46,10 +46,8 @@ namespace ProfitWise.Data.ProcessSteps
 
         public virtual void Execute(ShopifyCredentials shopCredentials)
         {
-
             ExecuteAuxillary(shopCredentials);
         }
-
 
         private void ExecuteAuxillary(ShopifyCredentials shopCredentials)
         {
@@ -155,7 +153,8 @@ namespace ProfitWise.Data.ProcessSteps
             if (masterProduct == null)
             {
                 _pushLogger.Debug(
-                    $"Unable to find Master Product for Title: {context.Title} and Vendor: {context.Vendor}");
+                    $"Unable to find Master Product for Title: {context.Title} " + 
+                    $"and Vendor: {context.Vendor}");
 
                 masterProduct = service.BuildAndSaveMasterProduct();
                 context.MasterProducts.Add(masterProduct);

@@ -283,3 +283,32 @@ a.no-underline:hover, a.no-underline:active {
 .selection-preview-listing-overflow-bottom {
     font-size: 0.9em; padding-top: 3px; padding-bottom: 15px;        
 }
+
+
+/* Edit Product Drilldown Styling */
+
+.return-link i {
+    color: #999;
+}
+
+.return-link a {
+    text-transform:uppercase; letter-spacing: 0.1em; font-weight: 700;font-size: 0.95em;
+    text-transform:uppercase; letter-spacing: 0.1em; font-weight: 700;font-size: 0.95em;
+}
+
+h3.edit-product-header {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 1.6em;
+}
+
+.edit-product-subtitle {
+    font-size: 1.0em; 
+    font-weight: 700;
+    color: #888;
+}
+
+.edit-product-spacer {
+    height: 20px;
+}
+

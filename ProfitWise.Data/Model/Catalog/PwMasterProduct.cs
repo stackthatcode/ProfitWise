@@ -27,18 +27,21 @@ namespace ProfitWise.Data.Model.Catalog
                 throw new Exception(msg);
             }
 
+            // Rule #1 - if a certain Product has been manually set to Primary, it's always Primary
             var manualPrimaryProduct = Products.FirstOrDefault(x => x.IsPrimaryManual);
             if (manualPrimaryProduct != null)
             {
                 return manualPrimaryProduct;
             }
 
+            // Rule #2 - if there is exactly *one* Active Products, it is automatically the Primary
             var activeProducts = Products.Where(x => x.IsActive).ToList();
             if (activeProducts.Count == 1)
             {
                 return activeProducts.First();
             }
                 
+            // Rule #3 - the Primary that will default to the most recently updated
             return Products.OrderByDescending(x => x.LastUpdated).First();
         }
     }

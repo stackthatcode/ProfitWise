@@ -235,6 +235,10 @@ namespace ProfitWise.Data.Services
             }
         }
 
+
+        // A Shopify Product Id may appear under multiple Master Products due to historical data
+        // This updates the Active Status so the most recent instance is Active and all the historical
+        // ones are Inactive.
         public void UpdateActiveProduct(IList<PwMasterProduct> allMasterProducts, long? shopifyProductId)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
