@@ -95,12 +95,11 @@ namespace ProfitWise.Web.Controllers
 
         // Search pop-up
         [HttpGet]
-        public ActionResult ProductConsolidationSearch(long? pwMasterProductId)
+        public ActionResult ProductConsolidationSearch(long pwMasterProductId)
         {
-            var model = new ProductConsolidationSearchModel();
+            var model = new ProductConsolidationSearchModel {PwMasterProductId = pwMasterProductId};
             return View(model);
         }
-
 
 
         [HttpGet]

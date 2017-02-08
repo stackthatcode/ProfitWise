@@ -1,20 +1,14 @@
 USE ProfitWise
 GO
 
-SELECT * FROM profitwisereportquerystub;
+SELECT * FROM profitwiseshop;
 
 
-DELETE FROM profitwisereportquerystub WHERE PwReportId IN 
-( SELECT PwReportId FROM profitwisereport 
-WHERE LastAccessedDate < dateadd(minute, -15, getdate()) AND CopyForEditing = 1)
+SELECT * FROM profitwiseproduct;
 
-DELETE FROM profitwisereportfilter WHERE PwReportId IN 
-( SELECT PwReportId FROM profitwisereport 
-WHERE LastAccessedDate < dateadd(minute, -15, getdate()) AND CopyForEditing = 1)
+SELECT * FROM profitwisemastervariant;
 
-DELETE FROM profitwisereport WHERE PwReportId IN 
-( SELECT PwReportId FROM profitwisereport 
-WHERE LastAccessedDate < dateadd(minute, -15, getdate()) AND CopyForEditing = 1)
+SELECT * FROM profitwisevariant;
 
-
+SELECT * FROM profitwisemastervariantcogsdetail;
 

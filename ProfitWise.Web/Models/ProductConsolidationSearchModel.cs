@@ -2,5 +2,6 @@
 {
     public class ProductConsolidationSearchModel
     {
+        public long PwMasterProductId { get; set; }
     }
 }

@@ -221,9 +221,9 @@
             self.RetrieveMasterProduct(self.PwMasterProductId());
         };
         
-        self.SearchForProductsPopup = function (pwMasterProductId) {
+        self.SearchForProductsPopup = function () {
             var url = ProfitWiseConfig.BaseUrl +
-                '/Cogs/ProductConsolidationSearch?pwMasterProductId=' + pwMasterProductId;
+                '/Cogs/ProductConsolidationSearch?pwMasterProductId=' + self.PwMasterProductId();
             
             ProfitWiseShopify.LaunchModal({
                 src: url,

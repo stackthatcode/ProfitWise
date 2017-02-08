@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Transactions;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
-using ProfitWise.Data.Model.Cogs;
-using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
-using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
@@ -53,7 +45,8 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult RetrieveResults(long pickListId, int pageNumber, int pageSize)
+        public ActionResult RetrieveResults(
+                long pickListId, int pageNumber, int pageSize, int sortByColumn, bool sortByDirectionDown)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
@@ -65,7 +58,10 @@ namespace ProfitWise.Web.Controllers
             }
 
             var recordCount = pickListRepository.Count(pickListId);
-            var products = cogsRepository.RetrieveProductsFromPicklist(pickListId, pageNumber, pageSize);
+
+            var products = cogsRepository
+                .RetrieveProductsFromPicklist(pickListId, pageNumber, pageSize, sortByColumn, sortByDirectionDown);
+
 
             return new JsonNetResult(new { pickListValid = true, products, totalRecords = recordCount });
         }

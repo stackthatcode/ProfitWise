@@ -413,7 +413,7 @@
     <Content Include="Views\Cogs\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\SharedTemplates\_SortColumnHeaderWidget.cshtml" />
+    <Content Include="Views\SharedTemplates\_SortingColumnWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cogs\_EditProductCogsView.cshtml" />

@@ -7,14 +7,29 @@
 }
 
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_SortingColumnWidget.cshtml")
 
 <style>
     body { overflow-y: scroll !important; padding: 0px !important; }
+    .search-grid tr {
+        height: 60px;
+        
+    }
+    .search-grid tr td:nth-child(1), .search-heading tr th:nth-child(1) {
+        width: 20%; vertical-align: middle;
+    }
+    .search-grid tr td:nth-child(2), .search-heading tr th:nth-child(2) {
+        width: 50%; vertical-align: middle;
+    }
+    .search-grid tr td:nth-child(3), .search-heading tr th:nth-child(3) {
+        width: 30%; vertical-align: middle;
+    }
 </style>
+
 
 <script type="text/html" id="Main-Template">
     <div class="fixed-header-container" style="padding-left: 0px; padding-right: 0px;">
-        <div class="standard-header-sleeve" style="height: 150px;">
+        <div class="standard-header-sleeve" style="height: 163px;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header" 
@@ -26,10 +41,21 @@
     </div>
 
     <div style="position: absolute; overflow: auto; width:100%;">
-        <div style="height: 150px;"></div>
+        <div style="height: 163px;"></div>
         <div style="width:100%; background-color:#FFF; overflow:auto; padding-top:0px; padding-left:30px; padding-right: 30px;">
-            <table class="table table-striped">
-                <tbody data-bind="foreach: SearchGrid">                    
+            <table class="table search-grid">
+                <tbody data-bind="foreach: SearchGrid">  
+                <tr>
+                    <td class="overflow-gracefully">
+                        <div data-bind="text: Vendor"></div>
+                    </td>
+                    <td class="overflow-gracefully">
+                        <span data-bind="text: Title"></span>
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>                  
                 </tbody>
             </table>
         </div>
@@ -41,8 +67,8 @@
         <div class="col-xs-12">
             <div class="form-group" style="margin-bottom: 5px; height:50px;">
                 <div class="input-group">
-                    <input type="text" class="form-control" 
-                           placeholder="Search for Products by Title, Vendor, Type or Sku"
+                    <input type="text" class="form-control"
+                           placeholder="Search for Products by Title, Vendor, or Sku"
                            data-bind="value: SearchText,
                                valueUpdate: 'afterkeydown' ,
                                hasFocus: true,
@@ -66,6 +92,25 @@
                style="width: 125px;" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;Close</a>
         </div>
     </div>
+
+    <div class="row" data-bind="visible: ProductsFound">
+        <div class="col-xs-12">
+            <!-- The margin bumps this downward so it hugs the bottom of the header -->
+            <table class="table search-heading" style="margin-top: 10px;">
+                <thead>
+                <tr>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 0, ColumnName: 'Vendor', Model: $root.SortingModel } }">
+                    </th>
+                    <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 1, ColumnName: 'Product', Model: $root.SortingModel } }">
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
 </script>
 
 <!-- KnockoutJS Root Element -->
@@ -80,8 +125,7 @@
         self.PickListId = ko.observable();
         self.SearchText = ko.observable();
         self.SearchGrid = ko.observableArray();
-
-        self.ShowNoProductsFound = ko.computed(function () { return self.SearchGrid().length == 0 });
+        self.ProductsFound = ko.computed(function () { return self.SearchGrid().length > 0 });
 
         self.SearchClick = function () {
             flow.exec(
@@ -90,7 +134,9 @@
                         pickListId: self.PickListId(),
                         terms: self.SearchText(),                        
                     };
-                    var ajax = new ProfitWiseFunctions.Ajax();
+
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
                     ajax.HttpPost("/ConsolService/Search", search, this);
                 },
                 function(data) {
@@ -107,11 +153,12 @@
                         PickListId: self.PickListId(),
                         PageNumber: self.PagingModel.PageNumber(),
                         PageSize: self.PagingModel.PageSize(),
-                        //SortByColumn: self.SortingModel.SelectedColumnIndex(),
-                        //SortByDirectionDown: self.SortingModel.SortByDirectionDown(),
+                        SortByColumn: self.SortingModel.SelectedColumnIndex(),
+                        SortByDirectionDown: self.SortingModel.SortByDirectionDown(),
                     };
 
-                    var ajax = new ProfitWiseFunctions.Ajax();
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
                     ajax.HttpPost("/ConsolService/RetrieveResults", resultsPaging, this);
                 },
                 function (data) {
@@ -122,8 +169,13 @@
                         return;
                     };
 
+                    AQ(data.products).each(function (item) {
+                        item.Vendor = item.Vendor || "(No Vendor)";
+                    });
+
                     self.SearchGrid.removeAll();
                     self.SearchGrid(data.products);
+
                     self.PagingModel.RecordCount(data.totalRecords);
 
                     $(document).scrollTop(0);
@@ -145,6 +197,9 @@
 
         self.OkClick = function() { ShopifyApp.Modal.close({ result: true }); };
 
+        self.SortingModel = new ProfitWiseWidgets.SortingModel();
+        self.SortingModel.Callback = function () { self.LoadDataForCurrentPage(); };
+
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
         self.PagingModel.PageSize(50);
         self.PagingModel.PageNumber(1);
@@ -155,5 +210,6 @@
 
     var model = new ProfitWiseWidgets.ProductConsolSearchModel();
     ko.applyBindings(model);
+    model.SearchClick();
 </script>
 
