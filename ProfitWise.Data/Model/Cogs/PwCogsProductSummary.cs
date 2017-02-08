@@ -20,7 +20,6 @@ namespace ProfitWise.Data.Model.Cogs
 
         public int NumberOfVariants => Variants.Count();
 
-
         public bool HasNormalizedCogs
         {
             get { return Variants.Any(x => x.CogsTypeId == CogsType.FixedAmount); }
@@ -90,7 +89,6 @@ namespace ProfitWise.Data.Model.Cogs
             get { return Variants.Min(x => x.LowPrice); }
         }
 
-
         public int TotalInventory
         {
             get
@@ -124,7 +122,8 @@ namespace ProfitWise.Data.Model.Cogs
             Variants = new List<PwCogsVariant>();
         }
 
-        public PwCogsProductSummary PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
+        public PwCogsProductSummary 
+                PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
         {
             this.NormalizedCurrencyId = targetCurrencyId;
 

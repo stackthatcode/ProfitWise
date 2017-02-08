@@ -62,8 +62,7 @@
                        type="button"
                        rel="popover"
                        style="line-height: 20px !important;"
-                       data-bind="
-                                popover: { options: { placement: 'bottom', trigger: 'click',  },  
+                       data-bind="popover: { options: { placement: 'bottom', trigger: 'click',  },  
                                 template: 'Product-Filter-Widget-Popover', 
                                 data: $data }">
                         Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
@@ -71,11 +70,10 @@
                 </div>
 
                 <input type="text" class="form-control" placeholder="Enter up to 5 search terms for Titles, Vendors or SKU's, separated by comma"
-                       data-bind="
-                            value: SearchText,
-                            valueUpdate: 'afterkeydown', 
-                            hasFocus: true,
-                            event: { keyup: KeyPressCallback }"/>
+                       data-bind="value: SearchText,
+                                valueUpdate: 'afterkeydown', 
+                                hasFocus: true,
+                                event: { keyup: KeyPressCallback }"/>
 
                 <div class="input-group-addon btn btn-primary" data-bind="click: Callback">
                     Search &nbsp;<i class="glyphicon glyphicon-search"></i>

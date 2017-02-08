@@ -93,6 +93,7 @@ namespace ProfitWise.Web.Controllers
             return View(model);
         }
 
+        // Search pop-up
         [HttpGet]
         public ActionResult ProductConsolidationSearch(long? pwMasterProductId)
         {

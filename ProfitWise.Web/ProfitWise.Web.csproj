@@ -230,6 +230,7 @@
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\RequiresStoreDataAttribute.cs" />
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
+    <Compile Include="Controllers\ConsolServiceController.cs" />
     <Compile Include="Controllers\ContentController.cs" />
     <Compile Include="Controllers\QueryServiceController.cs" />
     <Compile Include="Controllers\FilterServiceController.cs" />

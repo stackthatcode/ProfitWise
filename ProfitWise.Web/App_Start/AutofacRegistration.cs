@@ -60,52 +60,25 @@ namespace ProfitWise.Web
 
             // Critical piece for all database infrastructure to work smoothly
             builder.RegisterType<ConnectionWrapper>().InstancePerLifetimeScope();
-
-
+            
             // Error forensics interceptors
             builder.RegisterType<ErrorForensics>();
-            var registry = new InceptorRegistry();
-            //registry.Add(typeof(ErrorForensics));
-
-            // Controller registration   
-            builder.RegisterType<ErrorController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ReportController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<AdminHomeController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<AdminAuthController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ShopifyAuthController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<CogsServiceController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<CogsController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);            
-            builder.RegisterType<FilterServiceController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<QueryServiceController>()
-                .InstancePerDependency()
-                .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ReportServiceController>()
-                 .InstancePerDependency()
-                 .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<PreferencesController>()
-                 .InstancePerDependency()
-                 .EnableClassInterceptorsWithRegistry(registry);
-            builder.RegisterType<ContentController>()
-                 .InstancePerDependency()
-                 .EnableClassInterceptorsWithRegistry(registry);
             
-
+            // Controller registration   
+            builder.RegisterType<ErrorController>();
+            builder.RegisterType<ReportController>();
+            builder.RegisterType<AdminHomeController>();
+            builder.RegisterType<AdminAuthController>();
+            builder.RegisterType<ShopifyAuthController>();
+            builder.RegisterType<CogsServiceController>();
+            builder.RegisterType<CogsController>();
+            builder.RegisterType<FilterServiceController>();
+            builder.RegisterType<QueryServiceController>();
+            builder.RegisterType<ReportServiceController>();
+            builder.RegisterType<PreferencesController>();
+            builder.RegisterType<ContentController>();
+            builder.RegisterType<ConsolServiceController>();
+                
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

@@ -36,7 +36,7 @@ namespace ProfitWise.Web.Controllers
 
             long newPickListId;
 
-            using (var trans = new TransactionScope())
+            using (var trans = pickListRepository.InitiateTransaction())
             {
                 if (parameters.CurrentPickListId.HasValue)
                 {
@@ -46,6 +46,7 @@ namespace ProfitWise.Web.Controllers
                 newPickListId = pickListRepository.CreateNew();
 
                 var terms = (parameters.Text ?? "").SplitBy(',');
+
                 pickListRepository.Populate(newPickListId, terms);
 
                 if (parameters.Filters != null && parameters.Filters.Count > 0)
@@ -58,7 +59,7 @@ namespace ProfitWise.Web.Controllers
                     }
                 }
 
-                trans.Complete();
+                trans.Commit();
             }
             
             return new JsonNetResult(new { PickListId = newPickListId});
@@ -81,7 +82,7 @@ namespace ProfitWise.Web.Controllers
 
             // Pull the Search Results by Pick List page number
             var products =
-                cogsRepository.RetrieveProductsFromPicklist(
+                cogsRepository.RetrieveCogsSummaryFromPicklist(
                     resultSelection.PickListId,
                     resultSelection.PageNumber, 
                     resultSelection.PageSize,
@@ -208,8 +209,8 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateCogsDetails(
-                long? pwMasterVariantId, long? pwMasterProductId, PwCogsDetail defaults, List<PwCogsDetail> details)
+        public ActionResult UpdateCogsDetails(long? pwMasterVariantId, 
+                long? pwMasterProductId, PwCogsDetail defaults, List<PwCogsDetail> details)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsService = _factory.MakeCogsUpdateService(userIdentity.PwShop);
@@ -235,6 +236,10 @@ namespace ProfitWise.Web.Controllers
             service.UpdateCogsForPickList(pickListId, simpleCogs);
             return JsonNetResult.Success();
         }
+
+
+
+
     }
 }
 

@@ -9,15 +9,13 @@
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
 
 <style>
-    body {
-        overflow-y: scroll !important;
-        padding: 0px !important;
-    }
+    body { overflow-y: scroll !important; padding: 0px !important; }
 </style>
 
 <script type="text/html" id="Main-Template">
     <div class="fixed-header-container" style="padding-left: 0px; padding-right: 0px;">
         <div class="standard-header-sleeve" style="height: 150px;">
+
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header" 
                  style="width:100% !important; min-width: 0 !important; padding-top:20px; padding-right:20px; padding-left:20px; border-bottom: 1px dashed #CCC;">
@@ -31,18 +29,30 @@
         <div style="height: 150px;"></div>
         <div style="width:100%; background-color:#FFF; overflow:auto; padding-top:0px; padding-left:30px; padding-right: 30px;">
             <table class="table table-striped">
-                <tbody data-bind="foreach: SelectionsGrid">                    
+                <tbody data-bind="foreach: SearchGrid">                    
                 </tbody>
             </table>
         </div>
     </div>
 </script>
 
-
 <script type="text/html" id="Top-Header">
     <div class="row">
         <div class="col-xs-12">
+            <div class="form-group" style="margin-bottom: 5px; height:50px;">
+                <div class="input-group">
+                    <input type="text" class="form-control" 
+                           placeholder="Search for Products by Title, Vendor, Type or Sku"
+                           data-bind="value: SearchText,
+                               valueUpdate: 'afterkeydown' ,
+                               hasFocus: true,
+                               event: { keyup: KeyPressCallback }" />
 
+                    <div class="input-group-addon btn btn-primary" data-bind="click: SearchClick">
+                        Search &nbsp;<i class="glyphicon glyphicon-search"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -56,35 +66,94 @@
                style="width: 125px;" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;Close</a>
         </div>
     </div>
-
 </script>
 
+<!-- KnockoutJS Root Element -->
+<div data-bind="template: { name: 'Main-Template' }"></div>
 
-    <!-- KnockoutJS Root Element -->
-    <div data-bind="template: { name: 'Main-Template' }"></div>
+<script>
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    <script>
-        var ProfitWiseWidgets = ProfitWiseWidgets || {};
+    ProfitWiseWidgets.ProductConsolSearchModel = function() {
+        var self = this;
 
-        ProfitWiseWidgets.ProductVariantSelections = function() {
-            var self = this;
+        self.PickListId = ko.observable();
+        self.SearchText = ko.observable();
+        self.SearchGrid = ko.observableArray();
 
+        self.ShowNoProductsFound = ko.computed(function () { return self.SearchGrid().length == 0 });
 
-            self.SelectionsGrid = ko.observableArray();
-
-            self.OkClick = function() {
-                ShopifyApp.Modal.close({ result: true });
-            };
-
-            self.PagingModel = new ProfitWiseWidgets.PagingModel();
-            self.PagingModel.PageSize(50);
-            self.PagingModel.PageNumber(1);
-            self.PagingModel.Callback = self.LoadDataForCurrentPage;
-            return self;
+        self.SearchClick = function () {
+            flow.exec(
+                function() {
+                    var search = {
+                        pickListId: self.PickListId(),
+                        terms: self.SearchText(),                        
+                    };
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ConsolService/Search", search, this);
+                },
+                function(data) {
+                    self.PickListId(data.PickListId);
+                    self.PagingModel.PageNumber(1);
+                    self.LoadDataForCurrentPage();
+                });
         };
 
-        var model = new ProfitWiseWidgets.ProductVariantSelections();
-        //model.LoadDataForCurrentPage();
-        ko.applyBindings(model);
-    
+        self.LoadDataForCurrentPage = function (callback) {
+            flow.exec(
+                function () {
+                    var resultsPaging = {
+                        PickListId: self.PickListId(),
+                        PageNumber: self.PagingModel.PageNumber(),
+                        PageSize: self.PagingModel.PageSize(),
+                        //SortByColumn: self.SortingModel.SelectedColumnIndex(),
+                        //SortByDirectionDown: self.SortingModel.SortByDirectionDown(),
+                    };
+
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/ConsolService/RetrieveResults", resultsPaging, this);
+                },
+                function (data) {
+                    if (!data.pickListValid) {
+                        ShopifyApp.Modal.alert(
+                            "Your query appears to have expired. The page will refresh so you can re-enter parameters.",
+                            function (result) { location.reload(); });
+                        return;
+                    };
+
+                    self.SearchGrid.removeAll();
+                    self.SearchGrid(data.products);
+                    self.PagingModel.RecordCount(data.totalRecords);
+
+                    $(document).scrollTop(0);
+
+                    if (callback) {
+                        callback();
+                    }
+                });
+        };
+
+        self.KeyPressCallback = function () {
+            if (event.keyCode == 13) {
+                self.SearchClick();
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        self.OkClick = function() { ShopifyApp.Modal.close({ result: true }); };
+
+        self.PagingModel = new ProfitWiseWidgets.PagingModel();
+        self.PagingModel.PageSize(50);
+        self.PagingModel.PageNumber(1);
+        self.PagingModel.Callback = self.LoadDataForCurrentPage;
+
+        return self;
+    };
+
+    var model = new ProfitWiseWidgets.ProductConsolSearchModel();
+    ko.applyBindings(model);
 </script>
+

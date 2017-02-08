@@ -6,6 +6,7 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
+using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 
@@ -30,9 +31,6 @@ namespace ProfitWise.Data.Repositories
             return _connectionWrapper.StartTransactionForScope();
         }
 
-
-
-
         public PwCogsProductSummary RetrieveProduct(long masterProductId)
         {
             var query =
@@ -51,29 +49,23 @@ namespace ProfitWise.Data.Repositories
                     }, _connectionWrapper.Transaction)
                 .FirstOrDefault();
         }
-
-        public IList<PwCogsProductSummary> RetrieveProductsFromPicklist(
-                long pickListId, int pageNumber, int resultsPerPage, int sortByColumn, bool sortByDirectionDown)
+        
+        public void TouchPickList(long pickListId)
         {
-            if (resultsPerPage > 200)
-            {
-                throw new ArgumentException("Maximum number of results per page is 200");
-            }
-
             var touchQuery =
                 @"UPDATE profitwisepicklist SET LastAccessed = getdate() 
                 WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId";
-            Connection.Execute(touchQuery, new { PwShopId, pickListId});
+            Connection.Execute(touchQuery, new { PwShopId, pickListId }, _connectionWrapper.Transaction);
+        }
 
-            var startRecord = (pageNumber - 1) * resultsPerPage;
+        private string ResultsQueryGen(int sortByColumn, bool sortByDirectionDown)
+        {
             var sortDirectionWord = (sortByDirectionDown ? "ASC" : "DESC");
-
             var sortByClause =
                 "ORDER BY " +
                 (sortByColumn == 0
                     ? $"t1.Vendor {sortDirectionWord}, t1.Title {sortDirectionWord} "
                     : $"t1.Title {sortDirectionWord}, t1.Vendor {sortDirectionWord} ");
-
             var query =
                 @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
                 FROM profitwiseproduct t1
@@ -84,18 +76,46 @@ namespace ProfitWise.Data.Repositories
 	                SELECT PwMasterProductId FROM profitwisepicklistmasterproduct 
                     WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId ) " +
                 sortByClause + " OFFSET @StartRecord ROWS FETCH NEXT @ResultsPerPage ROWS ONLY;";
-
+            
             // sortByClause + " LIMIT @StartRecord, @ResultsPerPage;"; //MySQL
 
-            return Connection.Query<PwCogsProductSummary>(
-                query,
-                new
-                {
-                    PwShopId = this.PwShop.PwShopId,
-                    pickListId,
-                    StartRecord = startRecord,
-                    ResultsPerPage = resultsPerPage
-                },
+            return query;
+        }
+
+        // Sort By Column { 0 for Vendor, 1 for Product Title }
+        public IList<PwCogsProductSummary> RetrieveCogsSummaryFromPicklist(
+                long pickListId, int pageNumber, int resultsPerPage, 
+                int sortByColumn = 0, bool sortByDirectionDown = true)
+        {
+            if (resultsPerPage > 200)
+            {
+                throw new ArgumentException("Maximum number of results per page is 200");
+            }
+
+            TouchPickList(pickListId);
+            var query = ResultsQueryGen(sortByColumn, sortByDirectionDown);
+            var startRecord = (pageNumber - 1) * resultsPerPage;
+
+            return Connection.Query<PwCogsProductSummary>(query,
+                new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage },
+                _connectionWrapper.Transaction).ToList();
+        }
+
+        public IList<PwProduct> RetrieveProductsFromPicklist(
+                long pickListId, int pageNumber, int resultsPerPage,
+                int sortByColumn = 0, bool sortByDirectionDown = true)
+        {
+            if (resultsPerPage > 200)
+            {
+                throw new ArgumentException("Maximum number of results per page is 200");
+            }
+
+            TouchPickList(pickListId);
+            var query = ResultsQueryGen(sortByColumn, sortByDirectionDown);
+            var startRecord = (pageNumber - 1) * resultsPerPage;
+
+            return Connection.Query<PwProduct>(query,
+                new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage },
                 _connectionWrapper.Transaction).ToList();
         }
 
