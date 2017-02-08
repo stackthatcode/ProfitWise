@@ -249,6 +249,7 @@
     <Compile Include="Models\FilterEditorModel.cs" />
     <Compile Include="Models\MoneyRange.cs" />
     <Compile Include="Models\PreviewSelectionLimit.cs" />
+    <Compile Include="Models\ProductConsolidationSearchModel.cs" />
     <Compile Include="Models\SaveAsModel.cs" />
     <Compile Include="Models\SearchResultSelection.cs" />
     <Compile Include="Models\SimplePickList.cs" />
@@ -487,6 +488,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cogs\_EditProductConsolidationView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Cogs\ProductConsolidationSearch.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -93,8 +93,15 @@ namespace ProfitWise.Web.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public ActionResult ProductConsolidationSearch(long? pwMasterProductId)
+        {
+            var model = new ProductConsolidationSearchModel();
+            return View(model);
+        }
 
-        
+
+
         [HttpGet]
         public ActionResult StockedPicklistPopup(int pickListId)
         {

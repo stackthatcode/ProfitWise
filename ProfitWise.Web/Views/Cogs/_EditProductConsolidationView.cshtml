@@ -25,24 +25,8 @@
 
     .consol-link-control { font-weight:700; }
 
-    /*
-    #product-consol-grid td {
-        height: 120px !important;
-        font-size: 14px;
-        vertical-align: middle !important;
-    }
-
-    #product-consol-grid th {
-        font-size: 14px !important;
-        font-weight: 700;
-        color: #777;
-        height: 50px;
-    }
-    */
-
     input[type='text'] { width: 100px; }
 </style>
-
 
 <script type="text/html" id="Product-Consolidation-Header">
     <!-- Filtering and Paging -->
@@ -143,6 +127,7 @@
                     <span class="consolidation-synposis" data-bind="if: ProductConsolidations().length == 0">
                         This Product is not consolidated with any other Products
                     </span>
+
                     <span class="consolidation-synposis" data-bind="if: ProductConsolidations().length > 0">                        
                         <span>
                             This Product is consolidated with 
@@ -153,18 +138,16 @@
 
                         <span data-bind="template: { name: 'Product-Consolidation-Expander',
                                                 data: { Visible: ShowProductConsolidation } }"></span>
-
                     </span>
 
                     <span style="display: inline-block; width:30px;"></span>
-                    <a href="#" class="consol-link-control">
+                    <a href="#" class="consol-link-control" data-bind="click: SearchForProductsPopup">
                         <i class="glyphicon glyphicon-plus"></i> Add Consolidations
                     </a>
                 </div>
             </div>
         </div>
     </div>
-
     
     <div class="row" style="height:40px;">
         <div class="col-xs-10"></div>
@@ -234,31 +217,21 @@
             //self.RefreshSort();
         };
 
-
         self.Refresh = function() {
             self.RetrieveMasterProduct(self.PwMasterProductId());
         };
         
-        self.SearchForProductsPopup = function (pwMasterVariantId, pwMasterProductId, dialogTitle) {
+        self.SearchForProductsPopup = function (pwMasterProductId) {
             var url = ProfitWiseConfig.BaseUrl +
-                '/Cogs/CogsDetail?pwMasterVariantId=' + pwMasterVariantId +
-                "&pwMasterProductId=" + pwMasterProductId;
+                '/Cogs/ProductConsolidationSearch?pwMasterProductId=' + pwMasterProductId;
             
             ProfitWiseShopify.LaunchModal({
                 src: url,
-                title: 'Edit CoGS Detail: ' + dialogTitle,
+                title: 'Search for Products to Consolidate With',
                 width: 'large',
                 height: 500,
             }, self.Refresh);
         }
-
-
-        // Some JQuery initialization
-        self.JQueryInit = function() {
-            ProfitWiseFunctions.SynchronizeWidth(
-                "table#product-edit-grid tbody tr td",
-                "table#product-edit-heading thead tr th");
-        };
 
         return self;
     };
