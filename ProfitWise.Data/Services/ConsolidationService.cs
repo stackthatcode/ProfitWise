@@ -36,13 +36,15 @@ namespace ProfitWise.Data.Services
         {
             return _connectionWrapper.StartTransactionForScope();
         }
-
+        
         public void CommitTransaction()
         {
             _connectionWrapper.CommitTranscation();
         }
 
-        public void ConjoinProductToMasterProduct(long targetMasterProductId, long inboundProductId)
+        
+        
+        public void ConsolidateProduct(long inboundProductId, long targetMasterProductId)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
@@ -60,7 +62,7 @@ namespace ProfitWise.Data.Services
             productRepository.UpdateProductsMasterProduct(inboundProduct);
             catalogBuilderService.UpdatePrimary(targetMasterProduct);
 
-            // Step #2 - 
+            // Step #2 - extract Variants that are associated with this Product Id across all Master Variants
             var inboundVariants = 
                 inboundMasterProduct.MasterVariants
                     .SelectMany(x => x.Variants)
@@ -98,7 +100,7 @@ namespace ProfitWise.Data.Services
             }
 
             // Step #3 - decommission any Master Variants that don't have Variants left
-            foreach (var masterVariant in targetMasterProduct.MasterVariants)
+            foreach (var masterVariant in inboundMasterProduct.MasterVariants)
             {
                 if (masterVariant.Variants.Count == 0)
                 {
@@ -117,9 +119,67 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public void SeparateProductFromMasterProduct(long productId)
+        public void DeconsolidateProduct(long productId)
         {
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
+            var masterProduct = new PwMasterProduct()
+            {
+                PwShopId = this.PwShop.PwShopId
+            };
+            var newMasterProductId = productRepository.InsertMasterProduct(masterProduct);
+
+            ConsolidateProduct(productId, newMasterProductId);
+        }
+
+        public void ConsolidateVariant(long inboundVariantId, long targetMasterVariantId)
+        {
+            var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+            var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+
+            var inboundMasterVariantId = variantRepository.RetrieveMasterVariantId(inboundVariantId);
+            var inboundMasterVariant =
+                variantRepository.RetrieveMasterVariants(pwMasterVariantId: inboundMasterVariantId).First();
+
+            var inboundVariant = inboundMasterVariant.Variants.First(x => x.PwVariantId == inboundVariantId);
+
+            var targetMasterVariant =
+                variantRepository.RetrieveMasterVariants(pwMasterVariantId: targetMasterVariantId).First();
             
+            targetMasterVariant.AssignVariant(inboundVariant);
+
+            variantRepository.UpdateVariantsMasterVariant(inboundVariant);
+
+            if (inboundMasterVariant.Variants.Count == 0)
+            {
+                variantRepository.DeleteMasterVariant(inboundMasterVariant.PwMasterVariantId);
+
+                // TODO - is this guy called by the Product Clean-up Service
+                cogsRepository.DeleteCogsDetail(inboundMasterVariant.PwMasterVariantId);
+            }
+        }
+
+        public void DeconsolidateVariant(long variantId)
+        {
+            var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+            var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+
+            var masterVariantId = variantRepository.RetrieveMasterVariantId(variantId);
+            var masterVariant =
+                variantRepository.RetrieveMasterVariants(pwMasterVariantId: masterVariantId).First();
+            var variant = masterVariant.Variants.First(x => x.PwVariantId == variantId);
+
+            var newMasterVariant = masterVariant.Clone();
+            newMasterVariant.PwMasterVariantId =
+                    variantRepository.InsertMasterVariant(newMasterVariant);
+
+            foreach (var detail in newMasterVariant.CogsDetails)
+            {
+                detail.PwMasterVariantId = newMasterVariant.PwMasterVariantId;
+                cogsRepository.InsertCogsDetails(detail);
+            }
+
+            newMasterVariant.AssignVariant(variant);
+            variantRepository.UpdateVariantsMasterVariant(variant);
         }
     }
 }

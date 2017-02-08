@@ -60,7 +60,7 @@ namespace ProfitWise.Data.Services
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
 
             var masterProduct = productRepository.RetrieveMasterProduct(masterProductId);
-            var masterVariants = variantDataRepository.RetrieveMasterVariants(masterProductId);
+            var masterVariants = variantDataRepository.RetrieveMasterVariants(pwMasterProductId: masterProductId);
             var cogsDetails = cogsRepository.RetrieveCogsDetailByMasterProduct(masterProductId);
 
             masterProduct.MasterVariants = masterVariants;
