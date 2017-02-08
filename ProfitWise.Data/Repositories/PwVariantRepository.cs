@@ -123,7 +123,26 @@ namespace ProfitWise.Data.Repositories
             return Connection.Query<long>(query, masterVariant, _connectionWrapper.Transaction).FirstOrDefault();
         }
 
-        public void DeleteMasterVariantByMasterVariantId(long pwMasterVariantId)
+        public PwMasterVariant InsertCopy(long sourceMasterVariantId, long targetMasterProductId)
+        {
+            var query =
+                @"INSERT INTO profitwisemastervariant ( 
+                    PwShopId, PwMasterProductId, Exclude, StockedDirectly, 
+                    CogsTypeId, CogsCurrencyId, CogsAmount, CogsMarginPercent, CogsDetail ) 
+                SELECT PwShopId, @targetMasterProductId, Exclude, StockedDirectly,
+                    CogsTypeId, CogsCurrencyId, CogsAmount, CogsMarginPercent, CogsDetail
+                FROM profitwisemastervariant 
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId = @sourceMasterVariantId;
+                SELECT * FROM profitwisemastervariant
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId IN ( SELECT SCOPE_IDENTITY() );";
+
+            return Connection.Query<PwMasterVariant>(
+                query, new { PwShop.PwShopId, sourceMasterVariantId, targetMasterProductId },
+                _connectionWrapper.Transaction).First();
+        }
+
+
+        public void DeleteMasterVariant(long pwMasterVariantId)
         {
             var query =
                 @"DELETE FROM profitwisemastervariant " +

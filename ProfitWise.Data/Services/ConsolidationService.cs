@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
+using Castle.Core.Internal;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
@@ -41,65 +42,84 @@ namespace ProfitWise.Data.Services
             _connectionWrapper.CommitTranscation();
         }
 
-        public void ConsolidateWithMasterProduct(long targetMasterProductId, long inboundProductId)
+        public void ConjoinProductToMasterProduct(long targetMasterProductId, long inboundProductId)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+            var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
             var catalogBuilderService = this._multitenantFactory.MakeCatalogBuilderService(this.PwShop);
+            var catalogRetrievalService = this._multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
 
-            var targetMasterProduct = RetrieveMasterProduct(targetMasterProductId);
+            var targetMasterProduct = catalogRetrievalService.RetrieveMasterProduct(targetMasterProductId);
             var inboundMasterProductId = productRepository.RetrieveMasterProductId(inboundProductId);
-            var inboundMasterProduct = RetrieveMasterProduct(inboundMasterProductId);
+            var inboundMasterProduct = catalogRetrievalService.RetrieveMasterProduct(inboundMasterProductId);
             var inboundProduct = inboundMasterProduct.Products.First(x => x.PwProductId == inboundProductId);
 
             // Step #1 - re-assign Product 
             targetMasterProduct.AssignProduct(inboundProduct);
             productRepository.UpdateProductsMasterProduct(inboundProduct);
-            catalogBuilderService.AssignAndWritePrimaryProduct(targetMasterProduct);
+            catalogBuilderService.UpdatePrimary(targetMasterProduct);
 
-            // Step #2 - attempt to auto-consolidate MasterVariants
-            foreach (var inboundVariant in inboundMasterProduct.MasterVariants.SelectMany(x => x.Variants))
+            // Step #2 - 
+            var inboundVariants = 
+                inboundMasterProduct.MasterVariants
+                    .SelectMany(x => x.Variants)
+                    .Where(x => x.PwProductId == inboundProductId)
+                    .ToList();
+
+            foreach (var inboundVariant in inboundVariants)
             {
-                // Step #2A - attempt to 
+                // Step #2A - attempt to auto-consolidate Variants
                 var targetMasterVariant = 
                     targetMasterProduct.FindMasterVariant(inboundVariant.Sku, inboundVariant.Title);
 
-                // Step #2A - if match was found, assign this Variant under the Target Master Variant
                 if (targetMasterVariant != null)
                 {
+                    // Step #2B1 - if match was found, assign this Variant under the Target Master Variant
                     targetMasterVariant.AssignVariant(inboundVariant);
                     variantRepository.UpdateVariantsMasterVariant(inboundVariant);
+                    catalogBuilderService.UpdatePrimary(targetMasterVariant);
+                }
+                else
+                {
+                    // Step #2B2 - clone the original Master Variant and assign it to the Master Product
+                    var newMasterVariant = inboundVariant.ParentMasterVariant.Clone();
+                    targetMasterProduct.AssignMasterVariant(newMasterVariant);
+
+                    newMasterVariant.PwMasterVariantId = 
+                            variantRepository.InsertMasterVariant(newMasterVariant);
+
+                    foreach (var detail in newMasterVariant.CogsDetails)
+                    {
+                        detail.PwMasterVariantId = newMasterVariant.PwMasterVariantId;                        
+                        cogsRepository.InsertCogsDetails(detail);
+                    }
                 }
             }
 
             // Step #3 - decommission any Master Variants that don't have Variants left
+            foreach (var masterVariant in targetMasterProduct.MasterVariants)
+            {
+                if (masterVariant.Variants.Count == 0)
+                {
+                    variantRepository.DeleteMasterVariant(masterVariant.PwMasterVariantId);
+
+                    // TODO - is this guy called by the Product Clean-up Service
+                    cogsRepository.DeleteCogsDetail(masterVariant.PwMasterVariantId);
+                }                
+            }
             
-            
-            // Step #3 - determine whether or not to decommission Master Product            
+            // Step #4 - if necessary decommission Master Product the inbound belongs to
             if (inboundMasterProduct.Products.Count == 0)
             {
+                // Note - it should be impossible for a Product to be 
                 productRepository.DeleteMasterProduct(inboundMasterProduct);
             }
-
-
-
         }
 
-        public PwMasterProduct RetrieveMasterProduct(long masterProductId)
+        public void SeparateProductFromMasterProduct(long productId)
         {
-            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-            var variantDataRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
-            var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
-
-            var masterProduct = productRepository.RetrieveMasterProduct(masterProductId);
-            var masterVariants = variantDataRepository.RetrieveMasterVariants(masterProductId);
-            var cogsDetails = cogsRepository.RetrieveCogsDetailByMasterProduct(masterProductId);
-
-            masterProduct.MasterVariants = masterVariants;
-            masterVariants.LoadCogsDetail(cogsDetails);
-
-            return masterProduct;
+            
         }
-
     }
 }

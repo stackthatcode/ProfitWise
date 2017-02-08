@@ -42,11 +42,11 @@ namespace ProfitWise.Data.Services
         {
             var defaultsWithConstraints =
                 defaults
-                    .CloneWithConstraints(ApplyConstraintsToDetail)
+                    .Clone(ApplyConstraintsToDetail)
                     .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId);
             
             var detailsWithConstraints =
-                details?.Select(x => x.CloneWithConstraints(ApplyConstraintsToDetail)
+                details?.Select(x => x.Clone(ApplyConstraintsToDetail)
                                     .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId))                                        
                         .ToList();
 
@@ -141,7 +141,7 @@ namespace ProfitWise.Data.Services
                 // Update the Order Lines for the Pick List
                 var context = new OrderLineCogsContextPickList()
                 { 
-                    Cogs = cogs.CloneWithConstraints(ApplyConstraintsToDetail),
+                    Cogs = cogs.Clone(ApplyConstraintsToDetail),
                     PwPickListId = pickListId,
                     DestinationCurrencyId = this.PwShop.CurrencyId,                   
                 };
@@ -244,7 +244,7 @@ namespace ProfitWise.Data.Services
             {
                 foreach (var detail in context.Details)
                 {
-                    var detailWithConstraints = detail.CloneWithConstraints(ApplyConstraintsToDetail);
+                    var detailWithConstraints = detail.Clone(ApplyConstraintsToDetail);
                     detailWithConstraints.PwMasterVariantId = context.PwMasterVariantId.Value;
                     cogsEntryRepository.InsertCogsDetails(detailWithConstraints);
                 }

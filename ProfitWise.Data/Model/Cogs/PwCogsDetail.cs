@@ -18,7 +18,7 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal CogsPercentOfUnitPrice => 100m - CogsMarginPercent ?? 0m;
 
 
-        public PwCogsDetail CloneWithConstraints(Action<PwCogsDetail> constraint)
+        public PwCogsDetail Clone(Action<PwCogsDetail> constraint = null)
         {
             var output = new PwCogsDetail
             {
@@ -33,7 +33,7 @@ namespace ProfitWise.Data.Model.Cogs
                 CogsMarginPercent = this.CogsMarginPercent,
             };
 
-            constraint(output);
+            constraint?.Invoke(output);
             return output;
         }
 
@@ -43,7 +43,7 @@ namespace ProfitWise.Data.Model.Cogs
             this.PwMasterVariantId = pwMasterVariantId;
             this.PwMasterProductId = pwMasterProductId;
             return this;
-        }
-        
+        }        
     }
 }
+

@@ -45,6 +45,7 @@ namespace ProfitWise.Data
 
             builder.RegisterType<ShopRefreshService>();
             builder.RegisterType<CatalogBuilderService>();
+            builder.RegisterType<CatalogRetrievalService>();
             builder.RegisterType<CurrencyService>();
             builder.RegisterType<ShopSynchronizationService>();
             builder.RegisterType<CogsService>();

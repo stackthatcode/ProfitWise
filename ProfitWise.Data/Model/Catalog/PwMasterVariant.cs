@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using ProfitWise.Data.Model.Cogs;
 using Push.Foundation.Utilities.General;
 
@@ -19,7 +20,10 @@ namespace ProfitWise.Data.Model.Catalog
         public long PwMasterVariantId { get; set; }
         public long PwShopId { get; set; }
         public long PwMasterProductId { get; set; }
+
         public PwMasterProduct ParentMasterProduct { get; set; }
+        public IList<PwCogsDetail> CogsDetails { get; set; }
+        public IList<PwVariant> Variants { get; set; }
 
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
@@ -30,9 +34,31 @@ namespace ProfitWise.Data.Model.Catalog
         public decimal? CogsMarginPercent { get; set; }
 
         public bool CogsDetail { get; set; }
-        public IList<PwCogsDetail> CogsDetails { get; set; }
 
-        public IList<PwVariant> Variants { get; set; }
+        public PwMasterVariant Clone()
+        {
+            var output = new PwMasterVariant
+            {
+                PwShopId = this.PwShopId,
+                PwMasterVariantId = this.PwMasterVariantId,
+                PwMasterProductId = this.PwMasterProductId,
+                Exclude = this.Exclude,
+                StockedDirectly = this.StockedDirectly,
+                CogsCurrencyId = this.CogsCurrencyId,
+                CogsAmount = this.CogsAmount,
+                CogsTypeId = this.CogsTypeId,
+                CogsMarginPercent = this.CogsMarginPercent,
+                CogsDetail = this.CogsDetail,
+            };
+
+            foreach (var detail in this.CogsDetails)
+            {
+                output.CogsDetails.Add(detail.Clone());
+            }
+
+            return output;
+        }
+
 
         public PwVariant DeterminePrimaryVariant()
         {

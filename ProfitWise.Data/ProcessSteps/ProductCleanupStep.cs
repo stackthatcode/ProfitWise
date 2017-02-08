@@ -37,7 +37,7 @@ namespace ProfitWise.Data.ProcessSteps
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
 
             // Create an instance of multi-tenant-aware repositories
-            var service = this._multitenantFactory.MakeCatalogBuilderService(shop);
+            var service = this._multitenantFactory.MakeCatalogRetrievalService(shop);
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
             var orderRepository = this._multitenantFactory.MakeShopifyOrderRepository(shop);
@@ -81,7 +81,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                     productRepository.DeleteProduct(product.PwProductId);
 
-                    catalogService.AssignAndWritePrimaryProduct(product.ParentMasterProduct);
+                    catalogService.UpdatePrimary(product.ParentMasterProduct);
                 }
             }
 
@@ -98,7 +98,7 @@ namespace ProfitWise.Data.ProcessSteps
                     variant.ParentMasterVariant.Variants.Remove(variant);
 
                     variantRepository.DeleteVariantByVariantId(variant.PwVariantId);
-                    catalogService.UpdatePrimaryVariant(variant.ParentMasterVariant);
+                    catalogService.UpdatePrimary(variant.ParentMasterVariant);
                 }
             }
         }

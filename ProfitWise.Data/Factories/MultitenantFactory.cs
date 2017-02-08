@@ -12,6 +12,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwProductRepository> _productRepositoryFactory;
         private readonly Func<PwVariantRepository> _variantRepositoryFactory;
         private readonly Func<CatalogBuilderService> _productVariantServiceFactory;
+        private readonly Func<CatalogRetrievalService> _catalogRetrievalServiceFactory;
         private readonly Func<PwCogsEntryRepository> _cogsEntryRepositoryFactory;
         private readonly Func<PwCogsDataUpdateRepository> _cogsDataUpdateRepositoryFactory;
         private readonly Func<PwPickListRepository> _pickListRepositoryFactory;
@@ -26,6 +27,7 @@ namespace ProfitWise.Data.Factories
             Func<PwProductRepository> productRepositoryFactory,
             Func<PwVariantRepository> variantRepositoryFactory,
             Func<CatalogBuilderService> productVariantServiceFactory,
+            Func<CatalogRetrievalService> catalogRetrievalServiceFactory,
             Func<PwCogsEntryRepository> cogsEntryRepositoryFactory, 
             Func<PwPickListRepository> pickListRepositoryFactory,
             Func<PwReportRepository> reportRepositoryFactory, 
@@ -39,6 +41,7 @@ namespace ProfitWise.Data.Factories
             _productRepositoryFactory = productRepositoryFactory;
             _variantRepositoryFactory = variantRepositoryFactory;
             _productVariantServiceFactory = productVariantServiceFactory;
+            _catalogRetrievalServiceFactory = catalogRetrievalServiceFactory;
             _cogsEntryRepositoryFactory = cogsEntryRepositoryFactory;
             _pickListRepositoryFactory = pickListRepositoryFactory;
             _reportRepositoryFactory = reportRepositoryFactory;
@@ -78,6 +81,13 @@ namespace ProfitWise.Data.Factories
         public virtual CatalogBuilderService MakeCatalogBuilderService(PwShop shop)
         {
             var service = _productVariantServiceFactory();
+            service.PwShop = shop;
+            return service;
+        }
+
+        public virtual CatalogRetrievalService MakeCatalogRetrievalService(PwShop shop)
+        {
+            var service = _catalogRetrievalServiceFactory();
             service.PwShop = shop;
             return service;
         }
@@ -130,6 +140,8 @@ namespace ProfitWise.Data.Factories
             repository.PwShop = shop;
             return repository;
         }
+
+
     }
 }
 

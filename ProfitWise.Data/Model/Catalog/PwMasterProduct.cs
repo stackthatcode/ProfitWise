@@ -19,13 +19,18 @@ namespace ProfitWise.Data.Model.Catalog
 
         public void AssignProduct(PwProduct product)
         {
-            if (product.ParentMasterProduct != null && product.ParentMasterProduct.Products != null)
-            {
-                product.ParentMasterProduct.Products.Remove(product);
-            }
+            product.ParentMasterProduct?.Products?.Remove(product);
             product.ParentMasterProduct = this;
             product.PwMasterProductId = this.PwMasterProductId;
             this.Products.Add(product);
+        }
+
+        public void AssignMasterVariant(PwMasterVariant masterVariant)
+        {
+            masterVariant.ParentMasterProduct?.MasterVariants?.Remove(masterVariant);
+            masterVariant.ParentMasterProduct = this;
+            masterVariant.PwMasterProductId = this.PwMasterProductId;
+            this.MasterVariants.Add(masterVariant);
         }
 
         public PwProduct DeterminePrimaryProduct()

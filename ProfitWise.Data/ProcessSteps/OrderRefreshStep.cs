@@ -212,7 +212,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, PwShop shop)
         {
-            var catalogBuilderService = _multitenantFactory.MakeCatalogBuilderService(shop);
+            var catalogBuilderService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(shop);
 
@@ -366,7 +366,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Master Product for Title: {productBuildContext.Title} " +
                     $"and Vendor: {productBuildContext.Vendor}");
 
-                masterProduct = service.BuildAndSaveMasterProduct();
+                masterProduct = service.CreateMasterProduct();
                 productBuildContext.MasterProducts.Add(masterProduct);
             }
 
@@ -378,7 +378,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Vendor: {productBuildContext.Vendor} and " +
                     $"Shopify Id: {productBuildContext.ShopifyProductId}");
 
-                variantBuildContext.Product = service.BuildAndSaveProduct(masterProduct, productBuildContext);
+                variantBuildContext.Product = service.CreateProduct(masterProduct, productBuildContext);
             }
 
             variantBuildContext.MasterVariant = masterProduct.FindMasterVariant(variantBuildContext);            
@@ -388,7 +388,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Master Variant for Title: {variantBuildContext.Title} " +
                     $"and Sku: {variantBuildContext.Sku}");
 
-                variantBuildContext.MasterVariant = service.BuildAndSaveMasterVariant(variantBuildContext);
+                variantBuildContext.MasterVariant = service.CreateMasterVariant(variantBuildContext);
                 masterProduct.MasterVariants.Add(variantBuildContext.MasterVariant);
             }
 
@@ -399,7 +399,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Variant for Title: {variantBuildContext.Title} " +
                     $"and Sku: {variantBuildContext.Sku} " +
                     $"and Shopify Variant Id: {variantBuildContext.ShopifyVariantId}");
-                variant = service.BuildAndSaveVariant(variantBuildContext);
+                variant = service.CreateVariant(variantBuildContext);
             }
 
             return variant;

@@ -208,8 +208,9 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateCogsDetails(long? pwMasterVariantId, 
-                long? pwMasterProductId, PwCogsDetail defaults, List<PwCogsDetail> details)
+        public ActionResult UpdateCogsDetails(
+                long? pwMasterVariantId, long? pwMasterProductId, 
+                PwCogsDetail defaults, List<PwCogsDetail> details)
         {
             var userIdentity = HttpContext.PullIdentity();
             var cogsService = _factory.MakeCogsUpdateService(userIdentity.PwShop);
@@ -235,9 +236,6 @@ namespace ProfitWise.Web.Controllers
             service.UpdateCogsForPickList(pickListId, simpleCogs);
             return JsonNetResult.Success();
         }
-
-
-
 
     }
 }

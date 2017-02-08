@@ -56,7 +56,7 @@ namespace ProfitWise.Data.ProcessSteps
             // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-            var service = this._multitenantFactory.MakeCatalogBuilderService(shop);
+            var service = this._multitenantFactory.MakeCatalogRetrievalService(shop);
 
             // Load Batch State
             var batchState = batchStateRepository.Retrieve();
@@ -113,11 +113,12 @@ namespace ProfitWise.Data.ProcessSteps
             return results;
         }
 
+
         private void WriteProductsToDatabase(PwShop shop, IList<Product> importedProducts)
         {
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
-            var service = _multitenantFactory.MakeCatalogBuilderService(shop);
+            var service = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var masterProducts = service.RetrieveFullCatalog();
 
             foreach (var importedProduct in importedProducts)
@@ -144,7 +145,6 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-
         private PwProduct WriteProductToDatabase(PwShop shop, ProductBuildContext context)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
@@ -156,7 +156,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Master Product for Title: {context.Title} " + 
                     $"and Vendor: {context.Vendor}");
 
-                masterProduct = service.BuildAndSaveMasterProduct();
+                masterProduct = service.CreateMasterProduct();
                 context.MasterProducts.Add(masterProduct);
             }
 
@@ -167,12 +167,18 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Product for Title: {context.Title} " +
                     $"and Vendor: {context.Vendor} and Shopify Id: {context.ShopifyProductId}");
 
-                product = service.BuildAndSaveProduct(masterProduct, context);
+                product = service.CreateProduct(masterProduct, context);
                 service.UpdateActiveProduct(context.MasterProducts, product.ShopifyProductId);
             }
             else
             {
-                service.UpdateExistingProduct(product, context.Tags, context.ProductType);
+                _pushLogger.Debug($"Updating existing Product: {product.Title}");
+                product.Tags = context.Tags;
+                product.ProductType = context.ProductType;
+                product.LastUpdated = DateTime.Now;
+
+                var productRepository = this._multitenantFactory.MakeProductRepository(shop);
+                productRepository.UpdateProduct(product);
             }
             return product;
         }
@@ -186,7 +192,7 @@ namespace ProfitWise.Data.ProcessSteps
             if (masterVariant == null)
             {
                 _pushLogger.Debug($"Unable to find Master Variant for Title: {context.Title} and Sku: {context.Sku}");
-                masterVariant = service.BuildAndSaveMasterVariant(context);
+                masterVariant = service.CreateMasterVariant(context);
 
                 context.MasterProduct.MasterVariants.Add(masterVariant);
                 context.MasterVariant = masterVariant;
@@ -199,8 +205,8 @@ namespace ProfitWise.Data.ProcessSteps
                     $"Unable to find Variant for Title: {context.Title} " +
                     $"and Sku: {context.Sku} and Shopify Variant Id: {context.ShopifyVariantId}");
 
-                variant = service.BuildAndSaveVariant(context);                
-                service.UpdateActiveShopifyVariant(context.AllMasterProducts, context.ShopifyVariantId);
+                variant = service.CreateVariant(context);                
+                service.UpdateActiveVariant(context.AllMasterProducts, context.ShopifyVariantId);
             }
 
             var inventory = context.InventoryTracked ? context.Inventory : (int?) null;
@@ -214,10 +220,7 @@ namespace ProfitWise.Data.ProcessSteps
                     variant.PwVariantId, context.Price, context.Price, inventory);
         }
 
-        
-
-        // Ancillary catalog maintenance functions
-        public virtual IList<Event> RetrieveAllProductDestroyEvents(
+        private IList<Event> RetrieveAllProductDestroyEvents(
                                 ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDate)
         {
             var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
@@ -271,7 +274,7 @@ namespace ProfitWise.Data.ProcessSteps
                             masterProducts.Where(
                                 x => x.Products.Any(product => product.ShopifyProductId == shopifyProductId)))
                     {
-                        catalogService.AssignAndWritePrimaryProduct(masterProduct);
+                        catalogService.UpdatePrimary(masterProduct);
                     }
                 }
             }
@@ -301,7 +304,7 @@ namespace ProfitWise.Data.ProcessSteps
                 variant.IsActive = false;
                 _pushLogger.Debug($"Flagging PwVariantId {variant.PwVariantId} as Inactive");
                 variantRepository.UpdateVariantIsActive(variant);
-                catalogService.UpdatePrimaryVariant(variant.ParentMasterVariant);
+                catalogService.UpdatePrimary(variant.ParentMasterVariant);
             });
         }
     }
