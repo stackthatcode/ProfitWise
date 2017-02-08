@@ -300,6 +300,7 @@ h3.edit-product-header {
     font-weight: 700;
     margin-bottom: 8px;
     font-size: 1.6em;
+    height: 1.2em;
 }
 
 .edit-product-subtitle {
@@ -312,3 +313,7 @@ h3.edit-product-header {
     height: 20px;
 }
 
+div.edit-product-table-header {
+    height: 55px; 
+    border-bottom:1px solid #CCC;
+}

@@ -357,7 +357,7 @@
 
 
         // *** Search for Products *** //
-        self.SearchForProducts = function () {
+        self.SearchForProducts = function (callback) {
             flow.exec(                
                 function() {
                     var filters = [];
@@ -383,11 +383,11 @@
                 function(data) {
                     self.PickListId(data.PickListId);
                     self.PagingModel.PageNumber(1);
-                    self.LoadDataForCurrentPage();
+                    self.LoadDataForCurrentPage(callback);
                 });
         };
 
-        self.LoadDataForCurrentPage = function () {            
+        self.LoadDataForCurrentPage = function (callback) {            
             flow.exec(
                 function() {
                     var resultsPaging = {
@@ -420,6 +420,9 @@
                     }
 
                     self.ResetToLastScrollTop();
+                    if (callback) {
+                        callback();
+                    }
                 });
         };
 
@@ -500,9 +503,12 @@
     $(document)
         .ready(function () {
             var model = new ProfitWise.ProductSearchModel();
-            model.SearchForProducts();
+            
             ko.applyBindings(model);
             model.JQueryInit();
+            model.SearchForProducts(function() {
+                model.DrilldownToCogsEditor({ PwMasterProductId: 222 });
+            });            
         });
 </script>
 
