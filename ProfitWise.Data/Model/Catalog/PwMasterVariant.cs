@@ -58,6 +58,17 @@ namespace ProfitWise.Data.Model.Catalog
 
             return Variants.OrderByDescending(x => x.LastUpdated).First();
         }
+
+        public void AssignVariant(PwVariant variant)
+        {
+            if (variant.ParentMasterVariant != null && variant.ParentMasterVariant.Variants != null)
+            {
+                variant.ParentMasterVariant.Variants.Remove(variant);
+            }
+            this.Variants.Add(variant);
+            variant.PwMasterVariantId = this.PwMasterVariantId;
+            variant.ParentMasterVariant = this;
+        }
     }
 
     public static class PwMasterVariantExtensions

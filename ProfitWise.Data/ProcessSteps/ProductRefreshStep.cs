@@ -271,7 +271,7 @@ namespace ProfitWise.Data.ProcessSteps
                             masterProducts.Where(
                                 x => x.Products.Any(product => product.ShopifyProductId == shopifyProductId)))
                     {
-                        catalogService.UpdatePrimaryProduct(masterProduct);
+                        catalogService.AssignAndWritePrimaryProduct(masterProduct);
                     }
                 }
             }

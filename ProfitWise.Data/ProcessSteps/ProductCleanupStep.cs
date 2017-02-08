@@ -81,7 +81,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                     productRepository.DeleteProduct(product.PwProductId);
 
-                    catalogService.UpdatePrimaryProduct(product.ParentMasterProduct);
+                    catalogService.AssignAndWritePrimaryProduct(product.ParentMasterProduct);
                 }
             }
 

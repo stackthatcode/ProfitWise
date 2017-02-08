@@ -30,12 +30,15 @@ namespace ProfitWise.Data.Model.Catalog
 
         public static PwMasterVariant FindMasterVariant(this PwMasterProduct masterProduct, VariantBuildContext context)
         {
+            return masterProduct.FindMasterVariant(context.Sku, context.Title);
+        }
+
+        public static PwMasterVariant FindMasterVariant(this PwMasterProduct masterProduct, string sku, string title)
+        {
             var firstOrDefault = masterProduct
                 .MasterVariants
                 .SelectMany(x => x.Variants)
-                .FirstOrDefault(x => x.Sku == context.Sku && 
-                                    x.Title.VariantTitleCorrection() == context.Title.VariantTitleCorrection());
-
+                .FirstOrDefault(x => x.Sku == sku && x.Title.VariantTitleCorrection() == title.VariantTitleCorrection());
             return firstOrDefault?.ParentMasterVariant;
         }
 

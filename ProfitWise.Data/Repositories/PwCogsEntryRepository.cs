@@ -330,7 +330,7 @@ namespace ProfitWise.Data.Repositories
 
 
         // CoGS Detail functions
-        public List<PwCogsDetail> RetrieveCogsDetail(long? masterVariantId)
+        public List<PwCogsDetail> RetrieveCogsDetailByMasterVariant(long? masterVariantId)
         {
             var query =
                 @"SELECT * FROM profitwisemastervariantcogsdetail 
@@ -339,6 +339,20 @@ namespace ProfitWise.Data.Repositories
 
             return Connection.Query<PwCogsDetail>(
                 query, new { this.PwShop.PwShopId, @masterVariantId }, _connectionWrapper.Transaction).ToList();
+        }
+
+        public List<PwCogsDetail> RetrieveCogsDetailByMasterProduct(long? masterProductId)
+        {
+            var query =
+                @"SELECT t1.* FROM profitwisemastervariantcogsdetail t1
+                        INNER JOIN profitwisemastervariant t2 
+                            ON t1.PwShopId = t2.PwShopId 
+                            AND t1.PwMasterVariantId = t2.PwMasterVariantId
+                WHERE t1.PwShopId = @PwShopId AND t2.PwMasterProductId = @masterProductId
+                ORDER BY t1.CogsDate;";
+
+            return Connection.Query<PwCogsDetail>(
+                query, new { this.PwShop.PwShopId, masterProductId }, _connectionWrapper.Transaction).ToList();
         }
 
         public List<PwCogsDetail> RetrieveCogsDetailAll()

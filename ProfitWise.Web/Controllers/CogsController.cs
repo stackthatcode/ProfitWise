@@ -60,7 +60,7 @@ namespace ProfitWise.Web.Controllers
                     CogsAmount = masterVariant.CogsAmount,
 
                 };
-                var details = cogsRepository.RetrieveCogsDetail(pwMasterVariantId);
+                var details = cogsRepository.RetrieveCogsDetailByMasterVariant(pwMasterVariantId);
 
                 var model = new CogsDetailModel
                 {

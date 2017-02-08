@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Transactions;
 using Autofac.Extras.DynamicProxy2;
 using Castle.Core.Internal;
 using ProfitWise.Data.Aspect;
@@ -13,8 +12,6 @@ using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 using Push.Foundation.Utilities.Logging;
-using Push.Utilities.General;
-
 
 namespace ProfitWise.Data.Services
 {
@@ -40,7 +37,6 @@ namespace ProfitWise.Data.Services
             _connectionWrapper = connectionWrapper;
         }
 
-
         public IDbTransaction Transaction { get; set; }
 
         public IDbTransaction InitiateTransaction()
@@ -53,7 +49,6 @@ namespace ProfitWise.Data.Services
             _connectionWrapper.CommitTranscation();
         }
 
-
         public IList<PwMasterProduct> RetrieveFullCatalog()
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
@@ -61,7 +56,7 @@ namespace ProfitWise.Data.Services
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);            
 
             var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
-            var masterVariants = variantDataRepository.RetrieveAllMasterVariants();
+            var masterVariants = variantDataRepository.RetrieveMasterVariants();
             var cogsDetails = cogsRepository.RetrieveCogsDetailAll();
 
             masterProductCatalog.LoadMasterVariants(masterVariants);
@@ -114,7 +109,7 @@ namespace ProfitWise.Data.Services
             finalProduct.ParentMasterProduct = masterProduct;
             masterProduct.Products.Add(finalProduct);
 
-            this.UpdatePrimaryProduct(masterProduct);
+            this.AssignAndWritePrimaryProduct(masterProduct);
             return finalProduct;
         }
 
@@ -177,7 +172,6 @@ namespace ProfitWise.Data.Services
             return newVariant;
         }
 
-
         public void UpdateExistingProduct(PwProduct product, string tags, string productType)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
@@ -191,8 +185,7 @@ namespace ProfitWise.Data.Services
         }
 
 
-
-        public void UpdatePrimaryProduct(PwMasterProduct masterProduct)
+        public void AssignAndWritePrimaryProduct(PwMasterProduct masterProduct)
         {
             var repository = _multitenantFactory.MakeProductRepository(this.PwShop);
 
@@ -284,6 +277,13 @@ namespace ProfitWise.Data.Services
                 variantRepository.UpdateVariantIsActive(variant);
             }
         }
+
+
+        public void ConsolidateMasterProducts()
+        {
+            
+        }
+
     }
 }
 

@@ -15,7 +15,18 @@ namespace ProfitWise.Data.Model.Catalog
         public long PwMasterProductId { get; set; }
         public long PwShopId { get; set; }
         public IList<PwProduct> Products { get; set; }
-        public IList<PwMasterVariant> MasterVariants { get; set; }        
+        public IList<PwMasterVariant> MasterVariants { get; set; }
+
+        public void AssignProduct(PwProduct product)
+        {
+            if (product.ParentMasterProduct != null && product.ParentMasterProduct.Products != null)
+            {
+                product.ParentMasterProduct.Products.Remove(product);
+            }
+            product.ParentMasterProduct = this;
+            product.PwMasterProductId = this.PwMasterProductId;
+            this.Products.Add(product);
+        }
 
         public PwProduct DeterminePrimaryProduct()
         {

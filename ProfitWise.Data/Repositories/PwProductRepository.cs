@@ -32,9 +32,6 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        //
-        // TODO => add paging and filtering
-        //
         public IList<PwMasterProduct> RetrieveAllMasterProducts()
         {
             var products = RetrieveAllProducts();
@@ -60,6 +57,33 @@ namespace ProfitWise.Data.Repositories
             return masterProducts;
         }
 
+        public long RetrieveMasterProductId(long pwProductId)
+        {
+            var query = @"SELECT PwMasterProductId FROM profitwiseproduct 
+                        WHERE PwShopId = @PwShopId AND PwProductId = @pwProductId";
+
+            return Connection.Query<long>(
+                query, new { PwShop.PwShopId, pwProductId }, _connectionWrapper.Transaction).First();
+        }
+
+        public PwMasterProduct RetrieveMasterProduct(long pwMasterProductId)
+        {
+            var products = RetrieveProducts(pwMasterProductId);
+            var masterProduct = new PwMasterProduct()
+            {
+                PwMasterProductId = pwMasterProductId,
+                PwShopId = this.PwShopId,
+                Products = products,
+            };
+
+            foreach (var product in products)
+            {
+                product.ParentMasterProduct = masterProduct;
+            }
+        
+            return masterProduct;
+        }
+
         public long InsertMasterProduct(PwMasterProduct masterProduct)
         {
             var query =
@@ -80,13 +104,20 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(query, _connectionWrapper.Transaction);
         }
 
-
-
         public IList<PwProduct> RetrieveAllProducts()
         {
             var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId";
             return Connection.Query<PwProduct>(
                 query, new { @PwShopId = this.PwShop.PwShopId }, _connectionWrapper.Transaction).ToList();
+        }
+
+        public IList<PwProduct> RetrieveProducts(long pwMasterProductId)
+        {
+            var query = @"SELECT * FROM profitwiseproduct 
+                        WHERE PwShopId = @PwShopId AND PwMasterProductId = pwMasterProductId";
+            return Connection.Query<PwProduct>(
+                query, new { @PwShopId = this.PwShop.PwShopId, pwMasterProductId }, 
+                _connectionWrapper.Transaction).ToList();
         }
 
         public PwProduct RetrieveProduct(long pwProductId)
@@ -116,6 +147,14 @@ namespace ProfitWise.Data.Repositories
                             SET Tags = @Tags,
                                 ProductType = @ProductType,
                                 LastUpdated = @LastUpdated
+                            WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
+            Connection.Execute(query, product, _connectionWrapper.Transaction);
+        }
+
+        public void UpdateProductsMasterProduct(PwProduct product)
+        {
+            var query = @"UPDATE profitwiseproduct
+                            SET PwMasterProductId = @PwMasterProductId
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
             Connection.Execute(query, product, _connectionWrapper.Transaction);
         }

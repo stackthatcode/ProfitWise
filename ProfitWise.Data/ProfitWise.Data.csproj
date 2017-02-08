@@ -163,6 +163,7 @@
     <Compile Include="Repositories\ExchangeRateRepository.cs" />
     <Compile Include="Repositories\PwCogsEntryRepository.cs" />
     <Compile Include="Repositories\PwReportRepository.cs" />
+    <Compile Include="Services\ConsolidationService.cs" />
     <Compile Include="Services\CurrencyService.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRepository.cs" />
     <Compile Include="Model\Catalog\MatchingExtensions.cs" />

@@ -31,8 +31,7 @@ namespace ProfitWise.Data.Repositories
             return _connectionWrapper.StartTransactionForScope();
         }
 
-
-        public IList<PwMasterVariant> RetrieveAllMasterVariants(long? pwMasterProductId = null)
+        public IList<PwMasterVariant> RetrieveMasterVariants(long? pwMasterProductId = null)
         {
             var query =
                 @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
@@ -221,6 +220,15 @@ namespace ProfitWise.Data.Repositories
                     },
                     _connectionWrapper.Transaction);
         }
+
+        public void UpdateVariantsMasterVariant(PwVariant variant)
+        {
+            var query = @"UPDATE profitwisevariant
+                            SET PwMasterVariantId = @PwMasterVariantId
+                            WHERE PwShopId = @PwShopId AND PwVariantId = @PwVariantId";
+            Connection.Execute(query, variant, _connectionWrapper.Transaction);
+        }
+
 
         public void DeleteOrphanedMasterVariants()
         {
