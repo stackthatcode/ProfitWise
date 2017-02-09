@@ -113,8 +113,7 @@ namespace ProfitWise.Data.Repositories
 
         public IList<PwProduct> RetrieveProducts(long pwMasterProductId)
         {
-            var query = @"SELECT * FROM profitwiseproduct 
-                        WHERE PwShopId = @PwShopId AND PwMasterProductId = pwMasterProductId";
+            var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwMasterProductId = @pwMasterProductId";
             return Connection.Query<PwProduct>(
                 query, new { @PwShopId = this.PwShop.PwShopId, pwMasterProductId }, 
                 _connectionWrapper.Transaction).ToList();
@@ -126,6 +125,20 @@ namespace ProfitWise.Data.Repositories
             return Connection
                     .Query<PwProduct>(
                                 query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId },
+                                _connectionWrapper.Transaction)
+                    .FirstOrDefault();
+        }
+
+        public PwProduct RetrievePrimaryProduct(long pwMasterProductId)
+        {
+            var query = @"SELECT * FROM profitwiseproduct 
+                        WHERE PwShopId = @PwShopId 
+                        AND PwMasterProductId = @pwMasterProductId
+                        AND IsPrimary = 1;";
+
+            return Connection
+                    .Query<PwProduct>(
+                                query, new { PwShop.PwShopId, pwMasterProductId },
                                 _connectionWrapper.Transaction)
                     .FirstOrDefault();
         }

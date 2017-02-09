@@ -65,6 +65,21 @@ namespace ProfitWise.Web.Controllers
 
             return new JsonNetResult(new { pickListValid = true, products, totalRecords = recordCount });
         }
+
+
+        [HttpGet]
+        public ActionResult MasterProduct(long pwMasterProductId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var productRepository = _factory.MakeProductRepository(userIdentity.PwShop);
+            var variantRepository = _factory.MakeVariantRepository(userIdentity.PwShop);
+
+            var product = productRepository.RetrieveProducts(pwMasterProductId);
+            var variants = variantRepository.RetrieveVariants(pwMasterProductId);
+
+            return new JsonNetResult(new { product, variants });
+        }
+
     }
 }
 

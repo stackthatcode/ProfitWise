@@ -96,8 +96,8 @@ namespace ProfitWise.Data.Repositories
             var query = ResultsQueryGen(sortByColumn, sortByDirectionDown);
             var startRecord = (pageNumber - 1) * resultsPerPage;
 
-            return Connection.Query<PwCogsProductSummary>(query,
-                new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage },
+            return Connection.Query<PwCogsProductSummary>(
+                query, new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage },
                 _connectionWrapper.Transaction).ToList();
         }
 
@@ -119,10 +119,8 @@ namespace ProfitWise.Data.Repositories
                 _connectionWrapper.Transaction).ToList();
         }
 
-        /// <summary>
-        /// Note: cannot handle more than 200 Master Product Ids i.e. paging should not exceed that
-        /// TODO - the High and Low computations are incorrect here
-        /// </summary>
+
+        // TODO - the High and Low computations are incorrect here
         public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)
         {
             var query =
@@ -391,6 +389,7 @@ namespace ProfitWise.Data.Repositories
                         @CogsDate, @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsMarginPercent );";
             Connection.Execute(query, detail, _connectionWrapper.Transaction);
         }
+
     }
 }
 

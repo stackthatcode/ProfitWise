@@ -165,24 +165,23 @@
         self.EditCogsCallback = parameters.editcogscallback || function () { };
 
         self.PwMasterProductId = ko.observable(null);
-        self.MasterProductTitle = ko.observable("");
+        self.PrimaryProduct = ko.observable();
+        self.MasterProductTitle = ko.computed(function() {
+            return self.PrimaryProduct() ? self.PrimaryProduct().Title : "";
+        });
+
+        self.PrimaryVariantGrid = ko.observable([]);
 
         self.ShowProductConsolidation = ko.observable(false);
         self.ProductConsolidations = ko.observable([ 1 , 2 ]);
 
 
-        self.Grid = ko.observable([]);
-        self.SortingModel = new ProfitWiseWidgets.SortingModel();
-
         // NOTE: need to scroll to the current selection
 
-        self.SortingModel.Callback = function () {
-            self.RefreshSort();
-        };
 
         // *** Sorting stuff...
         self.VariantTitle = ko.computed(function () {
-            return self.Grid().length + " Variant(s)";
+            return self.PrimaryVariantGrid().length + " Variant(s)";
         });
 
         self.RetrieveMasterProduct = function (pwMasterProductId, callback) {
@@ -191,11 +190,12 @@
                     self.PwMasterProductId(pwMasterProductId);
                     var settings = new ProfitWiseFunctions.AjaxSettings();
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    var url = "/CogsService/RetrieveMasterProduct?pwMasterProductId=" + self.PwMasterProductId();
+                    var url = "/ConsolService/MasterProduct?pwMasterProductId=" + self.PwMasterProductId();
                     ajax.HttpGet(url, this);
                 },
                 function (data) {
-                    if (!data.MasterProduct) {
+                    console.log(data);                    
+                    if (!data.product) {
                         self.ExitCallback();
                         return;
                     }
@@ -207,14 +207,13 @@
                 });
         };
 
-        self.LoadMasterProduct = function (data) {
-            self.MasterProductTitle(data.MasterProduct.Title);
+        self.LoadMasterProduct = function (data) {            
+            self.PrimaryProduct(data.product);
 
             // TODO - wire in goodness
             //AQ(data.MasterProduct.MasterVariants);
 
-            self.Grid(data.MasterProduct.MasterVariants);
-            //self.RefreshSort();
+            self.PrimaryVariantGrid(data.variants);
         };
 
         self.Refresh = function() {
@@ -227,7 +226,7 @@
             
             ProfitWiseShopify.LaunchModal({
                 src: url,
-                title: 'Search for Products to Consolidate With',
+                title: 'Search for Products to Consolidate With' + self.MasterProductTitle(),
                 width: 'large',
                 height: 500,
             }, self.Refresh);
