@@ -101,28 +101,7 @@ namespace ProfitWise.Data.Repositories
                 query, new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage },
                 _connectionWrapper.Transaction).ToList();
         }
-
-        public IList<PwProduct> RetrieveProductsFromPicklist(
-                long pickListId, int pageNumber, int resultsPerPage,
-                int sortByColumn = 0, bool sortByDirectionDown = true)
-        {
-            if (resultsPerPage > 200)
-            {
-                throw new ArgumentException("Maximum number of results per page is 200");
-            }
-
-            TouchPickList(pickListId);
-
-            var query = ResultsQueryGen(sortByColumn, sortByDirectionDown, false);
-
-            var startRecord = (pageNumber - 1) * resultsPerPage;
-
-            return Connection.Query<PwProduct>(query,
-                new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord,
-                    ResultsPerPage = resultsPerPage },
-                _connectionWrapper.Transaction).ToList();
-        }
-
+        
 
         // TODO - the High and Low computations are incorrect here
         public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)

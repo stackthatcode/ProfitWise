@@ -21,7 +21,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Search(long? pickListId, string terms)
+        public ActionResult Search(long pwMasterProductId, long? pickListId, string terms)
         {
             var userIdentity = HttpContext.PullIdentity();
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
@@ -40,7 +40,7 @@ namespace ProfitWise.Web.Controllers
 
                 var splitTerms = (terms ?? "").SplitBy(',');
                 pickListRepository.Populate(newPickListId, splitTerms);
-                
+                pickListRepository.Filter(newPickListId, pwMasterProductId);
                 trans.Commit();
             }
 
@@ -62,7 +62,7 @@ namespace ProfitWise.Web.Controllers
 
             var recordCount = pickListRepository.Count(pickListId);
             var products = cogsRepository
-                .RetrieveProductsFromPicklist(pickListId, pageNumber, pageSize, sortByColumn, sortByDirectionDown);
+                .RetrieveCogsSummaryFromPicklist(pickListId, pageNumber, pageSize, sortByColumn, sortByDirectionDown);
 
             return new JsonNetResult(new { pickListValid = true, products, totalRecords = recordCount });
         }

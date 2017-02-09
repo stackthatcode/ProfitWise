@@ -63,12 +63,12 @@
 <script id="Consolidation-Expander" type="text/html">
     <span data-bind="ifnot: $data.Visible">
         <a href="#" data-bind="click: function() { $data.Visible(true); }" class="consol-link-control">
-            <i class="glyphicon glyphicon-chevron-down"></i> Show Consolidations
+            <i class="glyphicon glyphicon-chevron-down"></i> Show
         </a>
     </span>
     <span data-bind="if: $data.Visible">
         <a href="#" data-bind="click: function() { $data.Visible(false); }" class="consol-link-control">
-            <i class="glyphicon glyphicon-chevron-up"></i> Hide Consolidations
+            <i class="glyphicon glyphicon-chevron-up"></i> Hide
         </a>
     </span>
 </script>
@@ -91,7 +91,7 @@
 </script>
 
 <script type="text/html" id="Product-Consolidation-Body">
-    <div style="padding-top: 40px; padding-bottom: 40px;">
+    <div style="padding-top: 40px; padding-bottom: 70px;">
         <div class="row" style="height: 50px;">
             <div class="col-xs-12">
                 <div class="consol-category-label">Product Consolidations</div>
@@ -115,7 +115,7 @@
     </div>
 
     <div data-bind="foreach: PrimaryVariantGrid">
-        <div data-bind="template: { name: 'Product-Consolidation-Variant-Widget' }" style="padding-bottom: 60px;">
+        <div data-bind="template: { name: 'Product-Consolidation-Variant-Widget' }" style="padding-bottom: 70px;">
         </div>
     </div>
 </script>
@@ -163,7 +163,7 @@
                 <span style="display: inline-block; width:30px;"></span>
                 <a href="#" class="consol-link-control"
                     data-bind="click: $parent.SearchForProductsPopup">
-                    <i class="glyphicon glyphicon-plus"></i> Add Consolidations
+                    <i class="glyphicon glyphicon-plus"></i> Add
                 </a>
             </div>
         </div>
@@ -171,52 +171,56 @@
 </script>
 
 <script type="text/html" id="Product-Consolidation-Variant-Widget">
-    <div class="row">
+    <div class="row" style="border-top: 1px dotted #CCC;">
         <div class="col-xs-10">
             <table class="table table-striped product-consol">
-            <tbody>
-            <tr>
-                <td>
-                    <span data-bind="text: Sku"></span> - <span data-bind="text: Title"></span><br />
-                    <span class="id-label">Shopify Variant ID: <span data-bind="text: ShopifyVariantId"></span>
-                    </span>
-                </td>
-                <td class="overflow-gracefully">
-                    <span data-bind="text:Product.Title"></span>
-                </td>
-                <td><span data-bind="text: ActiveText"></span></td>
-                <td><span class="consol-primary">Primary</span></td>
-                <td>&nbsp;</td>
-            </tr>
+                <tbody>
+                <tr>
+                    <td>
+                        <span data-bind="text: Sku"></span> - <span data-bind="text: Title"></span><br />
+                        <span class="id-label">Shopify Variant ID: <span data-bind="text: ShopifyVariantId"></span>
+                        </span>
+                    </td>
+                    <td class="overflow-gracefully">
+                        <span data-bind="text:Product.Title"></span>
+                    </td>
+                    <td><span data-bind="text: ActiveText"></span></td>
+                    <td><span class="consol-primary">Primary</span></td>
+                    <td>&nbsp;</td>
+                </tr>
 
-            <!-- ko if: ShowConsolidations -->
-            <!-- ko foreach: Consolidations -->
-            <tr>
-                <td>
-                    <span data-bind="text: Sku"></span>
-                    <span data-bind="text: Title"></span><br />
-                    <span class="id-label">
-                        Shopify Variant ID: <span data-bind="text: ShopifyVariantId"></span>
-                    </span>
-                </td>
-                <td><span data-bind="text: ActiveText"></span></td>
-                <td><a href="#" data-bind="click: SetPrimary"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
-                <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-            </tr>
-            <!-- /ko -->
-            <!-- /ko -->
-        </tbody>
-    </table>
+                <!-- ko if: ShowConsolidations -->
+                <!-- ko foreach: Consolidations -->
+                <tr>
+                    <td>
+                        <span data-bind="text: Sku"></span>
+                        <span data-bind="text: Title"></span><br />
+                        <span class="id-label">
+                            Shopify Variant ID: <span data-bind="text: ShopifyVariantId"></span>
+                        </span>
+                    </td>
+                    <td class="overflow-gracefully">
+                        <span data-bind="text:Product.Title"></span>
+                    </td>
 
-    <div>
-        <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
-        <span style="display: inline-block; width:30px;"></span>
-        <a href="#" class="consol-link-control"
-            data-bind="click: function() { alert('last function!'); }">
-            <i class="glyphicon glyphicon-plus"></i> Add Consolidations
-        </a>
+                    <td><span data-bind="text: ActiveText"></span></td>
+                    <td><a href="#" data-bind="click: SetPrimary"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
+                    <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
+                </tr>
+                <!-- /ko -->
+                <!-- /ko -->
+            </tbody>
+        </table>
+            
+        <div>
+            <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
+            <span style="display: inline-block; width:30px;"></span>
+            <a href="#" class="consol-link-control"
+                data-bind="click: function() { alert('last function!'); }">
+                <i class="glyphicon glyphicon-plus"></i> Add
+            </a>
+        </div>
     </div>
-</div>
 </div>
 </script>
 
@@ -275,7 +279,7 @@
         
         self.LoadMasterProduct = function (data) {
             self.PrimaryProduct(self.MasterProductModelFactory(data.product));
-            
+
             var masterVariants =
                 AQ(data.variants)
                     .groupBy(function(item) { return item.PwMasterVariantId; })
@@ -354,21 +358,25 @@
             return primaryProduct;
         };
 
-        self.MasterVariantModelFactory = function(variants, products) {            
+        self.MasterVariantModelFactory = function (variants, products) {
+            var productIdFinder = function (id) {
+                return AQ(products).firstOrDefault(function (x) { return x.PwProductId == id; });
+            };
+
             var primaryVariant = AQ(variants).first(isPrimary);
-            primaryVariant.ShowConsolidations = ko.observable(false);
             primaryVariant.Consolidations = AQ(variants).where(isNotPrimary).toArray();
+
+            primaryVariant.ShowConsolidations = ko.observable(false);
             primaryVariant.ActiveText = activeText(primaryVariant);
             primaryVariant.ExpanderLabel = "Variant";
-            primaryVariant.Product =
-                AQ(products).firstOrDefault(function (x) {
-                    return x.PwProductId == primaryVariant.PwProductId;
-                });
+            primaryVariant.Product = productIdFinder(primaryVariant.PwProductId);
 
             AQ(primaryVariant.Consolidations).each(function (item) {
                 item.SetPrimary = self.SetPrimaryVariant;
                 item.Deconsolidate = self.DeconsolidateVariant;
+                    
                 item.ActiveText = activeText(item);
+                item.Product = productIdFinder(item.PwProductId);
             });
 
             return primaryVariant;

@@ -133,13 +133,14 @@
         self.SearchText = ko.observable();
         self.SearchGrid = ko.observableArray();
         self.ProductsFound = ko.computed(function () { return self.SearchGrid().length > 0 });
-
+        
         self.SearchClick = function () {
             flow.exec(
                 function() {
                     var search = {
                         pickListId: self.PickListId(),
-                        terms: self.SearchText(),                        
+                        terms: self.SearchText(), 
+                        pwMasterProductId: @Model.PwMasterProductId,
                     };
 
                     var settings = new ProfitWiseFunctions.AjaxSettings(true);
@@ -178,7 +179,7 @@
 
                     AQ(data.products).each(function (item) {
                         item.Vendor = item.Vendor || "(No Vendor)";
-                        item.Consolidated = item.PwMasterProductId == '@Model.PwMasterProductId';
+                        item.Consolidated = false // TODO Remove
                     });
 
                     self.SearchGrid.removeAll();

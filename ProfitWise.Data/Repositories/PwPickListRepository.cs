@@ -104,6 +104,19 @@ namespace ProfitWise.Data.Repositories
             return $" AND ( (t1.Title LIKE @{termName}) OR (t1.Sku LIKE @{termName}) OR ( t3.Title LIKE @{termName} ) OR ( t3.Vendor LIKE @{termName} ) )";
         }
 
+        public void Filter(long pickListId, long pwMasterProductId)
+        {
+            var query =
+                @"DELETE FROM profitwisepicklistmasterproduct
+                WHERE PwShopId = @PwShopId
+                AND PwPickListId = @PwPickListId
+                AND PwMasterProductId = @PwMasterProductId";
+
+            Connection.Execute(
+                query, new { PwShop.PwShopId, PwPickListId = pickListId, PwMasterProductId = pwMasterProductId },
+                _connectionWrapper.Transaction);
+        }
+
         public void Filter(long pickListId, IList<ProductSearchFilter> filters)
         {
             var filterClause = "";
@@ -178,7 +191,7 @@ namespace ProfitWise.Data.Repositories
                 searchByTags2,
                 searchByTags3,
                 searchByTags4,
-            });
+            }, _connectionWrapper.Transaction);
         }
 
         public void FilterMissingCogs(long pickListId)

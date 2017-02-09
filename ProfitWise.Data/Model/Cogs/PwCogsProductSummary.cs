@@ -82,11 +82,11 @@ namespace ProfitWise.Data.Model.Cogs
 
         public decimal? HighPrice
         {
-            get { return Variants.Max(x => x.HighPrice); }
+            get { return Variants.Any() ? Variants.Max(x => x.HighPrice) : 0; }
         }
         public decimal? LowPrice
         {
-            get { return Variants.Min(x => x.LowPrice); }
+            get { return Variants.Any() ? Variants.Min(x => x.LowPrice) : 0; }
         }
 
         public int TotalInventory

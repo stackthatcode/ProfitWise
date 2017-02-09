@@ -56,18 +56,20 @@ namespace ProfitWise.Data.Services
             var targetMasterProduct = catalogRetrievalService.RetrieveMasterProduct(targetMasterProductId);
             var inboundMasterProductId = productRepository.RetrieveMasterProductId(inboundProductId);
             var inboundMasterProduct = catalogRetrievalService.RetrieveMasterProduct(inboundMasterProductId);
-            var inboundProduct = inboundMasterProduct.Products.First(x => x.PwProductId == inboundProductId);
 
-            // Step #2 - re-assign Product 
-            targetMasterProduct.AssignProduct(inboundProduct);
-            productRepository.UpdateProductsMasterProduct(inboundProduct);
+            // Step #2 - re-assign all Products
+            // ToList forces a copy to address removal from Assign
+            foreach (var inboundProduct in inboundMasterProduct.Products.ToList())  
+            {
+                targetMasterProduct.AssignProduct(inboundProduct);
+                productRepository.UpdateProductsMasterProduct(inboundProduct);
+            }
             catalogBuilderService.AutoUpdatePrimary(targetMasterProduct);
-            
+
             // Step #3 - extract Variants that are associated with this Product Id across all Master Variants
             var inboundVariants = 
                 inboundMasterProduct.MasterVariants
                     .SelectMany(x => x.Variants)
-                    .Where(x => x.PwProductId == inboundProductId)
                     .ToList();
 
             foreach (var inboundVariant in inboundVariants)
@@ -117,14 +119,7 @@ namespace ProfitWise.Data.Services
             }
             
             // Step #6 - if necessary decommission Master Product the inbound belongs to
-            if (inboundMasterProduct.Products.Count == 0)
-            {
-                productRepository.DeleteMasterProduct(inboundMasterProduct);
-            }
-            else
-            {
-                catalogBuilderService.AutoUpdatePrimary(inboundMasterProduct);
-            }
+            productRepository.DeleteMasterProduct(inboundMasterProduct);
         }
 
         public void DeconsolidateProduct(long productId)
