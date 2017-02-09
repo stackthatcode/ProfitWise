@@ -43,11 +43,10 @@ namespace ProfitWise.Data.Services
             var defaultsWithConstraints =
                 defaults
                     .Clone(ApplyConstraintsToDetail)
-                    .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId);
-            
+                    .AttachKeys(this.PwShop.PwShopId, masterVariantId);
+
             var detailsWithConstraints =
-                details?.Select(x => x.Clone(ApplyConstraintsToDetail)
-                                    .AttachKeys(this.PwShop.PwShopId, masterVariantId, masterProductId))                                        
+                details?.Select(x => x.Clone(ApplyConstraintsToDetail).AttachKeys(this.PwShop.PwShopId, masterVariantId))
                         .ToList();
 
             var context = new CogsDataEntryUpdateContext

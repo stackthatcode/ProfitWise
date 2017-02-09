@@ -188,15 +188,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        // CoGS update methods
-        [HttpPost]
-        public ActionResult BulkUpdateCogs(long picklistId, PwCogsDetail cogs)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
 
-            return JsonNetResult.Success();
-        }
 
         [HttpPost]
         public ActionResult UpdateSimpleCogs(PwCogsDetail simpleCogs)

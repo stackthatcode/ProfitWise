@@ -303,14 +303,15 @@ namespace ProfitWise.Data.Repositories
         public void UpdatePickListDefaultCogs(long pickListId, PwCogsDetail input)
         {
             var query =
-                @"UPDATE profitwisemastervariant t1
-                    INNER JOIN profitwisepicklistmasterproduct t2
-                        ON t1.PwMasterProductId = t2.PwMasterProductId                        
+                @"UPDATE t1        
                 SET CogsCurrencyId = @CogsCurrencyId, 
                     CogsAmount = @CogsAmount,
                     CogsTypeId = @CogsTypeId,
                     CogsMarginPercent = @CogsMarginPercent,
-                    CogsDetail = @CogsDetail                   
+                    CogsDetail = @CogsDetail   
+                FROM profitwisemastervariant t1
+                    INNER JOIN profitwisepicklistmasterproduct t2
+                        ON t1.PwMasterProductId = t2.PwMasterProductId                               
                 WHERE t1.PwShopId = @PwShopId 
                 AND t2.PwShopId = @PwShopId 
                 AND PwPickListId = @pickListId;";
