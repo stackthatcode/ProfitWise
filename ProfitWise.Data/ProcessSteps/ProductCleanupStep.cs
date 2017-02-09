@@ -82,7 +82,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                     productRepository.DeleteProduct(product.PwProductId);
 
-                    catalogService.UpdatePrimary(product.ParentMasterProduct);
+                    catalogService.AutoUpdatePrimary(product.ParentMasterProduct);
                 }
             }
 
@@ -99,7 +99,7 @@ namespace ProfitWise.Data.ProcessSteps
                     variant.ParentMasterVariant.Variants.Remove(variant);
 
                     variantRepository.DeleteVariantByVariantId(variant.PwVariantId);
-                    catalogService.UpdatePrimary(variant.ParentMasterVariant);
+                    catalogService.AutoUpdatePrimary(variant.ParentMasterVariant);
                 }
             }
         }

@@ -175,7 +175,7 @@ namespace ProfitWise.Data.Repositories
                         _connectionWrapper.Transaction).ToList();
         }
 
-        public IList<PwVariant> RetrieveVariants(long pwMasterProductId)
+        public IList<PwVariant> RetrieveVariantsForMasterProduct(long pwMasterProductId)
         {
             var query = @"SELECT t1.* FROM profitwisevariant t1
                             INNER JOIN profitwisemastervariant t2
@@ -186,6 +186,18 @@ namespace ProfitWise.Data.Repositories
             return Connection
                     .Query<PwVariant>(
                         query, new { PwShop.PwShopId, pwMasterProductId },
+                        _connectionWrapper.Transaction).ToList();
+        }
+
+        public IList<PwVariant> RetrieveVariantsForMasterVariant(long pwMasterVariantId)
+        {
+            var query = @"SELECT t1.* FROM profitwisevariant t1
+                        WHERE t1.PwShopId = @PwShopId 
+                        AND t1.PwMasterVariantId = @pwMasterVariantId";
+
+            return Connection
+                    .Query<PwVariant>(
+                        query, new { PwShop.PwShopId, pwMasterVariantId },
                         _connectionWrapper.Transaction).ToList();
         }
 

@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 using ProfitWise.Data.Factories;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Helpers;
@@ -73,10 +75,21 @@ namespace ProfitWise.Web.Controllers
             var variantRepository = _factory.MakeVariantRepository(userIdentity.PwShop);
 
             var product = productRepository.RetrieveProducts(pwMasterProductId);
-            var variants = variantRepository.RetrieveVariants(pwMasterProductId);
+            var variants = variantRepository.RetrieveVariantsForMasterProduct(pwMasterProductId);
 
             return new JsonNetResult(new { product, variants });
+        }        
+
+        [HttpGet]
+        public ActionResult MasterVariant(long pwMasterVariantId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var variantRepository = _factory.MakeVariantRepository(userIdentity.PwShop);
+            var variants = variantRepository.RetrieveVariantsForMasterVariant(pwMasterVariantId);
+
+            return new JsonNetResult(new { variants });
         }
+
 
 
         [HttpPost]
@@ -108,6 +121,37 @@ namespace ProfitWise.Web.Controllers
 
         }
 
+
+        [HttpPost]
+        public ActionResult PrimaryProduct(long pwMasterProductId, long pwProductId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var builderService = _factory.MakeCatalogBuilderService(userIdentity.PwShop);
+            var retrievalService = _factory.MakeCatalogRetrievalService(userIdentity.PwShop);
+            var repository = _factory.MakeProductRepository(userIdentity.PwShop);
+            
+            using (var transaction = builderService.InitiateTransaction())
+            {
+                var masterProduct = retrievalService.RetrieveMasterProduct(pwMasterProductId);
+                if (masterProduct == null)
+                {
+                    return JsonNetResult.Success();
+                }
+                var product = masterProduct.Product(pwProductId);
+                if (product == null)
+                {
+                    return JsonNetResult.Success();
+                }
+
+                masterProduct.PrimaryManual(product);
+                masterProduct.Products.ForEach(x => repository.UpdateProductIsPrimary(x));
+                
+                transaction.Commit();
+            }
+            return JsonNetResult.Success();
+        }
+
+
         [HttpPost]
         public ActionResult ConsolidateVariant(long pwMasterVariantId, long pwVariantId)
         {
@@ -137,6 +181,38 @@ namespace ProfitWise.Web.Controllers
 
             return JsonNetResult.Success();
         }
+
+
+        [HttpPost]
+        public ActionResult PrimaryVariant(long pwMasterVariantId, long pwProductId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var builderService = _factory.MakeCatalogBuilderService(userIdentity.PwShop);
+            var retrievalService = _factory.MakeCatalogRetrievalService(userIdentity.PwShop);
+            var repository = _factory.MakeProductRepository(userIdentity.PwShop);
+
+            using (var transaction = builderService.InitiateTransaction())
+            {
+                var masterProduct = retrievalService.RetrieveMasterProduct(pwMasterProductId);
+                if (masterProduct == null)
+                {
+                    return JsonNetResult.Success();
+                }
+                var product = masterProduct.Product(pwProductId);
+                if (product == null)
+                {
+                    return JsonNetResult.Success();
+                }
+
+                masterProduct.PrimaryManual(product);
+                masterProduct.Products.ForEach(x => repository.UpdateProductIsPrimary(x));
+
+                transaction.Commit();
+            }
+            return JsonNetResult.Success();
+        }
+
+
     }
 }
 

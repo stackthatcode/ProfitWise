@@ -35,7 +35,21 @@ namespace ProfitWise.Data.Model.Catalog
             this.MasterVariants.Add(masterVariant);
         }
 
-        public PwProduct DeterminePrimaryProduct()
+        public PwProduct Product(long pwProductId)
+        {
+            return Products.FirstOrDefault(x => x.PwProductId == pwProductId);
+        }
+
+        public void PrimaryManual(PwProduct product)
+        {
+            Products.ForEach(x => x.IsPrimary = false);
+            Products.ForEach(x => x.IsPrimaryManual = false);
+
+            product.IsPrimaryManual = true;
+            product.IsPrimary = true;
+        }
+
+        public PwProduct AutoPrimaryProduct()
         {
             if (Products.Count(x => x.IsPrimary) > 1 ||
                 Products.Count(x => x.IsPrimaryManual) > 1)

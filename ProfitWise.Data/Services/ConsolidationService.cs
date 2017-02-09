@@ -61,7 +61,7 @@ namespace ProfitWise.Data.Services
             // Step #2 - re-assign Product 
             targetMasterProduct.AssignProduct(inboundProduct);
             productRepository.UpdateProductsMasterProduct(inboundProduct);
-            catalogBuilderService.UpdatePrimary(targetMasterProduct);
+            catalogBuilderService.AutoUpdatePrimary(targetMasterProduct);
             
             // Step #3 - extract Variants that are associated with this Product Id across all Master Variants
             var inboundVariants = 
@@ -81,7 +81,7 @@ namespace ProfitWise.Data.Services
                     // Step #4B1 - if match was found, assign this Variant under the Target Master Variant
                     targetMasterVariant.AssignVariant(inboundVariant);
                     variantRepository.UpdateVariantsMasterVariant(inboundVariant);                    
-                    catalogBuilderService.UpdatePrimary(targetMasterVariant);
+                    catalogBuilderService.AutoUpdatePrimary(targetMasterVariant);
                 }
                 else
                 {
@@ -92,7 +92,7 @@ namespace ProfitWise.Data.Services
 
                     newMasterVariant.AssignVariant(inboundVariant);
                     variantRepository.UpdateVariantsMasterVariant(inboundVariant);
-                    catalogBuilderService.UpdatePrimary(newMasterVariant);
+                    catalogBuilderService.AutoUpdatePrimary(newMasterVariant);
 
                     foreach (var detail in newMasterVariant.CogsDetails)
                     {
@@ -112,7 +112,7 @@ namespace ProfitWise.Data.Services
                 }
                 else
                 {
-                    catalogBuilderService.UpdatePrimary(inboundMasterVariant);
+                    catalogBuilderService.AutoUpdatePrimary(inboundMasterVariant);
                 }            
             }
             
@@ -123,7 +123,7 @@ namespace ProfitWise.Data.Services
             }
             else
             {
-                catalogBuilderService.UpdatePrimary(inboundMasterProduct);
+                catalogBuilderService.AutoUpdatePrimary(inboundMasterProduct);
             }
         }
 
@@ -157,7 +157,7 @@ namespace ProfitWise.Data.Services
 
             targetMasterVariant.AssignVariant(inboundVariant);
             variantRepository.UpdateVariantsMasterVariant(inboundVariant);
-            catalogService.UpdatePrimary(targetMasterVariant);
+            catalogService.AutoUpdatePrimary(targetMasterVariant);
 
             if (inboundMasterVariant.Variants.Count == 0)
             {
@@ -166,7 +166,7 @@ namespace ProfitWise.Data.Services
             }
             else
             {
-                catalogService.UpdatePrimary(inboundMasterVariant);
+                catalogService.AutoUpdatePrimary(inboundMasterVariant);
             }
         }
 
@@ -197,8 +197,8 @@ namespace ProfitWise.Data.Services
             variantRepository.UpdateVariantsMasterVariant(inboundVariant);
 
             // Update the Primaries
-            catalogService.UpdatePrimary(newMasterVariant);
-            catalogService.UpdatePrimary(inboundMasterVariant);
+            catalogService.AutoUpdatePrimary(newMasterVariant);
+            catalogService.AutoUpdatePrimary(inboundMasterVariant);
         }
     }
 }

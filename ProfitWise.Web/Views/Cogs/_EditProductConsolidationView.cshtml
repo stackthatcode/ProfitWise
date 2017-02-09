@@ -73,187 +73,151 @@
     </span>
 </script>
 
+<script id="Consolidation-Expander-Synopsis" type="text/html">
+    <span class="consolidation-synposis" data-bind="if: Consolidations.length == 0">
+        This Product is not consolidated with any other Products
+    </span>
+
+    <span class="consolidation-synposis" data-bind="if: Consolidations.length > 0">
+        <span>
+            This Product is consolidated with
+            <span data-bind="text: Consolidations.length"></span> other Products
+        </span>
+
+        <span style="display: inline-block; width:30px;"></span>
+
+        <span data-bind="template: { name: 'Consolidation-Expander', data: { Visible: ShowConsolidations } }"></span>
+    </span>
+</script>
+
 <script type="text/html" id="Product-Consolidation-Body">
-    <div data-bind="with: PrimaryProduct">
-        <div data-bind="template: { name: 'Product-Consolidation-Product-Widget' }">
+    <div style="padding-top: 40px; padding-bottom: 40px;">
+        <div class="row" style="height: 50px;">
+            <div class="col-xs-12">
+                <div class="consol-category-label">Product Consolidations</div>
+            </div>
         </div>
+
+        <div data-bind="with: PrimaryProduct">
+            <div data-bind="template: { name: 'Product-Consolidation-Product-Widget' }">
+            </div>
+        </div>        
     </div>
 
-    <div class="row" style="height: 40px;">
+    <div class="row" style="height: 40px; border-top: 1px solid #CCC;">
         <div class="col-xs-10"></div>
     </div>
 
-    <!-- Variants here... -->
+    <div class="row" style="height: 50px;">
+        <div class="col-xs-12">
+            <div class="consol-category-label">Variant Consolidations</div>
+        </div>
+    </div>
+
+    <div data-bind="foreach: PrimaryVariantGrid">
+    <!--
+    <div data-bind="template: { name: 'Product-Consolidation-Variant-Widget' }"></div>
+        -->
+    </div>
 </script>
 
 <script type="text/html" id="Product-Consolidation-Product-Widget">
-    <div style="padding-top: 40px; padding-bottom: 40px; border-bottom: 1px solid #CCC;">
-        <div class="row" style="height: 50px;">
-            <div class="col-xs-6">
-                <div class="consol-category-label">Product Consolidations</div>
-            </div>
-            <div class="col-xs-4" style="text-align: right;">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-10">
-                <table class="table table-striped product-consol">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span data-bind="text: Title"></span><br />
-                                <span class="id-label">
-                                    Shopify Product ID:
-                                    <span data-bind="text: ShopifyProductId"></span>
-                                </span>
-                            </td>
-
-                            <td><span data-bind="text: Vendor"></span></td>
-                            <td>
-                                <span data-bind="if: IsActive">Active</span>
-                                <span data-bind="ifnot: IsActive">Inactive</span>
-                            </td>
-                            <td><span class="consol-primary">Primary</span></td>
-                            <td><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-                        </tr>
-
-                        <!-- ko if: ShowConsolidations -->
-                        <tr>
-                            <td class="overflow-gracefully">
-                                3D Universe PLA 2.85 mm<br />
-                                <span class="id-label">Shopify Product ID: 9123123</span>
-                            </td>
-                            <td>3D Universe</td>
-                            <td>Inactive</td>
-                            <td><a href="#"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
-                            <td><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                3D Universe PLA 2.85 mm<br />
-                                <span class="id-label">Shopify Product ID: 9123123</span>
-                            </td>
-                            <td>3D Universe</td>
-                            <td>Inactive</td>
-                            <td><a href="#"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
-                            <td><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-                        </tr>
-                        <!-- /ko -->
-                    </tbody>
-                </table>
-
-                <div>
-                    <span class="consolidation-synposis" data-bind="if: Consolidations.length == 0">
-                        This Product is not consolidated with any other Products
-                    </span>
-
-                    <span class="consolidation-synposis" data-bind="if: Consolidations.length > 0">
-                        <span>
-                            This Product is consolidated with
-                            <span data-bind="text: Consolidations.length"></span> other Products
+    <div class="row">
+        <div class="col-xs-10">
+            <table class="table table-striped product-consol">
+                <tbody>
+                <tr>
+                    <td>
+                        <span data-bind="text: Title"></span><br />
+                        <span class="id-label">Shopify Product ID: <span data-bind="text: ShopifyProductId"></span>
                         </span>
+                    </td>
 
-                        <span style="display: inline-block; width:30px;"></span>
+                    <td><span data-bind="text: Vendor"></span></td>
+                    <td><span data-bind="text: ActiveText"></span></td>
+                    <td><span class="consol-primary">Primary</span></td>
+                    <td>&nbsp;</td>
+                </tr>
 
-                        <span data-bind="template: { name: 'Consolidation-Expander',
-                                                data: { Visible: ShowConsolidations } }"></span>
-                    </span>
+                <!-- ko if: ShowConsolidations -->
+                <!-- ko foreach: Consolidations -->
+                <tr>
+                    <td class="overflow-gracefully">
+                        <span data-bind="text: Title"></span><br />
+                        <span class="id-label">
+                            Shopify Product ID: <span data-bind="text: ShopifyProductId"></span>
+                        </span>
+                    </td>
+                    <td><span data-bind="text: Vendor"></span></td>
+                    <td><span data-bind="text: ActiveText"></span></td>
+                    <td><a href="#" data-bind="click: SetPrimary"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
+                    <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
+                </tr>
+                <!-- /ko -->
+                <!-- /ko -->
+                </tbody>
+            </table>
 
-                    <span style="display: inline-block; width:30px;"></span>
-                    <a href="#" class="consol-link-control"
-                       data-bind="click: $parent.SearchForProductsPopup">
-                        <i class="glyphicon glyphicon-plus"></i> Add Consolidations
-                    </a>
-                </div>
+            <div>
+                <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
+
+                <span style="display: inline-block; width:30px;"></span>
+                <a href="#" class="consol-link-control"
+                    data-bind="click: $parent.SearchForProductsPopup">
+                    <i class="glyphicon glyphicon-plus"></i> Add Consolidations
+                </a>
             </div>
         </div>
     </div>
 </script>
 
 <script type="text/html" id="Product-Consolidation-Variant-Widget">
-    <div style="padding-top: 40px; padding-bottom: 40px; border-bottom: 1px solid #CCC;">
-        <div class="row" style="height: 50px;">
-            <div class="col-xs-6">
-                <div class="consol-category-label">Product Consolidations</div>
-            </div>
-            <div class="col-xs-4" style="text-align: right;">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-10">
-                <table class="table table-striped product-consol">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span data-bind="text: Title"></span><br />
-                                <span class="id-label">
-                                    Shopify Product ID:
-                                    <span data-bind="text: ShopifyProductId"></span>
-                                </span>
-                            </td>
-
-                            <td><span data-bind="text: Vendor"></span></td>
-                            <td>
-                                <span data-bind="if: IsActive">Active</span>
-                                <span data-bind="ifnot: IsActive">Inactive</span>
-                            </td>
-                            <td><span class="consol-primary">Primary</span></td>
-                            <td><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-                        </tr>
-
-                        <!-- ko if: ShowConsolidations -->
-                        <tr>
-                            <td class="overflow-gracefully">
-                                3D Universe PLA 2.85 mm<br />
-                                <span class="id-label">Shopify Product ID: 9123123</span>
-                            </td>
-                            <td>3D Universe</td>
-                            <td>Inactive</td>
-                            <td><a href="#"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
-                            <td><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                3D Universe PLA 2.85 mm<br />
-                                <span class="id-label">Shopify Product ID: 9123123</span>
-                            </td>
-                            <td>3D Universe</td>
-                            <td>Inactive</td>
-                            <td><a href="#"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
-                            <td><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-                        </tr>
-                        <!-- /ko -->
-                    </tbody>
-                </table>
-
-                <div>
-                    <span class="consolidation-synposis" data-bind="if: Consolidations.length == 0">
-                        This Product is not consolidated with any other Products
+<div class="row">
+<div class="col-xs-10">
+    <table class="table table-striped product-consol">
+        <tbody>
+            <tr>
+                <td>
+                    <span data-bind="text: Title"></span><br />
+                    <span class="id-label">Shopify Product ID: <span data-bind="text: ShopifyProductId"></span>
                     </span>
+                </td>
 
-                    <span class="consolidation-synposis" data-bind="if: Consolidations.length > 0">
-                        <span>
-                            This Product is consolidated with
-                            <span data-bind="text: Consolidations.length"></span> other Products
-                        </span>
+                <td><span data-bind="text: Vendor"></span></td>
+                <td><span data-bind="text: ActiveText"></span></td>
+                <td><span class="consol-primary">Primary</span></td>
+                <td>&nbsp;</td>
+            </tr>
 
-                        <span style="display: inline-block; width:30px;"></span>
-
-                        <span data-bind="template: { name: 'Consolidation-Expander',
-                                                data: { Visible: ShowConsolidations } }"></span>
+            <!-- ko if: ShowConsolidations -->
+            <!-- ko foreach: Consolidations -->
+            <tr>
+                <td class="overflow-gracefully">
+                    <span data-bind="text: Title"></span><br />
+                    <span class="id-label">
+                        Shopify Product ID: <span data-bind="text: ShopifyProductId"></span>
                     </span>
+                </td>
+                <td><span data-bind="text: Vendor"></span></td>
+                <td><span data-bind="text: ActiveText"></span></td>
+                <td><a href="#" data-bind="click: SetPrimary"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
+                <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
+            </tr>
+            <!-- /ko -->
+            <!-- /ko -->
+        </tbody>
+    </table>
 
-                    <span style="display: inline-block; width:30px;"></span>
-                    <a href="#" class="consol-link-control"
-                       data-bind="click: $root.SearchForProductsPopup">
-                        <i class="glyphicon glyphicon-plus"></i> Add Consolidations
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div>
+        <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
+        <span style="display: inline-block; width:30px;"></span>
+        <a href="#" class="consol-link-control"
+            data-bind="click: $parent.SearchForProductsPopup">
+            <i class="glyphicon glyphicon-plus"></i> Add Consolidations
+        </a>
     </div>
+</div>
+</div>
 </script>
 
 <script>
@@ -281,6 +245,16 @@
             return self.PrimaryVariantGrid().length + " Variant(s)";
         });
 
+        self.RefreshMasterProduct = function () {
+            flow.exec(
+                function () {
+                    self.RetrieveMasterProduct(self.PwMasterProductId(), this);
+                },
+                function () {
+                    self.PrimaryProduct().ShowConsolidations(true);
+                });            
+        };
+
         self.RetrieveMasterProduct = function (pwMasterProductId, callback) {
             flow.exec(
                 function () {
@@ -291,13 +265,10 @@
                     ajax.HttpGet(url, this);
                 },
                 function (data) {
-                    console.log(data);
-
                     if (!data.product) {
                         self.ExitCallback();
                         return;
                     }
-
                     self.LoadMasterProduct(data);
                     if (callback) {
                         callback();
@@ -317,38 +288,67 @@
             self.PrimaryVariantGrid(masterVariants);
         };
 
-        self.RefreshMasterProduct = function () {
-            self.RetrieveMasterProduct(self.PwMasterProductId());
-        };
-
-
         var isPrimary = function (item) { return item.IsPrimary; }
         var isNotPrimary = function (item) { return !item.IsPrimary; }
 
-        self.SetPrimaryProduct = function(model) {
-
+        self.SetPrimaryProduct = function(model) {            
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var url = "/ConsolService/PrimaryProduct";
+            var data = {
+                pwMasterProductId: self.PwMasterProductId(),
+                pwProductId: model.PwProductId,
+            };
+            ajax.HttpPost(url, data, self.RefreshMasterProduct);                
         };
 
         self.DeconsolidateProduct = function(model) {
-
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var url = "/ConsolService/DeconsolidateProduct";
+            var data = {
+                pwProductId: model.PwProductId,
+            };
+            ajax.HttpPost(url, data, self.RefreshMasterProduct);
         };
 
         self.SetPrimaryVariant = function (model) {
-
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var url = "/ConsolService/PrimaryVariant";
+            var data = {
+                pwMasterVariantId: model.PwMasterVariantId,
+                pwVariantId: model.PwVariantId,
+            };
+            ajax.HttpPost(url, data, self.RefreshMasterProduct);
         };
 
         self.DeconsolidateVariant = function (model) {
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            var url = "/ConsolService/DeconsolidateVariant";
+            var data = {
+                pwVariantId: model.PwVariantId,
+            };
+            ajax.HttpPost(url, data, self.RefreshMasterProduct);
+        };
 
+
+        // Model Factories
+        var activeText = function(item) {
+            return item.IsActive ? "Active" : "Inactive";
         };
 
         self.MasterProductModelFactory = function(products) {
             var primaryProduct = AQ(products).first(isPrimary);
             primaryProduct.ShowConsolidations = ko.observable(false);
             primaryProduct.Consolidations = AQ(products).where(isNotPrimary).toArray();
+            primaryProduct.ActiveText = activeText(primaryProduct);
 
             AQ(primaryProduct.Consolidations).each(function(item) {
                 item.SetPrimary = self.SetPrimaryProduct;
                 item.Deconsolidate = self.DeconsolidateProduct;
+                item.ActiveText = activeText(item);
             });
 
             return primaryProduct;
@@ -361,10 +361,12 @@
             var primaryVariant = AQ(variants).first(isPrimary);
             primaryVariant.ShowConsolidations = ko.observable(false);
             primaryVariant.Consolidations = AQ(variants).where(isNotPrimary).toArray();
+            primaryVariant.ActiveText = activeText(primaryVariant);
 
             AQ(primaryVariant.Consolidations).each(function (item) {
                 item.SetPrimary = self.SetPrimaryVariant;
                 item.Deconsolidate = self.DeconsolidateVariant;
+                item.ActiveText = activeText(item);
             });
 
             return primaryVariant;

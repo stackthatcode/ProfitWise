@@ -93,7 +93,7 @@ namespace ProfitWise.Data.Services
             finalProduct.ParentMasterProduct = masterProduct;
             masterProduct.Products.Add(finalProduct);
 
-            this.UpdatePrimary(masterProduct);
+            this.AutoUpdatePrimary(masterProduct);
             return finalProduct;
         }
 
@@ -152,12 +152,12 @@ namespace ProfitWise.Data.Services
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
             context.MasterVariant.Variants.Add(newVariant);
-            this.UpdatePrimary(context.MasterVariant);
+            this.AutoUpdatePrimary(context.MasterVariant);
             return newVariant;
         }
 
 
-        public void UpdatePrimary(PwMasterProduct masterProduct)
+        public void AutoUpdatePrimary(PwMasterProduct masterProduct)
         {
             var repository = _multitenantFactory.MakeProductRepository(this.PwShop);
 
@@ -166,7 +166,7 @@ namespace ProfitWise.Data.Services
                 return;
             }
 
-            var primaryProduct = masterProduct.DeterminePrimaryProduct();
+            var primaryProduct = masterProduct.AutoPrimaryProduct();
             primaryProduct.IsPrimary = true;
 
             masterProduct.Products
@@ -179,7 +179,7 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        public void UpdatePrimary(PwMasterVariant masterVariant)
+        public void AutoUpdatePrimary(PwMasterVariant masterVariant)
         {
             var repository = _multitenantFactory.MakeVariantRepository(this.PwShop);
 
@@ -187,7 +187,7 @@ namespace ProfitWise.Data.Services
             {
                 return;
             }
-            var primaryVariant = masterVariant.DeterminePrimaryVariant();
+            var primaryVariant = masterVariant.AutoPrimaryVariant();
 
             primaryVariant.IsPrimary = true;
             masterVariant.Variants

@@ -59,7 +59,7 @@ namespace ProfitWise.Data.Model.Catalog
             return output;
         }
 
-        public PwVariant DeterminePrimaryVariant()
+        public PwVariant AutoPrimaryVariant()
         {
             if (Variants.Count(x => x.IsPrimary) > 1 ||
                 Variants.Count(x => x.IsPrimaryManual) > 1)

@@ -274,7 +274,7 @@ namespace ProfitWise.Data.ProcessSteps
                             masterProducts.Where(
                                 x => x.Products.Any(product => product.ShopifyProductId == shopifyProductId)))
                     {
-                        catalogService.UpdatePrimary(masterProduct);
+                        catalogService.AutoUpdatePrimary(masterProduct);
                     }
                 }
             }
@@ -304,7 +304,7 @@ namespace ProfitWise.Data.ProcessSteps
                 variant.IsActive = false;
                 _pushLogger.Debug($"Flagging PwVariantId {variant.PwVariantId} as Inactive");
                 variantRepository.UpdateVariantIsActive(variant);
-                catalogService.UpdatePrimary(variant.ParentMasterVariant);
+                catalogService.AutoUpdatePrimary(variant.ParentMasterVariant);
             });
         }
     }
