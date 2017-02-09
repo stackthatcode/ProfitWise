@@ -253,7 +253,7 @@ namespace ProfitWise.Data.Repositories
         public void UpdateVariantIsPrimary(PwVariant variant)
         {
             var query = @"UPDATE profitwisevariant
-                            SET IsPrimary = @IsPrimary
+                            SET IsPrimary = @IsPrimary, IsPrimaryManual = @IsPrimaryManual
                             WHERE PwShopId = @PwShopId AND PwVariantId = @PwVariantId";
             Connection.Execute(query, variant, _connectionWrapper.Transaction);
         }

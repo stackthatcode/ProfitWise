@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using Microsoft.Ajax.Utilities;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
@@ -184,34 +185,34 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult PrimaryVariant(long pwMasterVariantId, long pwProductId)
+        public ActionResult PrimaryVariant(long pwMasterVariantId, long pwVariantId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var builderService = _factory.MakeCatalogBuilderService(userIdentity.PwShop);
-            var retrievalService = _factory.MakeCatalogRetrievalService(userIdentity.PwShop);
-            var repository = _factory.MakeProductRepository(userIdentity.PwShop);
+            var repository = _factory.MakeVariantRepository(userIdentity.PwShop);
 
             using (var transaction = builderService.InitiateTransaction())
             {
-                var masterProduct = retrievalService.RetrieveMasterProduct(pwMasterProductId);
-                if (masterProduct == null)
+                var masterVariant =
+                    repository.RetrieveMasterVariants(pwMasterVariantId: pwMasterVariantId)
+                        .FirstOrDefault();
+                if (masterVariant == null)
                 {
                     return JsonNetResult.Success();
                 }
-                var product = masterProduct.Product(pwProductId);
-                if (product == null)
+                var variant = masterVariant.Variant(pwVariantId);
+                if (variant == null)
                 {
                     return JsonNetResult.Success();
                 }
 
-                masterProduct.PrimaryManual(product);
-                masterProduct.Products.ForEach(x => repository.UpdateProductIsPrimary(x));
+                masterVariant.PrimaryManual(variant);
+                masterVariant.Variants.ForEach(x => repository.UpdateVariantIsPrimary(x));
 
                 transaction.Commit();
             }
             return JsonNetResult.Success();
         }
-
 
     }
 }

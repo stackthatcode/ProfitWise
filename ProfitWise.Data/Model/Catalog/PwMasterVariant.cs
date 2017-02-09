@@ -59,6 +59,11 @@ namespace ProfitWise.Data.Model.Catalog
             return output;
         }
 
+        public PwVariant Variant(long pwVariantId)
+        {
+            return Variants.FirstOrDefault(x => x.PwVariantId == pwVariantId);
+        }
+
         public PwVariant AutoPrimaryVariant()
         {
             if (Variants.Count(x => x.IsPrimary) > 1 ||
@@ -92,6 +97,16 @@ namespace ProfitWise.Data.Model.Catalog
             variant.IsPrimaryManual = false;
             variant.IsPrimary = false;
             variant.ParentMasterVariant = this;
+        }
+
+
+        public void PrimaryManual(PwVariant variant)
+        {
+            Variants.ForEach(x => x.IsPrimary = false);
+            Variants.ForEach(x => x.IsPrimaryManual = false);
+
+            variant.IsPrimaryManual = true;
+            variant.IsPrimary = true;
         }
     }
 
