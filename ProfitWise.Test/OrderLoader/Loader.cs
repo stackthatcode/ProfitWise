@@ -20,10 +20,9 @@ namespace ProfitWise.Test.OrderLoader
         {
             var container = ProfitWise.Batch.AutofacRegistration.Build();
 
-            //Use the userId for the "Super Deals Plus" test store
+            //Use the userId for the "Super Great Deals" test store
 
-            //var userId = "7ab46e72-3b1c-4db1-88d4-f8a6b8f3e57a";
-            var userId = "4ee36897-ebcd-44fe-a87f-8ead367e93a4";
+            var userId = "e507de54-d56d-41af-ba83-5ffa28b753da";
 
             using (var scope = container.BeginLifetimeScope())
             {
@@ -46,7 +45,7 @@ namespace ProfitWise.Test.OrderLoader
                 var products = productApiRepository.Retrieve(filter);
                 var numProducts = products.Count;
 
-                var numOrders = 5;
+                var numOrders = 7195;
 
                 //Create orders
                 for (int i = 1; i < numOrders+1; i = i + 1)
