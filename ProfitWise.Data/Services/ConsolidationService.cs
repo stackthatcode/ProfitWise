@@ -87,10 +87,10 @@ namespace ProfitWise.Data.Services
                 {
                     // Step #4B2 - clone the original Master Variant and assign it to the Master Product
                     var newMasterVariant = inboundVariant.ParentMasterVariant.Clone();
-                    targetMasterProduct.AssignMasterVariant(newMasterVariant);
-                    newMasterVariant.AssignVariant(inboundVariant);
-
+                    targetMasterProduct.AssignMasterVariant(newMasterVariant);                    
                     newMasterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(newMasterVariant);
+
+                    newMasterVariant.AssignVariant(inboundVariant);
                     variantRepository.UpdateVariantsMasterVariant(inboundVariant);
                     catalogBuilderService.UpdatePrimary(newMasterVariant);
 

@@ -58,7 +58,6 @@ namespace ProfitWise.Web.Controllers
             }
 
             var recordCount = pickListRepository.Count(pickListId);
-
             var products = cogsRepository
                 .RetrieveProductsFromPicklist(pickListId, pageNumber, pageSize, sortByColumn, sortByDirectionDown);
 

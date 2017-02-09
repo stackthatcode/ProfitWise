@@ -42,8 +42,7 @@ namespace ProfitWise.Data.Repositories
             return Connection.Query<long>(query,
                     new { PwShopId = this.PwShop.PwShopId, createdDate = DateTime.Now },
                     _connectionWrapper.Transaction).First();
-        }
-        
+        }        
 
         public void Delete(long pickListId)
         {
@@ -55,7 +54,6 @@ namespace ProfitWise.Data.Repositories
 
             Connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId}, _connectionWrapper.Transaction);
         }
-
 
         // Pick List population/filter operations
         public void Populate(long pickListId, List<string> searchTerms)

@@ -86,7 +86,7 @@ ProfitWiseShopify.ErrorPopup = function () {
         title: "System Error",
         message: ProfitWiseShopify.ErrorMessage,
     }, function (result) {
-        window.location.reload();
+        //window.location.reload();
     });
 };
 

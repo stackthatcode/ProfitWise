@@ -55,7 +55,7 @@
                                 <i class="glyphicon glyphicon-plus"></i> Add to Consolidation
                             </a>
                         </span>
-                        <span data-bind="if: Consolidated">Already Consolidated</span>
+                        <span data-bind="if: Consolidated">N/A</span>
                     </td>
                 </tr>                  
                 </tbody>
@@ -206,7 +206,7 @@
                         }, this);
                 },
                 function () {
-                    self.LoadDataForCurrentPage();
+                    self.OkClick();
                 }
             );
         }

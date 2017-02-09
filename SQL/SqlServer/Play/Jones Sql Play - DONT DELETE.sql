@@ -29,11 +29,16 @@ FROM profitwisemastervariantcogsdetail t1
 
 
 
-SELECT * FROM profitwiseproduct WHERE PwMasterProductId = 219;
+USE ProfitWise
+GO
 
+SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( 222, 223 );
 
-SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 219;
-SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 220;
+SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 222;
+
+SELECT * FROM profitwisevariant WHERE PwMasterVariantId IN 
+
+SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 223;
 
 
 
