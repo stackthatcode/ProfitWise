@@ -87,20 +87,23 @@
             <div class="col-xs-10">
                 <table class="table table-striped product-consol">
                     <tbody>
-                    <tr>
-                        <td>3D Universe PLA 2.85 mm<br />
-                            <span class="id-label">Shopify Product ID: 9123123</span>
+                    <tr data-bind="with: PrimaryProduct">
+                        <td><span data-bind="text: Title"></span><br />
+                            <span class="id-label">Shopify Product ID: 
+                                <span data-bind="text: ShopifyProductId"></span> </span>
                         </td>
 
-                        <td>3D Universe</td>
-                        <td>Active</td>
+                        <td><span data-bind="text: Vendor"></span></td>
+                        <td><span data-bind="if: IsActive">Active</span>
+                            <span data-bind="ifnot: IsActive">Inactive</span>
+                        </td>
                         <td><span class="consol-primary">Primary</span></td>
                         <td><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
                     </tr>
                         
                     <!-- ko if: ShowProductConsolidation -->
                     <tr>
-                        <td>
+                        <td class="overflow-gracefully">
                             3D Universe PLA 2.85 mm<br />
                             <span class="id-label">Shopify Product ID: 9123123</span>
                         </td>
@@ -166,14 +169,14 @@
 
         self.PwMasterProductId = ko.observable(null);
         self.PrimaryProduct = ko.observable();
+        self.ProductConsolidations = ko.observableArray();
+        self.ShowProductConsolidation = ko.observable(false);
+
         self.MasterProductTitle = ko.computed(function() {
             return self.PrimaryProduct() ? self.PrimaryProduct().Title : "";
         });
 
         self.PrimaryVariantGrid = ko.observable([]);
-
-        self.ShowProductConsolidation = ko.observable(false);
-        self.ProductConsolidations = ko.observable([ 1 , 2 ]);
 
 
         // NOTE: need to scroll to the current selection
@@ -194,7 +197,8 @@
                     ajax.HttpGet(url, this);
                 },
                 function (data) {
-                    console.log(data);                    
+                    console.log(data);
+
                     if (!data.product) {
                         self.ExitCallback();
                         return;
@@ -207,8 +211,17 @@
                 });
         };
 
-        self.LoadMasterProduct = function (data) {            
-            self.PrimaryProduct(data.product);
+        self.LoadMasterProduct = function (data) {
+            var primaryProduct = AQ(data.product).first(function(item) {
+                return item.IsPrimary;
+            });
+            var productConsolidations = AQ(data.product).where(function (item) {
+                return !item.IsPrimary;
+            });
+
+            self.PrimaryProduct(primaryProduct);
+            self.ProductConsolidations(productConsolidations);
+
 
             // TODO - wire in goodness
             //AQ(data.MasterProduct.MasterVariants);

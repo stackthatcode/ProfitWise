@@ -52,17 +52,18 @@ namespace ProfitWise.Data.Services
             var catalogBuilderService = this._multitenantFactory.MakeCatalogBuilderService(this.PwShop);
             var catalogRetrievalService = this._multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
 
+            // Step #1 - assemble the players
             var targetMasterProduct = catalogRetrievalService.RetrieveMasterProduct(targetMasterProductId);
             var inboundMasterProductId = productRepository.RetrieveMasterProductId(inboundProductId);
             var inboundMasterProduct = catalogRetrievalService.RetrieveMasterProduct(inboundMasterProductId);
             var inboundProduct = inboundMasterProduct.Products.First(x => x.PwProductId == inboundProductId);
 
-            // Step #1 - re-assign Product 
+            // Step #2 - re-assign Product 
             targetMasterProduct.AssignProduct(inboundProduct);
             productRepository.UpdateProductsMasterProduct(inboundProduct);
             catalogBuilderService.UpdatePrimary(targetMasterProduct);
-
-            // Step #2 - extract Variants that are associated with this Product Id across all Master Variants
+            
+            // Step #3 - extract Variants that are associated with this Product Id across all Master Variants
             var inboundVariants = 
                 inboundMasterProduct.MasterVariants
                     .SelectMany(x => x.Variants)
@@ -71,25 +72,27 @@ namespace ProfitWise.Data.Services
 
             foreach (var inboundVariant in inboundVariants)
             {
-                // Step #2A - attempt to auto-consolidate Variants
+                // Step #4 - attempt to auto-consolidate Variants
                 var targetMasterVariant = 
-                    targetMasterProduct.FindMasterVariant(inboundVariant.Sku, inboundVariant.Title);
+                        targetMasterProduct.FindMasterVariant(inboundVariant.Sku, inboundVariant.Title);                
 
                 if (targetMasterVariant != null)
                 {
-                    // Step #2B1 - if match was found, assign this Variant under the Target Master Variant
+                    // Step #4B1 - if match was found, assign this Variant under the Target Master Variant
                     targetMasterVariant.AssignVariant(inboundVariant);
-                    variantRepository.UpdateVariantsMasterVariant(inboundVariant);
+                    variantRepository.UpdateVariantsMasterVariant(inboundVariant);                    
                     catalogBuilderService.UpdatePrimary(targetMasterVariant);
                 }
                 else
                 {
-                    // Step #2B2 - clone the original Master Variant and assign it to the Master Product
+                    // Step #4B2 - clone the original Master Variant and assign it to the Master Product
                     var newMasterVariant = inboundVariant.ParentMasterVariant.Clone();
                     targetMasterProduct.AssignMasterVariant(newMasterVariant);
+                    newMasterVariant.AssignVariant(inboundVariant);
 
-                    newMasterVariant.PwMasterVariantId = 
-                            variantRepository.InsertMasterVariant(newMasterVariant);
+                    newMasterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(newMasterVariant);
+                    variantRepository.UpdateVariantsMasterVariant(inboundVariant);
+                    catalogBuilderService.UpdatePrimary(newMasterVariant);
 
                     foreach (var detail in newMasterVariant.CogsDetails)
                     {
@@ -99,23 +102,28 @@ namespace ProfitWise.Data.Services
                 }
             }
 
-            // Step #3 - decommission any Master Variants that don't have Variants left
-            foreach (var masterVariant in inboundMasterProduct.MasterVariants)
+            // Step #5 - decommission any Master Variants that don't have Variants left
+            foreach (var inboundMasterVariant in inboundMasterProduct.MasterVariants)
             {
-                if (masterVariant.Variants.Count == 0)
+                if (inboundMasterVariant.Variants.Count == 0)
                 {
-                    variantRepository.DeleteMasterVariant(masterVariant.PwMasterVariantId);
-
-                    // TODO - is this guy called by the Product Clean-up Service
-                    cogsRepository.DeleteCogsDetail(masterVariant.PwMasterVariantId);
-                }                
+                    variantRepository.DeleteMasterVariant(inboundMasterVariant.PwMasterVariantId);
+                    cogsRepository.DeleteCogsDetail(inboundMasterVariant.PwMasterVariantId);
+                }
+                else
+                {
+                    catalogBuilderService.UpdatePrimary(inboundMasterVariant);
+                }            
             }
             
-            // Step #4 - if necessary decommission Master Product the inbound belongs to
+            // Step #6 - if necessary decommission Master Product the inbound belongs to
             if (inboundMasterProduct.Products.Count == 0)
             {
-                // Note - it should be impossible for a Product to be 
                 productRepository.DeleteMasterProduct(inboundMasterProduct);
+            }
+            else
+            {
+                catalogBuilderService.UpdatePrimary(inboundMasterProduct);
             }
         }
 
@@ -135,26 +143,30 @@ namespace ProfitWise.Data.Services
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+            var catalogService = this._multitenantFactory.MakeCatalogBuilderService(this.PwShop);
 
+            // Get the inbound Variant and Master Variant
             var inboundMasterVariantId = variantRepository.RetrieveMasterVariantId(inboundVariantId);
             var inboundMasterVariant =
-                variantRepository.RetrieveMasterVariants(pwMasterVariantId: inboundMasterVariantId).First();
-
+                    variantRepository.RetrieveMasterVariants(pwMasterVariantId: inboundMasterVariantId).First();
             var inboundVariant = inboundMasterVariant.Variants.First(x => x.PwVariantId == inboundVariantId);
 
+            // Perform the assignment...
             var targetMasterVariant =
-                variantRepository.RetrieveMasterVariants(pwMasterVariantId: targetMasterVariantId).First();
-            
-            targetMasterVariant.AssignVariant(inboundVariant);
+                    variantRepository.RetrieveMasterVariants(pwMasterVariantId: targetMasterVariantId).First();            
 
+            targetMasterVariant.AssignVariant(inboundVariant);
             variantRepository.UpdateVariantsMasterVariant(inboundVariant);
+            catalogService.UpdatePrimary(targetMasterVariant);
 
             if (inboundMasterVariant.Variants.Count == 0)
             {
-                variantRepository.DeleteMasterVariant(inboundMasterVariant.PwMasterVariantId);
-
-                // TODO - is this guy called by the Product Clean-up Service
+                variantRepository.DeleteMasterVariant(inboundMasterVariant.PwMasterVariantId);                
                 cogsRepository.DeleteCogsDetail(inboundMasterVariant.PwMasterVariantId);
+            }
+            else
+            {
+                catalogService.UpdatePrimary(inboundMasterVariant);
             }
         }
 
@@ -162,15 +174,17 @@ namespace ProfitWise.Data.Services
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+            var catalogService = this._multitenantFactory.MakeCatalogBuilderService(this.PwShop);
 
-            var masterVariantId = variantRepository.RetrieveMasterVariantId(variantId);
-            var masterVariant =
-                variantRepository.RetrieveMasterVariants(pwMasterVariantId: masterVariantId).First();
-            var variant = masterVariant.Variants.First(x => x.PwVariantId == variantId);
+            // Retrieve the Variant and Master Variant
+            var inboundMasterVariantId = variantRepository.RetrieveMasterVariantId(variantId);
+            var inboundMasterVariant = 
+                    variantRepository.RetrieveMasterVariants(pwMasterVariantId: inboundMasterVariantId).First();
+            var inboundVariant = inboundMasterVariant.Variants.First(x => x.PwVariantId == variantId);
 
-            var newMasterVariant = masterVariant.Clone();
-            newMasterVariant.PwMasterVariantId =
-                    variantRepository.InsertMasterVariant(newMasterVariant);
+            // Create the new Master Variant
+            var newMasterVariant = inboundMasterVariant.Clone();
+            newMasterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(newMasterVariant);
 
             foreach (var detail in newMasterVariant.CogsDetails)
             {
@@ -178,8 +192,13 @@ namespace ProfitWise.Data.Services
                 cogsRepository.InsertCogsDetails(detail);
             }
 
-            newMasterVariant.AssignVariant(variant);
-            variantRepository.UpdateVariantsMasterVariant(variant);
+            // Assign the Variant
+            newMasterVariant.AssignVariant(inboundVariant);
+            variantRepository.UpdateVariantsMasterVariant(inboundVariant);
+
+            // Update the Primaries
+            catalogService.UpdatePrimary(newMasterVariant);
+            catalogService.UpdatePrimary(inboundMasterVariant);
         }
     }
 }

@@ -276,11 +276,16 @@ namespace ProfitWise.Data.Repositories
 
         public void DeleteOrphanedMasterVariants()
         {
-            var query = @"DELETE FROM profitwisemastervariant 
-                        WHERE PwShopId = @PwShopId AND PwMasterVariantId NOT IN 
-                            ( SELECT PwMasterVariantId FROM profitwisevariant );";
-            Connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, },
-                            _connectionWrapper.Transaction);
+            var query = 
+                    @"DELETE FROM profitwisemastervariantcogsdetail
+                    WHERE PwShopId = @PwShopId AND PwMasterVariantId NOT IN 
+                        ( SELECT PwMasterVariantId FROM profitwisevariant );
+                    
+                    DELETE FROM profitwisemastervariant 
+                    WHERE PwShopId = @PwShopId AND PwMasterVariantId NOT IN 
+                        ( SELECT PwMasterVariantId FROM profitwisevariant );";
+
+            Connection.Execute(query, new { @PwShopId = this.PwShop.PwShopId, }, _connectionWrapper.Transaction);
         }
     }
 }

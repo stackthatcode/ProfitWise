@@ -59,7 +59,6 @@ namespace ProfitWise.Data.Model.Catalog
             return output;
         }
 
-
         public PwVariant DeterminePrimaryVariant()
         {
             if (Variants.Count(x => x.IsPrimary) > 1 ||
@@ -87,12 +86,10 @@ namespace ProfitWise.Data.Model.Catalog
 
         public void AssignVariant(PwVariant variant)
         {
-            if (variant.ParentMasterVariant != null && variant.ParentMasterVariant.Variants != null)
-            {
-                variant.ParentMasterVariant.Variants.Remove(variant);
-            }
+            variant.ParentMasterVariant?.Variants?.Remove(variant);
             this.Variants.Add(variant);
             variant.PwMasterVariantId = this.PwMasterVariantId;
+            variant.IsPrimaryManual = false;
             variant.ParentMasterVariant = this;
         }
     }

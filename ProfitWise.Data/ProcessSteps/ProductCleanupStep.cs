@@ -46,8 +46,9 @@ namespace ProfitWise.Data.ProcessSteps
             var masterProductCatalog = service.RetrieveFullCatalog();
             var orderLineItems = orderRepository.RetrieveLineItemSubset();
 
+            // TODO - this is on hold for now
             // Remove Inactive Products and Variants that don't reference Order Line Items
-            RemoveInactiveWithoutReference(shop, masterProductCatalog, orderLineItems);
+            // RemoveInactiveWithoutReference(shop, masterProductCatalog, orderLineItems);
 
             // Update Inactive Variant prices using Order Line Items
             UpdateInactiveVariantPrice(shop, masterProductCatalog, orderLineItems);

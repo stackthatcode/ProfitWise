@@ -20,6 +20,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<PwReportFilterRepository> _filterRepositoryFactory;
         private readonly Func<PwReportQueryRepository> _reportQueryRepositoryFactory;
         private readonly Func<CogsService> _orderCogsUpdateServiceFactory;
+        private readonly Func<ConsolidationService> _consolidationServiceFactory;
 
         public MultitenantFactory(
             Func<ShopifyOrderRepository> orderRepositoryFactory,
@@ -34,7 +35,8 @@ namespace ProfitWise.Data.Factories
             Func<PwReportFilterRepository> filterRepositoryFactory, 
             Func<PwReportQueryRepository> reportQueryRepositoryFactory,
             Func<CogsService> orderCogsUpdateServiceFactory, 
-            Func<PwCogsDataUpdateRepository> cogsDataUpdateRepositoryFactory)
+            Func<PwCogsDataUpdateRepository> cogsDataUpdateRepositoryFactory, 
+            Func<ConsolidationService> consolidationServiceFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -49,6 +51,7 @@ namespace ProfitWise.Data.Factories
             _reportQueryRepositoryFactory = reportQueryRepositoryFactory;
             _orderCogsUpdateServiceFactory = orderCogsUpdateServiceFactory;
             _cogsDataUpdateRepositoryFactory = cogsDataUpdateRepositoryFactory;
+            _consolidationServiceFactory = consolidationServiceFactory;
         }
 
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
@@ -141,7 +144,12 @@ namespace ProfitWise.Data.Factories
             return repository;
         }
 
-
+        public virtual ConsolidationService MakeConsolidationService(PwShop shop)
+        {
+            var service = _consolidationServiceFactory();
+            service.PwShop = shop;
+            return service;
+        }
     }
 }
 

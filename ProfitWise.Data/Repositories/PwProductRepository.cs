@@ -167,8 +167,9 @@ namespace ProfitWise.Data.Repositories
         public void UpdateProductsMasterProduct(PwProduct product)
         {
             var query = @"UPDATE profitwiseproduct
-                            SET PwMasterProductId = @PwMasterProductId
+                            SET PwMasterProductId = @PwMasterProductId                            
                             WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
+
             Connection.Execute(query, product, _connectionWrapper.Transaction);
         }
 
@@ -183,8 +184,9 @@ namespace ProfitWise.Data.Repositories
         public void UpdateProductIsPrimary(PwProduct product)
         {
             var query = @"UPDATE profitwiseproduct
-                            SET IsPrimary = @IsPrimary
-                            WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
+                        SET IsPrimary = @IsPrimary, IsPrimaryManual = @IsPrimaryManual
+                        WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
+
             Connection.Execute(query, product, _connectionWrapper.Transaction);
         }
 
