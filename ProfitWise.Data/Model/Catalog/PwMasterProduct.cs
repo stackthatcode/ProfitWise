@@ -23,6 +23,7 @@ namespace ProfitWise.Data.Model.Catalog
             product.ParentMasterProduct = this;
             product.PwMasterProductId = this.PwMasterProductId;
             product.IsPrimaryManual = false;
+            product.IsPrimary = false;
             this.Products.Add(product);
         }
 

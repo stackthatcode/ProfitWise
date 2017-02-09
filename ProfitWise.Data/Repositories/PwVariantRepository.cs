@@ -150,7 +150,8 @@ namespace ProfitWise.Data.Repositories
                 @"WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId;";
 
             Connection.Execute(
-                query, new { @PwMasterVariantId = pwMasterVariantId }, _connectionWrapper.Transaction);
+                query, new { this.PwShop.PwShopId, @PwMasterVariantId = pwMasterVariantId }, 
+                _connectionWrapper.Transaction);
         }
 
         public void DeleteMasterVariantByProductId(long pwMasterProductId)

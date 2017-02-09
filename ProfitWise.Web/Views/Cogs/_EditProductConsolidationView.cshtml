@@ -162,7 +162,7 @@
 
                     <span style="display: inline-block; width:30px;"></span>
                     <a href="#" class="consol-link-control"
-                       data-bind="click: $root.SearchForProductsPopup">
+                       data-bind="click: $parent.SearchForProductsPopup">
                         <i class="glyphicon glyphicon-plus"></i> Add Consolidations
                     </a>
                 </div>
@@ -376,7 +376,7 @@
             
             ProfitWiseShopify.LaunchModal({
                 src: url,
-                title: 'Search for Products to Consolidate With' + self.MasterProductTitle(),
+                title: 'Search for Products to Consolidate with ' + self.MasterProductTitle(),
                 width: 'large',
                 height: 500,
             }, self.RefreshMasterProduct);

@@ -90,6 +90,7 @@ namespace ProfitWise.Data.Model.Catalog
             this.Variants.Add(variant);
             variant.PwMasterVariantId = this.PwMasterVariantId;
             variant.IsPrimaryManual = false;
+            variant.IsPrimary = false;
             variant.ParentMasterVariant = this;
         }
     }

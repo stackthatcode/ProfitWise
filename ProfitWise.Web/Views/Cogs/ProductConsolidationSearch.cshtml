@@ -49,8 +49,13 @@
                     <td class="overflow-gracefully">
                         <span data-bind="text: Title"></span>
                     </td>
-                    <td>
-
+                    <td style="text-align: right;">
+                        <span data-bind="ifnot: Consolidated">
+                            <a href="#" data-bind="click: $parent.AddToConsolidation">
+                                <i class="glyphicon glyphicon-plus"></i> Add to Consolidation
+                            </a>
+                        </span>
+                        <span data-bind="if: Consolidated">Already Consolidated</span>
                     </td>
                 </tr>                  
                 </tbody>
@@ -107,6 +112,11 @@
                 </thead>
             </table>
         </div>
+    </div>
+    
+    <div data-bind="visible: !ProductsFound()" style="text-align:center; padding-top:120px;">
+        <h1 style="font-weight:700; font-size:2.5em; color:#CCC;">No Products Found</h1>
+        <h4 style="font-weight:100;">Try using different search terms</h4>
     </div>
 </script>
 
@@ -168,6 +178,7 @@
 
                     AQ(data.products).each(function (item) {
                         item.Vendor = item.Vendor || "(No Vendor)";
+                        item.Consolidated = item.PwMasterProductId == '@Model.PwMasterProductId';
                     });
 
                     self.SearchGrid.removeAll();
@@ -182,6 +193,23 @@
                     }
                 });
         };
+
+        self.AddToConsolidation = function(item) {
+            flow.exec(
+                function () {
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    ajax.HttpPost(
+                        "/ConsolService/ConsolidateProduct", {
+                            pwMasterProductId: @Model.PwMasterProductId,
+                            pwProductId: item.PwProductId,
+                        }, this);
+                },
+                function () {
+                    self.LoadDataForCurrentPage();
+                }
+            );
+        }
 
         self.KeyPressCallback = function () {
             if (event.keyCode == 13) {

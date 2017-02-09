@@ -101,7 +101,7 @@ namespace ProfitWise.Data.Repositories
                 @"DELETE FROM profitwisemasterproduct " +
                 @"WHERE PwShopId = @PwShopId AND PwMasterProductId = @PwMasterProductId;";
 
-            Connection.Execute(query, _connectionWrapper.Transaction);
+            Connection.Execute(query, masterProduct, _connectionWrapper.Transaction);
         }
 
         public IList<PwProduct> RetrieveAllProducts()

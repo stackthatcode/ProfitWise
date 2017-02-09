@@ -58,21 +58,22 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(touchQuery, new { PwShopId, pickListId }, _connectionWrapper.Transaction);
         }
 
-        private string ResultsQueryGen(int sortByColumn, bool sortByDirectionDown)
+        private string ResultsQueryGen(int sortByColumn, bool sortByDirectionDown, bool primaryOnly = true)
         {
             var sortDirectionWord = (sortByDirectionDown ? "ASC" : "DESC");
             var sortByClause =
                 "ORDER BY " +
                 (sortByColumn == 0
-                    ? $"t1.Vendor {sortDirectionWord}, t1.Title {sortDirectionWord} "
-                    : $"t1.Title {sortDirectionWord}, t1.Vendor {sortDirectionWord} ");
+                    ? $"Vendor {sortDirectionWord}, Title {sortDirectionWord} "
+                    : $"Title {sortDirectionWord}, Vendor {sortDirectionWord} ");
+
+            var isPrimaryClause = primaryOnly ? "AND IsPrimary = 1 " : "";
+
             var query =
-                @"SELECT t1.PwMasterProductId, t1.PwProductId, t1.Title, t1.Vendor
-                FROM profitwiseproduct t1
-                    INNER JOIN profitwisemasterproduct t2
-                        ON t1.PwMasterProductId = t2.PwMasterProductId
-                WHERE t1.PwShopId = @PwShopId AND t1.IsPrimary = 1 AND t2.PwShopId = @PwShopId
-                AND t1.PwMasterProductId IN ( 
+                @"SELECT PwMasterProductId, PwProductId, Title, Vendor
+                FROM profitwiseproduct WHERE PwShopId = @PwShopId " + 
+                isPrimaryClause +
+                @"AND PwMasterProductId IN ( 
 	                SELECT PwMasterProductId FROM profitwisepicklistmasterproduct 
                     WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId ) " +
                 sortByClause + " OFFSET @StartRecord ROWS FETCH NEXT @ResultsPerPage ROWS ONLY;";
@@ -111,11 +112,14 @@ namespace ProfitWise.Data.Repositories
             }
 
             TouchPickList(pickListId);
-            var query = ResultsQueryGen(sortByColumn, sortByDirectionDown);
+
+            var query = ResultsQueryGen(sortByColumn, sortByDirectionDown, false);
+
             var startRecord = (pageNumber - 1) * resultsPerPage;
 
             return Connection.Query<PwProduct>(query,
-                new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage },
+                new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord,
+                    ResultsPerPage = resultsPerPage },
                 _connectionWrapper.Transaction).ToList();
         }
 

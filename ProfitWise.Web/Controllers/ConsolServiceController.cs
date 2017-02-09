@@ -62,7 +62,6 @@ namespace ProfitWise.Web.Controllers
             var products = cogsRepository
                 .RetrieveProductsFromPicklist(pickListId, pageNumber, pageSize, sortByColumn, sortByDirectionDown);
 
-
             return new JsonNetResult(new { pickListValid = true, products, totalRecords = recordCount });
         }
 
@@ -80,6 +79,65 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { product, variants });
         }
 
+
+        [HttpPost]
+        public ActionResult ConsolidateProduct(long pwMasterProductId, long pwProductId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeConsolidationService(userIdentity.PwShop);
+
+            using (var transaction = service.InitiateTransaction())
+            {
+                service.ConsolidateProduct(pwProductId, pwMasterProductId);
+                transaction.Commit();
+            }
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult DeconsolidateProduct(long pwProductId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeConsolidationService(userIdentity.PwShop);
+
+            using (var transaction = service.InitiateTransaction())
+            {
+                service.DeconsolidateProduct(pwProductId);
+                transaction.Commit();
+            }
+            return JsonNetResult.Success();
+
+        }
+
+        [HttpPost]
+        public ActionResult ConsolidateVariant(long pwMasterVariantId, long pwVariantId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeConsolidationService(userIdentity.PwShop);
+
+            using (var transaction = service.InitiateTransaction())
+            {
+                service.ConsolidateVariant(pwVariantId, pwMasterVariantId);
+                transaction.Commit();
+            }
+
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        public ActionResult DeconsolidateVariant(long pwVariantId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeConsolidationService(userIdentity.PwShop);
+
+            using (var transaction = service.InitiateTransaction())
+            {
+                service.DeconsolidateVariant(pwVariantId);
+                transaction.Commit();
+            }
+
+            return JsonNetResult.Success();
+        }
     }
 }
 
