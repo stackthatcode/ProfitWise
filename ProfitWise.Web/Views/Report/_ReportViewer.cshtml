@@ -440,7 +440,7 @@
         Select Report &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
     </a>
 
-    <ul class="dropdown-menu overflow-gracefully" style="width: 300px;">
+    <ul class="dropdown-menu" style="width: 300px;">
         <!-- ko foreach: SystemDefinedReports -->
         <li>
             <a href="#" data-bind="click: $parent.SelectReportClick">
@@ -460,7 +460,7 @@
 
         <!-- ko foreach: UserDefinedReports -->
         <li>
-            <a href="#" data-bind="click: $parent.SelectReportClick">
+            <a class="overflow-gracefully" style="width:280px;" href="#" data-bind="click: $parent.SelectReportClick">
                 <span style="display:inline-block; width:17px;" data-bind="if:CurrentlySelected">
                     <i class="glyphicon glyphicon-ok"></i>
                 </span>
