@@ -204,7 +204,7 @@ namespace ProfitWise.Data.Repositories
                     SELECT DISTINCT(PwMasterProductId)
                     FROM profitwisemastervariant
                     WHERE PwShopId = @PwShopId
-                    AND CogsAmount IS NULL );";
+                    AND (CogsAmount IS NULL OR CogsAmount = 0) );";
 
             Connection.Execute(query, new { PwShopId = PwShop.PwShopId, PwPickListId = pickListId });
         }
