@@ -40,7 +40,7 @@ namespace ProfitWise.Data.Model.Preferences
 
                 new DateRange(ThisYear, "This Year", DateTime.Today.FirstOfYear(), DateTime.Today.LastOfYear()),
 
-                new DateRange(LastMonth, "Last Year", DateTime.Today.AddYears(-1).FirstOfYear(), DateTime.Today.AddYears(-1).LastOfYear()),
+                new DateRange(LastYear, "Last Year", DateTime.Today.AddYears(-1).FirstOfYear(), DateTime.Today.AddYears(-1).LastOfYear()),
             };
         }
     }
