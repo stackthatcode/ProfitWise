@@ -503,12 +503,9 @@
     $(document)
         .ready(function () {
             var model = new ProfitWise.ProductSearchModel();
-            
+            model.SearchForProducts(function() {});
             ko.applyBindings(model);
             model.JQueryInit();
-            model.SearchForProducts(function() {
-                model.DrilldownToCogsEditor({ PwMasterProductId: 222 });
-            });            
         });
 </script>
 
