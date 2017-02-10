@@ -107,13 +107,15 @@ namespace ProfitWise.Data.Repositories
         public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)
         {
             var query =
-                @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t3.Sku, t2.Exclude, t2.StockedDirectly, 
-                        t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, 
-                        t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
+                @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t4.Title AS ProductTitle, t3.Sku, 
+                        t2.Exclude, t2.StockedDirectly, t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, 
+                        t2.CogsAmount, t2.CogsDetail, t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
                 FROM profitwisemastervariant t2 
 	                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
+                    INNER JOIN profitwiseproduct t4 ON t3.PwProductId = t4.PwProductId
                 WHERE t2.PwShopId = @PwShopId
                 AND t3.PwShopId = @PwShopId AND t3.IsPrimary = 1
+                AND t4.PwShopId = @PwShopId
                 AND t2.PwMasterProductId IN @MasterProductIds";
 
             return Connection.Query<PwCogsVariant>(
@@ -139,6 +141,9 @@ namespace ProfitWise.Data.Repositories
                      query, new { this.PwShopId, masterVariantId }, _connectionWrapper.Transaction)
                 .FirstOrDefault();
         }
+
+
+
 
 
         // Stocked Directly and Exclude data

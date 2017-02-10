@@ -1,4 +1,4 @@
-﻿namespace ProfitWise.Data.Model
+﻿namespace ProfitWise.Data.Model.Reports
 {
     public class PwProductSummary
     {

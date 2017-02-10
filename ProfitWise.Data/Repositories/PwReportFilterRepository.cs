@@ -2,9 +2,9 @@
 using System.Data;
 using System.Linq;
 using Dapper;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
