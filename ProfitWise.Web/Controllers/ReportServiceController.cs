@@ -5,6 +5,7 @@ using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Web.Json;
+using Push.Foundation.Utilities.General;
 
 namespace ProfitWise.Web.Controllers
 {
@@ -50,6 +51,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult SaveAs(long reportId, string name, bool deleteOriginal)
         {
+            name = name.TruncateAfter(50);
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);

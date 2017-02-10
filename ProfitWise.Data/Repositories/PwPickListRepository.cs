@@ -206,7 +206,7 @@ namespace ProfitWise.Data.Repositories
                     WHERE PwShopId = @PwShopId
                     AND (CogsAmount IS NULL OR CogsAmount = 0) );";
 
-            Connection.Execute(query, new { PwShopId = PwShop.PwShopId, PwPickListId = pickListId });
+            Connection.Execute(query, new { PwShopId = PwShop.PwShopId, PwPickListId = pickListId }, _connectionWrapper.Transaction);
         }
         
 
