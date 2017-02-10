@@ -1,0 +1,119 @@
+﻿@using ProfitWise.Web.Attributes
+@using ProfitWise.Web.Models
+@using Push.Foundation.Utilities.Json
+@model AddVariantToConsolidationModel
+@{
+    Context.PullCommonContext().PageTitle = "Variant Consolidation";
+    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+}
+
+@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
+@Html.Partial("~/Views/SharedTemplates/_SortingColumnWidget.cshtml")
+
+<style>
+    body { overflow-y: scroll !important; padding: 0px !important; }
+    .search-grid tr { height: 60px; }
+    .search-grid tr td:nth-child(1), .search-heading tr th:nth-child(1) {
+        width: 60%; vertical-align: middle;
+    }
+    .search-grid tr td:nth-child(2), .search-heading tr th:nth-child(2) {
+        width: 10%; vertical-align: middle;
+    }
+    .search-grid tr td:nth-child(3), .search-heading tr th:nth-child(3) {
+        width: 30%; vertical-align: middle;
+    }
+</style>
+
+
+<script type="text/html" id="Main-Template">
+    <div class="fixed-header-container" style="padding-left: 0px; padding-right: 0px;">
+        <div class="standard-header-sleeve" style="height: 90px;">
+            <div class="standard-header" 
+                 style="width:100% !important; min-width: 0 !important; padding-top:20px; padding-right:20px; padding-left:20px; border-bottom: 1px dashed #CCC;">                
+                <div data-bind="template: { name: 'Top-Header' }"></div>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: absolute; overflow: auto; width:100%;">
+        <div style="height: 90px;"></div>
+        
+        <div style="width:100%; background-color:#FFF; overflow:auto; padding-top:0px; padding-left:30px; padding-right: 30px;">
+            <table class="table search-grid">
+                <tbody data-bind="foreach: SearchGrid">  
+                <tr>
+                    <td class="overflow-gracefully" data-bind="text: SkuTitle"></td>
+                    <td class="overflow-gracefully"></td>
+                    <td style="text-align: right;">
+                        <a href="#" data-bind="click: $parent.AddToConsolidation">
+                            <i class="glyphicon glyphicon-plus"></i> Add to Consolidation
+                        </a>
+                    </td>
+                </tr>                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="Top-Header">
+    <div class="row">
+        <div class="col-xs-9 overflow-gracefully" 
+             style="text-align: left; font-weight: 700; color:#888; font-size:1.2em; margin-top: 5px;">
+            Select one of the Product's Variants to add to a Consolidation
+        </div>
+
+        <div class="col-xs-3" style="text-align: right;">
+            <a href="#" data-bind="click: OkClick" style="width: 125px;" class="btn btn-primary">
+                <i class="glyphicon glyphicon-ok"></i>&nbsp;Close
+            </a>
+        </div>
+    </div>
+</script>
+
+<!-- KnockoutJS Root Element -->
+<div data-bind="template: { name: 'Main-Template' }"></div>
+
+<script>
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    ProfitWiseWidgets.AddVariantToConsolidationModel = function() {
+        var self = this;
+
+        //self.ProductsFound = ko.computed(function () { return self.SearchGrid().length > 0 });
+
+        self.SearchGrid = ko.observableArray();
+
+        self.AddToConsolidation = function(item) {
+            flow.exec(
+                function () {
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    ajax.HttpPost(
+                        "/ConsolService/ConsolidateVariant", {
+                            targetMasterVariantId: @Model.PwMasterVariantId,
+                            inboundMasterVariantId: item.PwMasterVariantId,
+                        }, this);
+                },
+                function () {
+                    self.OkClick();
+                }
+            );
+        }
+
+        self.OkClick = function() { ShopifyApp.Modal.close({ result: true }); };
+
+        return self;
+    };
+
+    var model = new ProfitWiseWidgets.AddVariantToConsolidationModel();
+    var mvcModel = @Html.Raw(Model.SerializeToJson());
+    AQ(mvcModel.MasterVariants).each(function(item) {
+        item.SkuTitle = (item.Sku || "(No SKU)") + ' - ' + (item.Title);
+    });
+    console.log(mvcModel);
+    model.SearchGrid(mvcModel.MasterVariants);
+    ko.applyBindings(model);
+
+</script>
+

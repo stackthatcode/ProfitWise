@@ -101,6 +101,26 @@ namespace ProfitWise.Web.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public ActionResult AddVariantToConsolidation(long pwMasterVariantId, long pwMasterProductId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
+
+            var masterVariants =
+                cogsRepository.RetrieveVariants(new[] {pwMasterProductId})
+                    .Where(x => x.PwMasterVariantId != pwMasterVariantId)
+                    .ToList();
+
+            var model = new AddVariantToConsolidationModel
+            {
+                PwMasterVariantId = pwMasterVariantId,
+                MasterVariants = masterVariants,
+            };
+            
+            return View(model);
+        }
+        
 
         [HttpGet]
         public ActionResult StockedPicklistPopup(int pickListId)

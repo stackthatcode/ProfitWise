@@ -174,9 +174,9 @@
                     <tbody>
                     <tr class="success consol-primary">
                         <td class="overflow-gracefully">
-                            <span data-bind="text: Sku"></span> -
-                            <span data-bind="text: Title"></span><br />
-                            <span>Shopify Variant ID:</span> <span class="id-label" data-bind="text: ShopifyVariantId"></span>
+                            <span data-bind="text: SkuTitleText"></span><br />
+                            <span class="id-label">Shopify Variant ID:</span> 
+                            <span class="id-label" data-bind="text: ShopifyVariantIdText"></span>
                         </td>
                         <td class="overflow-gracefully">
                             <span data-bind="text:Product.Title"></span>
@@ -190,9 +190,9 @@
                     <!-- ko foreach: Consolidations -->
                     <tr>
                         <td class="overflow-gracefully">
-                            <span data-bind="text: Sku"></span> -
-                            <span data-bind="text: Title"></span><br />
-                            <span>Shopify Variant ID:</span> <span class="id-label" data-bind="text: ShopifyVariantId"></span>
+                            <span data-bind="text: SkuTitleText"></span><br />
+                            <span class="id-label">Shopify Variant ID:</span> 
+                            <span class="id-label" data-bind="text: ShopifyVariantIdText"></span>
                         </td>
                         <td class="overflow-gracefully">
                             <span data-bind="text:Product.Title"></span>
@@ -209,10 +209,12 @@
                         <td colspan="5">
                             <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
                             <span style="display: inline-block; width:30px;"></span>
-                            <a href="#" class="consol-link-control"
-                               data-bind="click: function() { alert('last function!'); }">
-                                <i class="glyphicon glyphicon-plus"></i> Add
-                            </a>
+                            <span data-bind="visible: $parent.AddVariantVisible">
+                                <a href="#" class="consol-link-control"
+                                   data-bind="click: $parent.AddVariantConsolidationPopup">
+                                    <i class="glyphicon glyphicon-plus"></i> Add
+                                </a>
+                            </span>
                         </td>
                     </tr>
                     </tbody>
@@ -254,12 +256,10 @@
 
             flow.exec(
                 function () {
-
                     self.RetrieveMasterProduct(self.PwMasterProductId(), this);
                 },
                 function () {
                     self.PrimaryProduct().ShowConsolidations(productState);
-
                     var grid = AQ(self.PrimaryVariantGrid());
 
                     AQ(masterVariantIds)
@@ -288,28 +288,15 @@
                         self.ExitCallback();
                         return;
                     }
-                    self.LoadMasterProduct(data);
+                    self.LoadModel(data);
                     if (callback) {
                         callback();
                     }
                 });
         };
         
-        self.LoadMasterProduct = function (data) {
-            self.PrimaryProduct(self.MasterProductModelFactory(data.product));
-
-            var masterVariants =
-                AQ(data.variants)
-                    .groupBy(function(item) { return item.PwMasterVariantId; })
-                    .select(function(item) {
-                         return self.MasterVariantModelFactory(item.values.toArray(), data.product);
-                    })
-                    .toArray();
-
-            self.PrimaryVariantGrid(masterVariants);
-        };
-
         var isPrimary = function (item) { return item.IsPrimary; }
+
         var isNotPrimary = function (item) { return !item.IsPrimary; }
 
         self.SetPrimaryProduct = function(model) {            
@@ -354,14 +341,29 @@
             ajax.HttpPost(url, data, self.Refresh);
         };
 
-
         // Model Factories
         var activeText = function(item) {
             return item.IsActive ? "Active" : "Inactive";
         };
+
         var idText = function (id) {
             return id || "(None)";
         };
+
+        self.LoadModel = function (data) {
+            self.PrimaryProduct(self.MasterProductModelFactory(data.product));
+
+            var masterVariants =
+                AQ(data.variants)
+                    .groupBy(function (item) { return item.PwMasterVariantId; })
+                    .select(function (item) {
+                        return self.MasterVariantModelFactory(item.values.toArray(), data.product);
+                    })
+                    .toArray();
+
+            self.PrimaryVariantGrid(masterVariants);
+        };
+
         self.MasterProductModelFactory = function(products) {
             var primaryProduct = AQ(products).first(isPrimary);
             primaryProduct.ShowConsolidations = ko.observable(false);
@@ -380,6 +382,10 @@
             return primaryProduct;
         };
 
+        var skuTitle = function(item) {
+            return (item.Sku || "(No SKU)") + ' - ' + (item.Title);
+        }
+
         self.MasterVariantModelFactory = function (variants, products) {
             var productIdFinder = function (id) {
                 return AQ(products).firstOrDefault(function (x) { return x.PwProductId == id; });
@@ -392,13 +398,16 @@
             primaryVariant.ExpanderLabel = "Variant";
             primaryVariant.Product = productIdFinder(primaryVariant.PwProductId);
             primaryVariant.ShopifyVariantIdText = idText(primaryVariant.ShopifyVariantId);
-            
+            primaryVariant.SkuTitleText = skuTitle(primaryVariant);
+
             AQ(primaryVariant.Consolidations).each(function (item) {
                 item.SetPrimary = self.SetPrimaryVariant;
                 item.Deconsolidate = self.DeconsolidateVariant;
                 item.ActiveText = activeText(item);
                 item.ShopifyVariantIdText = idText(item.ShopifyVariantId);
                 item.Product = productIdFinder(item.PwProductId);
+                item.SkuTitleText = skuTitle(item);
+
             });
 
             return primaryVariant;
@@ -415,6 +424,24 @@
                 height: 500,
             }, self.Refresh);
         }
+
+        self.AddVariantVisible = ko.computed( function () { return self.PrimaryVariantGrid().length > 1; } );
+
+        self.AddVariantConsolidationPopup = function(item) {
+            console.log(item.PwMasterVariantId);
+
+            var url = ProfitWiseConfig.BaseUrl +
+                '/Cogs/AddVariantToConsolidation?' +
+                    'pwMasterVariantId=' + item.PwMasterVariantId +
+                    '&pwMasterProductId=' + self.PwMasterProductId();
+
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Variant Consolidation with ' + item.SkuTitleText,
+                width: 'large',
+                height: 500,
+            }, self.Refresh);
+        };
 
         return self;
     };

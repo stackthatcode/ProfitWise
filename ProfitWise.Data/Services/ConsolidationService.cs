@@ -139,35 +139,28 @@ namespace ProfitWise.Data.Services
             ConsolidateProduct(productId, newMasterProductId);
         }
 
-        public void ConsolidateVariant(long inboundVariantId, long targetMasterVariantId)
+        public void ConsolidateVariant(long inboundMasterVariantId, long targetMasterVariantId)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
             var catalogService = this._multitenantFactory.MakeCatalogBuilderService(this.PwShop);
 
             // Get the inbound Variant and Master Variant
-            var inboundMasterVariantId = variantRepository.RetrieveMasterVariantId(inboundVariantId);
             var inboundMasterVariant =
                     variantRepository.RetrieveMasterVariants(pwMasterVariantId: inboundMasterVariantId).First();
-            var inboundVariant = inboundMasterVariant.Variants.First(x => x.PwVariantId == inboundVariantId);
-
-            // Perform the assignment...
             var targetMasterVariant =
-                    variantRepository.RetrieveMasterVariants(pwMasterVariantId: targetMasterVariantId).First();            
-
-            targetMasterVariant.AssignVariant(inboundVariant);
-            variantRepository.UpdateVariantsMasterVariant(inboundVariant);
-            catalogService.AutoUpdatePrimary(targetMasterVariant);
-
-            if (inboundMasterVariant.Variants.Count == 0)
+                    variantRepository.RetrieveMasterVariants(pwMasterVariantId: targetMasterVariantId).First();
+            
+            // Perform the assignment...
+            foreach (var inboundVariant in inboundMasterVariant.Variants)
             {
-                variantRepository.DeleteMasterVariant(inboundMasterVariant.PwMasterVariantId);                
-                cogsRepository.DeleteCogsDetail(inboundMasterVariant.PwMasterVariantId);
+                targetMasterVariant.AssignVariant(inboundVariant);
+                variantRepository.UpdateVariantsMasterVariant(inboundVariant);
+                catalogService.AutoUpdatePrimary(targetMasterVariant);
             }
-            else
-            {
-                catalogService.AutoUpdatePrimary(inboundMasterVariant);
-            }
+
+            variantRepository.DeleteMasterVariant(inboundMasterVariant.PwMasterVariantId);                
+            cogsRepository.DeleteCogsDetail(inboundMasterVariant.PwMasterVariantId);
         }
 
         public void DeconsolidateVariant(long variantId)

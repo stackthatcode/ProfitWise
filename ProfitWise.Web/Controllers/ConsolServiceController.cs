@@ -159,14 +159,14 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult ConsolidateVariant(long pwMasterVariantId, long pwVariantId)
+        public ActionResult ConsolidateVariant(long targetMasterVariantId, long inboundMasterVariantId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeConsolidationService(userIdentity.PwShop);
 
             using (var transaction = service.InitiateTransaction())
             {
-                service.ConsolidateVariant(pwVariantId, pwMasterVariantId);
+                service.ConsolidateVariant(inboundMasterVariantId, targetMasterVariantId);
                 transaction.Commit();
             }
 

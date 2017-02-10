@@ -228,7 +228,6 @@ namespace ProfitWise.Web.Controllers
             service.UpdateCogsForPickList(pickListId, simpleCogs);
             return JsonNetResult.Success();
         }
-
     }
 }
 
