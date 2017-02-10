@@ -244,14 +244,34 @@
             return self.PrimaryVariantGrid().length + " Variant(s)";
         });
 
-        self.RefreshMasterProduct = function () {
+        self.Refresh = function () {
+            var productState = self.PrimaryProduct().ShowConsolidations();
+            var masterVariantIds =
+                AQ(self.PrimaryVariantGrid())
+                    .where(function(item) { return item.ShowConsolidations(); })
+                    .select(function (item) { return item.PwMasterVariantId; })
+                    .toArray();
+
             flow.exec(
                 function () {
+
                     self.RetrieveMasterProduct(self.PwMasterProductId(), this);
                 },
                 function () {
-                    self.PrimaryProduct().ShowConsolidations(true);
-                });            
+                    self.PrimaryProduct().ShowConsolidations(productState);
+
+                    var grid = AQ(self.PrimaryVariantGrid());
+
+                    AQ(masterVariantIds)
+                        .each(function(id) {
+                            var gridRow = grid.firstOrDefault(function(item) {
+                                return item.PwMasterVariantId == id;
+                            });
+                            if (gridRow != null) {
+                                gridRow.ShowConsolidations(true);
+                            }
+                        });
+                });
         };
 
         self.RetrieveMasterProduct = function (pwMasterProductId, callback) {
@@ -300,7 +320,7 @@
                 pwMasterProductId: self.PwMasterProductId(),
                 pwProductId: model.PwProductId,
             };
-            ajax.HttpPost(url, data, self.RefreshMasterProduct);                
+            ajax.HttpPost(url, data, self.Refresh);                
         };
 
         self.DeconsolidateProduct = function(model) {
@@ -310,7 +330,7 @@
             var data = {
                 pwProductId: model.PwProductId,
             };
-            ajax.HttpPost(url, data, self.RefreshMasterProduct);
+            ajax.HttpPost(url, data, self.Refresh);
         };
 
         self.SetPrimaryVariant = function (model) {
@@ -321,7 +341,7 @@
                 pwMasterVariantId: model.PwMasterVariantId,
                 pwVariantId: model.PwVariantId,
             };
-            ajax.HttpPost(url, data, self.RefreshMasterProduct);
+            ajax.HttpPost(url, data, self.Refresh);
         };
 
         self.DeconsolidateVariant = function (model) {
@@ -331,7 +351,7 @@
             var data = {
                 pwVariantId: model.PwVariantId,
             };
-            ajax.HttpPost(url, data, self.RefreshMasterProduct);
+            ajax.HttpPost(url, data, self.Refresh);
         };
 
 
@@ -393,7 +413,7 @@
                 title: 'Search for Products to Consolidate with ' + self.MasterProductTitle(),
                 width: 'large',
                 height: 500,
-            }, self.RefreshMasterProduct);
+            }, self.Refresh);
         }
 
         return self;

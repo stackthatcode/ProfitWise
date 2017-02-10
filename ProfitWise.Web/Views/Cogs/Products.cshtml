@@ -1,5 +1,6 @@
 ﻿@using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
+
 @model ProfitWise.Web.Models.EditProductCogsModel
 @{
     Context.PullCommonContext().PageTitle = "Manage Products and CoGS";
@@ -240,7 +241,7 @@
 
     ProfitWise.ProductSearchModel = function () {
         var self = this;
-
+        
         self.PickListId = ko.observable();
         self.CurrentGrid = ko.observableArray();
         self.ShowNoProductsFound = ko.observable(false);
