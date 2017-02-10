@@ -119,9 +119,11 @@ namespace ProfitWise.Data.Repositories
                 _connectionWrapper.Transaction).ToList();
         }
 
+
         public PwProduct RetrieveProduct(long pwProductId)
         {
-            var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
+            var query = @"SELECT * FROM profitwiseproduct 
+                        WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
             return Connection
                     .Query<PwProduct>(
                                 query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId },
@@ -141,6 +143,15 @@ namespace ProfitWise.Data.Repositories
                                 query, new { PwShop.PwShopId, pwMasterProductId },
                                 _connectionWrapper.Transaction)
                     .FirstOrDefault();
+        }
+
+        public IList<long> RetrieveAllChildProductIds(long pwMasterProductId)
+        {
+            var query = @"SELECT * FROM profitwiseproduct
+                        WHERE PwShopId = @PwShopId AND PwMasterProductId = @pwMasterProductId";
+            return Connection.Query<long>(
+                query, new { @PwShopId = this.PwShop.PwShopId, pwMasterProductId },
+                _connectionWrapper.Transaction).ToList();
         }
 
         public long InsertProduct(PwProduct product)

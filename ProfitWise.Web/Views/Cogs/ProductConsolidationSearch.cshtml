@@ -202,8 +202,8 @@
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
                     ajax.HttpPost(
                         "/ConsolService/ConsolidateProduct", {
-                            pwMasterProductId: @Model.PwMasterProductId,
-                            pwProductId: item.PwProductId,
+                            targetMasterProductId: @Model.PwMasterProductId,
+                            inboundMasterProductId: item.PwMasterProductId,
                         }, this);
                 },
                 function () {

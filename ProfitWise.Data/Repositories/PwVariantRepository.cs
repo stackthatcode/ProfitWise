@@ -192,8 +192,7 @@ namespace ProfitWise.Data.Repositories
         public IList<PwVariant> RetrieveVariantsForMasterVariant(long pwMasterVariantId)
         {
             var query = @"SELECT t1.* FROM profitwisevariant t1
-                        WHERE t1.PwShopId = @PwShopId 
-                        AND t1.PwMasterVariantId = @pwMasterVariantId";
+                        WHERE t1.PwShopId = @PwShopId AND t1.PwMasterVariantId = @pwMasterVariantId";
 
             return Connection
                     .Query<PwVariant>(
@@ -203,7 +202,7 @@ namespace ProfitWise.Data.Repositories
 
         public long RetrieveMasterVariantId(long pwVariantId)
         {
-            var query = @"SELECT PwMasterVariantId FROM profitwiseproduct 
+            var query = @"SELECT PwMasterVariantId FROM profitwisevariant 
                         WHERE PwShopId = @PwShopId AND pwVariantId = @pwVariantId";
 
             return Connection.Query<long>(

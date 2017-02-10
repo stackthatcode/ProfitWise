@@ -94,14 +94,19 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult ConsolidateProduct(long pwMasterProductId, long pwProductId)
+        public ActionResult ConsolidateProduct(long targetMasterProductId, long inboundMasterProductId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeConsolidationService(userIdentity.PwShop);
+            var repository = _factory.MakeProductRepository(userIdentity.PwShop);
 
             using (var transaction = service.InitiateTransaction())
             {
-                service.ConsolidateProduct(pwProductId, pwMasterProductId);
+                var productIds = repository.RetrieveAllChildProductIds(inboundMasterProductId);
+                foreach (var inboundProductId in productIds)
+                {
+                    service.ConsolidateProduct(inboundProductId, targetMasterProductId);
+                }
                 transaction.Commit();
             }
             return JsonNetResult.Success();
