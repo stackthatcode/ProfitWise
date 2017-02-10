@@ -1,6 +1,5 @@
 ﻿@using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
-@using Push.Foundation.Web.Json
 @model ProfitWise.Web.Models.SaveAsModel
 @{
     Context.PullCommonContext().PageTitle = "Report Save As";
@@ -15,7 +14,7 @@
             </div>
             <div class="col-xs-9">
                 <input id="report-name" style="width:100%;" type="text" class="form-control"
-                       maxlength="100" data-bind="value: Name, event: { keyup: InvokeKeyCallback }" />
+                       maxlength="50" data-bind="value: Name, event: { keyup: InvokeKeyCallback }" />
             </div>
         </div>
 

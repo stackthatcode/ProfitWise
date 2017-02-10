@@ -506,9 +506,7 @@
             
             ko.applyBindings(model);
             model.JQueryInit();
-            model.SearchForProducts(function() {
-                model.DrilldownToCogsEditor({ PwMasterProductId: 222 });
-            });            
+            model.SearchForProducts();
         });
 </script>
 
