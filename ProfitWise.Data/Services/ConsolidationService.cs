@@ -152,7 +152,7 @@ namespace ProfitWise.Data.Services
                     variantRepository.RetrieveMasterVariants(pwMasterVariantId: targetMasterVariantId).First();
             
             // Perform the assignment...
-            foreach (var inboundVariant in inboundMasterVariant.Variants)
+            foreach (var inboundVariant in inboundMasterVariant.Variants.ToList())
             {
                 targetMasterVariant.AssignVariant(inboundVariant);
                 variantRepository.UpdateVariantsMasterVariant(inboundVariant);
