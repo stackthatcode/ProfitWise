@@ -9,6 +9,9 @@ namespace ProfitWise.Data.Model.Cogs
         public long PwMasterProductId { get; set;  }
         public long PwMasterVariantId { get; set; }
         public string Title { get; set; }
+
+        public string ProductTitle { get; set; }
+
         public string Sku { get; set; }
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
