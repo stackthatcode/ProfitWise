@@ -327,9 +327,9 @@ namespace ProfitWise.Data.Repositories
             if (queryContext.Ordering == ColumnOrdering.NetSalesAscending)
                 orderByClause = "ORDER BY TotalRevenue ASC ";
             if (queryContext.Ordering == ColumnOrdering.QuantitySoldDescending)
-                orderByClause = "ORDER BY TotalNumberSold DESC ";
+                orderByClause = "ORDER BY TotalQuantitySold DESC ";
             if (queryContext.Ordering == ColumnOrdering.QuantitySoldAscending)
-                orderByClause = "ORDER BY TotalNumberSold ASC ";
+                orderByClause = "ORDER BY TotalQuantitySold ASC ";
 
             return orderByClause + "OFFSET @StartingIndex ROWS FETCH NEXT @PageSize ROWS ONLY;";
 
