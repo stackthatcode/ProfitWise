@@ -1,5 +1,6 @@
 ﻿using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
+using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 
@@ -27,11 +28,12 @@ namespace ProfitWise.Data.ProcessSteps
         
         public int Execute(ShopifyCredentials shopifyCredentials)
         {
+
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(shopifyCredentials);
             var shopFromShopify = shopApiRepository.Retrieve();
 
             // Map the Shop Currency Id
-            _pushLogger.Info($"Shop Refresh Service for UserId : {shopifyCredentials.ShopOwnerUserId}");
+            _pushLogger.Info($"Shop Refresh Service for Shop: {shopifyCredentials.ShopDomain}, UserId: {shopifyCredentials.ShopOwnerUserId}");
             var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
 
             // Update Shop with the latest

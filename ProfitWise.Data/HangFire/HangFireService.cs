@@ -4,9 +4,10 @@ using Hangfire;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
-
+using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Data.HangFire
 {
@@ -15,7 +16,8 @@ namespace ProfitWise.Data.HangFire
         private readonly IPushLogger _logger;
         private readonly PwShopRepository _shopRepository;
         private readonly MultitenantFactory _multitenantFactory;
-        
+        private readonly IShopifyCredentialService _shopifyCredentialService;
+
         private readonly string 
             _shopRefreshInterval = ConfigurationManager.AppSettings
                     .GetAndTryParseAsString("ShopRefreshInterval", "0 * * * *");
@@ -38,10 +40,12 @@ namespace ProfitWise.Data.HangFire
 
 
         public HangFireService(
+                IShopifyCredentialService shopifyCredentialService, 
                 IPushLogger logger, 
                 PwShopRepository shopRepository, 
                 MultitenantFactory multitenantFactory)
         {
+            _shopifyCredentialService = shopifyCredentialService;
             _logger = logger;
             _shopRepository = shopRepository;
             _multitenantFactory = multitenantFactory;
@@ -50,7 +54,21 @@ namespace ProfitWise.Data.HangFire
 
         public string TriggerInitialShopRefresh(string userId)
         {
-            _logger.Info($"Scheduling Initial Shop Refresh for User {userId}");
+            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
+            if (shopifyFromClaims.Success == false)
+            {
+                throw new Exception(
+                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
+            }
+
+            var shopifyClientCredentials = new ShopifyCredentials()
+            {
+                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
+                ShopDomain = shopifyFromClaims.ShopDomain,
+                AccessToken = shopifyFromClaims.AccessToken,
+            };
+
+            _logger.Info($"Scheduling Initial Shop Refresh for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
             var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
             
             var shop = _shopRepository.RetrieveByUserId(userId);
@@ -61,8 +79,22 @@ namespace ProfitWise.Data.HangFire
 
         public string ScheduleRoutineShopRefresh(string userId)
         {
+            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
+            if (shopifyFromClaims.Success == false)
+            {
+                throw new Exception(
+                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
+            }
+
+            var shopifyClientCredentials = new ShopifyCredentials()
+            {
+                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
+                ShopDomain = shopifyFromClaims.ShopDomain,
+                AccessToken = shopifyFromClaims.AccessToken,
+            };
+
             var jobId = $"ShopRefreshProcess:{userId}"; 
-            _logger.Info($"Scheduling Routine Shop Refresh for User {userId} / Job Id {jobId}");
+            _logger.Info($"Scheduling Routine Shop Refresh for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}, Job Id: {jobId}");
 
             RecurringJob
                 .AddOrUpdate<ShopRefreshProcess>(

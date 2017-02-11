@@ -52,13 +52,27 @@ namespace ProfitWise.Data.Processes
         [Queue(ProfitWiseQueues.InitialShopRefresh)]
         public void InitialShopRefresh(string userId)
         {
+            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
+            if (shopifyFromClaims.Success == false)
+            {
+                throw new Exception(
+                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
+            }
+
+            var shopifyClientCredentials = new ShopifyCredentials()
+            {
+                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
+                ShopDomain = shopifyFromClaims.ShopDomain,
+                AccessToken = shopifyFromClaims.AccessToken,
+            };
+
             try
             {
                 ExecuteInner(userId);
             }
             catch (Exception e)
             {
-                _pushLogger.Error($"InitialShopRefresh failure for User Id: {userId}");
+                _pushLogger.Error($"InitialShopRefresh failure for Shop: {shopifyFromClaims.ShopDomain}, User Id: {userId}");
                 _pushLogger.Error(e);
                 throw;  // Need to do this so HangFire reschedules
             }
@@ -68,31 +82,11 @@ namespace ProfitWise.Data.Processes
         [Queue(ProfitWiseQueues.RoutineShopRefresh)]
         public void RoutineShopRefresh(string userId)
         {
-            try
-            {
-                ExecuteInner(userId);
-            }
-            catch (Exception e)
-            {
-                _pushLogger.Error($"RoutineShopRefresh failure for User Id: {userId}");
-                _pushLogger.Error(e);
-                throw;  // Need to do this so HangFire reschedules
-            }
-        }
-
-        private void ExecuteInner(string userId)
-        {
-            _pushLogger.Info($"Starting Refresh Process for UserId: {userId}");
-            _pushLogger.Debug($"Retrieving Shopify Credentials Claims for {userId}");
-
-            var id = _connectionWrapper.Identifier;
-            _pushLogger.Debug($"Connection Wrapper Id: {id}");
-
             var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
             if (shopifyFromClaims.Success == false)
             {
                 throw new Exception(
-                    $"ShopifyCredentialService unable to Retrieve for User {userId}: {shopifyFromClaims.Message}");
+                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
             }
 
             var shopifyClientCredentials = new ShopifyCredentials()
@@ -101,6 +95,40 @@ namespace ProfitWise.Data.Processes
                 ShopDomain = shopifyFromClaims.ShopDomain,
                 AccessToken = shopifyFromClaims.AccessToken,
             };
+
+            try
+            {
+                ExecuteInner(userId);
+            }
+            catch (Exception e)
+            {
+                _pushLogger.Error($"RoutineShopRefresh failure for Shop: {shopifyFromClaims.ShopDomain}, User Id: {userId}");
+                _pushLogger.Error(e);
+                throw;  // Need to do this so HangFire reschedules
+            }
+        }
+
+        private void ExecuteInner(string userId)
+        {
+            var id = _connectionWrapper.Identifier;
+            _pushLogger.Debug($"Connection Wrapper Id: {id}");
+
+            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
+            if (shopifyFromClaims.Success == false)
+            {
+                throw new Exception(
+                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
+            }
+
+            var shopifyClientCredentials = new ShopifyCredentials()
+            {
+                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
+                ShopDomain = shopifyFromClaims.ShopDomain,
+                AccessToken = shopifyFromClaims.AccessToken,
+            };
+
+            _pushLogger.Info($"Starting Refresh Process for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
+            _pushLogger.Debug($"Retrieving Shopify Credentials Claims for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
 
             try
             {
@@ -126,7 +154,7 @@ namespace ProfitWise.Data.Processes
                 throw;
             }
 
-            _pushLogger.Info($"FIN - Refresh Process for UserId: {userId}");
+            _pushLogger.Info($"FIN - Refresh Process for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
         }
     }
 }
