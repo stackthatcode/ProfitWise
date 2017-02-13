@@ -161,7 +161,7 @@ namespace ProfitWise.Data.Model.Reports
                 Name = "Goods on Hand Report",
                 StartDate = DateTime.Today.AddDays(-14),
                 EndDate = DateTime.Today.AddDays(-7),
-                GroupingId = ReportGrouping.Product,
+                GroupingId = ReportGrouping.Overall,
                 OrderingId = ReportOrdering.ProfitabilityDescending,
                 IsSystemReport = true,
             };
