@@ -29,6 +29,6 @@
             ProfitWiseFunctions.PopOverAutoCloseInit();
             var model = new ProfitWiseWidgets.ReportManagerModel(@ReportType.GoodsOnHand);
             ko.applyBindings(model);
-            model.Initialize();
+            model.Initialize(@PwSystemReportFactory.GoodsOnHandId);
         });
 </script>

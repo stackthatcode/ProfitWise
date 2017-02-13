@@ -459,6 +459,9 @@
 
         // State changes to the Report Selection
         self.SelectReportByReportId = function (id) {
+            console.log(id);
+            console.log(self.ReportList());
+
             var report =
                 AQ(self.ReportList())
                     .firstOrDefault(function (item) { return item.PwReportId == id; });
@@ -497,13 +500,13 @@
 
         self.EditReportCallback = function (reportId) { };
 
-        self.Initialize = function(callback) {
+        self.Initialize = function(reportId, callback) {
             flow.exec(
                 function () {
                     self.RefreshReportList(this);
                 },
                 function () {
-                    self.SelectReportByReportId(@PwSystemReportFactory.OverallProfitabilityId);
+                    self.SelectReportByReportId(reportId);
                     self.InitializeLastAccessedCheck();
                     if (callback) {
                         callback();
@@ -564,9 +567,9 @@
             self.InFilterEditMode(false);
         };
 
-        self.Initialize = function (callback) {
+        self.Initialize = function (reportId) {
             self.InFilterEditMode(false);
-            self.ReportViewerModel.Initialize();
+            self.ReportViewerModel.Initialize(reportId);
         };
 
         return self;

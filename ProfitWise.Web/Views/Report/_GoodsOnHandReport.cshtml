@@ -104,6 +104,15 @@
             </h1>
         </div>
     </div>
+    
+    <div data-bind="if: DatasetLoaded">
+        <div style="min-height: 600px;">
+            <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">
+                Data Data Data!!!
+            </h1>
+        </div>
+
+    </div>
 </script>
 <script id="Report-Profitability-Detail" type="text/html">
     <div id="details-drillup-button" style="height:40px; overflow:auto;">
@@ -309,7 +318,7 @@
             self.RefreshReportData(self.ReportId());
         };
         */
-
+        
         self.RefreshReportData = function (reportId, callback) {
             self.ReportId(reportId);
 
@@ -321,6 +330,8 @@
                 self.ProfitabilityDetailContext.LoadDataset(reportId, callback);
             }
             */
+
+            self.DatasetLoaded(true);
         };
 
         return self;

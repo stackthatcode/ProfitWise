@@ -170,7 +170,8 @@ namespace ProfitWise.Web.Controllers
 
         [HttpPost]
         public ActionResult Update(
-                long reportId, ReportGrouping groupingId, ReportOrdering orderingId, DateTime startDate, DateTime endDate)
+                long reportId, ReportGrouping groupingId, ReportOrdering orderingId, 
+                DateTime startDate, DateTime endDate)
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
@@ -185,7 +186,6 @@ namespace ProfitWise.Web.Controllers
             repository.UpdateReport(report);
             return JsonNetResult.Success();
         }
-
 
         [HttpPost]
         public ActionResult Accessed(long reportId)
