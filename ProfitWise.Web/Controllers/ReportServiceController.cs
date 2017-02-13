@@ -23,13 +23,13 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult All()
+        public ActionResult All(int reportTypeId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
 
-            var systemReports = repository.RetrieveSystemDefinedReports();
-            var userReports = repository.RetrieveUserDefinedReports();
+            var systemReports = repository.RetrieveSystemDefinedReports(reportTypeId);
+            var userReports = repository.RetrieveUserDefinedReports(reportTypeId);
             userReports.AddRange(systemReports);
 
             return new JsonNetResult(userReports);

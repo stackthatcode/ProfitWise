@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
-using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -37,13 +32,15 @@ namespace ProfitWise.Data.Repositories
         }
         
 
-        public List<PwReport> RetrieveUserDefinedReports()
+        public List<PwReport> RetrieveUserDefinedReports(int? reportTypeId = null)
         {
-            var query = 
-                    @"SELECT * FROM profitwisereport 
+            var query =
+                @"SELECT * FROM profitwisereport 
                     WHERE PwShopId = @PwShopId 
-                    AND CopyForEditing = 0;";
-            var results = Connection.Query<PwReport>(query, new {PwShopId}).ToList();
+                    AND CopyForEditing = 0 ";
+            if (reportTypeId.HasValue)
+                query += "AND ReportTypeId = @reportTypeId;";
+            var results = Connection.Query<PwReport>(query, new { reportTypeId, PwShopId }).ToList();
             return results.OrderBy(x => x.Name).ToList();
         }
 
@@ -62,25 +59,27 @@ namespace ProfitWise.Data.Repositories
             return new List<long>
             {
                 PwSystemReportFactory.OverallProfitabilityId,
-                PwSystemReportFactory.TestReportId,
+                PwSystemReportFactory.GoodsOnHandId,
             };
         }
 
-        public List<PwReport> RetrieveSystemDefinedReports()
+        public List<PwReport> RetrieveSystemDefinedReports(int? reportTypeId = null)
         {
-            var dateRange = 
+            var dateRange =
                 DateRangeDefaults
                     .Factory()
                     .FirstOrDefault(x => x.Id == this.PwShop.DateRangeDefault);
-            
-            List<PwReport> systemDefinedReports = new List<PwReport>()
+
+            var systemDefinedReports = new List<PwReport>()
             {
-                PwSystemReportFactory.OverallProfitability(dateRange),
-                PwSystemReportFactory.TestReport(),
+                PwSystemReportFactory.OverallProfitability(dateRange),                    
+                PwSystemReportFactory.GoodsOnHandReport(),
             };
 
             systemDefinedReports.ForEach(x => x.PwShopId = this.PwShopId);
-            return systemDefinedReports.OrderBy(x => x.Name).ToList();
+            return systemDefinedReports
+                        .Where(x => reportTypeId == null || x.ReportTypeId == reportTypeId)
+                        .OrderBy(x => x.Name).ToList();
         }
 
         public PwReport RetrieveReport(long reportId)
@@ -153,11 +152,11 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"INSERT INTO profitwisereport (
-                    PwShopId, Name, IsSystemReport, CopyForEditing, OriginalReportId, StartDate, EndDate, 
-                    GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
+                    PwShopId, ReportTypeId, Name, IsSystemReport, CopyForEditing, OriginalReportId, 
+                    StartDate, EndDate, GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
                 VALUES ( 
-                    @PwShopId, @Name, @IsSystemReport, @CopyForEditing, @OriginalReportId, @StartDate, @EndDate,
-                    @GroupingId, @OrderingId, getdate(), getdate() );
+                    @PwShopId, @ReportTypeId, @Name, @IsSystemReport, @CopyForEditing, @OriginalReportId, 
+                    @StartDate, @EndDate, @GroupingId, @OrderingId, getdate(), getdate() );
                 
                 SELECT SCOPE_IDENTITY();";
 

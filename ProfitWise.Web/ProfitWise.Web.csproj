@@ -435,7 +435,7 @@
     <Content Include="Views\Report\ProductVariantSelections.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_ReportViewer.cshtml" />
+    <Content Include="Views\Report\_ReportManagerAndViewer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\_FilterBullpenWidget.cshtml" />
@@ -502,6 +502,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\_ProfitabilityReport.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Report\_GoodsOnHandReport.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

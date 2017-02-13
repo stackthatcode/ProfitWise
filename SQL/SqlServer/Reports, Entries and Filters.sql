@@ -73,6 +73,7 @@ BEGIN
 CREATE TABLE [dbo].[profitwisereport](
 	[PwReportId] [bigint] IDENTITY(99790,1) NOT NULL,
 	[PwShopId] [bigint] NOT NULL,
+	[ReportTypeId] [smallint] NOT NULL,	
 	[Name] [nvarchar](50) NULL,
 	[IsSystemReport] [smallint] NOT NULL,
 	[CopyForEditing] [smallint] NOT NULL,

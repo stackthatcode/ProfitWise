@@ -1,17 +1,26 @@
 ﻿@using ProfitWise.Data.Model.Reports
 @using Push.Foundation.Utilities.Json
 
-<!-- Report View Templates -->
+
+<!-- Acts a container that holds the Viewer and the Editor -->
+<script type="text/html" id="Report-Manager">
+    <div data-bind="if: $data.InFilterEditMode">
+        <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
+    </div>
+
+    <div data-bind="ifnot: $data.InFilterEditMode">
+        <div data-bind="template: { name: 'Report-Viewer', data: ReportViewerModel }"></div>
+    </div>
+</script>
+
+<!-- Report Viewing-specific templates -->
 <script id="Report-Viewer" type="text/html">
     <div id="report-viewer-header" class="std-outer-padding" style="min-width:1200px;">
         <div class="standard-header-sleeve" style="height: 235px;">
-            
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header std-inner-padding top-border-facade" 
                  style="overflow: visible; padding-top:20px;">
                 
-                <div  data-bind="template: { name: 'Report-Viewer-Header' }"></div>
-         
+                <div  data-bind="template: { name: 'Report-Viewer-Header' }"></div>         
             </div>
         </div>
     </div>
@@ -19,7 +28,12 @@
     <div id="report-viewer-body" class="container page-content-sleeve" style="min-width:1200px;">
         <div class="page-content std-inner-padding">
             <div style="position: relative; width: 100%;">
-                <div data-bind="template: { name: 'Report-Profitability' }"></div>           
+                <div data-bind="if: ReportTypeId() == ProfitabilityId">
+                    <div data-bind="template: { name: 'Report-Profitability', data: ReportDataModel }"></div>
+                </div>
+                <div data-bind="if: ReportTypeId() == GoodsOnHandId">
+                    <div data-bind="template: { name: 'Report-Goods-On-Hand', data: ReportDataModel }"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -373,9 +387,23 @@
         return self;
     };
 </script>
-<script id="Report-Viewer-Model">
-    ProfitWiseWidgets.ReportViewerModel = function () {
+<script id="Report-Viewer-Model">    
+    ProfitWiseWidgets.ReportViewerModel = function (reportTypeId) {
         var self = this;
+        
+        self.ProfitabilityId = '@ReportType.Profitability';
+        self.GoodsOnHandId = '@ReportType.GoodsOnHand';
+
+        self.ReportTypeId = ko.observable(reportTypeId);
+        self.ReportDataModel = null;
+
+        // Profitability-specific stuff
+        if (self.ReportTypeId() == self.ProfitabilityId) {
+            self.ReportDataModel = new ProfitWiseWidgets.ProfitabilityModel();
+        }
+        if (self.ReportTypeId() == self.GoodsOnHandId) {
+            self.ReportDataModel = new ProfitWiseWidgets.GoodsOnHandModel();
+        }
 
         // Upper right menu selector for Reports
         self.ReportList = ko.observable([]);
@@ -394,7 +422,7 @@
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/ReportService/All", this);
+                    ajax.HttpGet("/ReportService/All?reportTypeId=" + self.ReportTypeId(), this);
                 },
                 function (data) {
                     AQ(data).each(
@@ -417,9 +445,6 @@
         };
 
 
-        // Profitability-specific stuff
-        self.ProfitabilityModel = new ProfitWiseWidgets.ProfitabilityModel();
-        
         // Model that contains all the functionality for the top header
         self.ReportInterfaceModel = new ProfitWiseWidgets.ReportInterfaceModel();
         self.ReportInterfaceModel.TriggerReportListRefresh = function (callback) {
@@ -429,7 +454,7 @@
             self.EditReportClick();
         };
         self.ReportInterfaceModel.TriggerReportDataRefresh = function (reportId, callback) {
-            self.ProfitabilityModel.RefreshReportData(reportId, callback);
+            self.ReportDataModel.RefreshReportData(reportId, callback);
         }
 
         // State changes to the Report Selection
@@ -507,6 +532,41 @@
                         location.reload();
                     }
                 });
+        };
+
+        return self;
+    };
+</script>
+<script id="Report-Manager-Model">
+    var ProfitWiseWidgets = ProfitWiseWidgets || {};
+
+    // Requires a reference to a InFilterEditMode observable
+    ProfitWiseWidgets.ReportManagerModel = function (reportTypeId) {
+        var self = this;
+
+        self.InFilterEditMode = ko.observable(false);
+
+        self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel(reportTypeId); 
+        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
+
+        // To be configured by the parent/owner object
+        self.ReportViewerModel.EditReportCallback = function (reportId) {
+            self.InFilterEditMode(true);
+            self.ReportEditorModel.LoadReport(reportId);
+        };
+
+        self.ReportEditorModel.OkCallback = function () {
+            self.InFilterEditMode(false);
+            self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
+        };
+
+        self.ReportEditorModel.CancelCallback = function () {
+            self.InFilterEditMode(false);
+        };
+
+        self.Initialize = function (callback) {
+            self.InFilterEditMode(false);
+            self.ReportViewerModel.Initialize();
         };
 
         return self;

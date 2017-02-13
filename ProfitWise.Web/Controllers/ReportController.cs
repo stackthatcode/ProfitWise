@@ -24,7 +24,6 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
-
         [HttpGet]
         public ActionResult GoodsOnHand()
         {

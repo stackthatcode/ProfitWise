@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Web.Attributes
+﻿@using ProfitWise.Data.Model.Reports
+@using ProfitWise.Web.Attributes
 @{
     Context.PullCommonContext().PageTitle = "Profitability Dashboard";
 }
@@ -16,67 +17,17 @@
 @Html.Partial("~/Views/Report/_ProductCountWidget.cshtml")
 @Html.Partial("~/Views/Report/_ProfitabilityReport.cshtml")
 @Html.Partial("~/Views/Report/_ReportEditor.cshtml")
-@Html.Partial("~/Views/Report/_ReportViewer.cshtml")
-
-<style>
-    .modal-backdrop { z-index: 900; }
-</style>
-
-<script type="text/html" id="Report-Manager">
-    <div data-bind="if: $data.InFilterEditMode">
-        <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
-    </div>
-
-    <div data-bind="ifnot: $data.InFilterEditMode">
-        <div data-bind="template: { name: 'Report-Viewer', data: ReportViewerModel }"></div>
-    </div>
-</script>
+@Html.Partial("~/Views/Report/_ReportManagerAndViewer.cshtml")
 
 <!-- KnockoutJS Root Element -->
 <div data-bind="template: { name: 'Report-Manager', data: $root }"></div>
 
 <!-- KnockoutJS Model -->
 <script>
-    var ProfitWiseWidgets = ProfitWiseWidgets || {};    
-    
-    // Requires a reference to a InFilterEditMode observable
-    ProfitWiseWidgets.ReportManagerModel = function () {
-        var self = this;
-
-        self.InFilterEditMode = ko.observable(false);
-
-        self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel();
-        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
-
-        // To be configured by the parent/owner object
-        self.ReportViewerModel.EditReportCallback = function (reportId) {
-            self.InFilterEditMode(true);
-            self.ReportEditorModel.LoadReport(reportId);        
-        };
-
-        self.ReportEditorModel.OkCallback = function () {
-            self.InFilterEditMode(false);
-            self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
-        };
-
-        self.ReportEditorModel.CancelCallback = function () {
-            self.InFilterEditMode(false);
-        };
-
-        self.Initialize = function (callback) {
-            self.InFilterEditMode(false);
-            self.ReportViewerModel.Initialize();
-        };
-
-        return self;
-    };
-
     $(document)
         .ready(function () {
-            ProfitWiseFunctions.FixedHeaderScrollingInit(".header-scrollfix");
             ProfitWiseFunctions.PopOverAutoCloseInit();
-
-            var model = new ProfitWiseWidgets.ReportManagerModel();
+            var model = new ProfitWiseWidgets.ReportManagerModel(@ReportType.Profitability);
             ko.applyBindings(model);
             model.Initialize();
         });

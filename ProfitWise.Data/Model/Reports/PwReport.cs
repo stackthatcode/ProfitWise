@@ -15,7 +15,8 @@ namespace ProfitWise.Data.Model.Reports
 
         public long PwReportId { get; set; }
         public long PwShopId { get; set; }
-
+        
+        public int ReportTypeId { get; set; }
         public string Name { get; set; }
 
         public bool IsSystemReport { get; set; }
@@ -36,6 +37,7 @@ namespace ProfitWise.Data.Model.Reports
             return new PwReport()
             {
                 PwShopId = this.PwShopId,
+                ReportTypeId = this.ReportTypeId,
                 Name = this.Name,
                 IsSystemReport = false,
                 CopyForEditing = true,
@@ -119,7 +121,7 @@ namespace ProfitWise.Data.Model.Reports
     public static class PwSystemReportFactory
     {
         public const long OverallProfitabilityId = 1;
-        public const long TestReportId = 2;
+        public const long GoodsOnHandId = 2;
 
         public static string CustomDefaultNameBuilder(int reportNumber)
         {
@@ -128,7 +130,7 @@ namespace ProfitWise.Data.Model.Reports
 
         public static bool IsSystemReport(this long reportId)
         {
-            return reportId == OverallProfitabilityId || reportId == TestReportId;
+            return reportId == OverallProfitabilityId || reportId == GoodsOnHandId;
         }
 
         public static PwReport OverallProfitability(DateRange dateRange)
@@ -137,6 +139,8 @@ namespace ProfitWise.Data.Model.Reports
             {
                 PwReportId = OverallProfitabilityId,
                 OriginalReportId = OverallProfitabilityId,
+                ReportTypeId = ReportType.Profitability,
+
                 Name = "Overall Profitability",
                 StartDate = dateRange.StartDate,
                 EndDate = dateRange.EndDate,
@@ -146,13 +150,15 @@ namespace ProfitWise.Data.Model.Reports
             };
         }
 
-        public static PwReport TestReport()
+        public static PwReport GoodsOnHandReport()
         {
             return new PwReport
             {
-                PwReportId = TestReportId,
-                OriginalReportId = TestReportId,
-                Name = "Test Report",
+                PwReportId = GoodsOnHandId,
+                OriginalReportId = GoodsOnHandId,
+                ReportTypeId = ReportType.GoodsOnHand,
+
+                Name = "Goods on Hand Report",
                 StartDate = DateTime.Today.AddDays(-14),
                 EndDate = DateTime.Today.AddDays(-7),
                 GroupingId = ReportGrouping.Product,

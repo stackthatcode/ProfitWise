@@ -96,23 +96,12 @@
 </style>
 
 <!-- Profitability Views -->
-<script id="Report-Profitability" type="text/html">
-    <div data-bind="ifnot: ProfitabilitySummaryContext.DatasetLoaded">
+<script id="Report-Goods-On-Hand" type="text/html">
+    <div data-bind="ifnot: DatasetLoaded">
         <div style="min-height: 600px;">
-            <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">No Report Loaded Yet</h1>
-        </div>
-    </div>
-
-    <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px"
-                data-bind="template: { name: 'Report-Profitability-Summary', data: $data }">
-        </div>
-    </div>
-    <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && !SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px"
-                data-bind="template: { name: 'Report-Profitability-Detail', data: $data }">
+            <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">
+                No Report Loaded Yet
+            </h1>
         </div>
     </div>
 </script>
@@ -199,207 +188,12 @@
 
     </div>
 </script>
-<script id="Report-Profitability-Summary" type="html/text">
-    <!-- Executive Summary -->
-    <div class="row executive-summary" data-bind="with: ProfitabilitySummaryContext.Data">
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Number of Orders</div>
-            <h1 data-bind="text: ExecutiveSummary.TotalOrders"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Revenue</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Cost of Goods Sold</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Profit</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
-        </div>
-    </div>
 
-    <!-- Spacer -->
-    <div class="row">
-        <div class="col-xs-12" style="height:25px; overflow:auto;">
-        </div>
-    </div>
-
-    <!-- Column Chart with drilldown -->
-    <div class="row">
-        <div class="col-xs-12" style="overflow:auto;">
-            <div style="text-align:center;">
-                <h4 style="font-weight:700; color:#AAA;">Profits by Time Period</h4>
-            </div>
-            <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-        </div>
-    </div>
-
-    <!-- Spacer -->
-    <div class="row">
-        <div class="col-xs-12" style="height:50px; overflow:auto;">
-        </div>
-    </div>
-
-    <!-- Pie Charts -->
-    <div data-bind="with: ProfitabilitySummaryContext">
-        <div data-bind="if: Data().ExecutiveSummary.TotalQuantitySold > 0">
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Products</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Product') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Detail
-                        </a>
-                    </div>
-                    <div id="products-pie-chart" class="pie-chart" style="clear:both;"></div>
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                        data: { ProfitData: Data().ProductsByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }">
-                    </div>
-                </div>
-
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Vendors</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Vendor') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Vendor Detail
-                        </a>
-                    </div>
-                    <div id="vendors-pie-chart" class="pie-chart"></div>
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                        data: { ProfitData: Data().VendorsByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-12" style="height:50px; overflow:auto;">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Variants</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Variant') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Variant Detail
-                        </a>
-                    </div>
-                    <div id="variants-pie-chart" class="pie-chart"></div>
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                            data: { ProfitData: Data().VariantByMostProfitable,
-                                                    CurrencyId: Data().CurrencyId } }"></div>
-                </div>
-
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Product Types</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.ProductType') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Type Detail
-                        </a>
-                    </div>
-
-                    <div id="product-types-pie-chart" class="pie-chart"></div>
-
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                        data: { ProfitData: Data().ProductTypeByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }"></div>
-                </div>
-            </div>
-        </div>
-
-        <div data-bind="ifnot: Data().ExecutiveSummary.TotalQuantitySold > 0">
-            <h1 style="margin-top: 100px; margin-bottom:300px; text-align:center; font-weight:700; font-size:4em; color:#CCC;">
-                No Data Found With Current Parameters
-            </h1>
-        </div>
-    </div>
-</script>
-<script id="Report-Profitability-Summary-Widget" type="text/html">
-    <!-- Expects to bind to: ProfitData, HeadingLabel, CurrencyId -->
-    <div data-bind="if: ProfitData.length > 0">
-        <table class="table profit-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Gross Sales</th>
-                    <th>CoGS</th>
-                    <th>Profit</th>
-                    <th># Sold</th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: ProfitData">
-                <tr>
-                    <td class="overflow-gracefully">
-                        <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span>
-                    </td>
-                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId) "></td>
-                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId) "></td>
-                    <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
-                    <td data-bind="text: TotalQuantitySold"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</script>
 <!-- Profitability Models -->
-
-<script id="Profitability-Summary-Context">
-    ProfitWiseWidgets.ProfitabilitySummaryContext = function() {
-        var self = this;        
-        self.Data = ko.observable();
-
-        self.DatasetLoaded = ko.computed(function() {
-            return self.Data() != null;
-        });
-
-        self.LoadDataset = function (reportId, callback) {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/QueryService/Summary", { reportId: reportId }, this);
-                },
-                function (data) {
-                    // Rename to Summary Dataset
-                    var summary = data.Summary;
-                    self.Data(summary);
-
-                    ProfitWiseWidgets.LoadColumnChart(
-                        '#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
-
-                    if (data.Summary.ExecutiveSummary.TotalQuantitySold > 0) {
-                        ProfitWiseWidgets.LoadPieChart('products-pie-chart', 'Top Products', summary.ProductsByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('vendors-pie-chart', 'Top Vendors', summary.VendorsByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('variants-pie-chart', 'Top Variants', summary.VariantByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('product-types-pie-chart', 'Top Product Types', summary.ProductTypeByMostProfitable, data.CurrencyId);
-                    }
-
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-
-        // Needs to be set by owner
-        self.DetailCallback = function (grouping) {
-            alert("DetailCallback fired with Grouping: " + grouping);
-        }
-
-        return self;
-    };
-</script>
 <script id="Profitability-Detail-Context">
     ProfitWiseWidgets.ProfitabilityDetailContext = function () {
         var self = this;
-        
+
         self.Data = ko.observableArray();
         self.Grouping = ko.observable('@ReportGrouping.Product');
         self.Currency = ko.observable(1);  // TODO: is there a cleaner way to get this?
@@ -487,15 +281,16 @@
         return self;
     };
 </script>
-<script id="Profitabilty-Model">
-    ProfitWiseWidgets.ProfitabilityModel = function () {
+
+
+<script id="Goods-On-Hand-Model">
+    ProfitWiseWidgets.GoodsOnHandModel = function () {
         var self = this;
-
         self.ReportId = ko.observable();
+        self.DatasetLoaded = ko.observable(false);
+
+        /*
         self.SummaryActive = ko.observable(true);
-
-        self.ProfitabilitySummaryContext = new ProfitWiseWidgets.ProfitabilitySummaryContext();
-
         self.ProfitabilityDetailContext = new ProfitWiseWidgets.ProfitabilityDetailContext();
 
         self.ProfitabilitySummaryContext.DetailCallback = function (grouping) {
@@ -513,15 +308,19 @@
             self.SummaryActive(true);
             self.RefreshReportData(self.ReportId());
         };
+        */
 
         self.RefreshReportData = function (reportId, callback) {
             self.ReportId(reportId);
+
+            /*
             if (self.SummaryActive()) {
                 self.ProfitabilitySummaryContext.LoadDataset(reportId, callback);
             } else {
                 self.ProfitabilityDetailContext.Initialize();
                 self.ProfitabilityDetailContext.LoadDataset(reportId, callback);
             }
+            */
         };
 
         return self;
