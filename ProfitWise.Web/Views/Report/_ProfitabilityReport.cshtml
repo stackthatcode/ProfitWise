@@ -399,11 +399,11 @@
 <script id="Profitability-Detail-Context">
     ProfitWiseWidgets.ProfitabilityDetailContext = function () {
         var self = this;
-        
+
         self.Data = ko.observableArray();
         self.Grouping = ko.observable('@ReportGrouping.Product');
-        self.Currency = ko.observable(1);  // TODO: is there a cleaner way to get this?
-
+        self.Currency = ko.observable(@ProfitWise.Data.Model.System.Currency.DefaultCurrencyId);
+        
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
         self.PagingModel.Callback = function() {
             self.LoadDataset(self.ReportId());

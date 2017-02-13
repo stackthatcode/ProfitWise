@@ -107,14 +107,17 @@
 
         <div style="clear: both; height: 20px;"></div>
 
-        <div id="report-date-picker" class="pull-right" data-bind="with: ReportInterfaceModel">
-            <div data-bind="template: { name: 'Date-Range-Picker-Widget-2',
+        <div id="report-date-picker" class="pull-right" style="margin-left: 7px;"
+             data-bind="with: ReportInterfaceModel">
+            <div data-bind="if: DatePickerEnabled">
+                <div data-bind="template: { name: 'Date-Range-Picker-Widget-2',
                                         data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
+            </div>
         </div>
 
         <div class="pull-right">
-            <a href="#" style="margin-right: 7px;"
-               class="btn btn-default report-viewer-top-button" data-bind="click: EditReportClick">
+            <a href="#" class="btn btn-default report-viewer-top-button" 
+               style="width:175px;" data-bind="click: EditReportClick">
                 Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
             </a>
         </div>
@@ -169,6 +172,9 @@
 
     ProfitWiseWidgets.ReportInterfaceModel = function() {
         var self = this;
+
+        self.DatePickerEnabled = ko.observable(true);
+        self.DefaultReportId = ko.observable();
 
         self.ReportId = ko.observable();
         self.Name = ko.observable();
@@ -307,6 +313,9 @@
                     self.FilterBullpenModel.Refresh(this);
                 },
                 function () {
+                    self.TriggerReportDataRefresh(reportId, this);
+                },
+                function() {
                     if (callback) {
                         callback();
                     }
@@ -373,24 +382,24 @@
                     self.TriggerReportListRefresh(this);
                 },
                 function () {
-                    self.LoadReport(OverallProfitabilityReportId, this);
+                    self.LoadReport(self.DefaultReportId(), this);
                 }
             );
         }
 
         self.TriggerReportListRefresh = function(callback) { };
 
-        self.EditFilterClickCallback = function() { };
+        self.TriggerReportDataRefresh = function () { };
 
-        self.TriggerReportDataRefresh = function() { };
+        self.EditFilterClickCallback = function() { };
 
         return self;
     };
 </script>
-<script id="Report-Viewer-Model">    
+<script id="Report-Viewer-Model">
     ProfitWiseWidgets.ReportViewerModel = function (reportTypeId) {
         var self = this;
-        
+
         self.ProfitabilityId = '@ReportType.Profitability';
         self.GoodsOnHandId = '@ReportType.GoodsOnHand';
 
@@ -457,11 +466,16 @@
             self.ReportDataModel.RefreshReportData(reportId, callback);
         }
 
+        if (self.ReportTypeId() == self.GoodsOnHandId) {
+            self.ReportInterfaceModel.DatePickerEnabled(false);
+            self.ReportInterfaceModel.DefaultReportId(@PwSystemReportFactory.GoodsOnHandId);
+        } else {
+            self.ReportInterfaceModel.DefaultReportId(@PwSystemReportFactory.OverallProfitabilityId);
+        }
+
+
         // State changes to the Report Selection
         self.SelectReportByReportId = function (id) {
-            console.log(id);
-            console.log(self.ReportList());
-
             var report =
                 AQ(self.ReportList())
                     .firstOrDefault(function (item) { return item.PwReportId == id; });
@@ -523,8 +537,6 @@
             flow.exec(
                 function() {
                     var reportId = self.ReportInterfaceModel.ReportId();
-                    //console.log("Refreshing Last Accessed: " + reportId);
-
                     var settings = new ProfitWiseFunctions.AjaxSettings();
                     settings.UseSpinner = false;
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
