@@ -355,7 +355,7 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Report\Dashboard.cshtml" />
+    <Content Include="Views\Report\Profitability.cshtml" />
     <Content Include="Views\Shared\_AnonymousLayout.cshtml" />
     <Content Include="Views\AdminHome\Index.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
@@ -496,6 +496,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cogs\AddVariantToConsolidation.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Report\GoodsOnHand.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Report\_ProfitabilityReport.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

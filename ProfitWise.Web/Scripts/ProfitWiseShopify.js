@@ -32,7 +32,8 @@ ProfitWiseShopify.BarInitialize = function (title) {
                         label: "Navigate to...",
                         type: "dropdown",
                         links: [
-                            linkBuilder("", "Profitability Dashboard"),
+                            linkBuilder("", "Profitability Report"),
+                            linkBuilder("/Report/GoodsOnHand", "Goods on Hand Report"),
                             linkBuilder("/Cogs/Products", "Manage Products and CoGS"),
                             linkBuilder("/Preferences/Edit", "Edit Preferences"),
                             //linkBuilder("/Error/ThrowAnonymousError", "Error Page - Anon (Remove for Prod)"),

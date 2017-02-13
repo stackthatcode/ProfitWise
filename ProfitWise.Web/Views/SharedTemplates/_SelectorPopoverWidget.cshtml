@@ -31,7 +31,7 @@
         self.OptionsText = ko.observable(parameters.OptionsText);
         self.OptionsValue = ko.observable(parameters.OptionsValue);
         self.Options = ko.observableArray(parameters.Options || []);
-        self.PromptText = ko.observable();
+        self.PromptText = ko.observable(parameters.PromptText);
 
         self.Selection = ko.observable();
         self.EditSelection = ko.observable();

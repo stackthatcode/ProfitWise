@@ -1,148 +1,17 @@
-﻿@using ProfitWise.Data.Model.Profit
-@using ProfitWise.Data.Model.Reports
-@using ProfitWise.Web.Attributes
+﻿@using ProfitWise.Data.Model.Reports
 @using Push.Foundation.Utilities.Json
 
-<style>
-    table#product-types td {
-        height: 70px !important;
-        font-size: 14px;
-        vertical-align: middle !important;
-    }
-    table#product-types tr td:nth-child(1) {
-        width: 10%;
-    }
-    table#product-types tr td:nth-child(2) {
-        width: 45%;
-    }
-    table#product-types tr td:nth-child(3) {
-        width: 45%;
-    }
-
-    .report-viewer-top-button {
-        width: 130px;
-    }
-
-    .report-widget-label {
-        font-weight: 700;
-        color: #AAA;
-        font-size: 1.2em;
-    }
-
-    .report-widget-drilldown-link {
-        font-weight:700; 
-        margin-top:10px;
-        display: inline-block;
-    }
-
-    .profit-table tr td:nth-child(1), .profit-table tr th:nth-child(1)  {
-        width:25%;
-        text-align:left;
-    }
-    .profit-table tr td:nth-child(2), .profit-table tr th:nth-child(2)  {
-        width:20%;
-        text-align:right;
-    }
-    .profit-table tr td:nth-child(3), .profit-table tr th:nth-child(3)  {
-        width:20%;
-        text-align:right;
-    }
-    .profit-table tr td:nth-child(4), .profit-table tr th:nth-child(4)  {
-        width:20%;
-        text-align:right;
-    }
-    .profit-table tr td:nth-child(5), .profit-table tr th:nth-child(5)  {
-        width:20%;
-        text-align:right;
-    }
-
-    .executive-summary h1 {
-        font-weight: 700;
-        margin-top: 6px;
-    }
-    .executive-summary-label {
-        font-weight: 700;
-        color: #999;
-        font-size:18p
-    }
-    .executive-summary .summary-cell {
-        text-align: left;
-    }
-
-    .summary-header {
-        text-align:center; border-bottom:1px dashed #CCC; overflow:auto;
-    }
-
-    .pie-chart {
-        min-width: 310px; height: 400px; max-width: 600px;margin: 0 auto;clear: both;
-    }
-</style>
-
-<script id="Report-Viewer-Top-Level" type="text/html">
+<!-- Report View Templates -->
+<script id="Report-Viewer" type="text/html">
     <div id="report-viewer-header" class="std-outer-padding" style="min-width:1200px;">
-        <div class="standard-header-sleeve" style="height: 190px;">
+        <div class="standard-header-sleeve" style="height: 235px;">
             
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header std-inner-padding top-border-facade" 
                  style="overflow: visible; padding-top:20px;">
-
-                <div class="col-xs-6 no-side-padding">
-                    <div data-bind="if: ReportInterfaceModel.ReportLoaded()">
-                        <div data-bind="template: { name: 'Report-Viewer-Context-Summary', 
-                                                    data: $data.ReportInterfaceModel }">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xs-6 no-side-padding" style="padding-top:10px; min-width:500px;">
-                    <div class="btn-group pull-right" 
-                         data-bind="template: { name: 'Report-Viewer-Report-Selector', 
-                                                    data: { SystemDefinedReports: $data.SystemDefinedReports,
-                                                            UserDefinedReports: $data.UserDefinedReports,
-                                                            SelectReportClick: $data.SelectReportClick} }">
-                    </div>
-                    
-                    <div class="pull-right" data-bind="with: ReportInterfaceModel">
-                        <div data-bind="if: OnlySaveAsAllowed">
-
-                            <div class="pull-right" style="margin-right: 7px;">
-                                <a href="#" data-bind="click: SaveAs" class="btn btn-primary report-viewer-top-button">
-                                    Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div data-bind="ifnot: OnlySaveAsAllowed">
-                            <div class="pull-right" style="margin-right: 7px;">
-                                <a href="#" data-bind="click: Save" class="btn btn-primary report-viewer-top-button">
-                                    Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
-                                </a>
-                            </div>
-                            <div class="pull-right btn-group" style="margin-right: 7px;">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
-
-                                <ul class="dropdown-menu">
-                                    <li><a href="#" data-bind="click: SaveAs">Save As</a></li>
-                                    <li><a href="#" data-bind="click: Delete">Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>                    
-
-                    <div style="clear: both; height: 20px;"></div>                    
-                    
-                    <div id="report-date-picker" class="pull-right" data-bind="with: ReportInterfaceModel">
-                        <div data-bind="template: { name: 'Date-Range-Picker-Widget-2', 
-                                                    data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
-                    </div>
-
-                    <div class="pull-right">
-                        <a href="#" style="margin-right: 7px;"
-                           class="btn btn-default report-viewer-top-button" data-bind="click: EditReportClick">
-                            Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
-                        </a>
-                    </div>
-                </div>               
+                
+                <div  data-bind="template: { name: 'Report-Viewer-Header' }"></div>
+         
             </div>
         </div>
     </div>
@@ -150,289 +19,92 @@
     <div id="report-viewer-body" class="container page-content-sleeve" style="min-width:1200px;">
         <div class="page-content std-inner-padding">
             <div style="position: relative; width: 100%;">
-                <div data-bind="template: { name: 'Report-Viewer-Dashboard' }"></div>           
+                <div data-bind="template: { name: 'Report-Profitability' }"></div>           
             </div>
         </div>
     </div>
 </script>
-<script id="Report-Viewer-Dashboard" type="text/html">   
-    <div data-bind="ifnot: ReportSummaryContext.DatasetLoaded">
-        <div style="min-height: 600px;">
-            <h1 style="margin-top: 100px; text-align:center; font-weight:700; font-size:6em; color:#EEE;">No Report Loaded Yet</h1>
-        </div>
-    </div>
-    <div data-bind="if: ReportSummaryContext.DatasetLoaded() && SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px" 
-             data-bind="template: { name: 'Report-Viewer-Summary-Section', data: $data }">
-        </div>
-    </div>
-    <div data-bind="if: ReportSummaryContext.DatasetLoaded() && !SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px"
-             data-bind="template: { name: 'Report-Viewer-Detail-Section', data: $data }">
-        </div>
-    </div>
-</script>
-<script id="Report-Viewer-Detail-Section" type="text/html">
-    <div id="details-drillup-button" style="height:40px; overflow:auto;">
-        <a href="#" style="width:250px; font-weight:700;" data-bind="click: ExitDetailClick">
-            <i class="glyphicon glyphicon-arrow-left"></i> Navigate Back to Summary
-        </a>
-    </div>
-    
-    <style>        
-        #detail-report-table tr td:nth-child(1), #detail-report-table tr th:nth-child(1) { width: 22%; }
-        #detail-report-table tr td:nth-child(2), #detail-report-table tr th:nth-child(2) { width: 14%; text-align: right; }
-        #detail-report-table tr td:nth-child(3), #detail-report-table tr th:nth-child(3) { width: 14%; text-align: right; }
-        #detail-report-table tr td:nth-child(4), #detail-report-table tr th:nth-child(4) { width: 13%; text-align: right; }
-        #detail-report-table tr td:nth-child(5), #detail-report-table tr th:nth-child(5) { width: 13%; text-align: right; }
-        #detail-report-table tr td:nth-child(6), #detail-report-table tr th:nth-child(6) { width: 13%; text-align: right; }
-        #detail-report-table tr td:nth-child(7), #detail-report-table tr th:nth-child(7) { width: 11%; text-align: right; }
-    </style>
-    
-    <div id="column-chart-detail" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<script type="text/html" id="Report-Viewer-Header">
+    <div class="col-xs-6 no-side-padding" data-bind="with: $data.ReportInterfaceModel">
+        <div data-bind="if: ReportLoaded()">
+            <h2 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h2>
 
-    <div data-bind="with: ReportDetailContext">
-        <div data-bind="if: Data().length == 0">
-            <div style="margin-top: 200px; margin-bottom:200px; text-align: center; overflow:auto;">
-                <i style="font-size: 6.0em; color: #DDD;" class="glyphicon glyphicon-tag"></i>
-                <h1 style="font-size:3em; color: #AAA; font-weight: 700;">No Data Found Here</h1>
-                <span style="color: #555;">Try refreshing the page or refining your filters</span>
-
-            </div>
-        </div>
-        
-        <div data-bind="if: Data().length > 0 && PagingModel.PageCount() > 1">
-            <div style="overflow:auto; margin-bottom: 30px;" data-bind="template: { name: 'Paging-Widget', data: PagingModel }"></div>
-        </div>
-
-        <div data-bind="if: Data().length > 0">            
-            <table class="table table-striped table-hover" id="detail-report-table" style="margin-top: 30px;">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 0, ColumnName: 'Items Sold', Model: SortingModel } }"></th>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 1, ColumnName: 'Average Margin', Model: SortingModel } }"></th>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 2, ColumnName: 'Net Sales', Model: SortingModel } }"></th>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 3, ColumnName: 'CoGS', Model: SortingModel } }"></th>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 4, ColumnName: 'Profit', Model: SortingModel } }"></th>
-                    <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 4, ColumnName: 'Profit %', Model: SortingModel } }"></th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: Data">
-                <tr>
-                    <td><div class="overflow-gracefully" style="max-width:350px;"
-                             data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></div></td>
-                    <td><span class="overflow-gracefully" 
-                              data-bind="text: TotalQuantitySold"></span></td>
-                    <td><span class="overflow-gracefully" 
-                              data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(AverageMargin)"></span>%</td>
-                    <td><span class="overflow-gracefully" 
-                              data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.Currency())"></span></td>
-                    <td><span class="overflow-gracefully" 
-                              data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.Currency())"></span></td>
-                    <td><span class="overflow-gracefully" 
-                              data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.Currency())"></span></td>
-                    <td><span class="overflow-gracefully"
-                              data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage)"></span>%</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div data-bind="if: Data().length > 0 && PagingModel.PageCount() > 1">
-            <div style="overflow:auto; margin-bottom: 30px;" data-bind="template: { name: 'Paging-Widget', data: PagingModel }"></div>            
-        </div>
-
-    </div>
-</script>
-<script id="Report-Viewer-Summary-Section" type="html/text">
-    <!-- Executive Summary -->
-    <div class="row executive-summary" data-bind="with: ReportSummaryContext.Data">
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Number of Orders</div>
-            <h1 data-bind="text: ExecutiveSummary.TotalOrders"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Revenue</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Cost of Goods Sold</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Profit</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
-        </div>
-    </div>
-
-    <!-- Spacer -->
-    <div class="row">
-        <div class="col-xs-12" style="height:25px; overflow:auto;">
-        </div>
-    </div>
-
-    <!-- Column Chart with drilldown -->
-    <div class="row">
-        <div class="col-xs-12" style="overflow:auto;">
-            <div style="text-align:center;">
-                <h4 style="font-weight:700; color:#AAA;">Profits by Time Period</h4>
-                <span>Grouped by </span>
-                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportInterfaceModel.GroupingPopoverModel }">
-                </span>
-                <!--<span>/</span>
-                <span>Ordered by </span>
-                <span data-bind="template: { name: 'Selector-Popover-Widget', data: ReportInterfaceModel.OrderingPopoverModel }">
-                </span>-->
-            </div>
-            <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-        </div>
-    </div>
-
-    <!-- Spacer -->
-    <div class="row">
-        <div class="col-xs-12" style="height:50px; overflow:auto;">
-        </div>
-    </div>
-
-    <!-- Pie Charts -->
-    <div data-bind="with: ReportSummaryContext">
-        <div data-bind="if: Data().ExecutiveSummary.TotalQuantitySold > 0">
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Products</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Product') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Detail
-                        </a>
-                    </div>
-                    <div id="products-pie-chart" class="pie-chart" style="clear:both;"></div>
-                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                        data: { ProfitData: Data().ProductsByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }">
-                    </div>
-                </div>
-
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Vendors</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Vendor') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Vendor Detail
-                        </a>
-                    </div>
-                    <div id="vendors-pie-chart" class="pie-chart"></div>
-                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                        data: { ProfitData: Data().VendorsByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }">
-                    </div>
+            <div style="display:inline-block; " data-bind="if: CopyForEditing">
+                <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
+                    (EDITING)
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-xs-12" style="height:50px; overflow:auto;">
-                </div>
+            <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
+                Report Id: <span data-bind="text: ReportId"></span>
             </div>
 
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Variants</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Variant') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Variant Detail
-                        </a>
-                    </div>
-                    <div id="variants-pie-chart" class="pie-chart"></div>
-                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                            data: { ProfitData: Data().VariantByMostProfitable,
-                                                    CurrencyId: Data().CurrencyId } }"></div>
+            <div style="font-size: 1.0em; color: #666;">
+                <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ProductCountModel }"></div>
+
+                <div style="height: 25px;">
+                    <span>Filtered by</span>
+                    <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: FilterBullpenModel }"></span>
                 </div>
-
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Product Types</h4>
-                        <a href="#" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.ProductType') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Type Detail
-                        </a>
-                    </div>
-
-                    <div id="product-types-pie-chart" class="pie-chart"></div>
-
-                    <div data-bind="template: { name: 'Report-Profit-Summary-Widget',
-                                        data: { ProfitData: Data().ProductTypeByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }"></div>
+                
+                <div style="height: 25px;">
+                    <span>Grouped by </span>
+                    <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
+                    </span>
                 </div>
-            </div>
-        </div> 
-         
-        <div data-bind="ifnot: Data().ExecutiveSummary.TotalQuantitySold > 0">
-            <h1 style="margin-top: 100px; margin-bottom:300px; text-align:center; font-weight:700; font-size:4em; color:#CCC;">
-                No Data Found With Current Parameters
-            </h1>
-        </div>
-    </div>
-</script>
-
-<!-- Expects to bind to: ProfitData, HeadingLabel, CurrencyId -->
-<script id="Report-Profit-Summary-Widget" type="text/html">
-    <div data-bind="if: ProfitData.length > 0">
-        <table class="table profit-table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Gross Sales</th>
-                <th>CoGS</th>
-                <th>Profit</th>
-                <th># Sold</th>
-            </tr>
-            </thead>
-            <tbody data-bind="foreach: ProfitData">
-            <tr>
-                <td class="overflow-gracefully">
-                    <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span>
-                </td>
-                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.CurrencyId) "></td>
-                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.CurrencyId) "></td>
-                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.CurrencyId)"></td>
-                <td data-bind="text: TotalQuantitySold"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</script>
-<script type="text/html" id="Report-Viewer-Context-Summary">
-    <div>
-        <h2 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h2>
-
-        <div style="display:inline-block; " data-bind="if: CopyForEditing">
-            <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)                
-            </div>
-        </div>
-    
-        <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
-            Report Id: <span data-bind="text: ReportId"></span>
-        </div>
-
-        <div style="font-size: 1.0em; color: #666;">
-            <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ProductCountModel }"></div>
-
-            <div style="height: 25px;">
-                <span>Filtered by</span>
-                <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: FilterBullpenModel }"></span>
             </div>
         </div>
     </div>
+
+    <div class="col-xs-6 no-side-padding" style="padding-top:10px; min-width:500px;">
+        <div class="btn-group pull-right"
+             data-bind="template: { name: 'Report-Viewer-Report-Selector',
+                                    data: { SystemDefinedReports: $data.SystemDefinedReports,
+                                            UserDefinedReports: $data.UserDefinedReports,
+                                            SelectReportClick: $data.SelectReportClick} }">
+        </div>
+
+        <div class="pull-right" data-bind="with: ReportInterfaceModel">
+            <div data-bind="if: OnlySaveAsAllowed">
+
+                <div class="pull-right" style="margin-right: 7px;">
+                    <a href="#" data-bind="click: SaveAs" class="btn btn-primary report-viewer-top-button">
+                        Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div data-bind="ifnot: OnlySaveAsAllowed">
+                <div class="pull-right" style="margin-right: 7px;">
+                    <a href="#" data-bind="click: Save" class="btn btn-primary report-viewer-top-button">
+                        Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                    </a>
+                </div>
+                <div class="pull-right btn-group" style="margin-right: 7px;">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-bind="click: SaveAs">Save As</a></li>
+                        <li><a href="#" data-bind="click: Delete">Delete</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="clear: both; height: 20px;"></div>
+
+        <div id="report-date-picker" class="pull-right" data-bind="with: ReportInterfaceModel">
+            <div data-bind="template: { name: 'Date-Range-Picker-Widget-2',
+                                        data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
+        </div>
+
+        <div class="pull-right">
+            <a href="#" style="margin-right: 7px;"
+               class="btn btn-default report-viewer-top-button" data-bind="click: EditReportClick">
+                Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
+            </a>
+        </div>
+    </div>     
 </script>
 <script type="text/html" id="Report-Viewer-Report-Selector">
     <a href="#" class="btn btn-primary dropdown-toggle report-viewer-top-button"
@@ -457,7 +129,6 @@
         <!-- ko if: UserDefinedReports().length == 0 -->
         <li><a href="#">(No custom reports defined yet)</a></li>
         <!-- /ko -->
-
         <!-- ko foreach: UserDefinedReports -->
         <li>
             <a class="overflow-gracefully" style="width:280px;" href="#" data-bind="click: $parent.SelectReportClick">
@@ -469,145 +140,6 @@
         </li>
         <!-- /ko -->
     </ul>
-</script>
-
-<!-- View Model -->
-<script id="Report-Summary-Context">
-    ProfitWiseWidgets.ReportSummaryContext = function() {
-        var self = this;
-
-        self.Data = ko.observable();
-
-        self.DatasetLoaded = ko.computed(function() {
-            return self.Data() != null;
-        });
-
-        self.LoadDataset = function (reportId, callback) {
-            flow.exec(
-                function() {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/QueryService/Summary", { reportId: reportId }, this);
-                },
-                function (data) {
-                    // Rename to Summary Dataset
-                    var summary = data.Summary;
-                    self.Data(summary);
-
-                    ProfitWiseWidgets.LoadColumnChart(
-                        '#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
-
-                    if (data.Summary.ExecutiveSummary.TotalQuantitySold > 0) {
-                        ProfitWiseWidgets.LoadPieChart('products-pie-chart', 'Top Products', summary.ProductsByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('vendors-pie-chart', 'Top Vendors', summary.VendorsByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('variants-pie-chart', 'Top Variants', summary.VariantByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('product-types-pie-chart', 'Top Product Types', summary.ProductTypeByMostProfitable, data.CurrencyId);
-                    }
-
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-
-        // Needs to be set by owner
-        self.DetailCallback = function (grouping) {
-            alert("DetailCallback fired with Grouping: " + grouping);
-        }
-
-        return self;
-    };
-</script>
-<script id="Report-Detail-Context">
-    ProfitWiseWidgets.ReportDetailContext = function () {
-        var self = this;
-
-        self.Data = ko.observableArray();
-        self.Grouping = ko.observable('@ReportGrouping.Product');
-        self.Currency = ko.observable(1);  // TODO: is there a cleaner way to get this?
-
-        self.PagingModel = new ProfitWiseWidgets.PagingModel();
-        self.PagingModel.Callback = function() {
-            self.LoadDataset(self.ReportId());
-        };
-        self.PagingModel.ShowPageSizeSelector(true);
-
-        self.SortingModel = new ProfitWiseWidgets.SortingModel();
-        self.SortingModel.Callback = function () { self.LoadDataset(self.ReportId()); };
-
-        self.ReportId = ko.observable();
-
-        self.Initialize = function() {
-            self.PagingModel.PageNumber(1);
-            self.SortingModel.SelectedColumnIndex(4);
-            self.SortingModel.SortByDirectionDown(true);
-        }
-
-        self.Ordering = ko.computed(function() {
-            var index = self.SortingModel.SelectedColumnIndex();
-            var descending = self.SortingModel.SortByDirectionDown();
-
-            if (index == 0)
-                return descending ? '@ColumnOrdering.QuantitySoldDescending' : '@ColumnOrdering.QuantitySoldAscending';
-            if (index == 1)
-                return descending ? '@ColumnOrdering.AverageMarginDescending' : '@ColumnOrdering.AverageMarginAscending';
-            if (index == 2)
-                return descending ? '@ColumnOrdering.NetSalesDescending' : '@ColumnOrdering.NetSalesAscending';
-            if (index == 3)
-                return descending ? '@ColumnOrdering.CogsDescending' : '@ColumnOrdering.CogsAscending';
-            if (index == 4)
-                return descending ? '@ColumnOrdering.ProfitDescending' : '@ColumnOrdering.ProfitAscending';
-            if (index == 5)
-                return descending ? '@ColumnOrdering.ProfitDescending' : '@ColumnOrdering.ProfitAscending';
-
-            return '@ColumnOrdering.ProfitDescending';
-        });
-
-        self.Drilldown = function (e) {
-            if (e.seriesOptions) {
-                return;
-            }
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet(e.point.drilldownurl, this);
-                },
-                function (data) {
-                    e.target.addSeriesAsDrilldown(e.point, data);
-                    console.log(data);
-                });
-        }
-
-        self.LoadDataset = function (reportId, callback) {
-            flow.exec(
-                function () {
-                    self.ReportId(reportId);
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    var data = {
-                        reportId: reportId,
-                        grouping: self.Grouping(),
-                        ordering: self.Ordering(),
-                        pageNumber: self.PagingModel.PageNumber(),
-                        pageSize: self.PagingModel.PageSize(),
-                    };
-                    ajax.HttpPost("/QueryService/Detail",  data, this);
-                },
-                function (data) {
-                    self.Data.removeAll();
-                    self.Data(data.rows);
-                    self.PagingModel.RecordCount(data.count);
-
-                    ProfitWiseWidgets.LoadColumnChart(
-                        '#column-chart-detail', 'Profitability', data.series, null, data.currency, self.Drilldown);
-
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-        return self;
-    };
 </script>
 
 <script id="Report-Interface-Model">
@@ -635,28 +167,27 @@
         self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
         self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
         self.FilterBullpenModel.SummaryClickCallback = function() {
-                self.EditFilterClickCallback();
-            }
+            self.EditFilterClickCallback();
+        }
 
         self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
-                OptionsValue: "GroupingId",
-                OptionsText: "Description",
-                Options : ProfitWiseWidgets.ReportGroupingOptionsFactory(),
-                PromptText: "Select a method for grouping data",
-                OkCallback: function() { self.Update(); },
-                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
-            });
+            OptionsValue: "GroupingId",
+            OptionsText: "Description",
+            Options : ProfitWiseWidgets.ReportGroupingOptionsFactory(),
+            PromptText: "Select a method for grouping data",
+            OkCallback: function() { self.Update(); },
+            PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
+        });
 
         self.OrderingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
-                OptionsValue: "OrderingId",
-                OptionsText: "Description",
-                Options : ProfitWiseWidgets.ReportOrderingOptionsFactory(),
-                PromptText: "Select a method for ordering data",
-                OkCallback: function() { self.Update(); },
-                PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
-            });
-
-
+            OptionsValue: "OrderingId",
+            OptionsText: "Description",
+            Options : ProfitWiseWidgets.ReportOrderingOptionsFactory(),
+            PromptText: "Select a method for ordering data",
+            OkCallback: function() { self.Update(); },
+            PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
+        });
+        
         self.ReportLoaded = ko.computed(function() {
             return self.ReportId() != null;
         });
@@ -842,7 +373,6 @@
         return self;
     };
 </script>
-
 <script id="Report-Viewer-Model">
     ProfitWiseWidgets.ReportViewerModel = function () {
         var self = this;
@@ -852,12 +382,12 @@
 
         self.UserDefinedReports = ko.computed(function () {
             return AQ(self.ReportList())
-                    .where(function (item) { return item.IsSystemReport == false; }).toArray();
+                .where(function (item) { return item.IsSystemReport == false; }).toArray();
         });
 
         self.SystemDefinedReports = ko.computed(function () {
             return AQ(self.ReportList())
-                    .where(function (item) { return item.IsSystemReport == true; }).toArray();
+                .where(function (item) { return item.IsSystemReport == true; }).toArray();
         });
 
         self.RefreshReportList = function (callback) {
@@ -886,6 +416,10 @@
                 });
         };
 
+
+        // Profitability-specific stuff
+        self.ProfitabilityModel = new ProfitWiseWidgets.ProfitabilityModel();
+        
         // Model that contains all the functionality for the top header
         self.ReportInterfaceModel = new ProfitWiseWidgets.ReportInterfaceModel();
         self.ReportInterfaceModel.TriggerReportListRefresh = function (callback) {
@@ -894,44 +428,9 @@
         self.ReportInterfaceModel.EditFilterClickCallback = function () {
             self.EditReportClick();
         };
-
-        // Determines which view is active: Summary or Detail
-        self.SummaryActive = ko.observable(true);
-
-        self.ExitDetailClick = function() {
-            self.SummaryActive(true);
-            self.RefreshReportData();
-        };
-
-        self.RefreshReportData = function (callback) {
-            var reportId = self.ReportInterfaceModel.ReportId();
-            if (self.SummaryActive()) {
-                self.ReportSummaryContext.LoadDataset(reportId, callback);
-            } else {
-                self.ReportDetailContext.Initialize();
-                self.ReportDetailContext.LoadDataset(reportId, callback);
-            }
-        };
-
-        self.ReportInterfaceModel.TriggerReportDataRefresh = function(reportId, callback) {
-             self.RefreshReportData(callback);
+        self.ReportInterfaceModel.TriggerReportDataRefresh = function (reportId, callback) {
+            self.ProfitabilityModel.RefreshReportData(reportId, callback);
         }
-
-        self.ReportSummaryContext = new ProfitWiseWidgets.ReportSummaryContext();
-
-        self.ReportSummaryContext.DetailCallback = function (grouping) {
-            flow.exec(
-                function () {
-                    // TODO - stub out setting Page Number, default Column Ordering
-                    self.ReportDetailContext.Grouping(grouping);
-                    self.SummaryActive(false);
-                    self.RefreshReportData(this);
-                }, function() {
-                    $('html, body').animate({ scrollTop: 0 });
-                });
-        };
-
-        self.ReportDetailContext = new ProfitWiseWidgets.ReportDetailContext();
 
         // State changes to the Report Selection
         self.SelectReportByReportId = function (id) {

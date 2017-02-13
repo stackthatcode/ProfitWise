@@ -19,7 +19,14 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Dashboard()
+        public ActionResult Profitability()
+        {
+            return View();
+        }
+
+
+        [HttpGet]
+        public ActionResult GoodsOnHand()
         {
             return View();
         }

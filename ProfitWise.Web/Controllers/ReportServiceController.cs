@@ -14,7 +14,6 @@ namespace ProfitWise.Web.Controllers
     public class ReportServiceController : Controller
     {
         private readonly MultitenantFactory _factory;
-
         public const int MaximumUserDefinedReports = 20;
 
 

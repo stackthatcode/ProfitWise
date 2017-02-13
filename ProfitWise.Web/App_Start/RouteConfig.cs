@@ -12,13 +12,13 @@ namespace ProfitWise.Web
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Report", action = "Dashboard", id = UrlParameter.Optional }
+                defaults: new { controller = "Report", action = "Profitability", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(
                 name: "Root",
                 url: "",
-                defaults: new { controller = "Report", action = "Dashboard", id = UrlParameter.Optional }
+                defaults: new { controller = "Report", action = "Profitability", id = UrlParameter.Optional }
             );
         }
     }
