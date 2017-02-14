@@ -38,6 +38,19 @@ namespace ProfitWise.Data.Model.Cogs
 
             return output;
         }
+
+        // The CogsDto is used now for Cost of Goods computations, whereas PwCogsDetail is purely SQL storage
+        public CogsDto ToCogsDto()
+        {
+            return new CogsDto()
+            {
+                CogsDate = this.CogsDate,
+                CogsTypeId = this.CogsTypeId,
+                CogsAmount = this.CogsAmount,
+                CogsCurrencyId = this.CogsCurrencyId,
+                CogsMarginPercent = this.CogsMarginPercent,
+            };
+        }
     }
 }
 

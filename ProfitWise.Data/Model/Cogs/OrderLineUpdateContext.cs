@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Model.Catalog;
 
 namespace ProfitWise.Data.Model.Cogs
 {
@@ -39,6 +40,21 @@ namespace ProfitWise.Data.Model.Cogs
                 DestinationCurrencyId = destinationCurrency,
                 PwPickListId = pickListId,
             };
+        }
+
+
+        public static IList<OrderLineUpdateContext> Make(PwMasterVariant masterVariant, int destinationCurrency)
+        {
+            var defaults = new CogsDto()
+            {
+                CogsCurrencyId = masterVariant.CogsCurrencyId,
+                CogsAmount = masterVariant.CogsAmount,
+                CogsMarginPercent = masterVariant.CogsMarginPercent,
+                CogsTypeId = masterVariant.CogsTypeId,
+            };
+
+            var details = masterVariant.CogsDetails.Select(x => x.ToCogsDto()).ToList();
+            return Make(defaults, details, destinationCurrency, null, masterVariant.PwMasterVariantId);
         }
 
         public static IList<OrderLineUpdateContext> Make(

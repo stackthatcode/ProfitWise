@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories;
@@ -288,13 +289,13 @@ namespace ProfitWise.Data.ProcessSteps
                 translatedLineItem.SetProfitWiseVariant(pwVariant);
 
                 // In-memory CoGS computation
-                var cogsContexts = cogsService.MakeOrderLineUpdateContexts(pwVariant.ParentMasterVariant);
-
+                var cogsContexts = 
+                    OrderLineUpdateContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);                
                 var unitCogs = cogsService.CalculateUnitCogs(cogsContexts, translatedLineItem);
 
                 _pushLogger.Debug(
-                    $"Computed CoGS for new Order Line Item: {translatedLineItem.ShopifyOrderLineId} " + 
-                    $" - {unitCogs}");
+                    "Computed CoGS for new Order Line Item: " + 
+                    $"{translatedLineItem.ShopifyOrderLineId}  - {unitCogs}");
             }
 
             orderRepository.InsertOrder(translatedOrder);
