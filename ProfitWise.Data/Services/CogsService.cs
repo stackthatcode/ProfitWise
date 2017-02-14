@@ -47,6 +47,8 @@ namespace ProfitWise.Data.Services
                     OrderLineUpdateContext.Make(
                         simpleCogs, null, PwShop.CurrencyId, null, pwMasterVariantId);
                 UpdateOrderLinesAndEntryData(orderLineContexts);
+
+                transaction.Commit();
             }
         }
 
@@ -98,24 +100,20 @@ namespace ProfitWise.Data.Services
         public void UpdateCogsForMasterVariant(MasterVariantUpdateContext context)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
-            using (var trans = _connectionWrapper.StartTransactionForScope())
+
+            // Save the Master Variant CoGS Defaults
+            cogsEntryRepository.UpdateMasterVariantDefaultCogs(context.Defaults, context.HasDetails);
+
+            // If they removed all Detail, this ensures everything is clear...
+            cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
+
+            // Save the Detail Entries
+            if (context.HasDetails)
             {
-                // Save the Master Variant CoGS Defaults
-                cogsEntryRepository.UpdateMasterVariantDefaultCogs(context.Defaults, context.HasDetails);
-
-                // If they removed all Detail, this ensures everything is clear...
-                cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
-
-                // Save the Detail Entries
-                if (context.HasDetails)
+                foreach (var detail in context.Details)
                 {
-                    foreach (var detail in context.Details)
-                    {
-                        cogsEntryRepository.InsertCogsDetails(detail);
-                    }
+                    cogsEntryRepository.InsertCogsDetails(detail);
                 }
-
-                trans.Commit();
             }
         }
 

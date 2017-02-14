@@ -61,7 +61,7 @@ namespace ProfitWise.Data.Model.Cogs
                     CogsDto defaults, IList<CogsDto> details, int destinationCurrency,
                     long? pwMasterProductId, long? pwMasterVariantId)
         {
-            if (details != null && details.Count == 0)
+            if (details == null || details.Count == 0)
             {
                 return new List<OrderLineUpdateContext> {
                     new OrderLineUpdateContext
@@ -71,6 +71,7 @@ namespace ProfitWise.Data.Model.Cogs
                         StartDate = MinimumCogsDate,
                         EndDate = MaximumCogsDate,
                         PwMasterProductId = pwMasterProductId,
+                        PwMasterVariantId = pwMasterVariantId,
                     }
                 };
             }
@@ -85,6 +86,7 @@ namespace ProfitWise.Data.Model.Cogs
                         StartDate = MinimumCogsDate,
                         EndDate = details.FirstDetail().CogsDate.AddDays(-1),
                         PwMasterProductId = pwMasterProductId,
+                        PwMasterVariantId = pwMasterVariantId,
                     }
                 };
 
@@ -98,6 +100,7 @@ namespace ProfitWise.Data.Model.Cogs
                         StartDate = detail.CogsDate,
                         EndDate = nextDetail?.CogsDate.AddDays(-1) ?? MaximumCogsDate,
                         PwMasterProductId = pwMasterProductId,
+                        PwMasterVariantId = pwMasterVariantId,
                     });
                 }
 

@@ -5,6 +5,7 @@ using System.Linq;
 namespace ProfitWise.Data.Model.Cogs
 {
     // Stand-alone object exists for the transport of CoGS data entry to other object context(s)
+    // ... and for computations
     public class CogsDto
     {
         public int CogsTypeId { get; set; }

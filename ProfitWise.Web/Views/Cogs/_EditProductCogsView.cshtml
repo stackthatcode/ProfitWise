@@ -246,8 +246,7 @@
 
                         // Save changes to the Summary model and trigger an AJAX update
                         item.SummaryModel.PushState(state);
-                        state.PwMasterVariantId = item.PwMasterVariantId;
-                        self.UpdateVariantCogs(state);
+                        self.UpdateVariantCogs(item.PwMasterVariantId, state);
                     };
 
                     item.EditorModel.RegisterEscapeKeyCallback(function () {
@@ -284,10 +283,14 @@
             }
         }
 
-        self.UpdateVariantCogs = function (data, callback) {
+        self.UpdateVariantCogs = function (pwMasterVariantId, cogs, callback) {
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
-            
+            var data = {
+                simpleCogs: cogs,
+                pwMasterVariantId: pwMasterVariantId,
+            };
+
             // Update observables 
             ajax.HttpPost("/CogsService/UpdateSimpleCogs", data, callback);
         };
