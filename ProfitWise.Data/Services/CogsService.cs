@@ -4,6 +4,7 @@ using System.Linq;
 using System.Transactions;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
+using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
@@ -19,258 +20,161 @@ namespace ProfitWise.Data.Services
         private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly CurrencyService _currencyService;
-
-
-        public readonly DateTime MaximumCogsDate = new DateTime(2099, 12, 31);
-        public readonly DateTime MinimumCogsDate = new DateTime(2000, 1, 1);
-
+        private readonly ConnectionWrapper _connectionWrapper;
 
         public PwShop PwShop { get; set; }
 
         public CogsService(
-                IPushLogger logger, MultitenantFactory multitenantFactory, CurrencyService currencyService)
+                IPushLogger logger, 
+                MultitenantFactory multitenantFactory, 
+                CurrencyService currencyService,
+                ConnectionWrapper connectionWrapper)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
             _currencyService = currencyService;
+            _connectionWrapper = connectionWrapper;
         }
 
-    
-        // Translates Cogs Defaults and Details to uniform representation for saving Cogs data entry to database
-        public CogsDataEntryUpdateContext MakeDataEntryUpdateContext(
-                long? masterVariantId, long? masterProductId, PwCogsDetail defaults, IList<PwCogsDetail> details)
+        public void UpdateSimpleCogs(long pwMasterVariantId, CogsDto simpleCogs)
         {
-            var defaultsWithConstraints =
-                defaults
-                    .Clone(ApplyConstraintsToDetail)
-                    .AttachKeys(this.PwShop.PwShopId, masterVariantId);
-
-            var detailsWithConstraints =
-                details?.Select(x => x.Clone(ApplyConstraintsToDetail).AttachKeys(this.PwShop.PwShopId, masterVariantId))
-                        .ToList();
-
-            var context = new CogsDataEntryUpdateContext
+            using (var transaction = _connectionWrapper.StartTransactionForScope())
             {
-                PwMasterProductId = masterProductId,
-                PwMasterVariantId = masterVariantId,
-                Defaults = defaultsWithConstraints,
-                Details = detailsWithConstraints,
-            };
+                var context = MasterVariantUpdateContext.Make(pwMasterVariantId, simpleCogs, null);
+                UpdateCogsForMasterVariant(context);
 
-            return context;
-        }
-
-        // Translates Defaults and Details into a flattened sequence that can be processed as a list
-        public IList<OrderLineCogsContext> MakeOrderLineUpdateContexts(PwMasterVariant masterVariant)
-        {
-            var defaults = new PwCogsDetail()
-            {
-                CogsTypeId = masterVariant.CogsTypeId,
-                CogsAmount = masterVariant.CogsAmount,
-                CogsCurrencyId = masterVariant.CogsCurrencyId,
-                CogsMarginPercent = masterVariant.CogsMarginPercent,
-            };
-
-            // We're only creating this to leverage the same function for creating OrderLineUpdateContexts
-            var entryContext =
-                MakeDataEntryUpdateContext(
-                    masterVariant.PwMasterVariantId, masterVariant.PwMasterProductId, defaults, masterVariant.CogsDetails);
-
-            return MakeOrderLineUpdateContexts(entryContext);
-        }
-
-        public IList<OrderLineCogsContext> MakeOrderLineUpdateContexts(CogsDataEntryUpdateContext sourceContext)
-        {
-            if (!sourceContext.HasDetails)
-            {
-                return new List<OrderLineCogsContext> {
-                        new OrderLineCogsContext
-                        {
-                            Cogs = sourceContext.Defaults,
-                            DestinationCurrencyId = this.PwShop.CurrencyId,
-                            StartDate = MinimumCogsDate,
-                            EndDate = MaximumCogsDate,
-                            PwMasterProductId = sourceContext.PwMasterProductId,
-                        }
-                    };
+                var orderLineContexts = 
+                    OrderLineUpdateContext.Make(
+                        simpleCogs, null, PwShop.CurrencyId, null, pwMasterVariantId);
+                UpdateOrderLinesAndEntryData(orderLineContexts);
             }
-            else
-            {
-                var output = new List<OrderLineCogsContext>()
-                {
-                    new OrderLineCogsContext
-                    {
-                        Cogs = sourceContext.Defaults,
-                        DestinationCurrencyId = this.PwShop.CurrencyId,
-                        StartDate = MinimumCogsDate,
-                        EndDate = sourceContext.FirstDetail.CogsDate.AddDays(-1),
-                        PwMasterProductId = sourceContext.PwMasterProductId,
-                    }
-                };
+        }
 
-                foreach (var detail in sourceContext.Details)
+        public void UpdateCogsDetails(
+                long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
+        {
+            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
+
+            if (pwMasterVariantId.HasValue)
+            {
+                using (var transaction = _connectionWrapper.StartTransactionForScope())
                 {
-                    var nextDetail = sourceContext.NextDetail(detail);
-                    output.Add(new OrderLineCogsContext
-                                {
-                                    Cogs = detail,
-                                    DestinationCurrencyId = this.PwShop.CurrencyId,
-                                    StartDate = detail.CogsDate,
-                                    EndDate = nextDetail?.CogsDate.AddDays(-1) ?? MaximumCogsDate,
-                                    PwMasterProductId = sourceContext.PwMasterProductId,
-                                });
+                    var context = MasterVariantUpdateContext.Make(pwMasterVariantId, defaults, details);
+                    UpdateCogsForMasterVariant(context);
+
+                    var orderLineContexts = 
+                        OrderLineUpdateContext.Make(
+                            defaults, details, PwShop.CurrencyId, null, pwMasterVariantId);
+                    UpdateOrderLinesAndEntryData(orderLineContexts);
+
+                    transaction.Commit();
+                    return;
+                }
+            }
+
+            if (pwMasterProductId.HasValue)
+            {
+                using (var transaction = _connectionWrapper.StartTransactionForScope())
+                {
+                    var masterVariants = cogsEntryRepository.RetrieveVariants(new[] {pwMasterProductId.Value});
+                    foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
+                    {
+                        var context = MasterVariantUpdateContext.Make(masterVariantId, defaults, details);
+                        UpdateCogsForMasterVariant(context);
+                    }
+
+                    var orderLineContexts = 
+                        OrderLineUpdateContext.Make(
+                            defaults, details, PwShop.CurrencyId, pwMasterProductId, null);
+
+                    UpdateOrderLinesAndEntryData(orderLineContexts);
+
+                    transaction.Commit();
+                    return;
+                }
+            }
+        }
+
+        public void UpdateCogsForMasterVariant(MasterVariantUpdateContext context)
+        {
+            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
+            using (var trans = _connectionWrapper.StartTransactionForScope())
+            {
+                // Save the Master Variant CoGS Defaults
+                cogsEntryRepository.UpdateMasterVariantDefaultCogs(context.Defaults, context.HasDetails);
+
+                // If they removed all Detail, this ensures everything is clear...
+                cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
+
+                // Save the Detail Entries
+                if (context.HasDetails)
+                {
+                    foreach (var detail in context.Details)
+                    {
+                        cogsEntryRepository.InsertCogsDetails(detail);
+                    }
                 }
 
-                return output;
+                trans.Commit();
             }
         }
 
-
-        // Update interface methods
-        public void UpdateCogsForPickList(long pickListId, PwCogsDetail cogs)
+        public void UpdateCogsForPickList(long pickListId, CogsDto cogs)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
 
-            using (var trans = new TransactionScope())
+            using (var trans = _connectionWrapper.StartTransactionForScope())
             {
                 // Update Pick List Default Cogs
                 cogsEntryRepository.UpdatePickListDefaultCogs(pickListId, cogs);
 
                 // Update the Order Lines for the Pick List
-                var context = new OrderLineCogsContextPickList()
-                { 
-                    Cogs = cogs.Clone(ApplyConstraintsToDetail),
-                    PwPickListId = pickListId,
-                    DestinationCurrencyId = this.PwShop.CurrencyId,                   
-                };
+                var context = OrderLineUpdateContext.Make(cogs, this.PwShop.CurrencyId, pickListId);
                 if (context.CogsTypeId == CogsType.FixedAmount)
                 {
-                    cogsUpdateRepository.UpdateOrderLineFixedAmount(context);
+                    cogsUpdateRepository.UpdateOrderLineFixedAmountPickList(context);
                 }
                 else
                 {
-                    cogsUpdateRepository.UpdateOrderLinePercentage(context);
+                    cogsUpdateRepository.UpdateOrderLinePercentagePickList(context);
                 }
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
-
-                trans.Complete();
+                trans.Commit();
             }
         }
 
-        public void UpdateCogsForMasterVariant(
-                    long? masterVariantId, PwCogsDetail defaults, IList<PwCogsDetail> details)
+        public void UpdateOrderLinesAndEntryData(IList<OrderLineUpdateContext> orderLineContexts)
         {
-            if (!masterVariantId.HasValue)
-            {
-                throw new ArgumentNullException("masterVariantId");
-            }
-            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
-
-            using (var trans = new TransactionScope())
-            {
-                // Write the CoGS Entries
-                var dataEntryContext = MakeDataEntryUpdateContext(masterVariantId, null, defaults, details);
-                UpdateCogsEntryByContext(dataEntryContext);
-
-                // Update the Order Lines for each division of Detail
-                var orderLineContexts = MakeOrderLineUpdateContexts(dataEntryContext);
-                foreach (var orderLineContext in orderLineContexts)
-                {
-                    UpdateOrderLines(orderLineContext);
-                }
-
-                // Update the Report Entries
-                cogsUpdateRepository.RefreshReportEntryData();
-
-                trans.Complete();
-            }
-        }
-
-        public void UpdateCogsForMasterProduct(
-                    long? masterProductId, PwCogsDetail defaults, IList<PwCogsDetail> details)
-        {
-            if (!masterProductId.HasValue)
-            {
-                throw new ArgumentNullException("masterProductId");
-            }
-            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
-            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
-
-            var masterVariants = cogsEntryRepository.RetrieveVariants(new[] { masterProductId.Value });
-            using (var trans = new TransactionScope())
-            {
-                // First we'll save the CoGS data entry for all child Master Variants
-                foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
-                {
-                    // Write the CoGS Entries
-                    var masterVariantContext = MakeDataEntryUpdateContext(masterVariantId, masterProductId, defaults, details);
-                    UpdateCogsEntryByContext(masterVariantContext);
-                }
-
-                // Next, create a data entry context (for Master Product)...
-                var masterProductContext = MakeDataEntryUpdateContext(null, masterProductId, defaults, details);
-
-                // ... to translate into Order Line update contexts
-                var orderLineContexts = MakeOrderLineUpdateContexts(masterProductContext);
-                foreach (var orderLineContext in orderLineContexts)
-                {
-                    UpdateOrderLines(orderLineContext);
-                }
-
-                // Update the Report Entries
-                cogsUpdateRepository.RefreshReportEntryData();
-                trans.Complete();
-            }
-        }
-
-        // Update worker methods
-        private void UpdateCogsEntryByContext(CogsDataEntryUpdateContext context)
-        {
-            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             
-            // Save the Master Variant CoGS Defaults
-            cogsEntryRepository.UpdateMasterVariantDefaultCogs(context.Defaults, context.HasDetails);
-
-            // IF they removed all Detail, this ensures everything is clear...
-            cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);
-
-            // Save the Detail Entries
-            if (context.HasDetails)
+            foreach (var orderLineContext in orderLineContexts)
             {
-                foreach (var detail in context.Details)
-                {
-                    var detailWithConstraints = detail.Clone(ApplyConstraintsToDetail);
-                    detailWithConstraints.PwMasterVariantId = context.PwMasterVariantId.Value;
-                    cogsEntryRepository.InsertCogsDetails(detailWithConstraints);
-                }
+                cogsUpdateRepository.UpdateOrderLines(orderLineContext);
             }
-        }
 
-        private void UpdateOrderLines(OrderLineCogsContext context)
-        {
-            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(PwShop);
-            cogsUpdateRepository.UpdateOrderLines(context);
+            cogsUpdateRepository.RefreshReportEntryData();
         }
-
+        
 
         // In-memory computation for the Order Refresh Step
         public decimal CalculateUnitCogs(
-                IList<OrderLineCogsContext> contexts, ShopifyOrderLineItem lineItem)
+                IList<OrderLineUpdateContext> contexts, ShopifyOrderLineItem lineItem)
         {
             var context = contexts.SelectContextByDate(lineItem.OrderDate);
             if (context == null)
             {
-                throw new Exception($"Unable to locate OrderLineCogsContext for Order Line {lineItem.ShopifyOrderLineId}");
+                throw new Exception(
+                    $"Unable to locate OrderLineCogsContext for Order Line {lineItem.ShopifyOrderLineId}");
             }
 
             if (context.CogsTypeId == CogsType.FixedAmount)
             {
                 if (!context.CogsAmount.HasValue)
                     throw new Exception("Missing CogsAmount");
+
                 if (!context.CogsCurrencyId.HasValue)
                     throw new Exception("Missing CogsCurrencyId");
 
@@ -284,26 +188,8 @@ namespace ProfitWise.Data.Services
             }
         }
 
-
-
-        // Constraints
-        private void ApplyConstraintsToDetail(PwCogsDetail detail)
-        {
-            ValidateCurrency(detail.CogsTypeId, detail.CogsCurrencyId);
-            detail.CogsAmount = ConstrainAmount(detail.CogsAmount);
-            detail.CogsMarginPercent = ConstrainPercentage(detail.CogsMarginPercent);
-            if (detail.CogsTypeId == CogsType.FixedAmount)
-            {
-                detail.CogsMarginPercent = null;
-            }
-            if (detail.CogsTypeId == CogsType.MarginPercentage)
-            {
-                detail.CogsCurrencyId = null;
-                detail.CogsAmount = null;
-            }
-        }
-
-        private void ValidateCurrency(int cogsTypeId, int? cogsCurrencyId)
+        // Not sure this belongs her?
+        public void ValidateCurrency(int cogsTypeId, int? cogsCurrencyId)
         {
             if (cogsTypeId != CogsType.FixedAmount) return;
 
@@ -312,41 +198,6 @@ namespace ProfitWise.Data.Services
                 throw new Exception($"Unable to locate Currency {cogsCurrencyId}");
             }
         }
-
-        private decimal? ConstrainPercentage(decimal? cogsMarginPercent)
-        {
-            if (!cogsMarginPercent.HasValue)
-            {
-                return cogsMarginPercent;
-            }
-            if (cogsMarginPercent < 0m)
-            {
-                return 0m;
-            }
-            if (cogsMarginPercent > 100m)
-            {
-                return 100m;
-            }
-            return cogsMarginPercent;
-        }
-
-        private decimal? ConstrainAmount(decimal? cogsAmount)
-        {
-            if (!cogsAmount.HasValue)
-            {
-                return cogsAmount;
-            }
-            if (cogsAmount < 0m)
-            {
-                return 0m;
-            }
-            if (cogsAmount > 999999999.99m)
-            {
-                return 999999999.99m;
-            }
-            return cogsAmount;
-        }
-
     }
 }
 

@@ -94,13 +94,13 @@
     <Compile Include="HangFire\QueueChannel.cs" />
     <Compile Include="HangFire\ProfitWiseQueues.cs" />
     <Compile Include="Model\Catalog\FinancialStatus.cs" />
-    <Compile Include="Model\Cogs\OrderLineCogsContextPickList.cs" />
-    <Compile Include="Model\Cogs\OrderLineCogsContext.cs" />
+    <Compile Include="Model\Cogs\CogsDto.cs" />
+    <Compile Include="Model\Cogs\OrderLineUpdateContext.cs" />
     <Compile Include="Model\Cogs\PwCogsDetail.cs" />
     <Compile Include="Model\Cogs\CogsType.cs" />
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
-    <Compile Include="Model\Cogs\CogsDataEntryUpdateContext.cs" />
+    <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
     <Compile Include="Model\Preferences\DateRange.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />

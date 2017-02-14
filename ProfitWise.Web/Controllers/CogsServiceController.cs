@@ -191,37 +191,26 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult UpdateSimpleCogs(PwCogsDetail simpleCogs)
+        public ActionResult UpdateSimpleCogs(long pwMasterVariantId, CogsDto simpleCogs)
         {
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
-            service.UpdateCogsForMasterVariant(simpleCogs.PwMasterVariantId, simpleCogs, null);
+            service.UpdateSimpleCogs(pwMasterVariantId, simpleCogs);
             return JsonNetResult.Success();
         }
 
         [HttpPost]
         public ActionResult UpdateCogsDetails(
-                long? pwMasterVariantId, long? pwMasterProductId, 
-                PwCogsDetail defaults, List<PwCogsDetail> details)
+                long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var cogsService = _factory.MakeCogsUpdateService(userIdentity.PwShop);
-            
-            if (pwMasterVariantId.HasValue)
-            {
-                cogsService.UpdateCogsForMasterVariant(pwMasterVariantId, defaults, details);
-                return JsonNetResult.Success();
-            }
-            if (pwMasterProductId.HasValue)
-            {
-                cogsService.UpdateCogsForMasterProduct(pwMasterProductId, defaults, details);
-                return JsonNetResult.Success();
-            }
-            throw new ArgumentNullException("Both Master pwMasterVariantId and pwMasterProductId are null");
+            var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
+            service.UpdateCogsDetails(pwMasterVariantId, pwMasterProductId, defaults, details);
+            return JsonNetResult.Success();
         }
 
         [HttpPost]
-        public ActionResult UpdateCogsForPickList(long pickListId, PwCogsDetail simpleCogs)
+        public ActionResult UpdateCogsForPickList(long pickListId, CogsDto simpleCogs)
         {
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);

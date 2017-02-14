@@ -70,7 +70,9 @@ AND t1.CogsDetail = 0;
 
 
 -- Margin Percent % and Fixed Amount
-SELECT t2.PwVariantId, t2.PwProductId, t2.Inventory, t1.CogsDetail, t1.CogsTypeId, t1.CogsCurrencyId, t1.CogsAmount, t1.CogsMarginPercent, t2.LowPrice, t2.HighPrice
+SELECT	t3.PwProductId, t2.PwVariantId, t3.Title AS ProductTitle, t2.Title AS VariantTitle, 
+		t2.Inventory, t2.LowPrice, t2.HighPrice, t1.CogsTypeId As DefaultCogsTypeId, t1.CogsCurrencyId AS DefaultCogsCurrencyId, 
+		t1.CogsAmount AS DefaultCogsAmount, t1.CogsMarginPercent AS DefaultCogsMarginPercent, t1.CogsDetail
 FROM profitwisemastervariant t1
 	INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
 	INNER JOIN profitwiseproduct t3 ON t2.PwProductId = t3.PwProductId

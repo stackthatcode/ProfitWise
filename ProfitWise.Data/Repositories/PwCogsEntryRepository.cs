@@ -6,7 +6,6 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 
@@ -140,10 +139,7 @@ namespace ProfitWise.Data.Repositories
                 .Query<PwCogsVariant>(
                      query, new { this.PwShopId, masterVariantId }, _connectionWrapper.Transaction)
                 .FirstOrDefault();
-        }
-
-
-
+        }        
 
 
         // Stocked Directly and Exclude data
@@ -225,7 +221,6 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-
         // Product Search input
         public IList<string> RetrieveVendors()
         {
@@ -252,7 +247,6 @@ namespace ProfitWise.Data.Repositories
             return Connection.Query<string>(
                 query, new {PwShopId = this.PwShop.PwShopId}, _connectionWrapper.Transaction).ToList();
         }
-
 
 
         // Master Variant Cogs Defaults
@@ -286,7 +280,7 @@ namespace ProfitWise.Data.Repositories
                 _connectionWrapper.Transaction);
         }
 
-        public void UpdatePickListDefaultCogs(long pickListId, PwCogsDetail input)
+        public void UpdatePickListDefaultCogs(long pickListId, CogsDto input)
         {
             var query =
                 @"UPDATE t1        

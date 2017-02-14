@@ -15,7 +15,6 @@ namespace ProfitWise.Data.Repositories
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
-
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
@@ -33,7 +32,7 @@ namespace ProfitWise.Data.Repositories
 
 
         // Order Line update queries
-        public void UpdateOrderLines(OrderLineCogsContext lineContext)
+        public void UpdateOrderLines(OrderLineUpdateContext lineContext)
         {
             if (lineContext.PwMasterVariantId == null && lineContext.PwMasterProductId == null)
             {
@@ -49,10 +48,10 @@ namespace ProfitWise.Data.Repositories
             }
         }
 
-        public void UpdateOrderLineFixedAmount(OrderLineCogsContext lineContext)
+        public void UpdateOrderLineFixedAmount(OrderLineUpdateContext lineContext)
         {
             var query =
-                @"UPDATE t3
+                @"UPDATE t3 
                 SET t3.UnitCogs = (@CogsAmount * ISNULL(t4.Rate, 0))                 
                 FROM profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
@@ -69,7 +68,7 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(query, lineContext, _connectionWrapper.Transaction);
         }
 
-        public void UpdateOrderLinePercentage(OrderLineCogsContext lineContext)
+        public void UpdateOrderLinePercentage(OrderLineUpdateContext lineContext)
         {
             var query =
                 @"UPDATE t3 
@@ -85,7 +84,7 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(query, lineContext, _connectionWrapper.Transaction);
         }
 
-        public void UpdateOrderLineFixedAmount(OrderLineCogsContextPickList context)
+        public void UpdateOrderLineFixedAmountPickList(OrderLineUpdateContext context)
         {
             var query =
                 @"UPDATE t3
@@ -106,7 +105,7 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(query, context, _connectionWrapper.Transaction);
         }
 
-        public void UpdateOrderLinePercentage(OrderLineCogsContextPickList context)
+        public void UpdateOrderLinePercentagePickList(OrderLineUpdateContext context)
         {
             var query =
                 @"UPDATE t3 SET t3.UnitCogs = @CogsPercentOfUnitPrice * t3.UnitPrice / 100.00
@@ -122,7 +121,7 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(query, context, _connectionWrapper.Transaction);
         }
 
-        public string WhereClauseGenerator(OrderLineCogsContext lineContext)
+        public string WhereClauseGenerator(OrderLineUpdateContext lineContext)
         {
             var output = "";
             if (lineContext.PwMasterProductId.HasValue)
@@ -152,24 +151,35 @@ namespace ProfitWise.Data.Repositories
                 new { PwShopId, DefaultCogsPercent = PwShop.DefaultCogsPercent }, _connectionWrapper.Transaction);
         }
 
-        private string RefreshInsertAdjustmentQuery()
+        private string RefreshInsertLineItemQuery()
         {
-            var adjustmentQuery =
+            var orderQuery =
                 @"INSERT INTO profitwiseprofitreportentry
-                        SELECT t1.PwShopId, t1.AdjustmentDate, 3 AS EntryType, t1.ShopifyOrderId, 
-                            t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS, NULL AS Quantity
-                        FROM shopifyorderadjustment t1 
-                            INNER JOIN shopifyorder t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
-
-            if (PwShop.ProfitRealization == ProfitRealization.PaymentClears)
+                        SELECT 	PwShopId, OrderDate, 1 AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
+		                        PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, ";
+            if (PwShop.UseDefaultMargin)
             {
-                adjustmentQuery += "WHERE t1.PwShopId = @PwShopId AND t2.FinancialStatus IN ( 4, 5, 6 ); ";
+                orderQuery +=
+                    @"CASE WHEN (UnitCogs = 0 OR UnitCogs IS NULL) THEN Quantity * UnitPrice * @DefaultCogsPercent 
+                    ELSE Quantity * UnitCogs END AS CoGS, ";
+
+                // MySQL "IF (UnitCogs = 0 OR UnitCogs IS NULL,  Quantity * UnitPrice * @DefaultCogsPercent , Quantity * UnitCogs) AS CoGS, ";
+
             }
             else
             {
-                adjustmentQuery += @"WHERE t1.PwShopId = @PwShopId; ";
+                orderQuery += "(Quantity * UnitCogs) AS CoGS, ";
             }
-            return adjustmentQuery;
+            orderQuery += @"Quantity AS Quantity FROM shopifyorderlineitem ";
+            if (PwShop.ProfitRealization == ProfitRealization.PaymentClears)
+            {
+                orderQuery += "WHERE PwShopId = @PwShopId AND FinancialStatus IN ( 4, 5, 6 ); ";
+            }
+            else
+            {
+                orderQuery += @"WHERE PwShopId = @PwShopId; ";
+            }
+            return orderQuery;
         }
 
         private string RefreshInsertRefundQuery()
@@ -208,35 +218,24 @@ namespace ProfitWise.Data.Repositories
             return refundQuery;
         }
 
-        private string RefreshInsertLineItemQuery()
+        private string RefreshInsertAdjustmentQuery()
         {
-            var orderQuery =
+            var adjustmentQuery =
                 @"INSERT INTO profitwiseprofitreportentry
-                        SELECT 	PwShopId, OrderDate, 1 AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
-		                        PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, ";
-            if (PwShop.UseDefaultMargin)
-            {
-                orderQuery +=
-                    @"CASE WHEN (UnitCogs = 0 OR UnitCogs IS NULL) THEN Quantity * UnitPrice * @DefaultCogsPercent 
-                    ELSE Quantity * UnitCogs END AS CoGS, ";
+                    SELECT t1.PwShopId, t1.AdjustmentDate, 3 AS EntryType, t1.ShopifyOrderId, 
+                        t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS, NULL AS Quantity
+                    FROM shopifyorderadjustment t1 
+                        INNER JOIN shopifyorder t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
 
-                // MySQL "IF (UnitCogs = 0 OR UnitCogs IS NULL,  Quantity * UnitPrice * @DefaultCogsPercent , Quantity * UnitCogs) AS CoGS, ";
-
-            }
-            else
-            {
-                orderQuery += "(Quantity * UnitCogs) AS CoGS, ";
-            }
-            orderQuery += @"Quantity AS Quantity FROM shopifyorderlineitem ";
             if (PwShop.ProfitRealization == ProfitRealization.PaymentClears)
             {
-                orderQuery += "WHERE PwShopId = @PwShopId AND FinancialStatus IN ( 4, 5, 6 ); ";
+                adjustmentQuery += "WHERE t1.PwShopId = @PwShopId AND t2.FinancialStatus IN ( 4, 5, 6 ); ";
             }
             else
             {
-                orderQuery += @"WHERE PwShopId = @PwShopId; ";
+                adjustmentQuery += @"WHERE t1.PwShopId = @PwShopId; ";
             }
-            return orderQuery;
+            return adjustmentQuery;
         }
 
         private string RefreshDeleteQuery()

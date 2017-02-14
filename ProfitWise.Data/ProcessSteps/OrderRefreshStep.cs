@@ -289,6 +289,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                 // In-memory CoGS computation
                 var cogsContexts = cogsService.MakeOrderLineUpdateContexts(pwVariant.ParentMasterVariant);
+
                 var unitCogs = cogsService.CalculateUnitCogs(cogsContexts, translatedLineItem);
 
                 _pushLogger.Debug(
