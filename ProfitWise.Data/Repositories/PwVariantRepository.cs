@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
@@ -146,14 +147,21 @@ namespace ProfitWise.Data.Repositories
         public void DeleteMasterVariant(long pwMasterVariantId)
         {
             var query =
-                @"DELETE FROM profitwisemastervariant " +
-                @"WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId;";
+                @"DELETE FROM profitwisemastervariantcogscalc
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId;
+                
+                DELETE FROM profitwisemastervariantcogsdetail
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId;
+                
+                DELETE FROM profitwisemastervariant 
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId;";
 
             Connection.Execute(
                 query, new { this.PwShop.PwShopId, @PwMasterVariantId = pwMasterVariantId }, 
                 _connectionWrapper.Transaction);
         }
 
+        [Obsolete]
         public void DeleteMasterVariantByProductId(long pwMasterProductId)
         {
             var query =
@@ -162,7 +170,6 @@ namespace ProfitWise.Data.Repositories
 
             Connection.Execute(query, _connectionWrapper.Transaction);
         }
-
 
 
         public IList<PwVariant> RetrieveAllVariants(long pwMasterVariantId)
@@ -286,13 +293,17 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        public void DeleteOrphanedMasterVariants()
+        public void DeleteChildlessMasterVariants()
         {
-            var query = 
+            var query =
                     @"DELETE FROM profitwisemastervariantcogsdetail
                     WHERE PwShopId = @PwShopId AND PwMasterVariantId NOT IN 
                         ( SELECT PwMasterVariantId FROM profitwisevariant );
                     
+                    DELETE FROM profitwisemastervariantcogscalc
+                    WHERE PwShopId = @PwShopId AND PwMasterVariantId NOT IN 
+                        ( SELECT PwMasterVariantId FROM profitwisevariant );
+
                     DELETE FROM profitwisemastervariant 
                     WHERE PwShopId = @PwShopId AND PwMasterVariantId NOT IN 
                         ( SELECT PwMasterVariantId FROM profitwisevariant );";

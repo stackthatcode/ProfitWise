@@ -91,7 +91,6 @@ namespace ProfitWise.Data.Services
                             defaults, details, PwShop.CurrencyId, pwMasterProductId, null);
 
                     UpdateGoodsOnHandForMasterProduct(dateBlockContexts);
-
                     UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
                     transaction.Commit();
@@ -120,7 +119,6 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        // Accepts both Master Product and Master Variant-keyed contexts
         public void UpdateGoodsOnHandForMasterVariant(IList<CogsDateBlockContext> dateBlockContexts)
         {
             var repository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
@@ -140,6 +138,7 @@ namespace ProfitWise.Data.Services
                 repository.InsertCogsCalcByMasterProduct(context);
             }
         }
+
 
         // Report Entries for Non-PickList
         public void UpdateOrderLinesAndReportEntries(IList<CogsDateBlockContext> dateBlockContexts)
@@ -185,7 +184,7 @@ namespace ProfitWise.Data.Services
 
 
         // In-memory computation for the Order Refresh Step
-        public decimal CalculateUnitCogs(
+        public decimal AssignUnitCogsToLineItem(
                 IList<CogsDateBlockContext> contexts, ShopifyOrderLineItem lineItem)
         {
             var context = contexts.SelectContextByDate(lineItem.OrderDate);

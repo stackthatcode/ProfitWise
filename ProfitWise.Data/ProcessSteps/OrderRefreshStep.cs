@@ -271,7 +271,7 @@ namespace ProfitWise.Data.ProcessSteps
         public void InsertOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
         {
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
-            var cogsService = _multitenantFactory.MakeCogsUpdateService(context.PwShop);
+            var cogsService = _multitenantFactory.MakeCogsService(context.PwShop);
 
             var translatedOrder = orderFromShopify.ToShopifyOrder(context.PwShop.PwShopId);
 
@@ -289,13 +289,11 @@ namespace ProfitWise.Data.ProcessSteps
                 translatedLineItem.SetProfitWiseVariant(pwVariant);
 
                 // In-memory CoGS computation
-                var cogsContexts = 
-                    CogsDateBlockContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);                
-                var unitCogs = cogsService.CalculateUnitCogs(cogsContexts, translatedLineItem);
+                var cogsContexts = CogsDateBlockContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);                
+                var unitCogs = cogsService.AssignUnitCogsToLineItem(cogsContexts, translatedLineItem);
 
                 _pushLogger.Debug(
-                    "Computed CoGS for new Order Line Item: " + 
-                    $"{translatedLineItem.ShopifyOrderLineId}  - {unitCogs}");
+                    $"Computed CoGS for new Order Line Item: {translatedLineItem.ShopifyOrderLineId}  - {unitCogs}");
             }
 
             orderRepository.InsertOrder(translatedOrder);

@@ -139,7 +139,7 @@ namespace ProfitWise.Data.Factories
             return repository;
         }
 
-        public virtual CogsService MakeCogsUpdateService(PwShop shop)
+        public virtual CogsService MakeCogsService(PwShop shop)
         {
             var repository = _orderCogsUpdateServiceFactory();
             repository.PwShop = shop;

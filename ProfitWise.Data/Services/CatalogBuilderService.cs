@@ -100,6 +100,8 @@ namespace ProfitWise.Data.Services
         public PwMasterVariant CreateMasterVariant(VariantBuildContext context)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+            var cogsService = this._multitenantFactory.MakeCogsService(this.PwShop);
+
             _pushLogger.Debug(
                 $"Creating new Master Variant: {context.Title}, {context.Sku} " +
                 $"(Id = {context.ShopifyVariantId})");
@@ -122,6 +124,9 @@ namespace ProfitWise.Data.Services
             };
 
             masterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(masterVariant);
+            cogsService.UpdateGoodsOnHandForMasterVariant(
+                    CogsDateBlockContext.Make(masterVariant, this.PwShop.CurrencyId));
+
             _pushLogger.Debug($"Created new Master Variant: (Master Variant Id = {masterVariant.PwMasterVariantId})");
             return masterVariant;
         }

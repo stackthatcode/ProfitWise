@@ -6,6 +6,7 @@ using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 using Push.Foundation.Utilities.Logging;
 
@@ -49,6 +50,7 @@ namespace ProfitWise.Data.Services
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+            var cogsService = this._multitenantFactory.MakeCogsService(this.PwShop);
             var catalogBuilderService = this._multitenantFactory.MakeCatalogBuilderService(this.PwShop);
             var catalogRetrievalService = this._multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
 
@@ -57,6 +59,7 @@ namespace ProfitWise.Data.Services
             var inboundMasterProductId = productRepository.RetrieveMasterProductId(inboundProductId);
             var inboundMasterProduct = catalogRetrievalService.RetrieveMasterProduct(inboundMasterProductId);
             var inboundProduct = inboundMasterProduct.Products.First(x => x.PwProductId == inboundProductId);
+            var shopCurrencyId = this.PwShop.CurrencyId;
 
             // Step #2 - re-assign Product 
             targetMasterProduct.AssignProduct(inboundProduct);
@@ -90,6 +93,9 @@ namespace ProfitWise.Data.Services
                     targetMasterProduct.AssignMasterVariant(newMasterVariant);                    
                     newMasterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(newMasterVariant);
 
+                    var cogsDateBlocks = CogsDateBlockContext.Make(newMasterVariant, shopCurrencyId);
+                    cogsService.UpdateGoodsOnHandForMasterVariant(cogsDateBlocks);
+                        
                     newMasterVariant.AssignVariant(inboundVariant);
                     variantRepository.UpdateVariantsMasterVariant(inboundVariant);
                     catalogBuilderService.AutoUpdatePrimary(newMasterVariant);
@@ -168,6 +174,7 @@ namespace ProfitWise.Data.Services
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
             var catalogService = this._multitenantFactory.MakeCatalogBuilderService(this.PwShop);
+            var cogsService = this._multitenantFactory.MakeCogsService(this.PwShop);
 
             // Retrieve the Variant and Master Variant
             var inboundMasterVariantId = variantRepository.RetrieveMasterVariantId(variantId);
@@ -178,6 +185,9 @@ namespace ProfitWise.Data.Services
             // Create the new Master Variant
             var newMasterVariant = inboundMasterVariant.Clone();
             newMasterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(newMasterVariant);
+
+            var dateBlocks = CogsDateBlockContext.Make(newMasterVariant, this.PwShop.CurrencyId);
+            cogsService.UpdateGoodsOnHandForMasterVariant(dateBlocks);
 
             foreach (var detail in newMasterVariant.CogsDetails)
             {

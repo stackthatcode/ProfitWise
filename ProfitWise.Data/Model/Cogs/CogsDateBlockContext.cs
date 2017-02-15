@@ -12,6 +12,12 @@ namespace ProfitWise.Data.Model.Cogs
         public static readonly DateTime MaximumCogsDate = new DateTime(2099, 12, 31);
 
 
+        public CogsDateBlockContext()
+        {
+            StartDate = MinimumCogsDate;
+            EndDate = MaximumCogsDate;
+        }
+
         public long PwShopId { get; set; }
 
         public CogsDto Cogs { get; set; }
@@ -39,7 +45,6 @@ namespace ProfitWise.Data.Model.Cogs
                 SourceCurrencyId = CogsCurrencyId ?? Currency.DefaultCurrencyId,
             };
         }
-
 
         public static CogsDateBlockContext Make(CogsDto defaults, int destinationCurrency, long? pickListId)
         {

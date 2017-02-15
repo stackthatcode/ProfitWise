@@ -56,7 +56,7 @@ namespace ProfitWise.Data.ProcessSteps
             // Deletes any orphaned Master Products or Master Variants
             _pushLogger.Debug($"Deleting Orphaned Master Products and Master Variants");
             productRepository.DeleteOrphanedMasterProducts();
-            variantRepository.DeleteOrphanedMasterVariants();
+            variantRepository.DeleteChildlessMasterVariants();
         }
 
         private void RemoveInactiveWithoutReference(
