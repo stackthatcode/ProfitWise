@@ -290,7 +290,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                 // In-memory CoGS computation
                 var cogsContexts = 
-                    OrderLineUpdateContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);                
+                    CogsDateBlockContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);                
                 var unitCogs = cogsService.CalculateUnitCogs(cogsContexts, translatedLineItem);
 
                 _pushLogger.Debug(

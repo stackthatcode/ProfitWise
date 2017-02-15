@@ -22,21 +22,22 @@ namespace ProfitWise.Data.Factories
         private readonly Func<CogsService> _orderCogsUpdateServiceFactory;
         private readonly Func<ConsolidationService> _consolidationServiceFactory;
 
+
         public MultitenantFactory(
-            Func<ShopifyOrderRepository> orderRepositoryFactory,
-            Func<PwBatchStateRepository> profitWiseBatchStateRepositoryFactory,
-            Func<PwProductRepository> productRepositoryFactory,
-            Func<PwVariantRepository> variantRepositoryFactory,
-            Func<CatalogBuilderService> productVariantServiceFactory,
-            Func<CatalogRetrievalService> catalogRetrievalServiceFactory,
-            Func<PwCogsEntryRepository> cogsEntryRepositoryFactory, 
-            Func<PwPickListRepository> pickListRepositoryFactory,
-            Func<PwReportRepository> reportRepositoryFactory, 
-            Func<PwReportFilterRepository> filterRepositoryFactory, 
-            Func<PwReportQueryRepository> reportQueryRepositoryFactory,
-            Func<CogsService> orderCogsUpdateServiceFactory, 
-            Func<PwCogsDownstreamRepository> cogsDataUpdateRepositoryFactory, 
-            Func<ConsolidationService> consolidationServiceFactory)
+                Func<ShopifyOrderRepository> orderRepositoryFactory,
+                Func<PwBatchStateRepository> profitWiseBatchStateRepositoryFactory,
+                Func<PwProductRepository> productRepositoryFactory,
+                Func<PwVariantRepository> variantRepositoryFactory,
+                Func<CatalogBuilderService> productVariantServiceFactory,
+                Func<CatalogRetrievalService> catalogRetrievalServiceFactory,
+                Func<PwCogsEntryRepository> cogsEntryRepositoryFactory, 
+                Func<PwPickListRepository> pickListRepositoryFactory,
+                Func<PwReportRepository> reportRepositoryFactory, 
+                Func<PwReportFilterRepository> filterRepositoryFactory, 
+                Func<PwReportQueryRepository> reportQueryRepositoryFactory,
+                Func<CogsService> orderCogsUpdateServiceFactory, 
+                Func<PwCogsDownstreamRepository> cogsDataUpdateRepositoryFactory, 
+                Func<ConsolidationService> consolidationServiceFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -74,6 +75,7 @@ namespace ProfitWise.Data.Factories
             repository.PwShop = shop;
             return repository;
         }
+
         public virtual PwVariantRepository MakeVariantRepository(PwShop shop)
         {
             var repository = _variantRepositoryFactory();

@@ -205,7 +205,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsUpdateService(userIdentity.PwShop);
-            service.UpdateCogsDetails(pwMasterVariantId, pwMasterProductId, defaults, details);
+            service.UpdateCogsWithDetails(pwMasterVariantId, pwMasterProductId, defaults, details);
             return JsonNetResult.Success();
         }
 

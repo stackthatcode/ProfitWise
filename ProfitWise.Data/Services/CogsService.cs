@@ -40,18 +40,19 @@ namespace ProfitWise.Data.Services
             using (var transaction = _connectionWrapper.StartTransactionForScope())
             {
                 var context = MasterVariantUpdateContext.Make(pwMasterVariantId, simpleCogs, null);
-                UpdateCogsForMasterVariant(context);
-
-                var orderLineContexts = 
-                    OrderLineUpdateContext.Make(
+                var dateBlockContexts =
+                    CogsDateBlockContext.Make(
                         simpleCogs, null, PwShop.CurrencyId, null, pwMasterVariantId);
-                UpdateDownstreamNonPickList(orderLineContexts);
+
+                UpdateCogsForMasterVariant(context);
+                UpdateGoodsOnHand(dateBlockContexts);
+                UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
                 transaction.Commit();
             }
         }
 
-        public void UpdateCogsDetails(
+        public void UpdateCogsWithDetails(
                 long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
@@ -61,13 +62,14 @@ namespace ProfitWise.Data.Services
                 using (var transaction = _connectionWrapper.StartTransactionForScope())
                 {
                     var context = MasterVariantUpdateContext.Make(pwMasterVariantId, defaults, details);
-                    UpdateCogsForMasterVariant(context);
-
-                    var orderLineContexts = 
-                        OrderLineUpdateContext.Make(
+                    var dateBlockContexts =
+                        CogsDateBlockContext.Make(
                             defaults, details, PwShop.CurrencyId, null, pwMasterVariantId);
-                    
-                    UpdateDownstreamNonPickList(orderLineContexts);
+
+                    UpdateCogsForMasterVariant(context);
+                    UpdateGoodsOnHand(dateBlockContexts);                    
+                    UpdateOrderLinesAndReportEntries(dateBlockContexts);
+
                     transaction.Commit();
                     return;
                 }
@@ -84,11 +86,13 @@ namespace ProfitWise.Data.Services
                         UpdateCogsForMasterVariant(context);
                     }
 
-                    var orderLineContexts = 
-                        OrderLineUpdateContext.Make(
+                    var dateBlockContexts = 
+                        CogsDateBlockContext.Make(
                             defaults, details, PwShop.CurrencyId, pwMasterProductId, null);
 
-                    UpdateDownstreamNonPickList(orderLineContexts);
+                    UpdateGoodsOnHand(dateBlockContexts);
+
+                    UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
                     transaction.Commit();
                     return;
@@ -116,26 +120,40 @@ namespace ProfitWise.Data.Services
             }
         }
 
-
-        public void UpdateDownstreamNonPickList(IList<OrderLineUpdateContext> orderLineContexts)
+        // Accepts both Master Product and Master Variant-keyed contexts
+        public void UpdateGoodsOnHand(IList<CogsDateBlockContext> dateBlockContexts)
+        {
+            var repository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+            foreach (var context in dateBlockContexts)
+            {
+                if (context.PwMasterVariantId == null)
+                {
+                    repository.DeleteCogsCalcByMasterProduct(context);
+                    repository.InsertCogsCalcByMasterProduct(context);
+                }
+                else
+                {
+                    repository.DeleteCogsCalcByMasterVariant(context);
+                    repository.InsertCogsCalcByMasterVariant(context);
+                }
+            }
+        }
+        
+        // Report Entries for Non-PickList
+        public void UpdateOrderLinesAndReportEntries(IList<CogsDateBlockContext> dateBlockContexts)
         {
             var cogsDownstreamRepository = _multitenantFactory.MakeCogsDownstreamRepository(PwShop);
 
-            foreach (var orderLineContext in orderLineContexts)
+            foreach (var dateBlockContext in dateBlockContexts)
             {
-                cogsDownstreamRepository.UpdateOrderLines(orderLineContext);
+                cogsDownstreamRepository.UpdateOrderLines(dateBlockContext);
             }
 
             cogsDownstreamRepository.RefreshReportEntryData();
-
-
-            // Update the value of Goods on Hand *** TODO
-
-
         }
 
 
-
+        
         // Updates both the CoGS and the Downstream
         public void UpdateCogsForPickList(long pickListId, CogsDto cogs)
         {
@@ -148,12 +166,13 @@ namespace ProfitWise.Data.Services
                 cogsEntryRepository.UpdatePickListDefaultCogs(pickListId, cogs);
 
                 // Update the Order Lines for the Pick List
-                var context = OrderLineUpdateContext.Make(cogs, this.PwShop.CurrencyId, pickListId);
+                var context = CogsDateBlockContext.Make(cogs, this.PwShop.CurrencyId, pickListId);
+
                 cogsUpdateRepository.UpdateOrderLinesPickList(context);
 
-
-                // Update Goods on Hand *** TODO
-
+                // Update Goods on Hand
+                cogsEntryRepository.DeleteCogsCalcByPickList(context);
+                cogsEntryRepository.InsertCogsCalcByPickList(context);
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();
@@ -165,7 +184,7 @@ namespace ProfitWise.Data.Services
 
         // In-memory computation for the Order Refresh Step
         public decimal CalculateUnitCogs(
-                IList<OrderLineUpdateContext> contexts, ShopifyOrderLineItem lineItem)
+                IList<CogsDateBlockContext> contexts, ShopifyOrderLineItem lineItem)
         {
             var context = contexts.SelectContextByDate(lineItem.OrderDate);
             if (context == null)

@@ -94,8 +94,9 @@
     <Compile Include="HangFire\QueueChannel.cs" />
     <Compile Include="HangFire\ProfitWiseQueues.cs" />
     <Compile Include="Model\Catalog\FinancialStatus.cs" />
+    <Compile Include="Model\Cogs\CalcContext.cs" />
     <Compile Include="Model\Cogs\CogsDto.cs" />
-    <Compile Include="Model\Cogs\OrderLineUpdateContext.cs" />
+    <Compile Include="Model\Cogs\CogsDateBlockContext.cs" />
     <Compile Include="Model\Cogs\PwCogsDetail.cs" />
     <Compile Include="Model\Cogs\CogsType.cs" />
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />

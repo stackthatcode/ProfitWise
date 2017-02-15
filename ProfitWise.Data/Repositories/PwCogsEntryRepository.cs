@@ -372,6 +372,123 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(query, detail, _connectionWrapper.Transaction);
         }
 
+
+
+        // Goods on Hand queries
+        public void InsertCogsCalcByMasterVariant(CogsDateBlockContext context)
+        {
+            var query =
+                @"INSERT INTO profitwisemastervariantcogscalc 
+                VALUES (
+                    @PwMasterVariantId, @PwShopId, @StartDate, @EndDate, 
+                    @PercentMultiplier, @SourceCurrencyId, @FixedAmount  )";
+
+            var calcContext = context.ToCalcContext();
+
+            Connection.Execute(
+                query, new
+                {
+                    PwShop.PwShopId,
+                    context.PwMasterVariantId,
+                    context.StartDate,
+                    context.EndDate,
+                    calcContext.PercentMultiplier,
+                    calcContext.SourceCurrencyId,
+                    calcContext.FixedAmount,
+                },
+                _connectionWrapper.Transaction);
+        }
+
+        public void InsertCogsCalcByMasterProduct(CogsDateBlockContext context)
+        {
+            var query =
+                @"INSERT INTO profitwisemastervariantcogscalc 
+                SELECT PwMasterVariantId, @PwShopId, @StartDate, @EndDate, 
+                        @PercentMultiplier, @SourceCurrencyId, @FixedAmount
+                FROM profitwisemastervariant 
+                WHERE PwMasterProductId = @PwMasterProductId
+                AND PwShopId = @PwShopId";
+
+            var calcContext = context.ToCalcContext();
+
+            Connection.Execute(
+                query, new {
+                    PwShop.PwShopId, context.PwMasterVariantId, context.StartDate, context.EndDate,
+                    calcContext.PercentMultiplier, calcContext.SourceCurrencyId, calcContext.FixedAmount,
+                },
+                _connectionWrapper.Transaction);
+        }
+
+        public void InsertCogsCalcByPickList(CogsDateBlockContext context)
+        {
+            var query =
+                @"INSERT INTO profitwisemastervariantcogscalc 
+                SELECT t2.PwMasterVariantId, @PwShopId, @StartDate, @EndDate, 
+                        @PercentMultiplier, @SourceCurrencyId, @FixedAmount
+                FROM profitwisepicklistmasterproduct t1  
+	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId";
+
+            var calcContext = context.ToCalcContext();
+
+            Connection.Execute(
+                query, new
+                {
+                    PwShop.PwShopId,
+                    context.PwMasterVariantId,
+                    context.StartDate,
+                    context.EndDate,
+                    calcContext.PercentMultiplier,
+                    calcContext.SourceCurrencyId,
+                    calcContext.FixedAmount,
+                },
+                _connectionWrapper.Transaction);
+        }
+
+        public void DeleteCogsCalcByMasterVariant(CogsDateBlockContext context)
+        {
+            var query =
+                @"DELETE FROM profitwisemastervariantcogscalc
+                WHERE PwMasterVariantId = @PwMasterVariantId
+                AND PwShopId = @PwShopId";
+
+            Connection.Execute(
+                query, new { PwShop.PwShopId, context.PwMasterVariantId },
+                _connectionWrapper.Transaction);
+        }
+
+        public void DeleteCogsCalcByMasterProduct(CogsDateBlockContext context)
+        {
+            var query =
+                @"DELETE FROM profitwisemastervariantcogscalc
+                WHERE PwMasterVariantId IN ( 
+                    SELECT PwMasterVariantId FROM profitwisemastervariant
+                    WHERE PwShopId = @PwShopID AND PwMasterProductId = @PwMasterProductId )
+                AND PwShopId = @PwShopId";
+
+            Connection.Execute(
+                query, new { PwShop.PwShopId, context.PwMasterProductId },
+                _connectionWrapper.Transaction);
+        }
+
+        public void DeleteCogsCalcByPickList(CogsDateBlockContext context)
+        {
+            var query =
+                @"DELETE FROM profitwisemastervariantcogscalc 
+                WHERE PwMasterVariantId IN
+                (
+	                SELECT t2.PwMasterVariantId
+	                FROM profitwisepicklistmasterproduct t1 
+		                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
+	                WHERE t1.PwShopId = @PwShopId 
+	                AND t2.PwShopId = @PwShopId
+	                AND t1.PwPickListId = @PwPickListId
+                )
+                AND PwShopId  = @PwShopId;";
+
+            Connection.Execute(
+                query, new { PwShop.PwShopId, context.PwPickListId }, _connectionWrapper.Transaction);
+        }
+
     }
 }
 

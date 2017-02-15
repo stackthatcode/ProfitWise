@@ -6,7 +6,7 @@ using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Model.Cogs
 {
-    public class OrderLineUpdateContext
+    public class CogsDateBlockContext
     {
         public static readonly DateTime MinimumCogsDate = new DateTime(2000, 1, 1);
         public static readonly DateTime MaximumCogsDate = new DateTime(2099, 12, 31);
@@ -41,9 +41,9 @@ namespace ProfitWise.Data.Model.Cogs
         }
 
 
-        public static OrderLineUpdateContext Make(CogsDto defaults, int destinationCurrency, long? pickListId)
+        public static CogsDateBlockContext Make(CogsDto defaults, int destinationCurrency, long? pickListId)
         {
-            return new OrderLineUpdateContext
+            return new CogsDateBlockContext
             {
                 Cogs = defaults,
                 StartDate = MinimumCogsDate,
@@ -53,7 +53,7 @@ namespace ProfitWise.Data.Model.Cogs
             };
         }
 
-        public static IList<OrderLineUpdateContext> Make(PwMasterVariant masterVariant, int destinationCurrency)
+        public static IList<CogsDateBlockContext> Make(PwMasterVariant masterVariant, int destinationCurrency)
         {
             var defaults = new CogsDto()
             {
@@ -67,14 +67,14 @@ namespace ProfitWise.Data.Model.Cogs
             return Make(defaults, details, destinationCurrency, null, masterVariant.PwMasterVariantId);
         }
 
-        public static IList<OrderLineUpdateContext> Make(
+        public static IList<CogsDateBlockContext> Make(
                     CogsDto defaults, IList<CogsDto> details, int destinationCurrency,
                     long? pwMasterProductId, long? pwMasterVariantId)
         {
             if (details == null || details.Count == 0)
             {
-                return new List<OrderLineUpdateContext> {
-                    new OrderLineUpdateContext
+                return new List<CogsDateBlockContext> {
+                    new CogsDateBlockContext
                     {
                         Cogs = defaults,
                         DestinationCurrencyId = destinationCurrency,
@@ -87,9 +87,9 @@ namespace ProfitWise.Data.Model.Cogs
             }
             else
             {
-                var output = new List<OrderLineUpdateContext>()
+                var output = new List<CogsDateBlockContext>()
                 {
-                    new OrderLineUpdateContext
+                    new CogsDateBlockContext
                     {
                         Cogs = defaults,
                         DestinationCurrencyId = destinationCurrency,
@@ -103,7 +103,7 @@ namespace ProfitWise.Data.Model.Cogs
                 foreach (var detail in details)
                 {
                     var nextDetail = details.NextDetail(detail);
-                    output.Add(new OrderLineUpdateContext
+                    output.Add(new CogsDateBlockContext
                     {
                         Cogs = detail,
                         DestinationCurrencyId = destinationCurrency,
@@ -121,8 +121,8 @@ namespace ProfitWise.Data.Model.Cogs
 
     public static class OrderLineUpdateContextExtensions
     {
-        public static OrderLineUpdateContext SelectContextByDate(
-                this IList<OrderLineUpdateContext> contexts, DateTime orderDate)
+        public static CogsDateBlockContext SelectContextByDate(
+                this IList<CogsDateBlockContext> contexts, DateTime orderDate)
         {
             return contexts.FirstOrDefault(x => x.StartDate <= orderDate && x.EndDate > orderDate);
         }
