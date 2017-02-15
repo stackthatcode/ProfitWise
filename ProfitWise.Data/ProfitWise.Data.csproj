@@ -152,8 +152,9 @@
     <Compile Include="Processes\SystemCleanupProcess.cs" />
     <Compile Include="ProcessSteps\BatchLogger.cs" />
     <Compile Include="Repositories\PwCogsDownstreamRepository.cs" />
+    <Compile Include="Repositories\PwGoodsOnHandRepository.cs" />
     <Compile Include="Repositories\SystemRepository.cs" />
-    <Compile Include="Repositories\PwReportQueryRepository.cs" />
+    <Compile Include="Repositories\PwProfitRepository.cs" />
     <Compile Include="Repositories\PwReportFilterRepository.cs" />
     <Compile Include="Repositories\PwPickListRepository.cs" />
     <Compile Include="AutofacRegistration.cs" />

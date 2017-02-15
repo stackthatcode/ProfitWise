@@ -12,20 +12,17 @@ using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
 {
-    public class PwReportQueryRepository
+    public class PwProfitRepository
     {
         private readonly MultitenantFactory _factory;
 
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
-
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
 
-        public PwReportQueryRepository(
-                ConnectionWrapper connectionWrapper, 
-                MultitenantFactory factory)
+        public PwProfitRepository(ConnectionWrapper connectionWrapper, MultitenantFactory factory)
         {
             _connectionWrapper = connectionWrapper;
             _factory = factory;
@@ -36,139 +33,7 @@ namespace ProfitWise.Data.Repositories
             return _connectionWrapper.StartTransactionForScope();
         }
 
-
-        // Product & Variant counts and selection details
-        public ProductAndVariantCount RetrieveReportRecordCount(long reportId)
-        {
-            var query =
-                @"SELECT COUNT(DISTINCT(PwMasterProductId)) AS ProductCount, 
-                        COUNT(DISTINCT(PwMasterVariantId)) AS VariantCount
-                FROM vw_MasterProductAndVariantSearch 
-                WHERE PwShopId = @PwShopId ";
-
-            query += ReportFilterClauseGenerator(reportId);
-
-            return Connection
-                .Query<ProductAndVariantCount>(query, new { PwShopId, PwReportId = reportId })
-                .FirstOrDefault();
-        }
-
-        public List<PwReportSelectionMasterProduct> RetrieveProductSelections(long reportId, int pageNumber, int pageSize)
-        {
-            var query =
-                @"SELECT PwMasterProductId, ProductTitle AS Title, Vendor, ProductType
-                FROM vw_MasterProductAndVariantSearch   
-                WHERE PwShopId = @PwShopId ";
-            query += ReportFilterClauseGenerator(reportId);
-            query += @" GROUP BY PwMasterProductId, ProductTitle, Vendor, ProductType 
-                        ORDER BY ProductTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            //  ORDER BY Title LIMIT @startRecord, @pageSize"; // MySQL
-
-            var startRecord = (pageNumber - 1) * pageSize;
-
-            return Connection
-                .Query<PwReportSelectionMasterProduct>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize, })
-                .ToList();
-        }
-
-        public List<PwReportSelectionMasterVariant> RetrieveVariantSelections(long reportId, int pageNumber, int pageSize)
-        {
-            var query =
-                @"SELECT PwMasterProductId, ProductTitle, PwMasterVariantId, VariantTitle, Sku, Vendor
-                FROM vw_MasterProductAndVariantSearch   
-                WHERE PwShopId = @PwShopId ";
-            query += ReportFilterClauseGenerator(reportId);
-            query += @" ORDER BY ProductTitle, VariantTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            //query += @" ORDER BY ProductTitle, VariantTitle LIMIT @startRecord, @pageSize"; //MySQL
-
-            var startRecord = (pageNumber - 1) * pageSize;
-
-            return Connection
-                .Query<PwReportSelectionMasterVariant>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize })
-                .ToList();
-        }
-
-        public string ReportFilterClauseGenerator(long reportId)
-        {
-            var query = "";
-            var filterRepository = _factory.MakeReportFilterRepository(this.PwShop);
-            var filters = filterRepository.RetrieveFilters(reportId);
-
-            if (filters.Count(x => x.FilterType == PwReportFilter.ProductType) > 0)
-            {
-                query += $@"AND ProductType IN ( SELECT StringKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.ProductType} ) ";
-            }
-            if (filters.Count(x => x.FilterType == PwReportFilter.Vendor) > 0)
-            {
-                query += $@"AND Vendor IN ( SELECT StringKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Vendor} ) ";
-            }
-            if (filters.Count(x => x.FilterType == PwReportFilter.Product) > 0)
-            {
-                query += $@"AND PwMasterProductId IN ( SELECT NumberKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Product} ) ";
-            }
-            if (filters.Count(x => x.FilterType == PwReportFilter.Sku) > 0)
-            {
-                query += $@"AND PwMasterVariantId IN ( SELECT NumberKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Sku} ) ";
-            }
-
-            return query;
-        }
-
-
-        // Profit Query output
-        public void PopulateQueryStub(long reportId)
-        {
-            var deleteQuery =
-                @"DELETE FROM profitwisereportquerystub
-                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
-            Connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
-
-            var createQuery =
-                @"INSERT INTO profitwisereportquerystub
-                SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, 
-                        Vendor, ProductType, ProductTitle, Sku, VariantTitle
-                FROM vw_MasterProductAndVariantSearch 
-                WHERE PwShopId = @PwShopId " +
-                ReportFilterClauseGenerator(reportId) +
-                @" GROUP BY PwMasterVariantId,  PwMasterProductId, 
-                    Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
-            Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
-        }
-
-        public List<PwReportSearchStub> RetrieveSearchStubs(long reportId)
-        {
-            var query =
-                @"SELECT t2.*
-                FROM profitwisereportquerystub t1 
-	                INNER JOIN vw_MasterProductAndVariantSearch t2
-		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
-                WHERE t1.PwShopId = @PwShopId
-                AND t1.PwReportId = @reportId
-                AND t2.PwShopId = @PwShopId";
-
-            var results =
-                Connection
-                    .Query<PwReportSearchStub>(
-                        query, new { PwShopId, reportId }).ToList();
-            return results;
-        }
-
-
-
-
-        // Queries for generating Totals   
-        public int FilterCount(long reportId)
-        {
-            var filterCountQuery =
-                @"SELECT COUNT(PwFilterId) FROM profitwisereportfilter
-                WHERE PwShopId = @PwShopId AND PwReportId = @reportId";
-            var filterCount = Connection.Query<int>(filterCountQuery, new { this.PwShopId, reportId }).First();
-            return filterCount;
-        }
+        // Queries for generating Totals  
 
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
         {            
@@ -335,9 +200,7 @@ namespace ProfitWise.Data.Repositories
 
             //return orderByClause + "LIMIT @StartingIndex, @PageSize"; // MySQL
         }
-
-
-
+        
         // Date Period Bucketed Totals
         public List<DatePeriodTotal> RetrieveDatePeriodTotals(
                 long reportId, DateTime startDate, DateTime endDate, List<string> filterKeys,

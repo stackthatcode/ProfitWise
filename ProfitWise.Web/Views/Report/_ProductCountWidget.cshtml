@@ -57,7 +57,7 @@
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet("/QueryService/RecordCounts?reportId=" + self.ReportId(), this);
+                    ajax.HttpGet("/ReportService/RecordCounts?reportId=" + self.ReportId(), this);
                 },
                 function (data) {
                     self.ProductCount(data.ProductCount);

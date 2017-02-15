@@ -232,7 +232,8 @@
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
     <Compile Include="Controllers\ConsolServiceController.cs" />
     <Compile Include="Controllers\ContentController.cs" />
-    <Compile Include="Controllers\QueryServiceController.cs" />
+    <Compile Include="Controllers\GoodsOnHandServiceController.cs" />
+    <Compile Include="Controllers\ProfitServiceController.cs" />
     <Compile Include="Controllers\FilterServiceController.cs" />
     <Compile Include="Controllers\CogsServiceController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />

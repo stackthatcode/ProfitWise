@@ -32,9 +32,10 @@ namespace ProfitWise.Data
             builder.RegisterType<PwPickListRepository>();
             builder.RegisterType<PwReportRepository>();
             builder.RegisterType<PwReportFilterRepository>();
-            builder.RegisterType<PwReportQueryRepository>();
+            builder.RegisterType<PwProfitRepository>();
             builder.RegisterType<SystemRepository>();
             builder.RegisterType<PwCogsDownstreamRepository>();
+            builder.RegisterType<PwGoodsOnHandRepository>();
             
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));

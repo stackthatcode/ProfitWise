@@ -9,7 +9,6 @@ using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Web.Attributes;
-using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
 
@@ -18,7 +17,7 @@ namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
     [IdentityProcessor]
-    public class QueryServiceController : Controller
+    public class GoodsOnHandServiceController : Controller
     {
         private readonly MultitenantFactory _factory;
         private readonly IPushLogger _logger;
@@ -28,56 +27,20 @@ namespace ProfitWise.Web.Controllers
         public const string NoGroupingName = "All"; // Date-bucketed Totals
 
 
-        public QueryServiceController(MultitenantFactory factory, IPushLogger logger)
+        public GoodsOnHandServiceController(MultitenantFactory factory, IPushLogger logger)
         {
             _factory = factory;
             _logger = logger;
         }
 
 
-        [HttpGet]
-        public ActionResult RecordCounts(long reportId)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-            var output = repository.RetrieveReportRecordCount(reportId);
-            return new JsonNetResult(output);
-        }
-
-        [HttpGet]
-        public ActionResult ProductSelectionsByPage(long reportId, int pageNumber = 1,
-            int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-            
-            var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
-            var selections = repository.RetrieveProductSelections(reportId, pageNumber, pageSize);
-            var counts = repository.RetrieveReportRecordCount(reportId);
-
-            return new JsonNetResult(new {Selections = selections, RecordCounts = counts});
-        }
-
-        [HttpGet]
-        public ActionResult VariantSelectionsByPage(
-                long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-            
-            var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
-            var selections = repository.RetrieveVariantSelections(reportId, pageNumber, pageSize);
-            var counts = repository.RetrieveReportRecordCount(reportId);
-
-            return new JsonNetResult(new {Selections = selections, RecordCounts = counts});
-        }
-
         [HttpPost]
-        public ActionResult Summary(long reportId)
+        public ActionResult Data(long reportId, int pageNumber = 1, int pageSize = 50)
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);            
-            var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
+            var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
+            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             using (var trans = new TransactionScope())
             {
@@ -85,162 +48,29 @@ namespace ProfitWise.Web.Controllers
                 var report = repository.RetrieveReport(reportId);
 
                 // First create the query stub...
-                queryRepository.PopulateQueryStub(reportId);
+                filterRepository.PopulateQueryStub(reportId);
+
 
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userIdentity.PwShop);
-
-                List<ReportSeries> seriesDataset;
-                if (report.GroupingId == ReportGrouping.Overall)
-                {
-                    seriesDataset = BuildSeriesFromAggregateTotals(userIdentity.PwShop, report);
-                }
-                else
-                {
-                    seriesDataset = BuildSeriesWithGrouping(userIdentity.PwShop, report, summary);
-                }
-
+                
                 trans.Complete();
-
-                var flattenedSeries = new List<ReportSeries>();
-                foreach (var series in seriesDataset)
-                {
-                    series.VisitSeries(item => flattenedSeries.Add(item));
-                }
-
-                var seriesForChart =
-                    flattenedSeries.Where(x => x.Parent == null)
-                        .Select(x => x.ToJsonSeries()).ToList();
-
-                var drilldownForChart =
-                    flattenedSeries.Where(x => x.Parent != null)
-                        .Select(x => x.ToJsonSeries()).ToList();
-
+                
                 return new JsonNetResult(
                     new
                     {
                         CurrencyId = shopCurrencyId,
                         Summary = summary,
-                        Series = seriesForChart,
-                        Drilldown = drilldownForChart
                     });
             }
         }
 
-        [HttpPost]
-        public ActionResult Detail(
-                long reportId, ReportGrouping grouping, ColumnOrdering ordering, 
-                int pageNumber = 1, int pageSize = 50)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportRepository(userIdentity.PwShop);           
-            var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-
-            using (var trans = new TransactionScope())
-            {
-                var shopCurrencyId = userIdentity.PwShop.CurrencyId;
-                var report = repository.RetrieveReport(reportId);
-
-                queryRepository.PopulateQueryStub(reportId);
-                var queryContext = new TotalQueryContext
-                {
-                    PwShopId = userIdentity.PwShop.PwShopId,
-                    PwReportId = reportId,
-                    StartDate = report.StartDate,
-                    EndDate = report.EndDate,
-                    Grouping = grouping,
-                    Ordering = ordering,
-                    PageNumber = pageNumber,
-                    PageSize = pageSize,
-                };
-
-                var totals = queryRepository.RetrieveTotalsByContext(queryContext);
-
-                var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
-                var allProfit = executiveSummary.TotalProfit;
-
-                // Compute Profit % for each line item
-                foreach (var groupTotal in totals)
-                {
-                    groupTotal.ProfitPercentage =
-                        allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
-                }
-
-                var totalCounts = queryRepository.RetreiveTotalCounts(queryContext);
-
-                // Top-level series...
-                var series =
-                    new object[]
-                    {
-                        new {
-                            name = "Profitability",
-                            data = totals.Select(x =>
-                                new
-                                {
-                                    name = x.GroupingName,
-                                    y = x.TotalProfit,
-                                    drilldown = true,
-                                    drilldownurl = DrilldownUrlBuilder(
-                                        report.PwReportId, grouping, x.GroupingKey, x.GroupingName, report.StartDate, report.EndDate),
-                                }).ToList()
-                        }
-                    };
-
-                trans.Complete();
-                return new JsonNetResult(
-                    new { rows = totals, count = totalCounts, currency = shopCurrencyId, series = series });
-            }
-        }
-
-        // Profitability Drilldown
-        [HttpGet]
-        public ActionResult Drilldown(
-                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
-        {
-            var userIdentity = HttpContext.PullIdentity();
-            var queryRepository = _factory.MakeReportQueryRepository(userIdentity.PwShop);
-            
-            var keyFilters = new List<string>() {key};
-            var periodType = (end - start).ToDefaultGranularity();
-
-            var datePeriodTotals = 
-                queryRepository.RetrieveDatePeriodTotals(
-                    reportId, start, end, keyFilters, grouping, periodType);
-            
-            var series = 
-                ReportSeriesFactory.GenerateSeriesRecursive(key, name, start, end, periodType, periodType);
-
-            series.VisitElements(element =>
-            {
-                var total = datePeriodTotals.FirstOrDefault(element.MatchByGroupingAndDate);
-                if (total != null)
-                {
-                    element.Amount = total.TotalProfit;
-                }
-            });
-
-            var output =  new JsonSeries
-            {
-                name = name,
-                data = series.Elements.Select(element =>
-                    new JsonSeriesElement
-                    {
-                        name = element.DateLabel(),
-                        y = element.Amount,
-                        drilldown = (periodType == PeriodType.Day) ? null : "true",
-                        drilldownurl = (periodType == PeriodType.Day) ? null :
-                            DrilldownUrlBuilder(reportId, grouping, key, name, element.Start, element.End)
-                    }).ToList()
-            };
-
-            return new JsonNetResult(output);
-        }
 
 
         private string DrilldownUrlBuilder(
                 long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
         {
-            return $"/QueryService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
+            return $"/ProfitService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
                    $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&" +
                    $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
         }
@@ -249,7 +79,7 @@ namespace ProfitWise.Web.Controllers
         // *** The aggregated Grouped Totals, including Executive Summary
         private Summary BuildSummary(PwReport report, PwShop shop)
         {
-            var queryRepository = _factory.MakeReportQueryRepository(shop);
+            var queryRepository = _factory.MakeProfitRepository(shop);
 
             var queryContext = new TotalQueryContext
             {
@@ -298,7 +128,7 @@ namespace ProfitWise.Web.Controllers
         // *** Builds Report Series data for High Charts multi-column chart
         private List<ReportSeries> BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary)
         {
-            var queryRepository = _factory.MakeReportQueryRepository(shop);
+            var queryRepository = _factory.MakeProfitRepository(shop);
 
             // 1st-level drill down
             var periodType = (report.EndDate - report.StartDate).ToDefaultGranularity();
@@ -377,7 +207,7 @@ namespace ProfitWise.Web.Controllers
                 PwShop shop, long reportId, DateTime startDate, DateTime endDate, List<string> keyFilters,
                 ReportGrouping grouping, PeriodType periodType, PeriodType maximumPeriodType)
         {
-            var queryRepository = _factory.MakeReportQueryRepository(shop);
+            var queryRepository = _factory.MakeProfitRepository(shop);
 
             var output = 
                 queryRepository.RetrieveDatePeriodTotals(
@@ -397,7 +227,7 @@ namespace ProfitWise.Web.Controllers
         // *** Builds Report Series data for High Charts multi-column chart
         private List<ReportSeries> BuildSeriesFromAggregateTotals(PwShop shop, PwReport report)
         {
-            var queryRepository = _factory.MakeReportQueryRepository(shop);
+            var queryRepository = _factory.MakeProfitRepository(shop);
 
             // 1st-level drill down
             var periodType = (report.EndDate - report.StartDate).ToDefaultGranularity();

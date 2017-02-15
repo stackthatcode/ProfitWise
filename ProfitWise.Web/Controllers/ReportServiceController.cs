@@ -4,6 +4,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
+using ProfitWise.Web.Models;
 using Push.Foundation.Web.Json;
 using Push.Foundation.Utilities.General;
 
@@ -226,6 +227,46 @@ namespace ProfitWise.Web.Controllers
 
             return JsonNetResult.Success();
         }
+
+
+
+        [HttpGet]
+        public ActionResult RecordCounts(long reportId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
+            var output = repository.RetrieveReportRecordCount(reportId);
+            return new JsonNetResult(output);
+        }
+
+        [HttpGet]
+        public ActionResult ProductSelectionsByPage(long reportId, int pageNumber = 1,
+            int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
+
+            var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
+            var selections = filterRepository.RetrieveProductSelections(reportId, pageNumber, pageSize);
+            var counts = filterRepository.RetrieveReportRecordCount(reportId);
+
+            return new JsonNetResult(new { Selections = selections, RecordCounts = counts });
+        }
+
+        [HttpGet]
+        public ActionResult VariantSelectionsByPage(
+                long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
+
+            var limit = PreviewSelectionLimit.MaximumNumberOfVariants;
+            var selections = repository.RetrieveVariantSelections(reportId, pageNumber, pageSize);
+            var counts = repository.RetrieveReportRecordCount(reportId);
+
+            return new JsonNetResult(new { Selections = selections, RecordCounts = counts });
+        }
+
     }
 }
 

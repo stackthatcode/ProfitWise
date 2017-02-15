@@ -32,17 +32,15 @@ namespace ProfitWise.Web
             var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
             Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
 
-
             // ProfitWise.Data API registration
             ProfitWise.Data.AutofacRegistration.Build(builder);
 
             // Push.Shopify API registration
             Push.Shopify.AutofacRegistration.Build(builder);
 
-
             // Database connection string...
             var connectionString = 
-                ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+                    ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
             // ... and register configuration
             builder
@@ -73,7 +71,8 @@ namespace ProfitWise.Web
             builder.RegisterType<CogsServiceController>();
             builder.RegisterType<CogsController>();
             builder.RegisterType<FilterServiceController>();
-            builder.RegisterType<QueryServiceController>();
+            builder.RegisterType<ProfitServiceController>();
+            builder.RegisterType<GoodsOnHandServiceController>();            
             builder.RegisterType<ReportServiceController>();
             builder.RegisterType<PreferencesController>();
             builder.RegisterType<ContentController>();

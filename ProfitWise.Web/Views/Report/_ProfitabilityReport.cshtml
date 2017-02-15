@@ -364,7 +364,7 @@
             flow.exec(
                 function() {
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/QueryService/Summary", { reportId: reportId }, this);
+                    ajax.HttpPost("/ProfitService/Summary", { reportId: reportId }, this);
                 },
                 function (data) {
                     // Rename to Summary Dataset
@@ -468,7 +468,7 @@
                         pageNumber: self.PagingModel.PageNumber(),
                         pageSize: self.PagingModel.PageSize(),
                     };
-                    ajax.HttpPost("/QueryService/Detail",  data, this);
+                    ajax.HttpPost("/ProfitService/Detail",  data, this);
                 },
                 function (data) {
                     self.Data.removeAll();

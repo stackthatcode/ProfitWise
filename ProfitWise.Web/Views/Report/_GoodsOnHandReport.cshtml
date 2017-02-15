@@ -270,7 +270,7 @@
                         pageNumber: self.PagingModel.PageNumber(),
                         pageSize: self.PagingModel.PageSize(),
                     };
-                    ajax.HttpPost("/QueryService/Detail",  data, this);
+                    ajax.HttpPost("/ProfitService/Detail",  data, this);
                 },
                 function (data) {
                     self.Data.removeAll();
