@@ -101,6 +101,7 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
+    <Compile Include="Model\GoodsOnHand\QueryResults.cs" />
     <Compile Include="Model\Preferences\DateRange.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />
@@ -149,7 +150,7 @@
     <Compile Include="Model\System\SystemState.cs" />
     <Compile Include="Processes\SystemCleanupProcess.cs" />
     <Compile Include="ProcessSteps\BatchLogger.cs" />
-    <Compile Include="Repositories\PwCogsDataUpdateRepository.cs" />
+    <Compile Include="Repositories\PwCogsDownstreamRepository.cs" />
     <Compile Include="Repositories\SystemRepository.cs" />
     <Compile Include="Repositories\PwReportQueryRepository.cs" />
     <Compile Include="Repositories\PwReportFilterRepository.cs" />

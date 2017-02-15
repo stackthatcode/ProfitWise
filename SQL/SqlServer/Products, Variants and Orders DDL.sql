@@ -13,6 +13,9 @@ GO
 DROP TABLE IF EXISTS [dbo].[profitwisemastervariantcogsdetail]
 GO
 
+DROP TABLE IF EXISTS [dbo].[profitwisemastervariantcogscalc]
+GO
+
 DROP TABLE IF EXISTS [dbo].[profitwisemastervariant]
 GO
 
@@ -120,6 +123,32 @@ CREATE TABLE [dbo].[profitwisemastervariantcogsdetail](
 ) ON [PRIMARY]
 END
 GO
+
+
+
+
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisemastervariantcogscalc]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[profitwisemastervariantcogscalc] (
+	[PwMasterVariantId] [bigint] NOT NULL,
+	[PwShopId] [bigint] NOT NULL,
+	[StartDate] [date] NOT NULL,
+	[EndDate] [date] NOT NULL,
+	[PercentMultiplier] [decimal](15, 2) NOT NULL,
+	[SourceCurrencyId] [int] NOT NULL,
+	[FixedAmount] [decimal](15, 2) NOT NULL
+CONSTRAINT [PK_profitwisemastervariantcogscalc_PwVariantId] PRIMARY KEY CLUSTERED 
+(
+	[PwMasterVariantId] ASC,
+	[PwShopId] ASC,
+	[StartDate] ASC,
+	[EndDate] ASC	
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
 
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseproduct]') AND type in (N'U'))

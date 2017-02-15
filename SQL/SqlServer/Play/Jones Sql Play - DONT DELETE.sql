@@ -26,28 +26,23 @@ SELECT t1.*
 FROM profitwisemastervariantcogsdetail t1
 	INNER JOIN profitwisemastervariant t2 
 		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
-
-
-
 USE ProfitWise
 GO
+
 
 SELECT * FROM profitwiseproduct WHERE PwMasterProductId IN ( 222, 223 );
 
 SELECT * FROM profitwisemastervariant WHERE PwMasterProductId = 222;
 
-SELECT * FROM profitwisevariant 
-WHERE PwMasterVariantId IN ( 
-	SELECT PwMasterVariantId FROM profitwisemastervariant WHERE PwMasterProductId = 222 
-);
+SELECT * FROM profitwisevariant WHERE PwMasterVariantId IN 
+( SELECT PwMasterVariantId FROM profitwisemastervariant WHERE PwMasterProductId = 222 );
+
 
 SELECT * FROM profitwisevariant WHERE SKU Like '3DUPLA285%';
 
 SELECT * FROM profitwisereportquerystub;
 
 SELECT * FROM profitwiseprofitreportentry;
-
-
 
 SELECT * FROM profitwisemastervariant;
 
@@ -68,29 +63,62 @@ AND t1.CogsDetail = 0;
 
 
 
+-- UPDATE Percent profitwisevariant by PwMasterVariantId
+UPDATE profitwisevariant
+SET CurrentCogs = HighPrice * @UnitPricePercent
+WHERE PwMasterVariantId = 872
 
--- Margin Percent % and Fixed Amount
-SELECT	t3.PwProductId, t2.PwVariantId, t3.Title AS ProductTitle, t2.Title AS VariantTitle, 
-		t2.Inventory, t2.LowPrice, t2.HighPrice, t1.CogsTypeId As DefaultCogsTypeId, t1.CogsCurrencyId AS DefaultCogsCurrencyId, 
-		t1.CogsAmount AS DefaultCogsAmount, t1.CogsMarginPercent AS DefaultCogsMarginPercent, t1.CogsDetail
-FROM profitwisemastervariant t1
-	INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
-	INNER JOIN profitwiseproduct t3 ON t2.PwProductId = t3.PwProductId
-WHERE t1.StockedDirectly = 1
-AND t2.Inventory IS NOT NULL
---AND t1.IsActive = 1 
+-- UPDATE Fixed Price profitwisevariant by PwMasterVariantId
+UPDATE profitwisevariant
+SET CurrentCogs = @FixedAmount
+WHERE PwMasterVariantId = 872
 
-
--- Need to extract maximum CoGS Detail before today's Date
-SELECT PwMasterVariantId, MAX(CogsDate), CogsTypeId, CogsCurrencyId, CogsAmount, CogsMarginPercent
-FROM profitwisemastervariantcogsdetail
-WHERE CogsDate < getdate()
-GROUP BY PwMasterVariantId, CogsTypeId, CogsCurrencyId, CogsAmount, CogsMarginPercent;
+-- UPDATE Percent profitwisevariant by Pick List
+UPDATE profitwisevariant
+SET CurrentCogs = 1234
+WHERE PwMasterVariantId IN ( SELECT PwMasterVariantId FROM profitwiserepor )
 
 
 
-SELECT * FROM profitwisemastervariant WHERE CogsDetail = 1;
 
-SELECT * FROM profitwisemastervariantcogsdetail;
+SELECT * FROM profitwisevariantunitcost;
+
+INSERT INTO profitwisevariantunitcost
+SELECT PwVariantId, PwShopId, @StartDate, @EndDate, HighPrice * @Margin
+FROM profitwisevariant
+WHERE IsActive = 1 
+AND Inventory IS NOT NULL
+AND PwShopId = @PwShopId
+AND PwMasterVariantId = @PwMasterVariantId
+
+
+DELETE FROM profitwisevariantunitcost
+WHERE PwVariantId IN (
+    SELECT t3.PwVariantId
+	FROM profitwisemastervariant t2
+		INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
+	WHERE t2.PwShopId = @PwShopId 
+	AND t3.PwShopId = @PwShopId
+    AND t2.PwMasterVariantId = @PwMasterVariantId
+) 
+AND PwShopId = @PwShopId               
+
+
+DELETE FROM profitwisevariantunitcost
+WHERE PwVariantId IN
+(
+	SELECT t3.PwVariantId
+	FROM profitwisepicklistmasterproduct t1 
+		INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
+		INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
+	WHERE t1.PwShopId = 100001 
+	AND t2.PwShopId = 100001
+	AND t3.PwShopId = 100001
+	AND t1.PwPickListId = 100233
+)
+AND PwShopId  = 100001;
+
+
+SELECT * FROM profitwisepicklist;
 
 

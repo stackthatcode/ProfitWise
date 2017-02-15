@@ -215,7 +215,7 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var catalogBuilderService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
-            var cogsUpdateRepository = _multitenantFactory.MakeCogsDataUpdateRepository(shop);
+            var cogsUpdateRepository = _multitenantFactory.MakeCogsDownstreamRepository(shop);
 
             var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();                
             var orderIdList = importedOrders.Select(x => x.Id).ToList();

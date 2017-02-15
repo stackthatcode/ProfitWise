@@ -11,7 +11,7 @@ using ProfitWise.Data.Model.Shop;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopRequired))]
-    public class PwCogsDataUpdateRepository : IShopFilter
+    public class PwCogsDownstreamRepository : IShopFilter
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
@@ -19,7 +19,7 @@ namespace ProfitWise.Data.Repositories
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
 
-        public PwCogsDataUpdateRepository(ConnectionWrapper connectionWrapper)
+        public PwCogsDownstreamRepository(ConnectionWrapper connectionWrapper)
         {
             _connectionWrapper = connectionWrapper;
         }
@@ -28,15 +28,15 @@ namespace ProfitWise.Data.Repositories
         {
             return _connectionWrapper.StartTransactionForScope();
         }
-
-
+        
 
         // Order Line update queries
         public void UpdateOrderLines(OrderLineUpdateContext lineContext)
         {
             if (lineContext.PwMasterVariantId == null && lineContext.PwMasterProductId == null)
             {
-                throw new ArgumentNullException("PwMasterVariantId and PwMasterProductId can't both be null");
+                throw new ArgumentNullException(
+                    "PwMasterVariantId and PwMasterProductId can't both be null");
             }
             if (lineContext.CogsTypeId == CogsType.FixedAmount)
             {
@@ -48,11 +48,11 @@ namespace ProfitWise.Data.Repositories
             }
         }
 
+        // WARNING - will set Order Line to "0" if the Exchange Rates are not up-to-date
         public void UpdateOrderLineFixedAmount(OrderLineUpdateContext lineContext)
         {
             var query =
-                @"UPDATE t3 
-                SET t3.UnitCogs = (@CogsAmount * ISNULL(t4.Rate, 0))                 
+                @"UPDATE t3 SET t3.UnitCogs = (@CogsAmount * ISNULL(t4.Rate, 0))                 
                 FROM profitwisemastervariant t1 
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
@@ -82,6 +82,22 @@ namespace ProfitWise.Data.Repositories
                 WhereClauseGenerator(lineContext);
 
             Connection.Execute(query, lineContext, _connectionWrapper.Transaction);
+        }
+
+        public void UpdateOrderLinesPickList(OrderLineUpdateContext lineContext)
+        {
+            if (lineContext.PwPickListId == null)
+            {
+                throw new ArgumentNullException("PwPickListId can't both be null");
+            }
+            if (lineContext.CogsTypeId == CogsType.FixedAmount)
+            {
+                UpdateOrderLineFixedAmountPickList(lineContext);
+            }
+            if (lineContext.CogsTypeId == CogsType.MarginPercentage)
+            {
+                UpdateOrderLinePercentagePickList(lineContext);
+            }
         }
 
         public void UpdateOrderLineFixedAmountPickList(OrderLineUpdateContext context)
@@ -121,7 +137,7 @@ namespace ProfitWise.Data.Repositories
             Connection.Execute(query, context, _connectionWrapper.Transaction);
         }
 
-        public string WhereClauseGenerator(OrderLineUpdateContext lineContext)
+        private string WhereClauseGenerator(OrderLineUpdateContext lineContext)
         {
             var output = "";
             if (lineContext.PwMasterProductId.HasValue)
@@ -138,7 +154,60 @@ namespace ProfitWise.Data.Repositories
         }
         
 
-        // Report Entry query
+        // Goods on Hand queries
+        public void InsertCogsCalcByMasterVariant(OrderLineUpdateContext context)
+        {
+            var query =
+                @"INSERT INTO profitwisemastervariantcogscalc 
+                VALUES (
+                    @PwMasterVariantId, PwShopId, @StartDate, @EndDate, 
+                    @PercentMultiplier, @SourceCurrencyId, @FixedAmount  )";
+
+            var calcContext = context.ToCalcContext();
+
+            Connection.Execute(
+                query, new
+                {
+                    PwShop.PwShopId, context.PwMasterVariantId, context.StartDate, context.EndDate,
+                    calcContext.PercentMultiplier, calcContext.SourceCurrencyId, calcContext.FixedAmount,
+                },
+                _connectionWrapper.Transaction);
+        }
+
+        public void DeleteCogsCalcByMasterVariant(OrderLineUpdateContext context)
+        {
+            var query =
+                @"DELETE FROM profitwisemastervariantcogscalc
+                WHERE PwMasterVariantId = @PwMasterVariantId
+                AND PwShopId = @PwShopId";
+
+            Connection.Execute(
+                query, new { PwShop.PwShopId, context.PwMasterVariantId }, 
+                _connectionWrapper.Transaction);
+        }
+
+        public void DeleteCogsCalcByPickList(OrderLineUpdateContext context)
+        {
+            var query =
+                @"DELETE FROM profitwisemastervariantcogscalc 
+                WHERE PwMasterVariantId IN
+                (
+	                SELECT t2.PwMasterVariantId
+	                FROM profitwisepicklistmasterproduct t1 
+		                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
+	                WHERE t1.PwShopId = @PwShopId 
+	                AND t2.PwShopId = @PwShopId
+	                AND t1.PwPickListId = @PwPickListId
+                )
+                AND PwShopId  = @PwShopId;";
+
+            Connection.Execute(
+                query, new { PwShop.PwShopId, context.PwPickListId }, _connectionWrapper.Transaction);
+        }
+
+
+
+        // Report Entry queries
         public void RefreshReportEntryData()
         {
             var query =

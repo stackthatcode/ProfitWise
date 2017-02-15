@@ -105,7 +105,8 @@ namespace ProfitWise.Data.ProcessSteps
         }
 
         private void UpdateInactiveVariantPrice(
-                PwShop shop, IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
+                PwShop shop, IList<PwMasterProduct> masterProductCatalog, 
+                IList<OrderLineItemSubset> orderLineItems)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
 

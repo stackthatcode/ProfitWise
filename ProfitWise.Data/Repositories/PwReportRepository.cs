@@ -16,10 +16,8 @@ namespace ProfitWise.Data.Repositories
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
-
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
-
 
         public PwReportRepository(ConnectionWrapper connectionWrapper)
         {
@@ -36,10 +34,13 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT * FROM profitwisereport 
-                    WHERE PwShopId = @PwShopId 
-                    AND CopyForEditing = 0 ";
+                    WHERE PwShopId = @PwShopId AND CopyForEditing = 0 ";
+
             if (reportTypeId.HasValue)
+            {
                 query += "AND ReportTypeId = @reportTypeId;";
+            }
+
             var results = Connection.Query<PwReport>(query, new { reportTypeId, PwShopId }).ToList();
             return results.OrderBy(x => x.Name).ToList();
         }

@@ -258,16 +258,23 @@
         
         // *** Launch Bulk Edit Popup
         self.BulkEditPopUp = function () {
-            var url =
-                ProfitWiseConfig.BaseUrl +
-                    '/Cogs/BulkEditCogs?pickListId=' + self.PickListId();
+            flow.exec(
+                function() {
+                    var url =
+                    ProfitWiseConfig.BaseUrl +
+                        '/Cogs/BulkEditCogs?pickListId=' + self.PickListId();
 
-            ProfitWiseShopify.LaunchModal({
-                src: url,
-                title: 'Bulk Edit CoGS for Current Product Search',
-                width: 'small',
-                height: 380,
-            }, self.LoadDataForCurrentPage);
+                        ProfitWiseShopify.LaunchModal({
+                            src: url,
+                            title: 'Bulk Edit CoGS for Current Product Search',
+                            width: 'small',
+                            height: 380,
+                        }, this);
+                },
+                function(data) {
+                    self.LoadDataForCurrentPage();
+                }
+            );            
         }
 
         // *** Stocked Directly interactivity *** //
@@ -296,7 +303,9 @@
                 value: !self.StockedDirectlyIsChecked(model),
             };
 
-            ajax.HttpPost("/CogsService/StockedDirectlyByMasterProductId", data, self.LoadDataForCurrentPage);
+            ajax.HttpPost(
+                "/CogsService/StockedDirectlyByMasterProductId", 
+                data, self.LoadDataForCurrentPage);
         };
 
         self.StockedDirectlyGridLinkClick = function (model) {
@@ -339,7 +348,8 @@
                 value: !self.ExcludedIsChecked(model),
             };
 
-            ajax.HttpPost("/CogsService/ExcludeByMasterProductId", data, self.LoadDataForCurrentPage);
+            ajax.HttpPost("/CogsService/ExcludeByMasterProductId", 
+                        data, self.LoadDataForCurrentPage);
         };
 
         self.ExcludedGridLinkClick = function (model) {
@@ -421,6 +431,7 @@
 
                     self.ResetToLastScrollTop();
                     if (callback) {
+                        //console.log(callback);
                         callback();
                     }
                 });

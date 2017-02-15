@@ -176,7 +176,7 @@ namespace ProfitWise.Data.ProcessSteps
                 product.Tags = context.Tags;
                 product.ProductType = context.ProductType;
                 product.LastUpdated = DateTime.Now;
-
+                
                 var productRepository = this._multitenantFactory.MakeProductRepository(shop);
                 productRepository.UpdateProduct(product);
             }

@@ -14,7 +14,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<CatalogBuilderService> _productVariantServiceFactory;
         private readonly Func<CatalogRetrievalService> _catalogRetrievalServiceFactory;
         private readonly Func<PwCogsEntryRepository> _cogsEntryRepositoryFactory;
-        private readonly Func<PwCogsDataUpdateRepository> _cogsDataUpdateRepositoryFactory;
+        private readonly Func<PwCogsDownstreamRepository> _cogsDataUpdateRepositoryFactory;
         private readonly Func<PwPickListRepository> _pickListRepositoryFactory;
         private readonly Func<PwReportRepository> _reportRepositoryFactory;
         private readonly Func<PwReportFilterRepository> _filterRepositoryFactory;
@@ -35,7 +35,7 @@ namespace ProfitWise.Data.Factories
             Func<PwReportFilterRepository> filterRepositoryFactory, 
             Func<PwReportQueryRepository> reportQueryRepositoryFactory,
             Func<CogsService> orderCogsUpdateServiceFactory, 
-            Func<PwCogsDataUpdateRepository> cogsDataUpdateRepositoryFactory, 
+            Func<PwCogsDownstreamRepository> cogsDataUpdateRepositoryFactory, 
             Func<ConsolidationService> consolidationServiceFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
@@ -102,7 +102,7 @@ namespace ProfitWise.Data.Factories
             return repository;
         }
 
-        public virtual PwCogsDataUpdateRepository MakeCogsDataUpdateRepository(PwShop shop)
+        public virtual PwCogsDownstreamRepository MakeCogsDownstreamRepository(PwShop shop)
         {
             var repository = _cogsDataUpdateRepositoryFactory();
             repository.PwShop = shop;

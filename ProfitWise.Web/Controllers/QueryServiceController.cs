@@ -192,6 +192,7 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
+        // Profitability Drilldown
         [HttpGet]
         public ActionResult Drilldown(
                 long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
@@ -205,10 +206,9 @@ namespace ProfitWise.Web.Controllers
             var datePeriodTotals = 
                 queryRepository.RetrieveDatePeriodTotals(
                     reportId, start, end, keyFilters, grouping, periodType);
-
+            
             var series = 
-                ReportSeriesFactory.GenerateSeriesRecursive(
-                    key, name, start, end, periodType, periodType);
+                ReportSeriesFactory.GenerateSeriesRecursive(key, name, start, end, periodType, periodType);
 
             series.VisitElements(element =>
             {
