@@ -413,7 +413,7 @@ namespace ProfitWise.Data.Repositories
 
             Connection.Execute(
                 query, new {
-                    PwShop.PwShopId, context.PwMasterVariantId, context.StartDate, context.EndDate,
+                    PwShop.PwShopId, context.PwMasterProductId, context.StartDate, context.EndDate,
                     calcContext.PercentMultiplier, calcContext.SourceCurrencyId, calcContext.FixedAmount,
                 },
                 _connectionWrapper.Transaction);

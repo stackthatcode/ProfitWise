@@ -35,7 +35,8 @@ AS
 
 
 
-SELECT t1.PwShopId, t1.PwMasterProductId, t1.PwMasterVariantId,  t3.Vendor, t3.ProductType, 
+SELECT 
+	t1.PwMasterProductId, t1.PwMasterVariantId,  t3.Vendor, t3.ProductType, 
 	t3.PwProductId, t2.PwVariantId, t3.Title AS ProductTitle, t2.Title AS VariantTitle, 
 	
 	t2.Inventory, t2.LowPrice, t2.HighPrice, 

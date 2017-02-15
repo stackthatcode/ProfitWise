@@ -45,7 +45,7 @@ namespace ProfitWise.Data.Services
                         simpleCogs, null, PwShop.CurrencyId, null, pwMasterVariantId);
 
                 UpdateCogsForMasterVariant(context);
-                UpdateGoodsOnHand(dateBlockContexts);
+                UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
                 UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
                 transaction.Commit();
@@ -67,7 +67,7 @@ namespace ProfitWise.Data.Services
                             defaults, details, PwShop.CurrencyId, null, pwMasterVariantId);
 
                     UpdateCogsForMasterVariant(context);
-                    UpdateGoodsOnHand(dateBlockContexts);                    
+                    UpdateGoodsOnHandForMasterVariant(dateBlockContexts);                    
                     UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
                     transaction.Commit();
@@ -90,7 +90,7 @@ namespace ProfitWise.Data.Services
                         CogsDateBlockContext.Make(
                             defaults, details, PwShop.CurrencyId, pwMasterProductId, null);
 
-                    UpdateGoodsOnHand(dateBlockContexts);
+                    UpdateGoodsOnHandForMasterProduct(dateBlockContexts);
 
                     UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
@@ -121,24 +121,26 @@ namespace ProfitWise.Data.Services
         }
 
         // Accepts both Master Product and Master Variant-keyed contexts
-        public void UpdateGoodsOnHand(IList<CogsDateBlockContext> dateBlockContexts)
+        public void UpdateGoodsOnHandForMasterVariant(IList<CogsDateBlockContext> dateBlockContexts)
         {
             var repository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+            repository.DeleteCogsCalcByMasterVariant(dateBlockContexts.First());
             foreach (var context in dateBlockContexts)
             {
-                if (context.PwMasterVariantId == null)
-                {
-                    repository.DeleteCogsCalcByMasterProduct(context);
-                    repository.InsertCogsCalcByMasterProduct(context);
-                }
-                else
-                {
-                    repository.DeleteCogsCalcByMasterVariant(context);
-                    repository.InsertCogsCalcByMasterVariant(context);
-                }
+                repository.InsertCogsCalcByMasterVariant(context);
             }
         }
-        
+
+        public void UpdateGoodsOnHandForMasterProduct(IList<CogsDateBlockContext> dateBlockContexts)
+        {
+            var repository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+            repository.DeleteCogsCalcByMasterProduct(dateBlockContexts.First());
+            foreach (var context in dateBlockContexts)
+            {
+                repository.InsertCogsCalcByMasterProduct(context);
+            }
+        }
+
         // Report Entries for Non-PickList
         public void UpdateOrderLinesAndReportEntries(IList<CogsDateBlockContext> dateBlockContexts)
         {

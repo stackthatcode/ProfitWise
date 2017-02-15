@@ -122,3 +122,7 @@ AND PwShopId  = 100001;
 SELECT * FROM profitwisepicklist;
 
 
+
+
+
+
