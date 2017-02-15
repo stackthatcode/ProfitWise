@@ -28,7 +28,9 @@ namespace ProfitWise.Data.Repositories
             var query = @"SELECT * FROM currency ORDER BY CurrencyId ASC;";
             return _connection.DbConn.Query<Currency>(query, new { }, _connection.Transaction).ToList();
         }
+        
 
+        [Obsolete]
         public DateTime? LatestExchangeRateDate()
         {
             var query = @"SELECT MAX(Date) FROM exchangerate;";

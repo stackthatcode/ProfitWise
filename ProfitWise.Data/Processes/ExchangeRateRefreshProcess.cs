@@ -9,7 +9,6 @@ using ProfitWise.Data.Model;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Services;
-using Push.Foundation.Utilities.Logging;
 
 
 namespace ProfitWise.Data.Processes
@@ -20,29 +19,34 @@ namespace ProfitWise.Data.Processes
         private readonly ExchangeRateRepository _exchangeRateRepository;
         private readonly FixerApiRepository _fixerApiRepository;
         private readonly BatchLogger _pushLogger;
+        private readonly SystemRepository _systemRepository;
 
 
         public readonly DateTime DefaultStartDateOfDataset = new DateTime(2006, 01, 01);
         public const int ProfitWiseBaseCurrency = 1; // Corresponds to USD
+
+        public const int FutureProjectionDays = 30;
 
 
         public ExchangeRateRefreshProcess(
                 CurrencyService currencyService,
                 ExchangeRateRepository exchangeRateRepository,
                 FixerApiRepository fixerApiRepository,
-                BatchLogger pushLogger)
+                BatchLogger pushLogger,
+                SystemRepository systemRepository)
         {
             _currencyService = currencyService;
             _exchangeRateRepository = exchangeRateRepository;
             _fixerApiRepository = fixerApiRepository;
             _pushLogger = pushLogger;
+            _systemRepository = systemRepository;
         }
 
 
         [Queue(ProfitWiseQueues.ExchangeRateRefresh)]
         public void Execute()
         {
-            var lastDate = _exchangeRateRepository.LatestExchangeRateDate();
+            var lastDate = _systemRepository.RetrieveLastExchangeRateDate();
             var startDate = lastDate?.AddDays(1) ?? DefaultStartDateOfDataset;
             var endDate = DateTime.Today;
              
@@ -57,14 +61,31 @@ namespace ProfitWise.Data.Processes
                 var date = startDate;
                 var baseCurrency = _currencyService.CurrencyIdToAbbreviation(ProfitWiseBaseCurrency);
 
+                List<ExchangeRate> lastRates = null;
+
                 while (date <= endDate)
                 {
                     _pushLogger.Debug($"Importing Exchange Rates for {date}");
-
                     var rates = _fixerApiRepository.RetrieveConversion(date, baseCurrency);
+                    lastRates = rates;
 
+                    _pushLogger.Info($"Writing Exchange Rates for {date}");
                     WriteRatesForDate(date, rates);
                     date = date.AddDays(1);
+                }
+
+                _systemRepository.UpdateLastExchangeRateDate(endDate);
+                if (lastRates == null)
+                {
+                    return;
+                }
+
+                var projectionDate = endDate.AddDays(1);
+                while (projectionDate <= endDate.AddDays(FutureProjectionDays))
+                {
+                    _pushLogger.Info($"Writing (projected) Exchange Rates for {projectionDate}");
+                    WriteRatesForDate(projectionDate, lastRates);
+                    projectionDate = projectionDate.AddDays(1);
                 }
             }            
         }
@@ -75,7 +96,6 @@ namespace ProfitWise.Data.Processes
             {
                 // Clear out the date
                 _exchangeRateRepository.DeleteForDate(date);
-                _pushLogger.Info($"Writing Exchange Rates for {date}");
 
                 foreach (var rate in ExtrapolateFullSetOfExchangeRate(date, rates))
                 {

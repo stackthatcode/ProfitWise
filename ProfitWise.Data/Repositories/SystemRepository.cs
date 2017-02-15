@@ -24,6 +24,19 @@ namespace ProfitWise.Data.Repositories
         }
 
 
+        public DateTime? RetrieveLastExchangeRateDate()
+        {
+            var query = "SELECT ExchangeRateLastDate FROM systemstate;";
+            return Connection.Query<DateTime?>(query, new {  }).First();
+        }
+        public void UpdateLastExchangeRateDate(DateTime lastDate)
+        {
+            var query = "UPDATE systemstate SET ExchangeRateLastDate = @lastDate;";
+            Connection.Execute(query, new { lastDate });
+        }
+
+
+
         // TODO - this is where the deletion logic appears
         public long DeletePickListByDate(DateTime cutoffDate)
         {
