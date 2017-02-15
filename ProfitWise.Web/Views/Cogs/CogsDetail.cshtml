@@ -97,22 +97,32 @@
             </div>
             
             <div data-bind="visible: CogsDetail().length > 0">
-                <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom: 300px;">
-                    <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
-                        <div class="row">
-                            <div class="col-xs-6" data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
-                            <div class="col-xs-3">
-                                <div style="display: inline-block; position: relative;"
-                                     data-bind="template: { name: 'Date-Picker-Widget', data: { value: CogsDate } }"></div>
-                            </div>
-                            <div class="col-xs-3" style="padding-top:7px; text-align: right;">
-                                <a href="#" data-bind="click: $parent.RemoveDetailEntry">
-                                    <i class="glyphicon glyphicon-remove"></i> Remove
-                                </a>
+                <div class="row" style="padding-top: 15px">
+                    <div class="col-xs-3">
+                        <span><strong>CoGS Type</strong></span>
+                    </div>
+                    <div class="col-xs-3">
+                        <span><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CoGS Value</strong></span>
+                    </div>
+                    <div class="col-xs-3">
+                        <span><strong>On or After Date</strong></span>
+                    </div>
+                    <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom: 300px;">
+                        <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
+                            <div class="row">
+                                <div class="col-xs-6" data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
+                                <div class="col-xs-3">
+                                    <div style="display: inline-block; position: relative;"
+                                         data-bind="template: { name: 'Date-Picker-Widget', data: { value: CogsDate } }"></div>
+                                </div>
+                                <div class="col-xs-3" style="padding-top:7px; text-align: right;">
+                                    <a href="#" data-bind="click: $parent.RemoveDetailEntry">
+                                        <i class="glyphicon glyphicon-remove"></i> Remove
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
             </div>
         </div>
