@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
@@ -9,16 +10,19 @@ using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 
+
 namespace ProfitWise.Data.Repositories
 {
     public class ReportFilterRepository
     {
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly MultitenantFactory _factory;
-        private IDbConnection Connection => _connectionWrapper.DbConn;
-
         public PwShop PwShop { get; set; }
+
+
+        private IDbConnection Connection => _connectionWrapper.DbConn;
         public long PwShopId => PwShop.PwShopId;
+
 
 
         public ReportFilterRepository(ConnectionWrapper connectionWrapper, MultitenantFactory factory)
@@ -31,7 +35,6 @@ namespace ProfitWise.Data.Repositories
         {
             return _connectionWrapper.StartTransactionForScope();
         }
-
 
 
         // Product-Variant data for creating Filters
@@ -347,29 +350,54 @@ namespace ProfitWise.Data.Repositories
         // Product & Variant counts and selection details
         public ProductAndVariantCount RetrieveReportRecordCount(long reportId)
         {
-            var query =
-                @"SELECT COUNT(DISTINCT(PwMasterProductId)) AS ProductCount, 
-                        COUNT(DISTINCT(PwMasterVariantId)) AS VariantCount
-                FROM vw_MasterProductAndVariantSearch 
-                WHERE PwShopId = @PwShopId ";
+            var repository = _factory.MakeReportRepository(this.PwShop);
+            var report = repository.RetrieveReport(reportId);
+            var query = "";
 
-            query += ReportFilterClauseGenerator(reportId);
+            if (report.ReportTypeId == ReportType.Profitability)
+            {
+                query = @"SELECT COUNT(DISTINCT(PwMasterProductId)) AS ProductCount, 
+                        COUNT(DISTINCT(PwMasterVariantId)) AS VariantCount
+                        FROM vw_masterproductandvariantsearch 
+                        WHERE PwShopId = @PwShopId ";
+                query += ReportFilterClauseGenerator(reportId);
+            }
+            if (report.ReportTypeId == ReportType.GoodsOnHand)
+            {
+                query = @"SELECT COUNT(DISTINCT(PwProductId)) AS ProductCount, 
+                        COUNT(DISTINCT(PwVariantId)) AS VariantCount
+                        FROM vw_standaloneproductandvariantsearch 
+                        WHERE PwShopId = @PwShopId ";
+                query += ReportFilterClauseGenerator(reportId);
+            }
 
             return Connection
                 .Query<ProductAndVariantCount>(query, new { PwShopId, PwReportId = reportId })
                 .FirstOrDefault();
         }
-
+        
         public List<ReportSelectionMasterProduct> RetrieveProductSelections(long reportId, int pageNumber, int pageSize)
         {
-            var query =
-                @"SELECT PwMasterProductId, ProductTitle AS Title, Vendor, ProductType
-                FROM vw_MasterProductAndVariantSearch   
-                WHERE PwShopId = @PwShopId ";
-            query += ReportFilterClauseGenerator(reportId);
-            query += @" GROUP BY PwMasterProductId, ProductTitle, Vendor, ProductType 
+            var repository = _factory.MakeReportRepository(this.PwShop);
+            var report = repository.RetrieveReport(reportId);
+            var query = "";
+
+            if (report.ReportTypeId == ReportType.Profitability)
+            {
+                query = @"SELECT PwMasterProductId, ProductTitle AS Title, Vendor, ProductType
+                        FROM vw_masterproductandvariantsearch WHERE PwShopId = @PwShopId ";
+                query += ReportFilterClauseGenerator(reportId);
+                query += @" GROUP BY PwMasterProductId, ProductTitle, Vendor, ProductType 
                         ORDER BY ProductTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            //  ORDER BY Title LIMIT @startRecord, @pageSize"; // MySQL
+            }
+            if (report.ReportTypeId == ReportType.GoodsOnHand)
+            {
+                query = @"SELECT PwProductId, ProductTitle AS Title, Vendor, ProductType
+                        FROM vw_standaloneproductandvariantsearch WHERE PwShopId = @PwShopId ";
+                query += ReportFilterClauseGenerator(reportId);
+                query += @" GROUP BY PwProductId, ProductTitle, Vendor, ProductType 
+                        ORDER BY ProductTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            }
 
             var startRecord = (pageNumber - 1) * pageSize;
 
@@ -377,24 +405,37 @@ namespace ProfitWise.Data.Repositories
                 .Query<ReportSelectionMasterProduct>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize, })
                 .ToList();
         }
-
+        
         public List<ReportSelectionMasterVariant> RetrieveVariantSelections(long reportId, int pageNumber, int pageSize)
         {
-            var query =
-                @"SELECT PwMasterProductId, ProductTitle, PwMasterVariantId, VariantTitle, Sku, Vendor
-                FROM vw_MasterProductAndVariantSearch   
-                WHERE PwShopId = @PwShopId ";
-            query += ReportFilterClauseGenerator(reportId);
-            query += @" ORDER BY ProductTitle, VariantTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
-            //query += @" ORDER BY ProductTitle, VariantTitle LIMIT @startRecord, @pageSize"; //MySQL
+            var repository = _factory.MakeReportRepository(this.PwShop);
+            var report = repository.RetrieveReport(reportId);
+            var query = "";
+
+            if (report.ReportTypeId == ReportType.Profitability)
+            {
+                query = @"SELECT PwMasterProductId, ProductTitle, PwMasterVariantId, VariantTitle, Sku, Vendor
+                        FROM vw_masterproductandvariantsearch WHERE PwShopId = @PwShopId ";
+                query += ReportFilterClauseGenerator(reportId);
+                query += @" ORDER BY ProductTitle, VariantTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            }
+
+            if (report.ReportTypeId == ReportType.GoodsOnHand)
+            {
+                query = @"SELECT PwProductId, ProductTitle, PwVariantId, VariantTitle, Sku, Vendor
+                        FROM vw_standaloneproductandvariantsearch WHERE PwShopId = @PwShopId ";
+                query += ReportFilterClauseGenerator(reportId);
+                query += @" ORDER BY ProductTitle, VariantTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
+            }
 
             var startRecord = (pageNumber - 1) * pageSize;
-
             return Connection
                 .Query<ReportSelectionMasterVariant>(query, new { PwShopId, PwReportId = reportId, startRecord, pageSize })
                 .ToList();
         }
 
+
+        // TODO - refactor this to stop repeating the same clauses?
         public string ReportFilterClauseGenerator(long reportId)
         {
             var query = "";
@@ -421,7 +462,16 @@ namespace ProfitWise.Data.Repositories
                 query += $@"AND PwMasterVariantId IN ( SELECT NumberKey FROM profitwisereportfilter 
                             WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.MasterVariant} ) ";
             }
-
+            if (filters.Count(x => x.FilterType == PwReportFilter.Product) > 0)
+            {
+                query += $@"AND PwProductId IN ( SELECT NumberKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Product} ) ";
+            }
+            if (filters.Count(x => x.FilterType == PwReportFilter.Variant) > 0)
+            {
+                query += $@"AND PwVariantId IN ( SELECT NumberKey FROM profitwisereportfilter 
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Variant} ) ";
+            }
             return query;
         }
 

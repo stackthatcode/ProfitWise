@@ -7,6 +7,9 @@ GO
 DROP VIEW IF EXISTS [dbo].[vw_masterproductandvariantsearch]
 GO
 
+DROP VIEW IF EXISTS [dbo].[vw_standaloneproductandvariantsearch]
+GO
+
 DROP TABLE IF EXISTS [dbo].[profitwisevariant]
 GO
 
@@ -241,34 +244,6 @@ END
 GO
 
 
-CREATE VIEW [dbo].[vw_masterproductandvariantsearch] (
-   [PwShopId], 
-   [PwMasterProductId], 
-   [ProductTitle], 
-   [Vendor], 
-   [ProductType], 
-   [PwMasterVariantId], 
-   [VariantTitle], 
-   [Sku])
-AS 
-   SELECT 
-      t1.PwShopId AS PwShopId, 
-      t1.PwMasterProductId AS PwMasterProductId, 
-      t1.Title AS ProductTitle, 
-      t1.Vendor AS Vendor, 
-      t1.ProductType AS ProductType, 
-      t3.PwMasterVariantId AS PwMasterVariantId, 
-      t3.Title AS VariantTitle, 
-      t3.Sku AS Sku
-   FROM ((profitwiseproduct  AS t1 
-      INNER JOIN profitwisemastervariant  AS t2 
-      ON ((t1.PwMasterProductId = t2.PwMasterProductId))) 
-      INNER JOIN profitwisevariant  AS t3 
-      ON ((t2.PwMasterVariantId = t3.PwMasterVariantId)))
-   WHERE ((t1.IsPrimary = 1) AND (t3.IsPrimary = 1))
-GO
-
-
 
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[shopifyorder]') AND type in (N'U'))
@@ -364,3 +339,46 @@ CREATE TABLE [dbo].[shopifyorderrefund](
 END
 GO
 
+
+
+
+
+
+-- TODO - this badly needs multi-tenant filtering (!!!)
+CREATE VIEW [dbo].[vw_masterproductandvariantsearch] (
+	[PwShopId], [PwMasterProductId], [ProductTitle], [Vendor], [ProductType], [PwMasterVariantId], [VariantTitle], [Sku])
+AS 
+   SELECT 
+      t1.PwShopId AS PwShopId, 
+      t1.PwMasterProductId AS PwMasterProductId, 
+      t1.Title AS ProductTitle, 
+      t1.Vendor AS Vendor, 
+      t1.ProductType AS ProductType, 
+      t3.PwMasterVariantId AS PwMasterVariantId, 
+      t3.Title AS VariantTitle, 
+      t3.Sku AS Sku
+   FROM profitwiseproduct  AS t1 
+      INNER JOIN profitwisemastervariant  AS t2 
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterProductId = t2.PwMasterProductId
+      INNER JOIN profitwisevariant  AS t3 
+		ON t2.PwShopId = t3.PwShopId AND t2.PwMasterVariantId = t3.PwMasterVariantId
+   WHERE t1.IsPrimary = 1 AND t3.IsPrimary = 1
+GO
+
+-- TODO - this badly needs multi-tenant filtering (!!!)
+CREATE VIEW [dbo].[vw_standaloneproductandvariantsearch] (
+	[PwShopId], [PwProductId], [ProductTitle], [Vendor], [ProductType], [PwVariantId], [VariantTitle], [Sku])
+AS 
+   SELECT 
+      t1.PwShopId AS PwShopId, 
+      t1.PwProductId,
+	  t1.Title AS ProductTitle, 
+      t1.Vendor AS Vendor, 
+      t1.ProductType AS ProductType, 
+      t3.PwVariantId,
+	  t3.Title AS VariantTitle, 
+      t3.Sku AS Sku
+   FROM profitwiseproduct AS t1 
+		INNER JOIN profitwisevariant AS t3
+			ON t1.PwShopId = t3.PwShopId AND t1.PwProductId = t3.PwProductId
+GO

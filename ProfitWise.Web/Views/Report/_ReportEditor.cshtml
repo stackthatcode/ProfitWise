@@ -64,6 +64,7 @@
                         <a href="#report-filter-vendor" data-bind="click: VendorClick"
                            aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
                     </li>
+                    <!-- ko if: ReportTypeId() == @ReportType.Profitability -->
                     <li role="presentation">
                         <a href="#report-filter-master-product" data-bind="click: MasterProductClick"
                            aria-controls="messages" role="tab" data-toggle="tab">Master Products</a>
@@ -72,6 +73,9 @@
                         <a href="#report-filter-master-variant" data-bind="click: MasterVariantClick"
                            aria-controls="settings" role="tab" data-toggle="tab">Master Variants</a>
                     </li>
+                    <!-- /ko -->
+                    
+                    <!-- ko if: ReportTypeId() == @ReportType.GoodsOnHand -->
                     <li role="presentation">
                         <a href="#report-filter-product" data-bind="click: ProductClick"
                            aria-controls="messages" role="tab" data-toggle="tab">Products</a>
@@ -80,6 +84,7 @@
                         <a href="#report-filter-variant" data-bind="click: VariantClick"
                            aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
                     </li>
+                    <!-- /ko -->
                 </ul>
             </div>
 
@@ -92,12 +97,14 @@
                 <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
                      data-bind="template: { name: 'Report-Editor-Header-Vendor', data: VendorFilterModel }">
                 </div>
+                
                 <div id="report-filter-master-product" role="tabpanel" class="tab-pane reduced-padding"
                      data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: MasterProductFilterModel }">
                 </div>
                 <div id="report-filter-master-variant" role="tabpanel" class="tab-pane reduced-padding"
                      data-bind="template: { name: 'Report-Editor-Header-Master-Variant', data: MasterVariantFilterModel }">
                 </div>
+
                 <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
                      data-bind="template: { name: 'Report-Editor-Header-Product', data: ProductFilterModel }">
                 </div>
@@ -131,7 +138,7 @@
     <div data-bind="if: SelectedFilterModel() == VendorFilterModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Vendor', data: VendorFilterModel }"></div>
     </div>
-
+    
     <div data-bind="if: SelectedFilterModel() == MasterProductFilterModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Master-Product', data: MasterProductFilterModel }"></div>
     </div>
@@ -220,7 +227,6 @@
                         ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
                 });
 
-
         self.ProductFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.ProductFilter,
@@ -238,7 +244,7 @@
         
         self.VariantFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.MasterVariantFilter,
+                    ProfitWiseWidgets.VariantFilter,
                     "Search by Title, Vendor or SKU",
                     "/FilterService/Variants");
         self.VariantFilterModel.RegisterNotifyCallback(
@@ -283,7 +289,7 @@
         // Filter Bullpen and Selection Preview models...
         self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
 
-        self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
+        self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel(self.ReportTypeId());
         self.FilterBullpenModel.RegisterRemoveCallback(function (filterType, key) {
             var filterModel = filterModelByFilterType(filterType);
             filterModel
@@ -365,10 +371,13 @@
             flow.exec(
                 function () {
                     self.ReportId(reportId);
+
                     self.ProductTypeFilterModel.ReportId(reportId);
                     self.VendorFilterModel.ReportId(reportId);
                     self.MasterProductFilterModel.ReportId(reportId);
                     self.MasterVariantFilterModel.ReportId(reportId);
+                    self.ProductFilterModel.ReportId(reportId);
+                    self.VariantFilterModel.ReportId(reportId);
 
                     self.ProductCountModel.ReportId(reportId);
                     self.FilterBullpenModel.ReportId(reportId);

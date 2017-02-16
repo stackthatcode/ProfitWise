@@ -1,4 +1,5 @@
-﻿<script type="text/html" id="Report-Filter-Summary-Widget">
+﻿@using ProfitWise.Data.Model.Reports
+<script type="text/html" id="Report-Filter-Summary-Widget">
     <a href="#" style="font-weight:700;" data-bind="text: SummaryText, click: SummaryClickCallback"></a>
 </script>
 
@@ -17,15 +18,26 @@
         <div style="height: 10px;"></div>
         <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
                                         data: { label: 'Vendor Filters', grid: VendorsGrid } }"></div>
+        
+        <div data-bind="if: ReportTypeId() == @ReportType.Profitability">
+            <div style="height: 10px;"></div>
+            <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
+                                        data: { label: 'Product Filters', grid: MasterProductGrid } }"></div>
 
-        <div style="height: 10px;"></div>
-        <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
-                                        data: { label: 'Product Filters', grid: ProductsGrid } }"></div>
+            <div style="height: 10px;"></div>
+            <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
+                                        data: { label: 'Variant Filters', grid: MasterVariantGrid } }"></div>
+        </div>
+        
+        <div data-bind="if: ReportTypeId() == @ReportType.GoodsOnHand">
+            <div style="height: 10px;"></div>
+            <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
+                                        data: { label: 'Product Filters', grid: ProductGrid } }"></div>
 
-        <div style="height: 10px;"></div>
-        <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
-                                        data: { label: 'Variant Filters', grid: SkuGrid } }"></div>
-
+            <div style="height: 10px;"></div>
+            <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen-Group',
+                                        data: { label: 'Variant Filters', grid: VariantGrid } }"></div>
+        </div>
     </div>
 </script>
 
@@ -57,10 +69,11 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.FilterBullpenModel = function () {
+    ProfitWiseWidgets.FilterBullpenModel = function (reportTypeId) {
         var self = this;
         self.ReportId = ko.observable();
         self.FiltersGrid = ko.observableArray([]);
+        self.ReportTypeId = ko.observable(reportTypeId);
 
         self.GetFiltersByType = function (filterType) {
             return AQ(self.FiltersGrid())
@@ -72,10 +85,17 @@
             function () { return self.GetFiltersByType(ProfitWiseWidgets.ProductTypeFilter); });
         self.VendorsGrid = ko.computed(
             function () { return self.GetFiltersByType(ProfitWiseWidgets.VendorFilter); });
-        self.ProductsGrid = ko.computed(
+
+        self.MasterProductGrid = ko.computed(
+            function () { return self.GetFiltersByType(ProfitWiseWidgets.MasterProductFilter); });
+        self.MasterVariantGrid = ko.computed(
+            function () { return self.GetFiltersByType(ProfitWiseWidgets.MasterVariantFilter); });
+
+        self.ProductGrid = ko.computed(
             function () { return self.GetFiltersByType(ProfitWiseWidgets.ProductFilter); });
-        self.SkuGrid = ko.computed(
-            function () { return self.GetFiltersByType(ProfitWiseWidgets.SkuFilter); });
+        self.VariantGrid = ko.computed(
+            function () { return self.GetFiltersByType(ProfitWiseWidgets.VariantFilter); });
+
 
         self.SummaryText = ko.computed(
             function() {
@@ -86,11 +106,11 @@
                 if (self.VendorsGrid().length > 0) {
                     output.push("Vendor");
                 }
-                if (self.ProductsGrid().length > 0) {
+                if (self.MasterProductGrid().length > 0 || self.ProductGrid().length > 0) {
                     output.push("Product");
                 }
-                if (self.SkuGrid().length > 0) {
-                    output.push("Sku");
+                if (self.MasterVariantGrid().length > 0 || self.VariantGrid().length > 0) {
+                    output.push("Variant");
                 }
 
                 if (output.length == 0) {
