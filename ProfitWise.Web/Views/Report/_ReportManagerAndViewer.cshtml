@@ -562,7 +562,7 @@
         self.InFilterEditMode = ko.observable(false);
 
         self.ReportViewerModel = new ProfitWiseWidgets.ReportViewerModel(reportTypeId); 
-        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel();
+        self.ReportEditorModel = new ProfitWiseWidgets.ReportEditorModel(reportTypeId);
 
         // To be configured by the parent/owner object
         self.ReportViewerModel.EditReportCallback = function (reportId) {

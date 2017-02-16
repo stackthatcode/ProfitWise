@@ -8,7 +8,10 @@ GO
 DROP TABLE IF EXISTS [dbo].[profitwiseprofitreportentry]
 GO
 
-DROP TABLE IF EXISTS [dbo].[profitwisereportquerystub]
+DROP TABLE IF EXISTS [dbo].[profitwiseprofitquerystub]
+GO
+
+DROP TABLE IF EXISTS [dbo].[profitwisegoodsonhandquerystub]
 GO
 
 DROP TABLE IF EXISTS [dbo].[profitwisereportfilter]
@@ -45,9 +48,9 @@ END
 GO
 
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisereportquerystub]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseprofitquerystub]') AND type in (N'U'))
 BEGIN
-CREATE TABLE [dbo].[profitwisereportquerystub](
+CREATE TABLE [dbo].[profitwiseprofitquerystub](
 	[PwReportId] [bigint] NOT NULL,
 	[PwShopId] [bigint] NOT NULL,
 	[PwMasterVariantId] [bigint] NOT NULL,
@@ -57,7 +60,7 @@ CREATE TABLE [dbo].[profitwisereportquerystub](
 	[ProductTitle] [nvarchar](100) NULL,
 	[Sku] [nvarchar](100) NULL,
 	[VariantTitle] [nvarchar](100) NULL,
- CONSTRAINT [PK_profitwisereportquerystub_PwReportId] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_profitwiseprofitquerystub_PwReportId] PRIMARY KEY CLUSTERED 
 (
 	[PwReportId] ASC,
 	[PwShopId] ASC,
@@ -66,6 +69,34 @@ CREATE TABLE [dbo].[profitwisereportquerystub](
 ) ON [PRIMARY]
 END
 GO
+
+
+
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisegoodsonhandquerystub]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[profitwisegoodsonhandquerystub](
+	[PwReportId] [bigint] NOT NULL,
+	[PwShopId] [bigint] NOT NULL,
+	[PwVariantId] [bigint] NOT NULL,
+	[PwProductId] [bigint] NOT NULL,
+	[Vendor] [nvarchar](100) NULL,
+	[ProductType] [nvarchar](100) NULL,
+	[ProductTitle] [nvarchar](100) NULL,
+	[Sku] [nvarchar](100) NULL,
+	[VariantTitle] [nvarchar](100) NULL,
+ CONSTRAINT [PK_profitwisegoodsonhandquerystub_PwReportId] PRIMARY KEY CLUSTERED 
+(
+	[PwReportId] ASC,
+	[PwShopId] ASC,
+	[PwVariantId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+
+
 
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisereport]') AND type in (N'U'))

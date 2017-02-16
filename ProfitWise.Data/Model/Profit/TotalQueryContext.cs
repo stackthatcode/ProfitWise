@@ -5,14 +5,6 @@ namespace ProfitWise.Data.Model.Profit
 {
     public class TotalQueryContext
     {
-        public TotalQueryContext()
-        {
-            PageNumber = 1;
-            PageSize = 10;
-            Grouping = ReportGrouping.Product;
-            Ordering = ColumnOrdering.ProfitDescending;
-        }
-
         public long PwShopId { get; set; }
         public long PwReportId { get; set; }
         public DateTime StartDate { get; set; }
@@ -23,5 +15,13 @@ namespace ProfitWise.Data.Model.Profit
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public int StartingIndex => (PageNumber - 1) * PageSize;
+
+        public TotalQueryContext()
+        {
+            PageNumber = 1;
+            PageSize = 10;
+            Grouping = ReportGrouping.Product;
+            Ordering = ColumnOrdering.ProfitDescending;
+        }
     }
 }

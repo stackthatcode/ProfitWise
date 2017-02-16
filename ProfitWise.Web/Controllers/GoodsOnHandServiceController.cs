@@ -48,8 +48,8 @@ namespace ProfitWise.Web.Controllers
                 var report = repository.RetrieveReport(reportId);
 
                 // First create the query stub...
-                filterRepository.PopulateQueryStub(reportId);
-
+                //queryRepository.PopulateQueryStub(reportId);
+                // TODO - replace with Goods on Hand
 
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userIdentity.PwShop);
@@ -79,7 +79,7 @@ namespace ProfitWise.Web.Controllers
         // *** The aggregated Grouped Totals, including Executive Summary
         private Summary BuildSummary(PwReport report, PwShop shop)
         {
-            var queryRepository = _factory.MakeProfitRepository(shop);
+            var queryRepository = _factory.MakeGoodsOnHandRepository(shop);
 
             var queryContext = new TotalQueryContext
             {
@@ -91,37 +91,11 @@ namespace ProfitWise.Web.Controllers
                 Ordering = ColumnOrdering.ProfitDescending,
             };
 
-            var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
-
-            var productTotals =
-                queryRepository
-                    .RetreiveTotalsByProduct(queryContext)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-
-            var variantTotals =
-                queryRepository
-                    .RetreiveTotalsByVariant(queryContext)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-
-            var productTypeTotals =
-                queryRepository
-                    .RetreiveTotalsByProductType(queryContext)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-
-            var vendorTotals =
-                queryRepository
-                    .RetreiveTotalsByVendor(queryContext)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
-
             var summary = new Summary()
             {
                 CurrencyId = shop.CurrencyId,
-                ExecutiveSummary = executiveSummary,
-                ProductsByMostProfitable = productTotals,
-                VariantByMostProfitable = variantTotals,
-                ProductTypeByMostProfitable = productTypeTotals,
-                VendorsByMostProfitable = vendorTotals,
             };
+
             return summary;
         }
 

@@ -55,21 +55,3 @@ AND t2.PwShopId = 100001
 SELECT * FROM [vw_EffectiveCogsDetail]
 
 SELECT * FROM profitwisereportquerystub;
-
-PwShopId	
-PwMasterVariantId	
-PwProductId	
-PwVariantId	
-Vendor	
-ProductType	
-ProductTitle	
-VariantTitle	
-Inventory	
-LowPrice	
-HighPrice	
-CogsDetail	
-DefaultCogsTypeId	
-DefaultCogsCurrencyId	
-DefaultCogsAmount	
-DefaultCogsMarginPercent
-

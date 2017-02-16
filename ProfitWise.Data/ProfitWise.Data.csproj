@@ -102,7 +102,8 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
-    <Compile Include="Model\GoodsOnHand\QueryResults.cs" />
+    <Compile Include="Model\GoodsOnHand\Totals.cs" />
+    <Compile Include="Model\GoodsOnHand\TotalQueryContext.cs" />
     <Compile Include="Model\Preferences\DateRange.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />

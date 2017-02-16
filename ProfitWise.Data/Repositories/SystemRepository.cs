@@ -55,7 +55,7 @@ namespace ProfitWise.Data.Repositories
         public void CleanupReportData(DateTime cutoffDate)
         {
             var query =
-                @"  DELETE FROM profitwisereportquerystub WHERE PwReportId IN 
+                @"  DELETE FROM profitwiseprofitquerystub WHERE PwReportId IN 
                     ( SELECT PwReportId FROM profitwisereport 
                     WHERE LastAccessedDate < @cutoffDate AND CopyForEditing = 1)
 

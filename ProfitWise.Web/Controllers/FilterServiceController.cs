@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
-using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
 
@@ -29,7 +27,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
-            var data = repository.RetrieveProductTypeSummary();
+            var data = repository.RetrieveProductTypeOptions();
 
             // NOTE: this is domain logic living on the controller...
             var output = data.Select(x => new
@@ -47,7 +45,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
-            var data = repository.RetrieveVendorSummary(reportId);
+            var data = repository.RetrieveVendorOptions(reportId);
 
             // NOTE: this is domain logic living on the controller...
             var output = data.Select(x => new
@@ -72,7 +70,7 @@ namespace ProfitWise.Web.Controllers
             //    data.Add(new PwProductSummary() { PwMasterProductId = i, Title = "test", Count = 10 });
             //}
 
-            var data = repository.RetrieveMasterProductSummary(reportId);
+            var data = repository.RetrieveMasterProductOptions(reportId);
 
             var output = data.Select(x => new
             {
@@ -86,11 +84,11 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Skus(long reportId)
+        public ActionResult MasterVariants(long reportId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
-            var data = repository.RetrieveSkuSummary(reportId);
+            var data = repository.RetrieveMasterVariantOptions(reportId);
 
             var output = data.Select(x => new
             {

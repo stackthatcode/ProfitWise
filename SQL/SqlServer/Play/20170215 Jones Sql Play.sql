@@ -2,16 +2,14 @@ USE ProfitWise
 GO
 
 
-SELECT * FROM [profitwisemastervariantcogscalc]
-
-DELETE FROM [profitwisemastervariantcogscalc]
+SELECT * FROM profitwisemastervariant;
 
 
-SELECT 
-	t1.PwMasterProductId, t1.PwMasterVariantId,  t3.Vendor, t3.ProductType, 
-	t3.PwProductId, t2.PwVariantId, t3.Title AS ProductTitle, t2.Title AS VariantTitle, 
-	
-	t2.Inventory, t2.LowPrice, t2.HighPrice, t4.PercentMultiplier * t2.HighPrice + t4.FixedAmount * t5.Rate AS CostOfGoodsOnHand
+
+
+
+SELECT	t1.PwMasterProductId, t1.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, t2.Inventory, t2.LowPrice, t2.HighPrice, 
+		t4.PercentMultiplier * t2.HighPrice + t4.FixedAmount * t5.Rate AS CostOfGoodsOnHand
 
 FROM profitwisemastervariant t1
 	INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
@@ -27,12 +25,18 @@ AND t1.PwMasterVariantId IN (
 AND t2.PwShopId = 100001
 AND t2.Inventory IS NOT NULL
 AND t2.IsActive = 1
-
-AND t3.PwShopId = 100001
 AND t4.PwShopId = 100001
 AND t5.DestinationCurrencyId = 1 
 AND t5.Date = '2017-02-01'
 
 
 
+SELECT * FROM profitwisereportquerystub WHERE PwReportId = 99792;
+
+
+--AND t3.PwShopId = 100001
+
 SELECT * FROM profitwisereportquerystub;
+
+t3.Vendor, t3.ProductType, 
+ t3.Title AS ProductTitle, t2.Title AS VariantTitle, 

@@ -34,8 +34,8 @@ namespace ProfitWise.Data.Repositories
 
 
 
-        // Product-Variant reference data for creating Filters
-        public List<PwProductTypeSummary> RetrieveProductTypeSummary()
+        // Product-Variant data for creating Filters
+        public List<PwProductTypeSummary> RetrieveProductTypeOptions()
         {
             var query =
                 @"SELECT ProductType, COUNT(*) AS Count
@@ -45,7 +45,7 @@ namespace ProfitWise.Data.Repositories
             return Connection.Query<PwProductTypeSummary>(query, new { PwShopId }).ToList();
         }
 
-        public IList<PwProductVendorSummary> RetrieveVendorSummary(long pwReportId)
+        public IList<PwProductVendorSummary> RetrieveVendorOptions(long pwReportId)
         {
             var query =
                 @"SELECT Vendor, COUNT(*) AS Count 
@@ -68,7 +68,7 @@ namespace ProfitWise.Data.Repositories
                             query, new { PwShopId, @pwReportId, productTypeFilter }).ToList();
         }
 
-        public IList<PwProductSummary> RetrieveMasterProductSummary(long pwReportId)
+        public IList<PwProductSummary> RetrieveMasterProductOptions(long pwReportId)
         {
             var query =
                 @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title, COUNT(*) AS VariantCount
@@ -101,7 +101,7 @@ namespace ProfitWise.Data.Repositories
                             query, new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter }).ToList();
         }
 
-        public IList<PwProductSkuSummary> RetrieveSkuSummary(long pwReportId)
+        public IList<PwProductSkuSummary> RetrieveMasterVariantOptions(long pwReportId)
         {
             var query =
                 @"SELECT t1.PwMasterProductId, t1.Vendor, t1.Title AS ProductTitle, 
@@ -118,7 +118,7 @@ namespace ProfitWise.Data.Repositories
             var filters = RetrieveFilters(pwReportId);
             var productTypeFilter = PwReportFilter.ProductType;
             var vendorTypeFilter = PwReportFilter.Vendor;
-            var productFilter = PwReportFilter.Product;
+            var productFilter = PwReportFilter.MasterProduct;
 
             if (filters.Count(x => x.FilterType == PwReportFilter.ProductType) > 0)
             {
@@ -132,7 +132,7 @@ namespace ProfitWise.Data.Repositories
                                 SELECT StringKey FROM profitwisereportfilter
                                 WHERE PwReportId = @pwReportId AND FilterType = @vendorTypeFilter ) ";
             }
-            if (filters.Count(x => x.FilterType == PwReportFilter.Product) > 0)
+            if (filters.Count(x => x.FilterType == PwReportFilter.MasterProduct) > 0)
             {
                 query += @" AND t1.PwMasterProductId IN ( 
                                 SELECT NumberKey FROM profitwisereportfilter
@@ -334,57 +334,18 @@ namespace ProfitWise.Data.Repositories
                 query += $@"AND Vendor IN ( SELECT StringKey FROM profitwisereportfilter 
                             WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Vendor} ) ";
             }
-            if (filters.Count(x => x.FilterType == PwReportFilter.Product) > 0)
+            if (filters.Count(x => x.FilterType == PwReportFilter.MasterProduct) > 0)
             {
                 query += $@"AND PwMasterProductId IN ( SELECT NumberKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Product} ) ";
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.MasterProduct} ) ";
             }
-            if (filters.Count(x => x.FilterType == PwReportFilter.Sku) > 0)
+            if (filters.Count(x => x.FilterType == PwReportFilter.MasterVariant) > 0)
             {
                 query += $@"AND PwMasterVariantId IN ( SELECT NumberKey FROM profitwisereportfilter 
-                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.Sku} ) ";
+                            WHERE PwReportId = @PwReportId AND FilterType = {PwReportFilter.MasterVariant} ) ";
             }
 
             return query;
-        }
-
-
-        // Profit Query output
-        public void PopulateQueryStub(long reportId)
-        {
-            var deleteQuery =
-                @"DELETE FROM profitwisereportquerystub
-                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
-            Connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
-
-            var createQuery =
-                @"INSERT INTO profitwisereportquerystub
-                SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, 
-                        Vendor, ProductType, ProductTitle, Sku, VariantTitle
-                FROM vw_MasterProductAndVariantSearch 
-                WHERE PwShopId = @PwShopId " +
-                ReportFilterClauseGenerator(reportId) +
-                @" GROUP BY PwMasterVariantId,  PwMasterProductId, 
-                    Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
-            Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
-        }
-
-        public List<PwReportSearchStub> RetrieveSearchStubs(long reportId)
-        {
-            var query =
-                @"SELECT t2.*
-                FROM profitwisereportquerystub t1 
-	                INNER JOIN vw_MasterProductAndVariantSearch t2
-		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
-                WHERE t1.PwShopId = @PwShopId
-                AND t1.PwReportId = @reportId
-                AND t2.PwShopId = @PwShopId";
-
-            var results =
-                Connection
-                    .Query<PwReportSearchStub>(
-                        query, new { PwShopId, reportId }).ToList();
-            return results;
         }
 
     }

@@ -31,25 +31,9 @@ namespace ProfitWise.Data.Repositories
         public IDbTransaction InitiateTransaction()
         {
             return _connectionWrapper.StartTransactionForScope();
-        }
+        }        
 
-
-        // Product & Variant counts and selection details
-        public ProductAndVariantCount RetrieveReportRecordCount(long reportId)
-        {
-            var query =
-                @"SELECT COUNT(DISTINCT(PwMasterProductId)) AS ProductCount, 
-                        COUNT(DISTINCT(PwMasterVariantId)) AS VariantCount
-                FROM vw_MasterProductAndVariantSearch 
-                WHERE PwShopId = @PwShopId ";
-
-
-            return Connection
-                .Query<ProductAndVariantCount>(query, new { PwShopId, PwReportId = reportId })
-                .FirstOrDefault();
-        }
-
-        public List<PwReportSelectionMasterProduct> RetrieveProductSelections(long reportId, int pageNumber, int pageSize)
+        public List<PwReportSelectionMasterProduct> RetrieveTotals(long reportId)
         {
             throw new NotImplementedException();
         }

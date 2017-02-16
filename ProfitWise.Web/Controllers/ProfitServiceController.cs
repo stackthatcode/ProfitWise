@@ -49,7 +49,7 @@ namespace ProfitWise.Web.Controllers
                 var report = reportRepository.RetrieveReport(reportId);
 
                 // First create the query stub...
-                filterRepository.PopulateQueryStub(reportId);
+                queryRepository.PopulateQueryStub(reportId);
 
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userIdentity.PwShop);
@@ -99,14 +99,13 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);           
             var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);
-            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
-
+            
             using (var trans = new TransactionScope())
             {
                 var shopCurrencyId = userIdentity.PwShop.CurrencyId;
                 var report = repository.RetrieveReport(reportId);
 
-                filterRepository.PopulateQueryStub(reportId);
+                queryRepository.PopulateQueryStub(reportId);
                 var queryContext = new TotalQueryContext
                 {
                     PwShopId = userIdentity.PwShop.PwShopId,

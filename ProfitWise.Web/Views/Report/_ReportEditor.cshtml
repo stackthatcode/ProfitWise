@@ -1,4 +1,5 @@
 ﻿@using ProfitWise.Data.Model
+@using ProfitWise.Data.Model.Reports
 
 <script type="text/html" id="Report-Editor-Top-Level">
     <!-- Move this to the Report Editor...? -->
@@ -67,13 +68,23 @@
                            aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
                     </li>
                     <li role="presentation">
-                        <a href="#report-filter-product"
+                        <a href="#report-filter-master-product"
                            data-bind="click: MasterProductClick"
+                           aria-controls="messages" role="tab" data-toggle="tab">Master Products</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#report-filter-master-variant"
+                           data-bind="click: MasterVariantClick"
+                           aria-controls="settings" role="tab" data-toggle="tab">Master Variants</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#report-filter-product"
+                           data-bind="click: ProductClick"
                            aria-controls="messages" role="tab" data-toggle="tab">Products</a>
                     </li>
                     <li role="presentation">
-                        <a href="#report-filter-sku"
-                           data-bind="click: SkuClick"
+                        <a href="#report-filter-master-variant"
+                           data-bind="click: VariantClick"
                            aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
                     </li>
                 </ul>
@@ -88,11 +99,17 @@
                 <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
                      data-bind="template: { name: 'Report-Editor-Header-Vendor', data: VendorFilterModel }">
                 </div>
-                <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
+                <div id="report-filter-master-product" role="tabpanel" class="tab-pane reduced-padding"
                      data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: MasterProductFilterModel }">
                 </div>
-                <div id="report-filter-sku" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Sku', data: SkuFilterModel }">
+                <div id="report-filter-master-variant" role="tabpanel" class="tab-pane reduced-padding"
+                     data-bind="template: { name: 'Report-Editor-Header-Master-Variant', data: MasterVariantFilterModel }">
+                </div>
+                <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
+                     data-bind="template: { name: 'Report-Editor-Header-Product', data: ProductFilterModel }">
+                </div>
+                <div id="report-filter-variant" role="tabpanel" class="tab-pane reduced-padding"
+                     data-bind="template: { name: 'Report-Editor-Header-Variant', data: VariantFilterModel }">
                 </div>
             </div>
         </div>
@@ -126,8 +143,16 @@
         <div data-bind="template: { name: 'Report-Editor-Body-Master-Product', data: MasterProductFilterModel }"></div>
     </div>
 
-    <div data-bind="if: SelectedFilterModel() == SkuFilterModel">
-        <div data-bind="template: { name: 'Report-Editor-Body-Sku', data: SkuFilterModel }"></div>
+    <div data-bind="if: SelectedFilterModel() == MasterVariantFilterModel">
+        <div data-bind="template: { name: 'Report-Editor-Body-Master-Variant', data: MasterVariantFilterModel }"></div>
+    </div>
+    
+    <div data-bind="if: SelectedFilterModel() == ProductFilterModel">
+        <div data-bind="template: { name: 'Report-Editor-Body-Product', data: ProductFilterModel }"></div>
+    </div>
+
+    <div data-bind="if: SelectedFilterModel() == VariantFilterModel">
+        <div data-bind="template: { name: 'Report-Editor-Body-Variant', data: VariantFilterModel }"></div>
     </div>
 </script>
 
@@ -138,22 +163,25 @@
     // Bind the C# internal name
     ProfitWiseWidgets.ProductTypeFilter = "@PwReportFilter.ProductType";
     ProfitWiseWidgets.VendorFilter = "@PwReportFilter.Vendor";
+    ProfitWiseWidgets.MasterProductFilter = "@PwReportFilter.MasterProduct";
+    ProfitWiseWidgets.MasterVariantFilter = "@PwReportFilter.MasterVariant";
     ProfitWiseWidgets.ProductFilter = "@PwReportFilter.Product";
-    ProfitWiseWidgets.SkuFilter = "@PwReportFilter.Sku";
+    ProfitWiseWidgets.VariantFilter = "@PwReportFilter.Variant";
 
-    ProfitWiseWidgets.ReportEditorModel = function () {
+    ProfitWiseWidgets.ReportEditorModel = function (reportTypeId) {
         var self = this;
         self.ReportId = ko.observable();
         self.ReportContext = ko.observable();
-        
+        self.ReportTypeId = ko.observable(reportTypeId);
+
         // Wire in the individual Report Editor modules
         self.ProductTypeFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.ProductTypeFilter, 
+                    ProfitWiseWidgets.ProductTypeFilter,
                     "Search by Product Type...",
                     "/FilterService/ProductTypes");
         self.ProductTypeFilterModel.RegisterNotifyCallback(
-                function() {
+                function () {
                     self.RefreshFilterSummaryAndCount();
                 });
 
@@ -169,7 +197,7 @@
 
         self.MasterProductFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.ProductFilter, 
+                    ProfitWiseWidgets.MasterProductFilter,
                     "Search by Title and Vendor",
                     "/FilterService/MasterProducts");
         self.MasterProductFilterModel.RegisterNotifyCallback(
@@ -178,26 +206,59 @@
                 });
         self.MasterProductFilterModel.RegisterSearchTextFunction(
                 function (item, searchText) {
-                        return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
-                            ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
-                    });
-        
-        self.SkuFilterModel =
+                    return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
+                });
+
+        self.MasterVariantFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
-                    ProfitWiseWidgets.SkuFilter, 
+                    ProfitWiseWidgets.MasterVariantFilter,
                     "Search by Title, Vendor or SKU",
-                    "/FilterService/Skus");
-        self.SkuFilterModel.RegisterNotifyCallback(
+                    "/FilterService/MasterVariants");
+        self.MasterVariantFilterModel.RegisterNotifyCallback(
                 function () {
                     self.RefreshFilterSummaryAndCount();
                 });
-        self.SkuFilterModel.RegisterSearchTextFunction(
+        self.MasterVariantFilterModel.RegisterSearchTextFunction(
                 function (item, searchText) {
                     return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
                         ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
                         ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
                         ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
-                });        
+                });
+
+
+        self.ProductFilterModel =
+                new ProfitWiseWidgets.ReportFilterModel(
+                    ProfitWiseWidgets.ProductFilter,
+                    "Search by Title and Vendor",
+                    "/FilterService/Products");
+        self.ProductFilterModel.RegisterNotifyCallback(
+                function () {
+                    self.RefreshFilterSummaryAndCount();
+                });
+        self.ProductFilterModel.RegisterSearchTextFunction(
+                function (item, searchText) {
+                    return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
+                });
+        
+        self.VariantFilterModel =
+                new ProfitWiseWidgets.ReportFilterModel(
+                    ProfitWiseWidgets.MasterVariantFilter,
+                    "Search by Title, Vendor or SKU",
+                    "/FilterService/Variants");
+        self.VariantFilterModel.RegisterNotifyCallback(
+                function () {
+                    self.RefreshFilterSummaryAndCount();
+                });
+        self.VariantFilterModel.RegisterSearchTextFunction(
+                function (item, searchText) {
+                    return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.Sku, searchText) ||
+                        ProfitWiseFunctions.CaseInsensitiveContains(item.ProductTitle, searchText);
+                });
 
         var filterModelByFilterType = function (filterType) {
             if (filterType == ProfitWiseWidgets.ProductTypeFilter) {
@@ -206,11 +267,17 @@
             if (filterType == ProfitWiseWidgets.VendorFilter) {
                 return self.VendorFilterModel;
             }
-            if (filterType == ProfitWiseWidgets.ProductFilter) {
+            if (filterType == ProfitWiseWidgets.MasterProductFilter) {
                 return self.MasterProductFilterModel;
             }
-            if (filterType == ProfitWiseWidgets.SkuFilter) {
-                return self.SkuFilterModel;
+            if (filterType == ProfitWiseWidgets.MasterVariantFilter) {
+                return self.MasterVariantFilterModel;
+            }
+            if (filterType == ProfitWiseWidgets.ProductFilter) {
+                return self.ProductFilterModel;
+            }
+            if (filterType == ProfitWiseWidgets.VariantFilter) {
+                return self.VariantFilterModel;
             }
         };
 
@@ -221,7 +288,7 @@
         });
 
         // Filter Bullpen and Selection Preview models...
-        self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();        
+        self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
         self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
         self.FilterBullpenModel.RegisterRemoveCallback(function (filterType, key) {
             var filterModel = filterModelByFilterType(filterType);
@@ -255,13 +322,20 @@
         };
 
         self.MasterProductClick = function () {
-            self.ClickOnNewFilterTab(self.MasterProductFilterModel, "report-filter-product");
+            self.ClickOnNewFilterTab(self.MasterProductFilterModel, "report-filter-master-product");
         };
 
-        self.SkuClick = function () {
-            self.ClickOnNewFilterTab(self.SkuFilterModel, "report-filter-sku");
+        self.MasterVariantClick = function () {
+            self.ClickOnNewFilterTab(self.MasterVariantFilterModel, "report-filter-master-variant");
         };
 
+        self.ProductClick = function () {
+            self.ClickOnNewFilterTab(self.ProductFilterModel, "report-filter-product");
+        };
+
+        self.VariantClick = function () {
+            self.ClickOnNewFilterTab(self.VariantFilterModel, "report-filter-variant");
+        };
 
         // Report data bootstrapping function
         self.RefreshFilterSummaryAndCount = function (callback) {
@@ -295,19 +369,19 @@
 
         self.LoadReport = function (reportId) {
             flow.exec(
-                function() {
+                function () {
                     self.ReportId(reportId);
                     self.ProductTypeFilterModel.ReportId(reportId);
                     self.VendorFilterModel.ReportId(reportId);
                     self.MasterProductFilterModel.ReportId(reportId);
-                    self.SkuFilterModel.ReportId(reportId);
+                    self.MasterVariantFilterModel.ReportId(reportId);
 
                     self.ProductCountModel.ReportId(reportId);
                     self.FilterBullpenModel.ReportId(reportId);
-                    
+
                     self.RefreshFilterSummaryAndCount(this);
                 },
-                function() {
+                function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
@@ -316,7 +390,7 @@
                     self.ProductTypeClick();
                 });
         };
-        
+
         self.OkCallback = function () { };
 
         self.OkButtonClick = function () {

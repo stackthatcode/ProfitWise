@@ -5,9 +5,7 @@ using Autofac.Extras.DynamicProxy2;
 using Dapper;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Preferences;
-using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 

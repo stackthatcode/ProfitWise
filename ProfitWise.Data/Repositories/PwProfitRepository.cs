@@ -33,8 +33,49 @@ namespace ProfitWise.Data.Repositories
             return _connectionWrapper.StartTransactionForScope();
         }
 
-        // Queries for generating Totals  
 
+        // Profit Query output
+        public void PopulateQueryStub(long reportId)
+        {
+            var filterRepository = _factory.MakeReportFilterRepository(this.PwShop);
+
+            var deleteQuery =
+                @"DELETE FROM profitwiseprofitquerystub
+                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
+            Connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
+
+            var createQuery =
+                @"INSERT INTO profitwiseprofitquerystub
+                SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, 
+                        Vendor, ProductType, ProductTitle, Sku, VariantTitle
+                FROM vw_MasterProductAndVariantSearch 
+                WHERE PwShopId = @PwShopId " +
+                filterRepository.ReportFilterClauseGenerator(reportId) +
+                @" GROUP BY PwMasterVariantId,  PwMasterProductId, 
+                    Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
+            Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
+        }
+
+        public List<PwReportSearchStub> RetrieveSearchStubs(long reportId)
+        {
+            var query =
+                @"SELECT t2.*
+                FROM profitwiseprofitquerystub t1 
+	                INNER JOIN vw_MasterProductAndVariantSearch t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
+                WHERE t1.PwShopId = @PwShopId
+                AND t1.PwReportId = @reportId
+                AND t2.PwShopId = @PwShopId";
+
+            var results =
+                Connection
+                    .Query<PwReportSearchStub>(
+                        query, new { PwShopId, reportId }).ToList();
+            return results;
+        }
+
+
+        // Queries for generating Totals  
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
         {            
             var totalsQuery = @"SELECT " + QueryGutsForTotals();
@@ -42,7 +83,7 @@ namespace ProfitWise.Data.Repositories
 
             var numberOfOrdersQuery =
                 @"SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 
-                FROM profitwisereportquerystub t1
+                FROM profitwiseprofitquerystub t1
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	                INNER JOIN profitwiseprofitreportentry t3
@@ -76,7 +117,7 @@ namespace ProfitWise.Data.Repositories
         public int RetreiveTotalCounts(TotalQueryContext queryContext)
         {
             var queryGuts =
-                @"FROM profitwisereportquerystub t1
+                @"FROM profitwiseprofitquerystub t1
 		            INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	                INNER JOIN profitwiseprofitreportentry t3
@@ -160,7 +201,7 @@ namespace ProfitWise.Data.Repositories
                 SUM(t3.Quantity) AS TotalQuantitySold,
 		        SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
                 CASE WHEN SUM(t3.NetSales) = 0 THEN 0 ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin
-                FROM profitwisereportquerystub t1
+                FROM profitwiseprofitquerystub t1
 		            INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	                INNER JOIN profitwiseprofitreportentry t3
@@ -316,7 +357,7 @@ namespace ProfitWise.Data.Repositories
 
             var queryGuts =
                 @"t3.NetSales AS TotalRevenue, t3.CoGS AS TotalCogs
-                FROM profitwisereportquerystub t1
+                FROM profitwiseprofitquerystub t1
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	                INNER JOIN profitwiseprofitreportentry t3
@@ -354,7 +395,7 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t3.EntryDate AS OrderDate, SUM(t3.NetSales) AS TotalRevenue, SUM(t3.CoGS) AS TotalCogs
-                FROM profitwisereportquerystub t1
+                FROM profitwiseprofitquerystub t1
 	                INNER JOIN profitwisevariant t2
 		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
 	                INNER JOIN profitwiseprofitreportentry t3

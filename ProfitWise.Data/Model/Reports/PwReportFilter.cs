@@ -1,15 +1,18 @@
 ﻿using System;
 using Push.Foundation.Utilities.Helpers;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Reports
 {
     public class PwReportFilter
     {
         public const int ProductType = 1;
         public const int Vendor = 2;
-        public const int Product = 3;
-        public const int Sku = 4;
-        
+        public const int MasterProduct = 3;
+        public const int MasterVariant = 4;
+        public const int Product = 5;
+        public const int Variant = 6;
+
+
         public const string Empty = "(Empty)";
 
         public long PwReportId { get; set; }
@@ -39,7 +42,8 @@ namespace ProfitWise.Data.Model
 
         public static bool FilterTypeUsesNumberKey(int filterType)
         {
-            return filterType == Product || filterType == Sku;
+            return filterType == MasterProduct || filterType == MasterVariant ||
+                   filterType == Product || filterType == Variant;
         }
 
         public string DescriptionBuilder()
@@ -52,11 +56,11 @@ namespace ProfitWise.Data.Model
             {
                 return "Vendor is " + Title.IsNullOrEmptyAlt(Empty);
             }
-            if (FilterType == Product)
+            if (FilterType == MasterProduct || FilterType == Product)
             {
                 return "Product is " + Title.IsNullOrEmptyAlt(Empty);
             }
-            if (FilterType == Sku)
+            if (FilterType == MasterVariant || FilterType == Variant)
             {
                 return "Variant is " + Title.IsNullOrEmptyAlt(Empty);
             }
@@ -64,5 +68,5 @@ namespace ProfitWise.Data.Model
             throw new Exception($"Can't recognize FilterType: {FilterType}");
         }
     }
-
 }
+
