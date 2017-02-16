@@ -297,6 +297,8 @@
         self.ReportId = ko.observable();
         self.DatasetLoaded = ko.observable(false);
 
+        self.Data = ko.observable();
+
         /*
         self.SummaryActive = ko.observable(true);
         self.ProfitabilityDetailContext = new ProfitWiseWidgets.ProfitabilityDetailContext();
@@ -318,19 +320,38 @@
         };
         */
         
-        self.RefreshReportData = function (reportId, callback) {
-            self.ReportId(reportId);
+        self.RefreshReportData = function (reportId, callback) {             
+            alert('RefreshReportData Triggered!!!');
+            flow.exec(
+                function () {
+                    self.ReportId(reportId);
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/GoodsOnHandService/Data", { reportId: reportId }, this);
+                },
+                function (data) {
+                    // Rename to Summary Dataset
+                    var summary = data.Summary;
+                    self.Data(summary);
+                    
+                    /*
+                    ProfitWiseWidgets.LoadColumnChart(
+                        '#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
 
-            /*
-            if (self.SummaryActive()) {
-                self.ProfitabilitySummaryContext.LoadDataset(reportId, callback);
-            } else {
-                self.ProfitabilityDetailContext.Initialize();
-                self.ProfitabilityDetailContext.LoadDataset(reportId, callback);
-            }
-            */
+                    if (data.Summary.ExecutiveSummary.TotalQuantitySold > 0) {
+                        ProfitWiseWidgets.LoadPieChart('products-pie-chart', 'Top Products', summary.ProductsByMostProfitable, data.CurrencyId);
+                        ProfitWiseWidgets.LoadPieChart('vendors-pie-chart', 'Top Vendors', summary.VendorsByMostProfitable, data.CurrencyId);
+                        ProfitWiseWidgets.LoadPieChart('variants-pie-chart', 'Top Variants', summary.VariantByMostProfitable, data.CurrencyId);
+                        ProfitWiseWidgets.LoadPieChart('product-types-pie-chart', 'Top Product Types', summary.ProductTypeByMostProfitable, data.CurrencyId);
+                    }
+                    */
 
-            self.DatasetLoaded(true);
+                    self.DatasetLoaded(true);
+
+                    if (callback) {
+                        callback();
+                    }
+                }
+            );
         };
 
         return self;

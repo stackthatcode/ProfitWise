@@ -48,9 +48,8 @@ namespace ProfitWise.Web.Controllers
                 var report = repository.RetrieveReport(reportId);
 
                 // First create the query stub...
-                //queryRepository.PopulateQueryStub(reportId);
-                // TODO - replace with Goods on Hand
-
+                queryRepository.PopulateQueryStub(reportId);
+                
                 // Next build the top-performing summary
                 var summary = BuildSummary(report, userIdentity.PwShop);
                 
@@ -65,17 +64,7 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
-
-
-        private string DrilldownUrlBuilder(
-                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
-        {
-            return $"/ProfitService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
-                   $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&" +
-                   $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
-        }
-
-
+        
         // *** The aggregated Grouped Totals, including Executive Summary
         private Summary BuildSummary(PwReport report, PwShop shop)
         {
@@ -98,6 +87,15 @@ namespace ProfitWise.Web.Controllers
 
             return summary;
         }
+        
+        private string DrilldownUrlBuilder(
+                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
+        {
+            return $"/ProfitService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
+                   $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&" +
+                   $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
+        }
+
 
         // *** Builds Report Series data for High Charts multi-column chart
         private List<ReportSeries> BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary)

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using Dapper;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
-using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 
@@ -32,7 +29,29 @@ namespace ProfitWise.Data.Repositories
         public IDbTransaction InitiateTransaction()
         {
             return _connectionWrapper.StartTransactionForScope();
-        }        
+        }
+
+        public void PopulateQueryStub(long reportId)
+        {
+            var filterRepository = _factory.MakeReportFilterRepository(this.PwShop);
+
+            var deleteQuery =
+                @"DELETE FROM profitwisegoodsonhandquerystub
+                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
+            Connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
+
+            var createQuery =
+                @"INSERT INTO profitwisegoodsonhandquerystub
+                SELECT @PwReportId, @PwShopId, PwVariantId, PwProductId, 
+                        Vendor, ProductType, ProductTitle, Sku, VariantTitle
+                FROM vw_standaloneproductandvariantsearch 
+                WHERE PwShopId = @PwShopId " +
+                filterRepository.ReportFilterClauseGenerator(reportId) +
+                @" GROUP BY PwVariantId, PwProductId, 
+                Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
+            Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
+        }
+
 
         public List<ReportSelectionMasterProduct> RetrieveTotals(long reportId)
         {

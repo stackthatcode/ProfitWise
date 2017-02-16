@@ -5,38 +5,30 @@ GO
 SELECT * FROM profitwisemastervariant;
 
 
+DECLARE @Today DateTime;
+SELECT @Today = DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0)
+SELECT * FROM exchangerate WHERE [Date] = @Today;
 
 
 
-SELECT	t1.PwMasterProductId, t1.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, t2.Inventory, t2.LowPrice, t2.HighPrice, 
+DECLARE @QueryDate DateTime = '2016-01-01'
+--SELECT @Today = DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0)
+
+SELECT	t1.PwMasterVariantId, t2.PwProductId, t2.PwVariantId, t2.Inventory, t2.LowPrice, t2.HighPrice, 
 		t4.PercentMultiplier * t2.HighPrice + t4.FixedAmount * t5.Rate AS CostOfGoodsOnHand
-
 FROM profitwisemastervariant t1
-	INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
-	INNER JOIN profitwiseproduct t3 ON t2.PwProductId = t3.PwProductId
-	INNER JOIN profitwisemastervariantcogscalc t4 ON t1.PwMasterVariantId = t4.PwMasterVariantId
+	INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId	
+	LEFT JOIN profitwisemastervariantcogscalc t4 
+		ON t1.PwShopId = t4.PwShopId AND t1.PwMasterVariantId = t4.PwMasterVariantId 
+		AND t4.StartDate <= @QueryDate AND t4.EndDate > @QueryDate
 	LEFT JOIN exchangerate t5 ON t4.SourceCurrencyId = t5.SourceCurrencyId
-
+			AND t5.Date = @QueryDate AND t5.DestinationCurrencyId = 1 
 WHERE t1.PwShopId = 100001
 AND t1.StockedDirectly = 1
-AND t1.PwMasterVariantId IN ( 
-	SELECT PwMasterVariantId FROM profitwisereportquerystub WHERE PwShopId = 100001 AND PwReportId = 1 )
-
+AND t2.PwVariantId IN ( SELECT PwVariantId FROM profitwisegoodsonhandquerystub WHERE PwShopId = 100001 AND PwReportId = 2 )
 AND t2.PwShopId = 100001
 AND t2.Inventory IS NOT NULL
 AND t2.IsActive = 1
-AND t4.PwShopId = 100001
-AND t5.DestinationCurrencyId = 1 
-AND t5.Date = '2017-02-01'
 
 
 
-SELECT * FROM profitwisereportquerystub WHERE PwReportId = 99792;
-
-
---AND t3.PwShopId = 100001
-
-SELECT * FROM profitwisereportquerystub;
-
-t3.Vendor, t3.ProductType, 
- t3.Title AS ProductTitle, t2.Title AS VariantTitle, 

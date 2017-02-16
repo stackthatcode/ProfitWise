@@ -463,6 +463,7 @@
             self.EditReportClick();
         };
         self.ReportInterfaceModel.TriggerReportDataRefresh = function (reportId, callback) {
+            
             self.ReportDataModel.RefreshReportData(reportId, callback);
         }
 
@@ -473,7 +474,6 @@
             self.ReportInterfaceModel.DefaultReportId(@SystemReportFactory.OverallProfitabilityId);
         }
 
-
         // State changes to the Report Selection
         self.SelectReportByReportId = function (id) {
             var report =
@@ -481,25 +481,15 @@
                     .firstOrDefault(function (item) { return item.PwReportId == id; });
 
             if (report != null) {
-                self.SelectReport(report.PwReportId);
+                self.ReportInterfaceModel.LoadReport(report.PwReportId);
             }
         };
 
         self.SelectReportClick = function (data) {
             var reportId = data.PwReportId;
-            self.SelectReport(reportId);
+            self.ReportInterfaceModel.LoadReport(reportId);
         };
 
-        self.SelectReport = function(reportId) {
-            flow.exec(
-                function () {
-                    self.ReportInterfaceModel.LoadReport(reportId, this);
-                },
-                function () {
-                    self.ReportInterfaceModel.TriggerReportDataRefresh(reportId);
-                }
-            );
-        };
 
         // Transition to show Report Editor
         self.EditReportClick = function () {

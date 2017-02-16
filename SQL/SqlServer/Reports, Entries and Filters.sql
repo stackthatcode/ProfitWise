@@ -53,8 +53,8 @@ BEGIN
 CREATE TABLE [dbo].[profitwiseprofitquerystub](
 	[PwReportId] [bigint] NOT NULL,
 	[PwShopId] [bigint] NOT NULL,
-	[PwMasterVariantId] [bigint] NOT NULL,
-	[PwMasterProductId] [bigint] NOT NULL,
+	[PwVariantId] [bigint] NOT NULL,
+	[PwProductId] [bigint] NOT NULL,
 	[Vendor] [nvarchar](100) NULL,
 	[ProductType] [nvarchar](100) NULL,
 	[ProductTitle] [nvarchar](100) NULL,
@@ -64,7 +64,7 @@ CREATE TABLE [dbo].[profitwiseprofitquerystub](
 (
 	[PwReportId] ASC,
 	[PwShopId] ASC,
-	[PwMasterVariantId] ASC
+	[PwVariantId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 END
