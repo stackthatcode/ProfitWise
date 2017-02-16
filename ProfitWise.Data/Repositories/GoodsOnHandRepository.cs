@@ -7,12 +7,13 @@ using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Profit;
+using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 
 
 namespace ProfitWise.Data.Repositories
 {
-    public class PwGoodsOnHandRepository
+    public class GoodsOnHandRepository
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
@@ -21,7 +22,7 @@ namespace ProfitWise.Data.Repositories
         private readonly MultitenantFactory _factory;
 
 
-        public PwGoodsOnHandRepository(
+        public GoodsOnHandRepository(
                 ConnectionWrapper connectionWrapper, MultitenantFactory factory)
         {
             _connectionWrapper = connectionWrapper;
@@ -33,7 +34,7 @@ namespace ProfitWise.Data.Repositories
             return _connectionWrapper.StartTransactionForScope();
         }        
 
-        public List<PwReportSelectionMasterProduct> RetrieveTotals(long reportId)
+        public List<ReportSelectionMasterProduct> RetrieveTotals(long reportId)
         {
             throw new NotImplementedException();
         }

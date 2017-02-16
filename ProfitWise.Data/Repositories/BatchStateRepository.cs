@@ -9,13 +9,13 @@ using ProfitWise.Data.Model.Shop;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopRequired))]
-    public class PwBatchStateRepository : IShopFilter
+    public class BatchStateRepository : IShopFilter
     {
         public PwShop PwShop { get; set; }
 
         private readonly ConnectionWrapper _connectionWrapper;
         
-        public PwBatchStateRepository(ConnectionWrapper connectionWrapper)
+        public BatchStateRepository(ConnectionWrapper connectionWrapper)
         {
             _connectionWrapper = connectionWrapper;
         }

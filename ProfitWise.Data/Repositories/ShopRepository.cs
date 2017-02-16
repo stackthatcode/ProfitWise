@@ -7,13 +7,13 @@ using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
 {
-    public class PwShopRepository
+    public class ShopRepository
     {
 
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
-        public PwShopRepository(ConnectionWrapper connectionWrapper)
+        public ShopRepository(ConnectionWrapper connectionWrapper)
         {
             _connectionWrapper = connectionWrapper;
         }

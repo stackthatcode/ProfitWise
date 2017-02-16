@@ -20,7 +20,7 @@ namespace ProfitWise.Data.Processes
         private readonly OrderRefreshStep _orderRefreshStep;
         private readonly ProductCleanupStep _productCleanupStep;
         private readonly HangFireService _hangFireService;
-        private readonly PwShopRepository _pwShopRepository;
+        private readonly ShopRepository _pwShopRepository;
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly BatchLogger _pushLogger;
 
@@ -33,7 +33,7 @@ namespace ProfitWise.Data.Processes
                 ProductCleanupStep productCleanupStep,
                 HangFireService hangFireService,
                 BatchLogger logger, 
-                PwShopRepository pwShopRepository,
+                ShopRepository pwShopRepository,
                 ConnectionWrapper connectionWrapper)
         {
             _shopifyCredentialService = shopifyCredentialService;

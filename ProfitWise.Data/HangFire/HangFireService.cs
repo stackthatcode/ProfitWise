@@ -14,7 +14,7 @@ namespace ProfitWise.Data.HangFire
     public class HangFireService
     {
         private readonly IPushLogger _logger;
-        private readonly PwShopRepository _shopRepository;
+        private readonly ShopRepository _shopRepository;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly IShopifyCredentialService _shopifyCredentialService;
 
@@ -42,7 +42,7 @@ namespace ProfitWise.Data.HangFire
         public HangFireService(
                 IShopifyCredentialService shopifyCredentialService, 
                 IPushLogger logger, 
-                PwShopRepository shopRepository, 
+                ShopRepository shopRepository, 
                 MultitenantFactory multitenantFactory)
         {
             _shopifyCredentialService = shopifyCredentialService;

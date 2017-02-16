@@ -105,6 +105,47 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+        [HttpGet]
+        public ActionResult Products(long reportId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
+            
+            var data = repository.RetrieveMasterProductOptions(reportId);
+
+            var output = data.Select(x => new
+            {
+                Key = x.PwMasterProductId,
+                Title = x.Title.IsNullOrEmptyAlt("(No Product Title)"),
+                Vendor = x.Vendor,
+                VariantCount = x.VariantCount,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
+
+        [HttpGet]
+        public ActionResult Variants(long reportId)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
+            var data = repository.RetrieveMasterVariantOptions(reportId);
+
+            var output = data.Select(x => new
+            {
+                Key = x.PwMasterVariantId,
+                x.VariantTitle,
+                x.ProductTitle,
+                x.Sku,
+                Title = x.Sku.IsNullOrEmptyAlt("(No Sku)") +
+                            " - " + x.VariantTitle.IsNullOrEmptyAlt("(No Variant Title)"),
+                Vendor = x.Vendor,
+            }).ToList();
+
+            return new JsonNetResult(output);
+        }
+
+
 
         [HttpGet]
         public ActionResult Filters(long reportId)

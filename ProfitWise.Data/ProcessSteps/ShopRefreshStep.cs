@@ -10,13 +10,13 @@ namespace ProfitWise.Data.ProcessSteps
     public class ShopRefreshService
     {
         private readonly BatchLogger _pushLogger;
-        private readonly PwShopRepository _shopDataRepository;
+        private readonly ShopRepository _shopDataRepository;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly ShopSynchronizationService _shopSynchronizationService;
 
         public ShopRefreshService(
                     BatchLogger pushLogger, 
-                    PwShopRepository shopDataRepository,
+                    ShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
                     ShopSynchronizationService shopSynchronizationService)
         {

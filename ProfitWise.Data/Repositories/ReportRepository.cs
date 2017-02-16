@@ -12,14 +12,14 @@ using ProfitWise.Data.Model.Shop;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopRequired))]
-    public class PwReportRepository : IShopFilter
+    public class ReportRepository : IShopFilter
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
-        public PwReportRepository(ConnectionWrapper connectionWrapper)
+        public ReportRepository(ConnectionWrapper connectionWrapper)
         {
             _connectionWrapper = connectionWrapper;
         }

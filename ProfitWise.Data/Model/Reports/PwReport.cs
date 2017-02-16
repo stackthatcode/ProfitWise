@@ -139,7 +139,7 @@ namespace ProfitWise.Data.Model.Reports
             {
                 PwReportId = OverallProfitabilityId,
                 OriginalReportId = OverallProfitabilityId,
-                ReportTypeId = ReportType.Profitability,
+                ReportTypeId = ReportTypeOption.Profitability,
 
                 Name = "Overall Profitability",
                 StartDate = dateRange.StartDate,
@@ -156,7 +156,7 @@ namespace ProfitWise.Data.Model.Reports
             {
                 PwReportId = GoodsOnHandId,
                 OriginalReportId = GoodsOnHandId,
-                ReportTypeId = ReportType.GoodsOnHand,
+                ReportTypeId = ReportTypeOption.GoodsOnHand,
 
                 Name = "Goods on Hand Report",
                 StartDate = DateTime.Today.AddDays(-14),

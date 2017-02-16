@@ -1,8 +1,6 @@
-﻿using Push.Foundation.Utilities.Helpers;
-
-namespace ProfitWise.Data.Model
+﻿namespace ProfitWise.Data.Model.Reports
 {
-    public class PwProductTypeSummary
+    public class ProductTypeOption
     {
         public string ProductType { get; set; } // This will be used as String Key
         public int Count { get; set; }

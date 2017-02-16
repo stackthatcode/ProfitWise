@@ -14,7 +14,7 @@ using ProfitWise.Data.Model.Shop;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopRequired))]
-    public class PwVariantRepository : IShopFilter
+    public class VariantRepository : IShopFilter
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
@@ -22,7 +22,7 @@ namespace ProfitWise.Data.Repositories
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
-        public PwVariantRepository(ConnectionWrapper connectionWrapper)
+        public VariantRepository(ConnectionWrapper connectionWrapper)
         {
             _connectionWrapper = connectionWrapper;
         }

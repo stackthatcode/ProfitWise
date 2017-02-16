@@ -1,6 +1,6 @@
-﻿namespace ProfitWise.Data.Model
+﻿namespace ProfitWise.Data.Model.Reports
 {
-    public class PwReportSelectionMasterProduct
+    public class ReportSelectionMasterProduct
     {
         public long PwShopId { get; set; }
         public long PwMasterProductId { get; set; }

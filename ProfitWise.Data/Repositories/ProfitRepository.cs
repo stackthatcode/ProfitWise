@@ -12,7 +12,7 @@ using ProfitWise.Data.Model.Shop;
 
 namespace ProfitWise.Data.Repositories
 {
-    public class PwProfitRepository
+    public class ProfitRepository
     {
         private readonly MultitenantFactory _factory;
 
@@ -22,7 +22,7 @@ namespace ProfitWise.Data.Repositories
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
 
-        public PwProfitRepository(ConnectionWrapper connectionWrapper, MultitenantFactory factory)
+        public ProfitRepository(ConnectionWrapper connectionWrapper, MultitenantFactory factory)
         {
             _connectionWrapper = connectionWrapper;
             _factory = factory;

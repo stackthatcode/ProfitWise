@@ -24,7 +24,7 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
-        private readonly PwShopRepository _shopRepository;
+        private readonly ShopRepository _shopRepository;
 
         // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
         public const int MinutesFudgeFactor = 75;
@@ -34,7 +34,7 @@ namespace ProfitWise.Data.ProcessSteps
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration refreshServiceConfiguration,
-                PwShopRepository shopRepository,
+                ShopRepository shopRepository,
                 BatchLogger logger,
                 ShopifyOrderDiagnosticShim diagnostic,
                 TimeZoneTranslator timeZoneTranslator)

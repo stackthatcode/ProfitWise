@@ -1,5 +1,4 @@
-﻿@using ProfitWise.Data.Model
-@using ProfitWise.Data.Model.Reports
+﻿@using ProfitWise.Data.Model.Reports
 
 <script type="text/html" id="Report-Editor-Top-Level">
     <!-- Move this to the Report Editor...? -->
@@ -58,33 +57,27 @@
             <div style="overflow:auto; height:40px;">
                 <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
                     <li role="presentation" class="active">
-                        <a href="#report-filter-product-type"
-                           data-bind="click: ProductTypeClick"
+                        <a href="#report-filter-product-type" data-bind="click: ProductTypeClick"
                            aria-controls="home" role="tab" data-toggle="tab">Product Types</a>
                     </li>
                     <li role="presentation">
-                        <a href="#report-filter-vendor"
-                           data-bind="click: VendorClick"
+                        <a href="#report-filter-vendor" data-bind="click: VendorClick"
                            aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
                     </li>
                     <li role="presentation">
-                        <a href="#report-filter-master-product"
-                           data-bind="click: MasterProductClick"
+                        <a href="#report-filter-master-product" data-bind="click: MasterProductClick"
                            aria-controls="messages" role="tab" data-toggle="tab">Master Products</a>
                     </li>
                     <li role="presentation">
-                        <a href="#report-filter-master-variant"
-                           data-bind="click: MasterVariantClick"
+                        <a href="#report-filter-master-variant" data-bind="click: MasterVariantClick"
                            aria-controls="settings" role="tab" data-toggle="tab">Master Variants</a>
                     </li>
                     <li role="presentation">
-                        <a href="#report-filter-product"
-                           data-bind="click: ProductClick"
+                        <a href="#report-filter-product" data-bind="click: ProductClick"
                            aria-controls="messages" role="tab" data-toggle="tab">Products</a>
                     </li>
                     <li role="presentation">
-                        <a href="#report-filter-master-variant"
-                           data-bind="click: VariantClick"
+                        <a href="#report-filter-variant" data-bind="click: VariantClick"
                            aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
                     </li>
                 </ul>
@@ -289,6 +282,7 @@
 
         // Filter Bullpen and Selection Preview models...
         self.ProductCountModel = new ProfitWiseWidgets.ProductCountModel();
+
         self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel();
         self.FilterBullpenModel.RegisterRemoveCallback(function (filterType, key) {
             var filterModel = filterModelByFilterType(filterType);

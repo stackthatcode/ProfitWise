@@ -23,19 +23,19 @@ namespace ProfitWise.Data
             builder.RegisterType<MultitenantFactory>();
 
             builder.RegisterType<ShopifyOrderRepository>();
-            builder.RegisterType<PwShopRepository>();
-            builder.RegisterType<PwBatchStateRepository>();
-            builder.RegisterType<PwProductRepository>();
-            builder.RegisterType<PwVariantRepository>();
-            builder.RegisterType<PwCogsEntryRepository>();
+            builder.RegisterType<ShopRepository>();
+            builder.RegisterType<BatchStateRepository>();
+            builder.RegisterType<ProductRepository>();
+            builder.RegisterType<VariantRepository>();
+            builder.RegisterType<CogsEntryRepository>();
             builder.RegisterType<ExchangeRateRepository>();
-            builder.RegisterType<PwPickListRepository>();
-            builder.RegisterType<PwReportRepository>();
-            builder.RegisterType<PwReportFilterRepository>();
-            builder.RegisterType<PwProfitRepository>();
+            builder.RegisterType<PickListRepository>();
+            builder.RegisterType<ReportRepository>();
+            builder.RegisterType<ReportFilterRepository>();
+            builder.RegisterType<ProfitRepository>();
             builder.RegisterType<SystemRepository>();
-            builder.RegisterType<PwCogsDownstreamRepository>();
-            builder.RegisterType<PwGoodsOnHandRepository>();
+            builder.RegisterType<CogsDownstreamRepository>();
+            builder.RegisterType<GoodsOnHandRepository>();
             
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));

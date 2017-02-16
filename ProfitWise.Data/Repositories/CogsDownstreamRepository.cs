@@ -11,7 +11,7 @@ using ProfitWise.Data.Model.Shop;
 namespace ProfitWise.Data.Repositories
 {
     [Intercept(typeof(ShopRequired))]
-    public class PwCogsDownstreamRepository : IShopFilter
+    public class CogsDownstreamRepository : IShopFilter
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
@@ -19,7 +19,7 @@ namespace ProfitWise.Data.Repositories
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
 
-        public PwCogsDownstreamRepository(ConnectionWrapper connectionWrapper)
+        public CogsDownstreamRepository(ConnectionWrapper connectionWrapper)
         {
             _connectionWrapper = connectionWrapper;
         }

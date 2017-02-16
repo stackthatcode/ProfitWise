@@ -12,7 +12,7 @@ using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Repositories
 {
-    public class PwPickListRepository
+    public class PickListRepository
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
@@ -20,7 +20,7 @@ namespace ProfitWise.Data.Repositories
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
-        public PwPickListRepository(ConnectionWrapper connectionWrapper)
+        public PickListRepository(ConnectionWrapper connectionWrapper)
         {
             _connectionWrapper = connectionWrapper;
         }

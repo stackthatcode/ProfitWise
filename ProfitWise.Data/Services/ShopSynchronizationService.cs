@@ -9,13 +9,13 @@ namespace ProfitWise.Data.Services
     public class ShopSynchronizationService
     {
         private readonly CurrencyService _currencyService;
-        private readonly PwShopRepository _pwShopRepository;
+        private readonly ShopRepository _pwShopRepository;
         private readonly MultitenantFactory _factory;
         private readonly IPushLogger _logger;
 
         public ShopSynchronizationService(
                     CurrencyService currencyService, 
-                    PwShopRepository pwShopRepository, 
+                    ShopRepository pwShopRepository, 
                     MultitenantFactory factory,
                     IPushLogger logger)
         {

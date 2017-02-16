@@ -20,7 +20,7 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _configuration;
-        private readonly PwShopRepository _shopRepository;
+        private readonly ShopRepository _shopRepository;
         private readonly TimeZoneTranslator _timeZoneTranslator;
 
         // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
@@ -32,7 +32,7 @@ namespace ProfitWise.Data.ProcessSteps
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration configuration,
-                PwShopRepository shopRepository,
+                ShopRepository shopRepository,
                 TimeZoneTranslator timeZoneTranslator)
         {
             _pushLogger = logger;

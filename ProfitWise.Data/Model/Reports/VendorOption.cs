@@ -1,6 +1,6 @@
-﻿namespace ProfitWise.Data.Model
+﻿namespace ProfitWise.Data.Model.Reports
 {
-    public class PwProductVendorSummary
+    public class VendorOption
     {
         public string Vendor { get; set; }
         public int Count { get; set; }

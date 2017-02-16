@@ -1,9 +1,8 @@
-﻿namespace ProfitWise.Data.Model
+﻿namespace ProfitWise.Data.Model.Reports
 {
-    public class PwProductSkuSummary
+    public class MasterVariantOption
     {
         public long PwMasterProductId { get; set; }
-
         public long Key => PwMasterProductId;
         public string Title => VariantTitle;
 

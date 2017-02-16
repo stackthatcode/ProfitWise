@@ -18,7 +18,7 @@ namespace ProfitWise.Web.Attributes
             var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
             var roleManager = DependencyResolver.Current.GetService<ApplicationRoleManager>();
             var credentialService = DependencyResolver.Current.GetService<IShopifyCredentialService>();
-            var shopRepository = DependencyResolver.Current.GetService<PwShopRepository>();
+            var shopRepository = DependencyResolver.Current.GetService<ShopRepository>();
             var signInManager = DependencyResolver.Current.GetService<ApplicationSignInManager>();
             var logger = DependencyResolver.Current.GetService<IPushLogger>();
 
