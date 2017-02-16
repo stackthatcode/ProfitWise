@@ -120,7 +120,8 @@
     <Compile Include="Model\Profit\ReportSearchStub.cs" />
     <Compile Include="Model\Profit\TotalQueryContext.cs" />
     <Compile Include="Model\Reports\ProductOption.cs" />
-    <Compile Include="Model\Reports\ReportTypeOption.cs" />
+    <Compile Include="Model\Reports\SystemReportFactory.cs" />
+    <Compile Include="Model\Reports\ReportType.cs" />
     <Compile Include="Model\ShopifyImport\ShopifyOrderAdjustment.cs" />
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineRefund.cs" />
     <Compile Include="Model\System\ExchangeRate.cs" />

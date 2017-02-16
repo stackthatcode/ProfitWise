@@ -59,8 +59,8 @@ namespace ProfitWise.Data.Repositories
         {
             return new List<long>
             {
-                PwSystemReportFactory.OverallProfitabilityId,
-                PwSystemReportFactory.GoodsOnHandId,
+                SystemReportFactory.OverallProfitabilityId,
+                SystemReportFactory.GoodsOnHandId,
             };
         }
 
@@ -73,8 +73,8 @@ namespace ProfitWise.Data.Repositories
 
             var systemDefinedReports = new List<PwReport>()
             {
-                PwSystemReportFactory.OverallProfitability(dateRange),                    
-                PwSystemReportFactory.GoodsOnHandReport(),
+                SystemReportFactory.OverallProfitability(dateRange),                    
+                SystemReportFactory.GoodsOnHandReport(),
             };
 
             systemDefinedReports.ForEach(x => x.PwShopId = this.PwShopId);
@@ -120,7 +120,7 @@ namespace ProfitWise.Data.Repositories
             var reportName = "";
             while (true)
             {
-                reportName = PwSystemReportFactory.CustomDefaultNameBuilder(reportNumber);
+                reportName = SystemReportFactory.CustomDefaultNameBuilder(reportNumber);
                 if (reports.Any(x => x.Name == reportName))
                 {
                     reportNumber++;
