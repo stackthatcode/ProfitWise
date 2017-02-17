@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.GoodsOnHand;
-using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
-using ProfitWise.Data.Model.Shop;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
@@ -36,20 +32,24 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Data(long reportId, int pageNumber = 1, int pageSize = 50)
+        public ActionResult Data(
+                long reportId, ColumnOrdering ordering = ColumnOrdering.PotentialRevenueDescending, 
+                int pageNumber = 1, int pageSize = 50)
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
+            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
 
             using (var trans = new TransactionScope())
             {
                 // First create the query stub...
                 queryRepository.PopulateQueryStub(reportId);
-                
+                var report = reportRepository.RetrieveReport(reportId);
+                   
                 // Next build the top-performing summary
                 var totals = queryRepository.RetrieveTotals(reportId);
 
-                var details = queryRepository.RetrieveDetailsByProductType(reportId);
+                var details = queryRepository.RetrieveDetails(reportId, report.GroupingId, ordering);
 
                 trans.Complete();
                 
@@ -67,130 +67,7 @@ namespace ProfitWise.Web.Controllers
                    $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&" +
                    $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
         }
-
-
-        // *** Builds Report Series data for High Charts multi-column chart
-        private List<ReportSeries> BuildSeriesWithGrouping(PwShop shop, PwReport report, Summary summary)
-        {
-            var queryRepository = _factory.MakeProfitRepository(shop);
-
-            // 1st-level drill down
-            var periodType = (report.EndDate - report.StartDate).ToDefaultGranularity();
-
-            //  The Grouping Names should match with those from the Summary
-            var topGroups = summary
-                .TotalsByGroupingId(report.GroupingId)
-                .Take(NumberOfColumnGroups)
-                .ToList();
-
-            var groupingKeysAndName = topGroups
-                .Select(x => new GroupingKeyAndName { GroupingKey = x.GroupingKey, GroupingName = x.GroupingName })
-                .ToList();
-
-            var groupingKeys = topGroups.Select(x => x.GroupingKey).ToList();
-
-            // Context #1 - Grouped Data organized by Date
-            var datePeriodTotals =
-                RetrieveDatePeriodTotalsRecursive(
-                    shop, report.PwReportId, report.StartDate, report.EndDate,
-                    groupingKeys, report.GroupingId, periodType, periodType.NextDrilldownLevel());
-
-            //foreach (var total in datePeriodTotals.Where(x => x.GroupingKey == "3D Printer"))
-            //{
-            //    _logger.Debug(total.ToString());
-            //}
-
-            // Context #2 - Aggregate Date Totals
-            var aggregateDateTotals =
-                queryRepository
-                    .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
-                    .ToDictionary(x => x.OrderDate, x => x);
-
-            // Context #3 - Report Series hierarchical structure
-            var seriesDataset =
-                ReportSeriesFactory.GenerateSeriesMultiple(
-                    report.StartDate, report.EndDate, groupingKeysAndName, periodType, periodType.NextDrilldownLevel());
-
-            foreach (var series in seriesDataset)
-            {
-                series.VisitElements(element =>
-                {
-                    // if (element.Parent.GroupingKey == "3D Printer") _logger.Debug("Assigning Totals for " + element.ToString());
-                    var total = datePeriodTotals.FirstOrDefault(element.MatchByGroupingAndDate);
-                    if (total != null)
-                    {
-                        element.Amount = total.TotalProfit;
-                        // if (element.Parent.GroupingKey == "3D Printer") _logger.Debug("Found Date Period Total " + total.ToString());
-                    }
-                });
-            }
-
-            if (summary.TotalsByGroupingId(report.GroupingId).Count > NumberOfColumnGroups)
-            {
-                // ...add the "All Other" catch-all
-                var allOtherSeries = 
-                    ReportSeriesFactory.GenerateSeriesRecursive(
-                        AllOtherGroupingName, AllOtherGroupingName,
-                        report.StartDate, report.EndDate, periodType, periodType.NextDrilldownLevel());
-
-                allOtherSeries.VisitElements(element =>
-                {
-                    var totalAll = aggregateDateTotals.Total(element.Start, element.End, x => x.TotalProfit);
-                    var matchingDatePeriodTotals = datePeriodTotals.Where(x => element.MatchByDate(x)).ToList();
-                    element.Amount = totalAll - matchingDatePeriodTotals.Sum(x => x.TotalProfit);
-                });
-
-                seriesDataset.Add(allOtherSeries);
-            }
-
-            return seriesDataset;
-        }
-
-        // ... recursively invokes SQL to build data set of Date Totals organized by Grouping
-        private List<DatePeriodTotal>  RetrieveDatePeriodTotalsRecursive(
-                PwShop shop, long reportId, DateTime startDate, DateTime endDate, List<string> keyFilters,
-                ReportGrouping grouping, PeriodType periodType, PeriodType maximumPeriodType)
-        {
-            var queryRepository = _factory.MakeProfitRepository(shop);
-
-            var output = 
-                queryRepository.RetrieveDatePeriodTotals(
-                    reportId, startDate, endDate, keyFilters, grouping, periodType);
-
-            if (periodType != PeriodType.Day && periodType != maximumPeriodType)
-            {
-                output.AddRange(
-                    RetrieveDatePeriodTotalsRecursive(
-                        shop, reportId, startDate, endDate, keyFilters, grouping,
-                        periodType.NextDrilldownLevel(), maximumPeriodType));
-            }
-
-            return output;
-        }
-
-        // *** Builds Report Series data for High Charts multi-column chart
-        private List<ReportSeries> BuildSeriesFromAggregateTotals(PwShop shop, PwReport report)
-        {
-            var queryRepository = _factory.MakeProfitRepository(shop);
-
-            // 1st-level drill down
-            var periodType = (report.EndDate - report.StartDate).ToDefaultGranularity();
-
-            var totals = queryRepository
-                .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate);
-
-            var aggregateDateTotals = totals.ToDictionary(x => x.OrderDate, x => x);
-
-            // Context #3 - Report Series hierarchical structure
-            var series = ReportSeriesFactory.GenerateSeriesRecursive(
-                    "All", "All", report.StartDate, report.EndDate, periodType, PeriodType.Day);
-            series.VisitElements(element =>
-            {                
-                element.Amount = aggregateDateTotals.Total(element.Start, element.End, x=> x.TotalProfit);
-            });
-
-            return new List<ReportSeries> { series };
-        }
+        
     }
 }
 

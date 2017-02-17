@@ -162,15 +162,22 @@
 <script id="Report-Interface-Model">
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.ReportGroupingOptionsFactory = function() {
-        return @Html.Raw(@PwReportExtensions.AllGroupingToNamedObject().SerializeToJson());
+    ProfitWiseWidgets.ReportGroupingOptionsFactory = function(reportTypeId) {
+        var output = @Html.Raw(@PwReportExtensions.AllGroupingToNamedObject().SerializeToJson());
+        if (reportTypeId == '@ReportType.GoodsOnHand') {
+            return AQ(output)
+                .where(function(item) { return item.GroupingId != '@((int)ReportGrouping.Overall)'; })
+                .toArray();
+        } else {
+            return output;
+        }
     };
 
     ProfitWiseWidgets.ReportOrderingOptionsFactory = function() {
         return @Html.Raw(@PwReportExtensions.AllOrderingToNamedObject().SerializeToJson());
     };
 
-    ProfitWiseWidgets.ReportInterfaceModel = function() {
+    ProfitWiseWidgets.ReportInterfaceModel = function(reportTypeId) {
         var self = this;
 
         self.DatePickerEnabled = ko.observable(true);
@@ -193,7 +200,7 @@
         self.GroupingPopoverModel = new ProfitWiseWidgets.SelectorPopoverModel({
             OptionsValue: "GroupingId",
             OptionsText: "Description",
-            Options : ProfitWiseWidgets.ReportGroupingOptionsFactory(),
+            Options: ProfitWiseWidgets.ReportGroupingOptionsFactory(reportTypeId),
             PromptText: "Select a method for grouping data",
             OkCallback: function() { self.Update(); },
             PopOverLaunchCallback: function () { self.MakeCopyForEditing(); }
@@ -455,7 +462,7 @@
 
 
         // Model that contains all the functionality for the top header
-        self.ReportInterfaceModel = new ProfitWiseWidgets.ReportInterfaceModel();
+        self.ReportInterfaceModel = new ProfitWiseWidgets.ReportInterfaceModel(reportTypeId);
         self.ReportInterfaceModel.TriggerReportListRefresh = function (callback) {
             self.RefreshReportList(callback);
         };
@@ -562,7 +569,7 @@
 
         self.ReportEditorModel.OkCallback = function () {
             self.InFilterEditMode(false);
-            self.ReportViewerModel.SelectReport(self.ReportEditorModel.ReportId());
+            self.ReportViewerModel.ReportInterfaceModel.LoadReport(self.ReportEditorModel.ReportId());
         };
 
         self.ReportEditorModel.CancelCallback = function () {

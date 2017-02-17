@@ -59,23 +59,6 @@ namespace ProfitWise.Data.Model.Reports
         }
     }
 
-    public enum ReportGrouping
-    {
-        Overall = 1,
-        ProductType = 2,
-        Vendor = 3,
-        Product = 4,
-        Variant = 5
-    }
-
-    public enum ReportOrdering
-    {
-        NameAscending = 1,
-        NameDescending = 2,
-        ProfitabilityAscending = 3,
-        ProfitabilityDescending = 4,
-    }
-
     public static class PwReportExtensions
     {
         private static readonly

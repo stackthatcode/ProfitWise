@@ -105,7 +105,6 @@
     <Compile Include="Model\GoodsOnHand\ColumnOrdering.cs" />
     <Compile Include="Model\GoodsOnHand\Details.cs" />
     <Compile Include="Model\GoodsOnHand\Totals.cs" />
-    <Compile Include="Model\GoodsOnHand\TotalQueryContext.cs" />
     <Compile Include="Model\Preferences\DateRange.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealization.cs" />
@@ -122,6 +121,8 @@
     <Compile Include="Model\Profit\ReportSearchStub.cs" />
     <Compile Include="Model\Profit\TotalQueryContext.cs" />
     <Compile Include="Model\Reports\ProductOption.cs" />
+    <Compile Include="Model\Reports\ReportGrouping.cs" />
+    <Compile Include="Model\Reports\ReportOrdering.cs" />
     <Compile Include="Model\Reports\SystemReportFactory.cs" />
     <Compile Include="Model\Reports\ReportType.cs" />
     <Compile Include="Model\ShopifyImport\ShopifyOrderAdjustment.cs" />

@@ -1,4 +1,4 @@
-﻿@using ProfitWise.Data.Model.Profit
+﻿@using ProfitWise.Data.Model.GoodsOnHand
 @using ProfitWise.Data.Model.Reports
 
 <style>
@@ -235,16 +235,42 @@
 
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
         self.SortingModel.Callback = function () { self.RefreshReportData(self.ReportId()); };
-        
+        self.SortingModel.SelectedColumnIndex(1);   // Default to CoGS descending...
 
-        self.RefreshReportData = function (reportId, callback) {             
+        self.Ordering = ko.computed(function () {
+            var index = self.SortingModel.SelectedColumnIndex();
+            var descending = self.SortingModel.SortByDirectionDown();
+
+            if (index == 0)
+                return descending ?
+                    '@ColumnOrdering.InventoryDescending' : '@ColumnOrdering.InventoryAscending';
+            if (index == 1)
+                return descending ?
+                    '@ColumnOrdering.CogsDescending' : '@ColumnOrdering.CogsAscending';
+            if (index == 2)
+                return descending ?
+                    '@ColumnOrdering.PotentialRevenueDescending' : '@ColumnOrdering.PotentialRevenueAscending';
+            if (index == 3)
+                return descending ?
+                    '@ColumnOrdering.PotentialProfitDescending' : '@ColumnOrdering.PotentialProfitAscending';
+
+            return '@ColumnOrdering.CogsDescending';
+        });
+
+
+        self.RefreshReportData = function (reportId, callback) {
             flow.exec(
                 function () {
-                    self.ReportId(reportId);
+                    var data = {
+                        reportId: reportId,
+                        ordering: self.Ordering(),
+                    };
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/GoodsOnHandService/Data", { reportId: reportId }, this);
+                    ajax.HttpPost("/GoodsOnHandService/Data", data, this);
                 },
                 function (data) {
+                    self.ReportId(reportId);
+
                     console.log(data);
 
                     self.Data(data);

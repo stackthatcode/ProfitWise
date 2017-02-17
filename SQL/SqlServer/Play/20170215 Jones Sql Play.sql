@@ -31,31 +31,30 @@ AS (
 	WHERE t1.PwShopId = @PwShopId
 	AND t1.StockedDirectly = 1
 	AND t2.PwVariantId IN ( 
-		SELECT PwVariantId FROM profitwisegoodsonhandquerystub 
-		WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId )
+		SELECT PwVariantId FROM profitwisegoodsonhandquerystub WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId )
 	AND t2.PwShopId = @PwShopId
 	AND t2.Inventory IS NOT NULL
 	AND t2.IsActive = 1 
 ) 
 SELECT	t2.ProductType AS GroupingKey, t2.ProductType AS GroupingName, 
-		SUM(Inventory) AS TotalInventory,
 		MIN(Price) AS MinimumPrice,
 		MAX(Price) AS MaximumPrice, 
+		SUM(Inventory) AS TotalInventory,
 		SUM(CostOfGoodsOnHand) AS TotalCostOfGoodsSold, 
 		SUM(PotentialRevenue) AS TotalPotentialRevenue,	
 		SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) AS TotalPotentialProfit
 FROM Data_CTE t1
 	INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
-WHERE PwShopId = @PwShopId
+WHERE t2.PwShopId = @PwShopId
+
 GROUP BY t2.ProductType 
+
 ORDER BY t2.ProductType ASC
 
 
 
 
-ProductType, Vendor, PwProductId, PwVariantId, VariantTitle, Sku, Inventory, 
-LowPrice, HighPrice, CostOfGoodsOnHand, PotentialRevenu
-
-
+-- ProductType, Vendor, PwProductId, PwVariantId, VariantTitle, Sku, Inventory, 
+-- LowPrice, HighPrice, CostOfGoodsOnHand, PotentialRevenu
 
 

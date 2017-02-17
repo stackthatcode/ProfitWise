@@ -60,30 +60,112 @@ namespace ProfitWise.Data.Repositories
                 @" SELECT @PwReportId AS ReportId, 
                         SUM(CostOfGoodsOnHand) AS TotalCostOfGoodsOnHand, 
                         SUM(PotentialRevenue) AS TotalPotentialRevenue
-                FROM Data_CTE ;";
+                FROM Data_CTE ";
 
             return Connection.Query<Totals>(
                 query, new { QueryDate = DateTime.Today, PwShopId, PwReportId = reportId }).First();
         }
 
-        public List<Details> RetrieveDetailsByProductType(long reportId)
+        public List<Details> RetrieveDetails(long reportId, ReportGrouping grouping, ColumnOrdering ordering)
         {
-            var query = CTE_Query +
-                @" SELECT	t2.ProductType AS GroupingKey, t2.ProductType AS GroupingName, 
-		                SUM(Inventory) AS TotalInventory,
-		                MIN(Price) AS MinimumPrice,
-		                MAX(Price) AS MaximumPrice, 
-		                SUM(CostOfGoodsOnHand) AS TotalCostOfGoodsSold, 
-		                SUM(PotentialRevenue) AS TotalPotentialRevenue,	
-		                SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) AS TotalPotentialProfit
-                FROM Data_CTE t1
-	                INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
-                WHERE PwShopId = @PwShopId
-                GROUP BY t2.ProductType 
-                ORDER BY t2.ProductType ASC;";
+            var query = CTE_Query + " " +
+                        SelectGroupingKeyAndName(grouping) +
+                        @"  SUM(Inventory) AS TotalInventory,
+		                    MIN(Price) AS MinimumPrice,
+		                    MAX(Price) AS MaximumPrice, 
+		                    SUM(CostOfGoodsOnHand) AS TotalCostOfGoodsSold, 
+		                    SUM(PotentialRevenue) AS TotalPotentialRevenue,	
+		                    SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) AS TotalPotentialProfit
+                        FROM Data_CTE t1
+	                        INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
+                        WHERE PwShopId = @PwShopId " +
+                        GroupByClause(grouping) + " " +
+                        OrderByClause(ordering);
 
-            return Connection.Query<Details>(
-                query, new { QueryDate = DateTime.Today, PwShopId, PwReportId = reportId }).ToList();
+            return Connection.Query<Details>(query, 
+                new { QueryDate = DateTime.Today, PwShopId, PwReportId = reportId }).ToList();
+        }
+
+        private string OrderByClause(ColumnOrdering ordering)
+        {
+            if (ordering == ColumnOrdering.InventoryAscending)
+            {
+                return "ORDER BY SUM(Inventory) ASC";
+            }
+            if (ordering == ColumnOrdering.InventoryDescending)
+            {
+                return "ORDER BY SUM(Inventory) DESC";
+            }
+
+            if (ordering == ColumnOrdering.CogsAscending)
+            {
+                return "ORDER BY SUM(CostOfGoodsOnHand) ASC";
+            }
+            if (ordering == ColumnOrdering.CogsDescending)
+            {
+                return "ORDER BY SUM(CostOfGoodsOnHand) DESC";
+            }
+
+            if (ordering == ColumnOrdering.PotentialRevenueAscending)
+            {
+                return "ORDER BY SUM(PotentialRevenue) ASC";
+            }
+            if (ordering == ColumnOrdering.PotentialRevenueDescending)
+            {
+                return "ORDER BY SUM(PotentialRevenue) DESC";
+            }
+
+            if (ordering == ColumnOrdering.PotentialProfitAscending)
+            {
+                return "ORDER BY SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) ASC";
+            }
+            if (ordering == ColumnOrdering.PotentialProfitDescending)
+            {
+                return "ORDER BY SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) DESC";
+            }
+            throw new ArgumentException("reportGrouping");
+        }
+
+        private string GroupByClause(ReportGrouping reportGrouping)
+        {
+            if (reportGrouping == ReportGrouping.ProductType)
+            {
+                return $"GROUP BY t2.ProductType ";
+            }
+            if (reportGrouping == ReportGrouping.Vendor)
+            {
+                return $"GROUP BY t2.Vendor ";
+            }
+            if (reportGrouping == ReportGrouping.Product)
+            {
+                return $"GROUP BY t2.PwProductId, t2.Title ";
+            }
+            if (reportGrouping == ReportGrouping.Variant)
+            {
+                return $@"GROUP BY t1.PwVariantId, t1.SKU + ' - ' + t2.Title ";
+            }
+            throw new ArgumentException("reportGrouping");
+        }
+
+        private string SelectGroupingKeyAndName(ReportGrouping reportGrouping)
+        {
+            if (reportGrouping == ReportGrouping.ProductType)
+            {
+                return $"SELECT t2.ProductType AS GroupingKey, t2.ProductType AS GroupingName, ";
+            }
+            if (reportGrouping == ReportGrouping.Vendor)
+            {
+                return $"SELECT t2.Vendor AS GroupingKey, t2.Vendor AS GroupingName, ";
+            }
+            if (reportGrouping == ReportGrouping.Product)
+            {
+                return $"SELECT t2.PwProductId AS GroupingKey, t2.Title AS GroupingName, ";
+            }
+            if (reportGrouping == ReportGrouping.Variant)
+            {
+                return $@"SELECT t1.PwVariantId AS GroupingKey, t1.SKU + ' - ' + t2.Title AS GroupingName, ";
+            }
+            throw new ArgumentException("reportGrouping");
         }
 
         public string CTE_Query =
