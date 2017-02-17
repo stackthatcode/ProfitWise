@@ -264,6 +264,8 @@
                     var data = {
                         reportId: reportId,
                         ordering: self.Ordering(),
+                        pageNumber: self.PagingModel.PageNumber(),
+                        pageSize: self.PagingModel.PageSize(),
                     };
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpPost("/GoodsOnHandService/Data", data, this);
@@ -271,10 +273,10 @@
                 function (data) {
                     self.ReportId(reportId);
 
-                    console.log(data);
+                    //console.log(data);
 
                     self.Data(data);
-                    self.PagingModel.RecordCount(data.Details.length);
+                    self.PagingModel.RecordCount(data.DetailsCount);
 
                     $('html, body').animate({ scrollTop: 0 });
 

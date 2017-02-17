@@ -77,6 +77,10 @@ CREATE TABLE [dbo].[profitwisevariant](
 END
 GO
 
+ALTER TABLE [profitwisevariant] 
+	ALTER COLUMN [Sku] [nvarchar](100)
+	COLLATE SQL_Latin1_General_CP1_CS_AS
+
 -- This logic alone is worthy of discussion...
 CREATE UNIQUE INDEX uq_profitwisevariant
   ON dbo.[profitwisevariant]([PwShopId], [PwProductId], [ShopifyVariantId], [Sku], [Title])
@@ -367,7 +371,8 @@ GO
 
 -- TODO - this badly needs multi-tenant filtering (!!!)
 CREATE VIEW [dbo].[vw_standaloneproductandvariantsearch] (
-	[PwShopId], [PwProductId], [ProductTitle], [Vendor], [ProductType], [PwVariantId], [VariantTitle], [Sku])
+	[PwShopId], [PwProductId], [ProductTitle], [Vendor], [ProductType], [PwVariantId], [VariantTitle], [Sku],
+	[IsProductActive], [IsVariantActive], [Inventory], [PwMasterVariantId], [])
 AS 
    SELECT 
       t1.PwShopId AS PwShopId, 
@@ -377,8 +382,15 @@ AS
       t1.ProductType AS ProductType, 
       t3.PwVariantId,
 	  t3.Title AS VariantTitle, 
-      t3.Sku AS Sku
+      t3.Sku AS Sku,
+	  t1.IsActive AS IsProductActive,
+	  t3.IsActive AS IsVariantActive,
+	  t3.Inventory,
+	  t3.[PwMasterVariantId]
    FROM profitwiseproduct AS t1 
 		INNER JOIN profitwisevariant AS t3
 			ON t1.PwShopId = t3.PwShopId AND t1.PwProductId = t3.PwProductId
+		INNER JOIN profitwisemastervariant AS t4
+			ON t3.[PwMasterVariantId] = t4.[PwMasterVariantId]
 GO
+

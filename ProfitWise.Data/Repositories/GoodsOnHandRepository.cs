@@ -53,7 +53,8 @@ namespace ProfitWise.Data.Repositories
                 Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
             Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
         }
-        
+       
+
         public Totals RetrieveTotals(long reportId)
         {
             var query = CTE_Query +
@@ -66,7 +67,36 @@ namespace ProfitWise.Data.Repositories
                 query, new { QueryDate = DateTime.Today, PwShopId, PwReportId = reportId }).First();
         }
 
-        public List<Details> RetrieveDetails(long reportId, ReportGrouping grouping, ColumnOrdering ordering)
+        public int DetailsCount(long reportId, ReportGrouping grouping)
+        {
+            var selectQueryHead = "";
+            if (grouping == ReportGrouping.Product)
+                selectQueryHead = " SELECT COUNT(DISTINCT(PwProductId)) ";
+            if (grouping == ReportGrouping.Variant)
+                selectQueryHead = " SELECT COUNT(DISTINCT(PwVariantId)) ";
+            if (grouping == ReportGrouping.ProductType)
+                selectQueryHead = " SELECT COUNT(DISTINCT(ProductType)) ";
+            if (grouping == ReportGrouping.Vendor)
+                selectQueryHead = " SELECT COUNT(DISTINCT(Vendor)) ";
+
+            var query =
+                selectQueryHead +
+                @" FROM vw_standaloneproductandvariantsearch
+                WHERE PwVariantId IN ( 
+		            SELECT PwVariantId FROM profitwisegoodsonhandquerystub 
+		            WHERE PwShopId = @PwShopId AND PwReportId = @reportId )
+                AND PwShopId = @PwShopId
+                AND IsProductActive = 1 
+                AND IsVariantActive = 1
+                AND Inventory IS NOT NULL
+                AND StockedDirectly = 1";
+
+            return Connection.Query<int>(query, new { PwShopId, reportId }).FirstOrDefault();
+        }
+
+        public List<Details> RetrieveDetails(
+                long reportId, ReportGrouping grouping, ColumnOrdering ordering, 
+                int pageNumber, int pageSize)
         {
             var query = CTE_Query + " " +
                         SelectGroupingKeyAndName(grouping) +
@@ -80,10 +110,14 @@ namespace ProfitWise.Data.Repositories
 	                        INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
                         WHERE PwShopId = @PwShopId " +
                         GroupByClause(grouping) + " " +
-                        OrderByClause(ordering);
+                        OrderByClause(ordering) + " " +
+                        "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
             return Connection.Query<Details>(query, 
-                new { QueryDate = DateTime.Today, PwShopId, PwReportId = reportId }).ToList();
+                new {
+                    QueryDate = DateTime.Today, PwShopId, PwReportId = reportId,
+                    pageSize, startingIndex = (pageNumber - 1) * pageSize,
+                }).ToList();
         }
 
         private string OrderByClause(ColumnOrdering ordering)
@@ -168,7 +202,7 @@ namespace ProfitWise.Data.Repositories
             throw new ArgumentException("reportGrouping");
         }
 
-        public string CTE_Query =
+        private string CTE_Query =
             @"WITH Data_CTE ( PwProductId, PwVariantId, VariantTitle, Sku, Inventory, Price, CostOfGoodsOnHand, PotentialRevenue )
                 AS (
 	                SELECT	t2.PwProductId, t2.PwVariantId, t2.Title, t2.Sku, t2.Inventory, t2.HighPrice AS Price, 

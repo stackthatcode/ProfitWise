@@ -54,7 +54,7 @@ CREATE TABLE [dbo].[profitwiseprofitquerystub](
 	[PwReportId] [bigint] NOT NULL,
 	[PwShopId] [bigint] NOT NULL,
 	[PwMasterVariantId] [bigint] NOT NULL,
-	[PwProductId] [bigint] NOT NULL,
+	[PwMasterProductId] [bigint] NOT NULL,
 	[Vendor] [nvarchar](100) NULL,
 	[ProductType] [nvarchar](100) NULL,
 	[ProductTitle] [nvarchar](100) NULL,

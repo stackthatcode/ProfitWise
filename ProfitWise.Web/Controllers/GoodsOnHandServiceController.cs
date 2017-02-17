@@ -48,13 +48,14 @@ namespace ProfitWise.Web.Controllers
                    
                 // Next build the top-performing summary
                 var totals = queryRepository.RetrieveTotals(reportId);
-
-                var details = queryRepository.RetrieveDetails(reportId, report.GroupingId, ordering);
+                var details = queryRepository.RetrieveDetails(reportId, report.GroupingId, ordering, pageNumber, pageSize);
+                var detailsCount = queryRepository.DetailsCount(reportId, report.GroupingId);
 
                 trans.Complete();
                 
                 return new JsonNetResult(
-                    new { userIdentity.PwShop.CurrencyId, Totals = totals, Details = details });
+                    new {   userIdentity.PwShop.CurrencyId, Totals = totals, Details = details,
+                            DetailsCount = detailsCount, });
             }
         }
         
