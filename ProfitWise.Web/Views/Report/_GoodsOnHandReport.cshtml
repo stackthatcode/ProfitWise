@@ -281,8 +281,8 @@
 
                     $('html, body').animate({ scrollTop: 0 });
 
-                    ProfitWiseWidgets.LoadColumnChart(
-                        '#column-chart', 'Cost of Goods on Hand', data.Chart, null, data.CurrencyId);
+                    ProfitWiseWidgets.LoadColumnChart('#column-chart',
+                        'Cost of Goods on Hand', data.Chart, null, data.CurrencyId, self.Drilldown);
 
                     if (callback) {
                         callback();
@@ -290,6 +290,21 @@
                 }
             );
         };
+
+        self.Drilldown = function (e) {
+            if (e.seriesOptions) {
+                return;
+            }
+            flow.exec(
+                function () {
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet(e.point.drilldownurl, this);
+                },
+                function (data) {
+                    e.target.addSeriesAsDrilldown(e.point, data);
+                    //console.log(data);
+                });
+        }
 
         return self;
     };
