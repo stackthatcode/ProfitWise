@@ -110,7 +110,7 @@ namespace ProfitWise.Data.Repositories
 	                        INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
                         WHERE PwShopId = @PwShopId " +
                         GroupByClause(grouping) + " " +
-                        OrderByClause(ordering) + " " +
+                        OrderByClauseAggregate(ordering) + " " +
                         "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
             return Connection.Query<Details>(query, 
@@ -120,7 +120,34 @@ namespace ProfitWise.Data.Repositories
                 }).ToList();
         }
 
-        private string OrderByClause(ColumnOrdering ordering)
+
+        [Obsolete("Oops! Won't be needing this...")]
+        public List<HighChartElement> RetrieveChartElements(
+                long reportId, ReportGrouping grouping, ColumnOrdering ordering,
+                int pageNumber, int pageSize)
+        {
+            var query = CTE_Query + " " +
+                        SelectGroupingKeyAndName(grouping) +
+                        @"  CostOfGoodsOnHand AS y
+                        FROM Data_CTE t1
+	                        INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
+                        WHERE PwShopId = @PwShopId " +
+                        OrderByClause(ordering) + " " +
+                        "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
+
+            return Connection.Query<HighChartElement>(query,
+                new
+                {
+                    QueryDate = DateTime.Today,
+                    PwShopId,
+                    PwReportId = reportId,
+                    pageSize,
+                    startingIndex = (pageNumber - 1) * pageSize,
+                }).ToList();
+        }
+
+
+        private string OrderByClauseAggregate(ColumnOrdering ordering)
         {
             if (ordering == ColumnOrdering.InventoryAscending)
             {
@@ -156,6 +183,47 @@ namespace ProfitWise.Data.Repositories
             if (ordering == ColumnOrdering.PotentialProfitDescending)
             {
                 return "ORDER BY SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) DESC";
+            }
+            throw new ArgumentException("reportGrouping");
+        }
+
+        [Obsolete("Oops! Won't be needing this...")]
+        private string OrderByClause(ColumnOrdering ordering)
+        {
+            if (ordering == ColumnOrdering.InventoryAscending)
+            {
+                return "ORDER BY Inventory ASC";
+            }
+            if (ordering == ColumnOrdering.InventoryDescending)
+            {
+                return "ORDER BY Inventory DESC";
+            }
+
+            if (ordering == ColumnOrdering.CogsAscending)
+            {
+                return "ORDER BY CostOfGoodsOnHand ASC";
+            }
+            if (ordering == ColumnOrdering.CogsDescending)
+            {
+                return "ORDER BY CostOfGoodsOnHand DESC";
+            }
+
+            if (ordering == ColumnOrdering.PotentialRevenueAscending)
+            {
+                return "ORDER BY PotentialRevenue ASC";
+            }
+            if (ordering == ColumnOrdering.PotentialRevenueDescending)
+            {
+                return "ORDER BY PotentialRevenue DESC";
+            }
+
+            if (ordering == ColumnOrdering.PotentialProfitAscending)
+            {
+                return "ORDER BY PotentialRevenue - CostOfGoodsOnHand ASC";
+            }
+            if (ordering == ColumnOrdering.PotentialProfitDescending)
+            {
+                return "ORDER BY PotentialRevenue - CostOfGoodsOnHand DESC";
             }
             throw new ArgumentException("reportGrouping");
         }

@@ -109,6 +109,9 @@
         <div style="min-height: 600px;">            
             <!-- Executive Summary -->            
             <div data-bind="template: { name: 'Report-Goods-On-Hand-Totals' }"></div>
+            
+            <!-- Chart -->
+            <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
             <!-- Table -->
             <div data-bind="template: { name: 'Report-Goods-On-Hand-Details'  }"></div>
@@ -141,6 +144,7 @@
         <div class="col-xs-12" style="height:25px; overflow:auto;">
         </div>
     </div>
+    
 </script>
 
 <script id="Report-Goods-On-Hand-Details" type="text/html">
@@ -257,7 +261,6 @@
             return '@ColumnOrdering.CogsDescending';
         });
 
-
         self.RefreshReportData = function (reportId, callback) {
             flow.exec(
                 function () {
@@ -272,27 +275,14 @@
                 },
                 function (data) {
                     self.ReportId(reportId);
-
-                    //console.log(data);
-
                     self.Data(data);
                     self.PagingModel.RecordCount(data.DetailsCount);
+                    self.DatasetLoaded(true);
 
                     $('html, body').animate({ scrollTop: 0 });
 
-                    /*
                     ProfitWiseWidgets.LoadColumnChart(
-                        '#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);
-
-                    if (data.Summary.ExecutiveSummary.TotalQuantitySold > 0) {
-                        ProfitWiseWidgets.LoadPieChart('products-pie-chart', 'Top Products', summary.ProductsByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('vendors-pie-chart', 'Top Vendors', summary.VendorsByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('variants-pie-chart', 'Top Variants', summary.VariantByMostProfitable, data.CurrencyId);
-                        ProfitWiseWidgets.LoadPieChart('product-types-pie-chart', 'Top Product Types', summary.ProductTypeByMostProfitable, data.CurrencyId);
-                    }
-                    */
-
-                    self.DatasetLoaded(true);
+                        '#column-chart', 'Cost of Goods on Hand', data.Chart, null, data.CurrencyId);
 
                     if (callback) {
                         callback();

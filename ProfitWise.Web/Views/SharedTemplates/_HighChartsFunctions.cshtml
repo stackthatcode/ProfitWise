@@ -1,6 +1,9 @@
 ﻿
 <script id="HighChart-Load-Column-Chart">
-    ProfitWiseWidgets.LoadColumnChart = function (id, title, seriesData, drilldownData, currencyId, drilldownFunc) {
+    ProfitWiseWidgets.LoadColumnChart = function (
+            id, title, seriesData, drilldownData, currencyId, drilldownFunc) {
+
+        //console.log(seriesData);
         var events = drilldownFunc ?  { drilldown: drilldownFunc } : null;
 
         $(id).highcharts({
@@ -9,7 +12,7 @@
             },
             chart: { type: 'column', events: events },
             xAxis: { type: 'category' },
-            yAxis: { title: { text: 'Total profits' } },
+            yAxis: { title: { text: title } },
             lang: { drillUpText: '◁ Back' },
             legend: { enabled: true },
             title: { text: '' },

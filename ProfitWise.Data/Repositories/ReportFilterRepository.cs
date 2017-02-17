@@ -366,7 +366,7 @@ namespace ProfitWise.Data.Repositories
             {
                 query = @"SELECT COUNT(DISTINCT(PwProductId)) AS ProductCount, 
                         COUNT(DISTINCT(PwVariantId)) AS VariantCount
-                        FROM vw_standaloneproductandvariantsearch 
+                        FROM [vw_goodsonhand] 
                         WHERE PwShopId = @PwShopId ";
                 query += ReportFilterClauseGenerator(reportId);
             }

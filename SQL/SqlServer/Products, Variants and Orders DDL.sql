@@ -372,7 +372,7 @@ GO
 -- TODO - this badly needs multi-tenant filtering (!!!)
 CREATE VIEW [dbo].[vw_standaloneproductandvariantsearch] (
 	[PwShopId], [PwProductId], [ProductTitle], [Vendor], [ProductType], [PwVariantId], [VariantTitle], [Sku],
-	[IsProductActive], [IsVariantActive], [Inventory], [PwMasterVariantId], [])
+	[IsProductActive], [IsVariantActive], [Inventory], [PwMasterVariantId], [StockedDirectly])
 AS 
    SELECT 
       t1.PwShopId AS PwShopId, 
@@ -386,11 +386,23 @@ AS
 	  t1.IsActive AS IsProductActive,
 	  t3.IsActive AS IsVariantActive,
 	  t3.Inventory,
-	  t3.[PwMasterVariantId]
+	  t3.[PwMasterVariantId],
+	  t4.StockedDirectly
    FROM profitwiseproduct AS t1 
 		INNER JOIN profitwisevariant AS t3
 			ON t1.PwShopId = t3.PwShopId AND t1.PwProductId = t3.PwProductId
 		INNER JOIN profitwisemastervariant AS t4
 			ON t3.[PwMasterVariantId] = t4.[PwMasterVariantId]
 GO
+
+
+CREATE VIEW [dbo].[vw_goodsonhand]
+AS 
+	SELECT * FROM [vw_standaloneproductandvariantsearch]
+	WHERE StockedDirectly = 1
+	AND Inventory IS NOT NULL
+	AND IsProductActive = 1
+	AND IsVariantActive = 1
+GO
+
 

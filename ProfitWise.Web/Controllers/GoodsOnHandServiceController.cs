@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
@@ -48,14 +49,30 @@ namespace ProfitWise.Web.Controllers
                    
                 // Next build the top-performing summary
                 var totals = queryRepository.RetrieveTotals(reportId);
-                var details = queryRepository.RetrieveDetails(reportId, report.GroupingId, ordering, pageNumber, pageSize);
+                var details = queryRepository.RetrieveDetails(
+                    reportId, report.GroupingId, ordering, pageNumber, pageSize);
+                var chartData =
+                    new object[]
+                    {
+                        new {
+                            name = "Cost of Goods on Hand",
+                            data = details.Select(detail => new HighChartElement
+                            {
+                                y = detail.TotalCostOfGoodsSold,
+                                name = detail.GroupingName,
+                                drilldown = false,
+                                drilldownurl = null,
+                            }).ToList()
+                        }
+                    };
+
                 var detailsCount = queryRepository.DetailsCount(reportId, report.GroupingId);
 
                 trans.Complete();
                 
                 return new JsonNetResult(
                     new {   userIdentity.PwShop.CurrencyId, Totals = totals, Details = details,
-                            DetailsCount = detailsCount, });
+                            Chart = chartData, DetailsCount = detailsCount, });
             }
         }
         
