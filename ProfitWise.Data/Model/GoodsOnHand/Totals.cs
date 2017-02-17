@@ -4,7 +4,7 @@
     {
         public long ReportId { get; set; }
         public decimal TotalCostOfGoodsOnHand { get; set; }
-        public decimal PotentialRevenue { get; set; }
-        public decimal PotentialProfit => PotentialRevenue - TotalCostOfGoodsOnHand;
+        public decimal TotalPotentialRevenue { get; set; }
+        public decimal TotalPotentialProfit => TotalPotentialRevenue - TotalCostOfGoodsOnHand;
     }
 }

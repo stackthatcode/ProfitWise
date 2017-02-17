@@ -102,6 +102,8 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
+    <Compile Include="Model\GoodsOnHand\ColumnOrdering.cs" />
+    <Compile Include="Model\GoodsOnHand\Details.cs" />
     <Compile Include="Model\GoodsOnHand\Totals.cs" />
     <Compile Include="Model\GoodsOnHand\TotalQueryContext.cs" />
     <Compile Include="Model\Preferences\DateRange.cs" />

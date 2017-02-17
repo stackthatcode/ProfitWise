@@ -426,7 +426,10 @@ namespace ProfitWise.Data.Repositories
                 SELECT t2.PwMasterVariantId, @PwShopId, @StartDate, @EndDate, 
                         @PercentMultiplier, @SourceCurrencyId, @FixedAmount
                 FROM profitwisepicklistmasterproduct t1  
-	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId";
+	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
+                WHERE t1.PwShopId = @PwShopId 
+	                AND t2.PwShopId = @PwShopId
+	                AND t1.PwPickListId = @PwPickListId ";
 
             var calcContext = context.ToCalcContext();
 
@@ -434,7 +437,7 @@ namespace ProfitWise.Data.Repositories
                 query, new
                 {
                     PwShop.PwShopId,
-                    context.PwMasterVariantId,
+                    context.PwPickListId,
                     context.StartDate,
                     context.EndDate,
                     calcContext.PercentMultiplier,

@@ -106,222 +106,138 @@
     </div>
     
     <div data-bind="if: DatasetLoaded">
-        <div style="min-height: 600px;">
-            <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">
-                Data Data Data!!!
-            </h1>
+        <div style="min-height: 600px;">            
+            <!-- Executive Summary -->            
+            <div data-bind="template: { name: 'Report-Goods-On-Hand-Totals' }"></div>
+
+            <!-- Table -->
+            <div data-bind="template: { name: 'Report-Goods-On-Hand-Details'  }"></div>
+
         </div>
 
     </div>
 </script>
-<script id="Report-Profitability-Detail" type="text/html">
-    <div id="details-drillup-button" style="height:40px; overflow:auto;">
-        <a href="#" style="width:250px; font-weight:700;" data-bind="click: ExitDetailClick">
-            <i class="glyphicon glyphicon-arrow-left"></i> Navigate Back to Summary
-        </a>
+<script id="Report-Goods-On-Hand-Totals" type="text/html">
+    <!-- Executive Summary -->
+    <div class="row executive-summary" data-bind="with: Data">        
+        <div class="col-xs-3 summary-cell">
+            <div class="executive-summary-label">Cost of Goods on Hand</div>
+            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalCostOfGoodsOnHand, CurrencyId)"></h1>
+        </div>
+        <div class="col-xs-3 summary-cell">
+            <div class="executive-summary-label">Potential Revenue</div>
+            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialRevenue, CurrencyId)"></h1>
+        </div>
+        <div class="col-xs-3 summary-cell">
+            <div class="executive-summary-label">Potential Profit</div>
+            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialProfit, CurrencyId)"></h1>
+        </div>
+        <div class="col-xs-3 summary-cell">
+        </div>
     </div>
 
-    <div id="column-chart-detail" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
-    <div data-bind="with: ProfitabilityDetailContext">
-        <div data-bind="if: Data().length == 0">
-            <div style="margin-top: 200px; margin-bottom:200px; text-align: center; overflow:auto;">
-                <i style="font-size: 6.0em; color: #DDD;" class="glyphicon glyphicon-tag"></i>
-                <h1 style="font-size:3em; color: #AAA; font-weight: 700;">No Data Found Here</h1>
-                <span style="color: #555;">Try refreshing the page or refining your filters</span>
-
-            </div>
+    <!-- Spacer -->
+    <div class="row">
+        <div class="col-xs-12" style="height:25px; overflow:auto;">
         </div>
-
-        <div data-bind="if: Data().length > 0 && PagingModel.PageCount() > 1" style="text-align: right;">
-            <div style="overflow:auto; margin-bottom: 30px;" data-bind="template: { name: 'Paging-Widget', data: PagingModel }"></div>
-        </div>
-
-        <div data-bind="if: Data().length > 0">
-            <table class="table table-striped table-hover" id="detail-report-table" style="margin-top: 30px;">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 0, ColumnName: 'Items Sold', Model: SortingModel } }"></th>
-                        <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 1, ColumnName: 'Average Margin', Model: SortingModel } }"></th>
-                        <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 2, ColumnName: 'Net Sales', Model: SortingModel } }"></th>
-                        <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 3, ColumnName: 'CoGS', Model: SortingModel } }"></th>
-                        <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 4, ColumnName: 'Profit', Model: SortingModel } }"></th>
-                        <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 4, ColumnName: 'Profit %', Model: SortingModel } }"></th>
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: Data">
-                    <tr>
-                        <td>
-                            <div class="overflow-gracefully" style="max-width:350px;"
-                                 data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></div>
-                        </td>
-                        <td>
-                            <span class="overflow-gracefully"
-                                  data-bind="text: TotalQuantitySold"></span>
-                        </td>
-                        <td>
-                            <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(AverageMargin)"></span>%
-                        </td>
-                        <td>
-                            <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.Currency())"></span>
-                        </td>
-                        <td>
-                            <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.Currency())"></span>
-                        </td>
-                        <td>
-                            <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.Currency())"></span>
-                        </td>
-                        <td>
-                            <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage)"></span>%
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div data-bind="if: Data().length > 0 && PagingModel.PageCount() > 1" style="text-align: right;">
-            <div style="overflow:auto; margin-bottom: 30px;" data-bind="template: { name: 'Paging-Widget', data: PagingModel }"></div>
-        </div>
-
     </div>
 </script>
 
-<!-- Profitability Models -->
-<script id="Profitability-Detail-Context">
-    ProfitWiseWidgets.ProfitabilityDetailContext = function () {
-        var self = this;
+<script id="Report-Goods-On-Hand-Details" type="text/html">
+    <div data-bind="if: Data().Details.length > 0 && PagingModel.PageCount() > 0" style="text-align: right;">
+        <div style="overflow:auto; margin-bottom: 60px;" 
+             data-bind="template: { name: 'Paging-Widget', data: PagingModel }">
+        </div>
+    </div>
+    
+    <div data-bind="if: Data().Details.length > 0">
+        <table class="table table-striped table-hover" id="detail-report-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th style="text-align: center;">Unit Price</th>
+                <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 0, ColumnName: '# In Stock', Model: SortingModel } }"></th>
+                <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 1, ColumnName: 'Total CoGS', Model: SortingModel } }"></th>
+                <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 2, ColumnName: 'Potential Revenue', Model: SortingModel } }"></th>
+                <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 3, ColumnName: 'Potential Profit', Model: SortingModel } }"></th>
+            </tr>
+            </thead>
+            
+            <!-- ko with: Data() -->
+            <tbody data-bind="foreach: Details">
+            <tr>
+                <td>
+                    <div class="overflow-gracefully" style="max-width:350px;"
+                         data-bind="text: GroupingNameCleaned, tooltip: { title: GroupingNameCleaned, placement: 'bottom' }"></div>
+                </td>
 
-        self.Data = ko.observableArray();
-        self.Grouping = ko.observable('@ReportGrouping.Product');
-        self.Currency = ko.observable(@ProfitWise.Data.Model.System.Currency.DefaultCurrencyId);
-        
-        self.PagingModel = new ProfitWiseWidgets.PagingModel();
-        self.PagingModel.Callback = function() {
-            self.LoadDataset(self.ReportId());
-        };
-        self.PagingModel.ShowPageSizeSelector(true);
+                <td style="text-align: center;">
+                    <div data-bind="if: MinimumPrice != MaximumPrice">
+                        <span class="overflow-gracefully"
+                              data-bind="text: ProfitWiseFunctions.FormatCurrency(MinimumPrice, $parent.CurrencyId)"></span>
+                        to
+                        <span class="overflow-gracefully"
+                              data-bind="text: ProfitWiseFunctions.FormatCurrency(MaximumPrice, $parent.CurrencyId)"></span>
+                    </div>
+                    <div data-bind="if: MinimumPrice == MaximumPrice">
+                        <span class="overflow-gracefully"
+                              data-bind="text: ProfitWiseFunctions.FormatCurrency(MaximumPrice, $parent.CurrencyId)"></span>
+                    </div>
+                </td>
 
-        self.SortingModel = new ProfitWiseWidgets.SortingModel();
-        self.SortingModel.Callback = function () { self.LoadDataset(self.ReportId()); };
+                <td>
+                    <span class="overflow-gracefully"
+                          data-bind="text: TotalInventory"></span>
+                </td>
 
-        self.ReportId = ko.observable();
+                <td>
+                    <span class="overflow-gracefully"
+                          data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCostOfGoodsSold, $parent.CurrencyId)"></span>
+                </td>
+                <td>
+                    <span class="overflow-gracefully"
+                          data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialRevenue, $parent.CurrencyId)"></span>
+                </td>
+                <td>
+                    <span class="overflow-gracefully"
+                          data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialProfit, $parent.CurrencyId)"></span>
+                </td>
+            </tr>
+            </tbody>
+            <!-- /ko -->
+        </table>
+    </div>
 
-        self.Initialize = function() {
-            self.PagingModel.PageNumber(1);
-            self.SortingModel.SelectedColumnIndex(4);
-            self.SortingModel.SortByDirectionDown(true);
-        }
-
-        self.Ordering = ko.computed(function() {
-            var index = self.SortingModel.SelectedColumnIndex();
-            var descending = self.SortingModel.SortByDirectionDown();
-
-            if (index == 0)
-                return descending ? '@ColumnOrdering.QuantitySoldDescending' : '@ColumnOrdering.QuantitySoldAscending';
-            if (index == 1)
-                return descending ? '@ColumnOrdering.AverageMarginDescending' : '@ColumnOrdering.AverageMarginAscending';
-            if (index == 2)
-                return descending ? '@ColumnOrdering.NetSalesDescending' : '@ColumnOrdering.NetSalesAscending';
-            if (index == 3)
-                return descending ? '@ColumnOrdering.CogsDescending' : '@ColumnOrdering.CogsAscending';
-            if (index == 4)
-                return descending ? '@ColumnOrdering.ProfitDescending' : '@ColumnOrdering.ProfitAscending';
-            if (index == 5)
-                return descending ? '@ColumnOrdering.ProfitDescending' : '@ColumnOrdering.ProfitAscending';
-
-            return '@ColumnOrdering.ProfitDescending';
-        });
-
-        self.Drilldown = function (e) {
-            if (e.seriesOptions) {
-                return;
-            }
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet(e.point.drilldownurl, this);
-                },
-                function (data) {
-                    e.target.addSeriesAsDrilldown(e.point, data);
-                });
-        }
-        
-        self.LoadDataset = function (reportId, callback) {
-            flow.exec(
-                function () {
-                    self.ReportId(reportId);
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    var data = {
-                        reportId: reportId,
-                        grouping: self.Grouping(),
-                        ordering: self.Ordering(),
-                        pageNumber: self.PagingModel.PageNumber(),
-                        pageSize: self.PagingModel.PageSize(),
-                    };
-                    ajax.HttpPost("/ProfitService/Detail",  data, this);
-                },
-                function (data) {
-                    self.Data.removeAll();
-                    self.Data(data.rows);
-                    self.PagingModel.RecordCount(data.count);
-
-                    ProfitWiseWidgets.LoadColumnChart(
-                        '#column-chart-detail', 'Profitability', data.series, null, data.currency, self.Drilldown);
-
-                    if (callback) {
-                        callback();
-                    }
-                }
-            );
-        };
-        return self;
-    };
+    <div data-bind="if: Data().Details.length > 0 && PagingModel.PageCount() > 0" style="text-align: right;">
+        <div style="overflow:auto; margin-top: 60px;"
+             data-bind="template: { name: 'Paging-Widget', data: PagingModel }">
+        </div>
+    </div>
 </script>
+
 
 
 <script id="Goods-On-Hand-Model">
     ProfitWiseWidgets.GoodsOnHandModel = function () {
         var self = this;
         self.ReportId = ko.observable();
+        self.Data = ko.observable();
         self.DatasetLoaded = ko.observable(false);
 
-        self.Data = ko.observable();
+        self.PagingModel = new ProfitWiseWidgets.PagingModel();
+        self.PagingModel.Callback = function () { self.RefreshReportData(self.ReportId()); };
+        self.PagingModel.ShowPageSizeSelector(true);
+        self.PagingModel.PageNumber(1);
 
-        /*
-        self.SummaryActive = ko.observable(true);
-        self.ProfitabilityDetailContext = new ProfitWiseWidgets.ProfitabilityDetailContext();
-
-        self.ProfitabilitySummaryContext.DetailCallback = function (grouping) {
-            flow.exec(
-                function () {
-                    self.ProfitabilityDetailContext.Grouping(grouping);
-                    self.SummaryActive(false);
-                    self.RefreshReportData(self.ReportId(), this);
-                }, function () {
-                    $('html, body').animate({ scrollTop: 0 });
-                });
-        };
-
-        self.ExitDetailClick = function () {
-            self.SummaryActive(true);
-            self.RefreshReportData(self.ReportId());
-        };
-        */
+        self.SortingModel = new ProfitWiseWidgets.SortingModel();
+        self.SortingModel.Callback = function () { self.RefreshReportData(self.ReportId()); };
         
+
         self.RefreshReportData = function (reportId, callback) {             
-            alert('RefreshReportData Triggered!!!');
             flow.exec(
                 function () {
                     self.ReportId(reportId);
@@ -329,10 +245,13 @@
                     ajax.HttpPost("/GoodsOnHandService/Data", { reportId: reportId }, this);
                 },
                 function (data) {
-                    // Rename to Summary Dataset
-                    var summary = data.Summary;
-                    self.Data(summary);
-                    
+                    console.log(data);
+
+                    self.Data(data);
+                    self.PagingModel.RecordCount(data.Details.length);
+
+                    $('html, body').animate({ scrollTop: 0 });
+
                     /*
                     ProfitWiseWidgets.LoadColumnChart(
                         '#column-chart', 'Profitability', data.Series, data.Drilldown, data.CurrencyId);

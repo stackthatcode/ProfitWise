@@ -5,6 +5,7 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model.GoodsOnHand;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
@@ -38,55 +39,26 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Data(long reportId, int pageNumber = 1, int pageSize = 50)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportRepository(userIdentity.PwShop);            
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
-            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             using (var trans = new TransactionScope())
             {
-                var shopCurrencyId = userIdentity.PwShop.CurrencyId;
-                var report = repository.RetrieveReport(reportId);
-
                 // First create the query stub...
                 queryRepository.PopulateQueryStub(reportId);
                 
                 // Next build the top-performing summary
-                var summary = BuildSummary(report, userIdentity.PwShop);
-                
+                var totals = queryRepository.RetrieveTotals(reportId);
+
+                var details = queryRepository.RetrieveDetailsByProductType(reportId);
+
                 trans.Complete();
                 
                 return new JsonNetResult(
-                    new
-                    {
-                        CurrencyId = shopCurrencyId,
-                        Summary = summary,
-                    });
+                    new { userIdentity.PwShop.CurrencyId, Totals = totals, Details = details });
             }
         }
-
         
-        // *** The aggregated Grouped Totals, including Executive Summary
-        private Summary BuildSummary(PwReport report, PwShop shop)
-        {
-            var queryRepository = _factory.MakeGoodsOnHandRepository(shop);
 
-            var queryContext = new TotalQueryContext
-            {
-                PwReportId = report.PwReportId,
-                PwShopId = shop.PwShopId,
-                StartDate = report.StartDate,
-                EndDate = report.EndDate,
-                Grouping = report.GroupingId,
-                Ordering = ColumnOrdering.ProfitDescending,
-            };
-
-            var summary = new Summary()
-            {
-                CurrencyId = shop.CurrencyId,
-            };
-
-            return summary;
-        }
         
         private string DrilldownUrlBuilder(
                 long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
