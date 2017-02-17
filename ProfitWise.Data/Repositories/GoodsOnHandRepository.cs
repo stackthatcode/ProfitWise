@@ -52,8 +52,7 @@ namespace ProfitWise.Data.Repositories
                 @" GROUP BY PwVariantId, PwProductId, 
                 Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
             Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
-        }
-       
+        }       
 
         public Totals RetrieveTotals(long reportId)
         {
@@ -67,7 +66,8 @@ namespace ProfitWise.Data.Repositories
                 query, new { QueryDate = DateTime.Today, PwShopId, PwReportId = reportId }).First();
         }
 
-        public int DetailsCount(long reportId, ReportGrouping grouping)
+        public int DetailsCount(long reportId, ReportGrouping grouping,
+                string productType = null, string vendor = null, long? pwProductId = null)
         {
             var selectQueryHead = "";
             if (grouping == ReportGrouping.Product)
@@ -81,22 +81,27 @@ namespace ProfitWise.Data.Repositories
 
             var query =
                 selectQueryHead +
-                @" FROM vw_standaloneproductandvariantsearch
+                @" FROM vw_goodsonhand
                 WHERE PwVariantId IN ( 
 		            SELECT PwVariantId FROM profitwisegoodsonhandquerystub 
 		            WHERE PwShopId = @PwShopId AND PwReportId = @reportId )
-                AND PwShopId = @PwShopId
-                AND IsProductActive = 1 
-                AND IsVariantActive = 1
-                AND Inventory IS NOT NULL
-                AND StockedDirectly = 1";
+                AND PwShopId = @PwShopId ";
 
-            return Connection.Query<int>(query, new { PwShopId, reportId }).FirstOrDefault();
+            if (productType != null)
+                query += "AND ProductType = @productType ";
+            if (vendor != null)
+                query += "AND Vendor = @vendor ";
+            if (pwProductId != null)
+                query += "AND PwProductId = @pwProductId ";
+
+            return Connection.Query<int>(
+                query, new { PwShopId, reportId, productType, vendor, pwProductId }).FirstOrDefault();
         }
 
         public List<Details> RetrieveDetails(
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering, 
-                int pageNumber, int pageSize)
+                int pageNumber, int pageSize, 
+                string productType = null, string vendor = null, long? pwProductId = null)
         {
             var query = CTE_Query + " " +
                         SelectGroupingKeyAndName(grouping) +
@@ -108,10 +113,18 @@ namespace ProfitWise.Data.Repositories
 		                    SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) AS TotalPotentialProfit
                         FROM Data_CTE t1
 	                        INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
-                        WHERE PwShopId = @PwShopId " +
-                        GroupByClause(grouping) + " " +
-                        OrderByClauseAggregate(ordering) + " " +
-                        "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
+                        WHERE PwShopId = @PwShopId ";
+
+            if (productType != null)
+                query += "AND t2.ProductType = @productType ";
+            if (vendor != null)
+                query += "AND t2.Vendor = @vendor ";
+            if (pwProductId != null)
+                query += "AND t2.PwProductId = @pwProductId ";
+
+            query += GroupByClause(grouping) + " " +
+                    OrderByClauseAggregate(ordering) + " " +
+                    "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
             return Connection.Query<Details>(query, 
                 new {
@@ -121,32 +134,7 @@ namespace ProfitWise.Data.Repositories
         }
 
 
-        [Obsolete("Oops! Won't be needing this...")]
-        public List<HighChartElement> RetrieveChartElements(
-                long reportId, ReportGrouping grouping, ColumnOrdering ordering,
-                int pageNumber, int pageSize)
-        {
-            var query = CTE_Query + " " +
-                        SelectGroupingKeyAndName(grouping) +
-                        @"  CostOfGoodsOnHand AS y
-                        FROM Data_CTE t1
-	                        INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
-                        WHERE PwShopId = @PwShopId " +
-                        OrderByClause(ordering) + " " +
-                        "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
-
-            return Connection.Query<HighChartElement>(query,
-                new
-                {
-                    QueryDate = DateTime.Today,
-                    PwShopId,
-                    PwReportId = reportId,
-                    pageSize,
-                    startingIndex = (pageNumber - 1) * pageSize,
-                }).ToList();
-        }
-
-
+        
         private string OrderByClauseAggregate(ColumnOrdering ordering)
         {
             if (ordering == ColumnOrdering.InventoryAscending)
@@ -185,48 +173,7 @@ namespace ProfitWise.Data.Repositories
                 return "ORDER BY SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) DESC";
             }
             throw new ArgumentException("reportGrouping");
-        }
-
-        [Obsolete("Oops! Won't be needing this...")]
-        private string OrderByClause(ColumnOrdering ordering)
-        {
-            if (ordering == ColumnOrdering.InventoryAscending)
-            {
-                return "ORDER BY Inventory ASC";
-            }
-            if (ordering == ColumnOrdering.InventoryDescending)
-            {
-                return "ORDER BY Inventory DESC";
-            }
-
-            if (ordering == ColumnOrdering.CogsAscending)
-            {
-                return "ORDER BY CostOfGoodsOnHand ASC";
-            }
-            if (ordering == ColumnOrdering.CogsDescending)
-            {
-                return "ORDER BY CostOfGoodsOnHand DESC";
-            }
-
-            if (ordering == ColumnOrdering.PotentialRevenueAscending)
-            {
-                return "ORDER BY PotentialRevenue ASC";
-            }
-            if (ordering == ColumnOrdering.PotentialRevenueDescending)
-            {
-                return "ORDER BY PotentialRevenue DESC";
-            }
-
-            if (ordering == ColumnOrdering.PotentialProfitAscending)
-            {
-                return "ORDER BY PotentialRevenue - CostOfGoodsOnHand ASC";
-            }
-            if (ordering == ColumnOrdering.PotentialProfitDescending)
-            {
-                return "ORDER BY PotentialRevenue - CostOfGoodsOnHand DESC";
-            }
-            throw new ArgumentException("reportGrouping");
-        }
+        }        
 
         private string GroupByClause(ReportGrouping reportGrouping)
         {

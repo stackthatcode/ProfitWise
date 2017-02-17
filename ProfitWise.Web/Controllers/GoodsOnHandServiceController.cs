@@ -34,7 +34,8 @@ namespace ProfitWise.Web.Controllers
 
         [HttpPost]
         public ActionResult Data(
-                long reportId, ColumnOrdering ordering = ColumnOrdering.PotentialRevenueDescending, 
+                long reportId, ColumnOrdering ordering = ColumnOrdering.PotentialRevenueDescending,
+                string productType = null, string vendor = null, long? pwProductId = null,
                 int pageNumber = 1, int pageSize = 50)
         {
             var userIdentity = HttpContext.PullIdentity();
@@ -46,11 +47,12 @@ namespace ProfitWise.Web.Controllers
                 // First create the query stub...
                 queryRepository.PopulateQueryStub(reportId);
                 var report = reportRepository.RetrieveReport(reportId);
-                   
+                
                 // Next build the top-performing summary
                 var totals = queryRepository.RetrieveTotals(reportId);
                 var details = queryRepository.RetrieveDetails(
                     reportId, report.GroupingId, ordering, pageNumber, pageSize);
+
                 var chartData =
                     new object[]
                     {
@@ -75,15 +77,14 @@ namespace ProfitWise.Web.Controllers
                             Chart = chartData, DetailsCount = detailsCount, });
             }
         }
-        
 
         
         private string DrilldownUrlBuilder(
-                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
+                long reportId, ColumnOrdering ordering, string productType = null, string vendor = null, long? pwProductId = null,
+                int pageNumber = 1, int pageSize = 50)
         {
-            return $"/ProfitService/Drilldown?reportId={reportId}&grouping={grouping}&key={key}&name={name}&" +
-                   $"start={HttpUtility.UrlEncode(start.ToString("yyyy-MM-dd"))}&" +
-                   $"end={HttpUtility.UrlEncode(end.ToString("yyyy-MM-dd"))}";
+            return $"/GoodsOnHandService/Data?reportId={reportId}&ordering={ordering}&" +
+                   $"pageNumber={pageNumber}&pageSize={pageSize}";
         }
         
     }
