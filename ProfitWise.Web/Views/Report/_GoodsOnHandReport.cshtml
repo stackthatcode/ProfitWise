@@ -1,5 +1,6 @@
 ﻿@using ProfitWise.Data.Model.GoodsOnHand
 @using ProfitWise.Data.Model.Reports
+@using ProfitWise.Web.Controllers
 
 <style>
     .report-viewer-top-button {
@@ -233,12 +234,13 @@
         self.DatasetLoaded = ko.observable(false);
 
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
-        self.PagingModel.Callback = function () { self.RefreshReportData(self.ReportId()); };
-        self.PagingModel.ShowPageSizeSelector(true);
+        self.PagingModel.Callback = function () { self.RefreshPagingAndOrderData(); };
+        self.PagingModel.ShowPageSizeSelector(false);
         self.PagingModel.PageNumber(1);
+        self.PagingModel.PageSize(@GoodsOnHandServiceController.FixedPageSize);
 
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
-        self.SortingModel.Callback = function () { self.RefreshReportData(self.ReportId()); };
+        self.SortingModel.Callback = function () { self.RefreshPagingAndOrderData(); };
         self.SortingModel.SelectedColumnIndex(1);   // Default to CoGS descending...
 
         self.Ordering = ko.computed(function () {
@@ -280,22 +282,36 @@
             }
         };
 
+        self.CurrentUrlBase = ko.observable();
+
+        self.UrlWithPagingAndOrdering = function (baseUrl) {
+            return baseUrl +
+                "&ordering=" + self.Ordering() +
+                "&pageNumber=" + self.PagingModel.PageNumber();
+        };
+
+        self.DrilldownUrlStack = ko.observableArray();
+
         // Refreshes the drilldown and loads from the current Grouping selection
         self.RefreshReportData = function (reportId, callback) {
+            var urlbase = "/GoodsOnHandService/Data?reportId=" + reportId;
+
             flow.exec(
                 function () {
-                    var data = {
-                        reportId: reportId,
-                        ordering: self.Ordering(),
-                        pageNumber: self.PagingModel.PageNumber(),
-                        pageSize: self.PagingModel.PageSize(),
-                    };
+                    self.PagingModel.PageNumber(1);
+                    var finalurl = self.UrlWithPagingAndOrdering(urlbase);
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost("/GoodsOnHandService/Data", data, this);
+                    ajax.HttpPost(finalurl, {}, this);
+                    console.log(finalurl);
                 },
-                function (data) {
+                function(data) {
                     self.LoadModel(data);
+
+                    self.CurrentUrlBase(urlbase);
+                    self.DrilldownUrlStack.removeAll();
+
                     $('html, body').animate({ scrollTop: 0 });
+
                     if (callback) {
                         callback();
                     }
@@ -303,19 +319,45 @@
             );
         };
 
+        self.RefreshPagingAndOrderData = function() {
+            if (self.DrilldownUrlStack().length == 0) {
+                self.RefreshReportData(self.ReportId());
+                return;
+            }
 
+            flow.exec(
+                function () {
+                    var finalurl = self.UrlWithPagingAndOrdering(self.CurrentUrlBase());
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpGet(finalurl, this);
+                },
+                function (data) {
+                    self.LoadModel(data);
+                });
+        };
 
         // Loads using the Drilldown URL's grouping
         self.Drilldown = function (e) {
-            if (e.seriesOptions) {
+            if (e.seriesOptions || !e.point.drilldownurl) {
                 return;
             }
+
+            var drilldownbaseurl = e.point.drilldownurl;
+            var drilldownfinalurl = drilldownbaseurl + "&ordering=" + self.Ordering();
+
             flow.exec(
                 function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet(e.point.drilldownurl, this);
+                    var ajax = new ProfitWiseFunctions.Ajax();                    
+                    ajax.HttpGet(drilldownfinalurl, this);
                 },
                 function (data) {
+                    var finalurl = (self.UrlWithPagingAndOrdering(self.CurrentUrlBase()));
+                    self.DrilldownUrlStack.push(finalurl);
+                    self.CurrentUrlBase(drilldownbaseurl);
+                    
+                    console.log(self.CurrentUrlBase());
+                    console.log(self.DrilldownUrlStack());
+
                     self.LoadModel(data);
                 });
         }

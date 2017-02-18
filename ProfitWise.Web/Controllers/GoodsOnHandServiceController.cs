@@ -22,7 +22,7 @@ namespace ProfitWise.Web.Controllers
         public const int NumberOfColumnGroups = 5;
         public const string AllOtherGroupingName = "All other";
         public const string NoGroupingName = "All"; // Date-bucketed Totals
-
+        public const int FixedPageSize = 10;
 
         public GoodsOnHandServiceController(MultitenantFactory factory, IPushLogger logger)
         {
@@ -35,7 +35,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Data(
                 long reportId, ColumnOrdering ordering = ColumnOrdering.PotentialRevenueDescending,
                 string productType = null, string vendor = null, long? pwProductId = null,
-                int pageNumber = 1, int pageSize = 50)
+                int pageNumber = 1)
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
@@ -47,8 +47,7 @@ namespace ProfitWise.Web.Controllers
                 var report = reportRepository.RetrieveReport(reportId);
 
                 var results = BuildResults(
-                        reportId, report.GroupingId, ordering, productType, vendor, pwProductId,
-                        pageNumber, pageSize);
+                    reportId, report.GroupingId, ordering, productType, vendor, pwProductId, pageNumber);
 
                 return new JsonNetResult(results);
             }
@@ -57,17 +56,17 @@ namespace ProfitWise.Web.Controllers
         public ActionResult DrillDown(
                     long reportId, ColumnOrdering ordering, ReportGrouping grouping,
                     string productType = null, string vendor = null, long? pwProductId = null,
-                    int pageNumber = 1, int pageSize = 50)
+                    int pageNumber = 1)
         {
             var results = BuildResults(
-                reportId, grouping, ordering, productType, vendor, pwProductId, pageNumber, pageSize);
+                reportId, grouping, ordering, productType, vendor, pwProductId, pageNumber);
             return new JsonNetResult(results);
         }
 
         private Results BuildResults(
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering,
                 string productType = null, string vendor = null, long? pwProductId = null,
-                int pageNumber = 1, int pageSize = 50)
+                int pageNumber = 1)
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
@@ -78,7 +77,7 @@ namespace ProfitWise.Web.Controllers
                         reportId, grouping, productType, vendor, pwProductId);
 
             var details = queryRepository.RetrieveDetails(
-                    reportId, grouping, ordering, pageNumber, pageSize,
+                    reportId, grouping, ordering, pageNumber, FixedPageSize,
                     productType, vendor, pwProductId);
 
             var chartElements = new List<HighChartElement>();
@@ -86,7 +85,7 @@ namespace ProfitWise.Web.Controllers
             foreach (var detail in details)
             {
                 var drillDownUrl = DrilldownUrlBuilder(
-                    reportId, ordering, pageSize, grouping, detail, productType, vendor, pwProductId);
+                    reportId, grouping, detail, productType, vendor, pwProductId);
 
                 chartElements.Add(
                     new HighChartElement
@@ -119,20 +118,8 @@ namespace ProfitWise.Web.Controllers
             };
         }
 
-        private ReportGrouping? DrilldownGrouping(ReportGrouping currentGrouping)
-        {
-            if (currentGrouping == ReportGrouping.ProductType)
-                return ReportGrouping.Vendor;
-            if (currentGrouping == ReportGrouping.Vendor)
-                return ReportGrouping.Product;
-            if (currentGrouping == ReportGrouping.Product)
-                return ReportGrouping.Variant;
-            return null;
-        }
-
         private string DrilldownUrlBuilder(
-                long reportId, ColumnOrdering ordering, int pageSize,
-                ReportGrouping currentGrouping, Details currentDetails,                
+                long reportId, ReportGrouping currentGrouping, Details currentDetails,                
                 string productType = null, string vendor = null, long? pwProductId = null)
         {
             if (currentGrouping == ReportGrouping.Variant)
@@ -140,10 +127,7 @@ namespace ProfitWise.Web.Controllers
                 return null;
             }
 
-            var url = 
-                $"/GoodsOnHandService/DrillDown?reportId={reportId}&ordering={ordering}" +
-                $"&pageNumber=1&pageSize={pageSize}";
-
+            var url = $"/GoodsOnHandService/DrillDown?reportId={reportId}";
             var encodedDrilldownKey = HttpUtility.UrlEncode(currentDetails.GroupingKey);
 
             // These are exclusive conditions, although still guarded by an "if"
