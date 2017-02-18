@@ -261,6 +261,26 @@
             return '@ColumnOrdering.CogsDescending';
         });
 
+        self.HighChartRef = null;
+
+        self.LoadModel = function(data) {
+            self.Data(data);
+            self.PagingModel.RecordCount(data.DetailsCount);
+            self.ReportId(data.Totals.ReportId);
+            self.DatasetLoaded(true);
+
+            if (!self.HighChartRef) {
+                ProfitWiseWidgets.LoadColumnChart(
+                    '#column-chart', 'Cost of Goods on Hand',
+                    data.Chart, null, data.CurrencyId, self.Drilldown);
+
+                self.HighChartRef = $("#column-chart").highcharts();
+            } else {
+                self.HighChartRef.series[0].setData(data.Chart[0].data);
+            }
+        };
+
+        // Refreshes the drilldown and loads from the current Grouping selection
         self.RefreshReportData = function (reportId, callback) {
             flow.exec(
                 function () {
@@ -274,16 +294,8 @@
                     ajax.HttpPost("/GoodsOnHandService/Data", data, this);
                 },
                 function (data) {
-                    self.ReportId(reportId);
-                    self.Data(data);
-                    self.PagingModel.RecordCount(data.DetailsCount);
-                    self.DatasetLoaded(true);
-
+                    self.LoadModel(data);
                     $('html, body').animate({ scrollTop: 0 });
-
-                    ProfitWiseWidgets.LoadColumnChart('#column-chart',
-                        'Cost of Goods on Hand', data.Chart, null, data.CurrencyId, self.Drilldown);
-
                     if (callback) {
                         callback();
                     }
@@ -291,6 +303,9 @@
             );
         };
 
+
+
+        // Loads using the Drilldown URL's grouping
         self.Drilldown = function (e) {
             if (e.seriesOptions) {
                 return;
@@ -301,8 +316,7 @@
                     ajax.HttpGet(e.point.drilldownurl, this);
                 },
                 function (data) {
-                    e.target.addSeriesAsDrilldown(e.point, data);
-                    //console.log(data);
+                    self.LoadModel(data);
                 });
         }
 

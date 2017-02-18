@@ -6,7 +6,7 @@
         //console.log(seriesData);
         var events = drilldownFunc ?  { drilldown: drilldownFunc } : null;
 
-        $(id).highcharts({
+        return $(id).highcharts({
             credits: {
                 enabled: false
             },
@@ -36,7 +36,6 @@
                         ': <strong>' + ProfitWiseFunctions.FormatCurrency(this.y, currencyId) + '</strong>';
                 }
             },
-
             series: seriesData,
             drilldown: { series: drilldownData, }
         });

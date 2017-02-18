@@ -6,5 +6,6 @@ namespace ProfitWise.Data.Model.GoodsOnHand
     {
         public string name { get; set; }
         public List<HighChartElement> data { get; set; }
+        public bool showInLegend { get; set; }
     }
 }

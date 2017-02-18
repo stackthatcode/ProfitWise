@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
@@ -75,29 +73,40 @@ namespace ProfitWise.Web.Controllers
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
 
             var totals = queryRepository.RetrieveTotals(reportId);
-            var detailsCount = queryRepository.DetailsCount(reportId, grouping);
+            var detailsCount = 
+                    queryRepository.DetailsCount(
+                        reportId, grouping, productType, vendor, pwProductId);
+
             var details = queryRepository.RetrieveDetails(
                     reportId, grouping, ordering, pageNumber, pageSize,
                     productType, vendor, pwProductId);
 
             var chartElements = new List<HighChartElement>();
+
             foreach (var detail in details)
             {
                 var drillDownUrl = DrilldownUrlBuilder(
                     reportId, ordering, pageSize, grouping, detail, productType, vendor, pwProductId);
 
-                chartElements.Add(new HighChartElement
-                {
-                    y = detail.TotalCostOfGoodsSold,
-                    name = detail.GroupingName,
-                    drilldown = drillDownUrl != null,
-                    drilldownurl = drillDownUrl,
-                });
+                chartElements.Add(
+                    new HighChartElement
+                    {
+                        grouping = grouping,
+                        y = detail.TotalCostOfGoodsSold,
+                        name = detail.GroupingName,
+                        drilldown = drillDownUrl != null,
+                        drilldownurl = drillDownUrl,
+                    });
             }
 
             var chart = new List<ChartData>
                 {
-                    new ChartData() { name = "Cost of Goods on Hand", data = chartElements }
+                    new ChartData()
+                    {
+                        name = "Cost of Goods on Hand",
+                        data = chartElements,
+                        showInLegend = false,
+                    }
                 };
 
             return new Results()
@@ -109,7 +118,18 @@ namespace ProfitWise.Web.Controllers
                 DetailsCount = detailsCount,
             };
         }
-        
+
+        private ReportGrouping? DrilldownGrouping(ReportGrouping currentGrouping)
+        {
+            if (currentGrouping == ReportGrouping.ProductType)
+                return ReportGrouping.Vendor;
+            if (currentGrouping == ReportGrouping.Vendor)
+                return ReportGrouping.Product;
+            if (currentGrouping == ReportGrouping.Product)
+                return ReportGrouping.Variant;
+            return null;
+        }
+
         private string DrilldownUrlBuilder(
                 long reportId, ColumnOrdering ordering, int pageSize,
                 ReportGrouping currentGrouping, Details currentDetails,                
@@ -124,32 +144,37 @@ namespace ProfitWise.Web.Controllers
                 $"/GoodsOnHandService/DrillDown?reportId={reportId}&ordering={ordering}" +
                 $"&pageNumber=1&pageSize={pageSize}";
 
+            var encodedDrilldownKey = HttpUtility.UrlEncode(currentDetails.GroupingKey);
+
             // These are exclusive conditions, although still guarded by an "if"
             if (productType != null)
             {
-                url += $"&productType={productType}";
+                url += $"&productType={HttpUtility.UrlEncode(productType)}";
             }
             else if (currentGrouping == ReportGrouping.ProductType)
             {
-                url += $"&productType={currentDetails.GroupingKey}";
+                url += $"&productType={encodedDrilldownKey}&grouping={ReportGrouping.Vendor}";
+                return url;
             }
 
             if (vendor != null)
             {
-                url += $"&vendor={vendor}";
+                url += $"&vendor={HttpUtility.UrlEncode(vendor)}";
             }
             else if (currentGrouping == ReportGrouping.Vendor)
             {
-                url += $"&vendor={currentDetails.GroupingKey}";
+                url += $"&vendor={encodedDrilldownKey}&grouping={ReportGrouping.Product}";
+                return url;
             }
 
             if (pwProductId != null)
             {
-                url += $"&pwProductId={pwProductId}";
+                url += $"&pwProductId={HttpUtility.UrlEncode(pwProductId.ToString())}";
             }
             else if (currentGrouping == ReportGrouping.Product)
             {
-                url += $"&pwProductId={currentDetails.GroupingKey}";
+                url += $"&pwProductId={encodedDrilldownKey}&grouping={ReportGrouping.Variant}";
+                return url;
             }
 
             return url;

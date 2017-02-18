@@ -433,7 +433,7 @@
             return AQ(self.ReportList())
                 .where(function (item) { return item.IsSystemReport == true; }).toArray();
         });
-
+        
         self.RefreshReportList = function (callback) {
             flow.exec(
                 function () {

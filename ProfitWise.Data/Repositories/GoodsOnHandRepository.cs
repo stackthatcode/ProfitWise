@@ -126,14 +126,12 @@ namespace ProfitWise.Data.Repositories
                     OrderByClauseAggregate(ordering) + " " +
                     "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
-            return Connection.Query<Details>(query, 
-                new {
+            return Connection.Query<Details>(query, new {
                     QueryDate = DateTime.Today, PwShopId, PwReportId = reportId,
                     pageSize, startingIndex = (pageNumber - 1) * pageSize,
+                    productType, vendor, pwProductId,
                 }).ToList();
         }
-
-
         
         private string OrderByClauseAggregate(ColumnOrdering ordering)
         {

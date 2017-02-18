@@ -41,8 +41,7 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);            
             var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);
-            var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
-
+            
             using (var trans = new TransactionScope())
             {
                 var shopCurrencyId = userIdentity.PwShop.CurrencyId;
