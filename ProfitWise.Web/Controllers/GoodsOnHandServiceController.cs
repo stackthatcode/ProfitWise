@@ -128,35 +128,39 @@ namespace ProfitWise.Web.Controllers
             }
 
             var url = $"/GoodsOnHandService/DrillDown?reportId={reportId}";
-            var encodedDrilldownKey = HttpUtility.UrlEncode(currentDetails.GroupingKey);
 
-            // These are exclusive conditions, although still guarded by an "if"
+            // First add the current drill down state, as reflected in the URL
             if (productType != null)
             {
                 url += $"&productType={HttpUtility.UrlEncode(productType)}";
             }
-            else if (currentGrouping == ReportGrouping.ProductType)
-            {
-                url += $"&productType={encodedDrilldownKey}&grouping={ReportGrouping.Vendor}";
-                return url;
-            }
-
             if (vendor != null)
             {
                 url += $"&vendor={HttpUtility.UrlEncode(vendor)}";
             }
-            else if (currentGrouping == ReportGrouping.Vendor)
-            {
-                url += $"&vendor={encodedDrilldownKey}&grouping={ReportGrouping.Product}";
-                return url;
-            }
-
             if (pwProductId != null)
             {
                 url += $"&pwProductId={HttpUtility.UrlEncode(pwProductId.ToString())}";
             }
-            else if (currentGrouping == ReportGrouping.Product)
+
+            // Next, for this Details record, add a drill down pathway
+            var encodedDrilldownKey = HttpUtility.UrlEncode(currentDetails.GroupingKey);
+
+            if (currentGrouping == ReportGrouping.ProductType)
             {
+                // If this is the current grouping, Product Type won't have been added
+                url += $"&productType={encodedDrilldownKey}&grouping={ReportGrouping.Vendor}";
+                return url;
+            }
+            if (currentGrouping == ReportGrouping.Vendor)
+            {
+                // If this is the current grouping, Vendor won't have been added
+                url += $"&vendor={encodedDrilldownKey}&grouping={ReportGrouping.Product}";
+                return url;
+            }
+            if (currentGrouping == ReportGrouping.Product)
+            {
+                // If this is the current grouping, Product won't have been added
                 url += $"&pwProductId={encodedDrilldownKey}&grouping={ReportGrouping.Variant}";
                 return url;
             }
