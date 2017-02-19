@@ -113,7 +113,8 @@
             <!-- Chart -->
             <div data-bind="if: ShowBackButton" style="width:100%;">
                 <div style="float:right; width:100px;">
-                    <a href="#" style="width:100px; z-index: 1000; position: absolute; margin-top:0px;" class="btn btn-default">
+                    <a href="#" class="btn btn-default" data-bind="click: BackClick"
+                       style="width:100px; z-index: 1000; position: absolute; margin-top:0px;">
                         <i class="glyphicon glyphicon-arrow-left"></i> Back
                      </a>
                 </div>
@@ -241,13 +242,14 @@
         self.DatasetLoaded = ko.observable(false);
 
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
-        self.PagingModel.Callback = function () { self.RefreshForPageOrSort(); };
+        self.PagingModel.Callback = function () { self.RetrieveData(); };
         self.PagingModel.ShowPageSizeSelector(false);
+        self.PagingModel.ScrollToTopEnabled(false);
         self.PagingModel.PageNumber(1);
         self.PagingModel.PageSize(@GoodsOnHandServiceController.FixedPageSize);
 
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
-        self.SortingModel.Callback = function () { self.RefreshForPageOrSort(); };
+        self.SortingModel.Callback = function () { self.RetrieveData(); };
         self.SortingModel.SelectedColumnIndex(1);   // Default to CoGS descending...
 
         self.Ordering = ko.computed(function () {
@@ -297,48 +299,36 @@
                 "&pageNumber=" + self.PagingModel.PageNumber();
         };
 
-        self.DrilldownUrlStack = ko.observableArray();
+        self.DrilldownStack = ko.observableArray();
 
         self.ShowBackButton = ko.computed(
-            function () { return self.DrilldownUrlStack().length > 0; }
+            function () { return self.DrilldownStack().length > 0; }
         );
 
         // Refreshes the drilldown and loads from the current Grouping selection
         self.RefreshReportData = function (reportId, callback) {
             self.HighChartRef = null;
-            self.PagingModel.PageNumber(1);
             $('html, body').animate({ scrollTop: 0 });
-            self.RefreshDataAndClearDrilldown(reportId, callback);
+            self.PopulateAndClearDrilldown(reportId, callback);
         };
-
-        self.RefreshDataAndClearDrilldown = function (reportId, callback) {
-            var baseurl = "/GoodsOnHandService/Data?reportId=" + reportId;
+        
+        self.PopulateAndClearDrilldown = function (reportId, callback) {
             flow.exec(
-                function () {                    
-                    var finalurl = self.UrlWithPagingAndOrdering(baseurl);
+                function() {
+                    var url = "/GoodsOnHandService/Populate?reportId=" + reportId;
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpPost(finalurl, {}, this);
-
-                    console.log(finalurl);
+                    ajax.HttpPost(url, {}, this);
                 },
-                function(data) {
-                    self.LoadModel(data);
-                    self.CurrentBaseUrl(baseurl);
-                    self.DrilldownUrlStack.removeAll();
-
-                    if (callback) {
-                        callback();
-                    }
+                function() {
+                    self.PagingModel.PageNumber(1);
+                    self.DrilldownStack.removeAll();
+                    self.CurrentBaseUrl("/GoodsOnHandService/Data?reportId=" + reportId);
+                    self.RetrieveData(callback);
                 }
             );
         };
 
-        self.RefreshForPageOrSort = function() {
-            if (self.DrilldownUrlStack().length == 0) {
-                self.RefreshDataAndClearDrilldown(self.ReportId());
-                return;
-            }
-
+        self.RetrieveData = function(callback) {
             flow.exec(
                 function () {
                     var finalurl = self.UrlWithPagingAndOrdering(self.CurrentBaseUrl());
@@ -347,46 +337,44 @@
                 },
                 function (data) {
                     self.LoadModel(data);
+                    if (callback) {
+                        callback();
+                    }
                 });
         };
 
+
         // Loads using the Drilldown URL's grouping
-        self.Drilldown = function (e) {
+        self.Drilldown = function(e) {
             if (e.seriesOptions || !e.point.drilldownurl) {
                 return;
             }
 
-            console.log("Drilldown!", e.point.drilldownurl);
-            var drilldownbaseurl = e.point.drilldownurl;
-            var drilldownfinalurl =
-                    drilldownbaseurl + "&ordering=" + self.Ordering() + "&pageNumber=1";
-
-            flow.exec(
-                function () {
-                    var ajax = new ProfitWiseFunctions.Ajax();                    
-                    ajax.HttpGet(drilldownfinalurl, this);
-                },
-                function (data) {
-                    self.PushDrilldownState();
-                    self.CurrentBaseUrl(drilldownbaseurl);
-                                        
-                    self.PagingModel.PageNumber(1);
-                    self.LoadModel(data);
-                });
-        }
-
-        self.PushDrilldownState = function () {
-            var baseurl = self.CurrentBaseUrl();
-            var finalurl = self.UrlWithPagingAndOrdering(baseurl);
-
+            // First push the current state onto the stack
             var state = {
                 pageNumber: self.PagingModel.PageNumber(),
                 sortIndex: self.SortingModel.SelectedColumnIndex(),
                 sortByDesc: self.SortingModel.SortByDirectionDown(),
-                url: finalurl,
+                baseurl: self.CurrentBaseUrl(),
             };
-            self.DrilldownUrlStack.push(state);
-            console.log(self.DrilldownUrlStack());
+            self.DrilldownStack.push(state);
+
+            // Next, traverse to the drilldown url and load
+            var drilldownbaseurl = e.point.drilldownurl;
+            self.CurrentBaseUrl(drilldownbaseurl);
+            self.PagingModel.PageNumber(1);
+            self.RetrieveData();
+        };
+
+        self.BackClick = function() {
+            var stateRecovery = self.DrilldownStack().pop();
+
+            self.CurrentBaseUrl(stateRecovery.baseurl);
+            self.SortingModel.SelectedColumnIndex(stateRecovery.sortIndex);
+            self.SortingModel.SortByDirectionDown(stateRecovery.sortByDesc);
+            self.PagingModel.PageNumber(stateRecovery.pageNumber);
+
+            self.RetrieveData();
         };
 
         return self;

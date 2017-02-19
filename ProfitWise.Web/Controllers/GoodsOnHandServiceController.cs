@@ -32,34 +32,35 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Data(
-                long reportId, ColumnOrdering ordering = ColumnOrdering.PotentialRevenueDescending,
-                string productType = null, string vendor = null, long? pwProductId = null,
-                int pageNumber = 1)
+        public ActionResult Populate(long reportId)
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
-            var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
-
+            
             using (var trans = new TransactionScope())
             {
                 queryRepository.PopulateQueryStub(reportId);
-                var report = reportRepository.RetrieveReport(reportId);
-
-                var results = BuildResults(
-                    reportId, report.GroupingId, ordering, productType, vendor, pwProductId, pageNumber);
-
-                return new JsonNetResult(results);
+                trans.Complete();
             }
+            return JsonNetResult.Success();
         }
 
-        public ActionResult DrillDown(
-                    long reportId, ColumnOrdering ordering, ReportGrouping grouping,
+        [HttpGet]
+        public ActionResult Data(
+                    long reportId, ColumnOrdering ordering, ReportGrouping? grouping = null,
                     string productType = null, string vendor = null, long? pwProductId = null,
                     int pageNumber = 1)
         {
+            if (grouping == null)
+            {
+                var userIdentity = HttpContext.PullIdentity();
+                var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
+                var report = reportRepository.RetrieveReport(reportId);
+                grouping = report.GroupingId;
+            }
+
             var results = BuildResults(
-                reportId, grouping, ordering, productType, vendor, pwProductId, pageNumber);
+                reportId, grouping.Value, ordering, productType, vendor, pwProductId, pageNumber);
             return new JsonNetResult(results);
         }
 
@@ -127,7 +128,7 @@ namespace ProfitWise.Web.Controllers
                 return null;
             }
 
-            var url = $"/GoodsOnHandService/DrillDown?reportId={reportId}";
+            var url = $"/GoodsOnHandService/Data?reportId={reportId}";
 
             // First add the current drill down state, as reflected in the URL
             if (productType != null)

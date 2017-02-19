@@ -81,7 +81,7 @@
         self.RecordCount = ko.observable(0);
         self.PageNumber = ko.observable(0);
         self.PageSize = ko.observable(50);
-        
+        self.ScrollToTopEnabled = ko.observable(true);
         self.ShowPageSizeSelector = ko.observable(false);
 
         self.PageSizeChanged = function() {
@@ -139,8 +139,10 @@
             return (computedPageCount);
         });
 
-        self.ScrollToTop = function(){
-            $('html,body').animate({ scrollTop: 0 });
+        self.ScrollToTop = function () {
+            if (self.ScrollToTopEnabled()) {
+                $('html,body').animate({ scrollTop: 0 });
+            }
         }
 
         self.Forward = function() {
