@@ -211,17 +211,6 @@ namespace ProfitWise.Data.Services
                 return lineItem.UnitPrice * context.CogsPercentOfUnitPrice;
             }
         }
-
-        // Not sure this belongs her?
-        public void ValidateCurrency(int cogsTypeId, int? cogsCurrencyId)
-        {
-            if (cogsTypeId != CogsType.FixedAmount) return;
-
-            if (!cogsCurrencyId.HasValue || !_currencyService.CurrencyExists(cogsCurrencyId.Value))
-            {
-                throw new Exception($"Unable to locate Currency {cogsCurrencyId}");
-            }
-        }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Model.Cogs
 {
@@ -82,6 +83,17 @@ namespace ProfitWise.Data.Model.Cogs
                 return 999999999.99m;
             }
             return cogsAmount;
+        }
+
+
+        public void ValidateCurrency(CurrencyService service)
+        {
+            if (CogsTypeId != CogsType.FixedAmount) return;
+
+            if (!CogsCurrencyId.HasValue || !service.CurrencyExists(CogsCurrencyId.Value))
+            {
+                throw new Exception($"Unable to locate Currency {CogsCurrencyId}");
+            }
         }
     }
 

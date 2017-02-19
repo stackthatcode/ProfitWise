@@ -111,7 +111,7 @@
             <div data-bind="template: { name: 'Report-Goods-On-Hand-Totals' }"></div>
             
             <!-- Chart -->
-            <div data-bind="if: ShowBackButton" style="width:100%;">
+            <div data-bind="visible: ShowBackButton" style="width:100%;">
                 <div style="float:right; width:100px;">
                     <a href="#" class="btn btn-default" data-bind="click: BackClick"
                        style="width:100px; z-index: 1000; position: absolute; margin-top:0px;">
@@ -302,7 +302,9 @@
         self.DrilldownStack = ko.observableArray();
 
         self.ShowBackButton = ko.computed(
-            function () { return self.DrilldownStack().length > 0; }
+            function () {
+                return self.DrilldownStack().length > 0;
+            }
         );
 
         // Refreshes the drilldown and loads from the current Grouping selection
@@ -366,8 +368,8 @@
             self.RetrieveData();
         };
 
-        self.BackClick = function() {
-            var stateRecovery = self.DrilldownStack().pop();
+        self.BackClick = function () {            
+            var stateRecovery = self.DrilldownStack.pop();
 
             self.CurrentBaseUrl(stateRecovery.baseurl);
             self.SortingModel.SelectedColumnIndex(stateRecovery.sortIndex);

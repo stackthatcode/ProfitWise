@@ -195,14 +195,19 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
+            simpleCogs.ValidateCurrency(_currencyService); 
+
             service.UpdateSimpleCogs(pwMasterVariantId, simpleCogs);
             return JsonNetResult.Success();
-        }
+        }        
 
         [HttpPost]
         public ActionResult UpdateCogsDetails(
                 long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
         {
+            defaults.ValidateCurrency(_currencyService);
+            details.ForEach(x => x.ValidateCurrency(_currencyService));
+
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
             service.UpdateCogsWithDetails(pwMasterVariantId, pwMasterProductId, defaults, details);
@@ -212,6 +217,8 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult UpdateCogsForPickList(long pickListId, CogsDto simpleCogs)
         {
+            simpleCogs.ValidateCurrency(_currencyService);
+
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
             service.UpdateCogsForPickList(pickListId, simpleCogs);
