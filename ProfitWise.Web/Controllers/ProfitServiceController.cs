@@ -11,6 +11,7 @@ using ProfitWise.Data.Model.Shop;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
+using ServiceStack.Text;
 
 
 namespace ProfitWise.Web.Controllers
@@ -145,14 +146,13 @@ namespace ProfitWise.Web.Controllers
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var repository = _factory.MakeReportRepository(userIdentity.PwShop);
-            var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);
             var dataService = _factory.MakeDataService(userIdentity.PwShop);
             
             var totals = dataService.Details(reportId, grouping, ordering, 1, 100000);
 
+            string csv = CsvSerializer.SerializeToCsv(totals);
             return File(
-                new System.Text.UTF8Encoding().GetBytes("Test Test"), "text/csv", "Report123.csv");
+                new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "ProfitWiseDetail.csv");
 
         }
 
@@ -199,14 +199,7 @@ namespace ProfitWise.Web.Controllers
             };
 
             return new JsonNetResult(output);
-        }
-
-
-        [HttpPost]
-        public ActionResult ExportDetail()
-        {
-            return JsonNetResult.Success();
-        }
+        }        
 
 
         private string DrilldownUrlBuilder(

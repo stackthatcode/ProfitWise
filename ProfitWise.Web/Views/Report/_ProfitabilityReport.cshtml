@@ -519,8 +519,13 @@
             }
         };
 
-        self.ExportDetailCallback = function(downloadElementId) {
-            alert("DetailCallback fired with Grouping: " + downloadElementId);
+        self.ExportDetailCallback = function (downloadIframeId) {
+            var url = ProfitWiseConfig.BaseUrl + "/ProfitService/ExportDetail?" +
+                "reportId=" + self.ReportId() + "&" +
+                "grouping=" + self.ProfitabilityDetailContext.Grouping() + "&" +
+                "ordering=" + self.ProfitabilityDetailContext.Ordering();
+
+            document.getElementById(downloadIframeId).src = url;
         };
 
 

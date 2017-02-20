@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using ProfitWise.Data.Model.Reports;
 using Castle.Core.Internal;
 
@@ -7,7 +8,10 @@ namespace ProfitWise.Data.Model.Profit
 {
     public class GroupedTotal
     {
+        [IgnoreDataMember]
         public ReportGrouping ReportGrouping { get; set; }
+
+        [IgnoreDataMember]
         public string GroupingKey { get; set; }
 
         private string _groupingName;
