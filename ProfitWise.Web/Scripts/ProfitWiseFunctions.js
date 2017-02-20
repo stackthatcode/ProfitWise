@@ -1,7 +1,4 @@
 ﻿
-var ProfitWiseConfig = ProfitWiseConfig || {};
-ProfitWiseConfig.BaseUrl = '/ProfitWise';
-
 var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
 ProfitWiseFunctions.FixedHeaderScrollingInit = function (movingElementSelector) {

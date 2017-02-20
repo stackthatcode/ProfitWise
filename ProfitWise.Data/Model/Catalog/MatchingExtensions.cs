@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Push.Foundation.Utilities.Helpers;
 
@@ -38,7 +39,9 @@ namespace ProfitWise.Data.Model.Catalog
             var firstOrDefault = masterProduct
                 .MasterVariants
                 .SelectMany(x => x.Variants)
-                .FirstOrDefault(x => x.Title.VariantTitleCorrection() == title.VariantTitleCorrection());
+                .FirstOrDefault(x => 
+                        String.Equals(x.Title.VariantTitleCorrection(), title.VariantTitleCorrection(), 
+                        StringComparison.OrdinalIgnoreCase));
             // x.Sku == sku && 
             return firstOrDefault?.ParentMasterVariant;
         }
@@ -46,8 +49,9 @@ namespace ProfitWise.Data.Model.Catalog
         public static PwVariant FindVariant(this PwMasterVariant masterVariant, VariantBuildContext context)
         {
             return masterVariant.Variants.FirstOrDefault(
-                        x => x.Sku == context.Sku && 
-                        x.Title.VariantTitleCorrection() == context.Title.VariantTitleCorrection() && 
+                        x => x.Sku == context.Sku &&
+                        String.Equals(x.Title.VariantTitleCorrection(), context.Title.VariantTitleCorrection(),
+                        StringComparison.OrdinalIgnoreCase) && 
                         x.ShopifyVariantId == context.ShopifyVariantId);
         }
 

@@ -90,7 +90,8 @@ namespace ProfitWise.Web.Controllers
 
             products.PopulateVariants(
                 cogsRepository
-                    .RetrieveVariants(products.Select(x => x.PwMasterProductId).ToList()));
+                    .RetrieveVariants(
+                        products.Select(x => x.PwMasterProductId).ToList(), primaryOnly: false));
 
             products.PopulateNormalizedCogsAmount(_currencyService, userIdentity.PwShop.CurrencyId);
 

@@ -79,9 +79,12 @@ GO
 
 ALTER TABLE [profitwisevariant] 
 	ALTER COLUMN [Sku] [nvarchar](100)
-	COLLATE SQL_Latin1_General_CP1_CS_AS
+
+-- COLLATE SQL_Latin1_General_CP1_CS_AS
 
 -- This logic alone is worthy of discussion...
+DROP INDEX [profitwisevariant].uq_profitwisevariant;
+
 CREATE UNIQUE INDEX uq_profitwisevariant
   ON dbo.[profitwisevariant]([PwShopId], [PwProductId], [ShopifyVariantId], [Sku], [Title])
   WHERE [ShopifyVariantId] IS NOT NULL;
@@ -366,7 +369,7 @@ AS
 		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterProductId = t2.PwMasterProductId
       INNER JOIN profitwisevariant  AS t3 
 		ON t2.PwShopId = t3.PwShopId AND t2.PwMasterVariantId = t3.PwMasterVariantId
-   WHERE t1.IsPrimary = 1 AND t3.IsPrimary = 1
+   WHERE t1.IsPrimary = 1 AND t3.IsPrimary = 1 AND t2.Exclude = 0
 GO
 
 -- TODO - this badly needs multi-tenant filtering (!!!)

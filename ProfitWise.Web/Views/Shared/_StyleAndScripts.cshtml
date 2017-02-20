@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Web.Plumbing
+﻿@using System.Configuration
+@using ProfitWise.Web.Plumbing
 <!-- JQuery & Bootstrap -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <!--<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>-->
@@ -38,4 +39,9 @@
 @Styles.Render("~/Content/css")
 @Styles.Render("~/Content/datetimepicker.css")
 @Scripts.Render("~/bundles/modernizr")
+
+<script>
+    var ProfitWiseConfig = ProfitWiseConfig || {};
+    ProfitWiseConfig.BaseUrl = '@ConfigurationManager.AppSettings["application_root_url"]';
+</script>
 

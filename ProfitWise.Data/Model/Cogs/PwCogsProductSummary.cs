@@ -18,7 +18,8 @@ namespace ProfitWise.Data.Model.Cogs
         [JsonIgnore]
         public IList<PwCogsVariant> Variants { get; set; }
 
-        public int NumberOfVariants => Variants.Count();
+        public int NumberOfVariants => 
+            Variants.Select(x => x.PwMasterVariantId).Distinct().Count();
 
         public bool HasNormalizedCogs
         {

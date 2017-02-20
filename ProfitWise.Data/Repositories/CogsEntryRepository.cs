@@ -103,7 +103,7 @@ namespace ProfitWise.Data.Repositories
         
 
         // TODO - the High and Low computations are incorrect here
-        public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds)
+        public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds, bool primaryOnly = true)
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t4.Title AS ProductTitle, t3.Sku, 
@@ -113,9 +113,14 @@ namespace ProfitWise.Data.Repositories
 	                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
                     INNER JOIN profitwiseproduct t4 ON t3.PwProductId = t4.PwProductId
                 WHERE t2.PwShopId = @PwShopId
-                AND t3.PwShopId = @PwShopId AND t3.IsPrimary = 1
+                AND t3.PwShopId = @PwShopId
                 AND t4.PwShopId = @PwShopId
-                AND t2.PwMasterProductId IN @MasterProductIds";
+                AND t2.PwMasterProductId IN @MasterProductIds ";
+
+            if (primaryOnly)
+            {
+                query += "AND t3.IsPrimary = 1 ";
+            }
 
             return Connection.Query<PwCogsVariant>(
                 query, new {this.PwShopId, MasterProductIds = masterProductIds},
