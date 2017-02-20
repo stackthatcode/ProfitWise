@@ -111,7 +111,7 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             
-            var data = repository.RetrieveMasterProductOptions(reportId);
+            var data = repository.RetrieveProductOptions(reportId);
 
             var output = data.Select(x => new
             {
@@ -129,7 +129,7 @@ namespace ProfitWise.Web.Controllers
         {
             var userIdentity = HttpContext.PullIdentity();
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
-            var data = repository.RetrieveMasterVariantOptions(reportId);
+            var data = repository.RetrieveVariantOptions(reportId);
 
             var output = data.Select(x => new
             {

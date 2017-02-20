@@ -154,11 +154,16 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT t1.PwProductId, t1.Vendor, t1.Title, COUNT(*) AS VariantCount
                 FROM profitwiseproduct t1 
-	                INNER JOIN profitwisevariant t2 ON t1.ProductId = t2.ProductId
+	                INNER JOIN profitwisevariant t2 ON t1.PwProductId = t2.PwProductId
+                    INNER JOIN profitwisemastervariant t3 
+                        ON t2.PwMasterVariantId = t3.PwMasterVariantId
                 WHERE t1.PwShopId = @PwShopId
                 AND t2.PwShopId = @PwShopId 
-                AND t1.Active = 1
-                AND t2.Active = 1 ";
+                AND t3.PwShopID = @PwShopId
+                AND t1.IsActive = 1
+                AND t2.IsActive = 1 
+                AND t2.Inventory IS NOT NULL
+                AND t3.StockedDirectly = 1";
 
             var filters = RetrieveFilters(pwReportId);
             var productTypeFilter = PwReportFilter.ProductType;
@@ -177,7 +182,7 @@ namespace ProfitWise.Data.Repositories
                                 WHERE PwReportId = @pwReportId AND FilterType = @vendorTypeFilter ) ";
             }
 
-            query += " GROUP BY t1.ProductId, t1.Vendor, t1.Title;";
+            query += " GROUP BY t1.PwProductId, t1.Vendor, t1.Title;";
 
             return Connection.Query<MasterProductOption>(
                             query, new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter }).ToList();
@@ -189,11 +194,16 @@ namespace ProfitWise.Data.Repositories
                 @"SELECT t1.PwProductId, t2.PwVariantId, t1.Vendor, t1.Title AS ProductTitle, 
                         t2.Title AS VariantTitle, t2.Sku
                 FROM profitwiseproduct t1 
-	                INNER JOIN profitwisevariant t2 ON t1.ProductId = t2.ProductId
+	                INNER JOIN profitwisevariant t2 ON t1.PwProductId = t2.PwProductId
+                    INNER JOIN profitwisemastervariant t3 
+                        ON t2.PwMasterVariantId = t3.PwMasterVariantId
                 WHERE t1.PwShopId = @PwShopId
                 AND t2.PwShopId = @PwShopId 
-                AND t1.Active = 1
-                AND t2.Active = 1 ";
+                AND t3.PwShopID = @PwShopId
+                AND t1.IsActive = 1
+                AND t2.IsActive = 1 
+                AND t2.Inventory IS NOT NULL
+                AND t3.StockedDirectly = 1 ";
             
             var filters = RetrieveFilters(pwReportId);
             var productTypeFilter = PwReportFilter.ProductType;
@@ -219,7 +229,7 @@ namespace ProfitWise.Data.Repositories
                                 WHERE PwReportId = @pwReportId AND FilterType = @productFilter ) ";
             }
 
-            query += " ORDER BY t1.Title, t3.Title, t3.Sku";
+            query += " ORDER BY t1.Title, t2.Title, t2.Sku";
             return Connection
                 .Query<MasterVariantOption>(query,
                             new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter, productFilter })
@@ -393,7 +403,7 @@ namespace ProfitWise.Data.Repositories
             if (report.ReportTypeId == ReportType.GoodsOnHand)
             {
                 query = @"SELECT PwProductId, ProductTitle AS Title, Vendor, ProductType
-                        FROM vw_standaloneproductandvariantsearch WHERE PwShopId = @PwShopId ";
+                        FROM [vw_goodsonhand] WHERE PwShopId = @PwShopId ";
                 query += ReportFilterClauseGenerator(reportId);
                 query += @" GROUP BY PwProductId, ProductTitle, Vendor, ProductType 
                         ORDER BY ProductTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
@@ -423,7 +433,7 @@ namespace ProfitWise.Data.Repositories
             if (report.ReportTypeId == ReportType.GoodsOnHand)
             {
                 query = @"SELECT PwProductId, ProductTitle, PwVariantId, VariantTitle, Sku, Vendor
-                        FROM vw_standaloneproductandvariantsearch WHERE PwShopId = @PwShopId ";
+                        FROM [vw_goodsonhand] WHERE PwShopId = @PwShopId ";
                 query += ReportFilterClauseGenerator(reportId);
                 query += @" ORDER BY ProductTitle, VariantTitle OFFSET @startRecord ROWS FETCH NEXT @pageSize ROWS ONLY;";
             }

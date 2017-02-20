@@ -8,18 +8,6 @@ GO
 DROP TABLE IF EXISTS [dbo].[profitwiseprofitreportentry]
 GO
 
-DROP TABLE IF EXISTS [dbo].[profitwiseprofitquerystub]
-GO
-
-DROP TABLE IF EXISTS [dbo].[profitwisegoodsonhandquerystub]
-GO
-
-DROP TABLE IF EXISTS [dbo].[profitwisereportfilter]
-GO
-
-DROP TABLE IF EXISTS [dbo].[profitwisereport]
-GO
-
 
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseprofitreportentry]') AND type in (N'U'))
@@ -46,6 +34,22 @@ CREATE TABLE [dbo].[profitwiseprofitreportentry](
 ) ON [PRIMARY]
 END
 GO
+
+
+
+DROP TABLE IF EXISTS [dbo].[profitwiseprofitquerystub]
+GO
+
+DROP TABLE IF EXISTS [dbo].[profitwisegoodsonhandquerystub]
+GO
+
+DROP TABLE IF EXISTS [dbo].[profitwisereportfilter]
+GO
+
+DROP TABLE IF EXISTS [dbo].[profitwisereport]
+GO
+
+
 
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseprofitquerystub]') AND type in (N'U'))

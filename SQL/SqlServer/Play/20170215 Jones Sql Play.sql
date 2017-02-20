@@ -53,6 +53,14 @@ ORDER BY t2.ProductType ASC
 
 
 
+SELECT * FROM [vw_standaloneproductandvariantsearch];
+
+SELECT * FROM profitwisevariant;
+
+SELECT * FROM profitwisemastervariant;
+
+
+
 
 -- ProductType, Vendor, PwProductId, PwVariantId, VariantTitle, Sku, Inventory, 
 -- LowPrice, HighPrice, CostOfGoodsOnHand, PotentialRevenu
