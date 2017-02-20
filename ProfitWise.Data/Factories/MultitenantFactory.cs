@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<CogsService> _orderCogsUpdateServiceFactory;
         private readonly Func<ConsolidationService> _consolidationServiceFactory;
         private readonly Func<GoodsOnHandRepository> _goodsOnHandRepositoryFactory;
-
+        private readonly Func<DataService> _dataServiceFactory;
 
         public MultitenantFactory(
                 Func<ShopifyOrderRepository> orderRepositoryFactory,
@@ -40,7 +40,8 @@ namespace ProfitWise.Data.Factories
                 Func<CogsService> orderCogsUpdateServiceFactory, 
                 Func<CogsDownstreamRepository> cogsDataUpdateRepositoryFactory, 
                 Func<ConsolidationService> consolidationServiceFactory, 
-                Func<GoodsOnHandRepository> goodsOnHandRepositoryFactory)
+                Func<GoodsOnHandRepository> goodsOnHandRepositoryFactory, 
+                Func<DataService> dataServiceFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -57,32 +58,12 @@ namespace ProfitWise.Data.Factories
             _cogsDataUpdateRepositoryFactory = cogsDataUpdateRepositoryFactory;
             _consolidationServiceFactory = consolidationServiceFactory;
             _goodsOnHandRepositoryFactory = goodsOnHandRepositoryFactory;
+            _dataServiceFactory = dataServiceFactory;
         }
 
-        public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
-        {
-            var repository = _orderRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
-        
         public virtual BatchStateRepository MakeBatchStateRepository(PwShop shop)
         {
             var repository = _profitWiseBatchStateRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
-
-        public virtual ProductRepository MakeProductRepository(PwShop shop)
-        {
-            var repository = _productRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
-
-        public virtual VariantRepository MakeVariantRepository(PwShop shop)
-        {
-            var repository = _variantRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }
@@ -101,44 +82,16 @@ namespace ProfitWise.Data.Factories
             return service;
         }
 
-        public virtual CogsEntryRepository MakeCogsEntryRepository(PwShop shop)
-        {
-            var repository = _cogsEntryRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
-
         public virtual CogsDownstreamRepository MakeCogsDownstreamRepository(PwShop shop)
         {
             var repository = _cogsDataUpdateRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }
-
-        public virtual PickListRepository MakePickListRepository(PwShop shop)
-        {
-            var repository = _pickListRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
         
-        public virtual ReportRepository MakeReportRepository(PwShop shop)
+        public virtual CogsEntryRepository MakeCogsEntryRepository(PwShop shop)
         {
-            var repository = _reportRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
-
-        public virtual ReportFilterRepository MakeReportFilterRepository(PwShop shop)
-        {
-            var repository = _filterRepositoryFactory();
-            repository.PwShop = shop;
-            return repository;
-        }
-
-        public virtual ProfitRepository MakeProfitRepository(PwShop shop)
-        {
-            var repository = _reportQueryRepositoryFactory();
+            var repository = _cogsEntryRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }
@@ -157,9 +110,65 @@ namespace ProfitWise.Data.Factories
             return service;
         }
 
+        public virtual DataService MakeDataService(PwShop shop)
+        {
+            var service = _dataServiceFactory();
+            service.PwShop = shop;
+            return service;
+        }
+
         public virtual GoodsOnHandRepository MakeGoodsOnHandRepository(PwShop shop)
         {
             var repository = _goodsOnHandRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual PickListRepository MakePickListRepository(PwShop shop)
+        {
+            var repository = _pickListRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual ProfitRepository MakeProfitRepository(PwShop shop)
+        {
+            var repository = _reportQueryRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual ProductRepository MakeProductRepository(PwShop shop)
+        {
+            var repository = _productRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual ReportRepository MakeReportRepository(PwShop shop)
+        {
+            var repository = _reportRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual ReportFilterRepository MakeReportFilterRepository(PwShop shop)
+        {
+            var repository = _filterRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
+        {
+            var repository = _orderRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual VariantRepository MakeVariantRepository(PwShop shop)
+        {
+            var repository = _variantRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }

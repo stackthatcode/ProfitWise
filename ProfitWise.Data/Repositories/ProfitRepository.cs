@@ -42,7 +42,8 @@ namespace ProfitWise.Data.Repositories
             var deleteQuery =
                 @"DELETE FROM profitwiseprofitquerystub
                 WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
-            Connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
+            Connection.Execute(
+                deleteQuery, new { PwShopId, PwReportId = reportId }, _connectionWrapper.Transaction);
 
             var createQuery =
                 @"INSERT INTO profitwiseprofitquerystub
@@ -53,7 +54,8 @@ namespace ProfitWise.Data.Repositories
                 filterRepository.ReportFilterClauseGenerator(reportId) +
                 @" GROUP BY PwMasterVariantId,  PwMasterProductId, 
                     Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
-            Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
+            Connection.Execute(
+                createQuery, new { PwShopId, PwReportId = reportId }, _connectionWrapper.Transaction);
         }
 
         public List<PwReportSearchStub> RetrieveSearchStubs(long reportId)
@@ -79,7 +81,7 @@ namespace ProfitWise.Data.Repositories
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
         {            
             var totalsQuery = @"SELECT " + QueryGutsForTotals();
-            var totals = Connection.Query<GroupedTotal>(totalsQuery, queryContext).First();
+            var totals = Connection.Query<GroupedTotal>(totalsQuery, queryContext, _connectionWrapper.Transaction).First();
 
             var numberOfOrdersQuery =
                 @"SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 
@@ -95,7 +97,8 @@ namespace ProfitWise.Data.Repositories
                             AND t3.EntryType = 1 
                 WHERE t1.PwReportId = @PwReportId AND t1.PwShopId = @PwShopId ";
             
-            var orderCount = Connection.Query<int>(numberOfOrdersQuery, queryContext).First();
+            var orderCount = Connection.Query<int>(
+                numberOfOrdersQuery, queryContext, _connectionWrapper.Transaction).First();
             totals.TotalOrders = orderCount;
             return totals;
         }
@@ -138,7 +141,7 @@ namespace ProfitWise.Data.Repositories
             if (queryContext.Grouping == ReportGrouping.Vendor)
                 query = "SELECT COUNT(DISTINCT(t1.Vendor)) " + queryGuts;
 
-            return Connection.Query<int>(query, queryContext).First();
+            return Connection.Query<int>(query, queryContext, _connectionWrapper.Transaction).First();
         }
 
         public List<GroupedTotal> RetreiveTotalsByProduct(TotalQueryContext queryContext)
@@ -150,7 +153,7 @@ namespace ProfitWise.Data.Repositories
                 OrderingAndPagingForTotals(queryContext);
 
             return Connection
-                .Query<GroupedTotal>(query, queryContext).ToList()
+                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
                 .AssignGrouping(ReportGrouping.Product);
         }
 
@@ -164,7 +167,7 @@ namespace ProfitWise.Data.Repositories
                 OrderingAndPagingForTotals(queryContext);
 
             return Connection
-                .Query<GroupedTotal>(query, queryContext).ToList()
+                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
                 .AssignGrouping(ReportGrouping.Variant);
         }
 
@@ -177,7 +180,7 @@ namespace ProfitWise.Data.Repositories
                 OrderingAndPagingForTotals(queryContext);
 
             return Connection
-                .Query<GroupedTotal>(query, queryContext).ToList()
+                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
                 .AssignGrouping(ReportGrouping.ProductType);
         }
 
@@ -190,7 +193,7 @@ namespace ProfitWise.Data.Repositories
                 OrderingAndPagingForTotals(queryContext);
 
             return Connection
-                .Query<GroupedTotal>(query, queryContext).ToList()
+                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
                 .AssignGrouping(ReportGrouping.Vendor);
         }
 

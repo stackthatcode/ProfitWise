@@ -235,7 +235,7 @@ namespace ProfitWise.Data.Repositories
                 @"SELECT * FROM profitwisereportfilter 
                 WHERE PwShopId = @PwShopId AND PwReportId = @reportId
                 ORDER BY DisplayOrder;";
-            return Connection.Query<PwReportFilter>(query, new { PwShopId, reportId }).ToList();
+            return Connection.Query<PwReportFilter>(query, new { PwShopId, reportId }, _connectionWrapper.Transaction).ToList();
         }
 
         public PwReportFilter RetrieveFilter(long reportId, long filterId)

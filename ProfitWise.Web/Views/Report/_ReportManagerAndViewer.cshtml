@@ -78,31 +78,41 @@
                                             SelectReportClick: $data.SelectReportClick} }">
         </div>
 
-        <div class="pull-right" data-bind="with: ReportInterfaceModel">
-            <div data-bind="if: OnlySaveAsAllowed">
-
-                <div class="pull-right" style="margin-right: 7px;">
-                    <a href="#" data-bind="click: SaveAs" class="btn btn-primary report-viewer-top-button">
-                        Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
-                    </a>
-                </div>
+        <div class="pull-right" data-bind="with: ReportInterfaceModel" >
+            <!-- ko if: OnlySaveAsAllowed -->
+            <div class="pull-right" style="margin-right: 7px;">
+                <a href="#" data-bind="click: SaveAs" class="btn btn-primary report-viewer-top-button">
+                    Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                </a>
             </div>
+            <!-- /ko -->
 
-            <div data-bind="ifnot: OnlySaveAsAllowed">
-                <div class="pull-right" style="margin-right: 7px;">
-                    <a href="#" data-bind="click: Save" class="btn btn-primary report-viewer-top-button">
-                        Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
-                    </a>
-                </div>
-                <div class="pull-right btn-group" style="margin-right: 7px;">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
-
-                    <ul class="dropdown-menu">
-                        <li><a href="#" data-bind="click: SaveAs">Save As</a></li>
-                        <li><a href="#" data-bind="click: Delete">Delete</a></li>
-                    </ul>
-                </div>
+            <!-- ko ifnot: OnlySaveAsAllowed -->
+            <div class="pull-right" style="margin-right: 7px;">
+                <a href="#" data-bind="click: Save" class="btn btn-primary report-viewer-top-button">
+                    Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                </a>
             </div>
+            <div class="pull-right btn-group" style="margin-right: 7px;">
+                <button type="button" class="btn btn-primary dropdown-toggle" 
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
+
+                <ul class="dropdown-menu">
+                    <li><a href="#" data-bind="click: SaveAs">Save As</a></li>
+                    <li><a href="#" data-bind="click: Delete">Delete</a></li>
+                </ul>
+            </div>
+            <!-- /ko -->
+            
+            <!-- ko if: ExportVisible -->
+            <div class="pull-right" style="margin-right:7px;">
+                <a href="#" data-bind="click: ExportCallback" class="btn btn-primary report-viewer-top-button">
+                    <i class="glyphicon glyphicon-download-alt"></i> Export
+                </a>
+                
+                <iframe id="download-frame" style="display:none"></iframe>
+            </div>
+            <!-- /ko -->
         </div>
 
         <div style="clear: both; height: 20px;"></div>
@@ -222,6 +232,10 @@
         self.OnlySaveAsAllowed = ko.computed(function() {
             return self.IsSystemReport() || self.CopyOfSystemReport();
         });
+        
+        self.ExportVisible = ko.computed(function() { return false; });
+
+        self.ExportCallback = function() { alert("Export function invoked!")};
 
         self.DateRangePickerCallback = function(dateRange) {
             flow.exec(
@@ -420,6 +434,7 @@
         if (self.ReportTypeId() == self.GoodsOnHandId) {
             self.ReportDataModel = new ProfitWiseWidgets.GoodsOnHandModel();
         }
+        self.ReportInterfaceModel = new ProfitWiseWidgets.ReportInterfaceModel(reportTypeId);
 
         // Upper right menu selector for Reports
         self.ReportList = ko.observable([]);
@@ -462,23 +477,35 @@
 
 
         // Model that contains all the functionality for the top header
-        self.ReportInterfaceModel = new ProfitWiseWidgets.ReportInterfaceModel(reportTypeId);
         self.ReportInterfaceModel.TriggerReportListRefresh = function (callback) {
             self.RefreshReportList(callback);
         };
         self.ReportInterfaceModel.EditFilterClickCallback = function () {
             self.EditReportClick();
         };
-        self.ReportInterfaceModel.TriggerReportDataRefresh = function (reportId, callback) {
-            
+        self.ReportInterfaceModel.TriggerReportDataRefresh = function (reportId, callback) {            
             self.ReportDataModel.RefreshReportData(reportId, callback);
         }
 
+        // Configure Report Type specific behavior
         if (self.ReportTypeId() == self.GoodsOnHandId) {
             self.ReportInterfaceModel.DatePickerEnabled(false);
             self.ReportInterfaceModel.DefaultReportId(@SystemReportFactory.GoodsOnHandId);
-        } else {
+
+            // Export button is always visible for Goods on Hand
+            self.ReportInterfaceModel.ExportVisible = ko.computed( function() { return true; });
+        }
+        
+        if (self.ReportTypeId() == self.ProfitabilityId) {
             self.ReportInterfaceModel.DefaultReportId(@SystemReportFactory.OverallProfitabilityId);
+
+            // Export only visible for Profitability in the Detail Views
+            self.ReportInterfaceModel.ExportVisible = ko.computed( 
+                function() { return self.ReportDataModel.SummaryActive() == false; });
+
+            self.ReportInterfaceModel.ExportCallback = function() {
+                self.ReportDataModel.ExportDetailCallback("download-iframe");
+            };
         }
 
         // State changes to the Report Selection

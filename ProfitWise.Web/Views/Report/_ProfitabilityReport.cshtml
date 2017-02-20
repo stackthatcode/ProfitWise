@@ -388,11 +388,6 @@
             );
         };
 
-        // Needs to be set by owner
-        self.DetailCallback = function (grouping) {
-            alert("DetailCallback fired with Grouping: " + grouping);
-        }
-
         return self;
     };
 </script>
@@ -484,13 +479,13 @@
                 }
             );
         };
+
         return self;
     };
 </script>
 <script id="Profitabilty-Model">
     ProfitWiseWidgets.ProfitabilityModel = function () {
         var self = this;
-
         self.ReportId = ko.observable();
         self.SummaryActive = ko.observable(true);
 
@@ -523,6 +518,11 @@
                 self.ProfitabilityDetailContext.LoadDataset(reportId, callback);
             }
         };
+
+        self.ExportDetailCallback = function(downloadElementId) {
+            alert("DetailCallback fired with Grouping: " + downloadElementId);
+        };
+
 
         return self;
     };
