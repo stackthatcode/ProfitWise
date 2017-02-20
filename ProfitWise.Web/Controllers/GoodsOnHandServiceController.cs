@@ -8,6 +8,7 @@ using ProfitWise.Data.Model.Reports;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
+using ServiceStack.Text;
 
 
 namespace ProfitWise.Web.Controllers
@@ -64,6 +65,28 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(results);
         }
 
+        [HttpGet]
+        public ActionResult Export(
+                   long reportId, ColumnOrdering ordering, ReportGrouping? grouping = null,
+                   string productType = null, string vendor = null, long? pwProductId = null,
+                   int pageNumber = 1)
+        {
+            var userIdentity = HttpContext.PullIdentity();
+            if (grouping == null)
+            {
+                var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
+                var report = reportRepository.RetrieveReport(reportId);
+                grouping = report.GroupingId;
+            }
+
+            var service = _factory.MakeDataService(userIdentity.PwShop);
+            var details = service.GoodsOnHandDetails(
+                reportId, ordering, pageNumber, 100000, grouping, productType, vendor, pwProductId);
+
+            string csv = CsvSerializer.SerializeToCsv(details);
+            return File(new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "GoodsOnHandDetail.csv");
+        }
+
         private Results BuildResults(
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering,
                 string productType = null, string vendor = null, long? pwProductId = null,
@@ -85,8 +108,8 @@ namespace ProfitWise.Web.Controllers
 
             foreach (var detail in details)
             {
-                var drillDownUrl = DrilldownUrlBuilder(
-                    reportId, grouping, detail, productType, vendor, pwProductId);
+                var drillDownQueryString = 
+                    DrilldownQueryStringBuilder(grouping, detail, productType, vendor, pwProductId);
 
                 chartElements.Add(
                     new HighChartElement
@@ -94,8 +117,8 @@ namespace ProfitWise.Web.Controllers
                         grouping = grouping,
                         y = detail.TotalCostOfGoodsSold,
                         name = detail.GroupingName,
-                        drilldown = drillDownUrl != null,
-                        drilldownurl = drillDownUrl,
+                        drilldown = drillDownQueryString != null,
+                        querystringbase = drillDownQueryString,
                     });
             }
 
@@ -119,16 +142,16 @@ namespace ProfitWise.Web.Controllers
             };
         }
 
-        private string DrilldownUrlBuilder(
-                long reportId, ReportGrouping currentGrouping, Details currentDetails,                
-                string productType = null, string vendor = null, long? pwProductId = null)
+        private string DrilldownQueryStringBuilder(
+                ReportGrouping currentGrouping, Details currentDetails, string productType = null, 
+                string vendor = null, long? pwProductId = null)
         {
             if (currentGrouping == ReportGrouping.Variant)
             {
                 return null;
             }
 
-            var url = $"/GoodsOnHandService/Data?reportId={reportId}";
+            var url = "";
 
             // First add the current drill down state, as reflected in the URL
             if (productType != null)

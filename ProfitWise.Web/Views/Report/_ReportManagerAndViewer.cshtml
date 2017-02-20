@@ -494,6 +494,11 @@
 
             // Export button is always visible for Goods on Hand
             self.ReportInterfaceModel.ExportVisible = ko.computed( function() { return true; });
+
+            // Export Callback function on GoodsOnHandModel
+            self.ReportInterfaceModel.ExportCallback = function() {
+                self.ReportDataModel.ExportDetailCallback("download-frame");
+            };
         }
         
         if (self.ReportTypeId() == self.ProfitabilityId) {

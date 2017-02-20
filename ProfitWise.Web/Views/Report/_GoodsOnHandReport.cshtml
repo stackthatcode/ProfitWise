@@ -185,7 +185,7 @@
             <tr>
                 <td>
                     <div class="overflow-gracefully" style="max-width:350px;"
-                         data-bind="text: GroupingNameCleaned, tooltip: { title: GroupingNameCleaned, placement: 'bottom' }"></div>
+                         data-bind="text: Name, tooltip: { title: Name, placement: 'bottom' }"></div>
                 </td>
 
                 <td style="text-align: center;">
@@ -291,14 +291,6 @@
             }
         };
 
-        self.CurrentBaseUrl = ko.observable();
-
-        self.UrlWithPagingAndOrdering = function (baseUrl) {
-            return baseUrl +
-                "&ordering=" + self.Ordering() +
-                "&pageNumber=" + self.PagingModel.PageNumber();
-        };
-
         self.DrilldownStack = ko.observableArray();
 
         self.ShowBackButton = ko.computed(
@@ -306,6 +298,20 @@
                 return self.DrilldownStack().length > 0;
             }
         );
+
+        self.CurrentQueryStringBase = ko.observable();
+
+        self.UrlBuilder = function(baseurl) {
+            var output = baseurl +
+                "?reportId=" + self.ReportId() + 
+                "&ordering=" + self.Ordering() +
+                "&pageNumber=" + self.PagingModel.PageNumber();
+            
+            if (self.CurrentQueryStringBase()) {
+                output += "&" + self.CurrentQueryStringBase();
+            }
+            return output;
+        };
 
         // Refreshes the drilldown and loads from the current Grouping selection
         self.RefreshReportData = function (reportId, callback) {
@@ -321,10 +327,14 @@
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpPost(url, {}, this);
                 },
-                function() {
+                function () {
+                    self.ReportId(reportId);
                     self.PagingModel.PageNumber(1);
+
+                    // Clear the drilldown state
                     self.DrilldownStack.removeAll();
-                    self.CurrentBaseUrl("/GoodsOnHandService/Data?reportId=" + reportId);
+                    self.CurrentQueryStringBase(null);
+
                     self.RetrieveData(callback);
                 }
             );
@@ -333,9 +343,8 @@
         self.RetrieveData = function(callback) {
             flow.exec(
                 function () {
-                    var finalurl = self.UrlWithPagingAndOrdering(self.CurrentBaseUrl());
                     var ajax = new ProfitWiseFunctions.Ajax();
-                    ajax.HttpGet(finalurl, this);
+                    ajax.HttpGet(self.UrlBuilder("/GoodsOnHandService/Data"), this);
                 },
                 function (data) {
                     self.LoadModel(data);
@@ -345,10 +354,9 @@
                 });
         };
 
-
         // Loads using the Drilldown URL's grouping
         self.Drilldown = function(e) {
-            if (e.seriesOptions || !e.point.drilldownurl) {
+            if (e.seriesOptions || !e.point.querystringbase) {
                 return;
             }
 
@@ -357,13 +365,13 @@
                 pageNumber: self.PagingModel.PageNumber(),
                 sortIndex: self.SortingModel.SelectedColumnIndex(),
                 sortByDesc: self.SortingModel.SortByDirectionDown(),
-                baseurl: self.CurrentBaseUrl(),
+                querystringbase: self.CurrentQueryStringBase(),
             };
             self.DrilldownStack.push(state);
 
             // Next, traverse to the drilldown url and load
-            var drilldownbaseurl = e.point.drilldownurl;
-            self.CurrentBaseUrl(drilldownbaseurl);
+            var newquerystringbase = e.point.querystringbase;
+            self.CurrentQueryStringBase(newquerystringbase);
             self.PagingModel.PageNumber(1);
             self.RetrieveData();
         };
@@ -371,12 +379,17 @@
         self.BackClick = function () {            
             var stateRecovery = self.DrilldownStack.pop();
 
-            self.CurrentBaseUrl(stateRecovery.baseurl);
+            self.CurrentQueryStringBase(stateRecovery.querystringbase);
             self.SortingModel.SelectedColumnIndex(stateRecovery.sortIndex);
             self.SortingModel.SortByDirectionDown(stateRecovery.sortByDesc);
             self.PagingModel.PageNumber(stateRecovery.pageNumber);
 
             self.RetrieveData();
+        };
+
+        self.ExportDetailCallback = function (downloadIframeId) {
+            var url = ProfitWiseConfig.BaseUrl + self.UrlBuilder("/GoodsOnHandService/Export");
+            document.getElementById(downloadIframeId).src = url;
         };
 
         return self;

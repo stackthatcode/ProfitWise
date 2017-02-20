@@ -8,7 +8,7 @@ namespace ProfitWise.Data.Model.GoodsOnHand
         public ReportGrouping? grouping { get; set; }
         public string name { get; set; }
         public decimal y { get; set; }
-        public string drilldownurl { get; set; }
+        public string querystringbase { get; set; }
         public bool drilldown { get; set; }
     }
 }

@@ -114,7 +114,7 @@ namespace ProfitWise.Web.Controllers
             };
             var totalCounts = queryRepository.RetreiveTotalCounts(queryContext);
 
-            var totals = dataService.Details(reportId, grouping, ordering, pageNumber, pageSize);
+            var totals = dataService.ProfitabilityDetails(reportId, grouping, ordering, pageNumber, pageSize);
 
             // Top-level series...
             var series =
@@ -146,21 +146,20 @@ namespace ProfitWise.Web.Controllers
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering)
         {
             var userIdentity = HttpContext.PullIdentity();
-            var dataService = _factory.MakeDataService(userIdentity.PwShop);
-            
-            var totals = dataService.Details(reportId, grouping, ordering, 1, 100000);
+            var dataService = _factory.MakeDataService(userIdentity.PwShop);            
+            var totals = dataService.ProfitabilityDetails(reportId, grouping, ordering, 1, 100000);
 
             string csv = CsvSerializer.SerializeToCsv(totals);
             return File(
-                new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "ProfitWiseDetail.csv");
-
+                new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "ProfitabilityDetail.csv");
         }
 
 
         // Profitability Drilldown
         [HttpGet]
         public ActionResult Drilldown(
-                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
+                long reportId, ReportGrouping grouping, string key, string name, 
+                DateTime start, DateTime end)
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);

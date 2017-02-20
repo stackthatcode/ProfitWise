@@ -3,9 +3,11 @@ using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model.GoodsOnHand;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
+using ServiceStack.Text;
 
 namespace ProfitWise.Data.Services
 {
@@ -24,8 +26,9 @@ namespace ProfitWise.Data.Services
             _connectionWrapper = connectionWrapper;
         }
 
-        public List<GroupedTotal> Details(
-                long reportId, ReportGrouping grouping, ColumnOrdering ordering, int pageNumber, int pageSize)
+        public List<GroupedTotal> ProfitabilityDetails(
+                long reportId, ReportGrouping grouping, Model.Profit.ColumnOrdering ordering, 
+                int pageNumber, int pageSize)
         {
             var repository = _factory.MakeReportRepository(PwShop);
             var queryRepository = _factory.MakeProfitRepository(PwShop);
@@ -65,8 +68,18 @@ namespace ProfitWise.Data.Services
             }
         }
 
+        public List<Details> GoodsOnHandDetails(
+                long reportId, Model.GoodsOnHand.ColumnOrdering ordering, int pageNumber, int pageSize,
+                ReportGrouping? grouping = null, string productType = null, string vendor = null, 
+                long? pwProductId = null)
+        {
+            var repository = _factory.MakeGoodsOnHandRepository(PwShop);
+            var details = repository.RetrieveDetails(
+                reportId, grouping.Value, ordering, pageNumber, pageSize,
+                productType, vendor, pwProductId);
 
-
+            return details;
+        }
     }
 }
 
