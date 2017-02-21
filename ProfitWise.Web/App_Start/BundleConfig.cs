@@ -4,24 +4,43 @@ namespace ProfitWise.Web
 {
     public class BundleConfig
     {
-        // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
-            
-            // Use the development version of Modernizr to develop with and learn from. Then, when you're
-            // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
-            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                        "~/Scripts/modernizr-*"));
+            bundles.Add(new ScriptBundle("~/Bundles/Utility")
+                .Include("~/Scripts/Utility/jquery.min.js")
+                .Include("~/Scripts/Utility/aQuery-1.0-min.js")
+                .Include("~/Scripts/Utility/flow.js")
+                .Include("~/Scripts/Utility/numeral.min.js")
+                //.Include("~/Scripts/Utility/modernizr-2.6.2.js")
+                .Include("~/Scripts/Utility/moment.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js",
-                      "~/Scripts/respond.js"));
+            bundles.Add(new ScriptBundle("~/Bundles/Bootstrap")
+                .Include("~/Scripts/Bootstrap/bootstrap.min.js")
+                .Include("~/Scripts/Bootstrap/bootstrap-datetimepicker.min.js")
+                .Include("~/Scripts/Bootstrap/daterangepicker.js"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+            bundles.Add(new ScriptBundle("~/Bundles/Highcharts")
+                 .Include("~/Scripts/Highcharts/js/highcharts.js")
+                 .Include("~/Scripts/Highcharts/js/modules/drilldown.js"));
+
+            bundles.Add(new ScriptBundle("~/Bundles/KO")
+                 .Include("~/Scripts/KO/knockout-3.3.0.js")
+                 .Include("~/Scripts/KO/knockstrap.min.js"));
+
+            bundles.Add(new ScriptBundle("~/Bundles/ProfitWise")
+                .Include("~/Scripts/ProfitWise/ProfitWiseFunctions.js")
+                .Include("~/Scripts/ProfitWise/ProfitWiseCurrency.js")
+                .Include("~/Scripts/ProfitWise/ProfitWiseShopify.js"));
+
+            bundles.Add(new StyleBundle("~/Content/Bootstrap")
+                .Include("~/Content/bootstrap-3.3.7-dist/css/bootstrap.min.css"));
+
+            bundles.Add(new StyleBundle("~/Content/Css")
+                .Include("~/Content/site.css")
+                .Include("~/Content/daterangepicker.css")
+                .Include("~/Content/datetimepicker.css"));
+
+            // BundleTable.EnableOptimizations = true;
         }
     }
 }

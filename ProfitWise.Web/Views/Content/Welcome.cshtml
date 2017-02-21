@@ -44,6 +44,7 @@
                 function() {
                     var settings = new ProfitWiseFunctions.AjaxSettings();
                     settings.UseSpinner = false;
+                    settings.ErrorCallbackFunction = null;
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
                     ajax.HttpGet("/Preferences/StoreDataReady", this);
                 },

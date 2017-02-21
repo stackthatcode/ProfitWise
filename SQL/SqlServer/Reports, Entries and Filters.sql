@@ -154,5 +154,4 @@ GO
 
 ALTER TABLE [profitwisereportfilter] 
 	ALTER COLUMN [StringKey] [nvarchar](100)
-	COLLATE SQL_Latin1_General_CP1_CS_AS
 

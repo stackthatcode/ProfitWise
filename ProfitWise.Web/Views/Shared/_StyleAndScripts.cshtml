@@ -1,51 +1,19 @@
 ﻿@using System.Configuration
-@using ProfitWise.Web.Plumbing
-<!-- JQuery & Bootstrap -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" 
-      integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" 
-      crossorigin="anonymous">
-
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-
-<!-- KnockoutJS -->
-<script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
-
-@Scripts.Render("~/Scripts/knockstrap.min.js")
 
 <!-- Font -->
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' 
+      rel='stylesheet' type='text/css'>
 
-<!-- Helper Scripts -->
-@Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js")
-@Scripts.Render("~/Scripts/aQuery-1.0-min.js")
-@Scripts.Render("~/Scripts/flow.js")
-@Scripts.Render("~/Scripts/moment.js")
-
-<!-- Date Range Picker -->
-<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-
-<!-- Date Picker -->
-@Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
-
-<!-- High Charts -->
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/drilldown.js"></script>
-
-<!-- ProfitWise Domain Scripts -->
-@Scripts.Render("~/Scripts/ProfitWiseCurrency.js")
-@Scripts.Render("~/Scripts/ProfitWiseShopify.js")
-@Scripts.Render("~/Scripts/ProfitWiseFunctions.js")
+<!-- Scripts -->
+@Scripts.Render("~/Bundles/Utility")
+@Scripts.Render("~/Bundles/Bootstrap")
+@Scripts.Render("~/Bundles/Highcharts")
+@Scripts.Render("~/Bundles/KO")
+@Scripts.Render("~/Bundles/ProfitWise")
 
 <!-- Style Sheet -->
-@Styles.Render("~/Content/css")
-@Styles.Render("~/Content/datetimepicker.css")
-
-
-@Scripts.Render("~/bundles/modernizr")
-
+@Styles.Render("~/Content/Bootstrap")
+@Styles.Render("~/Content/Css")
 
 <script>
     var ProfitWiseConfig = ProfitWiseConfig || {};
