@@ -42,8 +42,12 @@
             <table class="table search-grid">
                 <tbody data-bind="foreach: SearchGrid">  
                 <tr>
-                    <td class="overflow-gracefully" data-bind="text: SkuTitle"></td>
-                    <td class="overflow-gracefully" data-bind="text: ProductTitle"></td>
+                    <td> 
+                        <div class="overflow-gracefully" data-bind="text: SkuTitle, tooltip: { title: SkuTitle }"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-gracefully" data-bind="text: ProductTitle, tooltip: { title: ProductTitle }"></div>
+                    </td>
                     <td style="text-align: right;">
                         <a href="#" data-bind="click: $parent.AddToConsolidation">
                             <i class="glyphicon glyphicon-plus"></i> Add to Consolidation
