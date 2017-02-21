@@ -29,9 +29,7 @@ namespace ProfitWise.Web
 
             // Push.Foundation.Web relies on consumers to supply Key and IV for its Encryption Service
             Push.Foundation.Web.AutofacRegistration.Build(
-                builder, "12345678901234gj12345678901234gj", "1234567890123456");
-
-            // ProfitWiseConfiguration.Settings.ClaimKey, ProfitWiseConfiguration.Settings.ClaimIv);
+                builder, ProfitWiseConfiguration.Settings.ClaimKey, ProfitWiseConfiguration.Settings.ClaimIv);
 
             // ProfitWise.Data API registration
             ProfitWise.Data.AutofacRegistration.Build(builder);

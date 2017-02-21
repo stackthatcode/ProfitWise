@@ -16,7 +16,7 @@ namespace Push.Foundation.Utilities.Security
             byte[] encryptedData = System.Security.Cryptography.ProtectedData.Protect(
                 System.Text.Encoding.Unicode.GetBytes(input.ToInsecureString()),
                 entropy,
-                System.Security.Cryptography.DataProtectionScope.CurrentUser);
+                System.Security.Cryptography.DataProtectionScope.LocalMachine);
             return Convert.ToBase64String(encryptedData);
         }
 
@@ -30,7 +30,7 @@ namespace Push.Foundation.Utilities.Security
                     System.Security.Cryptography.DataProtectionScope.LocalMachine);
                 return System.Text.Encoding.Unicode.GetString(decryptedData).ToSecureString();
             }
-            catch
+            catch (Exception ex)
             {
                 return new SecureString();
             }

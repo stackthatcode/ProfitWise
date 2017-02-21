@@ -4,6 +4,8 @@ using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Attributes;
+using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Utilities.Security;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -14,23 +16,20 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
         private readonly ShopRepository _shopRepository;
+        private readonly IPushLogger _logger;
 
-        public PreferencesController(MultitenantFactory factory, ShopRepository shopRepository)
+        public PreferencesController(
+            MultitenantFactory factory, ShopRepository shopRepository, IPushLogger logger)
         {
             _factory = factory;
             _shopRepository = shopRepository;
+            _logger = logger;
         }
 
         [HttpGet]
         public ActionResult Edit()
         {
             var shop = HttpContext.PullIdentity().PwShop;
-
-            var test1 = ProfitWiseConfiguration.Settings.ShopifyApiKey;
-            var test2 = ProfitWiseConfiguration.Settings.ShopifyApiSecret;
-            var test3 = ProfitWiseConfiguration.Settings.ClaimKey;
-            var test4 = ProfitWiseConfiguration.Settings.ClaimIv;
-
             return View(shop);
         }
         

@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Configuration;
 using Push.Foundation.Utilities.Security;
 
@@ -8,8 +7,7 @@ namespace ProfitWise.Data.Configuration
     public class ProfitWiseConfiguration : ConfigurationSection
     {
         private static readonly
-            Hashtable _settings = 
-                (Hashtable)ConfigurationManager.GetSection("profitWiseConfiguration");
+            Hashtable _settings = (Hashtable)ConfigurationManager.GetSection("profitWiseConfiguration");
 
         public static ProfitWiseConfiguration Settings { get; } = new ProfitWiseConfiguration();
 
@@ -17,8 +15,8 @@ namespace ProfitWise.Data.Configuration
         [ConfigurationProperty("ShopifyApiKey", IsRequired = true)]
         public string ShopifyApiKey
         {
-            get { return ((string)_settings["ShopifyAPIKey"]).DpApiDecryptString().ToInsecureString(); }
-            set { this["ShopifyAPIKey"] = value; }
+            get { return ((string)_settings["ShopifyApiKey"]).DpApiDecryptString().ToInsecureString(); }
+            set { this["ShopifyApiKey"] = value; }
         }
 
         [ConfigurationProperty("ShopifyApiSecret", IsRequired = true)]

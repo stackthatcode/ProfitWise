@@ -13,8 +13,11 @@ namespace Push.Foundation
 
         private void buttonExecute_Click(object sender, EventArgs e)
         {
-            this.txtEncrypted.Text = 
-                txtPlaintText.Text.ToSecureString().DpApiEncryptString();
+            if (txtPlaintText.Text.Trim() != "")
+            {
+                this.txtEncrypted.Text =
+                    txtPlaintText.Text.ToSecureString().DpApiEncryptString();
+            }
             this.txtDecrypted.Text = 
                 txtEncrypted.Text.DpApiDecryptString().ToInsecureString();
         }
