@@ -92,14 +92,14 @@ namespace ProfitWise.Web.Controllers
         }
 
 
-        [Obsolete]
-        [HttpGet]
-        public ActionResult OneTimeDataFix()
-        {
-            var service = _factory.MakeCogsService(HttpContext.PullIdentity().PwShop);
-            service.OneTimeCogsDataFixer();
-            return JsonNetResult.Success();
-        }
+        //[Obsolete]
+        //[HttpGet]
+        //public ActionResult OneTimeDataFix()
+        //{
+        //    var service = _factory.MakeCogsService(HttpContext.PullIdentity().PwShop);
+        //    service.OneTimeCogsDataFixer();
+        //    return JsonNetResult.Success();
+        //}
     }
 }
 
