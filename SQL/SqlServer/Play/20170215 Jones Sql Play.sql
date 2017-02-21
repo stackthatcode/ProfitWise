@@ -55,14 +55,34 @@ ORDER BY t2.ProductType ASC
 
 SELECT * FROM [vw_standaloneproductandvariantsearch];
 
-SELECT * FROM profitwisevariant;
+SELECT * FROM profitwisevariant WHERE Sku = 'VY5812'
 
 SELECT * FROM profitwisemastervariant;
 
 
-
+SELECT t1.PwProductId, t2.PwVariantId, t1.Vendor, t1.Title AS ProductTitle, 
+                        t2.Title AS VariantTitle, t2.Sku
+                FROM profitwiseproduct t1 
+	                INNER JOIN profitwisevariant t2 ON t1.PwProductId = t2.PwProductId
+                    INNER JOIN profitwisemastervariant t3 
+                        ON t2.PwMasterVariantId = t3.PwMasterVariantId
+                WHERE t1.IsActive = 1
+                AND t2.IsActive = 1 
+                AND t2.Inventory IS NOT NULL
+                AND t3.StockedDirectly = 1
 
 -- ProductType, Vendor, PwProductId, PwVariantId, VariantTitle, Sku, Inventory, 
 -- LowPrice, HighPrice, CostOfGoodsOnHand, PotentialRevenu
+
+
+SELECT * FROM profitwisepicklistmasterproduct;
+
+
+INSERT INTO profitwisepicklistmasterproduct (PwShopId, PwPickListId, PwMasterProductId)
+SELECT DISTINCT t2.PwMasterProductId
+FROM profitwisevariant t1
+	 INNER JOIN profitwisemastervariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
+	 INNER JOIN profitwiseproduct t3 ON t2.PwMasterProductId = t3.PwMasterProductId
+WHERE  ( (t1.Title LIKE 'UM3') OR (t1.Sku LIKE 'UM3') OR ( t3.Title LIKE 'UM3' ) OR ( t3.Vendor LIKE 'UM3' ) )
 
 

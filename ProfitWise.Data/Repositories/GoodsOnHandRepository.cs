@@ -46,7 +46,7 @@ namespace ProfitWise.Data.Repositories
                 @"INSERT INTO profitwisegoodsonhandquerystub
                 SELECT @PwReportId, @PwShopId, PwVariantId, PwProductId, 
                         Vendor, ProductType, ProductTitle, Sku, VariantTitle
-                FROM vw_standaloneproductandvariantsearch 
+                FROM vw_goodsonhand 
                 WHERE PwShopId = @PwShopId " +
                 filterRepository.ReportFilterClauseGenerator(reportId) +
                 @" GROUP BY PwVariantId, PwProductId, 

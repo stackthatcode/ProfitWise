@@ -90,6 +90,16 @@ namespace ProfitWise.Web.Controllers
             var storeDataLoaded = this.HttpContext.PullIdentity().PwShop.IsDataLoaded;
             return new JsonNetResult(new { storeDataLoaded });
         }
+
+
+        [Obsolete]
+        [HttpGet]
+        public ActionResult OneTimeDataFix()
+        {
+            var service = _factory.MakeCogsService(HttpContext.PullIdentity().PwShop);
+            service.OneTimeCogsDataFixer();
+            return JsonNetResult.Success();
+        }
     }
 }
 

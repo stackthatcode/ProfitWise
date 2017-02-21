@@ -10,6 +10,9 @@ GO
 DROP VIEW IF EXISTS [dbo].[vw_standaloneproductandvariantsearch]
 GO
 
+DROP VIEW IF EXISTS [dbo].[vw_goodsonhand]
+GO
+
 DROP TABLE IF EXISTS [dbo].[profitwisevariant]
 GO
 
@@ -83,7 +86,7 @@ ALTER TABLE [profitwisevariant]
 -- COLLATE SQL_Latin1_General_CP1_CS_AS
 
 -- This logic alone is worthy of discussion...
-DROP INDEX [profitwisevariant].uq_profitwisevariant;
+-- DROP INDEX [profitwisevariant].uq_profitwisevariant;
 
 CREATE UNIQUE INDEX uq_profitwisevariant
   ON dbo.[profitwisevariant]([PwShopId], [PwProductId], [ShopifyVariantId], [Sku], [Title])
