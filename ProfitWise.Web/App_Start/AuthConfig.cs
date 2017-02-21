@@ -10,6 +10,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 using Owin.Security.Providers.Shopify;
+using ProfitWise.Data.Configuration;
 using Push.Foundation.Web.Identity;
 
 
@@ -68,12 +69,10 @@ namespace ProfitWise.Web
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Shopify Authorization
-            var shopify_config_apikey = ConfigurationManager.AppSettings["shopify_config_apikey"];
-            var shopify_config_apisecret = ConfigurationManager.AppSettings["shopify_config_apisecret"];            
             var shopify_options = new ShopifyAuthenticationOptions()
             {
-                ApiKey = shopify_config_apikey,
-                ApiSecret = shopify_config_apisecret,
+                ApiKey = ProfitWiseConfiguration.Settings.ShopifyApiKey,
+                ApiSecret = ProfitWiseConfiguration.Settings.ShopifyApiSecret,
 
                 Provider = new ShopifyAuthenticationProvider
                 {
@@ -100,7 +99,6 @@ namespace ProfitWise.Web
             };
 
             shopify_options.Scope.Add("read_orders");
-            //shopify_options.Scope.Add("write_orders");
             shopify_options.Scope.Add("read_products");
             app.UseShopifyAuthentication(shopify_options);
         }

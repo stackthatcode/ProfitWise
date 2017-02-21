@@ -7,6 +7,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Builder;
 using Hangfire;
+using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.ExchangeRateApis;
 using ProfitWise.Data.ProcessSteps;
@@ -99,12 +100,9 @@ namespace ProfitWise.Batch
             var machineTimeZone = ConfigurationManager.AppSettings["Machine_TimeZone"];
             builder.Register(x => new TimeZoneTranslator(machineTimeZone));            
 
-            // Push.Foundation.Web Identity Stuff
-            var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
-            var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
-
-            Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
-
+            // Push.Foundation.Web relies on consumers to supply Key and IV for its Encryption Service
+            Push.Foundation.Web.AutofacRegistration.Build(builder,
+                ProfitWiseConfiguration.Settings.ClaimKey, ProfitWiseConfiguration.Settings.ClaimIv);
 
             AddDiagnostics(builder);
             

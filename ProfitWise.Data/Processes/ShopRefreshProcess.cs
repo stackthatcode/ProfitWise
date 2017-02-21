@@ -52,27 +52,13 @@ namespace ProfitWise.Data.Processes
         [Queue(ProfitWiseQueues.InitialShopRefresh)]
         public void InitialShopRefresh(string userId)
         {
-            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
-            if (shopifyFromClaims.Success == false)
-            {
-                throw new Exception(
-                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
-            }
-
-            var shopifyClientCredentials = new ShopifyCredentials()
-            {
-                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
-                ShopDomain = shopifyFromClaims.ShopDomain,
-                AccessToken = shopifyFromClaims.AccessToken,
-            };
-
             try
             {
                 ExecuteInner(userId);
             }
             catch (Exception e)
             {
-                _pushLogger.Error($"InitialShopRefresh failure for Shop: {shopifyFromClaims.ShopDomain}, User Id: {userId}");
+                _pushLogger.Error($"InitialShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
                 throw;  // Need to do this so HangFire reschedules
             }
@@ -82,27 +68,13 @@ namespace ProfitWise.Data.Processes
         [Queue(ProfitWiseQueues.RoutineShopRefresh)]
         public void RoutineShopRefresh(string userId)
         {
-            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
-            if (shopifyFromClaims.Success == false)
-            {
-                throw new Exception(
-                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
-            }
-
-            var shopifyClientCredentials = new ShopifyCredentials()
-            {
-                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
-                ShopDomain = shopifyFromClaims.ShopDomain,
-                AccessToken = shopifyFromClaims.AccessToken,
-            };
-
             try
             {
                 ExecuteInner(userId);
             }
             catch (Exception e)
             {
-                _pushLogger.Error($"RoutineShopRefresh failure for Shop: {shopifyFromClaims.ShopDomain}, User Id: {userId}");
+                _pushLogger.Error($"RoutineShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
                 throw;  // Need to do this so HangFire reschedules
             }
