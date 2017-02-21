@@ -1,7 +1,7 @@
 ﻿using System;
-using Push.Utilities.Helpers;
+using Push.Foundation.Utilities.Helpers;
 
-namespace Push.Utilities.Security
+namespace Push.Foundation.Utilities.Security
 {
     public interface IEncryptionService
     {

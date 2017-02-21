@@ -4,7 +4,7 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Push.Utilities.Helpers
+namespace Push.Foundation.Utilities.Security
 {
     public static class DpApiCrypto
     {
@@ -102,3 +102,4 @@ namespace Push.Utilities.Helpers
         }
     }
 }
+    

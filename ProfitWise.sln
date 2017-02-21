@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.TestData", "Prof
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Test", "ProfitWise.Test\ProfitWise.Test.csproj", "{81F30573-25F8-4EA7-8957-38F3D93DB690}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Foundation.EncryptionBuddy", "Push.Foundation.EncryptionBuddy\Push.Foundation.EncryptionBuddy.csproj", "{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,12 @@ Global
 		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Release|Any CPU.Build.0 = Release|Any CPU
 		{81F30573-25F8-4EA7-8957-38F3D93DB690}.ReleaseAzure|Any CPU.ActiveCfg = Release|Any CPU
 		{81F30573-25F8-4EA7-8957-38F3D93DB690}.ReleaseAzure|Any CPU.Build.0 = Release|Any CPU
+		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.ReleaseAzure|Any CPU.ActiveCfg = Release|Any CPU
+		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.ReleaseAzure|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

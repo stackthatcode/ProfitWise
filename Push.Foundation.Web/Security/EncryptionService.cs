@@ -1,5 +1,6 @@
 ﻿using System;
-using Push.Utilities.Helpers;
+using Push.Foundation.Utilities.Helpers;
+using Push.Foundation.Utilities.Security;
 
 namespace Push.Foundation.Web.Security
 {

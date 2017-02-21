@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Attributes;
@@ -24,6 +25,12 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Edit()
         {
             var shop = HttpContext.PullIdentity().PwShop;
+
+            var test1 = ProfitWiseConfiguration.Settings.ShopifyApiKey;
+            var test2 = ProfitWiseConfiguration.Settings.ShopifyApiSecret;
+            var test3 = ProfitWiseConfiguration.Settings.ClaimKey;
+            var test4 = ProfitWiseConfiguration.Settings.ClaimIv;
+
             return View(shop);
         }
         

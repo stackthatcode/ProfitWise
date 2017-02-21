@@ -71,8 +71,8 @@ namespace ProfitWise.Web
             // Shopify Authorization
             var shopify_options = new ShopifyAuthenticationOptions()
             {
-                ApiKey = ProfitWiseConfiguration.Settings.ShopifyApiKey,
-                ApiSecret = ProfitWiseConfiguration.Settings.ShopifyApiSecret,
+                ApiKey = "50d69dbaf54ee35929a946790d5884e4", // ProfitWiseConfiguration.Settings.ShopifyApiKey,
+                ApiSecret = "eb52fb7d5612e383d2e9513001a012eb", // ProfitWiseConfiguration.Settings.ShopifyApiSecret,
 
                 Provider = new ShopifyAuthenticationProvider
                 {

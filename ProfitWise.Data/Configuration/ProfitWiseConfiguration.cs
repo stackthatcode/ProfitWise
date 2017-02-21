@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using Push.Foundation.Utilities.Security;
 
@@ -6,7 +7,7 @@ namespace ProfitWise.Data.Configuration
 {
     public class ProfitWiseConfiguration : ConfigurationSection
     {
-        private static readonly 
+        private static readonly
             Hashtable _settings = 
                 (Hashtable)ConfigurationManager.GetSection("profitWiseConfiguration");
 
