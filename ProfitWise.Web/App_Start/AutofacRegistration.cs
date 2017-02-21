@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
+using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Database;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Utilities.CastleProxies;
@@ -26,11 +27,9 @@ namespace ProfitWise.Web
                 NLoggerImpl.LoggerFactory("ProfitWise.Web", ActivityId.MessageFormatter);
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
 
-
-            // Push.Foundation.Web Identity Stuff
-            var encryption_key = ConfigurationManager.AppSettings["security_aes_key"];
-            var encryption_iv = ConfigurationManager.AppSettings["security_aes_iv"];
-            Push.Foundation.Web.AutofacRegistration.Build(builder, encryption_key, encryption_iv);
+            // Push.Foundation.Web relies on consumers to supply Key and IV for its Encryption Service
+            Push.Foundation.Web.AutofacRegistration.Build(builder,
+                ProfitWiseConfiguration.Settings.ClaimKey, ProfitWiseConfiguration.Settings.ClaimIv);
 
             // ProfitWise.Data API registration
             ProfitWise.Data.AutofacRegistration.Build(builder);

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
@@ -117,7 +118,7 @@ namespace ProfitWise.Web.Attributes
 
             var commonContext = new CommonContext
             {
-                ShopifyApiKey = GlobalConfig.ShopifyApiKey,
+                ShopifyApiKey = ProfitWiseConfiguration.Settings.ShopifyApiKey,
                 IdentitySnapshot = identity,
             };
 

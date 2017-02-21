@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aspect\ShopRequired.cs" />
+    <Compile Include="Configuration\ProfitWiseConfiguration.cs" />
     <Compile Include="Database\ConnectionWrapper.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
