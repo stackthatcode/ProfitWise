@@ -53,37 +53,37 @@ namespace ProfitWise.Data.Services
         }
 
 
-        [Obsolete]
-        public void OneTimeCogsDataFixer()
-        {
-            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
-            var service = _multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
-            var fullcatalog = service.RetrieveFullCatalog();
+        //[Obsolete]
+        //public void OneTimeCogsDataFixer()
+        //{
+        //    var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+        //    var service = _multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
+        //    var fullcatalog = service.RetrieveFullCatalog();
 
-            foreach (var masterVariant in fullcatalog.SelectMany(x => x.MasterVariants))
-            {
-                using (var transaction = _connectionWrapper.StartTransactionForScope())
-                {
-                    CogsDto defaults = new CogsDto()
-                    {
-                        CogsAmount = masterVariant.CogsAmount,
-                        CogsCurrencyId = masterVariant.CogsCurrencyId,
-                        CogsMarginPercent = masterVariant.CogsMarginPercent,
-                        CogsTypeId = masterVariant.CogsTypeId
-                    };
+        //    foreach (var masterVariant in fullcatalog.SelectMany(x => x.MasterVariants))
+        //    {
+        //        using (var transaction = _connectionWrapper.StartTransactionForScope())
+        //        {
+        //            CogsDto defaults = new CogsDto()
+        //            {
+        //                CogsAmount = masterVariant.CogsAmount,
+        //                CogsCurrencyId = masterVariant.CogsCurrencyId,
+        //                CogsMarginPercent = masterVariant.CogsMarginPercent,
+        //                CogsTypeId = masterVariant.CogsTypeId
+        //            };
 
-                    var dateBlockContexts =
-                        CogsDateBlockContext.Make(
-                            defaults, null, PwShop.CurrencyId, null, masterVariant.PwMasterVariantId);
+        //            var dateBlockContexts =
+        //                CogsDateBlockContext.Make(
+        //                    defaults, null, PwShop.CurrencyId, null, masterVariant.PwMasterVariantId);
 
-                    UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
-                    UpdateOrderLinesAndReportEntries(dateBlockContexts);
+        //            UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
+        //            UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
-                    transaction.Commit();                    
-                }
-            }
+        //            transaction.Commit();                    
+        //        }
+        //    }
 
-        }
+        //}
 
 
         public void UpdateCogsWithDetails(
