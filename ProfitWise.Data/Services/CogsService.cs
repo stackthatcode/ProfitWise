@@ -51,41 +51,7 @@ namespace ProfitWise.Data.Services
                 transaction.Commit();
             }
         }
-
-
-        //[Obsolete]
-        //public void OneTimeCogsDataFixer()
-        //{
-        //    var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
-        //    var service = _multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
-        //    var fullcatalog = service.RetrieveFullCatalog();
-
-        //    foreach (var masterVariant in fullcatalog.SelectMany(x => x.MasterVariants))
-        //    {
-        //        using (var transaction = _connectionWrapper.StartTransactionForScope())
-        //        {
-        //            CogsDto defaults = new CogsDto()
-        //            {
-        //                CogsAmount = masterVariant.CogsAmount,
-        //                CogsCurrencyId = masterVariant.CogsCurrencyId,
-        //                CogsMarginPercent = masterVariant.CogsMarginPercent,
-        //                CogsTypeId = masterVariant.CogsTypeId
-        //            };
-
-        //            var dateBlockContexts =
-        //                CogsDateBlockContext.Make(
-        //                    defaults, null, PwShop.CurrencyId, null, masterVariant.PwMasterVariantId);
-
-        //            UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
-        //            UpdateOrderLinesAndReportEntries(dateBlockContexts);
-
-        //            transaction.Commit();                    
-        //        }
-        //    }
-
-        //}
-
-
+        
         public void UpdateCogsWithDetails(
                 long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
         {
@@ -152,6 +118,7 @@ namespace ProfitWise.Data.Services
                 }
             }
         }
+
 
         public void UpdateGoodsOnHandForMasterVariant(IList<CogsDateBlockContext> dateBlockContexts)
         {
@@ -245,6 +212,40 @@ namespace ProfitWise.Data.Services
                 return lineItem.UnitPrice * context.CogsPercentOfUnitPrice;
             }
         }
+
+
+        //[Obsolete]
+        //public void OneTimeCogsDataFixer()
+        //{
+        //    var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
+        //    var service = _multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
+        //    var fullcatalog = service.RetrieveFullCatalog();
+
+        //    foreach (var masterVariant in fullcatalog.SelectMany(x => x.MasterVariants))
+        //    {
+        //        using (var transaction = _connectionWrapper.StartTransactionForScope())
+        //        {
+        //            CogsDto defaults = new CogsDto()
+        //            {
+        //                CogsAmount = masterVariant.CogsAmount,
+        //                CogsCurrencyId = masterVariant.CogsCurrencyId,
+        //                CogsMarginPercent = masterVariant.CogsMarginPercent,
+        //                CogsTypeId = masterVariant.CogsTypeId
+        //            };
+
+        //            var dateBlockContexts =
+        //                CogsDateBlockContext.Make(
+        //                    defaults, null, PwShop.CurrencyId, null, masterVariant.PwMasterVariantId);
+
+        //            UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
+        //            UpdateOrderLinesAndReportEntries(dateBlockContexts);
+
+        //            transaction.Commit();                    
+        //        }
+        //    }
+
+        //}
+
     }
 }
 

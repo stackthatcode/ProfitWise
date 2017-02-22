@@ -218,7 +218,9 @@
                         });
 
                     // We'll maintain state in the Summary Model
-                    item.SummaryModel = new ProfitWiseWidgets.CogsSummaryWidgetModel(item);
+                    item.SummaryModel = new ProfitWiseWidgets.CogsSummaryWidgetModel(item.ActiveDetail);
+                    item.SummaryModel.CogsDetail(item.CogsDetail);
+
                     item.SummaryModel.EditCogsCallback = function() {
                         self.HideCurrentCogsEditor();
                         item.OldState(item.EditorModel.PullState());

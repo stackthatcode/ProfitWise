@@ -1,10 +1,10 @@
 ﻿@using ProfitWise.Data.Model.Cogs
 
 <script type="text/html" id="Cogs-Summary-Widget-Subview">
-    <span data-bind="visible: $data.CogsTypeId() == @CogsType.FixedAmount">
+    <span data-bind="if: $data.CogsTypeId() == @CogsType.FixedAmount">
         <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount(), CogsCurrencyId())"></span>
     </span>
-    <span data-bind="visible: $data.CogsTypeId() == @CogsType.MarginPercentage">
+    <span data-bind="if: $data.CogsTypeId() == @CogsType.MarginPercentage">
         <span>Computed by </span><span data-bind="text: CogsMarginPercent"></span><span>% margin</span>
     </span>
 </script>
