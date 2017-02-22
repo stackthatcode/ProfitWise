@@ -24,6 +24,16 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal? CogsAmount { get; set; }
         public bool? CogsDetail { get; set; }
 
+        public MoneyRange Price => new MoneyRange
+        {
+            CurrencyId = NormalizedCurrencyId,
+            AmountHigh = HighPrice,
+            AmountLow = LowPrice,
+            IncludesAverages = false
+        };
+
+        public int NormalizedCurrencyId { get; set; }
+
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
         public int? Inventory { get; set; }        
@@ -36,13 +46,15 @@ namespace ProfitWise.Data.Model.Cogs
         public PwCogsProductSummary Parent { get; set; }
 
 
-        public void PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
+        public void PopulateNormalizedCogsAmount(CurrencyService currencyService, int shopCurrencyId)
         {
+            this.NormalizedCurrencyId = shopCurrencyId;
+
             if (CogsAmount != null && CogsCurrencyId != null)
             {
                 NormalizedCogsAmount =
                     currencyService.Convert(
-                        CogsAmount.Value, CogsCurrencyId.Value, targetCurrencyId, DateTime.Now);
+                        CogsAmount.Value, CogsCurrencyId.Value, shopCurrencyId, DateTime.Now);
             }
         }
     }

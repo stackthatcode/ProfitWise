@@ -136,18 +136,18 @@ namespace ProfitWise.Data.Model.Cogs
         }
 
         public PwCogsProductSummary 
-                PopulateNormalizedCogsAmount(CurrencyService currencyService, int targetCurrencyId)
+                    PopulateNormalizedCogsAmount(CurrencyService currencyService, int shopCurrencyId)
         {
-            this.NormalizedCurrencyId = targetCurrencyId;
+            this.NormalizedCurrencyId = shopCurrencyId;
 
-            if (currencyService.AllCurrencies().All(x => x.CurrencyId != targetCurrencyId))
+            if (currencyService.AllCurrencies().All(x => x.CurrencyId != shopCurrencyId))
             {
-                throw new ArgumentException($"targetCurrencyId {targetCurrencyId} is not a valid currency");
+                throw new ArgumentException($"shopCurrencyId {shopCurrencyId} is not a valid currency");
             }
 
             foreach (var variant in this.Variants)
             {
-                variant.PopulateNormalizedCogsAmount(currencyService, targetCurrencyId);
+                variant.PopulateNormalizedCogsAmount(currencyService, shopCurrencyId);
             }
             return this;
         }
@@ -167,11 +167,11 @@ namespace ProfitWise.Data.Model.Cogs
         }
 
         public static void PopulateNormalizedCogsAmount(
-                this IList<PwCogsProductSummary> products, CurrencyService currencyService, int targetCurrencyId)
+                this IList<PwCogsProductSummary> products, CurrencyService currencyService, int shopCurrencyId)
         {
             foreach (var product in products)
             {
-                product.PopulateNormalizedCogsAmount(currencyService, targetCurrencyId);
+                product.PopulateNormalizedCogsAmount(currencyService, shopCurrencyId);
             }
         }
     }
