@@ -33,7 +33,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
                         type: "dropdown",
                         links: [
                             linkBuilder("", "Profitability Report"),
-                            linkBuilder("/Report/GoodsOnHand", "Inventory Valuation"),
+                            linkBuilder("/Report/GoodsOnHand", "Inventory Valuation Report"),
                             linkBuilder("/Cogs/Products", "Manage Products and CoGS"),
                             linkBuilder("/Preferences/Edit", "Edit Preferences"),
                             //linkBuilder("/Preferences/OneTimeDataFix", "DELETE ASAP")

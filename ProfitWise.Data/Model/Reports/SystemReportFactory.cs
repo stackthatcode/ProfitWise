@@ -48,7 +48,7 @@ namespace ProfitWise.Data.Model.Reports
                 OriginalReportId = GoodsOnHandId,
                 ReportTypeId = ReportType.GoodsOnHand,
 
-                Name = "Inventory Valuation",
+                Name = "Inventory Valuation Report",
                 StartDate = DateTime.Today.AddDays(-14),
                 EndDate = DateTime.Today.AddDays(-7),
                 GroupingId = ReportGrouping.ProductType,
