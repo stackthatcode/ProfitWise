@@ -102,13 +102,12 @@ namespace ProfitWise.Data.Repositories
         }
         
 
-        // TODO - the High and Low computations are incorrect here
         public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds, bool primaryOnly = true)
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t4.Title AS ProductTitle, t3.Sku, 
-                        t2.Exclude, t2.StockedDirectly, t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, 
-                        t2.CogsAmount, t2.CogsDetail, t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
+                    t2.Exclude, t2.StockedDirectly, t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, 
+                    t2.CogsAmount, t2.CogsDetail, t3.IsPrimary, t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
                 FROM profitwisemastervariant t2 
 	                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
                     INNER JOIN profitwiseproduct t4 ON t3.PwProductId = t4.PwProductId
@@ -127,7 +126,6 @@ namespace ProfitWise.Data.Repositories
                 _connectionWrapper.Transaction).ToList();
         }
 
-        // TODO - the High and Low computations are incorrect here
         public PwCogsVariant RetrieveVariant(long masterVariantId)
         {
             var query =

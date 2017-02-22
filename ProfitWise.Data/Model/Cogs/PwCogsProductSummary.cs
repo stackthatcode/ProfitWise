@@ -12,14 +12,18 @@ namespace ProfitWise.Data.Model.Cogs
         public long PwMasterProductId { get; set; }
         public long PwProductId { get; set; }
         public string Title { get; set; }
+        public string ProductTitle => Title;
+
         public string Vendor { get; set; }
 
 
         [JsonIgnore]
         public IList<PwCogsVariant> Variants { get; set; }
 
-        public int NumberOfVariants => 
-            Variants.Select(x => x.PwMasterVariantId).Distinct().Count();
+        [JsonIgnore]
+        public IList<PwCogsVariant> PrimaryVariants => Variants.Where(x => x.IsPrimary).ToList();
+
+        public int VariantCount => PrimaryVariants.Count();
 
         public bool HasNormalizedCogs
         {
@@ -90,6 +94,14 @@ namespace ProfitWise.Data.Model.Cogs
             get { return Variants.Any() ? Variants.Min(x => x.LowPrice) : 0; }
         }
 
+        public MoneyRange Price => new MoneyRange()
+        {
+            CurrencyId = NormalizedCurrencyId,
+            AmountHigh = HighPrice,
+            AmountLow = LowPrice,
+            IncludesAverages = false,
+        };
+
         public int TotalInventory
         {
             get
@@ -102,19 +114,19 @@ namespace ProfitWise.Data.Model.Cogs
         
         public bool IsPriceRange => HighPrice != LowPrice;
 
-        public int StockedDirectly
+        public int StockedDirectlyCount
         {
             get
             {
-                return Variants.Count(x => x.StockedDirectly);
+                return PrimaryVariants.Count(x => x.StockedDirectly);
             }
         }
 
-        public int Excluded
+        public int ExcludedCount
         {
             get
             {
-                return Variants.Count(x => x.Exclude);
+                return PrimaryVariants.Count(x => x.Exclude);
             }
         }
 

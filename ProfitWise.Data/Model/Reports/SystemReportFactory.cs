@@ -26,7 +26,7 @@ namespace ProfitWise.Data.Model.Reports
                 OriginalReportId = OverallProfitabilityId,
                 ReportTypeId = ReportType.Profitability,
 
-                Name = "Overall Profitability",
+                Name = "Overall Profitability Report",
                 StartDate = dateRange.StartDate,
                 EndDate = dateRange.EndDate,
                 GroupingId = ReportGrouping.Overall,

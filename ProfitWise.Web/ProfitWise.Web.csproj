@@ -249,12 +249,10 @@
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\CogsDetailModel.cs" />
     <Compile Include="Models\CogsMasterProductModel.cs" />
-    <Compile Include="Models\CogsProductGridModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
     <Compile Include="Models\CommonContext.cs" />
     <Compile Include="Models\EditProductCogsModel.cs" />
     <Compile Include="Models\FilterEditorModel.cs" />
-    <Compile Include="Models\MoneyRange.cs" />
     <Compile Include="Models\PreviewSelectionLimit.cs" />
     <Compile Include="Models\ProductConsolidationSearchModel.cs" />
     <Compile Include="Models\SaveAsModel.cs" />

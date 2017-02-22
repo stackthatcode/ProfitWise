@@ -56,9 +56,9 @@ namespace ProfitWise.Web.Models
                     HighPercentage = product.HighPercentage,
                     LowPercentage = product.LowPercentage,
 
-                    ExcludedCount = product.Excluded,
+                    ExcludedCount = product.ExcludedCount,
                     InventoryCount = product.TotalInventory,
-                    StockedDirectlyCount = product.StockedDirectly,
+                    StockedDirectlyCount = product.StockedDirectlyCount,
                     VariantCount = product.NumberOfVariants
                 });
             }

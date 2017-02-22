@@ -12,6 +12,8 @@ namespace ProfitWise.Data.Model.Cogs
 
         public string ProductTitle { get; set; }
 
+        public bool IsPrimary { get; set; }
+
         public string Sku { get; set; }
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
@@ -20,13 +22,11 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal? CogsMarginPercent { get; set; }
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
-
         public bool? CogsDetail { get; set; }
 
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
-        public int? Inventory { get; set; }
-
+        public int? Inventory { get; set; }        
 
         // This needs to be manually populated, by leveraging the Currency Service
         public decimal? NormalizedCogsAmount { get; set; }

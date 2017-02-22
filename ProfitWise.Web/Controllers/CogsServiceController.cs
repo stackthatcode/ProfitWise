@@ -96,8 +96,7 @@ namespace ProfitWise.Web.Controllers
             products.PopulateNormalizedCogsAmount(_currencyService, userIdentity.PwShop.CurrencyId);
 
             // Notice: we're using the Shop Currency to represent the price
-            var model = products.ToCogsGridModel(userIdentity.PwShop.CurrencyId);
-            return new JsonNetResult(new { pickListValid = true, products = model, totalRecords = recordCount });
+            return new JsonNetResult(new { pickListValid = true, products, totalRecords = recordCount });
         }
 
         [HttpGet]
@@ -121,7 +120,9 @@ namespace ProfitWise.Web.Controllers
                 Title = masterProductSummary.Title,
             };
             masterProduct.MasterVariants =
-                masterVariants.Select(x => CogsMasterVariantModel.Build(x, shopCurrencyId)).ToList();
+                masterVariants
+                    .Select(item => CogsMasterVariantModel.Build(item, shopCurrencyId))
+                    .ToList();
 
             return new JsonNetResult(new { MasterProduct = masterProduct });
         }
