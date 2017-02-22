@@ -215,7 +215,7 @@ namespace ProfitWise.Data.Repositories
             }
             if (reportGrouping == ReportGrouping.Variant)
             {
-                return $@"GROUP BY t1.PwVariantId, t1.SKU + ' - ' + t2.Title ";
+                return $@"GROUP BY t1.PwVariantId, t1.SKU + ' - ' + t2.Title + ' - ' + t1.VariantTitle";
             }
             throw new ArgumentException("reportGrouping");
         }
@@ -236,7 +236,7 @@ namespace ProfitWise.Data.Repositories
             }
             if (reportGrouping == ReportGrouping.Variant)
             {
-                return $@"SELECT t1.PwVariantId AS GroupingKey, t1.SKU + ' - ' + t2.Title AS GroupingName, ";
+                return $@"SELECT t1.PwVariantId AS GroupingKey, t1.SKU + ' - ' + t2.Title + ' - ' + t1.VariantTitle AS GroupingName, ";
             }
             throw new ArgumentException("reportGrouping");
         }
