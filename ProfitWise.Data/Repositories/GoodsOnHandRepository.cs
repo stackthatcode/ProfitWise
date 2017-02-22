@@ -8,6 +8,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.GoodsOnHand;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
+using ProfitWise.Data.Services;
 
 
 namespace ProfitWise.Data.Repositories
@@ -19,13 +20,16 @@ namespace ProfitWise.Data.Repositories
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
         private readonly MultitenantFactory _factory;
-
+        private readonly TimeZoneTranslator _timeZoneTranslator;
 
         public GoodsOnHandRepository(
-                ConnectionWrapper connectionWrapper, MultitenantFactory factory)
+                ConnectionWrapper connectionWrapper, 
+                MultitenantFactory factory,
+                TimeZoneTranslator timeZoneTranslator)
         {
             _connectionWrapper = connectionWrapper;
             _factory = factory;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
         public IDbTransaction InitiateTransaction()
@@ -52,7 +56,13 @@ namespace ProfitWise.Data.Repositories
                 @" GROUP BY PwVariantId, PwProductId, 
                 Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
             Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
-        }       
+        }
+
+
+        private decimal MarginMultiplier()
+        {
+            return PwShop.UseDefaultMargin ? PwShop.DefaultMargin / 100m : 0m;
+        }
 
         public Totals RetrieveTotals(long reportId)
         {
@@ -62,8 +72,16 @@ namespace ProfitWise.Data.Repositories
                         SUM(PotentialRevenue) AS TotalPotentialRevenue
                 FROM Data_CTE ";
 
+            var today = _timeZoneTranslator.Today(PwShop.TimeZone);
+
             return Connection.Query<Totals>(
-                query, new { QueryDate = DateTime.Today, PwShopId, PwReportId = reportId }).First();
+                query, new
+                {
+                    QueryDate = today,
+                    PwShopId,
+                    PwReportId = reportId,
+                    MarginMultiplier = MarginMultiplier()
+                }).First();
         }
 
         public int DetailsCount(long reportId, ReportGrouping grouping,
@@ -126,10 +144,18 @@ namespace ProfitWise.Data.Repositories
                     OrderByClauseAggregate(ordering) + " " +
                     "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
+            var today = _timeZoneTranslator.Today(PwShop.TimeZone);
+
             return Connection.Query<Details>(query, new {
-                    QueryDate = DateTime.Today, PwShopId, PwReportId = reportId,
-                    pageSize, startingIndex = (pageNumber - 1) * pageSize,
-                    productType, vendor, pwProductId,
+                    QueryDate = today,
+                    PwShopId,
+                    PwReportId = reportId,
+                    MarginMultiplier = MarginMultiplier(),
+                    pageSize,
+                    startingIndex = (pageNumber - 1) * pageSize,
+                    productType,
+                    vendor,
+                    pwProductId,
                 }).ToList();
         }
         
@@ -215,11 +241,13 @@ namespace ProfitWise.Data.Repositories
             throw new ArgumentException("reportGrouping");
         }
 
-        private string CTE_Query =
+        private string CTE_Query= 
             @"WITH Data_CTE ( PwProductId, PwVariantId, VariantTitle, Sku, Inventory, Price, CostOfGoodsOnHand, PotentialRevenue )
                 AS (
-	                SELECT	t2.PwProductId, t2.PwVariantId, t2.Title, t2.Sku, t2.Inventory, t2.HighPrice AS Price, 
-			                ISNULL(t2.Inventory * (t4.PercentMultiplier / 100 * t2.HighPrice + t4.FixedAmount * t5.Rate), 0) AS CostOfGoodsOnHand,
+                    SELECT	t2.PwProductId, t2.PwVariantId, t2.Title, t2.Sku, t2.Inventory, t2.HighPrice AS Price, 
+                            CASE WHEN (t4.PercentMultiplier = 0 AND t4.FixedAmount = 0 AND @MarginMultiplier <> 0) THEN @MarginMultiplier * t2.HighPrice * t2.Inventory
+                            ELSE (ISNULL(t4.PercentMultiplier, 0) / 100 * t2.HighPrice + ISNULL(t4.FixedAmount, 0) * t5.Rate) * t2.Inventory END
+                            AS CostOfGoodsOnHand,
                             ISNULL(t2.Inventory, 0) * t2.HighPrice AS PotentialRevenue
 	                FROM profitwisemastervariant t1
 		                INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId	

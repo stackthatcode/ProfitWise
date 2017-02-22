@@ -1,6 +1,8 @@
-﻿using ProfitWise.Data.Factories;
+﻿using System.Configuration;
+using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Model;
 
@@ -41,8 +43,13 @@ namespace ProfitWise.Data.Services
 
             if (pwShop == null)
             {
-                var newShop = 
-                    PwShop.Make(shopOwnerUserId, shop.Id, currencyId, shop.TimeZone, shop.Domain);
+                var initialOrderStartDateOffsetMonths = 
+                    ConfigurationManager.AppSettings
+                        .GetAndTryParseAsInt("InitialOrderStartDateOffsetMonths", 3);
+
+                var newShop = PwShop.Make(
+                    shopOwnerUserId, shop.Id, currencyId, shop.TimeZone, shop.Domain, initialOrderStartDateOffsetMonths);
+
                 newShop.PwShopId = _pwShopRepository.Insert(newShop);
 
                 _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}, " +

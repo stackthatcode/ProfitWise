@@ -18,29 +18,27 @@ namespace ProfitWise.Data.Model.Preferences
         public const int LastYear = 10;
 
 
-        public static List<DateRange> Factory()
+        public static List<DateRange> Factory(DateTime today)
         {
             return new List<DateRange>()
             {
-                new DateRange(Today, "Today", DateTime.Today, DateTime.Today),
-                new DateRange(Yesterday, "Yesterday", DateTime.Today.AddDays(-1), DateTime.Today.AddDays(-1)),
-                new DateRange(Last7Days, "Last 7 Days", DateTime.Today.AddDays(-7), DateTime.Today),
-                new DateRange(Last30Days, "Last 30 Days", DateTime.Today.AddDays(-30), DateTime.Today),
+                new DateRange(Today, "Today", today, today),
+                new DateRange(Yesterday, "Yesterday", today.AddDays(-1), today.AddDays(-1)),
 
-                new DateRange(ThisMonth, "This Month", DateTime.Today.FirstOfMonth(), DateTime.Today.LastOfMonth()),
+                new DateRange(Last7Days, "Last 7 Days", today.AddDays(-7), today),
+                new DateRange(Last30Days, "Last 30 Days", today.AddDays(-30), today),
 
-                new DateRange(LastMonth, "Last Month", DateTime.Today.AddMonths(-1).FirstOfMonth(),
-                                DateTime.Today.AddMonths(-1).LastOfMonth()),
+                new DateRange(ThisMonth, "This Month", today.FirstOfMonth(), today.LastOfMonth()),
+                new DateRange(LastMonth, "Last Month", today.AddMonths(-1).FirstOfMonth(),
+                                today.AddMonths(-1).LastOfMonth()),
 
-                new DateRange(ThisQuarter, "This Quarter", DateTime.Today.FirstOfQuarter(),
-                                DateTime.Today.LastOfQuarter()),
+                new DateRange(ThisQuarter, "This Quarter", today.FirstOfQuarter(),
+                                today.LastOfQuarter()),
+                new DateRange(LastQuarter, "Last Quarter", today.AddMonths(-3).FirstOfQuarter(),
+                                today.AddMonths(-3).LastOfQuarter()),
 
-                new DateRange(LastQuarter, "Last Quarter", DateTime.Today.AddMonths(-3).FirstOfQuarter(),
-                                DateTime.Today.AddMonths(-3).LastOfQuarter()),
-
-                new DateRange(ThisYear, "This Year", DateTime.Today.FirstOfYear(), DateTime.Today.LastOfYear()),
-
-                new DateRange(LastYear, "Last Year", DateTime.Today.AddYears(-1).FirstOfYear(), DateTime.Today.AddYears(-1).LastOfYear()),
+                new DateRange(ThisYear, "This Year", today.FirstOfYear(), today.LastOfYear()),
+                new DateRange(LastYear, "Last Year", today.AddYears(-1).FirstOfYear(), today.AddYears(-1).LastOfYear()),
             };
         }
     }

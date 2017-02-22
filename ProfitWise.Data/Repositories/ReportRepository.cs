@@ -8,6 +8,7 @@ using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
+using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Repositories
 {
@@ -17,11 +18,15 @@ namespace ProfitWise.Data.Repositories
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
-        public ReportRepository(ConnectionWrapper connectionWrapper)
+        public ReportRepository(
+                ConnectionWrapper connectionWrapper, 
+                TimeZoneTranslator timeZoneTranslator)
         {
             _connectionWrapper = connectionWrapper;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
         public IDbTransaction InitiateTransaction()
@@ -66,15 +71,15 @@ namespace ProfitWise.Data.Repositories
 
         public List<PwReport> RetrieveSystemDefinedReports(int? reportTypeId = null)
         {
-            var dateRange =
-                DateRangeDefaults
-                    .Factory()
-                    .FirstOrDefault(x => x.Id == this.PwShop.DateRangeDefault);
+            var today = _timeZoneTranslator.Today(PwShop.TimeZone);
+            var dateRange = DateRangeDefaults
+                            .Factory(today)
+                            .FirstOrDefault(x => x.Id == this.PwShop.DateRangeDefault);
 
             var systemDefinedReports = new List<PwReport>()
             {
-                SystemReportFactory.OverallProfitability(dateRange),                    
-                SystemReportFactory.GoodsOnHandReport(),
+                SystemReportFactory.OverallProfitability(dateRange), 
+                SystemReportFactory.GoodsOnHandReport(today),
             };
 
             systemDefinedReports.ForEach(x => x.PwShopId = this.PwShopId);

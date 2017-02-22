@@ -80,13 +80,14 @@ CREATE TABLE [dbo].[profitwisevariant](
 END
 GO
 
+
+DROP INDEX IF EXISTS [profitwisevariant].uq_profitwisevariant;
+
+
 ALTER TABLE [profitwisevariant] 
 	ALTER COLUMN [Sku] [nvarchar](100)
 
--- COLLATE SQL_Latin1_General_CP1_CS_AS
-
 -- This logic alone is worthy of discussion...
--- DROP INDEX [profitwisevariant].uq_profitwisevariant;
 
 CREATE UNIQUE INDEX uq_profitwisevariant
   ON dbo.[profitwisevariant]([PwShopId], [PwProductId], [ShopifyVariantId], [Sku], [Title])
@@ -188,20 +189,17 @@ CREATE TABLE [dbo].[profitwiseproduct](
 END
 GO
 
+DROP INDEX IF EXISTS [profitwiseproduct].uq_profitwiseproduct
+
 ALTER TABLE [profitwiseproduct] 
 	ALTER COLUMN [Title] [nvarchar](200)
-	COLLATE SQL_Latin1_General_CP1_CS_AS
 
 ALTER TABLE [profitwiseproduct] 
 	ALTER COLUMN [Vendor] [nvarchar](100)
-	COLLATE SQL_Latin1_General_CP1_CS_AS
 
 ALTER TABLE [profitwiseproduct] 
 	ALTER COLUMN [ProductType] [nvarchar](100)
-	COLLATE SQL_Latin1_General_CP1_CS_AS
-
-
-
+	
 CREATE UNIQUE INDEX uq_profitwiseproduct
 	ON dbo.[profitwiseproduct]([PwShopId], [ShopifyProductId], [Title], [Vendor])
 	WHERE [ShopifyProductId] IS NOT NULL;

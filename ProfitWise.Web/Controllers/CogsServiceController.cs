@@ -207,6 +207,7 @@ namespace ProfitWise.Web.Controllers
                 long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
         {
             defaults.ValidateCurrency(_currencyService);
+            details = details ?? new List<CogsDto>();             
             details.ForEach(x => x.ValidateCurrency(_currencyService));
 
             var userIdentity = HttpContext.PullIdentity();

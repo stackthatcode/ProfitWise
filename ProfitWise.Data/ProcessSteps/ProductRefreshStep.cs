@@ -87,7 +87,7 @@ namespace ProfitWise.Data.ProcessSteps
             {
                 var lastUpdatedInShopifyTime =
                     _timeZoneTranslator
-                        .TranslateToTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
+                        .ToOtherTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
                         .AddMinutes(-MinutesFudgeFactor);
 
                 filter.UpdatedAtMin = lastUpdatedInShopifyTime;
@@ -226,7 +226,7 @@ namespace ProfitWise.Data.ProcessSteps
             var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
 
             var fromDateInShopify = 
-                _timeZoneTranslator.TranslateToTimeZone(fromDate, shop.TimeZone)
+                _timeZoneTranslator.ToOtherTimeZone(fromDate, shop.TimeZone)
                                 .AddMinutes(-MinutesFudgeFactor);
 
             var filter = new EventFilter()

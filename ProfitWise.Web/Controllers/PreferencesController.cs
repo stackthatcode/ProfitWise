@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Web.Mvc;
-using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Logging;
-using Push.Foundation.Utilities.Security;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -17,13 +16,18 @@ namespace ProfitWise.Web.Controllers
         private readonly MultitenantFactory _factory;
         private readonly ShopRepository _shopRepository;
         private readonly IPushLogger _logger;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
 
         public PreferencesController(
-            MultitenantFactory factory, ShopRepository shopRepository, IPushLogger logger)
+                MultitenantFactory factory, 
+                ShopRepository shopRepository, 
+                IPushLogger logger,
+                TimeZoneTranslator timeZoneTranslator)
         {
             _factory = factory;
             _shopRepository = shopRepository;
             _logger = logger;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
         [HttpGet]
@@ -45,13 +49,17 @@ namespace ProfitWise.Web.Controllers
         public ActionResult UpdateStartingDate(DateTime startDate)
         {
             var shop = HttpContext.PullIdentity().PwShop;
-            if (startDate > shop.StartingDateForOrders)
+
+            // Translate what the User was seeing in the UI to Server Time Zone
+            var translatedStartDate = _timeZoneTranslator.ToServerTime(startDate, shop.TimeZone);
+
+            if (translatedStartDate > shop.StartingDateForOrders)
             {
-                throw new Exception($"User attempted to set Start Date to {startDate} for shop {shop.PwShopId}");
+                throw new Exception($"User attempted to set Start Date to {translatedStartDate} for shop {shop.PwShopId}");
             }
             else
             {
-                _shopRepository.UpdateStartingDateForOrders(shop.PwShopId, startDate);
+                _shopRepository.UpdateStartingDateForOrders(shop.PwShopId, translatedStartDate);
                 return JsonNetResult.Success();
             }
         }

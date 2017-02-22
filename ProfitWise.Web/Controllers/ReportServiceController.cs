@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Reports;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -16,12 +17,17 @@ namespace ProfitWise.Web.Controllers
     public class ReportServiceController : Controller
     {
         private readonly MultitenantFactory _factory;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
+
         public const int MaximumUserDefinedReports = 20;
 
-
-        public ReportServiceController(MultitenantFactory factory, CurrencyService currencyService)
+        public ReportServiceController(
+                    MultitenantFactory factory, 
+                    CurrencyService currencyService, 
+                    TimeZoneTranslator timeZoneTranslator)
         {
             _factory = factory;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
         [HttpGet]
@@ -181,8 +187,10 @@ namespace ProfitWise.Web.Controllers
             var report = repository.RetrieveReport(reportId);
             report.GroupingId = groupingId;
             report.OrderingId = orderingId;
-            report.StartDate = startDate;
-            report.EndDate = endDate;
+
+            var shopTimeZone = userIdentity.PwShop.TimeZone;
+            report.StartDate = _timeZoneTranslator.ToServerTime(startDate, shopTimeZone);
+            report.EndDate = _timeZoneTranslator.ToServerTime(endDate, shopTimeZone);
             report.LastAccessedDate = DateTime.Now;
             
             repository.UpdateReport(report);

@@ -40,7 +40,7 @@ namespace ProfitWise.Data.Model.Reports
             };
         }
 
-        public static PwReport GoodsOnHandReport()
+        public static PwReport GoodsOnHandReport(DateTime today)
         {
             return new PwReport
             {
@@ -49,8 +49,8 @@ namespace ProfitWise.Data.Model.Reports
                 ReportTypeId = ReportType.GoodsOnHand,
 
                 Name = "Inventory Valuation",
-                StartDate = DateTime.Today.AddDays(-14),
-                EndDate = DateTime.Today.AddDays(-7),
+                StartDate = today,
+                EndDate = today,
                 GroupingId = ReportGrouping.ProductType,
                 OrderingId = ReportOrdering.ProfitabilityDescending,
                 IsSystemReport = true,

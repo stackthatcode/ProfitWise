@@ -1,6 +1,10 @@
 ﻿@using ProfitWise.Data.Model.Preferences
+@using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
-@using Push.Foundation.Web.Json
+
+@{
+    var todayInShopTimeZone = Context.PullCommonContext().Today;
+}
 
 <style>
     .date-ranger-picker-parent .daterangepicker {
@@ -91,7 +95,7 @@
 
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.DateRanges = @Html.Raw(DateRangeDefaults.Factory().SerializeToJson());    
+    ProfitWiseWidgets.DateRanges = @Html.Raw(DateRangeDefaults.Factory(todayInShopTimeZone).SerializeToJson());    
 
     ProfitWiseWidgets.DateRangeById = function(id) {
         return AQ(ProfitWiseWidgets.DateRanges)

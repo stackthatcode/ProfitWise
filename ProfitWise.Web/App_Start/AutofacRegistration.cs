@@ -7,11 +7,11 @@ using Autofac;
 using Autofac.Integration.Mvc;
 using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Database;
+using ProfitWise.Data.Services;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
-using Push.Utilities.CastleProxies;
 
 
 namespace ProfitWise.Web
@@ -26,6 +26,12 @@ namespace ProfitWise.Web
             LoggerSingleton.Get = 
                 NLoggerImpl.LoggerFactory("ProfitWise.Web", ActivityId.MessageFormatter);
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
+
+
+            // Timezone
+            var machineTimeZone = ConfigurationManager.AppSettings["Machine_TimeZone"];
+            builder.Register(x => new TimeZoneTranslator(machineTimeZone));
+
 
             // Push.Foundation.Web relies on consumers to supply Key and IV for its Encryption Service
             Push.Foundation.Web.AutofacRegistration.Build(

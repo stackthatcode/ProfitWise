@@ -151,7 +151,3 @@ CREATE TABLE [dbo].[profitwisereportfilter](
 END
 GO
 
-
-ALTER TABLE [profitwisereportfilter] 
-	ALTER COLUMN [StringKey] [nvarchar](100)
-

@@ -12,11 +12,13 @@ namespace Push.Shopify.Model
         public string Email { get; set; }
         public decimal TotalTax { get; set; }
         public decimal SubTotal { get; set; }
+
+        // Coming from Shopify, these include the TimeZone of the Shop
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? CancelledAt { get; set; }
 
-        public bool Cancelled { get { return this.CancelledAt.HasValue; } }
+        public bool Cancelled => this.CancelledAt.HasValue;
 
         public decimal TotalRefunds => Refunds.Sum(x => x.TransactionAmount);
         public decimal TotalShippingRefund => Refunds.Sum(x => x.ShippingAdjustment);

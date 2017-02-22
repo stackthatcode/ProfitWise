@@ -9,45 +9,65 @@ namespace ProfitWise.Data.Services
     /// </summary>
     public class TimeZoneTranslator
     {
-        public int MachineHourOffset { get; private set; }
-        public int MachineMinuteOffset { get; private set; }
+        public int ServerHourOffset { get; private set; }
+        public int ServerMinuteOffset { get; private set; }
+
 
         public TimeZoneTranslator(string machineTimeZone)
         {
-            MachineHourOffset = machineTimeZone.ParseTimeZoneHours();
-            MachineMinuteOffset = machineTimeZone.ParseTimeZoneMinutes();
+            ServerHourOffset = machineTimeZone.ParseTimeZoneHours();
+            ServerMinuteOffset = machineTimeZone.ParseTimeZoneMinutes();
         }
 
         public TimeZoneTranslator(int hour, int minute)
         {
-            MachineHourOffset = hour;
-            MachineMinuteOffset = minute;
+            ServerHourOffset = hour;
+            ServerMinuteOffset = minute;
         }
 
-
-        public DateTime TranslateToTimeZone(DateTime input, string destinationTimeZone)
+        // Returns Date + Midnight of that Date in another Time Zone based on *now*
+        public DateTime Today(string otherTimeZone)
         {
-            var destinationHourOffset = destinationTimeZone.ParseTimeZoneHours();
-            var destinationMinuteOffset = destinationTimeZone.ParseTimeZoneMinutes();
+            var serverTime = DateTime.Now;
+            var timeInOtherTimeZone = ToOtherTimeZone(serverTime, otherTimeZone);
 
-            var hourAdjustment = destinationHourOffset - MachineHourOffset;
-            var minAdjustment = destinationMinuteOffset - MachineMinuteOffset;
+            // Strip off time
+            var dateInOtherTimeZone = new DateTime(
+                timeInOtherTimeZone.Year, timeInOtherTimeZone.Month, timeInOtherTimeZone.Day);
+
+            return dateInOtherTimeZone;
+        }
+
+        public TimeSpan OtherTimeZoneAdjustment(string otherTimeZone)
+        {
+            var otherHourOffset = otherTimeZone.ParseTimeZoneHours();
+            var otherMinuteOffset = otherTimeZone.ParseTimeZoneMinutes();
+
+            var hourAdjustment = otherHourOffset - ServerHourOffset;
+            var minuteAdjustment = otherMinuteOffset - ServerMinuteOffset;
+
+            return new TimeSpan(0, hourAdjustment, minuteAdjustment, 0);
+        }
+
+        public DateTime ToOtherTimeZone(DateTime timeInServerTimeZone, string otherTimeZone)
+        {
+            var adjustment = OtherTimeZoneAdjustment(otherTimeZone);
+            return timeInServerTimeZone.Add(adjustment);
+        }
+
+        // Haven't needed this, because all the Orders from Shopify contain Time Zone information,
+        // ... which, when deserialized is parsed into Server Time automatically
+        public DateTime ToServerTime(DateTime input, string otherTimeZone)
+        {
+            var otherHourOffset = otherTimeZone.ParseTimeZoneHours();
+            var sourceMinuteOffset = otherTimeZone.ParseTimeZoneMinutes();
+
+            var hourAdjustment = -(otherHourOffset - ServerHourOffset);
+            var minAdjustment = -(sourceMinuteOffset - ServerMinuteOffset);
 
             return input.Add(new TimeSpan(0, hourAdjustment, minAdjustment, 0));
         }
-
-        public DateTime TranslateFromTimeZone(DateTime input, string sourceTimeZone)
-        {
-            var sourceHourOffset = sourceTimeZone.ParseTimeZoneHours();
-            var sourceMinuteOffset = sourceTimeZone.ParseTimeZoneMinutes();
-
-            var hourAdjustment = -(sourceHourOffset - MachineHourOffset);
-            var minAdjustment = -(sourceMinuteOffset - MachineMinuteOffset);
-
-            return input.Add(new TimeSpan(0, hourAdjustment, minAdjustment, 0));
-        }
-
-
+        
         // 1:00 PM CST => Input / Server Time
         // 10:00 AM ALASKA => Shopify
     }

@@ -61,12 +61,12 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 OrderLevelDiscount = order.OrderDiscount,
                 FinancialStatus = order.FinancialStatus.ToFinancialStatus(),
                 Tags = order.Tags,
-                CreatedAt = order.CreatedAt,
-                UpdatedAt = order.UpdatedAt,
 
                 LineItems = new List<ShopifyOrderLineItem>(),
                 Adjustments = new List<ShopifyOrderAdjustment>(),
 
+                CreatedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
                 Cancelled = order.CancelledAt.HasValue, // only used during Refresh to DELETE Cancelled Orders
             };
 

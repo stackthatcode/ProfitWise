@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
@@ -22,6 +24,7 @@ namespace ProfitWise.Web.Attributes
             var shopRepository = DependencyResolver.Current.GetService<ShopRepository>();
             var signInManager = DependencyResolver.Current.GetService<ApplicationSignInManager>();
             var logger = DependencyResolver.Current.GetService<IPushLogger>();
+            var timeZoneTranslator = DependencyResolver.Current.GetService<TimeZoneTranslator>();
 
             // Pull the User ID from OWIN plumbing...
             var currentUrl = filterContext.HttpContext.Request.Url.PathAndQuery;
@@ -118,6 +121,7 @@ namespace ProfitWise.Web.Attributes
 
             var commonContext = new CommonContext
             {
+                Today = timeZoneTranslator.ToOtherTimeZone(DateTime.Today, pwShop.TimeZone),
                 ShopifyApiKey = ProfitWiseConfiguration.Settings.ShopifyApiKey,
                 IdentitySnapshot = identity,
             };

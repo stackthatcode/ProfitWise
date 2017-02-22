@@ -1,5 +1,6 @@
 ﻿using System;
 using ProfitWise.Data.Model.Preferences;
+using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model.Shop
 {
@@ -27,14 +28,9 @@ namespace ProfitWise.Data.Model.Shop
 
 
 
-        // TODO - wire this into configuration settings?
-        public static DateTime InitialOrderStartDate()
-        {
-            return DateTime.Today.AddMonths(-2);
-        }
-
         public static PwShop Make(
-                string shopifyUserId, long shopId, int shopCurrencyId, string shopTimeZone, string shopDomain)
+                string shopifyUserId, long shopId, int shopCurrencyId, 
+                string shopTimeZone, string shopDomain, int initialOrderStartDateOffsetMonths)
         {
             var newShop = new PwShop
             {
@@ -48,7 +44,8 @@ namespace ProfitWise.Data.Model.Shop
                 IsShopEnabled = true,
                 IsDataLoaded = false,
 
-                StartingDateForOrders = InitialOrderStartDate(),
+                StartingDateForOrders = 
+                        DateTime.Today.AddDays(-Math.Abs(initialOrderStartDateOffsetMonths)),
                 UseDefaultMargin = true,
                 DefaultMargin = 20.0m,
                 ProfitRealization = Preferences.ProfitRealization.OrderReceived,
