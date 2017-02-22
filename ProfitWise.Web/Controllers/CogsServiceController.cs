@@ -107,21 +107,24 @@ namespace ProfitWise.Web.Controllers
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             var masterProductSummary = cogsRepository.RetrieveProduct(pwMasterProductId);
+            var details = cogsRepository.RetrieveCogsDetailByMasterProduct(pwMasterProductId);
+
             if (masterProductSummary == null)
             {
                 return new JsonNetResult(new { MasterProduct = (PwCogsMasterProductModel)null });
-            }            
+            }
 
-            var masterProduct = new PwCogsMasterProductModel()
+            var masterProduct = new PwCogsMasterProductModel
             {
                 PwMasterProductId = masterProductSummary.PwMasterProductId,
                 Title = masterProductSummary.Title,
+                MasterVariants = cogsRepository.RetrieveVariants(new[] {pwMasterProductId}),
             };
 
-            masterProduct.MasterVariants = cogsRepository.RetrieveVariants(new[] { pwMasterProductId });            
             foreach (var variant in masterProduct.MasterVariants)
             {
                 variant.PopulateNormalizedCogsAmount(_currencyService, shopCurrencyId);
+                variant.PopulateCogsDetails(details);
             }
 
             return new JsonNetResult(new { MasterProduct = masterProduct });

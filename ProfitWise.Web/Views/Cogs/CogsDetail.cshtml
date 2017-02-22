@@ -16,7 +16,7 @@
 @Html.Partial("~/Views/SharedTemplates/_MoneyEditorWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
 @Html.Partial("~/Views/Cogs/_CogsEditorWidget.cshtml")
-@Html.Partial("~/Views/Cogs/_CogsVariantSummaryWidget.cshtml")
+@Html.Partial("~/Views/Cogs/_CogsSummaryWidget.cshtml")
 
 <style>
     body {
@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <div style="position: absolute; overflow: visible; width:100%;">
+    <div style="position: absolute; overflow: visible; width:100%; padding-left:15px; padding-right:15px;">
         <div style="height: 140px;"></div>
 
         <div class="scrolling-popout-layout">
@@ -137,25 +137,26 @@
 
     ProfitWiseWidgets.CogsDetailRow = function(jsEntryDate) {
         var self = this;
-        
+
         self.CogsDate = ko.observable(jsEntryDate);
-        
+
         self.EditorModel = new ProfitWiseWidgets.CogsEditorWidgetModel({
             identifier: ProfitWiseFunctions.getRandomInt(1000, 9999),
             CogsTypeId: @CogsType.FixedAmount,
             CogsCurrencyId: @defaultCurrencyId,
             CogsAmount: 0.00,
             CogsMarginPercent: 0.00,
+            DefaultCurrencyId: @defaultCurrencyId,
         });
 
         self.EditorModel.HorizontalEditor(true);
-        
+
         self.PullState = function() {
             var output = self.EditorModel.PullState();
             output.CogsDate = self.CogsDate();
             return output;
         };
-        
+
         self.PushState = function(cogsDetail) {
             self.EditorModel.PushState(cogsDetail);
             self.CogsDate(cogsDetail.CogsDate);
@@ -175,18 +176,20 @@
             if (!defaults && !details) {
                 return;
             }
-            
+
             self.DefaultEditorModel.PushState(defaults);
+
             AQ(details).each(function(detail) {
-                var entry = new ProfitWiseWidgets.CogsDetailRow();
                 detail.CogsDate = detail.CogsDate.parseToJavascriptDate();
+
+                var entry = new ProfitWiseWidgets.CogsDetailRow();
                 entry.PushState(detail);
-                
+
                 // add to array
                 self.CogsDetail.push(entry);
             });
-        };        
-        
+        };
+
         self.RemoveAllDetail = function() {
             self.CogsDetail.removeAll();
         };
@@ -198,11 +201,11 @@
             var entry = new ProfitWiseWidgets.CogsDetailRow(jsDefaultDate);
             self.CogsDetail.push(entry);
         };
-        
+
         self.RemoveDetailEntry = function(item) {
             self.CogsDetail.remove(item);
         };
-        
+
         self.DefaultEditorModel =
             new ProfitWiseWidgets.CogsEditorWidgetModel({
                 identifier: "default-editor",
@@ -212,6 +215,7 @@
                 CogsMarginPercent: 0.00,
                 DefaultCurrencyId: @defaultCurrencyId,
             });
+
         self.DefaultEditorModel.HorizontalEditor(true);
 
         self.CloseClick = function() {
@@ -222,7 +226,7 @@
             if (self.ValidationMessage()) {
                 return;
             }
-            
+
             var defaults = self.DefaultEditorModel.PullState();
             var details =
                 AQ(self.CogsDetail())
@@ -250,9 +254,9 @@
                     ShopifyApp.Modal.close({ result: true });
                 });
         };
-        
+
         self.ValidationMessage = ko.computed(function() {
-            var dates = 
+            var dates =
                 AQ(self.CogsDetail())
                     .select(function(x) { return x.CogsDate().toString() });
 

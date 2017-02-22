@@ -464,7 +464,7 @@
     <Content Include="Views\Cogs\_CogsEditorWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Cogs\_CogsVariantSummaryWidget.cshtml" />
+    <Content Include="Views\Cogs\_CogsSummaryWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cogs\CogsDetail.cshtml" />
