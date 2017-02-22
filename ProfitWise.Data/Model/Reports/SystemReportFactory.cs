@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ProfitWise.Data.Model.Preferences;
 
 namespace ProfitWise.Data.Model.Reports
 {
-
     public static class SystemReportFactory
     {
         public const long OverallProfitabilityId = 1;
@@ -48,7 +43,7 @@ namespace ProfitWise.Data.Model.Reports
                 OriginalReportId = GoodsOnHandId,
                 ReportTypeId = ReportType.GoodsOnHand,
 
-                Name = "Inventory Valuation",
+                Name = "Inventory Valuation Report",
                 StartDate = today,
                 EndDate = today,
                 GroupingId = ReportGrouping.ProductType,
