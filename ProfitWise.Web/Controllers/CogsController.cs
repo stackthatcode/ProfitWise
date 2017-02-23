@@ -47,11 +47,17 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult CogsDetail(long? pwMasterVariantId)
+        public ActionResult CogsDetail(long? pwMasterVariantId, long? pwPickListId)
         {
+            if (!pwMasterVariantId.HasValue && !pwPickListId.HasValue)
+            {
+                throw new Exception("Missing parameters");
+            }
+
+            var userIdentity = HttpContext.PullIdentity();
+
             if (pwMasterVariantId.HasValue)
             {
-                var userIdentity = HttpContext.PullIdentity();
                 var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
                 var masterVariant = cogsRepository.RetrieveVariant(pwMasterVariantId.Value);
 
@@ -80,7 +86,8 @@ namespace ProfitWise.Web.Controllers
             {
                 return View(new CogsDetailModel
                 {
-                    DateDefault = DateTime.Today,
+                    PwPickListId = pwPickListId.Value,
+                    DateDefault = _timeZoneTranslator.Today(userIdentity.PwShop.TimeZone),
                 });
             }
         }

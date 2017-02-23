@@ -236,7 +236,7 @@
                                     item.Sku + " - " + item.Title :
                                     self.MasterProductTitle() + " - " + item.Title;
 
-                        self.CogsDetailDialogPopup(item.PwMasterVariantId, null, dialogTitle);
+                        self.CogsDetailDialogPopup(item.PwMasterVariantId, dialogTitle);
                     };
 
                     item.CancelAndHide = function () {
@@ -355,9 +355,9 @@
             }, self.Refresh);
         };
         
-        self.CogsDetailDialogPopup = function (pwMasterVariantId, pwMasterProductId, dialogTitle) {
+        self.CogsDetailDialogPopup = function (pwMasterVariantId, dialogTitle) {
             var url = ProfitWiseConfig.BaseUrl +
-                '/Cogs/CogsDetail?pwMasterVariantId=' + pwMasterVariantId + "&pwMasterProductId=" + pwMasterProductId;
+                        '/Cogs/CogsDetail?pwMasterVariantId=' + pwMasterVariantId;
             
             ProfitWiseShopify.LaunchModal({
                 src: url,

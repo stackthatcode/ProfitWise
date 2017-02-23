@@ -253,7 +253,7 @@ namespace ProfitWise.Web.Controllers
 
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
-            service.UpdateCogsForPickList(pickListId, simpleCogs);
+            service.SaveCogsForPickList(pickListId, simpleCogs);
             return JsonNetResult.Success();
         }
     }

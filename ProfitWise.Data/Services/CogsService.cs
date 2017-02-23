@@ -138,7 +138,7 @@ namespace ProfitWise.Data.Services
 
         
         // Updates both the CoGS and the Downstream
-        public void UpdateCogsForPickList(long pickListId, CogsDto cogs)
+        public void SaveCogsForPickList(long pickListId, CogsDto cogs)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDownstreamRepository(PwShop);

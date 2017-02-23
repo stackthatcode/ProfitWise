@@ -105,7 +105,12 @@
 
                     <th>Inventory</th>
                     <th>Price</th>
-                    <th><a href="#" data-bind="click: BulkEditPopUp">CoGS</a></th>
+                    <th class="popover-container">
+                        <a href="#" class="popover-launcher"
+                           data-bind="popover: { options: { placement: 'bottom' , trigger: 'click' , },
+                                            template: 'Product-Bulk-Edit-Cogs-Confirm', data: $data }">
+                        CoGS</a>                    
+                    </th>
 
                     <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked<br />Directly</a></th>
                     <th style="text-align: center;"><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
@@ -115,6 +120,27 @@
 
         </div>
     </div>
+</script>
+
+<script type="text/html" id="Product-Bulk-Edit-Cogs-Confirm">
+    <div style="text-align: center;">
+        <div style="color:red;text-align: justify; padding:7px;">
+            WARNING! This function will overwrite all CoGS data for all Products and Variants
+            in the current search results. Once you Save, the operation cannot be undone!
+        </div>
+
+        <div style="height: 7px;"></div>
+        <a href="#" style="font-size: 0.9em; font-weight: 600;"
+           data-bind="click: function() { ProfitWiseFunctions.PopOverCloseAll(); }">
+            <span><i class="glyphicon glyphicon-remove"></i> Cancel</span>
+        </a>
+        &nbsp;
+        <span>|</span>
+        &nbsp;
+        <a href="#" style="font-size: 0.9em; font-weight: 600;" data-bind="click: BulkEditPopUp">
+            <span><i class="glyphicon glyphicon-ok"></i> Ok, Proceed</span>
+        </a>
+    </div>    
 </script>
 
 <script type="text/html" id="Product-Search-Body">
@@ -254,26 +280,31 @@
         self.SortingModel.Callback = function() { self.LoadDataForCurrentPage(); };
         
         // *** Launch Bulk Edit Popup
-        self.BulkEditPopUp = function () {
-            flow.exec(
-                function() {
-                    var url =
-                    ProfitWiseConfig.BaseUrl +
-                        '/Cogs/BulkEditCogs?pickListId=' + self.PickListId();
+        self.BulkEditPopUp = function() {            
+            ProfitWiseFunctions.PopOverCloseAll();
 
-                        ProfitWiseShopify.LaunchModal({
-                            src: url,
-                            title: 'Bulk Edit CoGS for Current Product Search',
-                            width: 'small',
-                            height: 380,
-                        }, this);
-                },
-                function(data) {
-                    self.LoadDataForCurrentPage();
-                }
-            );            
-        }
+            if (self.PagingModel.RecordCount() > 100) {
+                var msg = "There are too many Products in your current Product Search. " +
+                    "Bulk Cost of Goods Updates are only allowed for up 100 Products.";
 
+                ShopifyApp.Modal.confirm({
+                    title: "Too many Products for Bulk CoGS Update",
+                    message: msg,
+                    okButton: "OK",
+                    style: "danger"
+                });
+                return;
+            }
+
+            var url = ProfitWiseConfig.BaseUrl + '/Cogs/CogsDetail?pwPickListId=' + self.PickListId();            
+            ProfitWiseShopify.LaunchModal({
+                src: url,
+                title: 'Add CoGS Detail to all Products in current Search',
+                width: 'large',
+                height: 500,
+            }, self.LoadDataForCurrentPage);
+        };
+        
         // *** Stocked Directly interactivity *** //
         self.StockedDirectlyPickListPopup = function () {
             var url = 
