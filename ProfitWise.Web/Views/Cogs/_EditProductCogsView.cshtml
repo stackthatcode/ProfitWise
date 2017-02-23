@@ -35,9 +35,8 @@
             <div class="edit-product-spacer"></div>
 
             <div class="return-link">
-                <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;
-                <a href="#" data-bind="click: ExitCallback">
-                    Return to Product Search
+                <a href="#" class="btn btn-default" data-bind="click: ExitCallback">
+                    <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;Go Back
                 </a>
             </div>
         </div>
@@ -81,7 +80,8 @@
 
 <script type="text/html" id="Product-Edit-Body">
     <!-- Search Results -->
-    <table id="product-edit-grid" class="table" style="width: 100%; height: 100%; margin: 0;">
+    <table id="product-edit-grid" class="table" 
+           style="width: 100%; height: 100%; margin: 0;">
         <tbody data-bind="foreach: $data.Grid">
         <tr>
             <td class="overflow-gracefully">

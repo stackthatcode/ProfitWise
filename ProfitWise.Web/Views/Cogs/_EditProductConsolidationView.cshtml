@@ -29,9 +29,8 @@
             <div class="edit-product-spacer"></div>
 
             <div class="return-link">
-                <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;
-                <a href="#" data-bind="click: ExitCallback">
-                    Return to Product Search
+                <a href="#" class="btn btn-default" data-bind="click: ExitCallback">
+                    <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;Go Back
                 </a>
             </div>
         </div>
@@ -64,13 +63,14 @@
 
 <script id="Consolidation-Expander-Synopsis" type="text/html">
     <span class="consolidation-synposis" data-bind="if: Consolidations.length == 0">
-        This <span data-bind="text: ExpanderLabel"></span> is not consolidated with any other <span data-bind="text: ExpanderLabel"></span>(s)
+        No Consolidations
     </span>
 
     <span class="consolidation-synposis" data-bind="if: Consolidations.length > 0">
         <span>
-            This <span data-bind="text: ExpanderLabel"></span> is consolidated with
-            <span data-bind="text: Consolidations.length"></span> other <span data-bind="text: ExpanderLabel"></span>(s)
+            Consolidated with
+            <span data-bind="text: Consolidations.length"></span> other 
+            <span data-bind="text: ExpanderLabel"></span>(s)
         </span>
 
         <span style="display: inline-block; width:30px;"></span>
@@ -116,7 +116,7 @@
             <div class="panel panel-default">                
                 <table class="table product-consol">
                     <tbody>
-                    <tr class="success consol-primary">
+                    <tr class="bg-warning consol-primary">
                         <td>
                             <span data-bind="text: Title, tooltip: { title: Title }"></span><br />
                             <span class="id-label">
@@ -172,7 +172,7 @@
 
                 <table class="table product-consol">
                     <tbody>
-                    <tr class="success consol-primary">
+                    <tr class="bg-warning consol-primary">
                         <td class="overflow-gracefully">
                             <span data-bind="text: SkuTitleText"></span><br />
                             <span class="id-label">Shopify Variant ID:</span> 
@@ -366,7 +366,7 @@
 
         self.MasterProductModelFactory = function(products) {
             var primaryProduct = AQ(products).first(isPrimary);
-            primaryProduct.ShowConsolidations = ko.observable(false);
+            primaryProduct.ShowConsolidations = ko.observable(true);
             primaryProduct.Consolidations = AQ(products).where(isNotPrimary).toArray();
             primaryProduct.ActiveText = activeText(primaryProduct);
             primaryProduct.ShopifyProductIdText = idText(primaryProduct.ShopifyProductId);

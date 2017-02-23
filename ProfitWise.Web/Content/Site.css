@@ -291,9 +291,6 @@ a.no-underline:hover, a.no-underline:active {
     color: #999;
 }
 
-.return-link a {
-    text-transform:uppercase; letter-spacing: 0.1em; font-weight: 700;font-size: 1.00em;
-}
 
 h3.edit-product-header {
     font-weight: 700;
@@ -315,4 +312,5 @@ h3.edit-product-header {
 div.edit-product-table-header {
     height: 55px; 
     border-bottom:1px solid #CCC;
+    background-color: #FFF
 }
