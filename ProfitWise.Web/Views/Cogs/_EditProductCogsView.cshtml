@@ -63,9 +63,9 @@
                                 data: { ColumnIndex: 1, ColumnName: 'Title', Model: $data.SortingModel } }">
                         </span>
                     </th>
+
                     <th>Price</th>                    
-                    <th><a href="#" data-bind="click: function() { $data.CogsDetailForProduct(); }">Cost of Goods Sold</a></th>
-                    
+                    <th>Cost of Goods Sold</th>                    
                     <th style="text-align: center;">
                         <a href="#" data-bind="click: function() { $data.StockedDirectlyDialogPopup(); }">Stocked<br />Directly</a>
                     </th>
@@ -352,12 +352,7 @@
                 height: 200,
             }, self.Refresh);
         };
-
-        self.CogsDetailForProduct = function () {
-            self.CogsDetailDialogPopup(
-                null, self.PwMasterProductId(), "All Variants of " + self.MasterProductTitle());
-        };        
-
+        
         self.CogsDetailDialogPopup = function (pwMasterVariantId, pwMasterProductId, dialogTitle) {
             var url = ProfitWiseConfig.BaseUrl +
                 '/Cogs/CogsDetail?pwMasterVariantId=' + pwMasterVariantId + "&pwMasterProductId=" + pwMasterProductId;

@@ -34,72 +34,50 @@ namespace ProfitWise.Data.Services
             _connectionWrapper = connectionWrapper;
         }
 
-
-        public void UpdateSimpleCogs(long pwMasterVariantId, CogsDto simpleCogs)
+        
+       
+        public void SaveCogsForMasterVariant(long pwMasterVariantId, CogsDto defaults, List<CogsDto> details)
         {
             using (var transaction = _connectionWrapper.StartTransactionForScope())
             {
-                var context = MasterVariantUpdateContext.Make(pwMasterVariantId, simpleCogs, null);
+                var context = MasterVariantUpdateContext.Make(pwMasterVariantId, defaults, details);
                 var dateBlockContexts =
                     CogsDateBlockContext.Make(
-                        simpleCogs, null, PwShop.CurrencyId, null, pwMasterVariantId);
+                        defaults, details, PwShop.CurrencyId, null, pwMasterVariantId);
 
-                UpdateCogsForMasterVariant(context);
-                UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
+                UpdateCogsDataEntry(context);
+                UpdateGoodsOnHandForMasterVariant(dateBlockContexts);                    
+                UpdateOrderLinesAndReportEntries(dateBlockContexts);
+
+                transaction.Commit();
+            }            
+        }
+        
+        public void SaveCogsForMasterProduct(long pwMasterProductId, CogsDto defaults, List<CogsDto> details)
+        {
+            using (var transaction = _connectionWrapper.StartTransactionForScope())
+            {
+                var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
+                var masterVariants = cogsEntryRepository.RetrieveVariants(new[] { pwMasterProductId });
+                foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
+                {
+                    var context = MasterVariantUpdateContext.Make(masterVariantId, defaults, details);
+                    UpdateCogsDataEntry(context);
+                }
+
+                var dateBlockContexts =
+                    CogsDateBlockContext.Make(defaults, details, PwShop.CurrencyId, pwMasterProductId, null);
+
+                UpdateGoodsOnHandForMasterProduct(dateBlockContexts);
                 UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
                 transaction.Commit();
             }
         }
-        
-        public void UpdateCogsWithDetails(
-                long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
-        {
-            var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
 
-            if (pwMasterVariantId.HasValue)
-            {
-                using (var transaction = _connectionWrapper.StartTransactionForScope())
-                {
-                    var context = MasterVariantUpdateContext.Make(pwMasterVariantId, defaults, details);
-                    var dateBlockContexts =
-                        CogsDateBlockContext.Make(
-                            defaults, details, PwShop.CurrencyId, null, pwMasterVariantId);
 
-                    UpdateCogsForMasterVariant(context);
-                    UpdateGoodsOnHandForMasterVariant(dateBlockContexts);                    
-                    UpdateOrderLinesAndReportEntries(dateBlockContexts);
-
-                    transaction.Commit();
-                    return;
-                }
-            }
-
-            if (pwMasterProductId.HasValue)
-            {
-                using (var transaction = _connectionWrapper.StartTransactionForScope())
-                {
-                    var masterVariants = cogsEntryRepository.RetrieveVariants(new[] {pwMasterProductId.Value});
-                    foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
-                    {
-                        var context = MasterVariantUpdateContext.Make(masterVariantId, defaults, details);
-                        UpdateCogsForMasterVariant(context);
-                    }
-
-                    var dateBlockContexts = 
-                        CogsDateBlockContext.Make(
-                            defaults, details, PwShop.CurrencyId, pwMasterProductId, null);
-
-                    UpdateGoodsOnHandForMasterProduct(dateBlockContexts);
-                    UpdateOrderLinesAndReportEntries(dateBlockContexts);
-
-                    transaction.Commit();
-                    return;
-                }
-            }
-        }
-
-        public void UpdateCogsForMasterVariant(MasterVariantUpdateContext context)
+        // Data Entry storing functionality
+        private void UpdateCogsDataEntry(MasterVariantUpdateContext context)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
 
@@ -120,6 +98,7 @@ namespace ProfitWise.Data.Services
         }
 
 
+        // Goods on Hand Date Range-cached data
         public void UpdateGoodsOnHandForMasterVariant(IList<CogsDateBlockContext> dateBlockContexts)
         {
             var repository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);

@@ -36,7 +36,6 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             linkBuilder("/Report/GoodsOnHand", "Inventory Valuation Report"),
                             linkBuilder("/Cogs/Products", "Manage Products and CoGS"),
                             linkBuilder("/Preferences/Edit", "Edit Preferences"),
-                            //linkBuilder("/Preferences/OneTimeDataFix", "DELETE ASAP")
                             //linkBuilder("/Error/ThrowAnonymousError", "Error Page - Anon (Remove for Prod)"),
                         ]
                     },
@@ -56,6 +55,10 @@ ProfitWiseShopify.BarInitialize = function (title) {
     });
 };
 
+// Parameters for the ShopifyApp.Modal.close() method
+// { result: true } => invokes callback
+// { result: false } => does nothing
+// { result: error } => shows the Error Popup
 ProfitWiseShopify.LaunchModal = function(settings, callback) {
     flow.exec(
         function () {
@@ -78,6 +81,7 @@ ProfitWiseShopify.LaunchModal = function(settings, callback) {
         }
     );
 };
+
 
 ProfitWiseShopify.ErrorMessage =
     "We're sorry for the inconvenience, but the System has encountered an error. " +

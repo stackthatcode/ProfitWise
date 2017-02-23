@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model.Catalog
@@ -15,7 +16,8 @@ namespace ProfitWise.Data.Model.Catalog
         {
             var firstOrDefault = masterProducts
                 .SelectMany(x => x.Products)
-                .FirstOrDefault(x => x.Title == context.Title && x.Vendor == context.Vendor);
+                .FirstOrDefault(x => x.Title.CaselessEquals(context.Title) &&
+                                    x.Vendor.CaselessEquals(context.Vendor));
             return firstOrDefault?.ParentMasterProduct;
         }
 
@@ -24,8 +26,8 @@ namespace ProfitWise.Data.Model.Catalog
         {
             return masterProduct
                     .Products.FirstOrDefault(
-                                x => x.Title == context.Title &&
-                                    x.Vendor == context.Vendor &&
+                                x => x.Title.CaselessEquals(context.Title) &&
+                                    x.Vendor.CaselessEquals(context.Vendor) &&
                                     x.ShopifyProductId == context.ShopifyProductId);
         }
 
@@ -40,19 +42,17 @@ namespace ProfitWise.Data.Model.Catalog
                 .MasterVariants
                 .SelectMany(x => x.Variants)
                 .FirstOrDefault(x => 
-                        String.Equals(x.Title.VariantTitleCorrection(), title.VariantTitleCorrection(), 
-                        StringComparison.OrdinalIgnoreCase));
-            // x.Sku == sku && 
+                        x.Title.VariantTitleCorrection().CaselessEquals(title.VariantTitleCorrection())
+                        && x.Sku.CaselessEquals(sku));
             return firstOrDefault?.ParentMasterVariant;
         }
 
         public static PwVariant FindVariant(this PwMasterVariant masterVariant, VariantBuildContext context)
         {
             return masterVariant.Variants.FirstOrDefault(
-                        x => x.Sku == context.Sku &&
-                        String.Equals(x.Title.VariantTitleCorrection(), context.Title.VariantTitleCorrection(),
-                        StringComparison.OrdinalIgnoreCase) && 
-                        x.ShopifyVariantId == context.ShopifyVariantId);
+                        x => x.Sku.CaselessEquals(context.Sku)
+                         && x.Title.VariantTitleCorrection().CaselessEquals(context.Title.VariantTitleCorrection())
+                         && x.ShopifyVariantId == context.ShopifyVariantId);
         }
 
 

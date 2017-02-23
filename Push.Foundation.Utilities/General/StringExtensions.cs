@@ -19,5 +19,10 @@ namespace Push.Foundation.Utilities.General
         {
             return string.Join(",", input);
         }
+
+        public static bool CaselessEquals(this string input, string other)
+        {
+            return string.Equals(input, other, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

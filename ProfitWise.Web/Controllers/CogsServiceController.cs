@@ -201,14 +201,13 @@ namespace ProfitWise.Web.Controllers
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
             simpleCogs.ValidateCurrency(_currencyService); 
-
-            service.UpdateSimpleCogs(pwMasterVariantId, simpleCogs);
+            service.SaveCogsForMasterVariant(pwMasterVariantId, simpleCogs, null);
             return JsonNetResult.Success();
         }        
 
         [HttpPost]
         public ActionResult UpdateCogsDetails(
-                long? pwMasterVariantId, long? pwMasterProductId, CogsDto defaults, List<CogsDto> details)
+                long pwMasterVariantId, CogsDto defaults, List<CogsDto> details)
         {
             defaults.ValidateCurrency(_currencyService);
             details = details ?? new List<CogsDto>();             
@@ -216,9 +215,30 @@ namespace ProfitWise.Web.Controllers
 
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
-            service.UpdateCogsWithDetails(pwMasterVariantId, pwMasterProductId, defaults, details);
+            service.SaveCogsForMasterVariant(pwMasterVariantId, defaults, details);
             return JsonNetResult.Success();
         }
+
+
+        [HttpPost]
+        public ActionResult UpdateAndCopyCogsDetails(
+                long pwMasterVariantId, CogsDto defaults, List<CogsDto> details)
+        {
+            defaults.ValidateCurrency(_currencyService);
+            details = details ?? new List<CogsDto>();
+            details.ForEach(x => x.ValidateCurrency(_currencyService));
+
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeCogsService(userIdentity.PwShop);
+            var repository = _factory.MakeProductRepository(userIdentity.PwShop);
+
+            var masterProductId = repository.RetrieveMasterProductByMasterVariantId(pwMasterVariantId);
+            service.SaveCogsForMasterProduct(masterProductId, defaults, details);
+            return JsonNetResult.Success();
+        }
+
+
+
 
         [HttpPost]
         public ActionResult UpdateCogsForPickList(long pickListId, CogsDto simpleCogs)

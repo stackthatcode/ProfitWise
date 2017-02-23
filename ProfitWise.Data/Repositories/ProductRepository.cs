@@ -57,13 +57,22 @@ namespace ProfitWise.Data.Repositories
             return masterProducts;
         }
 
-        public long RetrieveMasterProductId(long pwProductId)
+        public long RetrieveMasterProductByProductId(long pwProductId)
         {
             var query = @"SELECT PwMasterProductId FROM profitwiseproduct 
                         WHERE PwShopId = @PwShopId AND PwProductId = @pwProductId";
 
             return Connection.Query<long>(
                 query, new { PwShop.PwShopId, pwProductId }, _connectionWrapper.Transaction).First();
+        }
+
+        public long RetrieveMasterProductByMasterVariantId(long pwMasterVariantId)
+        {
+            var query = @"SELECT PwMasterProductId FROM profitwisemastervariant 
+                        WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId";
+
+            return Connection.Query<long>(
+                query, new { PwShop.PwShopId, pwMasterVariantId }, _connectionWrapper.Transaction).First();
         }
 
         public PwMasterProduct RetrieveMasterProduct(long pwMasterProductId)

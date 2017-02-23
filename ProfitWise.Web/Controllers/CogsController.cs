@@ -19,11 +19,16 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
 
-        public CogsController(MultitenantFactory factory, CurrencyService currencyService)
+        public CogsController(
+                MultitenantFactory factory, 
+                CurrencyService currencyService, 
+                TimeZoneTranslator timeZoneTranslator)
         {
             _factory = factory;
             _currencyService = currencyService;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
 
@@ -42,7 +47,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult CogsDetail(long? pwMasterVariantId, long? pwMasterProductId)
+        public ActionResult CogsDetail(long? pwMasterVariantId)
         {
             if (pwMasterVariantId.HasValue)
             {
@@ -66,7 +71,7 @@ namespace ProfitWise.Web.Controllers
                 {
                     Defaults = defaults,
                     Details = details,
-                    DateDefault = DateTime.Today,
+                    DateDefault = _timeZoneTranslator.Today(userIdentity.PwShop.TimeZone),
                     PwMasterVariantId = pwMasterVariantId,
                 };
                 return View(model);
@@ -75,7 +80,6 @@ namespace ProfitWise.Web.Controllers
             {
                 return View(new CogsDetailModel
                 {
-                    PwMasterProductId = pwMasterProductId,
                     DateDefault = DateTime.Today,
                 });
             }

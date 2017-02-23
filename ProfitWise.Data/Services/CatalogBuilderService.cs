@@ -28,9 +28,7 @@ namespace ProfitWise.Data.Services
         private const bool StockedDirectlyDefault = true;
 
         public CatalogBuilderService(
-                IPushLogger logger, 
-                MultitenantFactory multitenantFactory,
-                ConnectionWrapper connectionWrapper)
+                IPushLogger logger, MultitenantFactory multitenantFactory, ConnectionWrapper connectionWrapper)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;

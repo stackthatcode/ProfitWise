@@ -56,7 +56,7 @@ namespace ProfitWise.Data.Services
 
             // Step #1 - assemble the players
             var targetMasterProduct = catalogRetrievalService.RetrieveMasterProduct(targetMasterProductId);
-            var inboundMasterProductId = productRepository.RetrieveMasterProductId(inboundProductId);
+            var inboundMasterProductId = productRepository.RetrieveMasterProductByProductId(inboundProductId);
             var inboundMasterProduct = catalogRetrievalService.RetrieveMasterProduct(inboundMasterProductId);
             var inboundProduct = inboundMasterProduct.Products.First(x => x.PwProductId == inboundProductId);
             var shopCurrencyId = this.PwShop.CurrencyId;

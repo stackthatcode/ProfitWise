@@ -199,9 +199,10 @@ namespace ProfitWise.Data.Repositories
 
         public string QueryGutsForTotals()
         {
-            return 
+            return
                 @"SUM(t3.NetSales) As TotalRevenue,
                 SUM(t3.Quantity) AS TotalQuantitySold,
+                COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalOrders,
 		        SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
                 CASE WHEN SUM(t3.NetSales) = 0 THEN 0 ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin
                 FROM profitwiseprofitquerystub t1

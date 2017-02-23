@@ -2,7 +2,6 @@
 @using ProfitWise.Web.Attributes
 @using ProfitWise.Web.Models
 @using Push.Foundation.Utilities.Json
-@using Push.Foundation.Web.Json
 
 @model CogsDetailModel
 @{
@@ -37,16 +36,31 @@
     }
 </style>
 
+<script type="text/html" id="Cogs-Detail-Copy-Confirmation">
+    <div style="text-align: center;">
+        Are you sure you want to copy these CoGs to all Variants of the Product?
+        <div style="height: 7px;"></div>    
+        <a href="#" style="font-size: 0.9em; font-weight: 600;" 
+            data-bind="click: function() { ProfitWiseFunctions.PopOverCloseAll(); }">
+            <span><i class="glyphicon glyphicon-remove"></i> No, Cancel</span>
+        </a>
+        <span>|</span>
+        <a href="#" style="font-size: 0.9em; font-weight: 600;" data-bind="click: CopyClick">
+            <span><i class="glyphicon glyphicon-ok"></i> Yes, Proceed</span>
+        </a>
+    </div>
+</script>
+
 <script type="text/html" id="Cogs-Detail-Main-Template">
     <div class="fixed-header-container" style="padding-left: 0px; padding-right: 0px;">
         <div class="standard-header-sleeve" style="height: 140px;">
 
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
             <div class="standard-header" 
-                 style="width:100% !important; min-width: 0 !important; padding-top:20px; padding-right:20px; padding-left:20px; border-bottom: 1px dashed #CCC;">
+                 style="width:100% !important; min-width: 950px !important; padding-top:20px; padding-right:20px; padding-left:20px; border-bottom: 1px dashed #CCC;">
                 
                 <div class="row">
-                    <div class="col-xs-8 pull-left">
+                    <div class="col-xs-6 pull-left">
                         <div style="margin-bottom: 8px;">
                             <span style="font-size:1.1em; font-weight:700; color:#888;">
                                 Enter the default Cost of Goods Sold
@@ -56,12 +70,19 @@
                         <div data-bind="template: { name: 'Cogs-Editor-Widget', data: DefaultEditorModel }"></div>
                     </div>
 
-                    <div class="col-xs-4" style="text-align:right; padding-top:30px;">
-                        <a href="#" data-bind="click: CloseClick" style="width:125px;" class="btn btn-default">
-                            <i class="glyphicon glyphicon-ok"></i> &nbsp;Close                            
+                    <div class="col-xs-6 popover-container" style="text-align:right; padding-top:30px;">
+                        <a href="#" data-bind="click: CloseClick" style="width:100px;" class="btn btn-default">
+                            <i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel                            
                         </a>
                         &nbsp;
-                        <a href="#" data-bind="click: SaveClick" style="width:125px;" class="btn btn-primary">
+                        <a href="#" 
+                           data-bind="popover: { options: { placement: 'bottom' , trigger: 'click' , }, 
+                            template: 'Cogs-Detail-Copy-Confirmation', data: $data }"
+                           style="" class="btn btn-warning popover-launcher">
+                            <i class="glyphicon glyphicon-flash"></i> &nbsp; Copy to all Variants
+                        </a>
+                        &nbsp;
+                        <a href="#" data-bind="click: SaveClick" style="width:100px;" class="btn btn-primary">
                             <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
                         </a>
                     </div>
@@ -97,7 +118,7 @@
             </div>
             
             <div data-bind="visible: CogsDetail().length > 0">
-                <div class="row" style="padding-top: 15px">
+                <div class="row" style="padding-top: 15px; min-width: 920px !important;">
                     <div class="col-xs-3">
                         <span><strong>CoGS Type</strong></span>
                     </div>
@@ -222,11 +243,7 @@
             ShopifyApp.Modal.close({ result: false });
         };
 
-        self.SaveClick = function() {
-            if (self.ValidationMessage()) {
-                return;
-            }
-
+        self.AssembleDataForUpdate = function() {            
             var defaults = self.DefaultEditorModel.PullState();
             var details =
                 AQ(self.CogsDetail())
@@ -239,11 +256,36 @@
 
             var data = {
                 pwMasterVariantId: self.PwMasterVariantId(),
-                pwMasterProductId: self.PwMasterProductId(),
                 defaults: defaults,
                 details: details,
             };
 
+            return data;
+        };
+
+        self.CopyClick = function() {
+            if (self.ValidationMessage()) {
+                return;
+            }
+
+            var data = self.AssembleDataForUpdate();
+            flow.exec(
+                function () {
+                    var settings = new ProfitWiseFunctions.AjaxSettings(true);
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    ajax.HttpPost("/CogsService/UpdateAndCopyCogsDetails", data, this);
+                },
+                function () {
+                    ShopifyApp.Modal.close({ result: true });
+                });
+        };
+
+        self.SaveClick = function() {
+            if (self.ValidationMessage()) {
+                return;
+            }
+
+            var data = self.AssembleDataForUpdate();
             flow.exec(
                 function () {
                     var settings = new ProfitWiseFunctions.AjaxSettings(true);
@@ -283,7 +325,7 @@
 
             var model = new ProfitWiseWidgets.CogsDetailModel(defaultDate);
             model.PwMasterVariantId(data.PwMasterVariantId);
-            model.PwMasterProductId(data.PwMasterProductId);
+            
             model.LoadCogsDetail(data.Defaults, data.Details);
             ko.applyBindings(model);
 

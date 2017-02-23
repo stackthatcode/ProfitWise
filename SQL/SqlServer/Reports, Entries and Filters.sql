@@ -1,14 +1,10 @@
-
 USE ProfitWise
 GO
 
 
 
-
 DROP TABLE IF EXISTS [dbo].[profitwiseprofitreportentry]
 GO
-
-
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiseprofitreportentry]') AND type in (N'U'))
 BEGIN

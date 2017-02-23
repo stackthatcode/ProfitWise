@@ -45,7 +45,7 @@ namespace ProfitWise.Data.Model.Shop
                 IsDataLoaded = false,
 
                 StartingDateForOrders = 
-                        DateTime.Today.AddDays(-Math.Abs(initialOrderStartDateOffsetMonths)),
+                        DateTime.Today.AddMonths(-Math.Abs(initialOrderStartDateOffsetMonths)),
                 UseDefaultMargin = true,
                 DefaultMargin = 20.0m,
                 ProfitRealization = Preferences.ProfitRealization.OrderReceived,

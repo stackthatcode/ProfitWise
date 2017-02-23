@@ -158,8 +158,7 @@ namespace ProfitWise.Web.Controllers
         // Profitability Drilldown
         [HttpGet]
         public ActionResult Drilldown(
-                long reportId, ReportGrouping grouping, string key, string name, 
-                DateTime start, DateTime end)
+                long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
         {
             var userIdentity = HttpContext.PullIdentity();
             var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);
