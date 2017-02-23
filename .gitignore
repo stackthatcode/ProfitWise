@@ -279,3 +279,4 @@ __pycache__/
 Logs/
 
 ProfitWise.Web/Web.config
+ProfitWise.Batch/App.config
