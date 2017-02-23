@@ -18,26 +18,24 @@ namespace ProfitWise.Data.Model.Cogs
 
 
         [JsonIgnore]
-        public IList<PwCogsVariant> Variants { get; set; }
+        public IList<PwCogsVariantSummary> Variants { get; set; }
+
+        public int VariantCount => Variants.Count();
 
         [JsonIgnore]
-        public IList<PwCogsVariant> PrimaryVariants => Variants.Where(x => x.IsPrimary).ToList();
+        public IList<PwCogsDetail> ActiveCostOfGoods => Variants.Select(x => x.ActiveCostOfGoods).ToList();
 
-        public int VariantCount => PrimaryVariants.Count();
+        [JsonIgnore]
+        public IList<PwCogsVariantSummary> VariantsWithNormalizedCogs
+                        => Variants.Where(x => x.NormalizedCogsAmount.HasValue).ToList();
+        
+        public bool HasNormalizedCogs => VariantsWithNormalizedCogs.Any();
 
-        public bool HasNormalizedCogs
-        {
-            get { return Variants.Any(x => x.CogsTypeId == CogsType.FixedAmount); }
-        }
-
-        public bool HasPercentages
-        {
-            get { return Variants.Any(x => x.CogsTypeId == CogsType.MarginPercentage); }
-        }
+        public bool HasPercentages => ActiveCostOfGoods.Any(x => x.CogsTypeId == CogsType.MarginPercentage);         
 
         public bool HasCogsDetail
         {
-            get { return Variants.Any(x => x.CogsDetail != null && x.CogsDetail.Value == true); }
+            get { return Variants.Any(x => x.CogsDetail != null && x.CogsDetail.Value); }
         }
 
         public bool HasInventory
@@ -47,52 +45,37 @@ namespace ProfitWise.Data.Model.Cogs
         
         public int NormalizedCurrencyId { get; set; }
 
-        public decimal? HighNormalizedCogs
-        {
-            get
-            {
-                return HasNormalizedCogs ?
-                        Variants.Where(x => x.CogsTypeId == CogsType.FixedAmount)
-                                .Max(x => x.NormalizedCogsAmount) : null;
-            }
-        }
-        public decimal? LowNormalizedCogs
-        {
-            get
-            {
-                return HasNormalizedCogs ?
-                        Variants.Where(x => x.CogsTypeId == CogsType.FixedAmount)
-                                .Min(x => x.NormalizedCogsAmount) : null;
-            }
-        }
+        // This is necessary as multiple currencies may have been used
+        public decimal? HighNormalizedCogs => 
+                HasNormalizedCogs ? VariantsWithNormalizedCogs.Max(x => x.NormalizedCogsAmount) : null;
+
+        public decimal? LowNormalizedCogs => 
+                HasNormalizedCogs ? VariantsWithNormalizedCogs.Min(x => x.NormalizedCogsAmount) : null;
+
 
         public decimal? HighPercentage
         {
             get
             {
                 return HasPercentages ?
-                        Variants.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
+                        ActiveCostOfGoods.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
                             .Max(x => x.CogsMarginPercent) : null;
             }
         }
+
         public decimal? LowPercentage
         {
             get
             {
                 return HasPercentages ?
-                        Variants.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
+                        ActiveCostOfGoods.Where(x => x.CogsTypeId == CogsType.MarginPercentage)
                             .Min(x => x.CogsMarginPercent) : null;
             }
         }
 
-        public decimal? HighPrice
-        {
-            get { return Variants.Any() ? Variants.Max(x => x.HighPrice) : 0; }
-        }
-        public decimal? LowPrice
-        {
-            get { return Variants.Any() ? Variants.Min(x => x.LowPrice) : 0; }
-        }
+        public decimal? HighPrice =>  Variants.Any() ? Variants.Max(x => x.HighPrice) : 0; 
+        
+        public decimal? LowPrice =>  Variants.Any() ? Variants.Min(x => x.LowPrice) : 0; 
 
         public MoneyRange Price => new MoneyRange()
         {
@@ -114,25 +97,13 @@ namespace ProfitWise.Data.Model.Cogs
         
         public bool IsPriceRange => HighPrice != LowPrice;
 
-        public int StockedDirectlyCount
-        {
-            get
-            {
-                return PrimaryVariants.Count(x => x.StockedDirectly);
-            }
-        }
+        public int StockedDirectlyCount =>  Variants.Count(x => x.StockedDirectly);
 
-        public int ExcludedCount
-        {
-            get
-            {
-                return PrimaryVariants.Count(x => x.Exclude);
-            }
-        }
+        public int ExcludedCount =>  Variants.Count(x => x.Exclude);
 
         public PwCogsProductSummary()
         {
-            Variants = new List<PwCogsVariant>();
+            Variants = new List<PwCogsVariantSummary>();
         }
 
         public PwCogsProductSummary 
@@ -149,6 +120,7 @@ namespace ProfitWise.Data.Model.Cogs
             {
                 variant.PopulateNormalizedCogsAmount(currencyService, shopCurrencyId);
             }
+
             return this;
         }
     }
@@ -156,7 +128,7 @@ namespace ProfitWise.Data.Model.Cogs
     public static class CogsExtensions
     {
         public static void PopulateVariants(
-                this IList<PwCogsProductSummary> products, IList<PwCogsVariant> variants)
+                this IList<PwCogsProductSummary> products, IList<PwCogsVariantSummary> variants)
         {
             foreach (var variant in variants)
             {

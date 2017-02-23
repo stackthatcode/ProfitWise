@@ -6,6 +6,6 @@ namespace ProfitWise.Web.Models
     public class AddVariantToConsolidationModel
     {
         public long PwMasterVariantId { get; set; }
-        public IList<PwCogsVariant> MasterVariants { get; set; }
+        public IList<PwCogsVariantSummary> MasterVariants { get; set; }
     }
 }

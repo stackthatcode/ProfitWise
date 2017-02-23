@@ -57,9 +57,10 @@ namespace ProfitWise.Data.Services
         {
             using (var transaction = _connectionWrapper.StartTransactionForScope())
             {
-                var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
-                var masterVariants = cogsEntryRepository.RetrieveVariants(new[] { pwMasterProductId });
-                foreach (var masterVariantId in masterVariants.Select(x => x.PwMasterVariantId))
+                var repository = _multitenantFactory.MakeVariantRepository(PwShop);
+                var masterVariantIds = repository.RetrieveMasterVariantIdsForMasterProduct(pwMasterProductId);
+
+                foreach (var masterVariantId in masterVariantIds)
                 {
                     var context = MasterVariantUpdateContext.Make(masterVariantId, defaults, details);
                     UpdateCogsDataEntry(context);
@@ -82,7 +83,8 @@ namespace ProfitWise.Data.Services
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
 
             // Save the Master Variant CoGS Defaults
-            cogsEntryRepository.UpdateMasterVariantDefaultCogs(context.Defaults, context.HasDetails);
+            cogsEntryRepository.UpdateMasterVariantDefaultCogs(
+                    context.PwMasterVariantId, context.Defaults, context.HasDetails);
 
             // If they removed all Detail, this ensures everything is clear...
             cogsEntryRepository.DeleteCogsDetail(context.PwMasterVariantId);

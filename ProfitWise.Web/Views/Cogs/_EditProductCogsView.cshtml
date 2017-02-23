@@ -218,7 +218,9 @@
                         });
 
                     // We'll maintain state in the Summary Model
-                    item.SummaryModel = new ProfitWiseWidgets.CogsSummaryWidgetModel(item.ActiveDetail);
+                    item.SummaryModel =
+                        new ProfitWiseWidgets.CogsSummaryWidgetModel(item.ActiveCostOfGoods);
+
                     item.SummaryModel.CogsDetail(item.CogsDetail);
 
                     item.SummaryModel.EditCogsCallback = function() {

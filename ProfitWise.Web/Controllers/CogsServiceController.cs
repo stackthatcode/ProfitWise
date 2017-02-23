@@ -88,11 +88,17 @@ namespace ProfitWise.Web.Controllers
                     resultSelection.SortByColumn, 
                     resultSelection.SortByDirectionDown);
 
-            products.PopulateVariants(
-                cogsRepository
-                    .RetrieveVariants(
-                        products.Select(x => x.PwMasterProductId).ToList(), primaryOnly: false));
+            var masterProductIds = products.Select(x => x.PwMasterProductId).ToList();
+            var masterVariants = cogsRepository.RetrieveVariants(masterProductIds);
 
+            var cogsDetails = cogsRepository.RetrieveCogsDetailByMasterProduct(masterProductIds);
+
+            foreach (var masterVariant in masterVariants)
+            {
+                masterVariant.PopulateCogsDetails(cogsDetails);
+            }
+
+            products.PopulateVariants(masterVariants);
             products.PopulateNormalizedCogsAmount(_currencyService, userIdentity.PwShop.CurrencyId);
 
             // Notice: we're using the Shop Currency to represent the price

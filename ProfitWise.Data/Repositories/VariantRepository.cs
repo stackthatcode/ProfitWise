@@ -196,6 +196,18 @@ namespace ProfitWise.Data.Repositories
                         _connectionWrapper.Transaction).ToList();
         }
 
+
+        public IList<long> RetrieveMasterVariantIdsForMasterProduct(long pwMasterProductId)
+        {
+            var query = @"SELECT PwMasterVariantId profitwisemastervariant t2
+                        WHERE t2.PwShopId = @PwShopId 
+                        AND t2.PwMasterProductId = @pwMasterProductId";
+
+            return Connection.Query<long>(
+                query, new { PwShop.PwShopId, pwMasterProductId }, _connectionWrapper.Transaction).ToList();
+        }
+
+
         public IList<PwVariant> RetrieveVariantsForMasterVariant(long pwMasterVariantId)
         {
             var query = @"SELECT t1.* FROM profitwisevariant t1

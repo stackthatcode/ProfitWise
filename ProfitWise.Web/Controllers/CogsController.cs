@@ -65,7 +65,7 @@ namespace ProfitWise.Web.Controllers
                     CogsAmount = masterVariant.CogsAmount,
 
                 };
-                var details = cogsRepository.RetrieveCogsDetailByMasterVariant(pwMasterVariantId);
+                var details = cogsRepository.RetrieveCogsDetailByMasterVariant(pwMasterVariantId.Value);
 
                 var model = new CogsDetailModel
                 {
@@ -84,6 +84,7 @@ namespace ProfitWise.Web.Controllers
                 });
             }
         }
+
 
         [HttpGet]
         public ActionResult BulkEditCogs(long pickListId)

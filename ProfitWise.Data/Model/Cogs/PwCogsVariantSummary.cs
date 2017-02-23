@@ -6,7 +6,7 @@ using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Model.Cogs
 {
-    public class PwCogsVariant
+    public class PwCogsVariantSummary
     {
         public long PwMasterProductId { get; set;  }
         public long PwMasterVariantId { get; set; }
@@ -14,12 +14,11 @@ namespace ProfitWise.Data.Model.Cogs
 
         public string ProductTitle { get; set; }
 
-        public bool IsPrimary { get; set; }
-
         public string Sku { get; set; }
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
 
+        // These come straight from Master Variant
         public int CogsTypeId { get; set; }
         public decimal? CogsMarginPercent { get; set; }
         public int? CogsCurrencyId { get; set; }
@@ -36,13 +35,15 @@ namespace ProfitWise.Data.Model.Cogs
 
         public int NormalizedCurrencyId { get; set; }
 
+        // TODO => these need to be populated by the database
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
+
         public int? Inventory { get; set; }        
 
-        // This needs to be manually populated, by leveraging the Currency Service
+        // This is manually populated, by leveraging the Currency Service
         public decimal? NormalizedCogsAmount { get; set; }
-        	
+        
         [JsonIgnore]
         public PwCogsProductSummary Parent { get; set; }
 
@@ -61,7 +62,7 @@ namespace ProfitWise.Data.Model.Cogs
             }
         }
 
-        public PwCogsDetail ActiveDetail
+        public PwCogsDetail ActiveCostOfGoods
         {
             get
             {
@@ -77,8 +78,6 @@ namespace ProfitWise.Data.Model.Cogs
                 {
                     return defaultCogs;
                 }
-
-                var mostRecentCogsDetail = MostRecentCogsDetail;
 
                 if (MostRecentCogsDetail == null)
                 {
@@ -104,11 +103,11 @@ namespace ProfitWise.Data.Model.Cogs
         {
             this.NormalizedCurrencyId = shopCurrencyId;
 
-            if (CogsAmount != null && CogsCurrencyId != null)
+            if (ActiveCostOfGoods.CogsAmount.HasValue && ActiveCostOfGoods.CogsCurrencyId.HasValue)
             {
-                NormalizedCogsAmount =
-                    currencyService.Convert(
-                        CogsAmount.Value, CogsCurrencyId.Value, shopCurrencyId, DateTime.Now);
+                NormalizedCogsAmount = currencyService.Convert(
+                    ActiveCostOfGoods.CogsAmount.Value, ActiveCostOfGoods.CogsCurrencyId.Value, 
+                    shopCurrencyId, DateTime.Now);
             }
         }
     }

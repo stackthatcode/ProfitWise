@@ -8,6 +8,6 @@ namespace ProfitWise.Web.Models
     {
         public string Title { get; set; }
         public long PwMasterProductId { get; set; }
-        public IList<PwCogsVariant> MasterVariants { get; set; }
+        public IList<PwCogsVariantSummary> MasterVariants { get; set; }
     }
 }

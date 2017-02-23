@@ -141,7 +141,7 @@
     <Compile Include="Model\System\Currency.cs" />
     <Compile Include="Model\ShopifyImport\OrderLineItemSubset.cs" />
     <Compile Include="Model\Cogs\ProductSearchFilter.cs" />
-    <Compile Include="Model\Cogs\PwCogsVariant.cs" />
+    <Compile Include="Model\Cogs\PwCogsVariantSummary.cs" />
     <Compile Include="Model\Cogs\PwCogsProductSummary.cs" />
     <Compile Include="Model\Catalog\PwMasterVariant.cs" />
     <Compile Include="Model\Catalog\PwMasterProduct.cs" />

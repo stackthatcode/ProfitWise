@@ -84,8 +84,7 @@ namespace ProfitWise.Data.Repositories
 
         // Sort By Column { 0 for Vendor, 1 for Product Title }
         public IList<PwCogsProductSummary> RetrieveCogsSummaryFromPicklist(
-                long pickListId, int pageNumber, int resultsPerPage, 
-                int sortByColumn = 0, bool sortByDirectionDown = true)
+                long pickListId, int pageNumber, int resultsPerPage, int sortByColumn = 0, bool sortByDirectionDown = true)
         {
             if (resultsPerPage > 200)
             {
@@ -93,40 +92,47 @@ namespace ProfitWise.Data.Repositories
             }
 
             TouchPickList(pickListId);
+
             var query = ResultsQueryGen(sortByColumn, sortByDirectionDown);
             var startRecord = (pageNumber - 1) * resultsPerPage;
 
             return Connection.Query<PwCogsProductSummary>(
                 query, new { this.PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage },
                 _connectionWrapper.Transaction).ToList();
-        }
-        
+        }        
 
-        public IList<PwCogsVariant> RetrieveVariants(IList<long> masterProductIds, bool primaryOnly = true)
+        public IList<PwCogsVariantSummary> RetrieveVariants(IList<long> masterProductIds)
         {
             var query =
-                @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t4.Title AS ProductTitle, t3.Sku, 
+                @"WITH CTE_PriceSummary ( PwMasterVariantId, LowPriceAll, HighPriceAll, TotalInventory ) AS 
+                (
+	                SELECT t2.PwMasterVariantId, MAX(t3.HighPrice), MIN(t3.LowPrice), SUM(Inventory)
+	                FROM profitwisemastervariant t2 
+		                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
+	                WHERE t2.PwShopId = @PwShopId
+	                AND t3.PwShopId = @PwShopId	
+	                AND t2.PwMasterProductId IN @MasterProductIds
+	                GROUP BY t2.PwMasterVariantId
+                )
+                SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t4.Title AS ProductTitle, t3.Sku, 
                     t2.Exclude, t2.StockedDirectly, t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, 
-                    t2.CogsAmount, t2.CogsDetail, t3.IsPrimary, t3.PwVariantId, t3.LowPrice, t3.HighPrice, t3.Inventory
+                    t2.CogsAmount, t2.CogsDetail, t5.LowPriceAll AS LowPrice, t5.HighPriceAll AS HighPrice, t5.TotalInventory AS Inventory
                 FROM profitwisemastervariant t2 
 	                INNER JOIN profitwisevariant t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
                     INNER JOIN profitwiseproduct t4 ON t3.PwProductId = t4.PwProductId
+	                INNER JOIN CTE_PriceSummary t5 ON t3.PwMasterVariantId = t5.PwMasterVariantId
                 WHERE t2.PwShopId = @PwShopId
                 AND t3.PwShopId = @PwShopId
                 AND t4.PwShopId = @PwShopId
-                AND t2.PwMasterProductId IN @MasterProductIds ";
+                AND t3.IsPrimary = 1
+                AND t2.PwMasterProductId IN @MasterProductIds";
 
-            if (primaryOnly)
-            {
-                query += "AND t3.IsPrimary = 1 ";
-            }
-
-            return Connection.Query<PwCogsVariant>(
+            return Connection.Query<PwCogsVariantSummary>(
                 query, new {this.PwShopId, MasterProductIds = masterProductIds},
                 _connectionWrapper.Transaction).ToList();
         }
 
-        public PwCogsVariant RetrieveVariant(long masterVariantId)
+        public PwCogsVariantSummary RetrieveVariant(long masterVariantId)
         {
             var query =
                 @"SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t3.Sku, t2.Exclude, t2.StockedDirectly, 
@@ -139,7 +145,7 @@ namespace ProfitWise.Data.Repositories
                 AND t2.PwMasterVariantId = @masterVariantId";
 
             return Connection
-                .Query<PwCogsVariant>(
+                .Query<PwCogsVariantSummary>(
                      query, new { this.PwShopId, masterVariantId }, _connectionWrapper.Transaction)
                 .FirstOrDefault();
         }        
@@ -253,15 +259,17 @@ namespace ProfitWise.Data.Repositories
 
 
         // Master Variant Cogs Defaults
-        public void UpdateMasterVariantDefaultCogs(PwCogsDetail input, bool hasDetail)
+        public void UpdateMasterVariantDefaultCogs(
+                long masterVariantId, PwCogsDetail input, bool hasDetail)
         {
-            UpdateMasterVariantDefaultCogs(input.PwMasterVariantId, input.CogsTypeId, input.CogsCurrencyId,
-                    input.CogsAmount, input.CogsMarginPercent, hasDetail);
+            UpdateMasterVariantDefaultCogs(
+                masterVariantId, input.CogsTypeId, input.CogsCurrencyId, input.CogsAmount, 
+                input.CogsMarginPercent, hasDetail);
         } 
        
         public void UpdateMasterVariantDefaultCogs(
-                long? masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, 
-                decimal? cogsMarginPercent, bool cogsDetail)
+                    long masterVariantId, int cogsTypeId, int? cogsCurrencyId, decimal? cogsAmount, 
+                    decimal? cogsMarginPercent, bool cogsDetail)
         {
             if (cogsTypeId != CogsType.FixedAmount && cogsTypeId != CogsType.MarginPercentage)
             {
@@ -314,7 +322,7 @@ namespace ProfitWise.Data.Repositories
 
 
         // CoGS Detail functions
-        public List<PwCogsDetail> RetrieveCogsDetailByMasterVariant(long? masterVariantId)
+        public List<PwCogsDetail> RetrieveCogsDetailByMasterVariant(long masterVariantId)
         {
             var query =
                 @"SELECT * FROM profitwisemastervariantcogsdetail 
@@ -325,18 +333,34 @@ namespace ProfitWise.Data.Repositories
                 query, new { this.PwShop.PwShopId, @masterVariantId }, _connectionWrapper.Transaction).ToList();
         }
 
-        public List<PwCogsDetail> RetrieveCogsDetailByMasterProduct(long? masterProductId)
+        public List<PwCogsDetail> RetrieveCogsDetailByMasterProduct(long masterProductId)
+        {
+            var query =
+                @"SELECT t1.* 
+                    FROM profitwisemastervariantcogsdetail t1
+                        INNER JOIN profitwisemastervariant t2 
+                            ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId
+                WHERE t1.PwShopId = @PwShopId   
+                AND t2.PwMasterProductId = @masterProductId
+                ORDER BY t1.CogsDate;";
+
+            return Connection.Query<PwCogsDetail>(
+                query, new { this.PwShop.PwShopId, masterProductId }, _connectionWrapper.Transaction).ToList();
+        }
+
+        public List<PwCogsDetail> RetrieveCogsDetailByMasterProduct(List<long> masterProductIds)
         {
             var query =
                 @"SELECT t1.* FROM profitwisemastervariantcogsdetail t1
                         INNER JOIN profitwisemastervariant t2 
                             ON t1.PwShopId = t2.PwShopId 
                             AND t1.PwMasterVariantId = t2.PwMasterVariantId
-                WHERE t1.PwShopId = @PwShopId AND t2.PwMasterProductId = @masterProductId
+                WHERE t1.PwShopId = @PwShopId 
+                AND t2.PwMasterProductId IN @masterProductIds
                 ORDER BY t1.CogsDate;";
 
             return Connection.Query<PwCogsDetail>(
-                query, new { this.PwShop.PwShopId, masterProductId }, _connectionWrapper.Transaction).ToList();
+                query, new { this.PwShop.PwShopId, masterProductIds }, _connectionWrapper.Transaction).ToList();
         }
 
         public List<PwCogsDetail> RetrieveCogsDetailAll()
