@@ -285,7 +285,7 @@
 
             if (self.PagingModel.RecordCount() > 100) {
                 var msg = "There are too many Products in your current Product Search. " +
-                    "Bulk Cost of Goods Updates are only allowed for up 100 Products.";
+                            "Bulk Cost of Goods Updates are only allowed for up 100 Products.";
 
                 ShopifyApp.Modal.confirm({
                     title: "Too many Products for Bulk CoGS Update",
@@ -524,7 +524,7 @@
                 self.LastScrollTop = null;
             } 
         };
-
+        
         self.JQueryInit = function() {
             ProfitWiseFunctions.SynchronizeWidth(
                 "table#product-search-grid tbody tr td",

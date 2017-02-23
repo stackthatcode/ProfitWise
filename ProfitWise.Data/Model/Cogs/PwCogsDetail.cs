@@ -39,6 +39,14 @@ namespace ProfitWise.Data.Model.Cogs
             return output;
         }
 
+        public void ValidateType()
+        {
+            if (CogsTypeId != CogsType.FixedAmount && CogsTypeId != CogsType.MarginPercentage)
+            {
+                throw new ArgumentException("Invalid CogsTypeId");
+            }
+        }
+
         // The CogsDto is used now for Cost of Goods computations, whereas PwCogsDetail is purely SQL storage
         public CogsDto ToCogsDto()
         {

@@ -212,10 +212,12 @@
 
             self.SelectedFilter(null);
             ProfitWiseFunctions.PopOverCloseAll();
+            self.Callback();
         };
 
         self.RemoveFilterFromSearch = function (data, event) {
             self.SelectedFiltersForSearch.remove(data);
+            self.Callback();
         };
 
         self.Callback = function() {

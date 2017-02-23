@@ -73,8 +73,8 @@ namespace ProfitWise.Data.Model.Cogs
         }
 
         public static IList<CogsDateBlockContext> Make(
-                    CogsDto defaults, IList<CogsDto> details, int destinationCurrency,
-                    long? pwMasterProductId, long? pwMasterVariantId)
+                    CogsDto defaults, IList<CogsDto> details, int destinationCurrency, 
+                    long? pwMasterProductId = null, long? pwMasterVariantId = null, long? pwPickListId = null)
         {
             if (details == null || details.Count == 0)
             {
@@ -87,6 +87,7 @@ namespace ProfitWise.Data.Model.Cogs
                         EndDate = MaximumCogsDate,
                         PwMasterProductId = pwMasterProductId,
                         PwMasterVariantId = pwMasterVariantId,
+                        PwPickListId = pwPickListId,
                     }
                 };
             }
@@ -102,6 +103,7 @@ namespace ProfitWise.Data.Model.Cogs
                         EndDate = details.FirstDetail().CogsDate.AddDays(-1),
                         PwMasterProductId = pwMasterProductId,
                         PwMasterVariantId = pwMasterVariantId,
+                        PwPickListId = pwPickListId,
                     }
                 };
 
@@ -116,6 +118,7 @@ namespace ProfitWise.Data.Model.Cogs
                         EndDate = nextDetail?.CogsDate.AddDays(-1) ?? MaximumCogsDate,
                         PwMasterProductId = pwMasterProductId,
                         PwMasterVariantId = pwMasterVariantId,
+                        PwPickListId = pwPickListId,
                     });
                 }
 

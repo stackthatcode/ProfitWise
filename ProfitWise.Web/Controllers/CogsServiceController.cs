@@ -225,6 +225,20 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
+        [HttpPost]
+        public ActionResult UpdateCogsDetailsPickList(
+                long pwPickListId, CogsDto defaults, List<CogsDto> details)
+        {
+            defaults.ValidateCurrency(_currencyService);
+            details = details ?? new List<CogsDto>();
+            details.ForEach(x => x.ValidateCurrency(_currencyService));
+
+            var userIdentity = HttpContext.PullIdentity();
+            var service = _factory.MakeCogsService(userIdentity.PwShop);
+            service.SaveCogsForPickList(pwPickListId, defaults, details);
+
+            return JsonNetResult.Success();
+        }
 
         [HttpPost]
         public ActionResult UpdateAndCopyCogsDetails(
@@ -236,26 +250,13 @@ namespace ProfitWise.Web.Controllers
 
             var userIdentity = HttpContext.PullIdentity();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
-            var repository = _factory.MakeProductRepository(userIdentity.PwShop);
 
+            var repository = _factory.MakeProductRepository(userIdentity.PwShop);
             var masterProductId = repository.RetrieveMasterProductByMasterVariantId(pwMasterVariantId);
             service.SaveCogsForMasterProduct(masterProductId, defaults, details);
+            
             return JsonNetResult.Success();
-        }
-
-
-
-
-        [HttpPost]
-        public ActionResult UpdateCogsForPickList(long pickListId, CogsDto simpleCogs)
-        {
-            simpleCogs.ValidateCurrency(_currencyService);
-
-            var userIdentity = HttpContext.PullIdentity();
-            var service = _factory.MakeCogsService(userIdentity.PwShop);
-            service.SaveCogsForPickList(pickListId, simpleCogs);
-            return JsonNetResult.Success();
-        }
+        }        
     }
 }
 

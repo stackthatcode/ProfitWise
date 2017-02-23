@@ -291,7 +291,7 @@ namespace ProfitWise.Data.Repositories
                 _connectionWrapper.Transaction);
         }
 
-        public void UpdatePickListDefaultCogs(long pickListId, CogsDto input)
+        public void UpdatePickListDefaultCogs(long pickListId, PwCogsDetail input, bool cogsDetail)
         {
             var query =
                 @"UPDATE t1        
@@ -299,7 +299,7 @@ namespace ProfitWise.Data.Repositories
                     CogsAmount = @CogsAmount,
                     CogsTypeId = @CogsTypeId,
                     CogsMarginPercent = @CogsMarginPercent,
-                    CogsDetail = @CogsDetail   
+                    CogsDetail = @cogsDetail   
                 FROM profitwisemastervariant t1
                     INNER JOIN profitwisepicklistmasterproduct t2
                         ON t1.PwMasterProductId = t2.PwMasterProductId                               
@@ -316,7 +316,7 @@ namespace ProfitWise.Data.Repositories
                     input.CogsCurrencyId,
                     input.CogsAmount,
                     input.CogsMarginPercent,
-                    CogsDetail = false,
+                    cogsDetail,
                 }, _connectionWrapper.Transaction);
         }
 
@@ -372,31 +372,63 @@ namespace ProfitWise.Data.Repositories
             return Connection.Query<PwCogsDetail>(query, new { this.PwShop.PwShopId }, _connectionWrapper.Transaction).ToList();
         }
 
-        public void DeleteCogsDetail(long? masterVariantId)
+        public void DeleteCogsDetail(long masterVariantId)
         {
-            if (!masterVariantId.HasValue)
-            {
-                throw new ArgumentNullException();
-            }
-
             var query = 
                 @"DELETE FROM profitwisemastervariantcogsdetail 
                 WHERE PwShopId = @PwShopId AND PwMasterVariantId = @masterVariantId;";
             Connection.Execute(query, new {this.PwShopId, masterVariantId}, _connectionWrapper.Transaction);
         }
 
+        public void DeleteCogsDetailByPickList(long pickListId)
+        {
+            var query =
+                @"DELETE FROM profitwisemastervariantcogsdetail 
+                WHERE PwShopId = @PwShopId AND PwMasterVariantId IN (
+                    SELECT PwMasterVariantId
+                    FROM profitwisepicklistmasterproduct t1  
+	                    INNER JOIN profitwisemastervariant t2 ON t1.PwMasterProductId = t2.PwMasterProductId
+                    WHERE t1.PwShopId = @PwShopId 
+	                AND t2.PwShopId = @PwShopId
+	                AND t1.PwPickListId = @pickListId
+                )";
+            Connection.Execute(query, new { this.PwShopId, pickListId }, _connectionWrapper.Transaction);
+        }
+
+
         public void InsertCogsDetails(PwCogsDetail detail)
         {
-            if (detail.CogsTypeId != CogsType.FixedAmount && detail.CogsTypeId != CogsType.MarginPercentage)
-            {
-                throw new ArgumentException("Invalid CogsTypeId");
-            }
+            detail.ValidateType();
             detail.PwShopId = this.PwShopId;
             var query = 
                 @"INSERT INTO profitwisemastervariantcogsdetail 
                 VALUES ( @PwMasterVariantId, @PwShopId, 
                         @CogsDate, @CogsTypeId, @CogsCurrencyId, @CogsAmount, @CogsMarginPercent );";
             Connection.Execute(query, detail, _connectionWrapper.Transaction);
+        }
+
+
+        public void InsertCogsDetailByPickList(long pickListId, PwCogsDetail detail)
+        {
+            detail.ValidateType();
+            var query =
+                @"INSERT INTO profitwisemastervariantcogsdetail 
+                SELECT t2.PwMasterVariantId, @PwShopId, @CogsDate, @CogsTypeId, @CogsCurrencyId, 
+                    @CogsAmount, @CogsMarginPercent
+                FROM profitwisepicklistmasterproduct t1  
+	                    INNER JOIN profitwisemastervariant t2 
+                            ON t1.PwMasterProductId = t2.PwMasterProductId
+                WHERE t1.PwShopId = @PwShopId 
+	            AND t2.PwShopId = @PwShopId
+	            AND t1.PwPickListId = @pickListId";
+
+            var data = new
+            {
+                this.PwShopId, pickListId, detail.CogsDate, detail.CogsTypeId, detail.CogsCurrencyId,
+                detail.CogsAmount, detail.CogsMarginPercent
+            };
+
+            Connection.Execute(query, data, _connectionWrapper.Transaction);
         }
 
 
@@ -474,6 +506,7 @@ namespace ProfitWise.Data.Repositories
                 _connectionWrapper.Transaction);
         }
 
+
         public void DeleteCogsCalcByMasterVariant(CogsDateBlockContext context)
         {
             var query =
@@ -500,7 +533,7 @@ namespace ProfitWise.Data.Repositories
                 _connectionWrapper.Transaction);
         }
 
-        public void DeleteCogsCalcByPickList(CogsDateBlockContext context)
+        public void DeleteCogsCalcByPickList(long pwPickListId)
         {
             var query =
                 @"DELETE FROM profitwisemastervariantcogscalc 
@@ -512,14 +545,13 @@ namespace ProfitWise.Data.Repositories
                             ON t1.PwMasterProductId = t2.PwMasterProductId
 	                WHERE t1.PwShopId = @PwShopId 
 	                AND t2.PwShopId = @PwShopId
-	                AND t1.PwPickListId = @PwPickListId
+	                AND t1.PwPickListId = @pwPickListId
                 )
                 AND PwShopId  = @PwShopId;";
 
             Connection.Execute(
-                query, new { PwShop.PwShopId, context.PwPickListId }, _connectionWrapper.Transaction);
+                query, new { PwShop.PwShopId, pwPickListId }, _connectionWrapper.Transaction);
         }
-
     }
 }
 

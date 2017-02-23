@@ -35,7 +35,7 @@ namespace ProfitWise.Data.Services
         }
 
         
-       
+       // Top-level orchestration functions
         public void SaveCogsForMasterVariant(long pwMasterVariantId, CogsDto defaults, List<CogsDto> details)
         {
             using (var transaction = _connectionWrapper.StartTransactionForScope())
@@ -43,7 +43,7 @@ namespace ProfitWise.Data.Services
                 var context = MasterVariantUpdateContext.Make(pwMasterVariantId, defaults, details);
                 var dateBlockContexts =
                     CogsDateBlockContext.Make(
-                        defaults, details, PwShop.CurrencyId, null, pwMasterVariantId);
+                        defaults, details, PwShop.CurrencyId, pwMasterVariantId: pwMasterVariantId);
 
                 UpdateCogsDataEntry(context);
                 UpdateGoodsOnHandForMasterVariant(dateBlockContexts);                    
@@ -67,7 +67,8 @@ namespace ProfitWise.Data.Services
                 }
 
                 var dateBlockContexts =
-                    CogsDateBlockContext.Make(defaults, details, PwShop.CurrencyId, pwMasterProductId, null);
+                    CogsDateBlockContext.Make(
+                        defaults, details, PwShop.CurrencyId, pwMasterProductId: pwMasterProductId);
 
                 UpdateGoodsOnHandForMasterProduct(dateBlockContexts);
                 UpdateOrderLinesAndReportEntries(dateBlockContexts);
@@ -138,24 +139,38 @@ namespace ProfitWise.Data.Services
 
         
         // Updates both the CoGS and the Downstream
-        public void SaveCogsForPickList(long pickListId, CogsDto cogs)
+        public void SaveCogsForPickList(long pickListId, CogsDto defaults, List<CogsDto> details)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDownstreamRepository(PwShop);
 
             using (var trans = _connectionWrapper.StartTransactionForScope())
             {
+                // First clean out the old
+                cogsEntryRepository.DeleteCogsDetailByPickList(pickListId);
+
                 // Update Pick List Default Cogs
-                cogsEntryRepository.UpdatePickListDefaultCogs(pickListId, cogs);
+                var cogsDetail = details != null && details.Any();
+                cogsEntryRepository
+                    .UpdatePickListDefaultCogs(pickListId, defaults.ToPwCogsDetail(null), cogsDetail);
+                foreach (var detail in details)
+                {
+                    cogsEntryRepository.InsertCogsDetailByPickList(pickListId, detail.ToPwCogsDetail(null));
+                }
 
                 // Update the Order Lines for the Pick List
-                var context = CogsDateBlockContext.Make(cogs, this.PwShop.CurrencyId, pickListId);
-
-                cogsUpdateRepository.UpdateOrderLinesPickList(context);
+                var contexts = CogsDateBlockContext.Make(defaults, details, this.PwShop.CurrencyId, pwPickListId: pickListId);
+                foreach (var context in contexts)
+                {
+                    cogsUpdateRepository.UpdateOrderLinesPickList(context);
+                }
 
                 // Update Goods on Hand
-                cogsEntryRepository.DeleteCogsCalcByPickList(context);
-                cogsEntryRepository.InsertCogsCalcByPickList(context);
+                cogsEntryRepository.DeleteCogsCalcByPickList(pickListId);
+                foreach (var context in contexts)
+                {
+                    cogsEntryRepository.InsertCogsCalcByPickList(context);
+                }
 
                 // Update the Report Entries
                 cogsUpdateRepository.RefreshReportEntryData();

@@ -93,7 +93,7 @@
                             </a>
                         </span>
                         <span data-bind="if: PwPickListId">
-                            <a href="#" data-bind="click: SaveClick" style="width:100px;" class="btn btn-danger">
+                            <a href="#" data-bind="click: SavePickListClick" style="width:100px;" class="btn btn-danger">
                                 <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
                             </a>
                         </span>
@@ -274,6 +274,7 @@
 
             var data = {
                 pwMasterVariantId: self.PwMasterVariantId(),
+                pwPickListId: self.PwPickListId(),
                 defaults: defaults,
                 details: details,
             };
@@ -299,6 +300,14 @@
         };
 
         self.SaveClick = function() {
+            self.Save("/CogsService/UpdateCogsDetails");
+        };
+
+        self.SavePickListClick = function() {
+            self.Save("/CogsService/UpdateCogsDetailsPickList");
+        };
+
+        self.Save = function(url) {
             if (self.ValidationMessage()) {
                 return;
             }
@@ -308,7 +317,7 @@
                 function () {
                     var settings = new ProfitWiseFunctions.AjaxSettings(true);
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpPost("/CogsService/UpdateCogsDetails", data, this);
+                    ajax.HttpPost(url, data, this);
                 },
                 function () {
                     ShopifyApp.Modal.close({ result: true });

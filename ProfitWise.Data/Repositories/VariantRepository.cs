@@ -199,7 +199,8 @@ namespace ProfitWise.Data.Repositories
 
         public IList<long> RetrieveMasterVariantIdsForMasterProduct(long pwMasterProductId)
         {
-            var query = @"SELECT PwMasterVariantId profitwisemastervariant t2
+            var query = @"SELECT PwMasterVariantId 
+                        FROM profitwisemastervariant t2
                         WHERE t2.PwShopId = @PwShopId 
                         AND t2.PwMasterProductId = @pwMasterProductId";
 

@@ -86,6 +86,15 @@ namespace ProfitWise.Data.Model.Cogs
         }
 
 
+        public CogsDto ValidateType()
+        {
+            if (CogsTypeId != CogsType.FixedAmount && CogsTypeId != CogsType.MarginPercentage)
+            {
+                throw new ArgumentException("Invalid CogsTypeId");
+            }
+            return this;
+        }
+
         public void ValidateCurrency(CurrencyService service)
         {
             if (CogsTypeId != CogsType.FixedAmount) return;
