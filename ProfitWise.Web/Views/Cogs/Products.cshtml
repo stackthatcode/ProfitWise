@@ -413,7 +413,14 @@
                     ajax.HttpPost("/CogsService/RetrieveResults", resultsPaging, this);
                 },
                 function (data) {
-                    if (data.products == 0) {
+                    self.CurrentGrid.removeAll();
+
+                    if (data.totalRecords == 0) {
+                        self.ShowNoProductsFound(true);
+                        return;
+                    }
+
+                    if (data.products.length == 0) {
                         self.SearchForProducts(self.PagingModel.PageNumber());
                         return;
                     }
@@ -424,16 +431,10 @@
                             function(result) { location.reload(); });
                         return;
                     };                      
-
-                    self.CurrentGrid.removeAll();
                     
-                    if (data.products.length == 0) {
-                        self.ShowNoProductsFound(true);
-                    } else {
-                        self.ShowNoProductsFound(false);
-                        self.CurrentGrid(data.products);
-                        self.PagingModel.RecordCount(data.totalRecords);
-                    }
+                    self.ShowNoProductsFound(false);
+                    self.CurrentGrid(data.products);
+                    self.PagingModel.RecordCount(data.totalRecords);
 
                     self.ResetToLastScrollTop();
                     if (callback) {
