@@ -397,6 +397,7 @@
                 function(data) {
                     self.PickListId(data.PickListId);
                     self.PagingModel.PageNumber(pageOverride || 1);
+                    $('html,body').animate({ scrollTop: 0 });
                     self.LoadDataForCurrentPage(callback);
                 });
         };
