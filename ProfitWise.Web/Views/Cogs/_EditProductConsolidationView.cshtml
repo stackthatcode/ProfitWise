@@ -1,5 +1,5 @@
 ﻿<style>
-    .consol-category-label { color: #999; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; }
+    .consol-category-label { color: #777; font-weight: 700;font-size: 1.3em; }
     .consol-primary { font-weight: 700; }    
     .product-consol {margin-bottom: 10px;}
     .product-consol tr th { color: #AAA; border:none; }    
@@ -74,8 +74,6 @@
         </span>
 
         <span style="display: inline-block; width:30px;"></span>
-
-        <span data-bind="template: { name: 'Consolidation-Expander', data: { Visible: ShowConsolidations } }"></span>
     </span>
 </script>
 
@@ -117,14 +115,11 @@
                 <table class="table product-consol">
                     <tbody>
                     <tr class="bg-warning consol-primary">
-                        <td>
-                            <span data-bind="text: Title, tooltip: { title: Title }"></span><br />
-                            <span class="id-label">
-                                Shopify Product ID: <span data-bind="text: ShopifyProductIdText"></span>
-                            </span>
+                        <td style="padding-top:20px; padding-bottom:20px;">
+                            <span data-bind="text: Title, tooltip: { title: Title }"></span>
                         </td>
 
-                        <td><span data-bind="text: Vendor"></span></td>
+                        <td><span data-bind="text: VendorText"></span></td>
                         <td><span data-bind="text: ActiveText"></span></td>
                         <td><span>Primary</span></td>
                         <td>&nbsp;</td>
@@ -134,12 +129,9 @@
                     <!-- ko foreach: Consolidations -->
                     <tr>
                         <td class="overflow-gracefully">
-                            <span data-bind="text: Title, tooltip: { title: Title }"></span><br />
-                            <span class="id-label">
-                                Shopify Product ID: <span data-bind="text: ShopifyProductId"></span>
-                            </span>
+                            <span data-bind="text: Title, tooltip: { title: Title }"></span>
                         </td>
-                        <td><span data-bind="text: Vendor"></span></td>
+                        <td><span data-bind="text: VendorText"></span></td>
                         <td><span data-bind="text: ActiveText"></span></td>
                         <td><a href="#" data-bind="click: SetPrimary"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
                         <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
@@ -173,13 +165,11 @@
                 <table class="table product-consol">
                     <tbody>
                     <tr class="bg-warning consol-primary">
-                        <td class="overflow-gracefully">
-                            <span data-bind="text: SkuTitleText"></span><br />
-                            <span class="id-label">Shopify Variant ID:</span> 
-                            <span class="id-label" data-bind="text: ShopifyVariantIdText"></span>
+                        <td class="overflow-gracefully" style="padding-top:20px; padding-bottom:20px;">
+                            <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />                            
                         </td>
                         <td class="overflow-gracefully">
-                            <span data-bind="text:Product.Title, tooltip: { title: Product.Title }"></span>
+                            <span data-bind="text: Product.Title, tooltip: { title: Product.Title }"></span>
                         </td>
                         <td><span data-bind="text: ActiveText"></span></td>
                         <td><span>Primary</span></td>
@@ -190,9 +180,7 @@
                     <!-- ko foreach: Consolidations -->
                     <tr>
                         <td class="overflow-gracefully">
-                            <span data-bind="text: SkuTitleText"></span><br />
-                            <span class="id-label">Shopify Variant ID:</span> 
-                            <span class="id-label" data-bind="text: ShopifyVariantIdText"></span>
+                            <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />
                         </td>
                         <td class="overflow-gracefully">
                             <span data-bind="text:Product.Title, tooltip: { title: Product.Title }"></span>
@@ -233,6 +221,7 @@
 
         self.ExitCallback = parameters.exitcallback || function () { };
         self.EditCogsCallback = parameters.editcogscallback || function () { };
+        self.ForceRequeryCallback = parameters.forcerequerycallback || function() { };
 
         self.PwMasterProductId = ko.observable(null);
         self.PrimaryProduct = ko.observable();
@@ -314,9 +303,10 @@
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             var url = "/ConsolService/DeconsolidateProduct";
-            var data = {
-                pwProductId: model.PwProductId,
-            };
+            var data = { pwProductId: model.PwProductId };
+
+            // A new Product will be spawned - this forces the parent form
+            self.ForceRequeryCallback();
             ajax.HttpPost(url, data, self.Refresh);
         };
 
@@ -393,7 +383,7 @@
 
             var primaryVariant = AQ(variants).first(isPrimary);
             primaryVariant.Consolidations = AQ(variants).where(isNotPrimary).toArray();
-            primaryVariant.ShowConsolidations = ko.observable(false);
+            primaryVariant.ShowConsolidations = ko.observable(true);
             primaryVariant.ActiveText = activeText(primaryVariant);
             primaryVariant.ExpanderLabel = "Variant";
             primaryVariant.Product = productIdFinder(primaryVariant.PwProductId);

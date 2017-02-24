@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using ProfitWise.Data.Model.Catalog;
+using Push.Foundation.Utilities.Helpers;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.Catalog
 {
     public class PwProduct
     {
@@ -14,6 +13,8 @@ namespace ProfitWise.Data.Model
         public long? ShopifyProductId { get; set; }
         public string Title { get; set; }
         public string Vendor { get; set; }
+        public string VendorText => Vendor.IsNullOrEmptyAlt("(No Vendor)");
+
         public string ProductType { get; set; }
         public string Tags { get; set; }
         public bool IsActive { get; set; }

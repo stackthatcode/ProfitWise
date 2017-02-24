@@ -401,8 +401,18 @@
                 });
         };
 
+        self.ForceRequeryState = ko.observable(false);
+
+        self.ForceRequery = function() {
+            self.ForceRequeryState(true);
+        }
 
         self.LoadDataForCurrentPage = function (callback) {            
+            if (self.ForceRequeryState()) {
+                self.ForceRequeryState(false);
+                self.SearchForProducts(self.PagingModel.PageNumber());
+                return;
+            }
             flow.exec(
                 function() {
                     var resultsPaging = {
@@ -442,7 +452,6 @@
 
                     self.ResetToLastScrollTop();
                     if (callback) {
-                        //console.log(callback);
                         callback();
                     }
                 });
@@ -496,6 +505,7 @@
         self.EditProductConsolidationModel = new ProfitWise.EditProductConsolidationModel({
                     exitcallback: self.ReturnToProductSearch,
                     editcogscallback: self.ShowCogsEditor,
+                    forcerequerycallback: self.ForceRequery 
                 });
 
         

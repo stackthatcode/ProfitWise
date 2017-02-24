@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using ProfitWise.Data.Services;
+using Push.Foundation.Utilities.Helpers;
 
 
 namespace ProfitWise.Data.Model.Cogs
@@ -15,7 +16,7 @@ namespace ProfitWise.Data.Model.Cogs
         public string ProductTitle => Title;
 
         public string Vendor { get; set; }
-
+        public string VendorText => Vendor.IsNullOrEmptyAlt("(No Vendor)");
 
         [JsonIgnore]
         public IList<PwCogsVariantSummary> Variants { get; set; }

@@ -104,7 +104,7 @@ CREATE TABLE [dbo].[profitwisemastervariant](
 	[PwMasterProductId] [bigint] NOT NULL,
 	[Exclude] [smallint] NOT NULL,
 	[StockedDirectly] [smallint] NOT NULL,
-	[CogsTypeId] [smallint] NULL,
+	[CogsTypeId] [smallint] NOT NULL,
 	[CogsCurrencyId] [int] NULL,
 	[CogsAmount] [decimal](15, 2) NULL,
 	[CogsMarginPercent] [decimal](4, 2) NULL,

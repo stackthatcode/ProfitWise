@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using ProfitWise.Data.Services;
+using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model.Cogs
 {
@@ -13,8 +14,10 @@ namespace ProfitWise.Data.Model.Cogs
         public string Title { get; set; }
 
         public string ProductTitle { get; set; }
-
+        public string CombinedTitle => Title + " (" + ProductTitle + ")";
+        
         public string Sku { get; set; }
+        public string SkuCorrected => Sku.IsNullOrEmpty() ? "(No SKU)" : Sku;
         public bool Exclude { get; set; }
         public bool StockedDirectly { get; set; }
 
@@ -39,7 +42,9 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
 
-        public int? Inventory { get; set; }        
+        public int? Inventory { get; set; }
+        public string InventoryText =>
+            Inventory.HasValue ? (Inventory.Value + " in-stock") : "Inactive - no inventory";
 
         // This is manually populated, by leveraging the Currency Service
         public decimal? NormalizedCogsAmount { get; set; }

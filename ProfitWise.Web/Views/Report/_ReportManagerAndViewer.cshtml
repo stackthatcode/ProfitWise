@@ -48,10 +48,13 @@
                     (EDITING)
                 </div>
             </div>
-
-            <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
-                Report Id: <span data-bind="text: ReportId"></span>
-            </div>
+            
+            @if (HttpContext.Current.IsDebuggingEnabled)
+            {
+                <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
+                    Report Id: <span data-bind="text: ReportId"></span>
+                </div>
+            }
 
             <div style="font-size: 1.0em; color: #666;">
                 <div style="height: 25px;" data-bind="template:{ name: 'Report-Selection-Preview', data: ProductCountModel }"></div>
