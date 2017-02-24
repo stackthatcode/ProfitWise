@@ -2,10 +2,10 @@
 using System.Web.Mvc;
 using Microsoft.Ajax.Utilities;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Json;
+
 
 namespace ProfitWise.Web.Controllers
 {
@@ -90,8 +90,6 @@ namespace ProfitWise.Web.Controllers
 
             return new JsonNetResult(new { variants });
         }
-
-
 
         [HttpPost]
         public ActionResult ConsolidateProduct(long targetMasterProductId, long inboundMasterProductId)

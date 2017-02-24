@@ -118,7 +118,7 @@
 <script type="text/html" id="Product-Search-Body">
     <!-- No Products Found matching XYZ -->
     <div id="no-products-found" style="width: 100%;"
-            data-bind="visible: $root.ShowNoProductsFound() && $root.CurrentGrid().length == 0">
+         data-bind="visible: $root.ShowNoProductsFound() && $root.CurrentGrid().length == 0">
         <div style="text-align: center; padding-top: 20px; padding-bottom: 100px;">
             <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
             <h3 style="color: #555; font-weight: 300;">Could not find any products</h3>
@@ -133,15 +133,19 @@
         <tr>
             <td class="overflow-gracefully">
                 <span data-bind="if: Vendor">
-                        <span data-bind="text: Vendor"></span>
+                    <span data-bind="text: Vendor"></span>
                 </span>
                 <span data-bind="ifnot: Vendor">
-                        (No Vendor)
+                    (No Vendor)
                 </span>
             </td>
 
             <td class="overflow-gracefully">
                 <a href="#" data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor"></a>
+                @if (HttpContext.Current.IsDebuggingEnabled)
+                {
+                    <div>MPID: <span data-bind="text: PwMasterProductId"></span></div>
+                }
             </td>
             
             <td>
