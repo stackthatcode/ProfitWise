@@ -1,6 +1,7 @@
 ﻿using System;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Services;
 
 

@@ -4,11 +4,11 @@
     .product-consol {margin-bottom: 10px;}
     .product-consol tr th { color: #AAA; border:none; }    
     .product-consol tr td { vertical-align: middle !important; }
-    .product-consol tr td:nth-child(1), .product-consol tr th:nth-child(1) { width: 35%; }
+    .product-consol tr td:nth-child(1), .product-consol tr th:nth-child(1) { width: 40%; }
     .product-consol tr td:nth-child(2), .product-consol tr th:nth-child(2) { width: 25%; text-align: left; }
-    .product-consol tr td:nth-child(3), .product-consol tr th:nth-child(3) { width: 10%; text-align: center; }
-    .product-consol tr td:nth-child(4), .product-consol tr th:nth-child(4) { width: 15%; text-align: center; }
-    .product-consol tr td:nth-child(5), .product-consol tr th:nth-child(5) { width: 15%; text-align: center; }    
+    .product-consol tr td:nth-child(3), .product-consol tr th:nth-child(3) { width: 10%; text-align: left; }
+    .product-consol tr td:nth-child(4), .product-consol tr th:nth-child(4) { width: 10%; text-align: left; }
+    .product-consol tr td:nth-child(5), .product-consol tr th:nth-child(5) { width: 15%; text-align: right; }    
     .product-consol .id-label { font-size:0.8em; }
     
     .consolidation-synposis { font-weight:700; color: #888; }
@@ -72,8 +72,6 @@
             <span data-bind="text: Consolidations.length"></span> other 
             <span data-bind="text: ExpanderLabel"></span>(s)
         </span>
-
-        <span style="display: inline-block; width:30px;"></span>
     </span>
 </script>
 
@@ -133,7 +131,7 @@
                         </td>
                         <td><span data-bind="text: VendorText"></span></td>
                         <td><span data-bind="text: ActiveText"></span></td>
-                        <td><a href="#" data-bind="click: SetPrimary"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
+                        <td><a href="#" data-bind="click: SetPrimary">Set to Primary</a></td>
                         <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
                     </tr>
                     <!-- /ko -->
@@ -143,10 +141,10 @@
                         <td colspan="5">
                             <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
 
-                            <span style="display: inline-block; width:30px;"></span>
+                            <span style="display: inline-block; width:15px;"></span>
                             <a href="#" class="consol-link-control"
                                data-bind="click: $parent.SearchForProductsPopup">
-                                <i class="glyphicon glyphicon-plus"></i> Add
+                                <i class="glyphicon glyphicon-plus"></i> Add Product
                             </a>
                         </td>
                     </tr>
@@ -187,7 +185,7 @@
                         </td>
 
                         <td><span data-bind="text: ActiveText"></span></td>
-                        <td><a href="#" data-bind="click: SetPrimary"><i class="glyphicon glyphicon-star"></i> Set to Primary</a></td>
+                        <td><a href="#" data-bind="click: SetPrimary">Set to Primary</a></td>
                         <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
                     </tr>
                     <!-- /ko -->
@@ -196,11 +194,11 @@
                     <tr>
                         <td colspan="5">
                             <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
-                            <span style="display: inline-block; width:30px;"></span>
+                            <span style="display: inline-block; width:15px;"></span>
                             <span data-bind="visible: $parent.AddVariantVisible">
                                 <a href="#" class="consol-link-control"
                                    data-bind="click: $parent.AddVariantConsolidationPopup">
-                                    <i class="glyphicon glyphicon-plus"></i> Add
+                                    <i class="glyphicon glyphicon-plus"></i> Add Variant
                                 </a>
                             </span>
                         </td>

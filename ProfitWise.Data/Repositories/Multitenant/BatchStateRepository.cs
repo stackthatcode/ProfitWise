@@ -6,7 +6,7 @@ using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Shop;
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.Multitenant
 {
     [Intercept(typeof(ShopRequired))]
     public class BatchStateRepository : IShopFilter

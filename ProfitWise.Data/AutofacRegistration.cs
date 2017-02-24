@@ -6,6 +6,7 @@ using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Utilities.CastleProxies;
