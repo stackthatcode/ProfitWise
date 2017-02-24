@@ -91,6 +91,7 @@ namespace ProfitWise.Web.Controllers
         {
             var shop = HttpContext.PullIdentity().PwShop;
             _shopRepository.UpdateProfitRealization(shop.PwShopId, profitRealizationId);
+            shop.ProfitRealization = profitRealizationId; // Need to update the in-memory value!
 
             var cogsRepository = _factory.MakeCogsDownstreamRepository(shop);
             cogsRepository.RefreshReportEntryData();

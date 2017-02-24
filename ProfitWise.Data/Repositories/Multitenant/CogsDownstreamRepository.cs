@@ -8,7 +8,7 @@ using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Shop;
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.Multitenant
 {
     [Intercept(typeof(ShopRequired))]
     public class CogsDownstreamRepository : IShopFilter
@@ -172,8 +172,8 @@ namespace ProfitWise.Data.Repositories
         {
             var orderQuery =
                 @"INSERT INTO profitwiseprofitreportentry
-                        SELECT 	PwShopId, OrderDate, 1 AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
-		                        PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, ";
+                    SELECT 	PwShopId, OrderDate, 1 AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
+		                    PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, ";
             if (PwShop.UseDefaultMargin)
             {
                 orderQuery +=
@@ -190,7 +190,7 @@ namespace ProfitWise.Data.Repositories
             orderQuery += @"Quantity AS Quantity FROM shopifyorderlineitem ";
             if (PwShop.ProfitRealization == ProfitRealization.PaymentClears)
             {
-                orderQuery += "WHERE PwShopId = @PwShopId AND FinancialStatus IN ( 4, 5, 6 ); ";
+                orderQuery += "WHERE PwShopId = @PwShopId AND FinancialStatus IN ( 3, 4, 5, 6 ); ";
             }
             else
             {
@@ -203,8 +203,8 @@ namespace ProfitWise.Data.Repositories
         {
             var refundQuery =
                 @"INSERT INTO profitwiseprofitreportentry
-                        SELECT 	t1.PwShopId, t1.RefundDate, 2 AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
-		                        t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, ";
+                    SELECT 	t1.PwShopId, t1.RefundDate, 2 AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
+		                    t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, ";
             if (PwShop.UseDefaultMargin)
             {
                 refundQuery +=
@@ -226,7 +226,7 @@ namespace ProfitWise.Data.Repositories
 
             if (PwShop.ProfitRealization == ProfitRealization.PaymentClears)
             {
-                refundQuery += "WHERE t1.PwShopId = @PwShopId AND t2.FinancialStatus IN ( 4, 5, 6 ); ";
+                refundQuery += "WHERE t1.PwShopId = @PwShopId AND t2.FinancialStatus IN ( 3, 4, 5, 6 ); ";
             }
             else
             {
@@ -246,7 +246,7 @@ namespace ProfitWise.Data.Repositories
 
             if (PwShop.ProfitRealization == ProfitRealization.PaymentClears)
             {
-                adjustmentQuery += "WHERE t1.PwShopId = @PwShopId AND t2.FinancialStatus IN ( 4, 5, 6 ); ";
+                adjustmentQuery += "WHERE t1.PwShopId = @PwShopId AND t2.FinancialStatus IN ( 3, 4, 5, 6 ); ";
             }
             else
             {
