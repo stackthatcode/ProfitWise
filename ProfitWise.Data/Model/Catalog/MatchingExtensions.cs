@@ -41,17 +41,17 @@ namespace ProfitWise.Data.Model.Catalog
             var firstOrDefault = masterProduct
                 .MasterVariants
                 .SelectMany(x => x.Variants)
-                .FirstOrDefault(x => 
-                        x.Title.VariantTitleCorrection().CaselessEquals(title.VariantTitleCorrection())
-                        && x.Sku.CaselessEquals(sku));
+                .FirstOrDefault(x =>
+                    x.Title.VariantTitleCorrection().CaselessEquals(title.VariantTitleCorrection()));
+                       // && x.Sku.CaselessEquals(sku));
             return firstOrDefault?.ParentMasterVariant;
         }
 
         public static PwVariant FindVariant(this PwMasterVariant masterVariant, VariantBuildContext context)
         {
             return masterVariant.Variants.FirstOrDefault(
-                        x => x.Sku.CaselessEquals(context.Sku)
-                         && x.Title.VariantTitleCorrection().CaselessEquals(context.Title.VariantTitleCorrection())
+                        x =>  //x.Sku.CaselessEquals(context.Sku) &&
+                         x.Title.VariantTitleCorrection().CaselessEquals(context.Title.VariantTitleCorrection())
                          && x.ShopifyVariantId == context.ShopifyVariantId);
         }
 
