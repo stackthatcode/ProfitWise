@@ -1,4 +1,10 @@
-﻿
+﻿@using ProfitWise.Web.Attributes
+
+@{
+    var commonContext = Context.PullCommonContext();
+    var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
+}
+
 <style>
      #product-edit-grid td {
         height: 90px !important;
@@ -208,7 +214,7 @@
                     
                     // Used for undo functions
                     item.OldState = ko.observable();
-                    
+
                     item.EditorModel
                         = new ProfitWiseWidgets.CogsEditorWidgetModel({
                             identifier: item.PwMasterVariantId,
@@ -216,6 +222,7 @@
                             CogsCurrencyId: item.CogsCurrencyId,
                             CogsAmount: item.CogsAmount,
                             CogsMarginPercent: item.CogsMarginPercent,
+                            DefaultCurrencyId: @defaultCurrencyId,
                         });
 
                     // We'll maintain state in the Summary Model

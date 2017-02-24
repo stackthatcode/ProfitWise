@@ -1,8 +1,13 @@
 ﻿@using ProfitWise.Data.Model.Cogs
+@using ProfitWise.Web.Attributes
+@{
+    var commonContext = Context.PullCommonContext();
+    var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
+}
 
 <script type="text/html" id="Cogs-Summary-Widget-Subview">
     <span data-bind="if: $data.CogsTypeId() == @CogsType.FixedAmount">
-        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount(), CogsCurrencyId())"></span>
+        <span data-bind="text: ProfitWiseFunctions.FormatCurrencyWithAbbr(CogsAmount(), CogsCurrencyId() || @defaultCurrencyId)"></span>
     </span>
     <span data-bind="if: $data.CogsTypeId() == @CogsType.MarginPercentage">
         <span>Computed by </span><span data-bind="text: CogsMarginPercent"></span><span>% margin</span>
@@ -44,7 +49,7 @@
         self.CogsDetail = ko.observable();
         
         // These should match/line-up with the default JSON serialization of the database schema
-        self.PushState = function(state) {
+        self.PushState = function (state) {            
             self.CogsTypeId(state.CogsTypeId);
             self.CogsCurrencyId(state.CogsCurrencyId);
             self.CogsAmount(state.CogsAmount);

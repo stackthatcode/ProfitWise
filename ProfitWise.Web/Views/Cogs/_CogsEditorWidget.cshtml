@@ -65,7 +65,7 @@
             identifier: "money-" + parameters.identifier,
             lowconstraint: 0,
             highconstraint: 999999999.99,
-            defaultcurrencyid: parameters.CogsCurrencyId,
+            defaultcurrencyid: parameters.DefaultCurrencyId,
             defaultamount: parameters.CogsAmount,
         });
 
@@ -104,12 +104,13 @@
         };
 
         self.PullState = function() {
-            return {
+            var state  = {
                 CogsTypeId: self.SelectedCogsType(),
                 CogsCurrencyId: self.MoneyEditor.CurrencyId(),
                 CogsAmount: self.SelectedCogsType() == @CogsType.FixedAmount ? self.MoneyEditor.Amount() : null,
                 CogsMarginPercent: self.SelectedCogsType() == @CogsType.MarginPercentage ? self.NumberEditor.Amount() : null,
             };
+            return state;
         };
 
         // Register to both child controls - this is just a pass-thru
