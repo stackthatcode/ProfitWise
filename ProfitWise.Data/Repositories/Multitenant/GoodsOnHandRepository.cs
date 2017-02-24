@@ -241,14 +241,14 @@ namespace ProfitWise.Data.Repositories
             throw new ArgumentException("reportGrouping");
         }
 
-        private string CTE_Query= 
+        private string CTE_Query=
             @"WITH Data_CTE ( PwProductId, PwVariantId, VariantTitle, Sku, Inventory, Price, CostOfGoodsOnHand, PotentialRevenue )
                 AS (
-                    SELECT	t2.PwProductId, t2.PwVariantId, t2.Title, t2.Sku, t2.Inventory, t2.HighPrice AS Price, 
-                            CASE WHEN (t4.PercentMultiplier = 0 AND t4.FixedAmount = 0 AND @MarginMultiplier <> 0) THEN @MarginMultiplier * t2.HighPrice * t2.Inventory
-                            ELSE (ISNULL(t4.PercentMultiplier, 0) / 100 * t2.HighPrice + ISNULL(t4.FixedAmount, 0) * t5.Rate) * t2.Inventory END
+                    SELECT	t2.PwProductId, t2.PwVariantId, t2.Title, t2.Sku, dbo.ufnNegToZero(t2.Inventory), t2.HighPrice AS Price, 
+                            CASE WHEN (t4.PercentMultiplier = 0 AND t4.FixedAmount = 0 AND @MarginMultiplier <> 0) THEN @MarginMultiplier * t2.HighPrice * dbo.ufnNegToZero(t2.Inventory)
+                            ELSE (ISNULL(t4.PercentMultiplier, 0) / 100 * t2.HighPrice + ISNULL(t4.FixedAmount, 0) * t5.Rate) * dbo.ufnNegToZero(t2.Inventory) END
                             AS CostOfGoodsOnHand,
-                            ISNULL(t2.Inventory, 0) * t2.HighPrice AS PotentialRevenue
+                            dbo.ufnNegToZero(t2.Inventory) * t2.HighPrice AS PotentialRevenue
 	                FROM profitwisemastervariant t1
 		                INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId	
 		                LEFT JOIN profitwisemastervariantcogscalc t4 

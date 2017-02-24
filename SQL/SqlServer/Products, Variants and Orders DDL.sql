@@ -410,3 +410,24 @@ AS
 GO
 
 
+
+
+IF OBJECT_ID (N'dbo.ufnNegToZero', N'FN') IS NOT NULL  
+    DROP FUNCTION ufnNegToZero;  
+GO  
+CREATE FUNCTION dbo.ufnNegToZero(@input decimal(15, 2))  
+RETURNS int   
+AS   
+BEGIN  
+    DECLARE @output decimal(15, 2);  
+    SET @output = 0;
+
+    IF (@input IS NOT NULL AND @input > 0)   
+        SET @output = @input;  
+
+    RETURN @output;  
+END;  
+GO  
+
+
+
