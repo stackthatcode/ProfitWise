@@ -38,7 +38,7 @@ namespace ProfitWise.Data.Services
        // Top-level orchestration functions
         public void SaveCogsForMasterVariant(long pwMasterVariantId, CogsDto defaults, List<CogsDto> details)
         {
-            using (var transaction = _connectionWrapper.StartTransactionForScope())
+            using (var transaction = _connectionWrapper.InitiateTransaction())
             {
                 var context = MasterVariantUpdateContext.Make(pwMasterVariantId, defaults, details);
                 var dateBlockContexts =
@@ -55,7 +55,7 @@ namespace ProfitWise.Data.Services
         
         public void SaveCogsForMasterProduct(long pwMasterProductId, CogsDto defaults, List<CogsDto> details)
         {
-            using (var transaction = _connectionWrapper.StartTransactionForScope())
+            using (var transaction = _connectionWrapper.InitiateTransaction())
             {
                 var repository = _multitenantFactory.MakeVariantRepository(PwShop);
                 var masterVariantIds = repository.RetrieveMasterVariantIdsForMasterProduct(pwMasterProductId);
@@ -144,7 +144,7 @@ namespace ProfitWise.Data.Services
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
             var cogsUpdateRepository = _multitenantFactory.MakeCogsDownstreamRepository(PwShop);
 
-            using (var trans = _connectionWrapper.StartTransactionForScope())
+            using (var trans = _connectionWrapper.InitiateTransaction())
             {
                 // First clean out the old
                 cogsEntryRepository.DeleteCogsDetailByPickList(pickListId);

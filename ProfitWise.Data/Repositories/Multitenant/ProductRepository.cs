@@ -3,23 +3,19 @@ using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using Dapper;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.Multitenant
 {
     [Intercept(typeof(ShopRequired))]
     public class ProductRepository : IShopFilter
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
-
         private readonly ConnectionWrapper _connectionWrapper;
-        private IDbConnection Connection => _connectionWrapper.DbConn;
 
         public ProductRepository(ConnectionWrapper connectionWrapper)
         {
@@ -28,7 +24,7 @@ namespace ProfitWise.Data.Repositories
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
 
 
@@ -59,20 +55,17 @@ namespace ProfitWise.Data.Repositories
 
         public long RetrieveMasterProductByProductId(long pwProductId)
         {
-            var query = @"SELECT PwMasterProductId FROM profitwiseproduct 
-                        WHERE PwShopId = @PwShopId AND PwProductId = @pwProductId";
-
-            return Connection.Query<long>(
-                query, new { PwShop.PwShopId, pwProductId }, _connectionWrapper.Transaction).First();
+            var query = @"SELECT PwMasterProductId FROM product(@PwShopId) 
+                        WHERE PwProductId = @pwProductId";
+            return _connectionWrapper.Query<long>(query, new { PwShop.PwShopId, pwProductId }).First();
         }
 
         public long RetrieveMasterProductByMasterVariantId(long pwMasterVariantId)
         {
-            var query = @"SELECT PwMasterProductId FROM profitwisemastervariant 
-                        WHERE PwShopId = @PwShopId AND PwMasterVariantId = @pwMasterVariantId";
+            var query = @"SELECT PwMasterProductId FROM mastervariant(@PwShopId) 
+                        WHERE PwMasterVariantId = @pwMasterVariantId";
 
-            return Connection.Query<long>(
-                query, new { PwShop.PwShopId, pwMasterVariantId }, _connectionWrapper.Transaction).First();
+            return _connectionWrapper.Query<long>(query, new { PwShop.PwShopId, pwMasterVariantId }).First();
         }
 
         public PwMasterProduct RetrieveMasterProduct(long pwMasterProductId)
@@ -96,152 +89,130 @@ namespace ProfitWise.Data.Repositories
         public long InsertMasterProduct(PwMasterProduct masterProduct)
         {
             var query =
-                    @"INSERT INTO profitwisemasterproduct ( PwShopId )
-                    VALUES ( @PwShopId );
+                    @"INSERT INTO masterproduct(@PwShopId) ( PwShopId ) VALUES ( @PwShopId );
                     SELECT SCOPE_IDENTITY();";
 
-            return Connection
-                .Query<long>(query, masterProduct, _connectionWrapper.Transaction).FirstOrDefault();
+            return _connectionWrapper.Query<long>(query, masterProduct).FirstOrDefault();
         }
 
         public void DeleteMasterProduct(PwMasterProduct masterProduct)
         {
-            var query =
-                @"DELETE FROM profitwisemasterproduct " +
-                @"WHERE PwShopId = @PwShopId AND PwMasterProductId = @PwMasterProductId;";
-
-            Connection.Execute(query, masterProduct, _connectionWrapper.Transaction);
+            var query = @"DELETE FROM masterproduct(@PwShopId) 
+                        WHERE PwMasterProductId = @PwMasterProductId;";
+            _connectionWrapper.Execute(query, masterProduct);
         }
 
         public IList<PwProduct> RetrieveAllProducts()
         {
-            var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId";
-            return Connection.Query<PwProduct>(
-                query, new { @PwShopId = this.PwShop.PwShopId }, _connectionWrapper.Transaction).ToList();
+            var query = @"SELECT * FROM product(@PwShopId);";
+            return _connectionWrapper.Query<PwProduct>(query, new { PwShop.PwShopId }).ToList();
         }
 
         public IList<PwProduct> RetrieveProducts(long pwMasterProductId)
         {
-            var query = @"SELECT * FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwMasterProductId = @pwMasterProductId";
-            return Connection.Query<PwProduct>(
-                query, new { @PwShopId = this.PwShop.PwShopId, pwMasterProductId }, 
-                _connectionWrapper.Transaction).ToList();
+            var query = @"SELECT * FROM product(@PwShopId) 
+                        WHERE PwMasterProductId = @pwMasterProductId";
+            return _connectionWrapper.Query<PwProduct>(query, new { PwShopId, pwMasterProductId }).ToList();
         }
 
 
         public PwProduct RetrieveProduct(long pwProductId)
         {
-            var query = @"SELECT * FROM profitwiseproduct 
-                        WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
-            return Connection
-                    .Query<PwProduct>(
-                                query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId },
-                                _connectionWrapper.Transaction)
+            var query = @"SELECT * FROM product(@PwShopId) WHERE PwProductId = @PwProductId;";
+            return _connectionWrapper
+                    .Query<PwProduct>(query, new { PwShop.PwShopId, @PwProductId = pwProductId })
                     .FirstOrDefault();
         }
 
         public PwProduct RetrievePrimaryProduct(long pwMasterProductId)
         {
-            var query = @"SELECT * FROM profitwiseproduct 
-                        WHERE PwShopId = @PwShopId 
-                        AND PwMasterProductId = @pwMasterProductId
+            var query = @"SELECT * FROM product(@PwShopId) 
+                        WHERE PwMasterProductId = @pwMasterProductId
                         AND IsPrimary = 1;";
 
-            return Connection
-                    .Query<PwProduct>(
-                                query, new { PwShop.PwShopId, pwMasterProductId },
-                                _connectionWrapper.Transaction)
+            return _connectionWrapper
+                    .Query<PwProduct>(query, new { PwShop.PwShopId, pwMasterProductId })
                     .FirstOrDefault();
         }
 
         public IList<long> RetrieveAllChildProductIds(long pwMasterProductId)
         {
-            var query = @"SELECT * FROM profitwiseproduct
-                        WHERE PwShopId = @PwShopId AND PwMasterProductId = @pwMasterProductId";
-            return Connection.Query<long>(
-                query, new { @PwShopId = this.PwShop.PwShopId, pwMasterProductId },
-                _connectionWrapper.Transaction).ToList();
+            var query = @"SELECT * FROM product(@PwShopId) WHERE PwMasterProductId = @pwMasterProductId";
+            return _connectionWrapper.Query<long>(query, new { PwShop.PwShopId, pwMasterProductId }).ToList();
         }
 
         public long InsertProduct(PwProduct product)
         {
-            var query = @"INSERT INTO profitwiseproduct 
+            var query = @"INSERT INTO product(@PwShopId) 
                             ( PwShopId, PwMasterProductId, ShopifyProductId, Title, Vendor, ProductType, Tags,
                             IsActive, IsPrimary, IsPrimaryManual, LastUpdated ) 
                         VALUES ( @PwShopId, @PwMasterProductId, @ShopifyProductId, @Title, @Vendor, @ProductType, @Tags,
                             @IsActive, @IsPrimary, @IsPrimaryManual, @LastUpdated );
                         SELECT SCOPE_IDENTITY();";
-            return Connection.Query<long>(query, product, _connectionWrapper.Transaction).FirstOrDefault();
+            return _connectionWrapper.Query<long>(query, product).FirstOrDefault();
         }
 
         public void UpdateProduct(PwProduct product)
         {
-            var query = @"UPDATE profitwiseproduct
-                            SET Tags = @Tags,
-                                ProductType = @ProductType,
-                                LastUpdated = @LastUpdated
-                            WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
-            Connection.Execute(query, product, _connectionWrapper.Transaction);
+            var query = @"UPDATE product(@PwShopId)
+                        SET Tags = @Tags,
+                            ProductType = @ProductType,
+                            LastUpdated = @LastUpdated
+                        WHERE PwProductId = @PwProductId";
+            _connectionWrapper.Execute(query, product);
         }
 
         public void UpdateProductsMasterProduct(PwProduct product)
         {
-            var query = @"UPDATE profitwiseproduct
-                            SET PwMasterProductId = @PwMasterProductId                            
-                            WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
+            var query = @"UPDATE product(@PwShopId) SET PwMasterProductId = @PwMasterProductId                            
+                        WHERE PwProductId = @PwProductId";
 
-            Connection.Execute(query, product, _connectionWrapper.Transaction);
+            _connectionWrapper.Execute(query, product);
         }
 
         public void UpdateProductIsActive(PwProduct product)
         {
-            var query = @"UPDATE profitwiseproduct
-                            SET IsActive = @IsActive
-                            WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
-            Connection.Execute(query, product, _connectionWrapper.Transaction);
+            var query = @"UPDATE product(@PwShopId) SET IsActive = @IsActive WHERE PwProductId = @PwProductId";
+            _connectionWrapper.Execute(query, product);
         }
 
         public void UpdateProductIsPrimary(PwProduct product)
         {
-            var query = @"UPDATE profitwiseproduct
+            var query = @"UPDATE product(@PwShopId)
                         SET IsPrimary = @IsPrimary, IsPrimaryManual = @IsPrimaryManual
-                        WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId";
+                        WHERE PwProductId = @PwProductId";
 
-            Connection.Execute(query, product, _connectionWrapper.Transaction);
+            _connectionWrapper.Execute(query, product);
         }
 
 
         public void UpdateProductIsActiveByShopifyId(long shopifyProductId, bool isActive)
         {
-            var query = @"UPDATE profitwiseproduct SET IsActive = @IsActive
-                            WHERE PwShopId = @PwShopId 
-                            AND ShopifyProductId = @shopifyProductId";
-            Connection.Execute(query, 
+            var query = @"UPDATE product(@PwShopId) SET IsActive = @IsActive
+                            WHERE ShopifyProductId = @shopifyProductId";
+            _connectionWrapper.Execute(query, 
                     new
                     {
-                        @PwShopId = this.PwShop.PwShopId,
+                        PwShop.PwShopId,
                         ShopifyProductId = shopifyProductId,
                         IsActive = isActive,
-                    }, _connectionWrapper.Transaction);
+                    });
         }
 
         public PwProduct DeleteProduct(long pwProductId)
         {
-            var query = @"DELETE FROM profitwiseproduct WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
-            return Connection
-                    .Query<PwProduct>(
-                        query, new { @PwShopId = this.PwShop.PwShopId, @PwProductId = pwProductId }, 
-                        _connectionWrapper.Transaction)
+            var query = @"DELETE FROM product(@PwShopId) 
+                        WHERE PwShopId = @PwShopId AND PwProductId = @PwProductId;";
+            return _connectionWrapper
+                    .Query<PwProduct>(query, new { PwShop.PwShopId, @PwProductId = pwProductId })
                     .FirstOrDefault();
         }
 
         public void DeleteOrphanedMasterProducts()
         {
-            var query = @"DELETE FROM profitwisemasterproduct
-                        WHERE PwShopId = @PwShopId AND PwMasterProductId NOT IN 
-                            (SELECT PwMasterProductId FROM profitwiseproduct);";
-            Connection.Execute(query, new {@PwShopId = this.PwShop.PwShopId,}, 
-                                _connectionWrapper.Transaction);
+            var query = @"DELETE FROM masterproduct(@PwShopId)
+                        WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM product(@PwShopId));";
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId,});
         }
     }
 }

@@ -23,7 +23,7 @@ namespace ProfitWise.Web.Controllers
         public const int NumberOfColumnGroups = 5;
         public const string AllOtherGroupingName = "All other";
         public const string NoGroupingName = "All"; // Date-bucketed Totals
-        public const int FixedPageSize = 10;
+        public const int FixedPageSize = 25;
 
         public GoodsOnHandServiceController(MultitenantFactory factory, IPushLogger logger)
         {

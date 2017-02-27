@@ -20,7 +20,7 @@ namespace ProfitWise.Data.Repositories
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
 
 
@@ -67,7 +67,7 @@ namespace ProfitWise.Data.Repositories
                     ( SELECT PwReportId FROM profitwisereport 
                     WHERE LastAccessedDate < @cutoffDate AND CopyForEditing = 1)";
 
-            Connection.Execute(query, new { cutoffDate }, _connectionWrapper.Transaction);
+            Connection.Execute(query, new { cutoffDate });
         }
     }
 }

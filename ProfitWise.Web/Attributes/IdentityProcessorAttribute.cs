@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Configuration;
-using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;

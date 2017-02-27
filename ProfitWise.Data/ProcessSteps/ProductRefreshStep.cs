@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
-using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;

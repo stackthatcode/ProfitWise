@@ -20,7 +20,7 @@ namespace ProfitWise.Data.Repositories
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connection.StartTransactionForScope();
+            return _connection.InitiateTransaction();
         }
 
         public IList<Currency> RetrieveCurrency()

@@ -29,7 +29,7 @@ namespace ProfitWise.Data.Services
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
 
         public void CommitTransaction()

@@ -5,6 +5,7 @@ using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.System;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.HttpClient;
 

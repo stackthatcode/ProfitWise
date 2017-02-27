@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using Dapper;
 
 namespace ProfitWise.Data.Database
 {
@@ -16,10 +18,20 @@ namespace ProfitWise.Data.Database
             _connection = connection;
         }
 
-        public IDbTransaction StartTransactionForScope()
+        public IDbTransaction InitiateTransaction()
         {
             Transaction = _connection.BeginTransaction();
             return Transaction;
+        }
+
+        public int Execute(string sql, object param = null)
+        {
+            return _connection.Execute(sql, param, this.Transaction);
+        }
+
+        public IEnumerable<T> Query<T>(string sql, object param = null)
+        {
+            return _connection.Query<T>(sql, param, this.Transaction);
         }
 
         public void CommitTranscation()

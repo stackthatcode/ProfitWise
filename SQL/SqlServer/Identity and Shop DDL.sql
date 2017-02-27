@@ -171,3 +171,4 @@ CREATE TABLE [dbo].[profitwisebatchstate](
 ) ON [PRIMARY]
 END
 GO
+

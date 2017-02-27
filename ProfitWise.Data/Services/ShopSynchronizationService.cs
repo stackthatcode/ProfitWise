@@ -2,6 +2,7 @@
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.System;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Model;

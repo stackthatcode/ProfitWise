@@ -10,16 +10,14 @@ using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.Multitenant
 {
     public class ProfitRepository
     {
         private readonly MultitenantFactory _factory;
-
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
-        private IDbConnection Connection => _connectionWrapper.DbConn;
 
 
         public ProfitRepository(ConnectionWrapper connectionWrapper, MultitenantFactory factory)
@@ -30,7 +28,7 @@ namespace ProfitWise.Data.Repositories
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
 
 
@@ -40,39 +38,34 @@ namespace ProfitWise.Data.Repositories
             var filterRepository = _factory.MakeReportFilterRepository(this.PwShop);
 
             var deleteQuery =
-                @"DELETE FROM profitwiseprofitquerystub
-                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
-            Connection.Execute(
-                deleteQuery, new { PwShopId, PwReportId = reportId }, _connectionWrapper.Transaction);
+                @"DELETE FROM profitquerystub(@PwShopId) WHERE PwReportId = @PwReportId";
+            _connectionWrapper.Execute(
+                deleteQuery, new { PwShopId, PwReportId = reportId });
 
             var createQuery =
-                @"INSERT INTO profitwiseprofitquerystub
+                @"INSERT INTO profitquerystub(@PwShopId)
                 SELECT @PwReportId, @PwShopId, PwMasterVariantId, PwMasterProductId, 
                         Vendor, ProductType, ProductTitle, Sku, VariantTitle
-                FROM vw_MasterProductAndVariantSearch 
+                FROM mtv_masterproductandvariantsearch(@PwShopId) 
                 WHERE PwShopId = @PwShopId " +
                 filterRepository.ReportFilterClauseGenerator(reportId) +
                 @" GROUP BY PwMasterVariantId,  PwMasterProductId, 
                     Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
-            Connection.Execute(
-                createQuery, new { PwShopId, PwReportId = reportId }, _connectionWrapper.Transaction);
+            _connectionWrapper.Execute(
+                createQuery, new { PwShopId, PwReportId = reportId });
         }
 
         public List<PwReportSearchStub> RetrieveSearchStubs(long reportId)
         {
             var query =
                 @"SELECT t2.*
-                FROM profitwiseprofitquerystub t1 
-	                INNER JOIN vw_MasterProductAndVariantSearch t2
+                FROM profitquerystub(@PwShopId) t1 
+	                INNER JOIN mtv_masterproductandvariantsearch(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
-                WHERE t1.PwShopId = @PwShopId
-                AND t1.PwReportId = @reportId
-                AND t2.PwShopId = @PwShopId";
+                WHERE t1.PwReportId = @reportId";
 
             var results =
-                Connection
-                    .Query<PwReportSearchStub>(
-                        query, new { PwShopId, reportId }).ToList();
+                _connectionWrapper.Query<PwReportSearchStub>(query, new { PwShopId, reportId }).ToList();
             return results;
         }
 
@@ -81,24 +74,24 @@ namespace ProfitWise.Data.Repositories
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
         {            
             var totalsQuery = @"SELECT " + QueryGutsForTotals();
-            var totals = Connection.Query<GroupedTotal>(totalsQuery, queryContext, _connectionWrapper.Transaction).First();
+            var totals = _connectionWrapper.Query<GroupedTotal>(totalsQuery, queryContext).First();
 
             var numberOfOrdersQuery =
                 @"SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 
-                FROM profitwiseprofitquerystub t1
-	                INNER JOIN profitwisevariant t2
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitwiseprofitreportentry t3
-		                ON  t1.PwShopId = t3.PwShopId
-			                AND t2.PwProductId = t3.PwProductId 
+                FROM profitquerystub(@PwShopId) t1
+	                INNER JOIN variant(@PwShopId) t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN profitreportentry(@PwShopId) t3
+		                ON t2.PwProductId = t3.PwProductId 
 			                AND t2.PwVariantId = t3.PwVariantId
 			                AND t3.EntryDate >= @StartDate
 			                AND t3.EntryDate <= @EndDate 
                             AND t3.EntryType = 1 
-                WHERE t1.PwReportId = @PwReportId AND t1.PwShopId = @PwShopId ";
+                WHERE t1.PwReportId = @PwReportId;";
             
-            var orderCount = Connection.Query<int>(
-                numberOfOrdersQuery, queryContext, _connectionWrapper.Transaction).First();
+            var orderCount = _connectionWrapper.Query<int>(
+                numberOfOrdersQuery, queryContext).First();
+
             totals.TotalOrders = orderCount;
             return totals;
         }
@@ -120,16 +113,15 @@ namespace ProfitWise.Data.Repositories
         public int RetreiveTotalCounts(TotalQueryContext queryContext)
         {
             var queryGuts =
-                @"FROM profitwiseprofitquerystub t1
-		            INNER JOIN profitwisevariant t2
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitwiseprofitreportentry t3
-		                ON t2.PwShopId = t3.PwShopId 
-                            AND t2.PwProductId = t3.PwProductId 
+                @"FROM profitquerystub(@PwShopId) t1
+		            INNER JOIN variant(@PwShopId) t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN profitreportentry(@PwShopId) t3
+		                ON t2.PwProductId = t3.PwProductId 
                             AND t2.PwVariantId = t3.PwVariantId  
 			                AND t3.EntryDate >= @StartDate 
                             AND t3.EntryDate <= @EndDate             
-                WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId";
+                WHERE t1.PwReportId = @PwReportId";
 
             var query = "";
             if (queryContext.Grouping == ReportGrouping.Product)
@@ -141,7 +133,7 @@ namespace ProfitWise.Data.Repositories
             if (queryContext.Grouping == ReportGrouping.Vendor)
                 query = "SELECT COUNT(DISTINCT(t1.Vendor)) " + queryGuts;
 
-            return Connection.Query<int>(query, queryContext, _connectionWrapper.Transaction).First();
+            return _connectionWrapper.Query<int>(query, queryContext).First();
         }
 
         public List<GroupedTotal> RetreiveTotalsByProduct(TotalQueryContext queryContext)
@@ -152,8 +144,8 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.PwMasterProductId, t1.ProductTitle " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return Connection
-                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
+            return _connectionWrapper
+                .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Product);
         }
 
@@ -162,12 +154,11 @@ namespace ProfitWise.Data.Repositories
             var query =
                 @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
-                //@"GROUP BY t1.PwMasterVariantId, GroupingName " + // MySQL
                 @"GROUP BY t1.PwMasterVariantId, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return Connection
-                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
+            return _connectionWrapper
+                .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Variant);
         }
 
@@ -179,8 +170,8 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.ProductType " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return Connection
-                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
+            return _connectionWrapper
+                .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.ProductType);
         }
 
@@ -192,12 +183,12 @@ namespace ProfitWise.Data.Repositories
                 @"GROUP BY t1.Vendor " +
                 OrderingAndPagingForTotals(queryContext);
 
-            return Connection
-                .Query<GroupedTotal>(query, queryContext, _connectionWrapper.Transaction).ToList()
+            return _connectionWrapper
+                .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Vendor);
         }
 
-        public string QueryGutsForTotals()
+        private string QueryGutsForTotals()
         {
             return
                 @"SUM(t3.NetSales) As TotalRevenue,
@@ -205,19 +196,18 @@ namespace ProfitWise.Data.Repositories
                 COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalOrders,
 		        SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
                 CASE WHEN SUM(t3.NetSales) = 0 THEN 0 ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin
-                FROM profitwiseprofitquerystub t1
-		            INNER JOIN profitwisevariant t2
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitwiseprofitreportentry t3
-		                ON t1.PwShopId = t3.PwShopId
-                            AND t2.PwProductId = t3.PwProductId 
+                FROM profitquerystub(@PwShopId) t1
+		            INNER JOIN variant(@PwShopId) t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN profitreportentry(@PwShopId) t3
+		                ON t2.PwProductId = t3.PwProductId 
                             AND t2.PwVariantId = t3.PwVariantId
                             AND t3.EntryDate >= @StartDate
                             AND t3.EntryDate <= @EndDate             
-                WHERE t1.PwShopId = @PwShopId AND t1.PwReportId = @PwReportId ";
+                WHERE t1.PwReportId = @PwReportId ";
         }
 
-        public string OrderingAndPagingForTotals(TotalQueryContext queryContext)
+        private string OrderingAndPagingForTotals(TotalQueryContext queryContext)
         {
             string orderByClause = "";
             if (queryContext.Ordering == ColumnOrdering.AverageMarginDescending)
@@ -242,8 +232,6 @@ namespace ProfitWise.Data.Repositories
                 orderByClause = "ORDER BY TotalQuantitySold ASC ";
 
             return orderByClause + "OFFSET @StartingIndex ROWS FETCH NEXT @PageSize ROWS ONLY;";
-
-            //return orderByClause + "LIMIT @StartingIndex, @PageSize"; // MySQL
         }
         
         // Date Period Bucketed Totals
@@ -293,7 +281,7 @@ namespace ProfitWise.Data.Repositories
                     ORDER BY Year, Quarter, Month, Week, Day;";
             }
             
-            var output = Connection
+            var output = _connectionWrapper
                 .Query<DatePeriodTotal>(
                     query,
                     new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate, FilterKeys = filterKeys, })
@@ -361,15 +349,16 @@ namespace ProfitWise.Data.Repositories
 
             var queryGuts =
                 @"t3.NetSales AS TotalRevenue, t3.CoGS AS TotalCogs
-                FROM profitwiseprofitquerystub t1
-	                INNER JOIN profitwisevariant t2
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitwiseprofitreportentry t3
-		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+                FROM profitquerystub(@PwShopId) t1
+	                INNER JOIN variant(@PwShopId) t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN profitreportentry(@PwShopId) t3
+		                ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
 	                INNER JOIN calendar_table t4
 		                ON t3.EntryDate = t4.dt
-                WHERE t1.PwShopId = @PwShopId AND t1.PwReportID = @PwReportId 
-                AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate ";
+                WHERE t1.PwReportID = @PwReportId 
+                AND t3.EntryDate >= @StartDate
+                AND t3.EntryDate <= @EndDate ";
 
             var filterClause = "";
             if (filterKeys != null && filterKeys.Count > 0)
@@ -399,16 +388,15 @@ namespace ProfitWise.Data.Repositories
         {
             var query =
                 @"SELECT t3.EntryDate AS OrderDate, SUM(t3.NetSales) AS TotalRevenue, SUM(t3.CoGS) AS TotalCogs
-                FROM profitwiseprofitquerystub t1
-	                INNER JOIN profitwisevariant t2
-		                ON t1.PwShopId = t2.PwShopId AND t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitwiseprofitreportentry t3
-		                ON t2.PwShopID = t3.PwShopId AND t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-                WHERE t1.PwShopId = @PwShopId AND t1.PwReportID = @PwReportId
-                AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
+                FROM profitquerystub(@PwShopId) t1
+	                INNER JOIN variant(@PwShopId) t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                INNER JOIN profitreportentry(@PwShopId) t3
+		                ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+                WHERE t1.PwReportID = @PwReportId AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
                 GROUP BY t3.EntryDate ORDER BY t3.EntryDate";
             
-            return Connection.Query<DateTotal>(
+            return _connectionWrapper.Query<DateTotal>(
                     query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
                 .ToList();
         }

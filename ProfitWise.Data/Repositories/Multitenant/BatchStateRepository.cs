@@ -19,56 +19,51 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             _connectionWrapper = connectionWrapper;
         }
-
-        private IDbConnection Connection => _connectionWrapper.DbConn;
-
+        
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
 
 
         public PwBatchState Retrieve()
         {
-            var query = @"SELECT * FROM profitwisebatchstate WHERE PwShopId = @PwShopId";
+            var query = @"SELECT * FROM batchstate(@PwShopId)";
             return
-                Connection
+                _connectionWrapper
                     .Query<PwBatchState>(query, new {PwShopId = PwShop.PwShopId})
                     .FirstOrDefault();
         }
 
         public void Insert(PwBatchState state)
         {
-            var query = @"INSERT INTO profitwisebatchstate VALUES (
+            var query = @"INSERT INTO batchstate(@PwShopId) VALUES (
                             @PwShopId, @ProductsLastUpdated, @OrderDatasetStart, 
                             @OrderDatasetEnd, @InitialRefreshJobId, @RoutineRefreshJobId)";
-            Connection.Execute(query, state);
+            _connectionWrapper.Execute(query, state);
         }
 
         public void Update(PwBatchState state)
         {
-            var query = @"UPDATE profitwisebatchstate SET 
+            var query = @"UPDATE batchstate(@PwShopId) SET 
                             ProductsLastUpdated = @ProductsLastUpdated, 
                             OrderDatasetStart = @OrderDatasetStart, 
-                            OrderDatasetEnd = @OrderDatasetEnd
-                            WHERE PwShopId = @PwShopId";
-            Connection.Execute(query, state); 
+                            OrderDatasetEnd = @OrderDatasetEnd;";
+            _connectionWrapper.Execute(query, state); 
         }
 
         public void UpdateInitialRefreshJobId(string initialRefreshJobId)
         {
-            var query = @"UPDATE profitwisebatchstate 
-                        SET InitialRefreshJobId = @initialRefreshJobId
-                        WHERE PwShopId = @PwShopId";
-            Connection.Execute(query, new { PwShop.PwShopId, initialRefreshJobId });
+            var query = @"UPDATE batchstate(@PwShopId) 
+                        SET InitialRefreshJobId = @initialRefreshJobId";
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId, initialRefreshJobId });
         }
 
         public void UpdateRoutineRefreshJobId(string routineRefreshJobId)
         {
-            var query = @"UPDATE profitwisebatchstate 
-                        SET RoutineRefreshJobId = @routineRefreshJobId 
-                        WHERE PwShopId = @PwShopId";
-            Connection.Execute(query, new { PwShop.PwShopId, routineRefreshJobId });
+            var query = @"UPDATE batchstate(@PwShopId) 
+                        SET RoutineRefreshJobId = @routineRefreshJobId";
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId, routineRefreshJobId });
         }
     }
 }

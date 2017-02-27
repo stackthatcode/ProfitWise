@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Dapper;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.GoodsOnHand;
@@ -11,14 +10,13 @@ using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Services;
 
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.Multitenant
 {
     public class GoodsOnHandRepository
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
-        private IDbConnection Connection => _connectionWrapper.DbConn;
         private readonly MultitenantFactory _factory;
         private readonly TimeZoneTranslator _timeZoneTranslator;
 
@@ -34,7 +32,7 @@ namespace ProfitWise.Data.Repositories
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
 
         public void PopulateQueryStub(long reportId)
@@ -42,12 +40,12 @@ namespace ProfitWise.Data.Repositories
             var filterRepository = _factory.MakeReportFilterRepository(this.PwShop);
 
             var deleteQuery =
-                @"DELETE FROM profitwisegoodsonhandquerystub
-                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId";
-            Connection.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
+                @"DELETE FROM goodsonhandquerystub(@PwShopId)
+                WHERE PwReportId = @PwReportId";
+            _connectionWrapper.Execute(deleteQuery, new { PwShopId, PwReportId = reportId });
 
             var createQuery =
-                @"INSERT INTO profitwisegoodsonhandquerystub
+                @"INSERT INTO goodsonhandquerystub(@PwShopId)
                 SELECT @PwReportId, @PwShopId, PwVariantId, PwProductId, 
                         Vendor, ProductType, ProductTitle, Sku, VariantTitle
                 FROM vw_goodsonhand 
@@ -55,7 +53,7 @@ namespace ProfitWise.Data.Repositories
                 filterRepository.ReportFilterClauseGenerator(reportId) +
                 @" GROUP BY PwVariantId, PwProductId, 
                 Vendor, ProductType, ProductTitle, Sku, VariantTitle; ";
-            Connection.Execute(createQuery, new { PwShopId, PwReportId = reportId });
+            _connectionWrapper.Execute(createQuery, new { PwShopId, PwReportId = reportId });
         }
 
 
@@ -74,7 +72,7 @@ namespace ProfitWise.Data.Repositories
 
             var today = _timeZoneTranslator.Today(PwShop.TimeZone);
 
-            return Connection.Query<Totals>(
+            return _connectionWrapper.Query<Totals>(
                 query, new
                 {
                     QueryDate = today,
@@ -101,8 +99,8 @@ namespace ProfitWise.Data.Repositories
                 selectQueryHead +
                 @" FROM vw_goodsonhand
                 WHERE PwVariantId IN ( 
-		            SELECT PwVariantId FROM profitwisegoodsonhandquerystub 
-		            WHERE PwShopId = @PwShopId AND PwReportId = @reportId )
+		            SELECT PwVariantId FROM goodsonhandquerystub(@PwShopId) 
+		            WHERE PwReportId = @reportId )
                 AND PwShopId = @PwShopId ";
 
             if (productType != null)
@@ -112,7 +110,7 @@ namespace ProfitWise.Data.Repositories
             if (pwProductId != null)
                 query += "AND PwProductId = @pwProductId ";
 
-            return Connection.Query<int>(
+            return _connectionWrapper.Query<int>(
                 query, new { PwShopId, reportId, productType, vendor, pwProductId }).FirstOrDefault();
         }
 
@@ -130,7 +128,7 @@ namespace ProfitWise.Data.Repositories
 		                    SUM(PotentialRevenue) AS TotalPotentialRevenue,	
 		                    SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) AS TotalPotentialProfit
                         FROM Data_CTE t1
-	                        INNER JOIN profitwiseproduct t2 ON t1.PwProductId = t2.PwProductId
+	                        INNER JOIN product(@PwShopId) t2 ON t1.PwProductId = t2.PwProductId
                         WHERE PwShopId = @PwShopId ";
 
             if (productType != null)
@@ -146,7 +144,7 @@ namespace ProfitWise.Data.Repositories
 
             var today = _timeZoneTranslator.Today(PwShop.TimeZone);
 
-            return Connection.Query<Details>(query, new {
+            return _connectionWrapper.Query<Details>(query, new {
                     QueryDate = today,
                     PwShopId,
                     PwReportId = reportId,
@@ -249,19 +247,20 @@ namespace ProfitWise.Data.Repositories
                             ELSE (ISNULL(t4.PercentMultiplier, 0) / 100 * t2.HighPrice + ISNULL(t4.FixedAmount, 0) * t5.Rate) * dbo.ufnNegToZero(t2.Inventory) END
                             AS CostOfGoodsOnHand,
                             dbo.ufnNegToZero(t2.Inventory) * t2.HighPrice AS PotentialRevenue
-	                FROM profitwisemastervariant t1
-		                INNER JOIN profitwisevariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId	
-		                LEFT JOIN profitwisemastervariantcogscalc t4 
-			                ON t1.PwShopId = t4.PwShopId AND t1.PwMasterVariantId = t4.PwMasterVariantId 
-			                AND t4.StartDate <= @QueryDate AND t4.EndDate > @QueryDate
-		                LEFT JOIN exchangerate t5 ON t4.SourceCurrencyId = t5.SourceCurrencyId
+	                FROM mastervariant(@PwShopId) t1
+		                INNER JOIN variant(@PwShopId) t2 
+                            ON t1.PwMasterVariantId = t2.PwMasterVariantId	
+		                LEFT JOIN mastervariantcogscalc(@PwShopId) t4 
+			                ON t1.PwMasterVariantId = t4.PwMasterVariantId 
+			                    AND t4.StartDate <= @QueryDate 
+                                AND t4.EndDate > @QueryDate
+		                LEFT JOIN exchangerate t5 
+                            ON t4.SourceCurrencyId = t5.SourceCurrencyId
 				                AND t5.Date = @QueryDate AND t5.DestinationCurrencyId = 1 
 	                WHERE t1.PwShopId = @PwShopId
 	                AND t1.StockedDirectly = 1
 	                AND t2.PwVariantId IN ( 
-		                SELECT PwVariantId FROM profitwisegoodsonhandquerystub 
-		                WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId )
-	                AND t2.PwShopId = @PwShopId
+		                SELECT PwVariantId FROM goodsonhandquerystub(@PwShopId) WHERE PwReportId = @PwReportId )
 	                AND t2.Inventory IS NOT NULL
 	                AND t2.IsActive = 1 
                 )  ";

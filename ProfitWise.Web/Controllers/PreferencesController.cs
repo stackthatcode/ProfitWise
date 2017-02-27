@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using Push.Foundation.Utilities.Logging;

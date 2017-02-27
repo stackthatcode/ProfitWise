@@ -33,7 +33,7 @@ namespace ProfitWise.Data.Services
             var repository = _factory.MakeReportRepository(PwShop);
             var queryRepository = _factory.MakeProfitRepository(PwShop);
 
-            using (var trans = _connectionWrapper.StartTransactionForScope())
+            using (var trans = _connectionWrapper.InitiateTransaction())
             {
                 var report = repository.RetrieveReport(reportId);
 

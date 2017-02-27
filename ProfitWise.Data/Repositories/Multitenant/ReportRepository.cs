@@ -10,7 +10,7 @@ using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Services;
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.Multitenant
 {
     [Intercept(typeof(ShopRequired))]
     public class ReportRepository : IShopFilter
@@ -19,7 +19,7 @@ namespace ProfitWise.Data.Repositories
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly TimeZoneTranslator _timeZoneTranslator;
-        private IDbConnection Connection => _connectionWrapper.DbConn;
+
 
         public ReportRepository(
                 ConnectionWrapper connectionWrapper, 
@@ -31,32 +31,27 @@ namespace ProfitWise.Data.Repositories
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
         
 
         public List<PwReport> RetrieveUserDefinedReports(int? reportTypeId = null)
         {
-            var query =
-                @"SELECT * FROM profitwisereport 
-                    WHERE PwShopId = @PwShopId AND CopyForEditing = 0 ";
+            var query = @"SELECT * FROM report(@PwShopId) WHERE CopyForEditing = 0 ";
 
             if (reportTypeId.HasValue)
             {
                 query += "AND ReportTypeId = @reportTypeId;";
             }
 
-            var results = Connection.Query<PwReport>(query, new { reportTypeId, PwShopId }).ToList();
+            var results = _connectionWrapper.Query<PwReport>(query, new { reportTypeId, PwShopId }).ToList();
             return results.OrderBy(x => x.Name).ToList();
         }
 
         public int RetrieveUserDefinedReportCount()
         {
-            var query =
-                    @"SELECT COUNT(*) FROM profitwisereport 
-                    WHERE PwShopId = @PwShopId 
-                    AND CopyForEditing = 0;";
-            var results = Connection.Query<int>(query, new { PwShopId });
+            var query = @"SELECT COUNT(*) FROM report(@PwShopId) WHERE CopyForEditing = 0;";
+            var results = _connectionWrapper.Query<int>(query, new { PwShopId });
             return results.First();
         }
 
@@ -97,9 +92,8 @@ namespace ProfitWise.Data.Repositories
                 return systemReport;
             }
 
-            var query = @"SELECT * FROM profitwisereport 
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            return Connection
+            var query = @"SELECT * FROM report(@PwShopId) WHERE PwReportId = @reportId;";
+            return _connectionWrapper
                     .Query<PwReport>(query, new { PwShopId, reportId })
                     .FirstOrDefault();
         }
@@ -111,9 +105,8 @@ namespace ProfitWise.Data.Repositories
                 return true;
             }
 
-            var query = @"SELECT PwReportId FROM profitwisereport 
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-            return Connection
+            var query = @"SELECT PwReportId FROM report(@PwShopId) WHERE PwReportId = @reportId;";
+            return _connectionWrapper
                     .Query<PwReport>(query, new { PwShopId, reportId })
                     .Any();
         }
@@ -145,11 +138,8 @@ namespace ProfitWise.Data.Repositories
                 return true;
             }
 
-            var query = @"SELECT * FROM profitwisereport 
-                        WHERE PwShopId = @PwShopId 
-                        AND CopyForEditing = 0
-                        AND Name = @name;";
-            return Connection
+            var query = @"SELECT * FROM report(@PwShopId) WHERE CopyForEditing = 0 AND Name = @name;";
+            return _connectionWrapper
                     .Query<PwReport>(query, new { PwShopId, reportId, name })
                     .Any();
         }
@@ -157,7 +147,7 @@ namespace ProfitWise.Data.Repositories
         public long InsertReport(PwReport report)
         {
             var query =
-                @"INSERT INTO profitwisereport (
+                @"INSERT INTO report(@PwShopId) (
                     PwShopId, ReportTypeId, Name, IsSystemReport, CopyForEditing, OriginalReportId, 
                     StartDate, EndDate, GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
                 VALUES ( 
@@ -166,43 +156,37 @@ namespace ProfitWise.Data.Repositories
                 
                 SELECT SCOPE_IDENTITY();";
 
-            return Connection.Query<long>(query, report).First();
+            return _connectionWrapper.Query<long>(query, report).First();
         }
 
         public void UpdateReport(PwReport report)
         {
             report.PwShopId = PwShopId;
 
-            var query = @"UPDATE profitwisereport SET 
-                        Name = @Name,
-                        IsSystemReport = @IsSystemReport,
-                        CopyForEditing = @CopyForEditing,
-                        OriginalReportId = @OriginalReportId,
-                        StartDate = @StartDate,
-                        EndDate = @EndDate,
-                        GroupingId = @GroupingId,
-                        OrderingId = @OrderingId,
-                        LastAccessedDate = getdate()                     
-                        WHERE PwShopId = @PwShopId AND PwReportId = @PwReportId;";
-            Connection.Execute(query, report );
+            var query = @"UPDATE report(@PwShopId) SET 
+                            Name = @Name,
+                            IsSystemReport = @IsSystemReport,
+                            CopyForEditing = @CopyForEditing,
+                            OriginalReportId = @OriginalReportId,
+                            StartDate = @StartDate,
+                            EndDate = @EndDate,
+                            GroupingId = @GroupingId,
+                            OrderingId = @OrderingId,
+                            LastAccessedDate = getdate()                     
+                        WHERE PwReportId = @PwReportId;";
+            _connectionWrapper.Execute(query, report );
         }
 
         public void UpdateReportLastAccessed(long reportId)
         {
-            var query = @"UPDATE profitwisereport SET 
-                        LastAccessedDate = getdate()                     
-                        WHERE PwShopId = @PwShopId AND PwReportId = @reportId;";
-
-            Connection.Execute(query, new { this.PwShopId, reportId });
+            var query = @"UPDATE report(@PwShopId) SET LastAccessedDate = getdate() WHERE PwReportId = @reportId;";
+            _connectionWrapper.Execute(query, new { this.PwShopId, reportId });
         }
-
 
         public void DeleteReport(long reportId)
         {
-            var query = @"DELETE FROM profitwisereport            
-                        WHERE PwShopId = @PwShopId 
-                        AND PwReportId = @reportId;";
-            Connection.Execute(query, new { PwShopId, reportId });
+            var query = @"DELETE FROM report(@PwShopId) WHERE PwReportId = @reportId;";
+            _connectionWrapper.Execute(query, new { PwShopId, reportId });
         }
     }
 }

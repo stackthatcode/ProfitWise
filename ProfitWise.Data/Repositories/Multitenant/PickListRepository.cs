@@ -2,23 +2,19 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Dapper;
-using MySql.Data.MySqlClient;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Helpers;
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.Multitenant
 {
     public class PickListRepository
     {
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
-
         private readonly ConnectionWrapper _connectionWrapper;
-        private IDbConnection Connection => _connectionWrapper.DbConn;
 
         public PickListRepository(ConnectionWrapper connectionWrapper)
         {
@@ -27,7 +23,7 @@ namespace ProfitWise.Data.Repositories
 
         public IDbTransaction InitiateTransaction()
         {
-            return _connectionWrapper.StartTransactionForScope();
+            return _connectionWrapper.InitiateTransaction();
         }
 
 
@@ -35,36 +31,31 @@ namespace ProfitWise.Data.Repositories
         public long CreateNew()
         {
             var query =
-                @"INSERT INTO profitwisepicklist (PwShopId, CreatedDate, LastAccessed) 
+                @"INSERT INTO picklist(@PwShopId) (PwShopId, CreatedDate, LastAccessed) 
                     VALUES (@PwShopId, @createdDate, @createdDate);
                 SELECT SCOPE_IDENTITY();";
 
-            return Connection.Query<long>(query,
-                    new { PwShopId = this.PwShop.PwShopId, createdDate = DateTime.Now },
-                    _connectionWrapper.Transaction).First();
+            return _connectionWrapper.Query<long>(query,
+                    new { PwShop.PwShopId, createdDate = DateTime.Now }).First();
         }        
 
         public void Delete(long pickListId)
         {
             var query =
-                @"DELETE FROM profitwisepicklistmasterproduct 
-                WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId;
-                DELETE FROM profitwisepicklist 
-                WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId;";
-
-            Connection.Execute(query, new {PwShopId = this.PwShop.PwShopId, pickListId}, _connectionWrapper.Transaction);
+                @"DELETE FROM picklistmasterproduct(@PwShopId) WHERE PwPickListId = @pickListId;
+                DELETE FROM picklist(@PwShopId) WHERE PwPickListId = @pickListId;";
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId, pickListId});
         }
 
         // Pick List population/filter operations
         public void Populate(long pickListId, List<string> searchTerms)
         {
             var query =
-                @"INSERT INTO profitwisepicklistmasterproduct (PwShopId, PwPickListId, PwMasterProductId)
+                @"INSERT INTO picklistmasterproduct(@PwShopId) (PwShopId, PwPickListId, PwMasterProductId)
                 SELECT DISTINCT @PwShopId, @PwPickListId, t2.PwMasterProductId
-                FROM profitwisevariant t1 
-	                INNER JOIN profitwisemastervariant t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
-	                INNER JOIN profitwiseproduct t3 ON t2.PwMasterProductId = t3.PwMasterProductId
-                WHERE (t1.PwShopId = @PwShopId AND t2.PwShopId = @PwShopId AND t3.PwShopId = @PwShopId)";
+                FROM variant(@PwShopId) t1 
+	                INNER JOIN mastervariant(@PwShopId) t2 ON t1.PwMasterVariantId = t2.PwMasterVariantId
+	                INNER JOIN product(@PwShopId) t3 ON t2.PwMasterProductId = t3.PwMasterProductId ";
 
             string term0 = "", term1 = "", term2 = "", term3 = "", term4 = "";
 
@@ -94,9 +85,8 @@ namespace ProfitWise.Data.Repositories
                 query += PickListClauseHelper("term4");
             }
 
-            Connection.Execute(
-                query, new { PwShopId = this.PwShop.PwShopId, @PwPickListId = pickListId, term0, term1, term2, term3, term4 },
-                _connectionWrapper.Transaction);
+            _connectionWrapper.Execute(
+                query, new { PwShop.PwShopId, @PwPickListId = pickListId, term0, term1, term2, term3, term4});
         }
 
         private string PickListClauseHelper(string termName)
@@ -106,15 +96,10 @@ namespace ProfitWise.Data.Repositories
 
         public void Filter(long pickListId, long pwMasterProductId)
         {
-            var query =
-                @"DELETE FROM profitwisepicklistmasterproduct
-                WHERE PwShopId = @PwShopId
-                AND PwPickListId = @PwPickListId
-                AND PwMasterProductId = @PwMasterProductId";
-
-            Connection.Execute(
-                query, new { PwShop.PwShopId, PwPickListId = pickListId, PwMasterProductId = pwMasterProductId },
-                _connectionWrapper.Transaction);
+            var query = @"DELETE FROM picklistmasterproduct(@PwShopId)
+                        WHERE PwPickListId = @PwPickListId AND PwMasterProductId = @PwMasterProductId";
+            _connectionWrapper.Execute(query, 
+                new {PwShop.PwShopId, PwPickListId = pickListId, PwMasterProductId = pwMasterProductId});
         }
 
         public void Filter(long pickListId, IList<ProductSearchFilter> filters)
@@ -172,17 +157,16 @@ namespace ProfitWise.Data.Repositories
             }
 
             var query =
-                @"DELETE FROM profitwisepicklistmasterproduct
-                WHERE PwShopId = @PwShopId
-                AND PwPickListId = @PwPickListId
+                @"DELETE FROM picklistmasterproduct(@PwShopId)
+                WHERE PwPickListId = @PwPickListId
                 AND PwMasterProductId NOT IN (
                     SELECT PwMasterProductId
-                    FROM profitwiseproduct
-                    WHERE PwShopId = @PwShopId " + filterClause + ");";
+                    FROM product(@PwShopId)
+                    WHERE PwShopId = PwShopId " + filterClause + ");";
 
-            Connection.Execute(query, new
+            _connectionWrapper.Execute(query, new
             {
-                PwShopId = this.PwShop.PwShopId,
+                PwShop.PwShopId,
                 @PwPickListId = pickListId,
                 searchByVendor,
                 searchByProductType,
@@ -191,44 +175,37 @@ namespace ProfitWise.Data.Repositories
                 searchByTags2,
                 searchByTags3,
                 searchByTags4,
-            }, _connectionWrapper.Transaction);
+            });
         }
 
         public void FilterMissingCogs(long pickListId)
         {
             var query =
-                @"DELETE FROM profitwisepicklistmasterproduct
-                WHERE PwShopId = @PwShopId
-                AND PwPickListId = @PwPickListId
+                @"DELETE FROM picklistmasterproduct(@PwShopId)
+                WHERE PwPickListId = @PwPickListId
                 AND PwMasterProductId NOT IN (
                     SELECT DISTINCT(PwMasterProductId)
-                    FROM profitwisemastervariant
-                    WHERE PwShopId = @PwShopId
-                    AND ((CogsTypeId = 1 AND (CogsAmount IS NULL OR CogsAmount = 0)) OR (CogsTypeId = 2 AND (CogsMarginPercent IS NULL OR CogsMarginPercent = 0))));";
+                    FROM mastervariant(@PwShopId)
+                    WHERE ((CogsTypeId = 1 AND (CogsAmount IS NULL OR CogsAmount = 0)) 
+                    OR (CogsTypeId = 2 AND (CogsMarginPercent IS NULL OR CogsMarginPercent = 0))));";
 
-            Connection.Execute(query, new { PwShopId = PwShop.PwShopId, PwPickListId = pickListId }, _connectionWrapper.Transaction);
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId, PwPickListId = pickListId });
         }
         
 
         // Pick List retrieve operations
         public int Count(long pickListId)
         {
-            var query = @"SELECT COUNT(*) 
-                        FROM profitwisepicklistmasterproduct 
-                        WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId";
+            var query = @"SELECT COUNT(*) FROM picklistmasterproduct(@PwShopId) WHERE PwPickListId = @pickListId";
 
-            return Connection.Query<int>(query, new { PwShopId = PwShop.PwShopId, pickListId }).First();
+            return _connectionWrapper.Query<int>(query, new { PwShop.PwShopId, pickListId }).First();
         }
 
 
         public bool Exists(long pickListId)
         {
-            var query = @"SELECT * FROM profitwisepicklist
-                        WHERE PwShopId = @PwShopId AND PwPickListId = @pickListId";
-
-            return Connection.Query<object>(
-                query, new { PwShopId = PwShop.PwShopId, pickListId }).Any();
+            var query = @"SELECT * FROM picklist(@PwShopId) WHERE PwPickListId = @pickListId";
+            return _connectionWrapper.Query<object>(query, new { PwShop.PwShopId, pickListId }).Any();
         }
-
     }
 }
