@@ -507,7 +507,7 @@
     <Content Include="Content\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff2" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\PublishProfiles\Local Deploy Test.pubxml" />
+    <None Include="Properties\PublishProfiles\Rackspace Jonze Is At it!.pubxml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

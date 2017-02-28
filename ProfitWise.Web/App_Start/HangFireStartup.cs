@@ -11,12 +11,12 @@ namespace ProfitWise.Web
         {
             GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection");
 
-            app.UseHangfireDashboard(
-                "/hangfire", new DashboardOptions
-                {
-                    Authorization = new[] { new HangFireAuthorizationFilter(),  },
-                    AppPath = GlobalConfig.BaseUrl + "/AdminHome/Index"
-                });
+            //app.UseHangfireDashboard(
+            //    "/hangfire", new DashboardOptions
+            //    {
+            //        Authorization = new[] { new HangFireAuthorizationFilter(),  },
+            //        AppPath = GlobalConfig.BaseUrl + "/AdminHome/Index"
+            //    });
         }
     }
 }
