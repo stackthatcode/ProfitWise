@@ -1,5 +1,10 @@
 ﻿@using System.Configuration
 
+@using ProfitWise.Web.Attributes
+@{
+    var commonContext = Context.PullCommonContext();
+}
+
 <!-- Font -->
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,800,700,600italic,600,400italic,300italic' 
       rel='stylesheet' type='text/css'>
@@ -20,3 +25,5 @@
     ProfitWiseConfig.BaseUrl = '@ConfigurationManager.AppSettings["application_root_url"]';
 </script>
 
+<!-- Shopify JavaScript API -->
+<script src="https://cdn.shopify.com/s/assets/external/app.js"></script>

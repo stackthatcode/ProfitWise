@@ -12,12 +12,13 @@
     <title>@commonContext.FullyBrandedPageTitle</title>
     
     @Html.Partial("_StyleAndScripts")
-
-    <!-- Shopify JavaScript API -->
-    <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+    
+    @if (commonContext.IdentitySnapshot.IsAdmin)
+    {
     <script>
         ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');
     </script>
+    }
 </head>
 
 <body style="background-color: #FFF !important; overflow: hidden; padding: 30px;">
