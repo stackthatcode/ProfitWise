@@ -230,6 +230,8 @@
     <Compile Include="App_Start\HangFireStartup.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\AuthConfig.cs" />
+    <Compile Include="Attributes\HangFireAuthorizationFilter.cs" />
+    <Compile Include="Attributes\ValidateJsonAntiForgeryTokenAttribute.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Attributes\HttpContextExtensions.cs" />
     <Compile Include="Attributes\RequiresStoreDataAttribute.cs" />
@@ -350,12 +352,10 @@
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
-    <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Report\Profitability.cshtml" />
     <Content Include="Views\Shared\_AnonymousLayout.cshtml" />
     <Content Include="Views\AdminHome\Index.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
-    <Content Include="Views\AdminHome\Users.cshtml" />
     <Content Include="Views\AdminAuth\_ViewStart.cshtml" />
     <Content Include="Views\AdminHome\_ViewStart.cshtml" />
     <Content Include="Views\Cogs\Products.cshtml" />

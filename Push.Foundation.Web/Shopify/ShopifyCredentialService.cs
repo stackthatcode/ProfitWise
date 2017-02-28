@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
@@ -13,6 +14,7 @@ namespace Push.Foundation.Web.Shopify
         private readonly IEncryptionService _encryptionService;
         private readonly ClaimsRepository _claimsRepository;
 
+
         public ShopifyCredentialService(
                 ApplicationUserManager userManager, 
                 IEncryptionService encryptionService,
@@ -23,30 +25,36 @@ namespace Push.Foundation.Web.Shopify
             _claimsRepository = claimsRepository;
         }
 
-
-        public CredentialServiceResult Retrieve(string currentUserId)
+        public string EffectiveShopUserId(string currentUserId)
         {
             var roles = _userManager.GetRoles(currentUserId);
             var isCurrentUserIsAdmin = roles.Contains(SecurityConfig.AdminRole);
 
-            var claims = _claimsRepository.RetrieveClaims(currentUserId);
-
-            var shopUserId = "";
             if (isCurrentUserIsAdmin)
             {
-                shopUserId = claims.ValueByType(SecurityConfig.UserImpersonationClaim);
+                var claims = _claimsRepository.RetrieveClaims(currentUserId);
+                var shopUserId = claims.ValueByType(SecurityConfig.UserImpersonationClaim);
 
                 if (shopUserId == null)
                 {
-                    return new CredentialServiceResult(false,
-                        "Admin User does not currently have a User selected for impersonation.");
+                    throw new Exception(
+                        "Admin User does not currently have a valid User selected for impersonation.");
                 }
+
+                return shopUserId;
             }
             else
             {
-                shopUserId = currentUserId;
+                return currentUserId;
             }
 
+        }
+
+        public CredentialServiceResult Retrieve(string currentUserId)
+        {
+            var shopUserId = EffectiveShopUserId(currentUserId);
+            var claims = _claimsRepository.RetrieveClaims(shopUserId);
+            
             var shopName = claims.ValueByType(SecurityConfig.ShopifyDomainClaim);
             if (shopName == null)
             {

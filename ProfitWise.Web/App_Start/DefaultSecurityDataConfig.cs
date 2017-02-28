@@ -27,7 +27,7 @@ namespace ProfitWise.Web
                 var result = roleManager.Create(new IdentityRole(SecurityConfig.AdminRole));
                 if (result.Succeeded == false)
                 {
-                    throw new Exception($"RoleManager.Create (Admin) failed: {StringExtensions.JoinByNewline(result.Errors)}");
+                    throw new Exception($"RoleManager.Create (Admin) failed: {result.Errors.JoinByNewline()}");
                 }
             }
 
@@ -37,14 +37,16 @@ namespace ProfitWise.Web
                 var result = roleManager.Create(new IdentityRole(SecurityConfig.UserRole));
                 if (result.Succeeded == false)
                 {
-                    throw new Exception($"RoleManager.Create (User) failed: {StringExtensions.JoinByNewline(result.Errors)}");
+                    throw new Exception($"RoleManager.Create (User) failed: {result.Errors.JoinByNewline()}");
                 }
             }
 
             var adminUser = userManager.FindByName(SecurityConfig.DefaultAdminEmail);
             if (adminUser == null)
             {
-                logger.Info($"Unable to locate default Sys Admin: {SecurityConfig.DefaultAdminEmail} - creating new Sys Admin");
+                logger.Info(
+                    $"Unable to locate default Sys Admin: {SecurityConfig.DefaultAdminEmail} - "
+                    + @"creating new Sys Admin");
 
                 var newAdminUser = new ApplicationUser()
                 {
@@ -55,20 +57,23 @@ namespace ProfitWise.Web
                 var result = userManager.Create(newAdminUser, SecurityConfig.DefaultAdminPassword);
                 if (result.Succeeded == false)
                 {
-                    throw new Exception($"UserManager.Create failed: {StringExtensions.JoinByNewline(result.Errors)}");
+                    throw new Exception(
+                        $"UserManager.Create failed: {result.Errors.JoinByNewline()}");
                 }
 
                 var resultAddToAdmin = userManager.AddToRole(newAdminUser.Id, SecurityConfig.AdminRole);
                 if (resultAddToAdmin.Succeeded == false)
                 {
-                    throw new Exception($"UserManager.AddToRole (Admin) failed: {StringExtensions.JoinByNewline(resultAddToAdmin.Errors)}");
+                    throw new Exception(
+                        $"UserManager.AddToRole (Admin) failed: {resultAddToAdmin.Errors.JoinByNewline()}");
                 }
 
-                var resultAddToUser =userManager.AddToRole(newAdminUser.Id, SecurityConfig.UserRole);
-                if (resultAddToUser.Succeeded == false)
-                {
-                    throw new Exception($"UserManager.AddToRole (User) failed: {StringExtensions.JoinByNewline(resultAddToUser.Errors)}");
-                }
+                //var resultAddToUser = userManager.AddToRole(newAdminUser.Id, SecurityConfig.UserRole);
+                //if (resultAddToUser.Succeeded == false)
+                //{
+                //    throw new Exception(
+                //        $"UserManager.AddToRole (User) failed: {resultAddToUser.Errors.JoinByNewline()}");
+                //}
             }
         }
     }

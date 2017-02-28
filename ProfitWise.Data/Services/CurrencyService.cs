@@ -4,6 +4,7 @@ using System.Linq;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.System;
 using ProfitWise.Data.Repositories;
+using ProfitWise.Data.Repositories.System;
 using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Services

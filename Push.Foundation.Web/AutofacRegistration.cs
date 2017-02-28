@@ -46,16 +46,14 @@ namespace Push.Foundation.Web
             builder.RegisterType<RoleStore<IdentityRole>>();
             
             // We need to pull the DataProtectionProvider from the App Builder
-            builder
-                .RegisterType<MachineKeyProtectionProvider>()
+            builder.RegisterType<MachineKeyProtectionProvider>()
                 .As<IDataProtectionProvider>();
-            builder
-                .RegisterType<MachineKeyDataProtector>()
+            builder.RegisterType<MachineKeyDataProtector>()
                 .As<IDataProtector>();
 
-            builder
-                .RegisterType<DataProtectorTokenProvider<ApplicationUser>>();
+            builder.RegisterType<DataProtectorTokenProvider<ApplicationUser>>();
             
+            // We leverage the Encryption Service to protect Claims from Shopify
             builder.Register(
                 ctx => new EncryptionService(encryption_key, encryption_iv))
                 .As<IEncryptionService>();
@@ -82,7 +80,7 @@ namespace Push.Foundation.Web
 
             // Http Client
             builder.RegisterType<HttpClientFacadeConfig>();
-            builder.RegisterType<Http.HttpClient>().As<IHttpClient>();
+            builder.RegisterType<HttpClient>().As<IHttpClient>();
             builder.RegisterType<HttpClientFacade>().As<IHttpClientFacade>();
         }
     }

@@ -1,5 +1,7 @@
 ﻿using Hangfire;
 using Owin;
+using ProfitWise.Web.Attributes;
+using ProfitWise.Web.Plumbing;
 
 namespace ProfitWise.Web
 {
@@ -9,9 +11,12 @@ namespace ProfitWise.Web
         {
             GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection");
 
-            app.UseHangfireDashboard("/hangfire");
-
-            // TODO - add filter that only allows Admins to view
+            app.UseHangfireDashboard(
+                "/hangfire", new DashboardOptions
+                {
+                    Authorization = new[] { new HangFireAuthorizationFilter(),  },
+                    AppPath = GlobalConfig.BaseUrl + "/AdminHome/Index"
+                });
         }
     }
 }

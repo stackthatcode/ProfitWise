@@ -7,7 +7,7 @@ using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.System;
 
-namespace ProfitWise.Data.Repositories
+namespace ProfitWise.Data.Repositories.System
 {
     public class ExchangeRateRepository
     {

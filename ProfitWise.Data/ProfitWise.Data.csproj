@@ -99,6 +99,7 @@
     <Compile Include="HangFire\HangFireLogProvider.cs" />
     <Compile Include="HangFire\QueueChannel.cs" />
     <Compile Include="HangFire\ProfitWiseQueues.cs" />
+    <Compile Include="Model\Admin\ProfitWiseUser.cs" />
     <Compile Include="Model\Catalog\FinancialStatus.cs" />
     <Compile Include="Model\Cogs\CalcContext.cs" />
     <Compile Include="Model\Cogs\CogsDto.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="ProcessSteps\BatchLogger.cs" />
     <Compile Include="Repositories\Multitenant\CogsDownstreamRepository.cs" />
     <Compile Include="Repositories\Multitenant\GoodsOnHandRepository.cs" />
+    <Compile Include="Repositories\System\AdminRepository.cs" />
     <Compile Include="Repositories\System\SystemRepository.cs" />
     <Compile Include="Repositories\Multitenant\ProfitRepository.cs" />
     <Compile Include="Repositories\Multitenant\ReportFilterRepository.cs" />

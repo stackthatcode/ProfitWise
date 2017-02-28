@@ -15,10 +15,6 @@
 .input-group {
 }
 
-input[type='text'] {
-    width: 100px;
-}
-
 .not-allowed:hover {
     cursor: not-allowed;
 }

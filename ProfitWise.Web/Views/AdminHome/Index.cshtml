@@ -1,9 +1,165 @@
-﻿@model dynamic
+﻿@using ProfitWise.Web.Plumbing
+@model dynamic
+@Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
 
-@{
-    ViewBag.Title = "title";
-}
 
-<h2>Admin Home Page</h2>
-<p>This is where Admins Kick-it</p>
+<div class="admin-arena">
+    <form id="__AjaxAntiForgeryForm" action="#" method="post">@Html.AntiForgeryToken()</form>
 
+    <div data-bind="template: { name: 'Admin-Interface' }"></div>
+</div>
+
+<script type="text/html" id="Admin-Interface">
+    <div style="height: 120px;">
+        <div class="row">
+            <div class="col-xs-6">
+                <h2>ProfitWise Administration</h2>
+                <p>This is where Admins Kick-it</p>
+            </div>
+            <div class="col-xs-6" style="padding-top: 20px; text-align: right;">
+                <a href="Logout" style="font-weight: 700;">Log Out</a>
+                
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 60px;">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#users-tab" data-bind="click: UsersClick"
+                   aria-controls="home" role="tab" data-toggle="tab">Users</a>
+            </li>
+            <li role="presentation">
+                <a href="#billing-tab" data-bind="click: BillingClick"
+                   aria-controls="profile" role="tab" data-toggle="tab">Billing Ops</a>
+            </li>
+            <li role="presentation">
+                <a href="@GlobalConfig.BaseUrl/hangfire"
+                   aria-controls="profile" role="tab">Hang Fire</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Tab panes -->
+    <div class="tab-content" style="clear: both;">
+        <div id="users-tab" role="tabpanel" class="tab-pane active reduced-padding"
+             data-bind="template: { name: 'Admin-Users', data: $data }">
+        </div>
+
+        <div id="billing-tab" role="tabpanel" class="tab-pane reduced-padding"
+             data-bind="template: { name: 'Admin-Billing', data: $data }">
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="Admin-Users">
+    <div style="height:40px;"></div>
+    
+    <table class="table table-striped">
+        <thead>
+        <tr>            
+            <th>Domain</th>
+            <th>Email</th>
+            <th>Time Zone / Currency</th>
+            <th>UserId / PwShopId</th>
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: Users">
+        <tr>
+            <td data-bind="text: Domain"></td>
+            <td data-bind="text: Email"></td>
+            <td>
+                <span data-bind="text: TimeZone"></span><br />
+                Currency: <span data-bind="text: CurrencyText"></span>
+            </td>
+            <td>
+                <span data-bind="text: UserId"></span><br />
+                <span data-bind="text: PwShopId"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/html" id="Admin-Billing">
+    <div style="height:40px;"></div>
+    
+    <p>Billing Ops</p>
+    <p>Billing Ops</p>
+    <p>Billing Ops</p>
+    <p>Billing Ops</p>
+</script>
+
+
+<script>
+    var ProfitWiseAdmin = ProfitWiseAdmin || {};
+
+    ProfitWiseAdmin.Model = function () {
+        var self = this;
+
+        self.PagingModel = new ProfitWiseWidgets.PagingModel();
+        self.PagingModel.Callback = function() {
+            self.LoadUsers();
+        };
+
+        self.AjaxFactory = function () {
+            var settings = new ProfitWiseFunctions.AjaxSettings();
+            settings.ErrorCallbackFunction = function () {
+                alert("Error has occurred - please check system logs");
+            };
+            var ajax = new ProfitWiseFunctions.Ajax(settings);
+            return ajax;
+        };
+
+        self.AntiForgeryToken = function () {
+            return $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
+        };
+
+        self.Impersonate = function (userId) {
+            flow.exec(
+                function() {
+                    var url = "/AdminHome/Impersonate?userId=" + userId;
+                    var token = self.AntiForgeryToken();
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpPost(url, {}, this, token);
+                },
+                function() {
+                    window.location = '@ProfitWise.Web.Plumbing.GlobalConfig.BaseUrl';
+                });
+        }
+
+        self.LoadUsers = function () {
+            flow.exec(
+                function () {
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpGet("/AdminHome/Users", this);
+                },
+                function (data) {
+                    AQ(data).each(function(item) {
+                        
+                        item.ImpersonateClick = function() {
+                            self.Impersonate(item.UserId);
+                        };
+                    });
+
+                    self.Users(data);
+                });
+        };
+
+
+        self.Users = ko.observableArray();
+
+        self.UsersClick = function () {
+            self.LoadUsers();
+        };
+
+        self.BillingClick = function () {
+        };
+
+        return self;
+    };
+
+    var model = new ProfitWiseAdmin.Model();
+    ko.applyBindings(model);
+    model.UsersClick();
+</script>

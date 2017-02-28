@@ -17,8 +17,7 @@ namespace ProfitWise.Web.Controllers
         private readonly ApplicationSignInManager _signInManager;
 
         public AdminAuthController(
-                ApplicationUserManager userManager, 
-                ApplicationSignInManager signInManager)
+                ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -29,11 +28,16 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            // NOTE - as of 9/19/2016 this is the whitelisted URL
-            // returnUrl = "https://gracie2/ProfitWise/ShopifyAuth/EmbeddedAppLogin";
-
             ViewBag.ReturnUrl = returnUrl;            
             return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ExternalLogin(string shopName)
+        {
+            return RedirectToAction("Login", "ShopifyAuth", new {shop = shopName});
         }
 
         // POST: /AdminAuth/Login
@@ -60,7 +64,7 @@ namespace ProfitWise.Web.Controllers
                         return RedirectToAction("Index", "AdminHome");
                     else
                         return RedirectToLocal(returnUrl);
-
+                
                 case SignInStatus.LockedOut:
                     return View("Lockout");
 
@@ -71,18 +75,6 @@ namespace ProfitWise.Web.Controllers
             }
         }        
 
-
-        // GET: /AdminAuth/ConfirmEmail
-        [AllowAnonymous]
-        public async Task<ActionResult> ConfirmEmail(string userId, string code)
-        {
-            if (userId == null || code == null)
-            {
-                return View("Error");
-            }
-            var result = await _userManager.ConfirmEmailAsync(userId, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
-        }
 
 
         // GET: /AdminAuth/ForgotPassword
