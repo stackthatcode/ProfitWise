@@ -1,4 +1,4 @@
-
+use profitwise;
 
 DROP FUNCTION IF EXISTS dbo.batchstate
 GO
