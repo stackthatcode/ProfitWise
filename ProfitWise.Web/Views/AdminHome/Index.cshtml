@@ -1,4 +1,5 @@
-﻿@model dynamic
+﻿@using ProfitWise.Web.Plumbing
+@model dynamic
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
 
 
@@ -17,6 +18,7 @@
             </div>
             <div class="col-xs-6" style="padding-top: 20px; text-align: right;">
                 <a href="Logout" style="font-weight: 700;">Log Out</a>
+                
             </div>
         </div>
     </div>
@@ -30,6 +32,10 @@
             <li role="presentation">
                 <a href="#billing-tab" data-bind="click: BillingClick"
                    aria-controls="profile" role="tab" data-toggle="tab">Billing Ops</a>
+            </li>
+            <li role="presentation">
+                <a href="@GlobalConfig.BaseUrl/hangfire"
+                   aria-controls="profile" role="tab">Hang Fire</a>
             </li>
         </ul>
     </div>
