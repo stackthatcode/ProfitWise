@@ -61,12 +61,15 @@ namespace ProfitWise.Web.Attributes
                 return;
             }
 
-            var pwShop = shopRepository.RetrieveByUserId(userId);
+            // We may have an impersonated User
+            var effectiveUserId = result.ShopOwnerUserId;
+
+            var pwShop = shopRepository.RetrieveByUserId(effectiveUserId);
             if (pwShop == null)
             {
                 // On failure of credential service, throw an error, which will redirect to Server Fault page
                 logger.Error(
-                    $"Shop does not exist for User {userId}: '{result.Message}' - aborting IdentityProcessing");
+                    $"Shop does not exist for User {effectiveUserId}: '{result.Message}' - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
                 filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
                 return;
@@ -107,7 +110,7 @@ namespace ProfitWise.Web.Attributes
 
             var identity = new IdentitySnapshot()
             {
-                UserId = user.Id,
+                UserId = effectiveUserId,
                 UserName = user.UserName,
                 Roles = userRoles,
                 Email = user.Email,

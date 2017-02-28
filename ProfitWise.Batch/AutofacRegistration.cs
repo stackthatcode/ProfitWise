@@ -29,14 +29,11 @@ namespace ProfitWise.Batch
             // Autofac registration sequence
             var builder = new ContainerBuilder();
 
-
             // ProfitWise.Data registration - which invokes downstream dependent registrations
             Data.AutofacRegistration.Build(builder);
 
-
             // Logging and metering interceptor
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
-
 
             // This registration ensures that within a Background Job, always the same logger will be 
             // used - thus the ScopePrefix need only be set once. :-)
@@ -55,21 +52,17 @@ namespace ProfitWise.Batch
                 .InstancePerBackgroundJobIfTrue(runningHangFire);
 
             // Critical piece for all database infrastructure to work smoothly
-            builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJobIfTrue(runningHangFire);
-            
+            builder.RegisterType<ConnectionWrapper>().InstancePerBackgroundJobIfTrue(runningHangFire);            
 
             var registry = new InceptorRegistry();
             registry.Add(typeof(ErrorForensics));
-
-
-
+            
             // Configure the paging rates of the Refresh Services
             builder.Register(x => new RefreshServiceConfiguration()
             {
                 MaxOrderRate = ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxOrderRate", 50),
                 MaxProductRate = ConfigurationManager.AppSettings.GetAndTryParseAsInt("RefreshServiceMaxProductRate", 100),
             });
-
 
             // Push.Shopify API configuration
             Push.Shopify.AutofacRegistration.Build(builder);

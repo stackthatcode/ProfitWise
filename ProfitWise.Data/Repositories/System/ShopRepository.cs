@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using Dapper;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Shop;
 

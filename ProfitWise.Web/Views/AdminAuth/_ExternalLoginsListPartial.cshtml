@@ -6,19 +6,18 @@
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
 
-    using (Html.BeginForm("ExternalLogin", "ShopifyAuth", new { ReturnUrl = Model.ReturnUrl })) {
+    using (Html.BeginForm("Login", "ShopifyAuth")) {
         @Html.AntiForgeryToken()
         <div id="socialLoginList">
-            <p>
-                <label>Please Enter Your Shop Name:</label>
-                <input name="shopname" id="shopname"/>
-
-                @foreach (AuthenticationDescription p in loginProviders)
-                {
-                    <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" 
-                            value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
-                }
-            </p>
+            <div class="form-group">
+                <label>Enter Full Shop Url <span style="font-weight: 400;">e.g. shopname.myshopify.com</span></label>
+                <input class="form-control" name="shop" id="shop" style="margin-bottom: 8px;" />
+            </div>
+            @foreach (AuthenticationDescription p in loginProviders)
+            {
+                <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" 
+                        value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+            }
         </div>
     }
 }

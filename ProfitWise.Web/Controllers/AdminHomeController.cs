@@ -1,79 +1,80 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using ProfitWise.Web.Models;
-using ProfitWise.Web.Plumbing;
-using Push.Foundation.Web.Helpers;
+using ProfitWise.Data.Repositories.System;
+using ProfitWise.Data.Services;
+using ProfitWise.Web.Attributes;
 using Push.Foundation.Web.Identity;
-using Push.Foundation.Web.Shopify;
+using Push.Foundation.Web.Interfaces;
+using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN")]
     public class AdminHomeController : Controller
     {
-        private readonly ShopifyCredentialService _shopifyCredentialService;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IShopifyCredentialService _shopifyCredentialService;
+        private readonly ApplicationSignInManager _applicationSignInManager;
+        private readonly AdminRepository _repository;
+        private readonly CurrencyService _service;
 
-        public AdminHomeController(ApplicationDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public AdminHomeController(ShopifyCredentialService shopifyCredentialService, ApplicationDbContext dbContext)
+        public AdminHomeController(
+                IShopifyCredentialService shopifyCredentialService,
+                ApplicationSignInManager applicationSignInManager,
+                AdminRepository repository,
+                CurrencyService service)
         {
             _shopifyCredentialService = shopifyCredentialService;
-            _dbContext = dbContext;
+            _applicationSignInManager = applicationSignInManager;
+            _repository = repository;
+            _service = service;
         }
 
-
-        // GET: AdminHome
+        
         [HttpGet]
         public ActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            AuthConfig.GlobalSignOut(_applicationSignInManager);
+            return RedirectToAction("Login", "AdminAuth");
+        }
 
         [HttpGet]
-        public ActionResult Users(string message = null)
+        public ActionResult Users()
         {
-            var adminRoleId = _dbContext.Roles.First(x => x.Name == SecurityConfig.AdminRole).Id;
-
-            var credentials = _shopifyCredentialService.Retrieve(User.Identity.GetUserId());
-            
-            var users =
-                _dbContext.Users
-                    .Where(x => x.Roles.All(role => role.RoleId != adminRoleId))
-                    .ToList();
-
-            var model = new UserListModel
+            var users = _repository.RetrieveUsers();
+            foreach (var user in users)
             {
-                Message = message ?? "",
-                Users = users,
-                ShopifyCredentials = credentials,
-            };
+                user.CurrencyText = _service.CurrencyIdToAbbreviation(user.CurrencyId);
+            }
 
-            return View(model);
+            return new JsonNetResult(users);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Impersonate(string userId)
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult Impersonate(string userId)
         {
-            var currentUserId = HttpContext.User.ExtractUserId();
-            _shopifyCredentialService.SetAdminImpersonation(currentUserId, userId);
-            return RedirectToAction("Index", "UserHome");
+            throw new NotImplementedException();
+
+            //var currentUserId = HttpContext.User.ExtractUserId();
+            //_shopifyCredentialService.SetAdminImpersonation(currentUserId, userId);
+            //return JsonNetResult.Success();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ClearImpersonation()
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult ClearImpersonation()
         {
-            var currentUserId = HttpContext.User.ExtractUserId();
-            _shopifyCredentialService.ClearAdminImpersonation(currentUserId);
-            return RedirectToAction("Users");
+            throw new NotImplementedException();
+
+            //var currentUserId = HttpContext.User.ExtractUserId();
+            //_shopifyCredentialService.ClearAdminImpersonation(currentUserId);
+            //return RedirectToAction("Users");
         }
     }
 }

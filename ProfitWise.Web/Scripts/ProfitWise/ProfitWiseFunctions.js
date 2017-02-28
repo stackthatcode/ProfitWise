@@ -151,7 +151,7 @@ ProfitWiseFunctions.Ajax = function (settings) {
         );
     };
 
-    self.HttpPost = function (url, data, successFunc) {
+    self.HttpPost = function (url, data, successFunc, token) {
         flow.exec(
             function () {
                 self.ShowLoading();
@@ -159,6 +159,9 @@ ProfitWiseFunctions.Ajax = function (settings) {
                 $.ajax({
                     type: 'POST',
                     dataType: 'json',
+                    beforeSend: function (request) {
+                        request.setRequestHeader("__RequestVerificationToken", token);
+                    },
                     contentType: 'application/json; charset=utf-8',
                     url: self.Settings.BaseUrl + url,
                     data: JSON.stringify(data),
