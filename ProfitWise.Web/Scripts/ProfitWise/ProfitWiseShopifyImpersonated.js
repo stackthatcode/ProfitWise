@@ -1,8 +1,6 @@
 ﻿var ProfitWiseShopify = ProfitWiseShopify || {};
 var ProfitWiseConfig = ProfitWiseConfig || {};
 
-ProfitWiseConfig.BaseUrl = '/ProfitWise';
-
 ProfitWiseShopify.LaunchModal = function (settings, callback) {
     $('.modal').modal({ show: true });
     $('.modal').on('shown.bs.modal', function () {
@@ -14,15 +12,41 @@ ProfitWiseShopify.LaunchModal = function (settings, callback) {
         function() {
             callback();
         });
+
+    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    var eventer = window[eventMethod];
+    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+    // Listen to message from child window
+    eventer(messageEvent, function (e) {
+        // Close the dialog box
+        $('.modal').modal('hide');
+
+        console.log(callback);
+
+        // Invoke the callback with data!        
+        if (e.data && e.data.result === true) {
+            if (callback) {
+                callback(e.data);
+            }
+        }
+        if (e.data.result === "error") {
+            ProfitWiseShopify.ErrorPopup();
+        }
+    }, false);
 }
 
-//ProfitWiseShopify.LaunchModal({
-//    src: url,
-//    title: 'Variant Consolidation with ' + item.SkuTitleText,
-//    width: 'large',
-//    height: 500,
-//}, self.Refresh);
+ProfitWiseShopify.CloseModal = function (data) {
+    console.log(ProfitWiseConfig.BaseUrl);
+    parent.postMessage(data, ProfitWiseConfig.BaseUrl);
+};
 
+ProfitWiseShopify.Confirm = function (settings) {
+    var result = confirm(settings.message);
+    if (result && settings.callback) {
+        settings.callback(true);
+    }
+};
 
 ProfitWiseShopify.ErrorMessage =
     "We're sorry for the inconvenience, but the System has encountered an error. " +

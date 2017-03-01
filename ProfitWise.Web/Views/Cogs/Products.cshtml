@@ -263,7 +263,7 @@
                 var msg = "There are too many Products in your current Product Search. " +
                             "Bulk Cost of Goods Updates are only allowed for up 100 Products.";
 
-                ShopifyApp.Modal.confirm({
+                ProfitWiseShopify.Confirm({
                     title: "Too many Products for Bulk CoGS Update",
                     message: msg,
                     okButton: "OK",
@@ -278,7 +278,9 @@
                 title: 'Add CoGS Detail to all Products in current Search',
                 width: 'large',
                 height: 500,
-            }, self.LoadDataForCurrentPage);
+            },  function(data) {
+                self.LoadDataForCurrentPage();
+            });
         };
         
         // *** Stocked Directly interactivity *** //
@@ -292,7 +294,9 @@
                 title: 'Set Stocked Directly for all Products in Search',
                 width: 'small',
                 height: 300,
-            }, self.LoadDataForCurrentPage);
+            },  function(data) {
+                self.LoadDataForCurrentPage();
+            });
         };
 
         self.StockedDirectlyIsChecked = function (data) {
@@ -322,7 +326,9 @@
                 title: 'Set Stocked Directly for all Variants for this Product',
                 width: 'small',
                 height: 250,
-            }, self.LoadDataForCurrentPage);
+            },  function(data) {
+                self.LoadDataForCurrentPage();
+            });
         };
 
 
@@ -337,7 +343,9 @@
                 title: 'Set Exclude/Include for all Products in Search',
                 width: 'small',
                 height: 350,
-            }, self.LoadDataForCurrentPage);
+            }, function(data) {
+                self.LoadDataForCurrentPage();
+            });
         };
 
         self.ExcludedIsChecked = function(data) {
@@ -366,7 +374,9 @@
                 title: 'Set Exclude/Include for all Product Variants',
                 width: 'small',
                 height: 200,
-            }, self.LoadDataForCurrentPage);
+            }, function(data) {
+                self.LoadDataForCurrentPage();
+            });
         };
 
 

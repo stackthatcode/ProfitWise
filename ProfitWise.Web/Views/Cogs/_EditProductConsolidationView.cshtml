@@ -406,7 +406,9 @@
                 title: 'Search for Products to Consolidate with ' + self.MasterProductTitle(),
                 width: 'large',
                 height: 500,
-            }, self.Refresh);
+            }, function (data) {
+                self.Refresh();
+            });
         }
 
         self.AddVariantVisible = ko.computed( function () { return self.PrimaryVariantGrid().length > 1; } );
@@ -424,7 +426,9 @@
                 title: 'Variant Consolidation with ' + item.SkuTitleText,
                 width: 'large',
                 height: 500,
-            }, self.Refresh);
+            }, function(data) {
+                self.Refresh();
+            });
         };
 
         return self;

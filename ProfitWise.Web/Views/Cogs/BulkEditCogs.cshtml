@@ -72,7 +72,7 @@
         // TODO - wirein Enter and Escape keys
 
         self.CancelButtonClick = function() {
-            ShopifyApp.Modal.close({ result: false });
+            ProfitWiseShopify.CloseModal({ result: false });
         };
 
         self.OkButtonClick = function() {
@@ -82,7 +82,7 @@
             ajax.HttpPost(
                 "/CogsService/UpdateCogsForPickList?pickListId=" + self.PickListId(), state,
                 function() {
-                    ShopifyApp.Modal.close({ result: true });
+                    ProfitWiseShopify.CloseModal({ result: true });
                 });
 
             return false;

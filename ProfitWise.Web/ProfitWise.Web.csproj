@@ -298,6 +298,7 @@
     <Content Include="Content\site.css" />
     <Content Include="Scripts\Bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\KO\knockout-3.3.0.js" />
+    <Content Include="Scripts\ProfitWise\ProfitWiseShopifyImpersonated.js" />
     <Content Include="Scripts\Utility\aQuery-1.0-min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

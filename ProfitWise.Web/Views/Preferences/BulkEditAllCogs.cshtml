@@ -87,7 +87,7 @@
                 highconstraint: 100 });
 
         self.CancelButtonClick = function() {
-            ShopifyApp.Modal.close({ result: false });
+            ProfitWiseShopify.CloseModal({ result: false });
         };
 
         self.UpdateAllProductVariants = ko.observable(0);
@@ -117,7 +117,7 @@
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             ajax.HttpPost("/Preferences/BulkEditAllCogs", { amount: amount, allproducts: allproducts },
                 function() {
-                    ShopifyApp.Modal.close({ result: true });
+                    ProfitWiseShopify.CloseModal({ result: true });
                 });
         };
 

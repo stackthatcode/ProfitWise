@@ -221,7 +221,7 @@
             }
         };
 
-        self.OkClick = function() { ShopifyApp.Modal.close({ result: true }); };
+        self.OkClick = function() { ProfitWiseShopify.CloseModal({ result: true }); };
 
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
         self.SortingModel.Callback = function () { self.LoadDataForCurrentPage(); };

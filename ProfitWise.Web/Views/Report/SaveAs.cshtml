@@ -103,19 +103,19 @@
                                 self.ValidationMessage(response.message);
                             } else {
                                 self.ValidationMessage();
-                                ShopifyApp.Modal.close({ result: true, reportId: response.reportId });
+                                ProfitWiseShopify.CloseModal({ result: true, reportId: response.reportId });
                             }
                         }
                     );
                 };
                 
                 self.CancelButtonClick = function() {
-                    ShopifyApp.Modal.close({ result: false });
+                    ProfitWiseShopify.CloseModal({ result: false });
                 };
 
                 self.InvokeKeyCallback = function (model, event) {
                     if (event.keyCode == 27) {
-                        ShopifyApp.Modal.close({ result: false });
+                        ProfitWiseShopify.CloseModal({ result: false });
                         return false;
                     }
                     if (event.keyCode == 13) {

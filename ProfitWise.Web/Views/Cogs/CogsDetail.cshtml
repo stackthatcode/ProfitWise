@@ -258,7 +258,7 @@
         self.DefaultEditorModel.HorizontalEditor(true);
 
         self.CloseClick = function() {
-            ShopifyApp.Modal.close({ result: false });
+            ProfitWiseShopify.CloseModal({ result: false });
         };
 
         self.AssembleDataForUpdate = function() {            
@@ -295,7 +295,7 @@
                     ajax.HttpPost("/CogsService/UpdateAndCopyCogsDetails", data, this);
                 },
                 function () {
-                    ShopifyApp.Modal.close({ result: true });
+                    ProfitWiseShopify.CloseModal({ result: true });
                 });
         };
 
@@ -320,7 +320,7 @@
                     ajax.HttpPost(url, data, this);
                 },
                 function () {
-                    ShopifyApp.Modal.close({ result: true });
+                    ProfitWiseShopify.CloseModal({ result: true });
                 });
         };
 

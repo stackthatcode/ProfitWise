@@ -12,7 +12,8 @@
     <title>@commonContext.FullyBrandedPageTitle</title>
     
     @Html.Partial("_StyleAndScripts")    
-    @if (commonContext != null)
+    @* Authenticated Users' context will carry these variables *@
+    @if (commonContext != null && !commonContext.IsImpersonated)
     {
     <script>
         ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');

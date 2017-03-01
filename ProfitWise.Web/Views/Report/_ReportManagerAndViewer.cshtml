@@ -392,8 +392,10 @@
         self.Delete = function() {
             flow.exec(
                 function () {
-                    ShopifyApp.Modal.confirm(
-                        "Are you sure you want to delete the Report named '" + self.Name() + "'?", this);
+                    ProfitWiseShopify.Confirm({
+                        message: "Are you sure you want to delete the Report named '" + self.Name() + "'?",
+                        callback: this
+                    });
                 },
                 function (result) {
                     if (!result) {

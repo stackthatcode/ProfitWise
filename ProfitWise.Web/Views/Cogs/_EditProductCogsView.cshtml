@@ -347,7 +347,9 @@
                 title: 'Set Stocked Directly for all Variants for this Product',
                 width: 'small',
                 height: 250,
-            }, self.Refresh);
+            }, function(data) {
+                self.Refresh();
+            });
         }
         
         self.ExcludedDialogPopup = function () {            
@@ -360,7 +362,9 @@
                 title: 'Set Exclude/Include for all Product Variants',
                 width: 'small',
                 height: 200,
-            }, self.Refresh);
+            }, function(data) {
+                self.Refresh();
+            });
         };
         
         self.CogsDetailDialogPopup = function (pwMasterVariantId, dialogTitle) {
@@ -372,7 +376,9 @@
                 title: 'Edit CoGS Detail: ' + dialogTitle,
                 width: 'large',
                 height: 500,
-            }, self.Refresh);
+            }, function(data) {
+                self.Refresh();
+            });
         }
 
 
