@@ -1,0 +1,58 @@
+﻿@using ProfitWise.Web.Attributes
+@using ProfitWise.Web.Plumbing
+@{
+    var authenticatedContext = Context.AuthenticatedContext();
+}
+
+<!-- Impersonation View -->
+<style>
+    #impersonation-footer {
+        position: fixed;
+        height: 100px;
+        background-color: white;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        padding: 20px;
+        margin-bottom: 0px;
+        border-top: #555 dashed 1px;
+    }
+
+    #standard-footer {
+        margin-bottom: 100px !important;
+    }
+</style>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content"  style="height: 500px;">
+            <iframe frameborder="0" style="height: 500px; width:100%"></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="impersonation-footer">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="alert alert-danger" role="alert" style="text-align: center;">
+                WARNING: you are currently Impersonating User:
+                <strong>@authenticatedContext.IdentitySnapshot.ShopName</strong>
+            </div>
+        </div>        
+        <div class="col-xs-6">
+            <div class="dropup">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    Application Navigation
+                    <span class="caret"></span>
+                </button>
+
+                <ul class="dropdown-menu">
+                    <li><a href="@GlobalConfig.BaseUrl/Report/Profitability">Profitability Report</a></li>
+                    <li><a href="@GlobalConfig.BaseUrl/Report/GoodsOnHand">Inventory Valuation</a></li>
+                    <li><a href="@GlobalConfig.BaseUrl/Cogs/Products">Manage Products CoGS</a></li>
+                    <li><a href="@GlobalConfig.BaseUrl/Preferences/Edit">Edit Preferences</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

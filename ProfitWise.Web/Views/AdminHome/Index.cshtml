@@ -62,6 +62,7 @@
             <th>Email</th>
             <th>Time Zone / Currency</th>
             <th>UserId / PwShopId</th>
+            <th>Impersonate</th>
         </tr>
         </thead>
         <tbody data-bind="foreach: Users">
@@ -75,6 +76,9 @@
             <td>
                 <span data-bind="text: UserId"></span><br />
                 <span data-bind="text: PwShopId"></span>
+            </td>
+            <td>
+                <a href="#" data-bind="click: ImpersonateClick">Impersonate</a>                
             </td>
         </tr>
         </tbody>

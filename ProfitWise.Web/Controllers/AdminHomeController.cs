@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
+using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Json;
@@ -59,22 +60,18 @@ namespace ProfitWise.Web.Controllers
         [ValidateJsonAntiForgeryToken]
         public ActionResult Impersonate(string userId)
         {
-            throw new NotImplementedException();
-
-            //var currentUserId = HttpContext.User.ExtractUserId();
-            //_shopifyCredentialService.SetAdminImpersonation(currentUserId, userId);
-            //return JsonNetResult.Success();
+            var currentUserId = HttpContext.User.ExtractUserId();
+            _shopifyCredentialService.SetAdminImpersonation(currentUserId, userId);
+            return JsonNetResult.Success();
         }
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken]
         public ActionResult ClearImpersonation()
         {
-            throw new NotImplementedException();
-
-            //var currentUserId = HttpContext.User.ExtractUserId();
-            //_shopifyCredentialService.ClearAdminImpersonation(currentUserId);
-            //return RedirectToAction("Users");
+            var currentUserId = HttpContext.User.ExtractUserId();
+            _shopifyCredentialService.ClearAdminImpersonation(currentUserId);
+            return RedirectToAction("Users");
         }
     }
 }

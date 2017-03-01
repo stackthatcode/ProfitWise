@@ -29,8 +29,7 @@ namespace ProfitWise.Web
 
             bundles.Add(new ScriptBundle("~/Bundles/ProfitWise")
                 .Include("~/Scripts/ProfitWise/ProfitWiseFunctions.js")
-                .Include("~/Scripts/ProfitWise/ProfitWiseCurrency.js")
-                .Include("~/Scripts/ProfitWise/ProfitWiseShopify.js"));
+                .Include("~/Scripts/ProfitWise/ProfitWiseCurrency.js"));
 
             bundles.Add(new StyleBundle("~/Content/Bootstrap")
                 .Include("~/Content/bootstrap-3.3.7-dist/css/bootstrap.min.css"));

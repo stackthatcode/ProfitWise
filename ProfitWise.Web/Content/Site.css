@@ -96,6 +96,10 @@ td.overflow-gracefully {
 }
 
 
+#standard-footer {
+    width: 100%; margin-top: 25px; margin-bottom: 25px; text-align: center;
+}
+
 
 
 /** Bootstrap customizations **/

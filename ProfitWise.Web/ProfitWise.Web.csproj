@@ -503,6 +503,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\Rackspace Jonze Is At it!.pubxml" />
+    <Content Include="Views\Shared\_Impersonation.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

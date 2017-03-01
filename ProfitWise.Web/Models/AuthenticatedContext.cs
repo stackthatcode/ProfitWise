@@ -11,6 +11,8 @@ namespace ProfitWise.Web.Models
         public DateTime Today { get; set; }
         public IdentitySnapshot IdentitySnapshot { get; set; }
         public string ShopUrl => "https://" + IdentitySnapshot.ShopDomain;
+        public bool IsImpersonated => IdentitySnapshot != null && IdentitySnapshot.Impersonated;
+        
 
         // Controlled by View
         public string PageTitle { get; set; }

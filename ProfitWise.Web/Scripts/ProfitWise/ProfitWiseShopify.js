@@ -1,7 +1,4 @@
 ﻿var ProfitWiseShopify = ProfitWiseShopify || {};
-var ProfitWiseConfig = ProfitWiseConfig || {};
-
-ProfitWiseConfig.BaseUrl = '/ProfitWise';
 
 ProfitWiseShopify.AppInitialize = function(apiKey, shopOrigin) {
     ShopifyApp.init({
