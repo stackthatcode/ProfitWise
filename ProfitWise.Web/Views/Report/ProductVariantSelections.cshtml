@@ -2,8 +2,8 @@
 @using ProfitWise.Web.Models
 @model ProductVariantSelectionModel
 @{
-    Context.PullCommonContext().PageTitle = @Model.SelectionType + " Selections";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    Context.AuthenticatedContext().PageTitle = @Model.SelectionType + " Selections";
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")

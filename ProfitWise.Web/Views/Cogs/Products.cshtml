@@ -3,7 +3,7 @@
 
 @model ProfitWise.Web.Models.EditProductCogsModel
 @{
-    Context.PullCommonContext().PageTitle = "Manage Products and CoGS";
+    Context.AuthenticatedContext().PageTitle = "Manage Products and CoGS";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")

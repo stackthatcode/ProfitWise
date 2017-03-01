@@ -3,8 +3,8 @@
 @using Push.Foundation.Utilities.Json
 @model AddVariantToConsolidationModel
 @{
-    Context.PullCommonContext().PageTitle = "Variant Consolidation";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    Context.AuthenticatedContext().PageTitle = "Variant Consolidation";
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")

@@ -30,7 +30,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Search(CogsSearchParameters parameters)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
 
             long newPickListId;
@@ -67,7 +67,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult RetrieveResults(SearchResultSelection resultSelection)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
 
@@ -108,7 +108,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult RetrieveMasterProduct(long pwMasterProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var shopCurrencyId = userIdentity.PwShop.CurrencyId;
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
@@ -141,7 +141,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult StockedDirectlyByPickList(long pickListId, bool newValue)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateStockedDirectlyByPicklist(pickListId, newValue);
@@ -151,7 +151,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult StockedDirectlyByMasterProductId(long pwMasterProductId, bool value)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateStockedDirectlyByMasterProductId(pwMasterProductId, value);
@@ -161,7 +161,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult ExcludeByPickList(long pickListId, bool value)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateExcludeByPicklist(pickListId, value);
@@ -171,7 +171,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult ExcludeByMasterProductId(long pwMasterProductId, bool value)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateExcludeByMasterProductId(pwMasterProductId, value);
@@ -181,7 +181,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult ExcludeByMasterVariantId(long pwMasterVariantId, bool value)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateExcludeByMasterVariantId(pwMasterVariantId, value);
@@ -191,7 +191,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult StockedDirectlyByMasterVariantId(long pwMasterVariantId, bool value)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             cogsRepository.UpdateStockedDirectlyByMasterVariantId(pwMasterVariantId, value);
@@ -204,7 +204,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult UpdateSimpleCogs(long pwMasterVariantId, CogsDto simpleCogs)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
             simpleCogs.ValidateCurrency(_currencyService); 
             service.SaveCogsForMasterVariant(pwMasterVariantId, simpleCogs, null);
@@ -219,7 +219,7 @@ namespace ProfitWise.Web.Controllers
             details = details ?? new List<CogsDto>();             
             details.ForEach(x => x.ValidateCurrency(_currencyService));
 
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
             service.SaveCogsForMasterVariant(pwMasterVariantId, defaults, details);
             return JsonNetResult.Success();
@@ -233,7 +233,7 @@ namespace ProfitWise.Web.Controllers
             details = details ?? new List<CogsDto>();
             details.ForEach(x => x.ValidateCurrency(_currencyService));
 
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
             service.SaveCogsForPickList(pwPickListId, defaults, details);
 
@@ -248,7 +248,7 @@ namespace ProfitWise.Web.Controllers
             details = details ?? new List<CogsDto>();
             details.ForEach(x => x.ValidateCurrency(_currencyService));
 
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeCogsService(userIdentity.PwShop);
 
             var repository = _factory.MakeProductRepository(userIdentity.PwShop);

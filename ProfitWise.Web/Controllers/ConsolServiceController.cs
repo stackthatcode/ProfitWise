@@ -23,7 +23,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Search(long pwMasterProductId, long? pickListId, string terms)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
 
             long newPickListId;
@@ -51,7 +51,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult RetrieveResults(
                 long pickListId, int pageNumber, int pageSize, int sortByColumn, bool sortByDirectionDown)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
             var pickListRepository = _factory.MakePickListRepository(userIdentity.PwShop);
 
@@ -71,7 +71,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult MasterProduct(long pwMasterProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var productRepository = _factory.MakeProductRepository(userIdentity.PwShop);
             var variantRepository = _factory.MakeVariantRepository(userIdentity.PwShop);
 
@@ -84,7 +84,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult MasterVariant(long pwMasterVariantId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var variantRepository = _factory.MakeVariantRepository(userIdentity.PwShop);
             var variants = variantRepository.RetrieveVariantsForMasterVariant(pwMasterVariantId);
 
@@ -94,7 +94,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult ConsolidateProduct(long targetMasterProductId, long inboundMasterProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeConsolidationService(userIdentity.PwShop);
             var repository = _factory.MakeProductRepository(userIdentity.PwShop);
 
@@ -113,7 +113,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult DeconsolidateProduct(long pwProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeConsolidationService(userIdentity.PwShop);
 
             using (var transaction = service.InitiateTransaction())
@@ -129,7 +129,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult PrimaryProduct(long pwMasterProductId, long pwProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var builderService = _factory.MakeCatalogBuilderService(userIdentity.PwShop);
             var retrievalService = _factory.MakeCatalogRetrievalService(userIdentity.PwShop);
             var repository = _factory.MakeProductRepository(userIdentity.PwShop);
@@ -159,7 +159,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult ConsolidateVariant(long targetMasterVariantId, long inboundMasterVariantId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeConsolidationService(userIdentity.PwShop);
 
             using (var transaction = service.InitiateTransaction())
@@ -174,7 +174,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult DeconsolidateVariant(long pwVariantId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var service = _factory.MakeConsolidationService(userIdentity.PwShop);
 
             using (var transaction = service.InitiateTransaction())
@@ -190,7 +190,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult PrimaryVariant(long pwMasterVariantId, long pwVariantId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var builderService = _factory.MakeCatalogBuilderService(userIdentity.PwShop);
             var repository = _factory.MakeVariantRepository(userIdentity.PwShop);
 

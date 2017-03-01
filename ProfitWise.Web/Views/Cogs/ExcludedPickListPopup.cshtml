@@ -2,8 +2,8 @@
 @model ProfitWise.Web.Models.SimplePickList
 
 @{
-    Context.PullCommonContext().PageTitle = "Bulk Exclude/Include Products";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    Context.AuthenticatedContext().PageTitle = "Bulk Exclude/Include Products";
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
 }
 
 

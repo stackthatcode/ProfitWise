@@ -2,8 +2,8 @@
 @using ProfitWise.Web.Models
 @model ProductConsolidationSearchModel
 @{
-    Context.PullCommonContext().PageTitle = "Search for Products to Consolidate With";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    Context.AuthenticatedContext().PageTitle = "Search for Products to Consolidate With";
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")

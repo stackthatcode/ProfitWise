@@ -1,6 +1,6 @@
 ﻿@using ProfitWise.Web.Attributes
 @{
-    var commonContext = Context.PullCommonContext();
+    var commonContext = Context.AuthenticatedContext();
 }
 
 <!DOCTYPE html>
@@ -11,9 +11,8 @@
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
     <title>@commonContext.FullyBrandedPageTitle</title>
     
-    @Html.Partial("_StyleAndScripts")
-    
-    @if (commonContext.IdentitySnapshot.IsAdmin)
+    @Html.Partial("_StyleAndScripts")    
+    @if (commonContext != null)
     {
     <script>
         ProfitWiseShopify.AppInitialize('@commonContext.ShopifyApiKey', '@commonContext.ShopUrl');

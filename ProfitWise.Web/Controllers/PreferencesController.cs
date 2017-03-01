@@ -33,7 +33,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Edit()
         {
-            var shop = HttpContext.PullIdentity().PwShop;
+            var shop = HttpContext.IdentitySnapshot().PwShop;
             return View(shop);
         }
         
@@ -48,7 +48,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult UpdateStartingDate(DateTime startDate)
         {
-            var shop = HttpContext.PullIdentity().PwShop;
+            var shop = HttpContext.IdentitySnapshot().PwShop;
 
             // Translate what the User was seeing in the UI to Server Time Zone
             var translatedStartDate = _timeZoneTranslator.ToServerTime(startDate, shop.TimeZone);
@@ -67,7 +67,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult UpdateDefaultMargin(bool useDefaultMargin, decimal defaultMargin)
         {
-            var shop = HttpContext.PullIdentity().PwShop;
+            var shop = HttpContext.IdentitySnapshot().PwShop;
             _shopRepository.UpdateDefaultMargin(shop.PwShopId, useDefaultMargin, defaultMargin);
 
             // Update the in-memory copy thereof...
@@ -81,7 +81,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult UpdateDefaultDateRange(int dateRangeId)
         {
-            var shop = HttpContext.PullIdentity().PwShop;
+            var shop = HttpContext.IdentitySnapshot().PwShop;
             _shopRepository.UpdateDateRangeDefault(shop.PwShopId, dateRangeId);
             return JsonNetResult.Success();
         }
@@ -89,7 +89,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult UpdateProfitRealization(int profitRealizationId)
         {
-            var shop = HttpContext.PullIdentity().PwShop;
+            var shop = HttpContext.IdentitySnapshot().PwShop;
             _shopRepository.UpdateProfitRealization(shop.PwShopId, profitRealizationId);
             shop.ProfitRealization = profitRealizationId; // Need to update the in-memory value!
 
@@ -102,7 +102,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult StoreDataReady()
         {
-            var storeDataLoaded = this.HttpContext.PullIdentity().PwShop.IsDataLoaded;
+            var storeDataLoaded = this.HttpContext.IdentitySnapshot().PwShop.IsDataLoaded;
             return new JsonNetResult(new { storeDataLoaded });
         }
 

@@ -1,7 +1,7 @@
 ﻿@using ProfitWise.Web.Attributes
 
 @{
-    var commonContext = Context.PullCommonContext();
+    var commonContext = Context.AuthenticatedContext();
     var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
 }
 

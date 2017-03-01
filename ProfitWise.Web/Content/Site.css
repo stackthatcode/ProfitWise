@@ -239,15 +239,15 @@ h4 {
 }
 
 
-.exception {
+.system-page {
     margin: 30px; padding: 30px; background-color: #FFF;  min-height: 500px;
 }
 
-.exception h2.header {
+.system-page h2.header {
     color: #666;        
 }
 
-.exception .top-spacer {
+.system-page .top-spacer {
     height: 20px;
 }
 

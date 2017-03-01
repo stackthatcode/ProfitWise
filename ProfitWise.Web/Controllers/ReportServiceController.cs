@@ -33,7 +33,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult All(int reportTypeId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
 
             var systemReports = repository.RetrieveSystemDefinedReports(reportTypeId);
@@ -46,7 +46,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Report(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
 
             var current = repository.RetrieveReport(reportId);
@@ -59,7 +59,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult SaveAs(long reportId, string name, bool deleteOriginal)
         {
             name = name.TruncateAfter(50);
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
@@ -122,7 +122,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Save(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
@@ -163,7 +163,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult CopyForEditing(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
@@ -181,7 +181,7 @@ namespace ProfitWise.Web.Controllers
                 long reportId, ReportGrouping groupingId, ReportOrdering orderingId, 
                 DateTime startDate, DateTime endDate)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
 
             var report = repository.RetrieveReport(reportId);
@@ -200,7 +200,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Accessed(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             if (!repository.ReportExists(reportId))
             {
@@ -216,7 +216,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Delete(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
@@ -242,7 +242,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult RecordCounts(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
             var output = repository.RetrieveReportRecordCount(reportId);
             return new JsonNetResult(output);
@@ -252,7 +252,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult ProductSelectionsByPage(long reportId, int pageNumber = 1,
             int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var filterRepository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfProducts;
@@ -266,7 +266,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult VariantSelectionsByPage(
                 long reportId, int pageNumber = 1, int pageSize = PreviewSelectionLimit.MaximumNumberOfProducts)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
 
             var limit = PreviewSelectionLimit.MaximumNumberOfVariants;

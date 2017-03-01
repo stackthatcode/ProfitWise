@@ -122,14 +122,14 @@ namespace ProfitWise.Web.Attributes
 
             logger.Debug($"Successfully hydrated User {user.Id} Identity Snapshot into HttpContext");
 
-            var commonContext = new CommonContext
+            var commonContext = new AuthenticatedContext
             {
                 Today = timeZoneTranslator.ToOtherTimeZone(DateTime.Today, pwShop.TimeZone),
                 ShopifyApiKey = ProfitWiseConfiguration.Settings.ShopifyApiKey,
                 IdentitySnapshot = identity,
             };
 
-            filterContext.HttpContext.PushCommonContext(commonContext);
+            filterContext.HttpContext.AuthenticatedContext(commonContext);
         }
     }
 }

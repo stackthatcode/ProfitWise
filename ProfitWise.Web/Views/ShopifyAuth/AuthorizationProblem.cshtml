@@ -1,10 +1,10 @@
 @model ProfitWise.Web.Models.AuthorizationProblemModel
 @{
     ViewBag.Title = "ProfitWise - " + @Model.Title;
-    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+    Layout = "~/Views/Shared/_PageLayout.cshtml";
 }
 
-<div class="exception">
+<div class="system-page">
     <h2 class="header">ProfitWise - @Model.Title</h2>
     <h4>@Model.Message</h4>
     <div style="height: 25px;"></div>

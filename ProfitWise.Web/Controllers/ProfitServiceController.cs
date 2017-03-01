@@ -38,7 +38,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Summary(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);            
             var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);
             
@@ -95,7 +95,7 @@ namespace ProfitWise.Web.Controllers
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering, 
                 int pageNumber = 1, int pageSize = 50)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);           
             var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);
             var dataService = _factory.MakeDataService(userIdentity.PwShop);
@@ -145,7 +145,7 @@ namespace ProfitWise.Web.Controllers
         public FileContentResult ExportDetail(
                 long reportId, ReportGrouping grouping, ColumnOrdering ordering)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var dataService = _factory.MakeDataService(userIdentity.PwShop);            
             var totals = dataService.ProfitabilityDetails(reportId, grouping, ordering, 1, 100000);
 
@@ -160,7 +160,7 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Drilldown(
                 long reportId, ReportGrouping grouping, string key, string name, DateTime start, DateTime end)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var queryRepository = _factory.MakeProfitRepository(userIdentity.PwShop);
             
             var keyFilters = new List<string>() {key};

@@ -35,7 +35,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Products()
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
             
             var model = new EditProductCogsModel()
@@ -54,7 +54,7 @@ namespace ProfitWise.Web.Controllers
                 throw new Exception("Missing parameters");
             }
 
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
 
             if (pwMasterVariantId.HasValue)
             {
@@ -96,7 +96,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult BulkEditCogs(long pickListId)
         {
-            var identity = this.HttpContext.PullIdentity();
+            var identity = this.HttpContext.IdentitySnapshot();
             var model = new BulkEditAllCogsModel()
             {
                 PickListId = pickListId,
@@ -116,7 +116,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult AddVariantToConsolidation(long pwMasterVariantId, long pwMasterProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             var masterVariants =
@@ -166,7 +166,7 @@ namespace ProfitWise.Web.Controllers
 
         private PwCogsProductSummary RetrieveProduct(int pwMasterProductId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var cogsRepository = _factory.MakeCogsEntryRepository(userIdentity.PwShop);
 
             var product = cogsRepository.RetrieveProduct(pwMasterProductId);

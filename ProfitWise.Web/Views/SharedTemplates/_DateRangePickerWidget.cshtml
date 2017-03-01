@@ -3,7 +3,7 @@
 @using Push.Foundation.Utilities.Json
 
 @{
-    var todayInShopTimeZone = Context.PullCommonContext().Today;
+    var todayInShopTimeZone = Context.AuthenticatedContext().Today;
 }
 
 <style>

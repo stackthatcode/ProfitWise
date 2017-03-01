@@ -41,7 +41,7 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult SaveAs(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeReportRepository(userIdentity.PwShop);
             var report = repository.RetrieveReport(reportId);
 

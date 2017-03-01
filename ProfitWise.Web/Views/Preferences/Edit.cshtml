@@ -4,8 +4,8 @@
 
 @model ProfitWise.Data.Model.Shop.PwShop
 @{
-    Layout = "~/Views/Shared/_AuthenticatedLayout.cshtml";
-    Context.PullCommonContext().PageTitle = "Edit Preferences";
+    Layout = "~/Views/Shared/_PageLayout.cshtml";
+    Context.AuthenticatedContext().PageTitle = "Edit Preferences";
 }
 @Html.Partial("~/Views/SharedTemplates/_DatePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_DateRangePickerWidget.cshtml")

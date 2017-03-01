@@ -4,8 +4,8 @@
 @model ProfitWise.Web.Models.BulkEditAllCogsModel
 
 @{
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
-    Context.PullCommonContext().PageTitle = "Bulk Edit CoGS Values";
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
+    Context.AuthenticatedContext().PageTitle = "Bulk Edit CoGS Values";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")

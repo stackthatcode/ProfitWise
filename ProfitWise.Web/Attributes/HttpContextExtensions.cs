@@ -7,34 +7,34 @@ namespace ProfitWise.Web.Attributes
     {
         public const string Key = "ProfitWise.CommonContext";        
         
-        public static IdentitySnapshot PullIdentity(this HttpContextBase context)
+        public static IdentitySnapshot IdentitySnapshot(this HttpContextBase context)
         {
-            var commonContext = context.Items[Key] as CommonContext;
+            var commonContext = context.Items[Key] as AuthenticatedContext;
             return commonContext?.IdentitySnapshot;
         }
 
-        public static IdentitySnapshot PullIdentity(this HttpContext context)
+        public static IdentitySnapshot IdentitySnapshot(this HttpContext context)
         {
-            var commonContext = context.Items[Key] as CommonContext;
+            var commonContext = context.Items[Key] as AuthenticatedContext;
             return commonContext?.IdentitySnapshot;
         }
 
-        public static CommonContext PullCommonContext(this HttpContextBase context)
+        public static AuthenticatedContext AuthenticatedContext(this HttpContextBase context)
         {
-            return context.Items[Key] as CommonContext;
+            return context.Items[Key] as AuthenticatedContext;
         }
 
-        public static CommonContext PullCommonContext(this HttpContext context)
+        public static AuthenticatedContext AuthenticatedContext(this HttpContext context)
         {
-            return context.Items[Key] as CommonContext;
+            return context.Items[Key] as AuthenticatedContext;
         }
 
-        public static void PushCommonContext(this HttpContextBase context, CommonContext commonContext)
+        public static void AuthenticatedContext(this HttpContextBase context, AuthenticatedContext commonContext)
         {
             context.Items[Key] = commonContext;
         }
 
-        public static void PushCommonContext(this HttpContext context, CommonContext commonContext)
+        public static void AuthenticatedContext(this HttpContext context, AuthenticatedContext commonContext)
         {
             context.Items[Key] = commonContext;
         }

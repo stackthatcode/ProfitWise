@@ -252,7 +252,7 @@
     <Compile Include="Models\CogsDetailModel.cs" />
     <Compile Include="Models\PwCogsMasterProductModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
-    <Compile Include="Models\CommonContext.cs" />
+    <Compile Include="Models\AuthenticatedContext.cs" />
     <Compile Include="Models\EditProductCogsModel.cs" />
     <Compile Include="Models\FilterEditorModel.cs" />
     <Compile Include="Models\PreviewSelectionLimit.cs" />
@@ -328,7 +328,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Report\_ViewStart.cshtml" />
     <Content Include="Views\Error\Http500.cshtml" />
-    <Content Include="Views\Shared\_AuthenticatedLayout.cshtml" />
+    <Content Include="Views\Shared\_PageLayout.cshtml" />
     <Content Include="Views\UserAuxiliary\About.cshtml" />
     <Content Include="Views\UserAuxiliary\Contact.cshtml" />
     <Content Include="Views\AdminAuth\_ExternalLoginsListPartial.cshtml" />
@@ -347,7 +347,6 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Report\Profitability.cshtml" />
-    <Content Include="Views\Shared\_AnonymousLayout.cshtml" />
     <Content Include="Views\AdminHome\Index.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
     <Content Include="Views\AdminAuth\_ViewStart.cshtml" />
@@ -363,7 +362,7 @@
     <Content Include="Views\SharedTemplates\_ProductFilterWidget.cshtml" />
     <Content Include="Views\Shared\_PageFooter.cshtml" />
     <Content Include="Views\SharedTemplates\_MoneyEditorWidget.cshtml" />
-    <Content Include="Views\Shared\_AuthenticatedPopupLayout.cshtml" />
+    <Content Include="Views\Shared\_DialogLayout.cshtml" />
     <Content Include="Views\Shared\_StyleAndScripts.cshtml" />
     <Content Include="Views\Cogs\BulkEditCogs.cshtml" />
     <Content Include="Views\SharedTemplates\_MoneyRangeWidget.cshtml" />
@@ -371,7 +370,6 @@
     <Content Include="Views\Cogs\ExcludedPickListPopup.cshtml" />
     <Content Include="Views\Cogs\ExcludedProductPopup.cshtml" />
     <Content Include="Views\Cogs\StockedPickListPopup.cshtml" />
-    <Content Include="Views\Error\ErrorDialogBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProfitWise.Data\ProfitWise.Data.csproj">
@@ -438,9 +436,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\SaveAs.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Error\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Preferences\Edit.cshtml" />

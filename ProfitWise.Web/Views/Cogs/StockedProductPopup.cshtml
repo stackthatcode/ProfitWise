@@ -2,8 +2,8 @@
 @model ProfitWise.Data.Model.Cogs.PwCogsProductSummary
 
 @{
-    Context.PullCommonContext().PageTitle = "Bulk Set Stocked Directly for Variants";
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    Context.AuthenticatedContext().PageTitle = "Bulk Set Stocked Directly for Variants";
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
 }
 
 <script id="Main-Template" type="text/html">

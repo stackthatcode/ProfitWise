@@ -5,10 +5,10 @@
 
 @model CogsDetailModel
 @{
-    var commonContext = Context.PullCommonContext();
+    var commonContext = Context.AuthenticatedContext();
     commonContext.PageTitle = "Edit CoGS Detail";
     var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
 }
 
 @Html.Partial("~/Views/SharedTemplates/_DatePickerWidget.cshtml")

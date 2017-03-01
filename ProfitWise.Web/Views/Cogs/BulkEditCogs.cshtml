@@ -4,8 +4,8 @@
 
 @model ProfitWise.Web.Models.BulkEditAllCogsModel
 @{
-    Layout = "~/Views/Shared/_AuthenticatedPopupLayout.cshtml";
-    var commonContext = Context.PullCommonContext();
+    Layout = "~/Views/Shared/_DialogLayout.cshtml";
+    var commonContext = Context.AuthenticatedContext();
     commonContext.PageTitle = "Bulk Edit CoGS for Current Product Search";
     var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
 }

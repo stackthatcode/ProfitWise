@@ -35,7 +35,7 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Populate(long reportId)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
             
             using (var trans = new TransactionScope())
@@ -54,7 +54,7 @@ namespace ProfitWise.Web.Controllers
         {
             if (grouping == null)
             {
-                var userIdentity = HttpContext.PullIdentity();
+                var userIdentity = HttpContext.IdentitySnapshot();
                 var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
                 var report = reportRepository.RetrieveReport(reportId);
                 grouping = report.GroupingId;
@@ -71,7 +71,7 @@ namespace ProfitWise.Web.Controllers
                    string productType = null, string vendor = null, long? pwProductId = null,
                    int pageNumber = 1)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             if (grouping == null)
             {
                 var reportRepository = _factory.MakeReportRepository(userIdentity.PwShop);
@@ -92,7 +92,7 @@ namespace ProfitWise.Web.Controllers
                 string productType = null, string vendor = null, long? pwProductId = null,
                 int pageNumber = 1)
         {
-            var userIdentity = HttpContext.PullIdentity();
+            var userIdentity = HttpContext.IdentitySnapshot();
             var queryRepository = _factory.MakeGoodsOnHandRepository(userIdentity.PwShop);
 
             var totals = queryRepository.RetrieveTotals(reportId);

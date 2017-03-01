@@ -8,7 +8,7 @@ namespace ProfitWise.Web.Attributes
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {            
             // Pull the User ID from OWIN plumbing...
-            var identity = filterContext.HttpContext.PullIdentity();
+            var identity = filterContext.HttpContext.IdentitySnapshot();
             var currentUrl = filterContext.HttpContext.Request.Url.PathAndQuery;
 
             if (!identity.PwShop.IsDataLoaded)
