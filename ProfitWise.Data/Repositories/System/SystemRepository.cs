@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using ProfitWise.Data.Database;
+using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Repositories.System
 {
@@ -11,6 +12,10 @@ namespace ProfitWise.Data.Repositories.System
         private readonly ConnectionWrapper _connectionWrapper;
         private IDbConnection Connection => _connectionWrapper.DbConn;
 
+        private static bool _maintenanceActiveCache = false;
+        private static DateTime? _lastMaintenanceActiveCheck;
+        private DateTime NextMaintenanceCheck => _lastMaintenanceActiveCheck ?? DateTime.Now;
+        private readonly object maintenanceConcurrencyLock = new object();
 
         public SystemRepository(ConnectionWrapper connectionWrapper)
         {
@@ -23,6 +28,28 @@ namespace ProfitWise.Data.Repositories.System
         }
 
 
+        public bool RetrieveMaintenanceActive()
+        {
+            lock (maintenanceConcurrencyLock)
+            {
+                if (DateTime.Now >= NextMaintenanceCheck)
+                {
+                    var query = "SELECT [MaintenanceActive] FROM systemstate;";
+                    _maintenanceActiveCache = Connection.Query<bool>(query, new { }).First();
+
+                    // Think ... this could go way farther out to the future
+                    _lastMaintenanceActiveCheck = DateTime.Now.AddMinutes(1);
+                }
+                return _maintenanceActiveCache;
+            }
+        }
+
+        public SystemState Retrieve()
+        {
+            var query = "SELECT * FROM systemstate;";
+            return Connection.Query<SystemState>(query, new { }).First();
+        }
+
         public DateTime? RetrieveLastExchangeRateDate()
         {
             var query = "SELECT ExchangeRateLastDate FROM systemstate;";
@@ -33,6 +60,17 @@ namespace ProfitWise.Data.Repositories.System
             var query = "UPDATE systemstate SET ExchangeRateLastDate = @lastDate;";
             Connection.Execute(query, new { lastDate });
         }
+        
+        public void UpdateMaintenance(bool active, string reason)
+        {
+            _maintenanceActiveCache = active;
+            var query =
+                @"UPDATE systemstate SET 
+                    [MaintenanceActive] = @active,
+                    [MaintenanceReason] = @reason";
+            Connection.Execute(query, new { active, reason });
+        }
+
 
 
 

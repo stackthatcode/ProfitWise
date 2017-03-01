@@ -1,0 +1,71 @@
+﻿@model ProfitWise.Web.Models.WelcomeModel
+@{
+    Layout = "~/Views/Shared/_PageLayout.cshtml";
+}
+
+<script type="text/html" id="Maintenance-Page">
+    <div class="system-page" style="text-align: center;">
+        <h2 class="header">System Maintenance</h2>
+        <h4>ProfitWise is in the middle of scheduled maintenance</h4>
+        <div class="top-spacer"></div>
+        <p>
+            Please bear with us for a few moments. Once we take care some important work, we'll be right back.
+        </p>
+        
+        <div data-bind="if: StoreDataLoaded" style="margin-top:40px; width:50%; margin-left:auto; margin-right: auto;">
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding:30px;">
+                    <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 30px;">
+                        Your store's data is now loaded into ProfitWise
+                    </div>
+                    <a href="@Model.ReturnUrl" class="btn btn-primary" style="width:200px;">
+                        <i class="glyphicon glyphicon-thumbs-up"></i> Proceed
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div> 
+</script>
+
+<div data-bind="template: { name: 'Maintenance-Page' }">    
+</div>
+
+
+<script>
+
+    var welcomeModel = function() {
+        var self = this;
+
+        self.StoreDataLoaded = ko.observable(false);
+
+        self.CheckStoreDataLoaded = function() {
+            flow.exec(
+                function() {
+                    var settings = new ProfitWiseFunctions.AjaxSettings();
+                    settings.UseSpinner = false;
+                    settings.ErrorCallbackFunction = null;
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    ajax.HttpGet("/Preferences/StoreDataReady", this);
+                },
+                function (data) {
+                    console.log(data);
+                    self.StoreDataLoaded(data.storeDataLoaded);
+                });
+        };
+
+        self.Initialize = function() {
+            var pingInteralMilliseconds = 1000; // Please do not change!
+            setInterval(self.CheckStoreDataLoaded, pingInteralMilliseconds);
+        };
+
+        return self;
+    };
+
+    $(document).ready(
+        function() {
+            var model = new welcomeModel();
+            model.Initialize();
+            ko.applyBindings(model);
+        }
+    );
+</script>

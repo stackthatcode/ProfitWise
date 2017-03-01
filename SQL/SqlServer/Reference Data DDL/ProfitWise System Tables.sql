@@ -2,9 +2,6 @@ USE ProfitWise
 GO
 
 
-DROP TABLE IF EXISTS [dbo].[systemstate]
-GO
-
 DROP TABLE IF EXISTS [dbo].[ints]
 GO
 
@@ -19,19 +16,6 @@ GO
 
 
 
-
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[systemstate]') AND type in (N'U'))
-BEGIN
-CREATE TABLE [dbo].[systemstate](
-	[ExchangeRateLastDate] [date] NULL
-) ON [PRIMARY]
-END
-GO
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ints]') AND type in (N'U'))
 BEGIN
@@ -98,8 +82,6 @@ END
 GO
 
 
-INSERT INTO systemstate VALUES (NULL);
-
 INSERT INTO currency VALUES ( 1, 'USD', '$', 'United States dollars' );
 INSERT INTO currency VALUES ( 2, 'EUR', '€', 'Euros' );
 INSERT INTO currency VALUES ( 3, 'JPY', '¥', 'Japanese yen' );
@@ -108,6 +90,33 @@ INSERT INTO currency VALUES ( 5, 'AUD', '$', 'Australian dollars' );
 INSERT INTO currency VALUES ( 6, 'CHF', 'Fr', 'Swiss francs' );
 INSERT INTO currency VALUES ( 7, 'CAD', '$', 'Canadian dollars' );
 
+
+
+
+
+-- Please enter the most recent [ExchangeRateLastDate] value into the INSERT statement below, before executing
+
+SELECT * FROM [systemstate]
+
+DROP TABLE IF EXISTS [dbo].[systemstate]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[systemstate]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[systemstate](
+	[ExchangeRateLastDate] [date] NULL,
+	[MaintenancePeriod] [bit] NOT NULL,
+	[MaintenanceReason] varchar(200) NOT NULL,
+) ON [PRIMARY]
+END
+GO
+
+INSERT INTO systemstate VALUES ('2017-02-20', 0, '');
 
 
 

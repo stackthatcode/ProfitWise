@@ -15,17 +15,20 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly IShopifyCredentialService _shopifyCredentialService;
         private readonly ApplicationSignInManager _applicationSignInManager;
+        private readonly SystemRepository _systemRepository;
         private readonly AdminRepository _repository;
         private readonly CurrencyService _service;
 
         public AdminHomeController(
                 IShopifyCredentialService shopifyCredentialService,
                 ApplicationSignInManager applicationSignInManager,
+                SystemRepository systemRepository,
                 AdminRepository repository,
                 CurrencyService service)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _applicationSignInManager = applicationSignInManager;
+            _systemRepository = systemRepository;
             _repository = repository;
             _service = service;
         }
@@ -72,6 +75,20 @@ namespace ProfitWise.Web.Controllers
             var currentUserId = HttpContext.User.ExtractUserId();
             _shopifyCredentialService.ClearAdminImpersonation(currentUserId);
             return RedirectToAction("Users");
+        }
+
+        [HttpGet]
+        public ActionResult Maintenance()
+        {
+            return new JsonNetResult(new { Active = _systemRepository.RetrieveMaintenanceActive()});
+        }
+
+
+        [HttpPost]
+        public ActionResult Maintenance(bool active)
+        {
+            _systemRepository.UpdateMaintenance(active, "Not supported, yet");
+            return JsonNetResult.Success();
         }
     }
 }

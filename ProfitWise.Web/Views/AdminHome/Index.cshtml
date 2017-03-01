@@ -34,6 +34,10 @@
                    aria-controls="profile" role="tab" data-toggle="tab">Billing Ops</a>
             </li>
             <li role="presentation">
+                <a href="#maintenance-tab" data-bind="click: MaintenanceClick"
+                   aria-controls="profile" role="tab" data-toggle="tab">Maintenance</a>
+            </li>
+            <li role="presentation">
                 <a href="@GlobalConfig.BaseUrl/hangfire"
                    aria-controls="profile" role="tab">Hang Fire</a>
             </li>
@@ -45,9 +49,11 @@
         <div id="users-tab" role="tabpanel" class="tab-pane active reduced-padding"
              data-bind="template: { name: 'Admin-Users', data: $data }">
         </div>
-
         <div id="billing-tab" role="tabpanel" class="tab-pane reduced-padding"
              data-bind="template: { name: 'Admin-Billing', data: $data }">
+        </div>        
+        <div id="maintenance-tab" role="tabpanel" class="tab-pane reduced-padding"
+             data-bind="template: { name: 'Admin-Maintenance', data: $data }">
         </div>
     </div>
 </script>
@@ -94,6 +100,23 @@
     <p>Billing Ops</p>
 </script>
 
+<script type="text/html" id="Admin-Maintenance">
+    <div style="height:40px;"></div>
+    
+    <div class="input-group">
+        <label>Enable Maintenance Mode</label>
+        <select class="form-control" 
+                data-bind="options: MaintenanceOptions,
+                        value: MaintenanceActive,
+                        optionsValue: 'Active',
+                        optionsText: 'Text'">           
+        </select>
+    </div>
+    <div style="margin-top:20px;">
+        <a href="#" class="btn btn-danger" data-bind="click: MaintenanceSelect">Apply Changes</a>
+    </div>
+</script>
+
 
 <script>
     var ProfitWiseAdmin = ProfitWiseAdmin || {};
@@ -128,10 +151,10 @@
                     ajax.HttpPost(url, {}, this, token);
                 },
                 function() {
-                    window.location = '@ProfitWise.Web.Plumbing.GlobalConfig.BaseUrl';
+                    window.location = '@GlobalConfig.BaseUrl';
                 });
-        }
-
+        }            
+        
         self.LoadUsers = function () {
             flow.exec(
                 function () {
@@ -150,7 +173,6 @@
                 });
         };
 
-
         self.Users = ko.observableArray();
 
         self.UsersClick = function () {
@@ -158,6 +180,41 @@
         };
 
         self.BillingClick = function () {
+        };
+
+        self.MaintenanceOptions = [
+            { Active: 0, Text: "Maintenance Mode is now OFF" },
+            { Active: 1, Text: "Maintenance Mode is now ON" }
+        ];
+
+        self.MaintenanceActive = ko.observable(false);
+
+        self.MaintenanceActiveText = ko.computed(function() {
+            return self.MaintenanceActive() == 1 ? "ON" : "OFF";
+        });
+
+        self.MaintenanceClick = function () {
+            flow.exec(
+                function () {
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpGet("/AdminHome/Maintenance", this);
+                },
+                function (data) {
+                    self.MaintenanceActive(data.Active);
+                }
+            );
+        };
+
+        self.MaintenanceSelect = function () {
+                flow.exec(
+                    function () {
+                        var ajax = self.AjaxFactory();
+                        ajax.HttpPost("/AdminHome/Maintenance", { Active:self.MaintenanceActive() }, this);
+                    },
+                    function () {
+                        alert("Maintenace Mode now: " + self.MaintenanceActiveText());
+                    }
+                );
         };
 
         return self;
