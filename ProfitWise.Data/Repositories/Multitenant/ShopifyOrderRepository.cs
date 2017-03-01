@@ -53,7 +53,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query = @"SELECT * FROM ordertable(@PwShopId) WHERE ShopifyOrderId IN @orderIdList";
             var orders =
-                _connectionWrapper.Query<ShopifyOrder>(query, new {orderIdList}).ToList();
+                _connectionWrapper.Query<ShopifyOrder>(query, new {PwShopId, orderIdList}).ToList();
 
             var lineItems = this.RetrieveLineItems(orderIdList);
             var refunds = this.RetrieveRefunds(orderIdList);
