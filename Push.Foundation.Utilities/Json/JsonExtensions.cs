@@ -23,5 +23,10 @@ namespace Push.Foundation.Utilities.Json
             serializer.Serialize(writer, input);
             writer.Flush();
         }
+
+        public static T DeserializeFromJson<T>(this string json)
+        {
+            return JsonConvert.DeserializeObject<T>(json);
+        }
     }
 }

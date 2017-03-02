@@ -81,6 +81,7 @@
     <Compile Include="Interfaces\IEventApiRepository.cs" />
     <Compile Include="Interfaces\IOrderApiRepository.cs" />
     <Compile Include="Interfaces\IProductApiRepository.cs" />
+    <Compile Include="Interfaces\IRecurringApiRepository.cs" />
     <Compile Include="Interfaces\IShopApiRepository.cs" />
     <Compile Include="Model\Event.cs" />
     <Compile Include="Model\EventFilter.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Model\OrderLineItem.cs" />
     <Compile Include="Model\Product.cs" />
     <Compile Include="Model\ProductFilter.cs" />
+    <Compile Include="Model\RecurringApplicationCharge.cs" />
     <Compile Include="Model\Refund.cs" />
     <Compile Include="Model\RefundLineItem.cs" />
     <Compile Include="Model\Shop.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Aspect\IShopifyCredentialConsumer.cs" />
     <Compile Include="Repositories\EventApiRepository.cs" />
     <Compile Include="Repositories\OrderApiRepository.cs" />
+    <Compile Include="Repositories\RecurringApiRepository.cs" />
     <Compile Include="Repositories\ShopApiRepository.cs" />
     <Compile Include="Repositories\ProductApiRepository.cs" />
   </ItemGroup>
