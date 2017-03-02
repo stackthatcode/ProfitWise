@@ -1,7 +1,9 @@
 ﻿using System.Web.Mvc;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
+using Push.Foundation.Web.Json;
 
 
 namespace ProfitWise.Web.Controllers
@@ -10,6 +12,13 @@ namespace ProfitWise.Web.Controllers
     [IdentityProcessor]
     public class ContentController : Controller
     {
+        private SystemRepository _systemRepository;
+
+        public ContentController(SystemRepository systemRepository)
+        {
+            _systemRepository = systemRepository;
+        }
+
         [HttpGet]
         public ActionResult Welcome(string returnUrl)
         {            
@@ -34,6 +43,12 @@ namespace ProfitWise.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult MaintenanceActive()
+        {
+            return new JsonNetResult(
+                new { Active = _systemRepository.RetrieveMaintenanceActive() });   
+        }
     }
 }
 

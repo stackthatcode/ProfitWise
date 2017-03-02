@@ -17,6 +17,7 @@ using ServiceStack.Text;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
+    [MaintenanceAttribute]
     [IdentityProcessor]
     public class ProfitServiceController : Controller
     {

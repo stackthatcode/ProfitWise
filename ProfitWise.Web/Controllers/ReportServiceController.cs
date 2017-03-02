@@ -13,6 +13,7 @@ using Push.Foundation.Utilities.General;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
+    [MaintenanceAttribute]
     [IdentityProcessor]
     public class ReportServiceController : Controller
     {

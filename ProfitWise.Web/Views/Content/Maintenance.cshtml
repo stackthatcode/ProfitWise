@@ -1,4 +1,5 @@
-﻿@model ProfitWise.Web.Models.WelcomeModel
+﻿@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
 }
@@ -12,13 +13,13 @@
             Please bear with us for a few moments. Once we take care some important work, we'll be right back.
         </p>
         
-        <div data-bind="if: StoreDataLoaded" style="margin-top:40px; width:50%; margin-left:auto; margin-right: auto;">
+        <div data-bind="ifnot: MaintenanceActive" style="margin-top:40px; width:50%; margin-left:auto; margin-right: auto;">
             <div class="panel panel-default">
                 <div class="panel-body" style="padding:30px;">
                     <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 30px;">
-                        Your store's data is now loaded into ProfitWise
+                        System Maintenance is now complete!
                     </div>
-                    <a href="@Model.ReturnUrl" class="btn btn-primary" style="width:200px;">
+                    <a href="@GlobalConfig.BaseUrl/Report/Profitability" class="btn btn-primary" style="width:200px;">
                         <i class="glyphicon glyphicon-thumbs-up"></i> Proceed
                     </a>
                 </div>
@@ -30,32 +31,30 @@
 <div data-bind="template: { name: 'Maintenance-Page' }">    
 </div>
 
-
 <script>
 
     var welcomeModel = function() {
         var self = this;
 
-        self.StoreDataLoaded = ko.observable(false);
+        self.MaintenanceActive = ko.observable(true);
 
-        self.CheckStoreDataLoaded = function() {
+        self.CheckMaintenance = function() {
             flow.exec(
                 function() {
                     var settings = new ProfitWiseFunctions.AjaxSettings();
                     settings.UseSpinner = false;
                     settings.ErrorCallbackFunction = null;
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpGet("/Preferences/StoreDataReady", this);
+                    ajax.HttpGet("/Content/MaintenanceActive", this);
                 },
                 function (data) {
-                    console.log(data);
-                    self.StoreDataLoaded(data.storeDataLoaded);
+                    self.MaintenanceActive(data.Active);
                 });
         };
 
         self.Initialize = function() {
-            var pingInteralMilliseconds = 1000; // Please do not change!
-            setInterval(self.CheckStoreDataLoaded, pingInteralMilliseconds);
+            var pingInteralMilliseconds = 5000; // Please do not change!
+            setInterval(self.CheckMaintenance, pingInteralMilliseconds);
         };
 
         return self;

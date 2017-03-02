@@ -14,6 +14,7 @@ namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
     [IdentityProcessor]
+    [MaintenanceAttribute]
     [RequiresStoreData]
     public class CogsController : Controller
     {

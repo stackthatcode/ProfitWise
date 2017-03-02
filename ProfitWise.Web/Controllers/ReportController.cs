@@ -8,6 +8,7 @@ namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
     [IdentityProcessor]
+    [MaintenanceAttribute]
     [RequiresStoreData]
     public class ReportController : Controller
     {

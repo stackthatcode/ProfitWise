@@ -95,3 +95,9 @@ SELECT * FROM AspNetUserRoles;
 
 SELECT * FROM profitwiseshop;
 
+
+SELECT * FROM systemstate;
+
+
+UPDATE systemstate SET MaintenanceActive = 0;
+
