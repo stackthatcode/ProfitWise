@@ -24,8 +24,11 @@ namespace ProfitWise.Batch
             Console.WriteLine("ProfitWise.Batch v1.0 - Push Automated Commerce LLC");
             Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++");
             Console.WriteLine("");
-            
-            var choice = args.Length > 0 && !args[0].IsNullOrEmpty() ? SolicitUserInput() : args[0].Trim();
+
+            var choice =
+                args.Length > 0 && args[0].ToLower() == "service"
+                    ? HangFireBackgroundServiceOption
+                    : SolicitUserInput();
 
             if (choice.Trim() == HangFireBackgroundServiceOption)
             {
