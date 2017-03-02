@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -14,8 +13,8 @@ using Push.Foundation.Web.Json;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
-    [MaintenanceAttribute]
     [IdentityProcessor]
+    [MaintenanceAttribute]
     public class CogsServiceController : Controller
     {
         private readonly MultitenantFactory _factory;

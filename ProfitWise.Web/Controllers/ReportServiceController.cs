@@ -2,7 +2,6 @@
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Reports;
-using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -10,11 +9,12 @@ using Push.Foundation.Web.Json;
 using Push.Foundation.Utilities.General;
 
 
+
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
-    [MaintenanceAttribute]
     [IdentityProcessor]
+    [MaintenanceAttribute]
     public class ReportServiceController : Controller
     {
         private readonly MultitenantFactory _factory;

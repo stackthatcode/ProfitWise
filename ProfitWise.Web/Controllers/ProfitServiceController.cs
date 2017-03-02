@@ -17,8 +17,8 @@ using ServiceStack.Text;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
-    [MaintenanceAttribute]
     [IdentityProcessor]
+    [MaintenanceAttribute]
     public class ProfitServiceController : Controller
     {
         private readonly MultitenantFactory _factory;

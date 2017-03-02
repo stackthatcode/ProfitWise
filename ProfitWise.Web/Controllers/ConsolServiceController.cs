@@ -10,8 +10,8 @@ using Push.Foundation.Web.Json;
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN, USER")]
-    [MaintenanceAttribute]
     [IdentityProcessor]
+    [MaintenanceAttribute]
     public class ConsolServiceController : Controller
     {
         private readonly MultitenantFactory _factory;

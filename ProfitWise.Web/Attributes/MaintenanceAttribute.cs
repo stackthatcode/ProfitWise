@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Repositories.System;
-using ProfitWise.Data.Services;
-using ProfitWise.Web.Models;
-using ProfitWise.Web.Plumbing;
-using Push.Foundation.Utilities.Logging;
-using Push.Foundation.Web.Helpers;
-using Push.Foundation.Web.Identity;
-using Push.Foundation.Web.Interfaces;
 
 
 namespace ProfitWise.Web.Attributes
@@ -26,6 +17,7 @@ namespace ProfitWise.Web.Attributes
                 return;
             }
 
+            // Admins are allowed to use the System while in Maintenance mode
             var authenticatedContext = filterContext.HttpContext.AuthenticatedContext();
             if (authenticatedContext?.IdentitySnapshot != null && authenticatedContext.IdentitySnapshot.IsAdmin)
             {
@@ -42,7 +34,7 @@ namespace ProfitWise.Web.Attributes
                 filterContext.Result = new RedirectToRouteResult(
                     new RouteValueDictionary
                     {
-                        { "controller", "Content" },
+                        { "controller", "Error" },
                         { "action", "Maintenance" }
                     });
             }
