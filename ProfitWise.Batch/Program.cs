@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Hangfire;
+using Microsoft.AspNet.Identity.EntityFramework;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
+using Push.Foundation.Web.Identity;
 
 
 namespace ProfitWise.Batch
@@ -12,6 +15,8 @@ namespace ProfitWise.Batch
         private const string HangFireBackgroundServiceOption = "1";
         private const string ScheduleInitialShopRefreshOption = "2";
         private const string ScheduleBackgroundSystemJobsOption = "3";
+        private const string ResetAdminPasswordOption = "W";
+
 
         static void Main(string[] args)
         {
@@ -35,6 +40,11 @@ namespace ProfitWise.Batch
             if (choice.Trim() == ScheduleInitialShopRefreshOption)
             {
                 ScheduleInitialShopRefresh();
+                return;
+            }
+            if (choice.Trim() == ResetAdminPasswordOption)
+            {
+                ResetAdminPassword();
                 return;
             }
 
@@ -89,6 +99,7 @@ namespace ProfitWise.Batch
             ExitWithAnyKey(); 
         }
         
+
         public static void HangFireBackgroundService()
         {
             Bootstrapper.ConfigureApp(true);
@@ -116,6 +127,80 @@ namespace ProfitWise.Batch
 
                 Console.ReadLine();
             }
+        }
+
+        public static void ResetAdminPassword()
+        {
+            var newPassword = SolicitPassword("Enter your password: ");
+            if (newPassword.Trim() == "")
+            {
+                return;
+            }
+            var confirmPassword = SolicitPassword("Re-enter your password: ");
+            if (confirmPassword.Trim() == "")
+            {
+                return;
+            }
+            if (newPassword != confirmPassword)
+            {
+                Console.WriteLine("Passwords don't match - hit any key to exit");
+                Console.Read();
+                return;
+            }
+
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var context = scope.Resolve<ApplicationDbContext>();
+                var manager = scope.Resolve<ApplicationUserManager>();
+                var store = scope.Resolve<UserStore<ApplicationUser>>();
+
+                var role = context.Roles.First(x => x.Name == "ADMIN");
+                var adminUser = 
+                    context.Users
+                        .First(u => u.Roles.Select(r => r.RoleId).Contains(role.Id));
+
+                var hashedNewPassword = manager.PasswordHasher.HashPassword(newPassword);
+                ApplicationUser cUser = store.FindByIdAsync(adminUser.Id).Result;
+                store.SetPasswordHashAsync(cUser, hashedNewPassword);
+                store.UpdateAsync(cUser);
+
+                Console.WriteLine("Password has been reset... hit any key");
+                Console.Read();
+            }
+        }
+
+        public static string SolicitPassword(string prompt)
+        {
+            string pass = "";
+            Console.Write(prompt);
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(true);
+
+                // Backspace Should Not Work
+                if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
+                {
+                    pass += key.KeyChar;
+                    Console.Write("*");
+                }
+                else
+                {
+                    if (key.Key == ConsoleKey.Backspace && pass.Length > 0)
+                    {
+                        pass = pass.Substring(0, (pass.Length - 1));
+                        Console.Write("\b \b");
+                    }
+                }
+            }
+            // Stops Receving Keys Once Enter is Pressed
+            while (key.Key != ConsoleKey.Enter);
+
+            Console.WriteLine();
+            //Console.WriteLine("The Password You entered is : " + pass);
+            return pass;
         }
     }
 }
