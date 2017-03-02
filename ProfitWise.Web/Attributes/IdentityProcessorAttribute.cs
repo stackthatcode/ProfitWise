@@ -29,27 +29,10 @@ namespace ProfitWise.Web.Attributes
             // Pull the User ID from OWIN plumbing...
             var currentUrl = filterContext.HttpContext.Request.Url.PathAndQuery;
             var shopParameter = filterContext.HttpContext.Request.QueryString["shop"];
-            var userId = filterContext.HttpContext.User.ExtractUserId();
+            var userId = filterContext.HttpContext.User.ExtractUserId();            
 
-            if (userId == null)
-            {
-                logger.Info($"Null UserId - aborting IdentityProcessing");
 
-                // It appears that the Authorize Attribute has incorrectly authorized a user...?
-                filterContext.Result = 
-                    GlobalConfig.Redirect(AuthConfig.UnauthorizedAccessUrl, currentUrl);
-                return;
-            }
-
-            var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
-            if (user == null)
-            {
-                logger.Error($"Unable to retrieve User with Id {userId} - aborting IdentityProcessing");
-                AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
-                return;
-            }
-
+            // Get the Shop Credentials
             var result = credentialService.Retrieve(userId);
             if (result.Success == false)
             {
@@ -63,21 +46,11 @@ namespace ProfitWise.Web.Attributes
 
             // We may have an impersonated User
             var effectiveUserId = result.ShopOwnerUserId;
-
             var pwShop = shopRepository.RetrieveByUserId(effectiveUserId);
-            if (pwShop == null)
-            {
-                // On failure of credential service, throw an error, which will redirect to Server Fault page
-                logger.Error(
-                    $"Shop does not exist for User {effectiveUserId}: '{result.Message}' - aborting IdentityProcessing");
-                AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
-                return;
-            }
 
             if (shopParameter != null && shopParameter != pwShop.Domain)
             {
-                logger.Error($"Currently logged in as {pwShop.Domain}, while accessing App from {shopParameter}");
+                logger.Error($"Currently logged in as {pwShop.Domain}, while accessing App for {shopParameter}");
                 AuthConfig.GlobalSignOut(signInManager);
                 filterContext.Result = GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, currentUrl);
                 return;
@@ -101,6 +74,7 @@ namespace ProfitWise.Web.Attributes
             }
 
             // Retrieve User Access Roles
+            var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
             var userRoleIds = user.Roles.Select(x => x.RoleId);
             var userRoles =
                 roleManager.Roles
@@ -110,7 +84,7 @@ namespace ProfitWise.Web.Attributes
 
             var identity = new IdentitySnapshot()
             {
-                UserId = effectiveUserId,
+                UserId = userId,
                 UserName = user.UserName,
                 Roles = userRoles,
                 Email = user.Email,

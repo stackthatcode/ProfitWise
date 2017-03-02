@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ProfitWise.Data.HangFire;
@@ -78,7 +79,7 @@ namespace ProfitWise.Web.Controllers
 
             // Sign in the user with this external login provider if the user already has a login
             var externalLoginCookieResult =
-                        await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
+                    await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
 
             if (externalLoginCookieResult == SignInStatus.Success)
             {
@@ -109,42 +110,55 @@ namespace ProfitWise.Web.Controllers
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 // The User exists already - good! Even so, copy the latest set of Claims to Persistence
-                PushCookieClaimsToPersistence(externalLoginInfo);
+                SaveExternalCredentialClaims(externalLoginInfo);
                 transaction.Complete();
             }
-
+            
+            // This is really just a bonus...
+            using (var transaction = _shopSynchronizationService.InitiateTransaction())
+            {
+                var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
+                var shop = Shop.MakeFromJson(shopSerialised.Value);
+                _shopSynchronizationService.RefreshShop(user.Id, shop);                
+                transaction.Commit();
+            }
             return RedirectToLocal(returnUrl);
         }
 
-        private async Task<ActionResult> CreateNewUserAndSignIn(
-                        string returnUrl, ExternalLoginInfo externalLoginInfo)
+        private async Task<ActionResult> CreateNewUserAndSignIn(string returnUrl, ExternalLoginInfo externalLoginInfo)
         {
             // It appears that the User does not exist yet
             var email = externalLoginInfo.Email;
             var userName = externalLoginInfo.DefaultUserName;
             ApplicationUser user = null;
 
+            // Atomically creates new User
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                // If User doesn't exist, create a new one
-                user = await _userManager.FindByNameAsync(userName);
-                if (user == null)
+                user = new ApplicationUser { UserName = userName, Email = email,};
+                if (!await _userService.CreateNewUser(user, externalLoginInfo.Login))
                 {
-                    user = new ApplicationUser {UserName = userName, Email = email,};
-                    if (!await _userService.CreateNewUser(user, externalLoginInfo.Login))
-                    {
-                        return RedirectToAction("ExternalLoginFailure", new { returnUrl });
-                    }
+                    return RedirectToAction("ExternalLoginFailure", new { returnUrl });
                 }
 
                 // Save the Shopify Domain and Access Token to Persistence
-                PushCookieClaimsToPersistence(externalLoginInfo);
-
-                _hangFireService.TriggerInitialShopRefresh(user.Id);
+                SaveExternalCredentialClaims(externalLoginInfo);
+                _logger.Info($"Created new User for {email}/{userName} - added to {SecurityConfig.UserRole} Roles and added Login");
                 transaction.Complete();
             }
             
-            _logger.Info($"Created new User for {email}/{userName} - added to {SecurityConfig.UserRole} Roles and added Login");
+            // Atomically creates new Shop, new Batch State and schedules Shop Refresh
+            using (var transaction = _shopSynchronizationService.InitiateTransaction())
+            {
+                var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
+
+                var shop = Shop.MakeFromJson(shopSerialised.Value);
+                _shopSynchronizationService.CreateShop(user.Id, shop);
+
+                _hangFireService.TriggerInitialShopRefresh(user.Id);
+
+                transaction.Commit();
+            }
 
             // Finally Sign-in Manager
             await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
@@ -152,20 +166,14 @@ namespace ProfitWise.Web.Controllers
             return RedirectToLocal(returnUrl);
         }
 
-        private void PushCookieClaimsToPersistence(ExternalLoginInfo externalLoginInfo)
+        private void SaveExternalCredentialClaims(ExternalLoginInfo externalLoginInfo)
         {
             // Matches ASP.NET User with the User identified by the external cookie
-            var user = _credentialService.SetUserCredentials(externalLoginInfo);
-
-            // WARNING: (TODO) => this does not participate in the enclosing/ambient TransactionScope
-            // Update the Shop with the latest serialized Shop from the OAuth handshake
-            var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
-            var shop = new Shop(shopSerialised.Value);
-            _shopSynchronizationService.RefreshShop(user.Id, shop);
-
+            var user = _userManager.FindByName(externalLoginInfo.DefaultUserName);
+            _credentialService.SetUserCredentials(user.Id, externalLoginInfo);
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
-
+        
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -174,6 +182,8 @@ namespace ProfitWise.Web.Controllers
             }
             return Redirect(GlobalConfig.BaseUrl + returnUrl.ExtractQueryString());
         }
+
+
 
 
         // Error pages...

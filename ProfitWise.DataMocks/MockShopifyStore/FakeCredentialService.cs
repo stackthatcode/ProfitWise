@@ -59,10 +59,16 @@ namespace ProfitWise.DataMocks
         {
             throw new NotImplementedException();
         }
+        
 
-        ApplicationUser IShopifyCredentialService.SetUserCredentials(string defaultUserName, string shopName, string unencryptedAccessToken)
+        public void SetUserCredentials(string userId, ExternalLoginInfo externalLoginInfo)
         {
             throw new NotImplementedException();
+        }
+
+        void IShopifyCredentialService.SetUserCredentials(string userId, string shopName, string unencryptedAccessToken)
+        {
+            SetUserCredentials(userId, shopName, unencryptedAccessToken);
         }
     }
 }

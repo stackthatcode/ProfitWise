@@ -95,7 +95,7 @@ INSERT INTO currency VALUES ( 7, 'CAD', '$', 'Canadian dollars' );
 
 
 -- Please enter the most recent [ExchangeRateLastDate] value into the INSERT statement below, before executing
--- SELECT * FROM [systemstate]
+SELECT * FROM [systemstate]
 
 DROP TABLE IF EXISTS [dbo].[systemstate]
 GO
@@ -116,6 +116,9 @@ END
 GO
 
 INSERT INTO systemstate VALUES ('2017-02-20', 0, '');
+
+SELECT * FROM AspNetRoles;
+
 
 
 

@@ -32,7 +32,7 @@ namespace Push.Shopify.Repositories
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
-            var output = new Shop(clientResponse.Body);
+            var output = Shop.MakeFromJson(clientResponse.Body);
             return output;
         }
         

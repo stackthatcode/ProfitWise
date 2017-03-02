@@ -27,7 +27,7 @@ namespace ProfitWise.Data.ProcessSteps
             _shopSynchronizationService = shopSynchronizationService;
         }
         
-        public int Execute(ShopifyCredentials shopifyCredentials)
+        public void Execute(ShopifyCredentials shopifyCredentials)
         {
 
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(shopifyCredentials);
@@ -38,8 +38,7 @@ namespace ProfitWise.Data.ProcessSteps
             var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
 
             // Update Shop with the latest
-            _shopSynchronizationService.RefreshShop(shopifyCredentials.ShopOwnerUserId, shopFromShopify);            
-            return shop.PwShopId;
+            _shopSynchronizationService.RefreshShop(shopifyCredentials.ShopOwnerUserId, shopFromShopify);
         }
     }
 }

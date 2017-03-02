@@ -16,9 +16,7 @@ namespace Push.Foundation.Web.Shopify
 
 
         public ShopifyCredentialService(
-                ApplicationUserManager userManager, 
-                IEncryptionService encryptionService,
-                ClaimsRepository claimsRepository)
+                ApplicationUserManager userManager, IEncryptionService encryptionService, ClaimsRepository claimsRepository)
         {
             _userManager = userManager;
             _encryptionService = encryptionService;
@@ -92,19 +90,17 @@ namespace Push.Foundation.Web.Shopify
             _claimsRepository.RemoveClaim(userId, SecurityConfig.UserImpersonationClaim);
         }
 
-        public ApplicationUser SetUserCredentials(ExternalLoginInfo externalLoginInfo)
+        public void SetUserCredentials(string userId, ExternalLoginInfo externalLoginInfo)
         {
             var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
             var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
             
             // Push the Domain and the Access Token
-            return SetUserCredentials(externalLoginInfo.DefaultUserName, domainClaim.Value, accessTokenClaim.Value);
+            SetUserCredentials(userId, domainClaim.Value, accessTokenClaim.Value);
         }
 
-        public ApplicationUser SetUserCredentials(string defaultUserName, string shopName, string unencryptedAccessToken)
+        public void SetUserCredentials(string userId, string shopName, string unencryptedAccessToken)
         {
-            var user = _userManager.FindByName(defaultUserName);
-            var userId = user.Id;
 
             // Clear out old, potentially invalid Claims
             _claimsRepository.RemoveClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim);
@@ -112,8 +108,6 @@ namespace Push.Foundation.Web.Shopify
 
             _claimsRepository.AddClaim(userId, SecurityConfig.ShopifyOAuthAccessTokenClaim, _encryptionService.Encrypt(unencryptedAccessToken));
             _claimsRepository.AddClaim(userId, SecurityConfig.ShopifyDomainClaim, shopName);
-
-            return user;
         }
 
         public void SetAdminImpersonation(string adminUserId, string shopOwnerId)

@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Shop;
-using ProfitWise.Web.Plumbing;
 using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web.Attributes
 {
     public class IdentitySnapshot
     {
-        // ASP.NET Identity
+        // ASP.NET Identity of the actual logged in User
         public string UserId { get; set; }
         public string Email { get; set; }
         public string UserName { get; set; }
@@ -18,12 +16,12 @@ namespace ProfitWise.Web.Attributes
         public string RolesFlattened => String.Join(",", Roles);
         public bool IsAdmin => Roles?.Contains(SecurityConfig.AdminRole) ?? false;
 
-        // Shopify 
+        // Shopify/ProfitWise Shop
+        // 1.) If the User is the actual Shop Owner
+        // 2.) If an Admin is Impersonating an actual Shop
         public string ShopDomain { get; set; }
         public string ShopName => ShopDomain.ShopName();
         public bool Impersonated { get; set; }
-
-        // ProfitWise Shop
         public PwShop PwShop { get; set; }
     }
 

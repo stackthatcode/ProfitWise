@@ -1,6 +1,5 @@
 ﻿using System;
 using ProfitWise.Data.Model.Preferences;
-using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Model.Shop
 {

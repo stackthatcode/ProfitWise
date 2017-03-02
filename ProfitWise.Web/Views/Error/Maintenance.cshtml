@@ -10,7 +10,7 @@
         <h4>ProfitWise is in the middle of scheduled maintenance</h4>
         <div class="top-spacer"></div>
         <p>
-            Please bear with us for a few moments. Once we take care some important work, we'll be right back.
+            Please bear with us for a few moments. Once we take care of some important work, we'll be right back.
         </p>
         
         <div data-bind="ifnot: MaintenanceActive" style="margin-top:40px; width:50%; margin-left:auto; margin-right: auto;">
@@ -45,7 +45,7 @@
                     settings.UseSpinner = false;
                     settings.ErrorCallbackFunction = null;
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpGet("/Content/MaintenanceActive", this);
+                    ajax.HttpGet("/Error/MaintenanceActive", this);
                 },
                 function (data) {
                     self.MaintenanceActive(data.Active);

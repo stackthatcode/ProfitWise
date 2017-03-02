@@ -89,15 +89,17 @@ FROM AspNetUsers t1
 	INNER JOIN profitwiseshop t4 ON t1.Id = t4.ShopOwnerUserId;
 
 
+
 SELECT * FROM AspNetUsers;
+
+SELECT * FROM AspNetUserClaims;
 
 SELECT * FROM AspNetUserRoles;
 
 SELECT * FROM profitwiseshop;
 
-
-SELECT * FROM systemstate;
-
-
 UPDATE systemstate SET MaintenanceActive = 0;
+
+
+
 

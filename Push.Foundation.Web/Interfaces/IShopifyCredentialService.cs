@@ -8,8 +8,8 @@ namespace Push.Foundation.Web.Interfaces
         CredentialServiceResult Retrieve(string currentUserId);
 
         void ClearUserCredentials(string userId);
-        ApplicationUser SetUserCredentials(ExternalLoginInfo externalLoginInfo);
-        ApplicationUser SetUserCredentials(string defaultUserName, string shopName, string unencryptedAccessToken);
+        void SetUserCredentials(string userId, ExternalLoginInfo externalLoginInfo);
+        void SetUserCredentials(string userId, string shopName, string unencryptedAccessToken);
 
         void ClearAdminImpersonation(string userId);
         void SetAdminImpersonation(string adminUserId, string shopOwnerId);

@@ -5,6 +5,7 @@ using Hangfire;
 using Microsoft.AspNet.Identity.EntityFramework;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Identity;
 
 
@@ -23,9 +24,8 @@ namespace ProfitWise.Batch
             Console.WriteLine("ProfitWise.Batch v1.0 - Push Automated Commerce LLC");
             Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++");
             Console.WriteLine("");
-
-
-            var choice = SolicitUserInput();
+            
+            var choice = args.Length > 0 && !args[0].IsNullOrEmpty() ? SolicitUserInput() : args[0].Trim();
 
             if (choice.Trim() == HangFireBackgroundServiceOption)
             {

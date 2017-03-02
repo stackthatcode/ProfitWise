@@ -55,26 +55,13 @@ namespace ProfitWise.Data.HangFire
 
         public string TriggerInitialShopRefresh(string userId)
         {
-            var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
-            if (shopifyFromClaims.Success == false)
-            {
-                throw new Exception(
-                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
-            }
-
-            var shopifyClientCredentials = new ShopifyCredentials()
-            {
-                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
-                ShopDomain = shopifyFromClaims.ShopDomain,
-                AccessToken = shopifyFromClaims.AccessToken,
-            };
-
-            _logger.Info($"Scheduling Initial Shop Refresh for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
+            _logger.Info($"Scheduling Initial Shop Refresh for Shop: UserId: {userId}");
             var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
             
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             batchRepository.UpdateInitialRefreshJobId(jobId);
+
             return jobId;
         }
 
