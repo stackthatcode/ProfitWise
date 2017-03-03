@@ -148,6 +148,8 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[DefaultMargin] [decimal](15, 2) NOT NULL,
 	[ProfitRealization] [smallint] NOT NULL,
 	[DateRangeDefault] [smallint] NOT NULL,
+	[ShopifyRecurringChargeId] [nvarchar] (50) NULL,
+	[ConfirmationUrl] [nvarchar] (1024) NULL
  CONSTRAINT [PK_profitwiseshop_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,

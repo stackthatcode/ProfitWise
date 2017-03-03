@@ -36,15 +36,27 @@ namespace ProfitWise.Data.Services
         {
             return _connectionWrapper.InitiateTransaction();
         }
-
-
-        // ShopOwnerUserId is an ASP.NET User Id
-        public bool IsShopExistingButDisabled(string shopOwnerUserId)
+        
+        public bool ExistsButDisabled(string shopOwnerUserId)
         {
             var pwShop = _pwShopRepository.RetrieveByUserId(shopOwnerUserId);
             return (pwShop != null && pwShop.IsShopEnabled == false);
         }
-        
+
+        public PwShop UpsertShop(string shopOwnerUserId, Shop shop)
+        {
+            var pwShop = _pwShopRepository.RetrieveByUserId(shopOwnerUserId);
+            if (pwShop == null)
+            {
+                var shopId = CreateShop(shopOwnerUserId, shop);
+                return _pwShopRepository.RetrieveByShopId(shopId);
+            }
+            else
+            {
+                UpdateShop(shopOwnerUserId, shop.Currency, shop.TimeZone);
+                return pwShop;;
+            }
+        }
 
         public int CreateShop(string shopOwnerUserId, Shop shop)
         {

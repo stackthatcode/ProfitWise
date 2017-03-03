@@ -33,21 +33,25 @@ namespace ProfitWise.Data.Services
             };
             return charge;
         }
+        
 
-        public RecurringApplicationCharge UpsertCharge(string userId, string returnUrl)
+
+        public RecurringApplicationCharge CreateCharge(string userId, string returnUrl)
         {
-            var charge = MakeProfitWiseCharge();
-            charge.return_url = returnUrl;
+            var chargeParameter = MakeProfitWiseCharge();
+            chargeParameter.return_url = returnUrl;
             
             var shopifyFromClaims = _credentialService.Retrieve(userId);
             var credentials = shopifyFromClaims.ToShopifyCredentials();
 
             var repository = _factory.MakeRecurringApiRepository(credentials);
-            var result = repository.UpsertCharge(charge);
+            var chargeResult = repository.UpsertCharge(chargeParameter);
 
-            // TODO => update ProfitWise Shop with the Recurring Id
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            _shopRepository.UpdateRecurringCharge(
+                    shop.PwShopId, chargeResult.id, chargeResult.confirmation_url);
 
-            return result;
+            return chargeParameter;
         }
 
         public RecurringApplicationCharge RetrieveCharge(string userId)

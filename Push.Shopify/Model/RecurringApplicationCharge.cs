@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Push.Shopify.Model
 {
@@ -32,6 +33,7 @@ namespace Push.Shopify.Model
         public string api_client_id { get; set; }
         public decimal price { get; set; }
         public string status { get; set; }
+
         public string return_url { get; set; }
         public DateTime? billing_on { get; set; }
         public DateTime? created_at { get; set; }

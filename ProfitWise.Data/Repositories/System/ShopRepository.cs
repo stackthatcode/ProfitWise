@@ -129,14 +129,14 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, new { pwShopId, dateRangeDefault });
         }
 
-        public void UpdateShopifyRecurringChargeId(int pwShopId, string recurringChargeId)
+        public void UpdateRecurringCharge(int pwShopId, string recurringChargeId, string confirmationUrl)
         {
             var query = @"UPDATE profitwiseshop 
-                        SET [ShopifyRecurringChargeId] = @recurringChargeId
+                        SET [ShopifyRecurringChargeId] = @recurringChargeId,
+                            [ConfirmationUrl] = @confirmationUrl
                         WHERE PwShopId = @pwShopId";
-            _connectionWrapper.Execute(query, new { pwShopId, recurringChargeId });
+            _connectionWrapper.Execute(query, new { pwShopId, recurringChargeId, confirmationUrl });
         }
-
     }
 }
 

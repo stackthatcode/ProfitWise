@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ProfitWise.Data.HangFire;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
@@ -79,132 +80,146 @@ namespace ProfitWise.Web.Controllers
             if (externalLoginInfo == null)
             {
                 _logger.Error("Unable to retrieve ExternalLoginInfo from Authentication Manager");
-
-                // Looks like the first cookie died, was corrupted, etc. We'll ask the User to refresh their browser.
                 return RedirectToAction("ExternalLoginFailure", new { returnUrl });
             }
 
             // Sign in the user with this external login provider if the user already has a login
+            ApplicationUser user;
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                user = await UpsertAspNetUserAndSignIn(externalLoginInfo);
+                transaction.Complete();
+            }
+            if (user == null)
+            {
+                return RedirectToAction("ExternalLoginFailure", new {returnUrl});
+            }
+
+            // Create/Update the Shop
+            PwShop shop = UpsertShop(externalLoginInfo, user);
+            if (shop == null)
+            {
+                return RedirectToAction("SevereAuthorizationFailure", new {returnUrl});
+            }
+
+            // Handle Billing
+            return UpsertBilling(user, returnUrl);
+        }
+
+        private async Task<ApplicationUser> UpsertAspNetUserAndSignIn(ExternalLoginInfo externalLoginInfo)
+        {            
             var externalLoginCookieResult =
                     await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
 
             if (externalLoginCookieResult == SignInStatus.Success)
             {
-                // Found a login, update the Claims and carry on!
-                return await UpdateAccount(returnUrl, externalLoginInfo);
-            }
-            else
-            {
-                // If no login, then provision a brand new ProfitWise account
-                return await CreateNewAccount(returnUrl, externalLoginInfo);
-            }
-        }
+                var email = externalLoginInfo.Email;
+                var userName = externalLoginInfo.DefaultUserName;
+                var newUser = new ApplicationUser {UserName = userName, Email = email,};
 
-        private async Task<ActionResult> UpdateAccount(
-                        string returnUrl, ExternalLoginInfo externalLoginInfo)
-        {
-            var user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
-            if (_shopSynchronizationService.IsShopExistingButDisabled(user.Id))
-            {
-                _logger.Error($"Attempt to login to disabled PwShop by {externalLoginInfo.DefaultUserName}");
-                return RedirectToAction("SevereAuthorizationFailure", new { returnUrl });
-            }
-            _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
-
-            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                // The User exists already - good! Even so, copy the latest set of Claims to Persistence
-                SaveExternalCredentialClaims(externalLoginInfo);
-                transaction.Complete();
-            }
-
-            return RedirectToLocal(returnUrl);
-        }
-
-        private async Task<ApplicationUser> CreateUser(ExternalLoginInfo externalLoginInfo)
-        {
-            var email = externalLoginInfo.Email;
-            var userName = externalLoginInfo.DefaultUserName;
-            
-            // Atomically creates new User
-            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                var user = new ApplicationUser { UserName = userName, Email = email, };
-                if (!await _userService.CreateNewUser(user, externalLoginInfo.Login))
+                if (!await _userService.CreateNewUser(newUser, externalLoginInfo.Login))
                 {
+                    _logger.Warn($"UserService.CreateNewUser failed for {email}/{userName}");
                     return null;
                 }
 
-                SaveExternalCredentialClaims(externalLoginInfo);
-                _logger.Info($"Created new User for {email}/{userName} - added to {SecurityConfig.UserRole} Roles and added Login");
-                transaction.Complete();
+                SaveExternalInfoToClaims(newUser, externalLoginInfo);
+                await _signInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
 
+                _logger.Info($"Created new User, Shopify Login and Claims for {email}/{userName}");
+                
+                return newUser;
+            }
+            else
+            {
+                var user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
+                if (user == null)
+                {
+                    _logger.Warn($"Unable to find AspNet User for {externalLoginInfo.DefaultUserName}");
+                    return null;
+                }
+                SaveExternalInfoToClaims(user, externalLoginInfo);
+
+                _logger.Info($"Updated Claims  for {externalLoginInfo.Email}/{externalLoginInfo.DefaultUserName}");
                 return user;
             }
         }
 
-        private async Task<int> CreateShop(ExternalLoginInfo externalLoginInfo, string userId)
-        {
-            int shopId;
-            using (var transaction = _shopSynchronizationService.InitiateTransaction())
-            {
-                var shopSerialised =
-                    externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
-                var shop = Shop.MakeFromJson(shopSerialised.Value);
-                shopId = _shopSynchronizationService.CreateShop(userId, shop);
-
-                transaction.Commit();
-            }
-            return shopId;
-        }
-
-        private async Task<ActionResult> CreateNewAccount(string returnUrl, ExternalLoginInfo externalLoginInfo)
-        {
-            // Atomically creates new User
-            var user = await CreateUser(externalLoginInfo);
-            if (user == null)
-            {
-                return RedirectToAction("ExternalLoginFailure", new { returnUrl });
-            }
-
-            // Atomically creates new Shop, new Batch State and schedules Shop Refresh
-            var shopId = await CreateShop(externalLoginInfo, user.Id);
-
-            // Create ProfitWise subscription and save
-            var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
-            var charge = _billingService.UpsertCharge(user.Id, verifyUrl);
-            _shopRepository.UpdateShopifyRecurringChargeId(shopId, charge.id);
-
-            // Issue cookies and redirect for Shopify Charge approval
-            await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-            return View("ChargeConfirm", 
-                            new ChargeConfirmModel() { ConfirmationUrl = charge.confirmation_url});
-        }
-
-        private void SaveExternalCredentialClaims(ExternalLoginInfo externalLoginInfo)
+        private void SaveExternalInfoToClaims(ApplicationUser user, ExternalLoginInfo externalLoginInfo)
         {
             // Matches ASP.NET User with the User identified by the external cookie
-            var user = _userManager.FindByName(externalLoginInfo.DefaultUserName);
             _credentialService.SetUserCredentials(user.Id, externalLoginInfo);
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
 
+        private PwShop UpsertShop(ExternalLoginInfo externalLoginInfo, ApplicationUser user)
+        {
+            if (_shopSynchronizationService.ExistsButDisabled(user.Id))
+            {
+                _logger.Warn($"Attempt to login with disabled Shop by {user.Id}");
+            }
 
-        // TODO => try adding charge_id
-        public ActionResult VerifyBilling()
+            PwShop pwShop;
+            using (var transaction = _shopSynchronizationService.InitiateTransaction())
+            {
+                var shopJson = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
+                var shop = Shop.MakeFromJson(shopJson.Value);
+                pwShop = _shopSynchronizationService.UpsertShop(user.Id, shop);
+                transaction.Commit();
+            }
+            return pwShop;
+        }
+        
+        private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
+        {
+            var shop = _shopRepository.RetrieveByUserId(user.Id);
+            if (shop.ShopifyRecurringChargeId == null)
+            {
+                // Create ProfitWise subscription and save
+                var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
+                var charge = _billingService.CreateCharge(user.Id, verifyUrl);
+
+                // Redirect for Shopify Charge approval
+                return View("ChargeConfirm", 
+                    new ChargeConfirmModel() { ConfirmationUrl = charge.confirmation_url });
+            }
+
+            if (!shop.IsBillingValid)
+            {
+                // Redirect for Shopify Charge approval
+                return View("ChargeConfirm", 
+                    new ChargeConfirmModel() { ConfirmationUrl = shop.ConfirmationUrl });
+            }
+            return RedirectToLocal(returnUrl);
+        }
+
+        [HttpGet]
+        public ActionResult VerifyBilling(string charge_id)
         {
             var userId = HttpContext.User.ExtractUserId();
             var charge = _billingService.RetrieveCharge(userId);
-            var valid = charge.status == "accepted";
-
-            // If charge is not valid, then what...?
             var shop = _shopRepository.RetrieveByUserId(userId);
-            _shopRepository.UpdateIsBillingValid(shop.PwShopId, valid);
-            _hangFireService.TriggerInitialShopRefresh(userId);
+            var status = charge.status.ToChargeStatus();
 
-            return Redirect("~");
+            if (status == ChargeStatus.Accepted || status == ChargeStatus.Active)
+            {                
+                _shopRepository.UpdateIsBillingValid(shop.PwShopId, true);
+                _hangFireService.TriggerInitialShopRefresh(userId);
+                return Redirect("~");
+            }
+            else
+            {
+                _shopRepository.UpdateRecurringCharge(shop.PwShopId, null, null);
+                return BillingDeclined();
+            }
         }
 
+        [HttpGet]
+        public ActionResult BillingDeclined()
+        {
+            AuthConfig.GlobalSignOut(_signInManager);
+            return View("BillingDeclined");
+        }
 
 
         // Error page

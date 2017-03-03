@@ -40,7 +40,7 @@ namespace Push.Shopify.Repositories
             
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
         }
-
+        
 
         public virtual RecurringApplicationCharge RetrieveCharge(string id)
         {

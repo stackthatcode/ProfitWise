@@ -506,6 +506,7 @@
     <Content Include="Views\Shared\_Impersonation.cshtml" />
     <Content Include="Views\Error\Maintenance.cshtml" />
     <Content Include="Views\ShopifyAuth\ChargeConfirm.cshtml" />
+    <Content Include="Views\ShopifyAuth\BillingDeclined.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
