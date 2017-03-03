@@ -24,6 +24,11 @@ GO
 DROP TABLE IF EXISTS [dbo].[profitwisebatchstate]
 GO
 
+DROP TABLE IF EXISTS [dbo].[profitwiserecurringcharge]
+GO
+
+
+
 
 
 SET ANSI_NULLS ON
@@ -147,9 +152,7 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[UseDefaultMargin] [smallint] NOT NULL,
 	[DefaultMargin] [decimal](15, 2) NOT NULL,
 	[ProfitRealization] [smallint] NOT NULL,
-	[DateRangeDefault] [smallint] NOT NULL,
-	[ShopifyRecurringChargeId] [nvarchar] (50) NULL,
-	[ConfirmationUrl] [nvarchar] (1024) NULL
+	[DateRangeDefault] [smallint] NOT NULL
  CONSTRAINT [PK_profitwiseshop_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,
@@ -170,6 +173,31 @@ CREATE TABLE [dbo].[profitwisebatchstate](
  CONSTRAINT [PK_profitwisebatchstate_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwiserecurringcharge]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[profitwiserecurringcharge](
+	[PwShopId] [bigint] NOT NULL,
+	[PwChargeId] [bigint] NOT NULL,
+	[ShopifyRecurringChargeId] [nvarchar](50) NOT NULL,
+
+	[ConfirmationUrl] [nvarchar](1024) NOT NULL,	
+	[LastStatus] [int] NOT NULL,
+	[Primary] [bit] NOT NULL,
+
+	[DateCreated] [datetime] NULL,
+	[LastUpdated] [datetime] NULL,
+	[LastJson] [nvarchar](2048) NOT NULL,
+
+ CONSTRAINT [PK_profitwiserecurringcharge_PwShopId] PRIMARY KEY CLUSTERED 
+(
+	[PwShopId] ASC,
+	[PwChargeId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 END

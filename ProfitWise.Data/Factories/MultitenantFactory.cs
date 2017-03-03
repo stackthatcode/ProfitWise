@@ -25,6 +25,8 @@ namespace ProfitWise.Data.Factories
         private readonly Func<ConsolidationService> _consolidationServiceFactory;
         private readonly Func<GoodsOnHandRepository> _goodsOnHandRepositoryFactory;
         private readonly Func<DataService> _dataServiceFactory;
+        private readonly Func<BillingRepository> _billingRepositoryFactory;
+
 
         public MultitenantFactory(
                 Func<ShopifyOrderRepository> orderRepositoryFactory,
@@ -42,7 +44,8 @@ namespace ProfitWise.Data.Factories
                 Func<CogsDownstreamRepository> cogsDataUpdateRepositoryFactory, 
                 Func<ConsolidationService> consolidationServiceFactory, 
                 Func<GoodsOnHandRepository> goodsOnHandRepositoryFactory, 
-                Func<DataService> dataServiceFactory)
+                Func<DataService> dataServiceFactory, 
+                Func<BillingRepository> billingRepositoryFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -60,6 +63,7 @@ namespace ProfitWise.Data.Factories
             _consolidationServiceFactory = consolidationServiceFactory;
             _goodsOnHandRepositoryFactory = goodsOnHandRepositoryFactory;
             _dataServiceFactory = dataServiceFactory;
+            _billingRepositoryFactory = billingRepositoryFactory;
         }
 
         public virtual BatchStateRepository MakeBatchStateRepository(PwShop shop)
@@ -69,6 +73,13 @@ namespace ProfitWise.Data.Factories
             return repository;
         }
 
+        public virtual BillingRepository MakeBillingRepository(PwShop shop)
+        {
+            var repository = _billingRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+        
         public virtual CatalogBuilderService MakeCatalogBuilderService(PwShop shop)
         {
             var service = _productVariantServiceFactory();

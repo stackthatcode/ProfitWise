@@ -99,7 +99,11 @@ namespace ProfitWise.Data.Processes
 
             try
             {
-                _shopRefreshStep.Execute(credentials);
+                if (!_shopRefreshStep.Execute(credentials))
+                {
+                    return;
+                }
+
                 _productRefreshStep.Execute(credentials);
                 _orderRefreshStep.Execute(credentials);
                 _productCleanupStep.Execute(credentials);
@@ -109,7 +113,7 @@ namespace ProfitWise.Data.Processes
                 _pwShopRepository.UpdateIsDataLoaded(shop.PwShopId, true);
 
                 // If it's already scheduled, this will only perform an update
-                _hangFireService.ScheduleRoutineShopRefresh(userId);
+                _hangFireService.AddOrUpdateRoutineShopRefresh(userId);
             }
             catch (BadHttpStatusCodeException exception)
             {

@@ -15,7 +15,8 @@ namespace Push.Shopify.Model
 
     public static class ChargeStatusExtensions
     {
-        private static Dictionary<string, ChargeStatus> _lookup = new Dictionary<string, ChargeStatus>()
+        private static readonly Dictionary<string, ChargeStatus> 
+                _lookup = new Dictionary<string, ChargeStatus>
         {
             { "pending", ChargeStatus.Pending },
             { "accepted", ChargeStatus.Accepted },

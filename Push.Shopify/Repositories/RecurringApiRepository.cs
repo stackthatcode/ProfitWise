@@ -39,13 +39,25 @@ namespace Push.Shopify.Repositories
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
-        }
-        
+        }        
 
-        public virtual RecurringApplicationCharge RetrieveCharge(string id)
+        public virtual RecurringApplicationCharge RetrieveCharge(long id)
         {
             var path = $"/admin/recurring_application_charges/{id}.json";
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
+            var clientResponse = _client.ExecuteRequest(request);
+
+            dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
+
+            return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
+        }
+
+        public virtual RecurringApplicationCharge ActivateCharge(RecurringApplicationCharge input)
+        {
+            var path = $"/admin/recurring_application_charges/{input.id}/activate.json";
+            var json = new { recurring_application_charge = input }.SerializeToJson();
+
+            var request = _requestFactory.HttpPost(ShopifyCredentials, path, json);
             var clientResponse = _client.ExecuteRequest(request);
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);

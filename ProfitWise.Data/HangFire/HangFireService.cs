@@ -53,7 +53,7 @@ namespace ProfitWise.Data.HangFire
         }
         
 
-        public string TriggerInitialShopRefresh(string userId)
+        public string AddOrUpdateInitialShopRefresh(string userId)
         {
             _logger.Info($"Scheduling Initial Shop Refresh for Shop: UserId: {userId}");
             var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
@@ -65,7 +65,7 @@ namespace ProfitWise.Data.HangFire
             return jobId;
         }
 
-        public string ScheduleRoutineShopRefresh(string userId)
+        public string AddOrUpdateRoutineShopRefresh(string userId)
         {
             var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
             if (shopifyFromClaims.Success == false)

@@ -70,36 +70,21 @@ FROM profitwisemastervariant t1
 WHERE t1.PwShopId = 100001 
 
 
-
-SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='ProfitWise'
-ORDER BY TABLE_NAME;
-
-SELECT * FROM profitwisebatchstate HWERE
-
-SELECT * FROM batchstate(100003);
-
-
-SELECT * FROM AspNetRoles;
-
-
-SELECT t1.Id, UserName, Email, t4.TimeZone, t4.Domain, t4.CurrencyId, t4.
-FROM AspNetUsers t1 
-	INNER JOIN AspNetUserRoles t2 ON t1.Id = t2.UserId
-	INNER JOIN AspNetRoles t3 ON t2.RoleId = t3.Id AND t3.Name = 'USER'
-	INNER JOIN profitwiseshop t4 ON t1.Id = t4.ShopOwnerUserId;
-
-
-
 SELECT * FROM AspNetUsers;
 
 SELECT * FROM AspNetUserClaims;
 
-SELECT * FROM AspNetUserRoles;
+SELECT * FROM AspNetUserLogins;
 
 SELECT * FROM profitwiseshop;
 
-UPDATE systemstate SET MaintenanceActive = 0;
+SELECT * FROM profitwisebatchstate;
 
 
 
+SELECT * FROM recurringcharge(100001);
+
+
+
+PwShopId	PwChargeId	ShopifyRecurringChargeId	ConfirmationUrl	LastStatus	Active	DateCreated	LastUpdated
 

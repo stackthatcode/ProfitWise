@@ -95,7 +95,7 @@ namespace ProfitWise.Batch
             using (var scope = container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<HangFireService>();
-                service.TriggerInitialShopRefresh(userId);
+                service.AddOrUpdateInitialShopRefresh(userId);
                 
             }
 

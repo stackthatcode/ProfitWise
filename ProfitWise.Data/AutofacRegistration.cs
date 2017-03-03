@@ -39,6 +39,7 @@ namespace ProfitWise.Data
             builder.RegisterType<CogsDownstreamRepository>();
             builder.RegisterType<GoodsOnHandRepository>();
             builder.RegisterType<AdminRepository>();
+            builder.RegisterType<BillingRepository>();
 
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));

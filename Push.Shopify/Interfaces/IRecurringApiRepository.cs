@@ -7,6 +7,7 @@ namespace Push.Shopify.Interfaces
     public interface IRecurringApiRepository : IShopifyCredentialConsumer
     {
         RecurringApplicationCharge UpsertCharge(RecurringApplicationCharge input);
-        RecurringApplicationCharge RetrieveCharge(string id);
+        RecurringApplicationCharge RetrieveCharge(long id);
+        RecurringApplicationCharge ActivateCharge(RecurringApplicationCharge charge);
     }
 }

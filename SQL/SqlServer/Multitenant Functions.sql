@@ -103,6 +103,15 @@ RETURN SELECT * FROM profitwiseprofitreportentry WHERE PwShopId = @PwShopId;
 GO
 
 
+DROP FUNCTION IF EXISTS dbo.recurringcharge
+GO
+CREATE FUNCTION dbo.recurringcharge(@PwShopId bigint)  
+RETURNS TABLE  
+AS  
+RETURN SELECT * FROM profitwiserecurringcharge WHERE PwShopId = @PwShopId;
+GO
+
+
 DROP FUNCTION IF EXISTS dbo.report
 GO
 CREATE FUNCTION dbo.report(@PwShopId bigint)  

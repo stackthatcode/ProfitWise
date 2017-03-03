@@ -111,7 +111,7 @@ namespace ProfitWise.Web.Controllers
             var externalLoginCookieResult =
                     await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
 
-            if (externalLoginCookieResult == SignInStatus.Success)
+            if (externalLoginCookieResult != SignInStatus.Success)
             {
                 var email = externalLoginInfo.Email;
                 var userName = externalLoginInfo.DefaultUserName;
@@ -172,44 +172,49 @@ namespace ProfitWise.Web.Controllers
         
         private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
         {
-            var shop = _shopRepository.RetrieveByUserId(user.Id);
-            if (shop.ShopifyRecurringChargeId == null)
+            var charge = _billingService.SyncAndRetrieveCurrentCharge(user.Id);
+
+            if (charge == null)
             {
                 // Create ProfitWise subscription and save
                 var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
-                var charge = _billingService.CreateCharge(user.Id, verifyUrl);
+                var newCharge = _billingService.CreateCharge(user.Id, verifyUrl);
 
                 // Redirect for Shopify Charge approval
                 return View("ChargeConfirm", 
-                    new ChargeConfirmModel() { ConfirmationUrl = charge.confirmation_url });
+                    new ChargeConfirmModel() { ConfirmationUrl = newCharge.ConfirmationUrl });
             }
 
-            if (!shop.IsBillingValid)
+            if (!charge.IsValid)
             {
                 // Redirect for Shopify Charge approval
                 return View("ChargeConfirm", 
-                    new ChargeConfirmModel() { ConfirmationUrl = shop.ConfirmationUrl });
+                    new ChargeConfirmModel() { ConfirmationUrl = charge.ConfirmationUrl });
             }
+
             return RedirectToLocal(returnUrl);
         }
+
 
         [HttpGet]
         public ActionResult VerifyBilling(string charge_id)
         {
+            // Notice: we don't use charge_id, as we rely on our cookies - maybe we should use charge_id?
+            // ... or if userId is null, Redirect to Login
+            
             var userId = HttpContext.User.ExtractUserId();
-            var charge = _billingService.RetrieveCharge(userId);
+            var charge = _billingService.SyncAndRetrieveCurrentCharge(userId);
             var shop = _shopRepository.RetrieveByUserId(userId);
-            var status = charge.status.ToChargeStatus();
-
-            if (status == ChargeStatus.Accepted || status == ChargeStatus.Active)
+            
+            if (charge.IsValid)
             {                
                 _shopRepository.UpdateIsBillingValid(shop.PwShopId, true);
-                _hangFireService.TriggerInitialShopRefresh(userId);
+                _hangFireService.AddOrUpdateInitialShopRefresh(userId);
                 return Redirect("~");
             }
             else
             {
-                _shopRepository.UpdateRecurringCharge(shop.PwShopId, null, null);
+                _shopRepository.UpdateIsBillingValid(shop.PwShopId, false);
                 return BillingDeclined();
             }
         }

@@ -26,9 +26,6 @@ namespace ProfitWise.Data.Model.Shop
         public int ProfitRealization { get; set; }
         public int DateRangeDefault { get; set; }
 
-        public string ShopifyRecurringChargeId { get; set; }
-        public string ConfirmationUrl { get; set; }
-
 
         public static PwShop Make(
                 string shopifyUserId, long shopId, int shopCurrencyId, 

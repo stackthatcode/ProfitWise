@@ -86,7 +86,6 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, new { pwShopId, isDataLoaded });
         }
 
-
         public void UpdateIsBillingValid(int pwShopId, bool valid)
         {
             var query = @"UPDATE profitwiseshop 
@@ -127,16 +126,6 @@ namespace ProfitWise.Data.Repositories.System
                         SET DateRangeDefault = @dateRangeDefault
                         WHERE PwShopId = @pwShopId";
             _connectionWrapper.Execute(query, new { pwShopId, dateRangeDefault });
-        }
-
-        public void UpdateRecurringCharge(int pwShopId, string recurringChargeId, string confirmationUrl)
-        {
-            var query = @"UPDATE profitwiseshop 
-                        SET [ShopifyRecurringChargeId] = @recurringChargeId,
-                            [ConfirmationUrl] = @confirmationUrl
-                        WHERE PwShopId = @pwShopId";
-            _connectionWrapper.Execute(query, new { pwShopId, recurringChargeId, confirmationUrl });
-        }
+        }        
     }
 }
-
