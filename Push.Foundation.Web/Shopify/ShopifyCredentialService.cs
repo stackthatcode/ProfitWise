@@ -25,7 +25,7 @@ namespace Push.Foundation.Web.Shopify
 
         public string EffectiveShopUserId(string currentUserId)
         {
-            var roles = _userManager.GetRoles(currentUserId);
+            var  roles = _userManager.GetRoles(currentUserId);
             var isCurrentUserIsAdmin = roles.Contains(SecurityConfig.AdminRole);
 
             if (isCurrentUserIsAdmin)

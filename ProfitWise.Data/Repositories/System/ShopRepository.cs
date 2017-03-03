@@ -21,7 +21,6 @@ namespace ProfitWise.Data.Repositories.System
         }
 
 
-
         public PwShop RetrieveByShopId(int pwShopId)
         {
             var query = @"SELECT * FROM profitwiseshop WHERE PwShopId = @PwShopId";
@@ -43,11 +42,11 @@ namespace ProfitWise.Data.Repositories.System
             var query =
                 @"INSERT INTO profitwiseshop (
                     ShopOwnerUserId, ShopifyShopId, Domain, CurrencyId, TimeZone, 
-                    IsAccessTokenValid, IsShopEnabled, IsDataLoaded,
+                    IsAccessTokenValid, IsShopEnabled, IsDataLoaded, IsBillingValid,
                     StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, DateRangeDefault 
                 ) VALUES (
                     @ShopOwnerUserId, @ShopifyShopId, @Domain, @CurrencyId, @TimeZone,
-                    @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded,
+                    @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded, @IsBillingValid,
                     @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, @DateRangeDefault );
                 SELECT SCOPE_IDENTITY();";
             return _connectionWrapper
@@ -87,6 +86,17 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, new { pwShopId, isDataLoaded });
         }
 
+
+        public void UpdateIsBillingValid(int pwShopId, bool valid)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET [IsBillingValid] = @valid
+                        WHERE PwShopId = @pwShopId";
+            _connectionWrapper.Execute(query, new { pwShopId, valid });
+        }
+
+
+
         public void UpdateStartingDateForOrders(int pwShopId, DateTime startingDateForOrders)
         {
             var query = @"UPDATE profitwiseshop 
@@ -118,6 +128,15 @@ namespace ProfitWise.Data.Repositories.System
                         WHERE PwShopId = @pwShopId";
             _connectionWrapper.Execute(query, new { pwShopId, dateRangeDefault });
         }
+
+        public void UpdateShopifyRecurringChargeId(int pwShopId, string recurringChargeId)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET [ShopifyRecurringChargeId] = @recurringChargeId
+                        WHERE PwShopId = @pwShopId";
+            _connectionWrapper.Execute(query, new { pwShopId, recurringChargeId });
+        }
+
     }
 }
 

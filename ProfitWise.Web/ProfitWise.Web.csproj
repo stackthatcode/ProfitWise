@@ -246,6 +246,7 @@
     <Compile Include="Models\AddVariantToConsolidationModel.cs" />
     <Compile Include="Models\BulkEditAllCogsModel.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
+    <Compile Include="Models\ChargeConfirmModel.cs" />
     <Compile Include="Models\CogsDetailModel.cs" />
     <Compile Include="Models\PwCogsMasterProductModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
@@ -504,6 +505,7 @@
     <None Include="Properties\PublishProfiles\Rackspace Jonze Is At it!.pubxml" />
     <Content Include="Views\Shared\_Impersonation.cshtml" />
     <Content Include="Views\Error\Maintenance.cshtml" />
+    <Content Include="Views\ShopifyAuth\ChargeConfirm.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

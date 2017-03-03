@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ProfitWise.Data.HangFire;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
@@ -29,6 +30,8 @@ namespace ProfitWise.Web.Controllers
         private readonly ShopSynchronizationService _shopSynchronizationService;
         private readonly OwinUserService _userService;
         private readonly HangFireService _hangFireService;
+        private readonly BillingService _billingService;
+        private readonly ShopRepository _shopRepository;
         private readonly IPushLogger _logger;        
 
         public ShopifyAuthController(
@@ -39,7 +42,9 @@ namespace ProfitWise.Web.Controllers
                 ShopSynchronizationService shopSynchronizationService,
                 OwinUserService userService,
                 HangFireService hangFireService,
-                IPushLogger logger)
+                BillingService billingService,
+                IPushLogger logger, 
+                ShopRepository shopRepository)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
@@ -47,7 +52,9 @@ namespace ProfitWise.Web.Controllers
             _credentialService = credentialService;
             _userService = userService;
             _hangFireService = hangFireService;
+            _billingService = billingService;
             _logger = logger;
+            _shopRepository = shopRepository;
             _shopSynchronizationService = shopSynchronizationService;
         }
 
@@ -84,27 +91,24 @@ namespace ProfitWise.Web.Controllers
             if (externalLoginCookieResult == SignInStatus.Success)
             {
                 // Found a login, update the Claims and carry on!
-                return await UpdateClaimsForExistingUser(returnUrl, externalLoginInfo);
+                return await UpdateAccount(returnUrl, externalLoginInfo);
             }
             else
             {
                 // If no login, then provision a brand new ProfitWise account
-                return await CreateNewUserAndSignIn(returnUrl, externalLoginInfo);
+                return await CreateNewAccount(returnUrl, externalLoginInfo);
             }
         }
 
-        private async Task<ActionResult> UpdateClaimsForExistingUser(
+        private async Task<ActionResult> UpdateAccount(
                         string returnUrl, ExternalLoginInfo externalLoginInfo)
         {
             var user = await _userManager.FindByNameAsync(externalLoginInfo.DefaultUserName);
-
-            // Er, shouldn't this be soley handled by the Identity Processor Attribute?              
             if (_shopSynchronizationService.IsShopExistingButDisabled(user.Id))
             {
                 _logger.Error($"Attempt to login to disabled PwShop by {externalLoginInfo.DefaultUserName}");
                 return RedirectToAction("SevereAuthorizationFailure", new { returnUrl });
             }
-
             _logger.Info($"Existing User {externalLoginInfo.DefaultUserName} has just authenticated");
 
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -113,57 +117,68 @@ namespace ProfitWise.Web.Controllers
                 SaveExternalCredentialClaims(externalLoginInfo);
                 transaction.Complete();
             }
-            
-            // This is really just a bonus...
-            using (var transaction = _shopSynchronizationService.InitiateTransaction())
-            {
-                var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
-                var shop = Shop.MakeFromJson(shopSerialised.Value);
-                _shopSynchronizationService.RefreshShop(user.Id, shop);                
-                transaction.Commit();
-            }
+
             return RedirectToLocal(returnUrl);
         }
 
-        private async Task<ActionResult> CreateNewUserAndSignIn(string returnUrl, ExternalLoginInfo externalLoginInfo)
+        private async Task<ApplicationUser> CreateUser(ExternalLoginInfo externalLoginInfo)
         {
-            // It appears that the User does not exist yet
             var email = externalLoginInfo.Email;
             var userName = externalLoginInfo.DefaultUserName;
-            ApplicationUser user = null;
-
+            
             // Atomically creates new User
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                user = new ApplicationUser { UserName = userName, Email = email,};
+                var user = new ApplicationUser { UserName = userName, Email = email, };
                 if (!await _userService.CreateNewUser(user, externalLoginInfo.Login))
                 {
-                    return RedirectToAction("ExternalLoginFailure", new { returnUrl });
+                    return null;
                 }
 
-                // Save the Shopify Domain and Access Token to Persistence
                 SaveExternalCredentialClaims(externalLoginInfo);
                 _logger.Info($"Created new User for {email}/{userName} - added to {SecurityConfig.UserRole} Roles and added Login");
                 transaction.Complete();
+
+                return user;
             }
-            
-            // Atomically creates new Shop, new Batch State and schedules Shop Refresh
+        }
+
+        private async Task<int> CreateShop(ExternalLoginInfo externalLoginInfo, string userId)
+        {
+            int shopId;
             using (var transaction = _shopSynchronizationService.InitiateTransaction())
             {
-                var shopSerialised = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
-
+                var shopSerialised =
+                    externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
                 var shop = Shop.MakeFromJson(shopSerialised.Value);
-                _shopSynchronizationService.CreateShop(user.Id, shop);
-
-                _hangFireService.TriggerInitialShopRefresh(user.Id);
+                shopId = _shopSynchronizationService.CreateShop(userId, shop);
 
                 transaction.Commit();
             }
+            return shopId;
+        }
 
-            // Finally Sign-in Manager
+        private async Task<ActionResult> CreateNewAccount(string returnUrl, ExternalLoginInfo externalLoginInfo)
+        {
+            // Atomically creates new User
+            var user = await CreateUser(externalLoginInfo);
+            if (user == null)
+            {
+                return RedirectToAction("ExternalLoginFailure", new { returnUrl });
+            }
+
+            // Atomically creates new Shop, new Batch State and schedules Shop Refresh
+            var shopId = await CreateShop(externalLoginInfo, user.Id);
+
+            // Create ProfitWise subscription and save
+            var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
+            var charge = _billingService.UpsertCharge(user.Id, verifyUrl);
+            _shopRepository.UpdateShopifyRecurringChargeId(shopId, charge.id);
+
+            // Issue cookies and redirect for Shopify Charge approval
             await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-            return RedirectToLocal(returnUrl);
+            return View("ChargeConfirm", 
+                            new ChargeConfirmModel() { ConfirmationUrl = charge.confirmation_url});
         }
 
         private void SaveExternalCredentialClaims(ExternalLoginInfo externalLoginInfo)
@@ -173,20 +188,26 @@ namespace ProfitWise.Web.Controllers
             _credentialService.SetUserCredentials(user.Id, externalLoginInfo);
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
-        
-        private ActionResult RedirectToLocal(string returnUrl)
+
+
+        // TODO => try adding charge_id
+        public ActionResult VerifyBilling()
         {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            return Redirect(GlobalConfig.BaseUrl + returnUrl.ExtractQueryString());
+            var userId = HttpContext.User.ExtractUserId();
+            var charge = _billingService.RetrieveCharge(userId);
+            var valid = charge.status == "accepted";
+
+            // If charge is not valid, then what...?
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            _shopRepository.UpdateIsBillingValid(shop.PwShopId, valid);
+            _hangFireService.TriggerInitialShopRefresh(userId);
+
+            return Redirect("~");
         }
 
 
 
-
-        // Error pages...
+        // Error page
         [HttpGet]
         [AllowAnonymous]
         public ActionResult UnauthorizedAccess(string returnUrl)
@@ -249,6 +270,16 @@ namespace ProfitWise.Web.Controllers
                 };
 
             return View("AuthorizationProblem", model);
+        }
+
+
+        private ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return Redirect(GlobalConfig.BaseUrl + returnUrl.ExtractQueryString());
         }
     }
 }

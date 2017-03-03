@@ -64,6 +64,9 @@ namespace ProfitWise.Web.Attributes
                 return;
             }
 
+            // TODO - add IsBillingValid check
+
+
             if (!pwShop.IsAccessTokenValid)
             {
                 logger.Info(

@@ -5,6 +5,7 @@ using ProfitWise.Data.Database;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories.System;
+using ProfitWise.Data.Utility;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.HttpClient;
@@ -92,25 +93,19 @@ namespace ProfitWise.Data.Processes
                     $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
             }
 
-            var shopifyClientCredentials = new ShopifyCredentials()
-            {
-                ShopOwnerUserId = shopifyFromClaims.ShopOwnerUserId,
-                ShopDomain = shopifyFromClaims.ShopDomain,
-                AccessToken = shopifyFromClaims.AccessToken,
-            };
-
-            _pushLogger.Info($"Starting Refresh Process for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
-            _pushLogger.Debug($"Retrieving Shopify Credentials Claims for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
+            var credentials = shopifyFromClaims.ToShopifyCredentials();            
+            _pushLogger.Info($"Starting Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
+            _pushLogger.Debug($"Retrieving Shopify Credentials Claims for Shop: {credentials.ShopDomain}, UserId: {userId}");
 
             try
             {
-                _shopRefreshStep.Execute(shopifyClientCredentials);
-                _productRefreshStep.Execute(shopifyClientCredentials);
-                _orderRefreshStep.Execute(shopifyClientCredentials);
-                _productCleanupStep.Execute(shopifyClientCredentials);
+                _shopRefreshStep.Execute(credentials);
+                _productRefreshStep.Execute(credentials);
+                _orderRefreshStep.Execute(credentials);
+                _productCleanupStep.Execute(credentials);
 
                 // Change the store's status...
-                var shop = _pwShopRepository.RetrieveByUserId(shopifyClientCredentials.ShopOwnerUserId);
+                var shop = _pwShopRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
                 _pwShopRepository.UpdateIsDataLoaded(shop.PwShopId, true);
 
                 // If it's already scheduled, this will only perform an update
@@ -126,7 +121,7 @@ namespace ProfitWise.Data.Processes
                 throw;
             }
 
-            _pushLogger.Info($"FIN - Refresh Process for Shop: {shopifyClientCredentials.ShopDomain}, UserId: {userId}");
+            _pushLogger.Info($"FIN - Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
         }
     }
 }

@@ -141,6 +141,7 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[TimeZone] [nvarchar](50) NULL,
 	[IsAccessTokenValid] [smallint] NOT NULL,
 	[IsShopEnabled] [smallint] NOT NULL,
+	[IsBillingValid] [smallint] NOT NULL,
 	[IsDataLoaded] [smallint] NOT NULL,
 	[StartingDateForOrders] [datetime] NULL,
 	[UseDefaultMargin] [smallint] NOT NULL,

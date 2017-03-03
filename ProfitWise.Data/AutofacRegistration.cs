@@ -56,6 +56,7 @@ namespace ProfitWise.Data
             builder.RegisterType<CogsService>();
             builder.RegisterType<HangFireService>();
             builder.RegisterType<DataService>();
+            builder.RegisterType<BillingService>();
 
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();

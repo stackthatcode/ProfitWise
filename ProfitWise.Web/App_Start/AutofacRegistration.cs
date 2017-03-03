@@ -10,8 +10,10 @@ using ProfitWise.Data.Database;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Controllers;
 using Push.Foundation.Utilities.CastleProxies;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
+using Push.Shopify.HttpClient;
 
 
 namespace ProfitWise.Web
@@ -38,10 +40,17 @@ namespace ProfitWise.Web
                 builder, ProfitWiseConfiguration.Settings.ClaimKey, ProfitWiseConfiguration.Settings.ClaimIv);
 
             // ProfitWise.Data API registration
-            ProfitWise.Data.AutofacRegistration.Build(builder);
+            Data.AutofacRegistration.Build(builder);
 
             // Push.Shopify API registration
             Push.Shopify.AutofacRegistration.Build(builder);
+            builder.Register(x => new ShopifyClientConfig()
+            {
+                RetryLimit = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyRetryLimit", 3),
+                Timeout = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyHttpTimeout", 60000),
+                ThrottlingDelay = ConfigurationManager.AppSettings.GetAndTryParseAsInt("ShopifyThrottlingDelay", 500),
+                RetriesEnabled = ConfigurationManager.AppSettings.GetAndTryParseAsBool("ShopifyRetriesEnabled", true)
+            });
 
             // Database connection string...
             var connectionString = 

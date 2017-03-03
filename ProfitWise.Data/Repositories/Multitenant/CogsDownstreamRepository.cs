@@ -15,7 +15,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
-        
+
+        public const int OrderLineEntry = 1;
+        public const int RefundEntry = 2;
+        public const int AdjustmentEntry = 3;
+
 
         public CogsDownstreamRepository(ConnectionWrapper connectionWrapper)
         {
@@ -161,14 +165,15 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 RefreshInsertRefundQuery() +
                 RefreshInsertAdjustmentQuery();
 
-            _connectionWrapper.Execute(query, new { PwShopId, PwShop.DefaultCogsPercent });
+            _connectionWrapper.Execute(
+                query, new { PwShopId, PwShop.DefaultCogsPercent, OrderLineEntry, AdjustmentEntry, RefundEntry });
         }
 
         private string RefreshInsertLineItemQuery()
         {
             var orderQuery =
                 @"INSERT INTO profitreportentry(@PwShopId)
-                    SELECT 	PwShopId, OrderDate, 1 AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
+                    SELECT 	PwShopId, OrderDate, @OrderLineEntry AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId, 
 		                    PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, ";
             if (PwShop.UseDefaultMargin)
             {
@@ -194,7 +199,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var refundQuery =
                 @"INSERT INTO profitreportentry(@PwShopId)
-                    SELECT 	t1.PwShopId, t1.RefundDate, 2 AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
+                    SELECT 	t1.PwShopId, t1.RefundDate, @RefundEntry AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
 		                    t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, ";
 
             if (PwShop.UseDefaultMargin)
@@ -225,7 +230,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var adjustmentQuery =
                 @"INSERT INTO profitreportentry(@PwShopId)
-                SELECT t1.PwShopId, t1.AdjustmentDate, 3 AS EntryType, t1.ShopifyOrderId, 
+                SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.ShopifyOrderId, 
                     t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 0 AS CoGS, NULL AS Quantity
                 FROM orderadjustment(@PwShopId) t1 
                     INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";

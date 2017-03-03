@@ -14,31 +14,34 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly ShopRepository _shopDataRepository;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly ShopSynchronizationService _shopSynchronizationService;
+        private readonly CurrencyService _currencyService;
 
         public ShopRefreshService(
                     BatchLogger pushLogger, 
                     ShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
-                    ShopSynchronizationService shopSynchronizationService)
+                    ShopSynchronizationService shopSynchronizationService, 
+                    CurrencyService currencyService)
         {
             _pushLogger = pushLogger;
             _shopDataRepository = shopDataRepository;
             _apiRepositoryFactory = apiRepositoryFactory;
             _shopSynchronizationService = shopSynchronizationService;
+            _currencyService = currencyService;
         }
         
         public void Execute(ShopifyCredentials shopifyCredentials)
         {
-
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(shopifyCredentials);
             var shopFromShopify = shopApiRepository.Retrieve();
 
-            // Map the Shop Currency Id
             _pushLogger.Info($"Shop Refresh Service for Shop: {shopifyCredentials.ShopDomain}, UserId: {shopifyCredentials.ShopOwnerUserId}");
-            var shop = _shopDataRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
 
             // Update Shop with the latest
-            _shopSynchronizationService.RefreshShop(shopifyCredentials.ShopOwnerUserId, shopFromShopify);
+            _shopSynchronizationService.UpdateShop(
+                shopifyCredentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
+
+            // TODO - add Billing Check
         }
     }
 }

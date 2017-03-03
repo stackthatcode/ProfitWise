@@ -1,0 +1,14 @@
+@model ProfitWise.Web.Models.ChargeConfirmModel
+@{
+    ViewBag.Title = "ProfitWise - Confirm Sign-up";
+    //Layout = "~/Views/Shared/_PageLayout.cshtml";
+}
+
+<div style="font-family: Arial; color: #AAA;">
+    <h2 class="header">ProfitWise - Confirm Subscription Sign-up</h2>
+    <h4>Redirecting to Shopify...</h4>
+</div>
+<script>
+    window.top.location = '@Model.ConfirmationUrl';
+</script>
+

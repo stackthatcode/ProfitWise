@@ -1,4 +1,5 @@
-﻿using Push.Shopify.Aspect;
+﻿using System.Collections.Generic;
+using Push.Shopify.Aspect;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Interfaces

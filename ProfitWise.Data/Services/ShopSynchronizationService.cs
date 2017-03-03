@@ -44,25 +44,9 @@ namespace ProfitWise.Data.Services
             var pwShop = _pwShopRepository.RetrieveByUserId(shopOwnerUserId);
             return (pwShop != null && pwShop.IsShopEnabled == false);
         }
+        
 
-        // Either creates a new Shop record, or updates existing with Currency and TimeZone
-        // NOTE: ShopOwnerUserId is an ASP.NET User Id
-        public void RefreshShop(string shopOwnerUserId, Shop shop)
-        {            
-            var pwShop = _pwShopRepository.RetrieveByUserId(shopOwnerUserId);
-
-            if (pwShop == null)
-            {
-                CreateShop(shopOwnerUserId, shop);
-            }
-            else
-            {
-                var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);
-                UpdateShop(pwShop, currencyId, shop.TimeZone);
-            }
-        }
-
-        public void CreateShop(string shopOwnerUserId, Shop shop)
+        public int CreateShop(string shopOwnerUserId, Shop shop)
         {
             var orderStartOffsetMonths =
                     ConfigurationManager.AppSettings.GetAndTryParseAsInt("InitialOrderStartDateOffsetMonths", 3);
@@ -86,10 +70,15 @@ namespace ProfitWise.Data.Services
             };
             profitWiseBatchStateRepository.Insert(state);
             _logger.Info($"Created Batch State for Shop - UserId: {newShop.ShopOwnerUserId}");
+
+            return newShop.PwShopId;
         }
 
-        public void UpdateShop(PwShop pwShop, int currencyId, string timezone)
+        public void UpdateShop(string userId, string currencySymbol, string timezone)
         {
+            var pwShop = _pwShopRepository.RetrieveByUserId(userId);
+            var currencyId = _currencyService.AbbreviationToCurrencyId(currencySymbol);
+
             pwShop.CurrencyId = currencyId;
             pwShop.TimeZone = timezone;
             _pwShopRepository.Update(pwShop);

@@ -15,6 +15,7 @@ namespace ProfitWise.Data.Model.Shop
 
         public bool IsAccessTokenValid { get; set; }
         public bool IsShopEnabled { get; set; }
+        public bool IsBillingValid { get; set; }
         public bool IsDataLoaded { get; set; }
 
         public DateTime? StartingDateForOrders { get; set; }
@@ -24,7 +25,7 @@ namespace ProfitWise.Data.Model.Shop
 
         public int ProfitRealization { get; set; }
         public int DateRangeDefault { get; set; }
-
+        public string ShopifyRecurringChargeId { get; set; }
 
 
         public static PwShop Make(
@@ -42,6 +43,7 @@ namespace ProfitWise.Data.Model.Shop
                 IsAccessTokenValid = true,
                 IsShopEnabled = true,
                 IsDataLoaded = false,
+                IsBillingValid = false,
 
                 StartingDateForOrders = 
                         DateTime.Today.AddMonths(-Math.Abs(initialOrderStartDateOffsetMonths)),
