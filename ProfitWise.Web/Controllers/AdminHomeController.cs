@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using ProfitWise.Data.Factories;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -18,19 +19,25 @@ namespace ProfitWise.Web.Controllers
         private readonly SystemRepository _systemRepository;
         private readonly AdminRepository _repository;
         private readonly CurrencyService _service;
+        private readonly MultitenantFactory _factory;
+        private readonly ShopRepository _shopRepository;
 
         public AdminHomeController(
                 IShopifyCredentialService shopifyCredentialService,
                 ApplicationSignInManager applicationSignInManager,
                 SystemRepository systemRepository,
                 AdminRepository repository,
-                CurrencyService service)
+                CurrencyService service,
+                MultitenantFactory factory,
+                ShopRepository shopRepository)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _applicationSignInManager = applicationSignInManager;
             _systemRepository = systemRepository;
             _repository = repository;
             _service = service;
+            _factory = factory;
+            _shopRepository = shopRepository;
         }
 
         
@@ -58,6 +65,19 @@ namespace ProfitWise.Web.Controllers
 
             return new JsonNetResult(users);
         }
+
+        [HttpGet]
+        public ActionResult User(string userId)
+        {
+            var user = _repository.RetrieveUser(userId);
+            user.CurrencyText = _service.CurrencyIdToAbbreviation(user.CurrencyId);
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var billingRepository = _factory.MakeBillingRepository(shop);
+            var billing = billingRepository.RetrieveAll();
+            
+            return new JsonNetResult(new { user, billing });
+        }
+
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken]

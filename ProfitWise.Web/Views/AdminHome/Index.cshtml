@@ -30,10 +30,6 @@
                    aria-controls="home" role="tab" data-toggle="tab">Users</a>
             </li>
             <li role="presentation">
-                <a href="#billing-tab" data-bind="click: BillingClick"
-                   aria-controls="profile" role="tab" data-toggle="tab">Billing Ops</a>
-            </li>
-            <li role="presentation">
                 <a href="#maintenance-tab" data-bind="click: MaintenanceClick"
                    aria-controls="profile" role="tab" data-toggle="tab">Maintenance</a>
             </li>
@@ -44,14 +40,10 @@
         </ul>
     </div>
 
-    <!-- Tab panes -->
     <div class="tab-content" style="clear: both;">
         <div id="users-tab" role="tabpanel" class="tab-pane active reduced-padding"
              data-bind="template: { name: 'Admin-Users', data: $data }">
         </div>
-        <div id="billing-tab" role="tabpanel" class="tab-pane reduced-padding"
-             data-bind="template: { name: 'Admin-Billing', data: $data }">
-        </div>        
         <div id="maintenance-tab" role="tabpanel" class="tab-pane reduced-padding"
              data-bind="template: { name: 'Admin-Maintenance', data: $data }">
         </div>
@@ -61,43 +53,55 @@
 <script type="text/html" id="Admin-Users">
     <div style="height:40px;"></div>
     
-    <table class="table table-striped">
-        <thead>
-        <tr>            
-            <th>Domain</th>
-            <th>Email</th>
-            <th>Time Zone / Currency</th>
-            <th>UserId / PwShopId</th>
-            <th>Impersonate</th>
-        </tr>
-        </thead>
-        <tbody data-bind="foreach: Users">
-        <tr>
-            <td data-bind="text: Domain"></td>
-            <td data-bind="text: Email"></td>
-            <td>
-                <span data-bind="text: TimeZone"></span><br />
-                Currency: <span data-bind="text: CurrencyText"></span>
-            </td>
-            <td>
-                <span data-bind="text: UserId"></span><br />
-                <span data-bind="text: PwShopId"></span>
-            </td>
-            <td>
-                <a href="#" data-bind="click: ImpersonateClick">Impersonate</a>                
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</script>
-
-<script type="text/html" id="Admin-Billing">
-    <div style="height:40px;"></div>
-    
-    <p>Billing Ops</p>
-    <p>Billing Ops</p>
-    <p>Billing Ops</p>
-    <p>Billing Ops</p>
+    <div data-bind="ifnot: DrilldownVisible">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Domain</th>
+                <th>Email</th>
+                <th>User Id</th>
+                <th>Shop Id</th>
+                <th>View</th>
+            </tr>
+            </thead>
+            <tbody data-bind="foreach: Users">
+            <tr>
+                <td data-bind="text: Domain"></td>
+                <td data-bind="text: Email"></td>
+                <td>
+                    <span data-bind="text: UserId"></span><br />
+                </td>
+                <td>
+                    <span data-bind="text: PwShopId"></span>
+                </td>
+                <td>
+                    <a href="#" class="btn btn-primary btn-sm" data-bind="click: ViewClick">View</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+        
+    <div data-bind="if: DrilldownVisible">
+        <a href="#" class="btn btn-default" data-bind="click: BackClick">
+            <i class="glyphicon glyphicon-arrow-left"></i> Go Back
+        </a>
+        
+        <div data-bind="with: UserModel">
+            <br />
+            <h4>User Details - <span data-bind="text: user.Domain"></span></h4>
+            <br />
+            <h5 style="font-weight:700;">Account Information</h5>
+            <table class="table table-striped">
+                <tbody data-bind="foreach: user.PropertyList">
+                <tr>
+                    <td data-bind="text:key"></td>
+                    <td data-bind="text:value"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </script>
 
 <script type="text/html" id="Admin-Maintenance">
@@ -116,7 +120,6 @@
         <a href="#" class="btn btn-danger" data-bind="click: MaintenanceSelect">Apply Changes</a>
     </div>
 </script>
-
 
 <script>
     var ProfitWiseAdmin = ProfitWiseAdmin || {};
@@ -155,6 +158,35 @@
                 });
         }            
         
+        self.UserModel = ko.observable();
+
+        self.DrilldownVisible = ko.computed(function() { return self.UserModel(); });
+
+        var propertiesAsArray = function (data) {
+            output = [];
+            for (var key in data) {
+                var value = data[key];
+                output.push({ key: key, value: value });
+            }
+            return output;
+        };
+
+        self.LoadUser = function(userId) {
+            flow.exec(
+                function() {
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpGet("/AdminHome/User?userId=" + userId, this);
+                },
+                function(data) {                    
+                    data.user.PropertyList = propertiesAsArray(data.user);
+                    self.UserModel(data);
+                });
+        };
+
+        self.BackClick = function() {
+            self.UserModel(null);
+        };
+
         self.LoadUsers = function () {
             flow.exec(
                 function () {
@@ -166,6 +198,10 @@
                         
                         item.ImpersonateClick = function() {
                             self.Impersonate(item.UserId);
+                        };
+
+                        item.ViewClick = function() {
+                            self.LoadUser(item.UserId);
                         };
                     });
 

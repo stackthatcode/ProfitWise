@@ -1,4 +1,6 @@
-﻿namespace ProfitWise.Data.Model.Admin
+﻿using System;
+
+namespace ProfitWise.Data.Model.Admin
 {
     public class ProfitWiseUser
     {
@@ -9,6 +11,13 @@
         public string Domain { get; set; }
         public int CurrencyId { get; set; }
         public long PwShopId { get; set; }
+        public DateTime ProductsLastUpdated { get; set; }
+
+        public bool IsAccessTokenValid { get; set; }
+        public bool IsShopEnabled { get; set; }
+        public bool IsBillingValid { get; set; }
+        public bool IsDataLoaded { get; set; }
+
 
         // Set downstream...
         public string CurrencyText { get; set; }
