@@ -78,7 +78,6 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { user, billing });
         }
 
-
         [HttpPost]
         [ValidateJsonAntiForgeryToken]
         public ActionResult Impersonate(string userId)
@@ -97,12 +96,18 @@ namespace ProfitWise.Web.Controllers
             return RedirectToAction("Users");
         }
 
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult DeleteCharge(string shopId, string chargeId)
+        {
+            
+        }
+
         [HttpGet]
         public ActionResult Maintenance()
         {
             return new JsonNetResult(new { Active = _systemRepository.RetrieveMaintenanceActive()});
         }
-
 
         [HttpPost]
         public ActionResult Maintenance(bool active)

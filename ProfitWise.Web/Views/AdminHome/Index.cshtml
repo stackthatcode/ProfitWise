@@ -90,7 +90,10 @@
         <div data-bind="with: UserModel">
             <br />
             <h4>User Details - <span data-bind="text: user.Domain"></span></h4>
+            <a style="font-weight: 700;" href="#" data-bind="click: function() { $root.Impersonate(user.UserId); }">Impersonate User</a>
             <br />
+            <br />
+
             <h5 style="font-weight:700;">Account Information</h5>
             <table class="table table-striped">
                 <tbody data-bind="foreach: user.PropertyList">
@@ -100,6 +103,27 @@
                 </tr>
                 </tbody>
             </table>
+            <br />
+            <div data-bind="foreach: billing">
+                <h5>
+                    <span style="font-weight:700;">Billing Information</span>
+                    <span data-bind="if: IsPrimary">
+                        (PRIMARY)
+                    </span>
+                    <a href="#" style="font-weight: 700;"
+                        data-bind="click: function() { $root.CancelCharge(PwShopId, PwChargeId); }">
+                        Cancel Recurring Charge</a>
+                </h5>
+                
+                <table class="table table-striped">
+                    <tbody data-bind="foreach: PropertyList">
+                        <tr>
+                            <td data-bind="text:key"></td>
+                            <td data-bind="text:value"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </script>
@@ -156,7 +180,26 @@
                 function() {
                     window.location = '@GlobalConfig.BaseUrl';
                 });
-        }            
+        }
+
+        self.CancelCharge = function (shopId, chargeId) {
+            var result = confirm("Are you ABSOLUTELY sure you want to delete this Charge?");
+            if (!result) {
+                return;
+            }
+            flow.exec(
+                function () {
+                    //var url = "/AdminHome/Impersonate?userId=" + userId;
+                    //var token = self.AntiForgeryToken();
+                    //var ajax = self.AjaxFactory();
+                    //ajax.HttpPost(url, {}, this, token);
+                    this();
+                },
+                function () {
+                    self.LoadUser(self.UserModel().user.UserId);
+                    window.location = '@GlobalConfig.BaseUrl';
+                });
+        };
         
         self.UserModel = ko.observable();
 
@@ -179,6 +222,9 @@
                 },
                 function(data) {                    
                     data.user.PropertyList = propertiesAsArray(data.user);
+                    AQ(data.billing).each(function(item) {
+                        item.PropertyList = propertiesAsArray(item);
+                    });
                     self.UserModel(data);
                 });
         };
@@ -213,9 +259,6 @@
 
         self.UsersClick = function () {
             self.LoadUsers();
-        };
-
-        self.BillingClick = function () {
         };
 
         self.MaintenanceOptions = [

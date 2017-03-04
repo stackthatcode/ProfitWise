@@ -36,13 +36,13 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public IList<PwRecurringCharge> RetrieveAll()
         {
-            var query = @"SELECT * FROM recurringcharge(@PwShopId)";
+            var query = @"SELECT * FROM recurringcharge(@PwShopId) 
+                        ORDER BY IsPrimary DESC, DateCreated DESC";
             return
                 _connectionWrapper
                     .Query<PwRecurringCharge>(query, new {PwShopId = PwShop.PwShopId})
                     .ToList();
         }
-
 
         public PwRecurringCharge RetrieveCurrent()
         {

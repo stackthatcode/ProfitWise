@@ -36,39 +36,6 @@ WHERE t1.PwShopId = 100001
 DROP FUNCTION IF EXISTS dbo.mastervariantcogsdetail
 GO
 
-CREATE FUNCTION dbo.mastervariantcogsdetail(@PwShopId bigint)  
-RETURNS TABLE  
-AS  
-RETURN  
-SELECT * FROM profitwisemastervariantcogsdetail WHERE PwShopId = @PwShopId;
-GO
-
-
-DECLARE @PwShopId bigint = 100001;
-SELECT  @PwShopId;
-SELECT * FROM mastervariantcogsdetail(@PwShopId);
-
-DECLARE @PwShopId2 bigint;
-SELECT  @PwShopId2;
-SELECT * FROM mastervariantcogsdetail(@PwShopId2);
-
-
-DECLARE @PwShopId bigint = 100001;
-
-SELECT t1.PwMasterVariantId, t1.PwShopId, t2.PwMasterVariantId, t2.PwShopId 
-FROM mastervariant(@PwShopId) t1
-	LEFT JOIN mastervariantcogsdetail(@PwShopId) t2
-		ON t1.PwMasterVariantId = t2.PwMasterVariantId;
-
-
-
--- Compare that ^^^^ with this:
-SELECT t1.PwMasterVariantId, t1.PwShopId, t2.PwMasterVariantId, t2.PwShopId 
-FROM profitwisemastervariant t1
-	LEFT JOIN profitwisemastervariantcogsdetail t2
-		ON t1.PwMasterVariantId = t2.PwMasterVariantId AND t2.PwShopId = 100001
-WHERE t1.PwShopId = 100001 
-
 
 SELECT * FROM AspNetUsers;
 
@@ -80,11 +47,15 @@ SELECT * FROM profitwiseshop;
 
 SELECT * FROM profitwisebatchstate;
 
+SELECT * FROM profitwiserecurringcharge;
+
+UPDATE profitwiserecurringcharge SET LastStatus = 7;
+
+UPDATE profitwiseshop SET IsBillingValid = 0;
+
+SELECT * FROM profitwiseshop;
+
+SELECT * FROM profitwisebatchstate;
 
 
-SELECT * FROM recurringcharge(100001);
-
-
-
-PwShopId	PwChargeId	ShopifyRecurringChargeId	ConfirmationUrl	LastStatus	Active	DateCreated	LastUpdated
-
+IsAccessTokenValid, IsShopEnabled, IsBillingValid, IsDataLoaded
