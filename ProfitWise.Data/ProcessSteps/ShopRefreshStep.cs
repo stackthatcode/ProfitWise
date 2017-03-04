@@ -19,12 +19,14 @@ namespace ProfitWise.Data.ProcessSteps
                     BatchLogger pushLogger, 
                     ShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
-                    ShopSynchronizationService shopSynchronizationService)
+                    ShopSynchronizationService shopSynchronizationService, 
+                    BillingService billingService)
         {
             _pushLogger = pushLogger;
             _shopDataRepository = shopDataRepository;
             _apiRepositoryFactory = apiRepositoryFactory;
             _shopSynchronizationService = shopSynchronizationService;
+            _billingService = billingService;
         }
         
         public bool Execute(ShopifyCredentials credentials)
