@@ -9,10 +9,13 @@ namespace ProfitWise.Web.Models
         public string Message { get; set; }
         public string Title { get; set; }
 
-        public bool UrlContainsShop => !Url.ExtractQueryParameter("shop").IsNullOrEmpty();
+        //public bool UrlContainsShop => !Url.ExtractQueryParameter("shop").IsNullOrEmpty();
        
-        public AuthorizationProblemModel(string url)
+        public bool ShowLoginLink { get; set; }
+
+        public AuthorizationProblemModel(string url, bool showLoginLink = false)
         {
+            ShowLoginLink = showLoginLink;
             Url = url;
         }
     }

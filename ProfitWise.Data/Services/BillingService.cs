@@ -1,7 +1,9 @@
-﻿using ProfitWise.Data.Factories;
+﻿using System.Configuration;
+using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Billing;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Utility;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Json;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Factories;
@@ -15,6 +17,12 @@ namespace ProfitWise.Data.Services
         private readonly IShopifyCredentialService _credentialService;
         private readonly ShopRepository _shopRepository;
         private readonly MultitenantFactory _multitenantFactory;
+
+        private static readonly bool TestRecurringCharges = 
+            ConfigurationManager.AppSettings.GetAndTryParseAsBool("TestRecurringCharges", false);
+
+        private const int DefaultFreeTrial = 14;
+        private const decimal ProfitWiseMonthlyPrice = 14.95m;
 
         public BillingService(
                 ApiRepositoryFactory factory, 
@@ -33,9 +41,9 @@ namespace ProfitWise.Data.Services
             var charge = new RecurringApplicationCharge()
             {
                 name = "ProfitWise Monthly Charge",
-                trial_days = 0,     //TODO - make configurable
-                price = 14.95m,
-                test = true,        // HIGH-PRIORITY - make configurable
+                trial_days = DefaultFreeTrial,
+                price = ProfitWiseMonthlyPrice,
+                test = TestRecurringCharges ? true : (bool?)null,
             };
             return charge;
         }        
@@ -46,32 +54,42 @@ namespace ProfitWise.Data.Services
             var credentials = shopifyFromClaims.ToShopifyCredentials();
             var repository = _factory.MakeRecurringApiRepository(credentials);
 
-            // Invoke Shopify API to create the Recurring Application Charge
-            var chargeParameter = MakeProfitWiseCharge();
-            chargeParameter.return_url = returnUrl;
-            var chargeResult = repository.UpsertCharge(chargeParameter);
-
             // Get Billing Repository for User
             var shop = _shopRepository.RetrieveByUserId(userId);
             var billingRepository = _multitenantFactory.MakeBillingRepository(shop);
 
-            // Write a record in ProfitWise's Recurring Charge table
-            var nextChargeId = billingRepository.RetrieveNextKey();
-            var charge = new PwRecurringCharge
+            // Invoke Shopify API to create the Recurring Application Charge
+            var chargeParameter = MakeProfitWiseCharge();
+            chargeParameter.return_url = returnUrl;
+            if (billingRepository.AnyHistory())
             {
-                PwShopId = shop.PwShopId,
-                PwChargeId = nextChargeId,
-                IsPrimary = true,
-                ShopifyRecurringChargeId = chargeResult.id,
-                ConfirmationUrl = chargeResult.confirmation_url,
-                LastStatus = chargeResult.status.ToChargeStatus(),
-                LastJson = chargeResult.SerializeToJson(),
-            };
-            billingRepository.Insert(charge);
+                chargeParameter.trial_days = 0;
+            }
 
-            // Important: Update Primary to nuke the previous Charge i.e. because its state went bad
-            billingRepository.UpdatePrimary(nextChargeId);
-            return charge;
+            var chargeResult = repository.UpsertCharge(chargeParameter);
+
+            // Write a record in ProfitWise's Recurring Charge table
+            using (var transaction = billingRepository.InitiateTransaction())
+            {
+                var nextChargeId = billingRepository.RetrieveNextKey();
+                var charge = new PwRecurringCharge
+                {
+                    PwShopId = shop.PwShopId,
+                    PwChargeId = nextChargeId,
+                    IsPrimary = true,
+                    ShopifyRecurringChargeId = chargeResult.id,
+                    ConfirmationUrl = chargeResult.confirmation_url,
+                    LastStatus = chargeResult.status.ToChargeStatus(),
+                    LastJson = chargeResult.SerializeToJson(),
+                };
+                billingRepository.Insert(charge);
+
+                // Important: Update Primary to nuke the previous Charge i.e. because its state went bad
+                billingRepository.UpdatePrimary(nextChargeId);
+
+                transaction.Commit();
+                return charge;
+            }
         }
 
         public PwRecurringCharge SyncAndRetrieveCurrentCharge(string userId)

@@ -9,7 +9,7 @@
     <h4>@Model.Message</h4>
     <div style="height: 25px;"></div>
     
-    @if (@Model.UrlContainsShop)
+    @if (@Model.ShowLoginLink)
     {
         <p>You can retry by <a href="@Model.Url">clicking here</a>, or exiting Shopify and restarting ProfitWise.</p>
     }

@@ -25,7 +25,6 @@ namespace ProfitWise.Web
         {
             var url = "/ShopifyAuth/Login?shop=" + domain +
                 (returnUrl != null ? $"&returnUrl={HttpUtility.UrlEncode(returnUrl)}" : "");
-
             return url;
         }
 
@@ -34,6 +33,7 @@ namespace ProfitWise.Web
         public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
         public const string SevereAuthorizationFailureUrl = "/ShopifyAuth/SevereAuthorizationFailure";
         public const string BillingProblemUrl = "/ShopifyAuth/BillingProblem";
+        public const string BillingIncomplete = "/ShopifyAuth/BillingIncomplete";
 
 
         public static void Configure(IAppBuilder app, IContainer autofacContainer)

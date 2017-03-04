@@ -25,6 +25,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return _connectionWrapper.InitiateTransaction();
         }
 
+        public bool AnyHistory()
+        {
+            var query = @"SELECT COUNT(*) FROM recurringcharge(@PwShopId) WHERE IsPrimary = 1";
+            return
+                _connectionWrapper
+                    .Query<int>(query, new {PwShopId = PwShop.PwShopId})
+                    .First() > 0;
+        }
 
         public IList<PwRecurringCharge> RetrieveAll()
         {

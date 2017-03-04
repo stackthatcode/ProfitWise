@@ -75,8 +75,8 @@ namespace ProfitWise.Web.Attributes
 
                 if (charge.UserNeedsToLoginAgain)
                 {
-                    logger.Info($"PwShop {pwShop.PwShopId} has invalid Billing - User logging in again");
-                    filterContext.Result = GlobalConfig.Redirect(AuthConfig.LoginUrl(pwShop.Domain, currentUrl));
+                    logger.Info($"PwShop {pwShop.PwShopId} has incomplete Billing - User logging in again");
+                    filterContext.Result = GlobalConfig.Redirect(AuthConfig.BillingIncomplete, currentUrl);
                     return;
                 }
                 else

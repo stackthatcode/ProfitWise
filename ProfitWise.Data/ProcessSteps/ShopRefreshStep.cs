@@ -1,9 +1,5 @@
-﻿using System;
-using ProfitWise.Data.Factories;
-using ProfitWise.Data.Repositories;
-using ProfitWise.Data.Repositories.System;
+﻿using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
-using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -17,24 +13,18 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly ShopRepository _shopDataRepository;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly ShopSynchronizationService _shopSynchronizationService;
-        private readonly CurrencyService _currencyService;
-        private readonly MultitenantFactory _multitenantFactory;
         private readonly BillingService _billingService;
 
         public ShopRefreshService(
                     BatchLogger pushLogger, 
                     ShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
-                    ShopSynchronizationService shopSynchronizationService, 
-                    CurrencyService currencyService,
-                    MultitenantFactory multitenantFactory)
+                    ShopSynchronizationService shopSynchronizationService)
         {
             _pushLogger = pushLogger;
             _shopDataRepository = shopDataRepository;
             _apiRepositoryFactory = apiRepositoryFactory;
             _shopSynchronizationService = shopSynchronizationService;
-            _currencyService = currencyService;
-            _multitenantFactory = multitenantFactory;
         }
         
         public bool Execute(ShopifyCredentials credentials)
