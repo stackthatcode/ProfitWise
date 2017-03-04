@@ -186,9 +186,9 @@ CREATE TABLE [dbo].[profitwiserecurringcharge](
 	[PwChargeId] [bigint] NOT NULL,
 	[ShopifyRecurringChargeId] [nvarchar](50) NOT NULL,
 
-	[ConfirmationUrl] [nvarchar](1024) NOT NULL,	
+	[ConfirmationUrl] [nvarchar](1024) NULL,	
 	[LastStatus] [int] NOT NULL,
-	[Primary] [bit] NOT NULL,
+	[IsPrimary] [bit] NOT NULL,
 
 	[DateCreated] [datetime] NULL,
 	[LastUpdated] [datetime] NULL,

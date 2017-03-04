@@ -14,15 +14,18 @@ namespace ProfitWise.Data.Model.Billing
 
         public bool IsValid => LastStatus == ChargeStatus.Accepted || LastStatus == ChargeStatus.Active;
 
-        public bool UserNeedsToReLogin => LastStatus == ChargeStatus.Pending || 
+        public bool UserNeedsToLoginAgain => LastStatus == ChargeStatus.Pending || 
                                             LastStatus == ChargeStatus.Declined ||
                                             LastStatus == ChargeStatus.Expired || 
                                             LastStatus == ChargeStatus.Cancelled;
 
-        public bool UserNeedsToContactSupport => LastStatus == ChargeStatus.Frozen;
+        public bool UserNeedsToContactSupport => !UserNeedsToLoginAgain;
 
+        public bool SystemNeedsToCreateNewCharge => LastStatus == ChargeStatus.Declined ||
+                                                    LastStatus == ChargeStatus.Expired ||
+                                                    LastStatus == ChargeStatus.Cancelled;
 
-        public bool Primary { get; set; }
+        public bool IsPrimary { get; set; }
 
         public DateTime DateCreated { get; set; }
         public DateTime LastUpdated { get; set; }

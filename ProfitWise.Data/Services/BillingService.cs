@@ -61,7 +61,7 @@ namespace ProfitWise.Data.Services
             {
                 PwShopId = shop.PwShopId,
                 PwChargeId = nextChargeId,
-                Primary = true,
+                IsPrimary = true,
                 ShopifyRecurringChargeId = chargeResult.id,
                 ConfirmationUrl = chargeResult.confirmation_url,
                 LastStatus = chargeResult.status.ToChargeStatus(),
@@ -84,7 +84,11 @@ namespace ProfitWise.Data.Services
             var shop = _shopRepository.RetrieveByUserId(userId);
             var billingRepository = _multitenantFactory.MakeBillingRepository(shop);
             var currentCharge = billingRepository.RetrieveCurrent();
-            
+            if (currentCharge == null)
+            {
+                return null; 
+            }
+
             // Invoke Shopify API to get the latest
             var result = repository.RetrieveCharge(currentCharge.ShopifyRecurringChargeId);
 

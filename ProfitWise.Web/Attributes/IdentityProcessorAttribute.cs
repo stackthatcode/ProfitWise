@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Configuration;
+using ProfitWise.Data.Factories;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
@@ -20,6 +21,7 @@ namespace ProfitWise.Web.Attributes
         {
             var dbContext = DependencyResolver.Current.GetService<ApplicationDbContext>();
             var roleManager = DependencyResolver.Current.GetService<ApplicationRoleManager>();
+            var factory = DependencyResolver.Current.GetService<MultitenantFactory>();
             var credentialService = DependencyResolver.Current.GetService<IShopifyCredentialService>();
             var shopRepository = DependencyResolver.Current.GetService<ShopRepository>();
             var signInManager = DependencyResolver.Current.GetService<ApplicationSignInManager>();
@@ -27,7 +29,7 @@ namespace ProfitWise.Web.Attributes
             var timeZoneTranslator = DependencyResolver.Current.GetService<TimeZoneTranslator>();
 
             // Pull the User ID from OWIN plumbing...
-            var currentUrl = filterContext.HttpContext.Request.Url.PathAndQuery;
+            var currentUrl = filterContext.HttpContext.Request.Url.ToString();
             var shopParameter = filterContext.HttpContext.Request.QueryString["shop"];
             var userId = filterContext.HttpContext.User.ExtractUserId();            
 
@@ -50,6 +52,7 @@ namespace ProfitWise.Web.Attributes
 
             if (shopParameter != null && shopParameter != pwShop.Domain)
             {
+                // Oops - wrong domain!
                 logger.Error($"Currently logged in as {pwShop.Domain}, while accessing App for {shopParameter}");
                 AuthConfig.GlobalSignOut(signInManager);
                 filterContext.Result = GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, currentUrl);
@@ -64,8 +67,25 @@ namespace ProfitWise.Web.Attributes
                 return;
             }
 
-            // TODO - add IsBillingValid check
+            if (!pwShop.IsBillingValid)
+            {
+                var billingRepository = factory.MakeBillingRepository(pwShop);
+                var charge = billingRepository.RetrieveCurrent();
+                AuthConfig.GlobalSignOut(signInManager);
 
+                if (charge.UserNeedsToLoginAgain)
+                {
+                    logger.Info($"PwShop {pwShop.PwShopId} has invalid Billing - User logging in again");
+                    filterContext.Result = GlobalConfig.Redirect(AuthConfig.LoginUrl(pwShop.Domain, currentUrl));
+                    return;
+                }
+                else
+                {
+                    logger.Info($"PwShop {pwShop.PwShopId} has invalid Billing - User must contact support");                    
+                    filterContext.Result = GlobalConfig.Redirect(AuthConfig.BillingProblemUrl, currentUrl);
+                    return;
+                }
+            }
 
             if (!pwShop.IsAccessTokenValid)
             {

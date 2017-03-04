@@ -22,6 +22,7 @@ namespace Push.Foundation.Web.Shopify
             _encryptionService = encryptionService;
             _claimsRepository = claimsRepository;
         }
+        
 
         public string EffectiveShopUserId(string currentUserId)
         {

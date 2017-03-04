@@ -4,13 +4,13 @@ namespace Push.Shopify.Model
 {
     public enum ChargeStatus
     {
-        Pending,
-        Accepted,
-        Active,
-        Declined,
-        Expired,
-        Frozen,
-        Cancelled,
+        Pending = 1,
+        Accepted = 2,
+        Active = 3,
+        Declined = 4,
+        Expired = 5,
+        Frozen = 6,
+        Cancelled = 7,
     }
 
     public static class ChargeStatusExtensions

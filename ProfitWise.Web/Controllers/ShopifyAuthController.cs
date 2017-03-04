@@ -173,8 +173,14 @@ namespace ProfitWise.Web.Controllers
         private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
         {
             var charge = _billingService.SyncAndRetrieveCurrentCharge(user.Id);
-
-            if (charge == null)
+            if (charge != null && charge.LastStatus == ChargeStatus.Pending)
+            {
+                // Redirect for Shopify Charge approval
+                return View("ChargeConfirm",
+                    new ChargeConfirmModel() { ConfirmationUrl = charge.ConfirmationUrl });
+            }
+            
+            if (charge == null || charge.SystemNeedsToCreateNewCharge)
             {
                 // Create ProfitWise subscription and save
                 var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
@@ -184,14 +190,7 @@ namespace ProfitWise.Web.Controllers
                 return View("ChargeConfirm", 
                     new ChargeConfirmModel() { ConfirmationUrl = newCharge.ConfirmationUrl });
             }
-
-            if (!charge.IsValid)
-            {
-                // Redirect for Shopify Charge approval
-                return View("ChargeConfirm", 
-                    new ChargeConfirmModel() { ConfirmationUrl = charge.ConfirmationUrl });
-            }
-
+            
             return RedirectToLocal(returnUrl);
         }
 
@@ -222,12 +221,12 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult BillingDeclined()
         {
-            AuthConfig.GlobalSignOut(_signInManager);
+            //AuthConfig.GlobalSignOut(_signInManager);
             return View("BillingDeclined");
         }
 
 
-        // Error page
+        // Error pages
         [HttpGet]
         [AllowAnonymous]
         public ActionResult UnauthorizedAccess(string returnUrl)
@@ -261,8 +260,18 @@ namespace ProfitWise.Web.Controllers
             return AuthorizationProblem(
                 returnUrl, "Authorization Failure",
                 "Something went wrong while attempting to authorize your Shopify account.");
-        }        
+        }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult BillingProblem(string returnUrl)
+        {
+            return AuthorizationProblem(
+                returnUrl, "Billing Problem",
+                "Something went wrong while attempting to bill your ProfitWise account. Please contact our support.");
+        }
+
+        
         private ActionResult AuthorizationProblem(string returnUrl, string title, string message)
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -276,7 +285,6 @@ namespace ProfitWise.Web.Controllers
                 url += $"?returnUrl={HttpUtility.UrlEncode(returnUrl)}";
 
                 var shop = returnUrl.ExtractQueryParameter("shop");
-
                 if (shop != null)
                 {
                     url += $"&shop={shop}";

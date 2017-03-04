@@ -35,6 +35,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .ToList();
         }
 
+
         public PwRecurringCharge RetrieveCurrent()
         {
             var query = @"SELECT * FROM recurringcharge(@PwShopId) WHERE IsPrimary = 1";
@@ -58,7 +59,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query = @"INSERT INTO recurringcharge(@PwShopId) VALUES (
                             @PwShopId, @PwChargeId, @ShopifyRecurringChargeId, @ConfirmationUrl, 
-                            @LastStatus, @IsPrimary, getdate(), getdate() );";
+                            @LastStatus, @IsPrimary, getdate(), getdate(), @LastJson );";
             _connectionWrapper.Execute(query, charge);
         }
 
@@ -76,15 +77,15 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public void UpdatePrimary(long primaryChargeId)
         {
             var query =
-                @"UPDATE recurringcharge(@PwShopId) SET IsPrimary = 1 WHERE PwChargeId = @activeChargeId;
-                UPDATE recurringcharge(@PwShopId) SET IsPrimary = 0 WHERE PwChargeId <> @activeChargeId;";
-            _connectionWrapper.Execute(query, primaryChargeId);
+                @"UPDATE recurringcharge(@PwShopId) SET IsPrimary = 1 WHERE PwChargeId = @primaryChargeId;
+                UPDATE recurringcharge(@PwShopId) SET IsPrimary = 0 WHERE PwChargeId <> @primaryChargeId;";
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId, primaryChargeId});
         }
 
         public void ClearPrimary()
         {
             var query = @"UPDATE recurringcharge(@PwShopId) SET IsPrimary = 0;";
-            _connectionWrapper.Execute(query);
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId });
         }
     }
 }
