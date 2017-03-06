@@ -55,5 +55,6 @@ SELECT * FROM profitwiseshop;
 
 SELECT * FROM profitwisebatchstate;
 
+-- IsAccessTokenValid, IsShopEnabled, IsBillingValid, IsDataLoaded
 
-IsAccessTokenValid, IsShopEnabled, IsBillingValid, IsDataLoaded
+

@@ -17,7 +17,7 @@ namespace ProfitWise.Data.Model.Admin
         public bool IsShopEnabled { get; set; }
         public bool IsBillingValid { get; set; }
         public bool IsDataLoaded { get; set; }
-
+        public int? TempFreeTrialOverride { get; set; }
 
         // Set downstream...
         public string CurrencyText { get; set; }

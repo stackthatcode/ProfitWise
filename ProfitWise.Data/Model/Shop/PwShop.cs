@@ -25,6 +25,7 @@ namespace ProfitWise.Data.Model.Shop
 
         public int ProfitRealization { get; set; }
         public int DateRangeDefault { get; set; }
+        public int? TempFreeTrialOverride { get; set; }
 
 
         public static PwShop Make(

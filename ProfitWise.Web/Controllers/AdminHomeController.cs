@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
@@ -24,14 +23,14 @@ namespace ProfitWise.Web.Controllers
         private readonly BillingService _billingService;
 
         public AdminHomeController(
-                IShopifyCredentialService shopifyCredentialService,
-                ApplicationSignInManager applicationSignInManager,
-                SystemRepository systemRepository,
-                AdminRepository repository,
-                CurrencyService service,
-                MultitenantFactory factory,
-                ShopRepository shopRepository, 
-                BillingService billingService)
+                    IShopifyCredentialService shopifyCredentialService,
+                    ApplicationSignInManager applicationSignInManager,
+                    SystemRepository systemRepository,
+                    AdminRepository repository,
+                    CurrencyService service,
+                    MultitenantFactory factory,
+                    ShopRepository shopRepository, 
+                    BillingService billingService)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _applicationSignInManager = applicationSignInManager;
@@ -118,6 +117,15 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult TempFreeTrialOverride(string userId, int? days)
+        {
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            _shopRepository.UpdateTempFreeTrialOverride(shop.PwShopId, days);
+            return JsonNetResult.Success();
+        }
+        
 
         [HttpGet]
         public ActionResult Maintenance()

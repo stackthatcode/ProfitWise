@@ -152,7 +152,8 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[UseDefaultMargin] [smallint] NOT NULL,
 	[DefaultMargin] [decimal](15, 2) NOT NULL,
 	[ProfitRealization] [smallint] NOT NULL,
-	[DateRangeDefault] [smallint] NOT NULL
+	[DateRangeDefault] [smallint] NOT NULL,
+	[TempFreeTrialOverride] [int] NULL,
  CONSTRAINT [PK_profitwiseshop_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,

@@ -43,11 +43,13 @@ namespace ProfitWise.Data.Repositories.System
                 @"INSERT INTO profitwiseshop (
                     ShopOwnerUserId, ShopifyShopId, Domain, CurrencyId, TimeZone, 
                     IsAccessTokenValid, IsShopEnabled, IsDataLoaded, IsBillingValid,
-                    StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, DateRangeDefault 
+                    StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, 
+                    DateRangeDefault, TempFreeTrialOverride
                 ) VALUES (
                     @ShopOwnerUserId, @ShopifyShopId, @Domain, @CurrencyId, @TimeZone,
                     @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded, @IsBillingValid,
-                    @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, @DateRangeDefault );
+                    @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, 
+                    @DateRangeDefault, @TempFreeTrialOverride );
                 SELECT SCOPE_IDENTITY();";
             return _connectionWrapper
                 .Query<int>(query, shop)
@@ -94,6 +96,13 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, new { pwShopId, valid });
         }
 
+        public void UpdateTempFreeTrialOverride(int pwShopId, int? days)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET [TempFreeTrialOverride] = @days
+                        WHERE PwShopId = @pwShopId";
+            _connectionWrapper.Execute(query, new { pwShopId, days });
+        }
 
 
         public void UpdateStartingDateForOrders(int pwShopId, DateTime startingDateForOrders)

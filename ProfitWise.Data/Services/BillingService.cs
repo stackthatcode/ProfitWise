@@ -61,7 +61,13 @@ namespace ProfitWise.Data.Services
             // Invoke Shopify API to create the Recurring Application Charge
             var chargeParameter = MakeProfitWiseCharge();
             chargeParameter.return_url = returnUrl;
-            if (billingRepository.AnyHistory())
+
+            // If a Free Trial Override has been set, then use that
+            if (shop.TempFreeTrialOverride.HasValue)
+            {
+                chargeParameter.trial_days = shop.TempFreeTrialOverride.Value;
+            }
+            else if (billingRepository.AnyHistory())
             {
                 chargeParameter.trial_days = 0;
             }
@@ -71,6 +77,8 @@ namespace ProfitWise.Data.Services
             // Write a record in ProfitWise's Recurring Charge table
             using (var transaction = billingRepository.InitiateTransaction())
             {
+                _shopRepository.UpdateTempFreeTrialOverride(shop.PwShopId, null);
+
                 var nextChargeId = billingRepository.RetrieveNextKey();
                 var charge = new PwRecurringCharge
                 {
