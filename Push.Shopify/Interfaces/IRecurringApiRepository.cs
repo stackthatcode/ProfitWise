@@ -9,5 +9,6 @@ namespace Push.Shopify.Interfaces
         RecurringApplicationCharge UpsertCharge(RecurringApplicationCharge input);
         RecurringApplicationCharge RetrieveCharge(long id);
         RecurringApplicationCharge ActivateCharge(RecurringApplicationCharge charge);
+        void CancelCharge(long id);
     }
 }

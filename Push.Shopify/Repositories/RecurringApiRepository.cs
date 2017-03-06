@@ -64,6 +64,13 @@ namespace Push.Shopify.Repositories
 
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
         }
+
+        public virtual void CancelCharge(long id)
+        {
+            var path = $"/admin/recurring_application_charges/{id}.json";
+            var request = _requestFactory.HttpDelete(ShopifyCredentials, path);
+            _client.ExecuteRequest(request);
+        }
     }
 }
 

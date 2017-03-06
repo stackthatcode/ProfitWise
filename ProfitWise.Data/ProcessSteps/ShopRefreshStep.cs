@@ -30,16 +30,8 @@ namespace ProfitWise.Data.ProcessSteps
         }
         
         public bool Execute(ShopifyCredentials credentials)
-        {
-            var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(credentials);
-            var shopFromShopify = shopApiRepository.Retrieve();
-
+        {            
             _pushLogger.Info($"Shop Refresh Service for Shop: {credentials.ShopDomain}, UserId: {credentials.ShopOwnerUserId}");
-
-            // Update Shop with the latest from Shopify
-            _shopSynchronizationService.UpdateShop(
-                credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
-
             var shop = _shopDataRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
             
             // Routine check on Shop Status
@@ -53,6 +45,12 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Warn($"Shop {shop.PwShopId} is currently disabled");
                 return false;
             }
+
+            // Update Shop with the latest from Shopify
+            var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(credentials);
+            var shopFromShopify = shopApiRepository.Retrieve();
+            _shopSynchronizationService.UpdateShop(
+                credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
 
             // Routine check on Billing Status            
             var charge = _billingService.SyncAndRetrieveCurrentCharge(credentials.ShopOwnerUserId);

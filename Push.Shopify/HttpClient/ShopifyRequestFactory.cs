@@ -39,6 +39,13 @@ namespace Push.Shopify.HttpClient
             return request;
         }
 
+        public HttpWebRequest HttpDelete(ShopifyCredentials credentials, string path)
+        {
+            var request = FactoryWorker(credentials, path);
+            request.Method = "DELETE";
+            return request;
+        }
+
         private HttpWebRequest FactoryWorker(ShopifyCredentials credentials, string path)
         {
             ServicePointManager.Expect100Continue = true;

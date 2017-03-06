@@ -45,8 +45,6 @@ SELECT * FROM AspNetUserLogins;
 
 SELECT * FROM profitwiseshop;
 
-SELECT * FROM profitwisebatchstate;
-
 SELECT * FROM profitwiserecurringcharge;
 
 UPDATE profitwiserecurringcharge SET LastStatus = 7;

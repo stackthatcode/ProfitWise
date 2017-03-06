@@ -1,4 +1,5 @@
 ﻿@using ProfitWise.Web.Plumbing
+@using Push.Shopify.Model
 @model dynamic
 @Html.Partial("~/Views/SharedTemplates/_PagingWidget.cshtml")
 
@@ -108,11 +109,24 @@
                 <h5>
                     <span style="font-weight:700;">Billing Information</span>
                     <span data-bind="if: IsPrimary">
-                        (PRIMARY)
+                        <i class="glyphicon glyphicon-star"></i> (PRIMARY)
+                        
+                        <span data-bind="if: LastStatus == @((int)ChargeStatus.Active)">
+                            <a href="#" style="font-weight: 700;"
+                               data-bind="click: function() { $root.CancelCharge(PwShopId, PwChargeId); }">
+                                Cancel Recurring Charge
+                            </a>
+                        </span>
+                        <span data-bind="if: LastStatus == @((int)ChargeStatus.Accepted)">
+                            <a href="#" style="font-weight: 700;"
+                               data-bind="click: function() { $root.ActivateCharge(PwShopId, PwChargeId); }">
+                                Activate Recurring Charge
+                            </a>
+                        </span>
                     </span>
-                    <a href="#" style="font-weight: 700;"
-                        data-bind="click: function() { $root.CancelCharge(PwShopId, PwChargeId); }">
-                        Cancel Recurring Charge</a>
+                    <span data-bind="ifnot: IsPrimary">
+                        <i class="glyphicon glyphicon-remove"></i> (NOT PRIMARY)
+                    </span>
                 </h5>
                 
                 <table class="table table-striped">
@@ -181,23 +195,40 @@
                     window.location = '@GlobalConfig.BaseUrl';
                 });
         }
+        
+        self.ActivateCharge = function (shopId, pwChargeId) {
+            var result = confirm("Are you ABSOLUTELY sure you want to activate this Charge?");
+            if (!result) {
+                return;
+            }
+            flow.exec(
+                function () {
+                    var url = "/AdminHome/ActivateCharge";
+                    var data = { shopId: shopId, pwChargeId: pwChargeId };
+                    var token = self.AntiForgeryToken();
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpPost(url, data, this, token);
+                },
+                function () {
+                    self.LoadUser(self.UserModel().user.UserId);
+                });
+        };
 
-        self.CancelCharge = function (shopId, chargeId) {
+        self.CancelCharge = function (shopId, pwChargeId) {
             var result = confirm("Are you ABSOLUTELY sure you want to delete this Charge?");
             if (!result) {
                 return;
             }
             flow.exec(
                 function () {
-                    //var url = "/AdminHome/Impersonate?userId=" + userId;
-                    //var token = self.AntiForgeryToken();
-                    //var ajax = self.AjaxFactory();
-                    //ajax.HttpPost(url, {}, this, token);
-                    this();
+                    var url = "/AdminHome/CancelCharge";
+                    var data = { shopId: shopId, pwChargeId: pwChargeId };
+                    var token = self.AntiForgeryToken();
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpPost(url, data, this, token);
                 },
                 function () {
                     self.LoadUser(self.UserModel().user.UserId);
-                    window.location = '@GlobalConfig.BaseUrl';
                 });
         };
         

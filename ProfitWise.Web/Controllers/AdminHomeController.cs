@@ -21,6 +21,7 @@ namespace ProfitWise.Web.Controllers
         private readonly CurrencyService _service;
         private readonly MultitenantFactory _factory;
         private readonly ShopRepository _shopRepository;
+        private readonly BillingService _billingService;
 
         public AdminHomeController(
                 IShopifyCredentialService shopifyCredentialService,
@@ -29,7 +30,8 @@ namespace ProfitWise.Web.Controllers
                 AdminRepository repository,
                 CurrencyService service,
                 MultitenantFactory factory,
-                ShopRepository shopRepository)
+                ShopRepository shopRepository, 
+                BillingService billingService)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _applicationSignInManager = applicationSignInManager;
@@ -38,6 +40,7 @@ namespace ProfitWise.Web.Controllers
             _service = service;
             _factory = factory;
             _shopRepository = shopRepository;
+            _billingService = billingService;
         }
 
         
@@ -98,10 +101,23 @@ namespace ProfitWise.Web.Controllers
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken]
-        public ActionResult DeleteCharge(string shopId, string chargeId)
+        public ActionResult CancelCharge(int shopId, long pwChargeId)
         {
-            
+            var shop = _shopRepository.RetrieveByShopId(shopId);
+            _billingService.CancelCharge(shop.ShopOwnerUserId, pwChargeId);            
+            return JsonNetResult.Success();
         }
+
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult ActivateCharge(int shopId, long pwChargeId)
+        {
+            var shop = _shopRepository.RetrieveByShopId(shopId);
+            _billingService.ActivateCharge(shop.ShopOwnerUserId, pwChargeId);
+            return JsonNetResult.Success();
+        }
+
 
         [HttpGet]
         public ActionResult Maintenance()

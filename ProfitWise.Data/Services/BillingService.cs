@@ -119,6 +119,14 @@ namespace ProfitWise.Data.Services
             return currentCharge;
         }
 
+        public PwRecurringCharge ActivateCharge(string userId, long chargeId)
+        {
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var billingRepository = _multitenantFactory.MakeBillingRepository(shop);
+            var charge = billingRepository.Retrieve(chargeId);
+            return ActivateCharge(userId, charge);
+        }
+
         public PwRecurringCharge ActivateCharge(string userId, PwRecurringCharge pwCharge)
         {
             var shop = _shopRepository.RetrieveByUserId(userId);
@@ -138,6 +146,38 @@ namespace ProfitWise.Data.Services
             billingRepository.Update(pwCharge);
 
             return pwCharge;
+        }
+
+        public void CancelCharge(string userId, long pwChargeId)
+        {
+            // Create Billing Repository and get the current primary Recurring Charge record
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var billingRepository = _multitenantFactory.MakeBillingRepository(shop);
+            var charge = billingRepository.Retrieve(pwChargeId);
+            if (charge == null)
+            {
+                return;
+            }
+
+            var shopifyFromClaims = _credentialService.Retrieve(userId);
+            var credentials = shopifyFromClaims.ToShopifyCredentials();
+            var apiRepository = _factory.MakeRecurringApiRepository(credentials);
+            apiRepository.CancelCharge(charge.ShopifyRecurringChargeId);
+
+            // Retrieve the Charge from Shopify API
+            var result = apiRepository.RetrieveCharge(charge.ShopifyRecurringChargeId);
+
+            // Update ProfitWise's local database record
+            charge.ConfirmationUrl = result.confirmation_url;
+            charge.LastStatus = result.status.ToChargeStatus();
+            charge.LastJson = result.SerializeToJson();
+            billingRepository.Update(charge);
+
+            // Eliminate the Primary Charge
+            billingRepository.ClearPrimary();
+
+            // Mark Billing Valid to false
+            _shopRepository.UpdateIsBillingValid(shop.PwShopId, false);
         }
     }
 }

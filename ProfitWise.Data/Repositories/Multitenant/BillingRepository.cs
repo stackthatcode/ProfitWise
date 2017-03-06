@@ -52,7 +52,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .Query<PwRecurringCharge>(query, new { PwShopId = PwShop.PwShopId })
                     .FirstOrDefault();
         }
-        
+        public PwRecurringCharge Retrieve(long chargeId)
+        {
+            var query = @"SELECT * FROM recurringcharge(@PwShopId) WHERE PwChargeId = @chargeId";
+            return
+                _connectionWrapper
+                    .Query<PwRecurringCharge>(query, new { PwShop.PwShopId, chargeId })
+                    .FirstOrDefault();
+        }
         public long RetrieveNextKey()
         {
             var query = @"SELECT ISNULL(MAX(PwChargeId), 0) + 1 FROM recurringcharge(@PwShopId)";

@@ -11,6 +11,7 @@ namespace ProfitWise.Data.Model.Billing
         public long ShopifyRecurringChargeId { get; set; }
         public string ConfirmationUrl { get; set; }
         public ChargeStatus LastStatus { get; set; }
+        public string LastStatusDesctipion => LastStatus.ToString();
 
         public bool IsValid => LastStatus == ChargeStatus.Accepted || LastStatus == ChargeStatus.Active;
 
