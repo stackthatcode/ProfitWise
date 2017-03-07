@@ -67,6 +67,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 WHERE t1.PwShopId = @PwShopId " +
                 WhereClauseGenerator(lineContext);
 
+            lineContext.PwShopId = this.PwShopId;
             _connectionWrapper.Execute(query, lineContext);
         }
 
@@ -82,6 +83,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 WHERE t1.PwShopId = @PwShopId " + 
                 WhereClauseGenerator(lineContext);
 
+            lineContext.PwShopId = this.PwShopId;
             _connectionWrapper.Execute(query, lineContext);
         }
 
@@ -119,6 +121,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 			                AND t4.DestinationCurrencyId = @DestinationCurrencyId
                 WHERE t0.PwPickListId = @PwPickListId";
 
+            context.PwShopId = this.PwShopId;
             _connectionWrapper.Execute(query, context);
         }
 
@@ -135,6 +138,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
                 WHERE t0.PwPickListId = @PwPickListId";
 
+            context.PwShopId = this.PwShopId;
             _connectionWrapper.Execute(query, context);
         }
 
