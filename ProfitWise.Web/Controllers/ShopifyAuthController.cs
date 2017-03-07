@@ -49,7 +49,8 @@ namespace ProfitWise.Web.Controllers
                 HangFireService hangFireService,
                 BillingService billingService,
                 IPushLogger logger, 
-                ShopRepository shopRepository)
+                ShopRepository shopRepository, 
+                HmacCryptoService hmacCryptoService)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
@@ -60,6 +61,7 @@ namespace ProfitWise.Web.Controllers
             _billingService = billingService;
             _logger = logger;
             _shopRepository = shopRepository;
+            _hmacCryptoService = hmacCryptoService;
             _shopSynchronizationService = shopSynchronizationService;
         }
 
@@ -239,6 +241,7 @@ namespace ProfitWise.Web.Controllers
             }
             else
             {
+                // TODO - should we remove this Charge Id from ProfitWise
                 _shopRepository.UpdateIsBillingValid(shop.PwShopId, false);
                 return BillingDeclined();
             }
