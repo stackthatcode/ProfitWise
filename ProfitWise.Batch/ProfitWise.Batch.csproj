@@ -157,6 +157,7 @@
   <ItemGroup>
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="AppUninstallTest.cs" />
     <Compile Include="_TempHoldingCell\TestOrderCreator.cs" />
     <Compile Include="_TempHoldingCell\NaughtyShopifyHttpClient.cs" />
     <Compile Include="Program.cs" />
@@ -218,6 +219,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UninstallRequest.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

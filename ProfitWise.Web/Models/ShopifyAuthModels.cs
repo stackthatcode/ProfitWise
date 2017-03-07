@@ -1,7 +1,4 @@
-﻿using Push.Foundation.Utilities.Helpers;
-using Push.Foundation.Web.Helpers;
-
-namespace ProfitWise.Web.Models
+﻿namespace ProfitWise.Web.Models
 {
     public class AuthorizationProblemModel
     {

@@ -154,6 +154,7 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[ProfitRealization] [smallint] NOT NULL,
 	[DateRangeDefault] [smallint] NOT NULL,
 	[TempFreeTrialOverride] [int] NULL,
+	[ShopifyUninstallId] [bigint] NULL,
  CONSTRAINT [PK_profitwiseshop_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,

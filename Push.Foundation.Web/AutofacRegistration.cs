@@ -7,19 +7,21 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
 using Push.Foundation.Utilities.CastleProxies;
+using Push.Foundation.Utilities.Security;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
-using Push.Foundation.Web.Security;
 using Push.Foundation.Web.Shopify;
 using Push.Utilities.CastleProxies;
+using EncryptionService = Push.Foundation.Web.Security.EncryptionService;
+using IEncryptionService = Push.Foundation.Web.Security.IEncryptionService;
 
 namespace Push.Foundation.Web
 {
     public class AutofacRegistration
     {
-        public static void Build(
-            ContainerBuilder builder, string encryption_key, string encryption_iv)
+        public static void Build(ContainerBuilder builder, 
+                string encryption_key, string encryption_iv, string hmac_secret)
         {
             // OWIN framework objects
             builder
@@ -57,6 +59,10 @@ namespace Push.Foundation.Web
             builder.Register(
                 ctx => new EncryptionService(encryption_key, encryption_iv))
                 .As<IEncryptionService>();
+
+            // The Hmac Service will be used to validate Webhooks from Shopify
+            builder.Register(x => new HmacCryptoService(hmac_secret));
+
 
             // Our customer Push Services
             var registry = new InceptorRegistry();

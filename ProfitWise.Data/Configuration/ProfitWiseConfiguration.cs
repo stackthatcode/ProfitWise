@@ -6,8 +6,8 @@ namespace ProfitWise.Data.Configuration
 {
     public class ProfitWiseConfiguration : ConfigurationSection
     {
-        private static readonly
-            Hashtable _settings = (Hashtable)ConfigurationManager.GetSection("profitWiseConfiguration");
+        private static readonly Hashtable _settings = 
+            (Hashtable)ConfigurationManager.GetSection("profitWiseConfiguration");
 
         public static ProfitWiseConfiguration Settings { get; } = new ProfitWiseConfiguration();
 

@@ -44,12 +44,12 @@ namespace ProfitWise.Data.Repositories.System
                     ShopOwnerUserId, ShopifyShopId, Domain, CurrencyId, TimeZone, 
                     IsAccessTokenValid, IsShopEnabled, IsDataLoaded, IsBillingValid,
                     StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, 
-                    DateRangeDefault, TempFreeTrialOverride
+                    DateRangeDefault, TempFreeTrialOverride, ShopifyUninstallId
                 ) VALUES (
                     @ShopOwnerUserId, @ShopifyShopId, @Domain, @CurrencyId, @TimeZone,
                     @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded, @IsBillingValid,
                     @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, 
-                    @DateRangeDefault, @TempFreeTrialOverride );
+                    @DateRangeDefault, @TempFreeTrialOverride, @ShopifyUninstallId );
                 SELECT SCOPE_IDENTITY();";
             return _connectionWrapper
                 .Query<int>(query, shop)
@@ -104,6 +104,13 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, new { pwShopId, days });
         }
 
+        public void UpdateShopifyUninstallId(string shopOwnerUserId, long? uninstallWebHookId)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET [ShopifyUninstallId] = @uninstallWebHookId
+                        WHERE ShopOwnerUserId = @shopOwnerUserId";
+            _connectionWrapper.Execute(query, new { shopOwnerUserId, uninstallWebHookId });
+        }
 
         public void UpdateStartingDateForOrders(int pwShopId, DateTime startingDateForOrders)
         {

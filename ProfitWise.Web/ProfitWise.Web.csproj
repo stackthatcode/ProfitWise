@@ -260,6 +260,7 @@
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />
     <Compile Include="Models\ProductVariantSelectionModel.cs" />
+    <Compile Include="Models\UninstallWebhook.cs" />
     <Compile Include="Models\WelcomeModel.cs" />
     <Compile Include="Plumbing\GlobalConfig.cs" />
     <Compile Include="App_Start\AutofacRegistration.cs" />

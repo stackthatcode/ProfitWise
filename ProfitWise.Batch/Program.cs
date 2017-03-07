@@ -5,7 +5,6 @@ using Hangfire;
 using Microsoft.AspNet.Identity.EntityFramework;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
-using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Identity;
 
 
@@ -16,11 +15,21 @@ namespace ProfitWise.Batch
         private const string HangFireBackgroundServiceOption = "1";
         private const string ScheduleInitialShopRefreshOption = "2";
         private const string ScheduleBackgroundSystemJobsOption = "3";
+        private const string AppUninstallTestRequest = "DEBUG";
         private const string ResetAdminPasswordOption = "W";
+
+
+        private static void TestHmacVerification()
+        {
+            var input = System.IO.File.ReadAllText("Request.txt");
+            Console.ReadLine();
+        }
+
 
 
         static void Main(string[] args)
         {
+            // Test HMAC encoder
             Console.WriteLine("ProfitWise.Batch v1.0 - Push Automated Commerce LLC");
             Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++");
             Console.WriteLine("");
@@ -48,6 +57,11 @@ namespace ProfitWise.Batch
             if (choice.Trim() == ResetAdminPasswordOption)
             {
                 ResetAdminPassword();
+                return;
+            }
+            if (choice.Trim() == AppUninstallTestRequest)
+            {
+                AppUninstallTest.Execute();
                 return;
             }
 

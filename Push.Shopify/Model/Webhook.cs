@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Configuration;
 using Newtonsoft.Json;
+using Push.Foundation.Utilities.Helpers;
 
 namespace Push.Shopify.Model
 {
@@ -10,7 +12,23 @@ namespace Push.Shopify.Model
         public string Address { get; set; }
         public string Format { get; set; }
         public DateTime Created_At { get; set; }
-        public DateTime Updated_At { get; set; }        
+        public DateTime Updated_At { get; set; }
+
+        public static readonly string
+            WebhookAddress = ConfigurationManager
+                .AppSettings
+                .GetAndTryParseAsString("UninstallWebHookAddress", "");
+
+                public static Webhook MakeUninstallHookRequest()
+                {
+                    var request = new Webhook()
+                    {
+                        Address = WebhookAddress,
+                        Format = "json",
+                        Topic = "app/uninstalled",
+                    };
+                    return request;
+                }
     }
 
     public static class WebhookExtensions

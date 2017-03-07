@@ -95,7 +95,9 @@ namespace ProfitWise.Batch
 
             // Push.Foundation.Web relies on consumers to supply Key and IV for its Encryption Service
             Push.Foundation.Web.AutofacRegistration.Build(builder,
-                ProfitWiseConfiguration.Settings.ClaimKey, ProfitWiseConfiguration.Settings.ClaimIv);
+                    ProfitWiseConfiguration.Settings.ClaimKey, 
+                    ProfitWiseConfiguration.Settings.ClaimIv,
+                    ProfitWiseConfiguration.Settings.ShopifyApiSecret);
 
             AddDiagnostics(builder);
             

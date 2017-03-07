@@ -26,11 +26,12 @@ namespace ProfitWise.Data.Model.Shop
         public int ProfitRealization { get; set; }
         public int DateRangeDefault { get; set; }
         public int? TempFreeTrialOverride { get; set; }
+        public long? ShopifyUninstallId { get; set; }
 
 
         public static PwShop Make(
-                string shopifyUserId, long shopId, int shopCurrencyId, 
-                string shopTimeZone, string shopDomain, int initialOrderStartDateOffsetMonths)
+                string shopifyUserId, long shopId, int shopCurrencyId, string shopTimeZone, 
+                string shopDomain, int initialOrderStartDateOffsetMonths)
         {
             var newShop = new PwShop
             {

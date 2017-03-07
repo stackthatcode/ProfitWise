@@ -1,9 +1,9 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ProfitWise.Data.HangFire;
@@ -13,10 +13,13 @@ using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Utilities.Security;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
+using Push.Foundation.Web.Json;
 using Push.Foundation.Web.Shopify;
+using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
 
 
@@ -33,7 +36,8 @@ namespace ProfitWise.Web.Controllers
         private readonly HangFireService _hangFireService;
         private readonly BillingService _billingService;
         private readonly ShopRepository _shopRepository;
-        private readonly IPushLogger _logger;        
+        private readonly IPushLogger _logger;
+        private readonly HmacCryptoService _hmacCryptoService;      
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
@@ -159,17 +163,39 @@ namespace ProfitWise.Web.Controllers
                 _logger.Warn($"Attempt to login with disabled Shop by {user.Id}");
             }
 
-            PwShop pwShop;
-            using (var transaction = _shopSynchronizationService.InitiateTransaction())
+            var pwShop = _shopRepository.RetrieveByUserId(user.Id);
+            var shopJson = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
+            var shop = Shop.MakeFromJson(shopJson.Value);
+
+            if (pwShop == null)
             {
-                var shopJson = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
-                var shop = Shop.MakeFromJson(shopJson.Value);
-                pwShop = _shopSynchronizationService.UpsertShop(user.Id, shop);
-                transaction.Commit();
+                using (var transaction = _shopSynchronizationService.InitiateTransaction())
+                {
+                    var credentials = MakeCredentials(externalLoginInfo, user);
+                    pwShop = _shopSynchronizationService.CreateShop(user.Id, shop, credentials);
+                    transaction.Commit();
+                }
+            }
+            else
+            {
+                _shopSynchronizationService.UpdateShop(user.Id, shop.Currency, shop.TimeZone);
             }
             return pwShop;
         }
         
+        private ShopifyCredentials MakeCredentials(ExternalLoginInfo externalLoginInfo, ApplicationUser user)
+        {
+            var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
+            var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
+            var credentials = new ShopifyCredentials()
+            {
+                ShopDomain = domainClaim.Value,
+                AccessToken = accessTokenClaim.Value,
+                ShopOwnerUserId = user.Id
+            };
+            return credentials;
+        }
+
         private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
         {
             var charge = _billingService.SyncAndRetrieveCurrentCharge(user.Id);
@@ -223,6 +249,19 @@ namespace ProfitWise.Web.Controllers
         {
             //AuthConfig.GlobalSignOut(_signInManager);
             return View("BillingDeclined");
+        }
+
+        [HttpPost]
+        public ActionResult Uninstall(UninstallWebhook message)
+        {
+            var shopifyHash = Request.Headers["X-Shopify-Hmac-Sha256"];
+            Request.InputStream.Position = 0;
+            var rawRequest = new StreamReader(Request.InputStream).ReadToEnd();
+            var verifyHash = _hmacCryptoService.ToBase64EncodedSha256(rawRequest);
+
+            _logger.Debug(shopifyHash);
+            _logger.Debug(verifyHash);
+            return JsonNetResult.Success();
         }
 
 
