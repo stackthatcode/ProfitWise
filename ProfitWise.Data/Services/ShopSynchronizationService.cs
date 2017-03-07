@@ -1,7 +1,9 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using Push.Foundation.Utilities.Helpers;
@@ -20,7 +22,8 @@ namespace ProfitWise.Data.Services
         private readonly IPushLogger _logger;
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly ApiRepositoryFactory _apifactory;
-
+        private readonly HangFireService _hangFireService;
+        private readonly BillingService _billingService;
 
         private readonly 
             int _orderStartOffsetMonths = ConfigurationManager
@@ -32,7 +35,9 @@ namespace ProfitWise.Data.Services
                     MultitenantFactory factory,
                     IPushLogger logger,
                     ConnectionWrapper connectionWrapper, 
-                    ApiRepositoryFactory apifactory)
+                    ApiRepositoryFactory apifactory, 
+                    HangFireService hangFireService, 
+                    BillingService billingService)
         {
             _currencyService = currencyService;
             _pwShopRepository = pwShopRepository;
@@ -40,17 +45,13 @@ namespace ProfitWise.Data.Services
             _logger = logger;
             _connectionWrapper = connectionWrapper;
             _apifactory = apifactory;
+            _hangFireService = hangFireService;
+            _billingService = billingService;
         }
 
         public IDbTransaction InitiateTransaction()
         {
             return _connectionWrapper.InitiateTransaction();
-        }
-        
-        public bool ExistsButDisabled(string shopOwnerUserId)
-        {
-            var pwShop = _pwShopRepository.RetrieveByUserId(shopOwnerUserId);
-            return (pwShop != null && pwShop.IsShopEnabled == false);
         }
         
         public PwShop CreateShop(string shopOwnerUserId, Shop shop, ShopifyCredentials credentials)
@@ -80,8 +81,7 @@ namespace ProfitWise.Data.Services
             _pwShopRepository.UpdateShopifyUninstallId(shopOwnerUserId, webhook.Id);
             return newShop;
         }
-    
-
+        
         public void UpdateShop(string userId, string currencySymbol, string timezone)
         {
             var pwShop = _pwShopRepository.RetrieveByUserId(userId);
@@ -93,6 +93,22 @@ namespace ProfitWise.Data.Services
             _pwShopRepository.UpdateIsAccessTokenValid(pwShop.PwShopId, true);
 
             _logger.Debug($"Updated Shop - UserId: {pwShop.ShopOwnerUserId}");
+        }
+
+        public void OrchestrateUninstallation(long shopifyShopId)
+        {
+            var shop = _pwShopRepository.RetrieveByShopifyShopId(shopifyShopId);
+            _pwShopRepository.UpdateIsProfitWiseInstalled(shop.PwShopId, false, DateTime.Now);
+
+            var batchRepository = _factory.MakeBatchStateRepository(shop);
+            var batchState = batchRepository.Retrieve();
+
+            _hangFireService.KillRecurringJob(batchState.RoutineRefreshJobId);
+
+
+            _billingService.CancelCharge();
+
+
         }
     }
 }

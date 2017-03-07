@@ -21,6 +21,14 @@ namespace ProfitWise.Data.Repositories.System
         }
 
 
+        public PwShop RetrieveByShopifyShopId(long shopifyShopId)
+        {
+            var query = @"SELECT * FROM profitwiseshop WHERE ShopifyShopId = @shopifyShopId";
+            return _connectionWrapper
+                .Query<PwShop>(query, new { shopifyShopId })
+                .FirstOrDefault();
+        }
+
         public PwShop RetrieveByShopId(int pwShopId)
         {
             var query = @"SELECT * FROM profitwiseshop WHERE PwShopId = @PwShopId";
@@ -42,12 +50,12 @@ namespace ProfitWise.Data.Repositories.System
             var query =
                 @"INSERT INTO profitwiseshop (
                     ShopOwnerUserId, ShopifyShopId, Domain, CurrencyId, TimeZone, 
-                    IsAccessTokenValid, IsShopEnabled, IsDataLoaded, IsBillingValid,
+                    IsAccessTokenValid, IsProfitWiseInstalled, IsDataLoaded, IsBillingValid,
                     StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, 
                     DateRangeDefault, TempFreeTrialOverride, ShopifyUninstallId
                 ) VALUES (
                     @ShopOwnerUserId, @ShopifyShopId, @Domain, @CurrencyId, @TimeZone,
-                    @IsAccessTokenValid, @IsShopEnabled, @IsDataLoaded, @IsBillingValid,
+                    @IsAccessTokenValid, @IsProfitWiseInstalled, @IsDataLoaded, @IsBillingValid,
                     @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, 
                     @DateRangeDefault, @TempFreeTrialOverride, @ShopifyUninstallId );
                 SELECT SCOPE_IDENTITY();";
@@ -72,12 +80,15 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, new { pwShopId, isAccessTokenValid });
         }
 
-        public void UpdateIsShopEnabled(int pwShopId, bool isShopEnabled)
+        public void UpdateIsProfitWiseInstalled(
+                int pwShopId, bool isProfitWiseInstalled, DateTime? uninstallDateTime)
         {
             var query = @"UPDATE profitwiseshop 
-                        SET IsShopEnabled = @isShopEnabled
+                        SET IsProfitWiseInstalled = @isProfitWiseInstalled,
+                            UninstallDateTime = @uninstallDateTime
                         WHERE PwShopId = @pwShopId";
-            _connectionWrapper.Execute(query, new { pwShopId, isShopEnabled });
+
+            _connectionWrapper.Execute(query, new { pwShopId, isProfitWiseInstalled, uninstallDateTime });
         }
 
         public void UpdateIsDataLoaded(int pwShopId, bool isDataLoaded)

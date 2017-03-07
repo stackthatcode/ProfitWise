@@ -40,9 +40,9 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Warn($"Shop {shop.PwShopId} is has an invalid Access Token");
                 return false;
             }
-            if (shop.IsShopEnabled == false)
+            if (shop.IsProfitWiseInstalled == false)
             {
-                _pushLogger.Warn($"Shop {shop.PwShopId} is currently disabled");
+                _pushLogger.Warn($"Shop {shop.PwShopId} is not installed");
                 return false;
             }
 

@@ -14,7 +14,7 @@ namespace ProfitWise.Data.Model.Shop
         public string TimeZone { get; set; }
 
         public bool IsAccessTokenValid { get; set; }
-        public bool IsShopEnabled { get; set; }
+        public bool IsProfitWiseInstalled { get; set; }
         public bool IsBillingValid { get; set; }
         public bool IsDataLoaded { get; set; }
 
@@ -42,7 +42,7 @@ namespace ProfitWise.Data.Model.Shop
                 Domain = shopDomain,
 
                 IsAccessTokenValid = true,
-                IsShopEnabled = true,
+                IsProfitWiseInstalled = true,
                 IsDataLoaded = false,
                 IsBillingValid = false,
 

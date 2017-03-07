@@ -59,11 +59,11 @@ namespace ProfitWise.Web.Attributes
                 return;
             }
 
-            if (!pwShop.IsShopEnabled)
+            if (!pwShop.IsProfitWiseInstalled)
             {
-                logger.Info($"PwShop {pwShop.PwShopId} has been disabled - aborting IdentityProcessing");
+                logger.Info($"PwShop {pwShop.PwShopId} has been uninstalled - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
-                filterContext.Result = GlobalConfig.Redirect(AuthConfig.UnauthorizedAccessUrl, currentUrl);
+                filterContext.Result = GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, currentUrl);
                 return;
             }
 
@@ -89,8 +89,7 @@ namespace ProfitWise.Web.Attributes
 
             if (!pwShop.IsAccessTokenValid)
             {
-                logger.Info(
-                    $"The Access Token for PwShop {pwShop.PwShopId} needs to be Refreshed - aborting IdentityProcessing");
+                logger.Info($"The Access Token for PwShop {pwShop.PwShopId} needs to be Refreshed - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
                 filterContext.Result = GlobalConfig.Redirect(AuthConfig.AccessTokenRefreshUrl, currentUrl);
                 return;

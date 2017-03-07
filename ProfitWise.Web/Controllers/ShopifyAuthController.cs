@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -160,10 +161,11 @@ namespace ProfitWise.Web.Controllers
 
         private PwShop UpsertShop(ExternalLoginInfo externalLoginInfo, ApplicationUser user)
         {
-            if (_shopSynchronizationService.ExistsButDisabled(user.Id))
-            {
-                _logger.Warn($"Attempt to login with disabled Shop by {user.Id}");
-            }
+            // TODO - add naughty Shop blacklist
+            //if (_shopSynchronizationService.ExistsButDisabled(user.Id))
+            //{
+            //    _logger.Warn($"Attempt to login with disabled Shop by {user.Id}");
+            //}
 
             var pwShop = _shopRepository.RetrieveByUserId(user.Id);
             var shopJson = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
