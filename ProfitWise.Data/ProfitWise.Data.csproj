@@ -201,6 +201,7 @@
     <Compile Include="Repositories\System\ExchangeRateRepository.cs" />
     <Compile Include="Repositories\Multitenant\CogsEntryRepository.cs" />
     <Compile Include="Repositories\Multitenant\ReportRepository.cs" />
+    <Compile Include="Services\WebhookService.cs" />
     <Compile Include="Services\BillingService.cs" />
     <Compile Include="Services\CatalogRetrievalService.cs" />
     <Compile Include="Services\ConsolidationService.cs" />

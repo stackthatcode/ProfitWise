@@ -11,6 +11,7 @@ namespace Push.Shopify.Factories
         private readonly Func<IEventApiRepository> _eventApiRepositoryFactory;
         private readonly Func<IShopApiRepository> _shopApiRepositoryFactory;
         private readonly Func<IRecurringApiRepository> _recurringApiRepositoryFactory;
+        private readonly Func<IWebhookApiRepository> _webhookApiRepositoryFactory;
 
 
         public ApiRepositoryFactory(
@@ -18,13 +19,22 @@ namespace Push.Shopify.Factories
             Func<IProductApiRepository> productApiRepositoryFactory,
             Func<IEventApiRepository> eventApiRepositoryFactory,
             Func<IShopApiRepository> shopApiRepositoryFactory, 
-            Func<IRecurringApiRepository> recurringApiRepositoryFactory)
+            Func<IRecurringApiRepository> recurringApiRepositoryFactory, 
+            Func<IWebhookApiRepository> webhookApiRepositoryFactory)
         {
             _orderApiRepositoryFactory = orderApiRepositoryFactory;
             _productApiRepositoryFactory = productApiRepositoryFactory;
             _eventApiRepositoryFactory = eventApiRepositoryFactory;
             _shopApiRepositoryFactory = shopApiRepositoryFactory;
             _recurringApiRepositoryFactory = recurringApiRepositoryFactory;
+            _webhookApiRepositoryFactory = webhookApiRepositoryFactory;
+        }
+
+        public virtual IWebhookApiRepository MakeWebhookApiRepository(ShopifyCredentials credentials)
+        {
+            var repository = _webhookApiRepositoryFactory();
+            repository.ShopifyCredentials = credentials;
+            return repository;
         }
 
         public virtual IOrderApiRepository MakeOrderApiRepository(ShopifyCredentials credentials)

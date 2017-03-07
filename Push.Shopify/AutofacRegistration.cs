@@ -42,6 +42,10 @@ namespace Push.Shopify
                 .As<IRecurringApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
+            builder.RegisterType<WebhookApiRepository>()
+                .As<IWebhookApiRepository>()
+                .EnableClassInterceptorsWithRegistry(registry);
+
             builder.RegisterType<ApiRepositoryFactory>();
 
         }        

@@ -82,6 +82,7 @@
     <Compile Include="Interfaces\IOrderApiRepository.cs" />
     <Compile Include="Interfaces\IProductApiRepository.cs" />
     <Compile Include="Interfaces\IRecurringApiRepository.cs" />
+    <Compile Include="Interfaces\IWebhookApiRepository.cs" />
     <Compile Include="Interfaces\IShopApiRepository.cs" />
     <Compile Include="Model\ChargeStatus.cs" />
     <Compile Include="Model\Event.cs" />
@@ -98,11 +99,13 @@
     <Compile Include="Model\Shop.cs" />
     <Compile Include="Model\Transaction.cs" />
     <Compile Include="Model\Variant.cs" />
+    <Compile Include="Model\Webhook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Aspect\IShopifyCredentialConsumer.cs" />
     <Compile Include="Repositories\EventApiRepository.cs" />
     <Compile Include="Repositories\OrderApiRepository.cs" />
     <Compile Include="Repositories\RecurringApiRepository.cs" />
+    <Compile Include="Repositories\WebhookApiRepository.cs" />
     <Compile Include="Repositories\ShopApiRepository.cs" />
     <Compile Include="Repositories\ProductApiRepository.cs" />
   </ItemGroup>
