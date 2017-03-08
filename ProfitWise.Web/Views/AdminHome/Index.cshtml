@@ -60,7 +60,7 @@
             <tr>
                 <th>Domain</th>
                 <th>Email</th>
-                <th>User Id</th>
+                <th>Status</th>
                 <th>Shop Id</th>
                 <th>Last Update</th>
                 <th>View</th>
@@ -71,7 +71,26 @@
                 <td data-bind="text: Domain"></td>
                 <td data-bind="text: Email"></td>
                 <td>
-                    <span data-bind="text: UserId"></span><br />
+                    <span data-bind="if: IsAccessTokenValid">
+                        <span class="label label-success">Access Token</span>
+                    </span>
+                    <span data-bind="ifnot: IsAccessTokenValid">
+                        <span class="label label-danger">Invalid Access Token</span>
+                    </span>
+
+                    <span data-bind="if: IsProfitWiseInstalled">
+                        <span class="label label-success">Installed</span>
+                    </span>
+                    <span data-bind="ifnot: IsProfitWiseInstalled">
+                        <span class="label label-danger">Uninstalled</span>
+                    </span>
+
+                    <span data-bind="if: IsBillingValid">
+                        <span class="label label-success">Billing Valid</span>
+                    </span>
+                    <span data-bind="ifnot: IsBillingValid">
+                        <span class="label label-danger">Billing Invalid</span>
+                    </span>
                 </td>
                 <td>
                     <span data-bind="text: PwShopId"></span>
@@ -84,7 +103,7 @@
             </tbody>
         </table>
     </div>
-        
+    
     <div data-bind="if: DrilldownVisible">
         <a href="#" class="btn btn-default" data-bind="click: BackClick">
             <i class="glyphicon glyphicon-arrow-left"></i> Go Back
