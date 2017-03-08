@@ -34,7 +34,7 @@ namespace ProfitWise.Data.Repositories.System
             var query =
                 @"SELECT t1.Id AS UserId, t1.UserName, t1.Email, t4.TimeZone, t4.Domain, t4.CurrencyId, 
                     t4.PwShopId, IsAccessTokenValid, IsProfitWiseInstalled, IsBillingValid, IsDataLoaded, 
-                    t5.ProductsLastUpdated, t4.TempFreeTrialOverride
+                    t5.ProductsLastUpdated, t4.TempFreeTrialOverride, t4.UninstallDateTime
                 FROM AspNetUsers t1 
 	                INNER JOIN profitwiseshop t4 ON t1.Id = t4.ShopOwnerUserId
                     INNER JOIN profitwisebatchstate t5 on t4.PwShopId = t5.PwShopId

@@ -64,6 +64,7 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+        // Shopify OAuth authentication & authorization flow
         [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
         {
@@ -180,7 +181,8 @@ namespace ProfitWise.Web.Controllers
             return pwShop;
         }
         
-        private ShopifyCredentials MakeCredentials(ExternalLoginInfo externalLoginInfo, ApplicationUser user)
+        private ShopifyCredentials MakeCredentials(
+            ExternalLoginInfo externalLoginInfo, ApplicationUser user)
         {
             var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
             var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
@@ -299,7 +301,8 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult BillingProblem(string returnUrl)
         {
-            var msg = "Something went wrong while attempting to bill your ProfitWise account. Please contact our support.";
+            var msg = "Something went wrong while attempting to bill your ProfitWise account. " + 
+                    "Please contact our support for more information.";
             return AuthorizationProblem(returnUrl, "Billing Problem", msg);
         }
 
@@ -351,5 +354,4 @@ namespace ProfitWise.Web.Controllers
         }
     }
 }
-
 

@@ -15,7 +15,7 @@ namespace ProfitWise.Batch
         private const string HangFireBackgroundServiceOption = "1";
         private const string ScheduleInitialShopRefreshOption = "2";
         private const string ScheduleBackgroundSystemJobsOption = "3";
-        private const string AppUninstallTestRequest = "DEBUG";
+        private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
 
 
@@ -29,7 +29,6 @@ namespace ProfitWise.Batch
 
         static void Main(string[] args)
         {
-            // Test HMAC encoder
             Console.WriteLine("ProfitWise.Batch v1.0 - Push Automated Commerce LLC");
             Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++");
             Console.WriteLine("");

@@ -62,6 +62,7 @@
                 <th>Email</th>
                 <th>User Id</th>
                 <th>Shop Id</th>
+                <th>Last Update</th>
                 <th>View</th>
             </tr>
             </thead>
@@ -75,6 +76,7 @@
                 <td>
                     <span data-bind="text: PwShopId"></span>
                 </td>
+                <td data-bind="text: ProductsLastUpdated"></td>
                 <td>
                     <a href="#" class="btn btn-primary btn-sm" data-bind="click: ViewClick">View</a>
                 </td>
@@ -90,12 +92,25 @@
         
         <div data-bind="with: UserModel">
             <br />
-            <h4>User Details - <span data-bind="text: user.Domain"></span></h4>
-            <a style="font-weight: 700;" class="btn btn-primary btn-sm"  href="#" data-bind="click: function() { $root.Impersonate(user.UserId); }">Impersonate User</a>
-            <a style="font-weight: 700;" class="btn btn-primary btn-sm" href="#" data-bind="click: function() { $root.SetFreeTrialOverride(user.UserId); }">Set Free Trial</a>
-            <a style="font-weight: 700;" class="btn btn-primary btn-sm" href="#" data-bind="click: function() { $root.ClearFreeTrialOverride(user.UserId); }">Clear Free Trial</a>
-            <a style="font-weight: 700;" class="btn btn-warning btn-sm" href="#" data-bind="click: function() { $root.Uninstall(user.PwShopId); }">Uninstall ProfitWise</a>
-            <a style="font-weight: 700;" class="btn btn-danger btn-sm" href="#" data-bind="click: function() { $root.FinalizeUninstall(user.PwShopId); }">Finalize Uninstall</a>
+            <h4 style="font-weight: 700">ProfitWise Account - <span data-bind="text: user.Domain"></span></h4>
+            <br />
+            <div class="row">
+                <div class="col-xs-6">
+                    <a style="font-weight: 700;" class="btn btn-primary btn-sm" href="#" data-bind="click: function() { $root.Impersonate(user.UserId); }">Impersonate User</a>
+                    <a style="font-weight: 700;" class="btn btn-primary btn-sm" href="#" data-bind="click: function() { $root.SetFreeTrialOverride(user.UserId); }">Set Free Trial</a>
+                    <a style="font-weight: 700;" class="btn btn-primary btn-sm" href="#" data-bind="click: function() { $root.ClearFreeTrialOverride(user.UserId); }">Clear Free Trial</a>
+                </div>
+                <div class="col-xs-6" style="text-align:right;">
+                    <span data-bind="if: user.IsProfitWiseInstalled">
+                        <a style="font-weight: 700;" class="btn btn-warning btn-sm" 
+                           href="#" data-bind="click: function() { $root.Uninstall(user.PwShopId); }">Uninstall ProfitWise</a>
+                    </span>
+                    <span data-bind="ifnot: user.IsProfitWiseInstalled">
+                        <a style="font-weight: 700;" class="btn btn-danger btn-sm" 
+                           href="#" data-bind="click: function() { $root.FinalizeUninstall(user.PwShopId); }">Finalize Uninstall</a>
+                    </span>
+                </div>
+            </div>
             
             <br />
             <br />

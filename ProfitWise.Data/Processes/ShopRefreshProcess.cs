@@ -8,7 +8,6 @@ using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
-using Push.Shopify.HttpClient;
 
 
 namespace ProfitWise.Data.Processes
@@ -49,7 +48,7 @@ namespace ProfitWise.Data.Processes
         }
         
 
-        [AutomaticRetry(Attempts = 3)]
+        [AutomaticRetry(Attempts = 1)]
         [Queue(ProfitWiseQueues.InitialShopRefresh)]
         public void InitialShopRefresh(string userId)
         {
@@ -61,7 +60,12 @@ namespace ProfitWise.Data.Processes
             {
                 _pushLogger.Error($"InitialShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
-                throw;  // Need to do this so HangFire reschedules
+                throw; // Need to do this so HangFire reschedules
+            }
+            finally
+            {
+                // If it's already scheduled, this will only perform an update
+                _hangFireService.AddOrUpdateRoutineShopRefresh(userId);
             }
         }
 
@@ -112,9 +116,6 @@ namespace ProfitWise.Data.Processes
                 // Change the store's status...
                 var shop = _pwShopRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
                 _pwShopRepository.UpdateIsDataLoaded(shop.PwShopId, true);
-
-                // If it's already scheduled, this will only perform an update
-                _hangFireService.AddOrUpdateRoutineShopRefresh(userId);
             }
             catch (BadHttpStatusCodeException exception)
             {

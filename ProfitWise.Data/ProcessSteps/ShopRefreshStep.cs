@@ -5,7 +5,6 @@ using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Helpers;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
-using Push.Shopify.Model;
 
 
 namespace ProfitWise.Data.ProcessSteps
@@ -64,7 +63,7 @@ namespace ProfitWise.Data.ProcessSteps
             }
 
             // Invoke Shopify API to get the latest Billing Status
-            if (_shopOrchestrationService.SyncAndValidateBilling(shop))
+            if (!_shopOrchestrationService.SyncAndValidateBilling(shop))
             {
                 _pushLogger.Warn($"Shop {shop.PwShopId} has Billing become invalid - skipping Refresh");
                 return false;
@@ -75,7 +74,7 @@ namespace ProfitWise.Data.ProcessSteps
             var shopFromShopify = shopApiRepository.Retrieve();
             _shopOrchestrationService.UpdateShop(credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
 
-            return false;
+            return true;
         }
     }
 }
