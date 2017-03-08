@@ -86,7 +86,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                             LastUpdated = getdate(),
                             LastJson = @LastJson,
                             IsPrimary = @IsPrimary
-                        WHERE PwChargeId = PwChargeId;";
+                        WHERE PwChargeId = @PwChargeId;";
             _connectionWrapper.Execute(query, state); 
         }
 

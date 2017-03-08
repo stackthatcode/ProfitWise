@@ -311,16 +311,11 @@ namespace ProfitWise.Data.Services
         public void FinalizeUninstallation(int pwShopId)
         {
             var shop = _shopRepository.RetrieveByShopId(pwShopId);
-            var batchRepository = _factory.MakeBatchStateRepository(shop);
             var billingRepository = _factory.MakeBillingRepository(shop);
 
             // Kill the Recurring Shop Refresh Job
-            var batchState = batchRepository.Retrieve();
-            if (batchState.RoutineRefreshJobId != null)
-            {
-                _hangFireService.KillRoutineRefresh(batchState.RoutineRefreshJobId);
-            }
-
+            _hangFireService.KillRoutineRefresh(shop.ShopOwnerUserId);
+ 
             // Clear out any ProfitWise Charge records to force creation of a new Charge
             billingRepository.ClearPrimary();
             _shopRepository.UpdateIsBillingValid(pwShopId, false);

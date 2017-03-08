@@ -129,8 +129,12 @@ namespace ProfitWise.Data.HangFire
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var batch = batchRepository.Retrieve();
-            RecurringJob.RemoveIfExists(batch.RoutineRefreshJobId);
-            batchRepository.UpdateRoutineRefreshJobId(null);
+
+            if (batch.RoutineRefreshJobId != null)
+            {
+                RecurringJob.RemoveIfExists(batch.RoutineRefreshJobId);
+                batchRepository.UpdateRoutineRefreshJobId(null);
+            }
         }
 
         public void KillBackgroundJob(string jobId)

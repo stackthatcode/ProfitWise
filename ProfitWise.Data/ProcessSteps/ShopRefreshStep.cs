@@ -65,7 +65,7 @@ namespace ProfitWise.Data.ProcessSteps
             // Invoke Shopify API to get the latest Billing Status
             if (!_shopOrchestrationService.SyncAndValidateBilling(shop))
             {
-                _pushLogger.Warn($"Shop {shop.PwShopId} has Billing become invalid - skipping Refresh");
+                _pushLogger.Warn($"Shop {shop.PwShopId} Billing was just invalidated - skipping Refresh");
                 return false;
             }
             

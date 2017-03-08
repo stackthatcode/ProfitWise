@@ -91,6 +91,13 @@
                     <span data-bind="ifnot: IsBillingValid">
                         <span class="label label-danger">Billing Invalid</span>
                     </span>
+                    
+                    <span data-bind="if: IsDataLoaded">
+                        <span class="label label-success">Data Loaded</span>
+                    </span>
+                    <span data-bind="ifnot: IsDataLoaded">
+                        <span class="label label-danger">Data Not Loaded</span>
+                    </span>
                 </td>
                 <td>
                     <span data-bind="text: PwShopId"></span>
@@ -369,6 +376,7 @@
 
         self.BackClick = function() {
             self.UserModel(null);
+            self.LoadUsers();
         };
 
         self.LoadUsers = function () {
