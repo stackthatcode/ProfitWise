@@ -318,7 +318,7 @@ namespace ProfitWise.Data.Services
             var batchState = batchRepository.Retrieve();
             if (batchState.RoutineRefreshJobId != null)
             {
-                _hangFireService.KillRecurringJob(batchState.RoutineRefreshJobId);
+                _hangFireService.KillRoutineRefresh(batchState.RoutineRefreshJobId);
             }
 
             // Clear out any ProfitWise Charge records to force creation of a new Charge

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 
 namespace ProfitWise.Batch
@@ -7,6 +8,8 @@ namespace ProfitWise.Batch
     {
         public static void Execute()
         {
+            Console.WriteLine("Simulating App/Uninstallation Webhook...");
+
             var url = "https://gracie2/profitwise/shopifyauth/uninstall";
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
 
@@ -28,6 +31,9 @@ namespace ProfitWise.Batch
             {
                 var result = streamReader.ReadToEnd();
             }
+
+            Console.WriteLine("Complete... hit enter to continue");
+            Console.ReadLine();
         }
     }
 }

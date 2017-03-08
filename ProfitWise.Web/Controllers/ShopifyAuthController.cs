@@ -252,9 +252,9 @@ namespace ProfitWise.Web.Controllers
             var rawRequest = new StreamReader(Request.InputStream).ReadToEnd();
             var verifyHash = _hmacCryptoService.ToBase64EncodedSha256(rawRequest);
 
-            if (rawRequest != verifyHash)
+            if (shopifyHash != verifyHash)
             {
-                _logger.Warn($"Hash Verification failure {shopifyHash}/{verifyHash}");
+                _logger.Error($"Hash Verification failure {shopifyHash}/{verifyHash}");
             }
 
             _shopOrchestrationService.UninstallShop(message.id);

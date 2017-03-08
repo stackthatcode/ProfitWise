@@ -55,11 +55,19 @@ namespace ProfitWise.Data.HangFire
 
         public string AddOrUpdateInitialShopRefresh(string userId)
         {
-            _logger.Info($"Scheduling Initial Shop Refresh for Shop: UserId: {userId}");
-            var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));
-            
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+            var batch = batchRepository.Retrieve();
+
+            if (batch.RoutineRefreshJobId != null)
+            {
+                _logger.Info($"Aborting addition of Initial Shop Refresh; " + 
+                        $"Routine Job Refresh {batch.RoutineRefreshJobId} exists already");
+                return batch.RoutineRefreshJobId;
+            }
+
+            _logger.Info($"Scheduling Initial Shop Refresh for Shop: UserId: {userId}");
+            var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));            
             batchRepository.UpdateInitialRefreshJobId(jobId);
 
             return jobId;
@@ -88,9 +96,13 @@ namespace ProfitWise.Data.HangFire
                 .AddOrUpdate<ShopRefreshProcess>(
                     jobId, x => x.RoutineShopRefresh(userId), _shopRefreshInterval, HangFireTimeZone);
 
-            var shop = _shopRepository.RetrieveByUserId(userId);
-            var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-            batchRepository.UpdateRoutineRefreshJobId(jobId);
+            using (var transaction = _shopRepository.InitiateTransaction())
+            {
+                var shop = _shopRepository.RetrieveByUserId(userId);
+                var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+                batchRepository.UpdateRoutineRefreshJobId(jobId);
+                transaction.Commit();
+            }
             return jobId;
         }
 
@@ -112,9 +124,13 @@ namespace ProfitWise.Data.HangFire
                     jobId, x => x.Execute(), _cleanupServiceInterval, HangFireTimeZone);
         }
 
-        public void KillRecurringJob(string jobId)
+        public void KillRoutineRefresh(string userId)
         {
-            RecurringJob.RemoveIfExists(jobId);
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+            var batch = batchRepository.Retrieve();
+            RecurringJob.RemoveIfExists(batch.RoutineRefreshJobId);
+            batchRepository.UpdateRoutineRefreshJobId(null);
         }
 
         public void KillBackgroundJob(string jobId)
