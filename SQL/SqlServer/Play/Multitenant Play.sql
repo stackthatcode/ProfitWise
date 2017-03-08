@@ -14,7 +14,9 @@ SELECT * FROM AspNetUserLogins;
 
 SELECT * FROM profitwiseshop;
 
-SELECT * FROM profitwisebatchstate
+SELECT * FROM profitwisebatchstate;
+
+SELECT * FROM profitwiserecurringcharge;
 
 
 

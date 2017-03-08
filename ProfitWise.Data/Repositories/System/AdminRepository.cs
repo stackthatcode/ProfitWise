@@ -41,7 +41,7 @@ namespace ProfitWise.Data.Repositories.System
                 FROM AspNetUsers t1 
 	                INNER JOIN profitwiseshop t4 ON t1.Id = t4.ShopOwnerUserId
                     LEFT JOIN profitwisebatchstate t5 on t4.PwShopId = t5.PwShopId
-                    LEFT JOIN profitwiserecurringcharge t6 ON t4.PwShopId = t6.PwShopId AND t6.IsPrimary = 1;
+                    LEFT JOIN profitwiserecurringcharge t6 ON t4.PwShopId = t6.PwShopId AND t6.IsPrimary = 1
                 WHERE t1.Id = @userId;";
 
             return _connectionWrapper.Query<ProfitWiseUser>(query, new { userId }).FirstOrDefault();

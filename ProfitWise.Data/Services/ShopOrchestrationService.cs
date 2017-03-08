@@ -182,6 +182,7 @@ namespace ProfitWise.Data.Services
             // Create Billing Repository and get the current primary Recurring Charge record
             var shop = _shopRepository.RetrieveByUserId(userId);
             var billingRepository = _factory.MakeBillingRepository(shop);
+
             var currentCharge = billingRepository.RetrieveCurrent();
             if (currentCharge == null)
             {
@@ -203,8 +204,10 @@ namespace ProfitWise.Data.Services
         public bool VerifyChargeAndScheduleRefresh(string userId)
         {
             // Synchronize the Charge record in ProfitWise with Shopify API
-            var shop = _shopRepository.RetrieveByUserId(userId);
+            SyncAndRetrieveCurrentCharge(userId);
 
+            // The Shop should reflect the status
+            var shop = _shopRepository.RetrieveByUserId(userId);
             if (shop.IsBillingValid)
             {
                 // Protective measure to prevent multiple background updates
@@ -310,6 +313,7 @@ namespace ProfitWise.Data.Services
             _shopRepository.UpdateIsProfitWiseInstalled(shop.PwShopId, false, DateTime.Now);
         }
 
+        // Kills the Background Jobs from Refreshing and nukes the Billing (if it isn't already!)
         public void FinalizeUninstallation(int pwShopId)
         {
             var shop = _shopRepository.RetrieveByShopId(pwShopId);
