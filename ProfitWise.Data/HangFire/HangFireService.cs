@@ -35,9 +35,7 @@ namespace ProfitWise.Data.HangFire
             _machineTimeZone = ConfigurationManager.AppSettings
                 .GetAndTryParseAsString("Machine_TimeZone", "(GMT-06:00) Central Time (US &amp; Canada)");
 
-        private TimeZoneInfo HangFireTimeZone =>
-            //TimeZoneInfo.FindSystemTimeZoneById(_machineTimeZone) ??  // Doesn't work???
-            TimeZoneInfo.Local;
+        private TimeZoneInfo HangFireTimeZone => TimeZoneInfo.Local;
 
 
         public HangFireService(
@@ -137,9 +135,17 @@ namespace ProfitWise.Data.HangFire
             }
         }
 
-        public void KillBackgroundJob(string jobId)
+        public void KillBackgroundJob(string userId)
         {
-            BackgroundJob.Delete(jobId);
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+            var batch = batchRepository.Retrieve();
+            
+            if (batch.InitialRefreshJobId != null)
+            {
+                BackgroundJob.Delete(batch.InitialRefreshJobId);
+                batchRepository.UpdateInitialRefreshJobId(null);
+            }
         }
     }
 }

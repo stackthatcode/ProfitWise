@@ -51,14 +51,10 @@ namespace ProfitWise.Data.ProcessSteps
                 }
                 return false;
             }
+
             if (shop.IsAccessTokenValid == false)
             {
                 _pushLogger.Warn($"Shop {shop.PwShopId} has an invalid Access Token - skipping Refresh");
-                return false;
-            }
-            if (shop.IsBillingValid == false)
-            {
-                _pushLogger.Warn($"Shop {shop.PwShopId} has an invalid Billing - skipping Refresh");
                 return false;
             }
 

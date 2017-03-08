@@ -198,13 +198,14 @@ namespace ProfitWise.Web.Controllers
         private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
         {
             var charge = _shopOrchestrationService.SyncAndRetrieveCurrentCharge(user.Id);
+
             if (charge != null && charge.LastStatus == ChargeStatus.Pending)
             {
                 // Redirect for Shopify Charge approval
                 return View("ChargeConfirm",
                     new ChargeConfirmModel() { ConfirmationUrl = charge.ConfirmationUrl });
             }            
-            if (charge == null || charge.SystemNeedsToCreateNewCharge)
+            if (charge == null || charge.LastStatus.SystemMustCreateNewCharge())
             {
                 // Create ProfitWise subscription and save
                 var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
@@ -266,54 +267,42 @@ namespace ProfitWise.Web.Controllers
         // Error pages
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult UnauthorizedAccess(string returnUrl)
-        {           
-            return AuthorizationProblem(
-                returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.", 
-                showLoginLink:true);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult ExternalLoginFailure(string returnUrl)
+        public ActionResult Problem(AuthProblemCode code, string returnUrl)
         {
-            var msg = "It appears that something went wrong while authorizing your Shopify Account.";
-            return AuthorizationProblem(returnUrl, "External Login Failure",  msg, showLoginLink:true);            
+            if (code == AuthProblemCode.UnauthorizedAccess)
+            {
+                return AuthorizationProblem(
+                    returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.",
+                    showLoginLink: true);
+            }
+            if (code == AuthProblemCode.ExternalLoginFailure)
+            {
+                var msg = "It appears that something went wrong while authorizing your Shopify Account.";
+                return AuthorizationProblem(returnUrl, "External Login Failure", msg, showLoginLink: true);
+            }
+            if (code == AuthProblemCode.AccessTokenRefresh)
+            {
+                var msg = "It appears your Shopify Access has expired or is invalid.";
+                return AuthorizationProblem(returnUrl, "Refresh Shopify Access", msg, showLoginLink: true);
+            }
+            if (code == AuthProblemCode.AccessTokenRefresh)
+            {
+                var msg = "Something went wrong while attempting to authorize your Shopify account.";
+                return AuthorizationProblem(returnUrl, "Authorization Failure", msg, showLoginLink: true);
+            }
+            if (code == AuthProblemCode.BillingProblem)
+            {
+                var msg = "Something went wrong while attempting to bill your ProfitWise account. " +
+                        "Please contact our support for more information.";
+                return AuthorizationProblem(returnUrl, "Billing Problem", msg);
+            }
+            if (code == AuthProblemCode.BillingIncomplete)
+            {
+                var msg = "It appears that your ProfitWise billing hasn't been set up correctly.";
+                return AuthorizationProblem(returnUrl, "Billing Incomplete", msg, showLoginLink: true);
+            }
+            throw new ArgumentException("Unrecognize problem code");
         }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult AccessTokenRefresh(string returnUrl)
-        {
-            var msg = "It appears your Shopify Access has expired or is invalid.";
-            return AuthorizationProblem(returnUrl, "Refresh Shopify Access", msg, showLoginLink:true);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult SevereAuthorizationFailure(string returnUrl)
-        {
-            var msg = "Something went wrong while attempting to authorize your Shopify account.";
-            return AuthorizationProblem(returnUrl, "Authorization Failure", msg, showLoginLink:true);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult BillingProblem(string returnUrl)
-        {
-            var msg = "Something went wrong while attempting to bill your ProfitWise account. " + 
-                    "Please contact our support for more information.";
-            return AuthorizationProblem(returnUrl, "Billing Problem", msg);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult BillingIncomplete(string returnUrl)
-        {
-            var msg = "It appears that your ProfitWise billing hasn't been set up correctly.";
-            return AuthorizationProblem(returnUrl, "Billing Incomplete", msg, showLoginLink:true);
-        }
-
 
         private ActionResult AuthorizationProblem(
                 string returnUrl, string title, string message, bool showLoginLink = false)

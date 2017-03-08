@@ -1,5 +1,6 @@
 ﻿using System;
 using ProfitWise.Data.Model.Preferences;
+using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.Shop
 {
@@ -15,7 +16,10 @@ namespace ProfitWise.Data.Model.Shop
 
         public bool IsAccessTokenValid { get; set; }
         public bool IsProfitWiseInstalled { get; set; }
-        public bool IsBillingValid { get; set; }
+        public bool IsBillingValid => LastBillingStatus.IsValid();
+
+        public ChargeStatus? LastBillingStatus { get; set; }
+
         public bool IsDataLoaded { get; set; }
 
         public DateTime? StartingDateForOrders { get; set; }
@@ -46,7 +50,6 @@ namespace ProfitWise.Data.Model.Shop
                 IsAccessTokenValid = true,
                 IsProfitWiseInstalled = true,
                 IsDataLoaded = false,
-                IsBillingValid = false,
 
                 StartingDateForOrders = 
                         DateTime.Today.AddMonths(-Math.Abs(initialOrderStartDateOffsetMonths)),

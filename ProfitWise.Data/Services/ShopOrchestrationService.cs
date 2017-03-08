@@ -203,12 +203,15 @@ namespace ProfitWise.Data.Services
         public bool VerifyChargeAndScheduleRefresh(string userId)
         {
             // Synchronize the Charge record in ProfitWise with Shopify API
-            var charge = SyncAndRetrieveCurrentCharge(userId);
             var shop = _shopRepository.RetrieveByUserId(userId);
 
-            if (charge.IsValid)
+            if (shop.IsBillingValid)
             {
-                _shopRepository.UpdateIsBillingValid(shop.PwShopId, true);
+                // Protective measure to prevent multiple background updates
+                _hangFireService.KillBackgroundJob(userId);
+                _hangFireService.KillRoutineRefresh(userId);
+
+                // ... and finally schedule an immediate update
                 _hangFireService.AddOrUpdateInitialShopRefresh(userId);
                 return true;
             }
@@ -216,8 +219,6 @@ namespace ProfitWise.Data.Services
             {
                 var billingRepository = _factory.MakeBillingRepository(shop);
                 billingRepository.ClearPrimary();
-
-                _shopRepository.UpdateIsBillingValid(shop.PwShopId, false);
                 return false;
             }
         }
@@ -228,12 +229,10 @@ namespace ProfitWise.Data.Services
 
             if (charge == null)
             {
-                _shopRepository.UpdateIsBillingValid(shop.PwShopId, false);
                 return false;
             }
             if (charge.LastStatus == ChargeStatus.Active)
             {
-                _shopRepository.UpdateIsBillingValid(shop.PwShopId, true);
                 return true;
             }
             if (charge.LastStatus == ChargeStatus.Accepted)
@@ -243,7 +242,6 @@ namespace ProfitWise.Data.Services
             }
 
             // Charge Status is neither Active nor Accepted, thus set Billing Valid to false
-            _shopRepository.UpdateIsBillingValid(shop.PwShopId, false);
             return false;
         }
 
@@ -267,8 +265,13 @@ namespace ProfitWise.Data.Services
             pwCharge.ConfirmationUrl = activtedCharge.confirmation_url;
             pwCharge.LastStatus = activtedCharge.status.ToChargeStatus();
             pwCharge.LastJson = activtedCharge.SerializeToJson();
-            billingRepository.Update(pwCharge);
-            billingRepository.UpdatePrimary(pwCharge.PwChargeId);
+
+            using (var transaction = billingRepository.InitiateTransaction())
+            {
+                billingRepository.Update(pwCharge);
+                billingRepository.UpdatePrimary(pwCharge.PwChargeId);
+                transaction.Commit();
+            }
 
             return pwCharge;
         }
@@ -296,8 +299,7 @@ namespace ProfitWise.Data.Services
             charge.ConfirmationUrl = result.confirmation_url;
             charge.LastStatus = result.status.ToChargeStatus();
             charge.LastJson = result.SerializeToJson();
-            charge.IsPrimary = false;
-            billingRepository.Update(charge);            
+            billingRepository.Update(charge); 
         }
 
 
@@ -315,10 +317,10 @@ namespace ProfitWise.Data.Services
 
             // Kill the Recurring Shop Refresh Job
             _hangFireService.KillRoutineRefresh(shop.ShopOwnerUserId);
- 
+            _hangFireService.KillBackgroundJob(shop.ShopOwnerUserId);
+
             // Clear out any ProfitWise Charge records to force creation of a new Charge
             billingRepository.ClearPrimary();
-            _shopRepository.UpdateIsBillingValid(pwShopId, false);
         }
     }
 }

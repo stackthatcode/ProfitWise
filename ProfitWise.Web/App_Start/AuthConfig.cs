@@ -18,6 +18,16 @@ using Push.Foundation.Web.Identity;
 
 namespace ProfitWise.Web
 {
+    public enum AuthProblemCode
+    {
+        UnauthorizedAccess = 1,
+        ExternalLoginFailure = 2,
+        AccessTokenRefresh = 3,
+        SevereAuthorizationFailure = 4,
+        BillingProblem = 5,
+        BillingIncomplete = 6,
+    }
+
     public class AuthConfig
     {
         // For Convenient Access
@@ -27,13 +37,25 @@ namespace ProfitWise.Web
                 (returnUrl != null ? $"&returnUrl={HttpUtility.UrlEncode(returnUrl)}" : "");
             return url;
         }
+        
 
-        public const string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
-        public const string ExternalLoginFailureUrl = "/ShopifyAuth/ExternalLoginFailure";
-        public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
-        public const string SevereAuthorizationFailureUrl = "/ShopifyAuth/SevereAuthorizationFailure";
-        public const string BillingProblemUrl = "/ShopifyAuth/BillingProblem";
-        public const string BillingIncomplete = "/ShopifyAuth/BillingIncomplete";
+        public static readonly string UnauthorizedAccessUrl = 
+                $"/ShopifyAuth/Problem?code={AuthProblemCode.UnauthorizedAccess}";
+
+        public static readonly string ExternalLoginFailureUrl = 
+                $"/ShopifyAuth/Problem?code={AuthProblemCode.ExternalLoginFailure}";
+
+        public static readonly string AccessTokenRefreshUrl = 
+                $"/ShopifyAuth/Problem?code={AuthProblemCode.AccessTokenRefresh}";
+
+        public static readonly string SevereAuthorizationFailureUrl = 
+                $"/ShopifyAuth/Problem?code={AuthProblemCode.SevereAuthorizationFailure}";
+
+        public static readonly string BillingProblemUrl = 
+                $"/ShopifyAuth/Problem?code={AuthProblemCode.BillingProblem}";
+
+        public static readonly string BillingIncomplete = 
+                $"/ShopifyAuth/Problem?code={AuthProblemCode.BillingIncomplete}";
 
 
         public static void Configure(IAppBuilder app, IContainer autofacContainer)
@@ -43,7 +65,9 @@ namespace ProfitWise.Web
                 AuthConfig.UnauthorizedAccessUrl,
                 AuthConfig.SevereAuthorizationFailureUrl,
                 AuthConfig.AccessTokenRefreshUrl,
-                AuthConfig.ExternalLoginFailureUrl
+                AuthConfig.ExternalLoginFailureUrl,
+                AuthConfig.BillingProblemUrl,
+                AuthConfig.BillingIncomplete,
             };
 
             app.UseAutofacMiddleware(autofacContainer);

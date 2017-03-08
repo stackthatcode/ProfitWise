@@ -31,5 +31,37 @@ namespace Push.Shopify.Model
         {
             return _lookup[input];
         }
+
+        public static bool IsValid(this ChargeStatus? input)
+        {
+            return input.HasValue && (input == ChargeStatus.Active || input == ChargeStatus.Accepted);
+        }
+
+        public static bool UserMustLoginAgain(this ChargeStatus? input)
+        {
+            return !input.HasValue || (
+                       input.Value == ChargeStatus.Pending ||
+                       input.Value == ChargeStatus.Declined ||
+                       input.Value == ChargeStatus.Expired ||
+                       input.Value == ChargeStatus.Cancelled);
+        }
+
+        public static bool UserMustContactSupport(this ChargeStatus? input)
+        {
+            return input.HasValue && input.Value == ChargeStatus.Frozen;
+        }
+
+        public static bool SystemMustCreateNewCharge(this ChargeStatus? input)
+        {
+            return !input.HasValue || input.Value.SystemMustCreateNewCharge();
+        }
+
+        public static bool SystemMustCreateNewCharge(this ChargeStatus input)
+        {
+            return input == ChargeStatus.Declined ||
+                    input == ChargeStatus.Expired ||
+                    input == ChargeStatus.Cancelled;
+        }
+
     }
 }

@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Repositories.System
 
         public PwShop RetrieveByShopifyShopId(long shopifyShopId)
         {
-            var query = @"SELECT * FROM profitwiseshop WHERE ShopifyShopId = @shopifyShopId";
+            var query = @"SELECT * FROM vw_profitwiseshop WHERE ShopifyShopId = @shopifyShopId";
             return _connectionWrapper
                 .Query<PwShop>(query, new { shopifyShopId })
                 .FirstOrDefault();
@@ -31,7 +31,7 @@ namespace ProfitWise.Data.Repositories.System
 
         public PwShop RetrieveByShopId(int pwShopId)
         {
-            var query = @"SELECT * FROM profitwiseshop WHERE PwShopId = @PwShopId";
+            var query = @"SELECT * FROM vw_profitwiseshop WHERE PwShopId = @PwShopId";
             return _connectionWrapper
                 .Query<PwShop>(query, new {@PwShopId = pwShopId })
                 .FirstOrDefault();
@@ -39,7 +39,7 @@ namespace ProfitWise.Data.Repositories.System
 
         public PwShop RetrieveByUserId(string shopOwnerUserId)
         {
-            var query = @"SELECT * FROM profitwiseshop WHERE ShopOwnerUserId = @ShopOwnerUserId";
+            var query = @"SELECT * FROM vw_profitwiseshop WHERE ShopOwnerUserId = @ShopOwnerUserId";
             return _connectionWrapper
                 .Query<PwShop>(query, new { ShopOwnerUserId = shopOwnerUserId })
                 .FirstOrDefault();
@@ -98,15 +98,7 @@ namespace ProfitWise.Data.Repositories.System
                         WHERE PwShopId = @pwShopId";
             _connectionWrapper.Execute(query, new { pwShopId, isDataLoaded });
         }
-
-        public void UpdateIsBillingValid(int pwShopId, bool valid)
-        {
-            var query = @"UPDATE profitwiseshop 
-                        SET [IsBillingValid] = @valid
-                        WHERE PwShopId = @pwShopId";
-            _connectionWrapper.Execute(query, new { pwShopId, valid });
-        }
-
+        
         public void UpdateTempFreeTrialOverride(int pwShopId, int? days)
         {
             var query = @"UPDATE profitwiseshop 

@@ -1,4 +1,5 @@
 ﻿using System;
+using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.Admin
 {
@@ -15,10 +16,14 @@ namespace ProfitWise.Data.Model.Admin
 
         public bool IsAccessTokenValid { get; set; }
         public bool IsProfitWiseInstalled { get; set; }
-        public bool IsBillingValid { get; set; }
         public bool IsDataLoaded { get; set; }
+        public ChargeStatus? LastBillingStatus { get; set; }
+        public bool IsBillingValid => LastBillingStatus.IsValid();
         public int? TempFreeTrialOverride { get; set; }
         public DateTime? UninstallDateTime { get; set; }
+        public string InitialRefreshJobId { get; set; }
+        public string RoutineRefreshJobId { get; set; }
+
 
         // Set downstream...
         public string CurrencyText { get; set; }

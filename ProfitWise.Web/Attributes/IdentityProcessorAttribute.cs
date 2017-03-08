@@ -11,6 +11,7 @@ using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
+using Push.Shopify.Model;
 
 
 namespace ProfitWise.Web.Attributes
@@ -69,18 +70,17 @@ namespace ProfitWise.Web.Attributes
 
             if (!pwShop.IsBillingValid)
             {
-                var billingRepository = factory.MakeBillingRepository(pwShop);
-                var charge = billingRepository.RetrieveCurrent();
-                AuthConfig.GlobalSignOut(signInManager);
-
-                if (charge.UserNeedsToLoginAgain)
+                // But what if it's null...?
+                if (pwShop.LastBillingStatus.UserMustLoginAgain())
                 {
+                    AuthConfig.GlobalSignOut(signInManager);
                     logger.Info($"PwShop {pwShop.PwShopId} has incomplete Billing - User logging in again");
                     filterContext.Result = GlobalConfig.Redirect(AuthConfig.BillingIncomplete, currentUrl);
                     return;
                 }
                 else
                 {
+                    // My elimination this is only for Frozen
                     logger.Info($"PwShop {pwShop.PwShopId} has invalid Billing - User must contact support");                    
                     filterContext.Result = GlobalConfig.Redirect(AuthConfig.BillingProblemUrl, currentUrl);
                     return;

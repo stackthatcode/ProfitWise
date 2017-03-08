@@ -206,3 +206,17 @@ CREATE TABLE [dbo].[profitwiserecurringcharge](
 END
 GO
 
+
+
+DROP VIEW IF EXISTS vw_profitwiseshop
+GO
+
+CREATE VIEW vw_profitwiseshop 
+AS
+
+SELECT t1.*, t2.LastStatus AS LastBillingStatus 
+FROM profitwiseshop t1
+	LEFT JOIN profitwiserecurringcharge t2
+		ON t1.PwShopId = t2.PwShopId AND t2.IsPrimary = 1;
+GO
+

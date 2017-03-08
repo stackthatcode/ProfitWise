@@ -12,20 +12,8 @@ namespace ProfitWise.Data.Model.Billing
         public string ConfirmationUrl { get; set; }
         public ChargeStatus LastStatus { get; set; }
         public string LastStatusDesctipion => LastStatus.ToString();
-
-        public bool IsValid => LastStatus == ChargeStatus.Accepted || LastStatus == ChargeStatus.Active;
-
-        public bool UserNeedsToLoginAgain => LastStatus == ChargeStatus.Pending || 
-                                            LastStatus == ChargeStatus.Declined ||
-                                            LastStatus == ChargeStatus.Expired || 
-                                            LastStatus == ChargeStatus.Cancelled;
-
-        public bool UserNeedsToContactSupport => !UserNeedsToLoginAgain;
-
-        public bool SystemNeedsToCreateNewCharge => LastStatus == ChargeStatus.Declined ||
-                                                    LastStatus == ChargeStatus.Expired ||
-                                                    LastStatus == ChargeStatus.Cancelled;
-
+        
+        
         public bool IsPrimary { get; set; }
 
         public DateTime DateCreated { get; set; }

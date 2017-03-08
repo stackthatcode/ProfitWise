@@ -100,7 +100,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public void ClearPrimary()
         {
-            var query = @"UPDATE recurringcharge(@PwShopId) SET IsPrimary = 0;";
+            var query = @"UPDATE recurringcharge(@PwShopId) SET IsPrimary = 0 WHERE IsPrimary = 1;";
             _connectionWrapper.Execute(query, new { PwShop.PwShopId });
         }
     }
