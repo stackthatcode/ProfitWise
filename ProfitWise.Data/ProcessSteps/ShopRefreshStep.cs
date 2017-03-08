@@ -37,7 +37,7 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"Shop Refresh Service for Shop: {credentials.ShopDomain}, UserId: {credentials.ShopOwnerUserId}");
             var shop = _shopDataRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
             
-            // Routine check on Shop Status
+            // Routing check on existing Shop status flags
             if (shop.IsProfitWiseInstalled == false)
             {
                 if (shop.UninstallDateTime.HasValue &&
@@ -54,34 +54,27 @@ namespace ProfitWise.Data.ProcessSteps
             }
             if (shop.IsAccessTokenValid == false)
             {
-                _pushLogger.Warn($"Shop {shop.PwShopId} is has an invalid Access Token - skipping Refresh");
+                _pushLogger.Warn($"Shop {shop.PwShopId} has an invalid Access Token - skipping Refresh");
+                return false;
+            }
+            if (shop.IsBillingValid == false)
+            {
+                _pushLogger.Warn($"Shop {shop.PwShopId} has an invalid Billing - skipping Refresh");
                 return false;
             }
 
-            // Update Shop with the latest from Shopify
+            // Invoke Shopify API to get the latest Billing Status
+            if (_shopOrchestrationService.SyncAndValidateBilling(shop))
+            {
+                _pushLogger.Warn($"Shop {shop.PwShopId} has Billing become invalid - skipping Refresh");
+                return false;
+            }
+            
+            // Update Shop with the latest from Shopify API
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(credentials);
             var shopFromShopify = shopApiRepository.Retrieve();
             _shopOrchestrationService.UpdateShop(credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
 
-            // Routine check on Billing Status            
-            var charge = _shopOrchestrationService.SyncAndRetrieveCurrentCharge(credentials.ShopOwnerUserId);
-            
-            if (charge.LastStatus == ChargeStatus.Active)
-            {
-                _shopDataRepository.UpdateIsBillingValid(shop.PwShopId, true);
-                return true; // All clear, nothing to do
-            }
-
-            if (charge.LastStatus == ChargeStatus.Accepted)
-            {
-                _shopOrchestrationService.ActivateCharge(
-                        credentials.ShopOwnerUserId, charge.PwChargeId);
-                return true;
-            }
-
-            // Charge Status is neither Active nor Accepted, thus set Billing Valid to false
-            _shopDataRepository.UpdateIsBillingValid(shop.PwShopId, false);
-            _pushLogger.Warn($"Shop {shop.PwShopId} Shopify Charge is {charge.LastStatus}");
             return false;
         }
     }

@@ -35,19 +35,19 @@ namespace ProfitWise.Web.Attributes
 
 
             // Get the Shop Credentials
-            var result = credentialService.Retrieve(userId);
-            if (result.Success == false)
+            var credentials = credentialService.Retrieve(userId);
+            if (credentials.Success == false)
             {
                 // On failure of credential service, throw an error, which will redirect to Server Fault page
                 logger.Error(
-                    $"Unable to Retrieve Claims for User {userId}: '{result.Message}' - aborting IdentityProcessing");
+                    $"Unable to Retrieve Claims for User {userId}: '{credentials.Message}' - aborting IdentityProcessing");
                 AuthConfig.GlobalSignOut(signInManager);
                 filterContext.Result = GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, currentUrl);
                 return;
             }
 
             // We may have an impersonated User
-            var effectiveUserId = result.ShopOwnerUserId;
+            var effectiveUserId = credentials.ShopOwnerUserId;
             var pwShop = shopRepository.RetrieveByUserId(effectiveUserId);
 
             if (shopParameter != null && shopParameter != pwShop.Domain)
@@ -111,9 +111,9 @@ namespace ProfitWise.Web.Attributes
                 Roles = userRoles,
                 Email = user.Email,
 
-                Impersonated = result.Impersonated,
+                Impersonated = credentials.Impersonated,
                 PwShop = pwShop,
-                ShopDomain = result.ShopDomain,
+                ShopDomain = credentials.ShopDomain,
             };
 
             logger.Debug($"Successfully hydrated User {user.Id} Identity Snapshot into HttpContext");

@@ -223,7 +223,7 @@ namespace ProfitWise.Web.Controllers
             // ... or if userId is null, Redirect to Login
             
             var userId = HttpContext.User.ExtractUserId();
-            var chargeAccepted =_shopOrchestrationService.VerifyChargeAcceptedByUser(userId);            
+            var chargeAccepted =_shopOrchestrationService.VerifyChargeAndScheduleRefresh(userId);            
             if (chargeAccepted)
             {           
                 return Redirect("~");

@@ -90,7 +90,8 @@ namespace ProfitWise.Data.Processes
             if (shopifyFromClaims.Success == false)
             {
                 throw new Exception(
-                    $"ShopifyCredentialService unable to Retrieve for Shop: {shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
+                    $"ShopifyCredentialService unable to Retrieve for Shop: " +
+                    $"{shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
             }
 
             var credentials = shopifyFromClaims.ToShopifyCredentials();            
@@ -121,8 +122,8 @@ namespace ProfitWise.Data.Processes
                 {
                     var shop = _pwShopRepository.RetrieveByUserId(userId);
                     _pwShopRepository.UpdateIsAccessTokenValid(shop.PwShopId, false);
+                    _pushLogger.Info($"Access Token is no longer valid for Shop {shop.PwShopId}");
                 }
-                throw;
             }
 
             _pushLogger.Info($"FIN - Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");

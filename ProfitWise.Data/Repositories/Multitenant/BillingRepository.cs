@@ -52,12 +52,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .Query<PwRecurringCharge>(query, new { PwShopId = PwShop.PwShopId })
                     .FirstOrDefault();
         }
-        public PwRecurringCharge Retrieve(long chargeId)
+        public PwRecurringCharge Retrieve(long pwChargeId)
         {
             var query = @"SELECT * FROM recurringcharge(@PwShopId) WHERE PwChargeId = @chargeId";
             return
                 _connectionWrapper
-                    .Query<PwRecurringCharge>(query, new { PwShop.PwShopId, chargeId })
+                    .Query<PwRecurringCharge>(query, new { PwShop.PwShopId, chargeId = pwChargeId })
                     .FirstOrDefault();
         }
         public long RetrieveNextKey()
@@ -84,7 +84,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         SET ConfirmationUrl	= @ConfirmationUrl,
                             LastStatus = @LastStatus, 
                             LastUpdated = getdate(),
-                            LastJson = @LastJson
+                            LastJson = @LastJson,
+                            IsPrimary = @IsPrimary
                         WHERE PwChargeId = PwChargeId;";
             _connectionWrapper.Execute(query, state); 
         }
