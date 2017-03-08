@@ -145,7 +145,7 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[CurrencyId] [int] NULL,
 	[TimeZone] [nvarchar](50) NULL,
 	[IsAccessTokenValid] [smallint] NOT NULL,
-	[IsShopEnabled] [smallint] NOT NULL,
+	[IsProfitWiseInstalled] [smallint] NOT NULL,
 	[IsBillingValid] [smallint] NOT NULL,
 	[IsDataLoaded] [smallint] NOT NULL,
 	[StartingDateForOrders] [datetime] NULL,
@@ -155,7 +155,7 @@ CREATE TABLE [dbo].[profitwiseshop](
 	[DateRangeDefault] [smallint] NOT NULL,
 	[TempFreeTrialOverride] [int] NULL,
 	[ShopifyUninstallId] [bigint] NULL,
-	[UninstallationDate] [datetime] NULL,
+	[UninstallDateTime] [datetime] NULL,
  CONSTRAINT [PK_profitwiseshop_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,

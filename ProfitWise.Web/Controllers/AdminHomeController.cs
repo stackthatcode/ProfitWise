@@ -8,6 +8,7 @@ using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Json;
 
+
 namespace ProfitWise.Web.Controllers
 {
     [Authorize(Roles = "ADMIN")]
@@ -20,7 +21,7 @@ namespace ProfitWise.Web.Controllers
         private readonly CurrencyService _service;
         private readonly MultitenantFactory _factory;
         private readonly ShopRepository _shopRepository;
-        private readonly BillingService _billingService;
+        private readonly ShopOrchestrationService _shopOrchestrationService;
 
         public AdminHomeController(
                     IShopifyCredentialService shopifyCredentialService,
@@ -30,7 +31,7 @@ namespace ProfitWise.Web.Controllers
                     CurrencyService service,
                     MultitenantFactory factory,
                     ShopRepository shopRepository, 
-                    BillingService billingService)
+                    ShopOrchestrationService shopOrchestrationService)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _applicationSignInManager = applicationSignInManager;
@@ -39,7 +40,7 @@ namespace ProfitWise.Web.Controllers
             _service = service;
             _factory = factory;
             _shopRepository = shopRepository;
-            _billingService = billingService;
+            _shopOrchestrationService = shopOrchestrationService;
         }
 
         
@@ -103,17 +104,16 @@ namespace ProfitWise.Web.Controllers
         public ActionResult CancelCharge(int shopId, long pwChargeId)
         {
             var shop = _shopRepository.RetrieveByShopId(shopId);
-            _billingService.CancelCharge(shop.ShopOwnerUserId, pwChargeId);            
+            _shopOrchestrationService.CancelCharge(shop.ShopOwnerUserId, pwChargeId);            
             return JsonNetResult.Success();
         }
-
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken]
         public ActionResult ActivateCharge(int shopId, long pwChargeId)
         {
             var shop = _shopRepository.RetrieveByShopId(shopId);
-            _billingService.ActivateCharge(shop.ShopOwnerUserId, pwChargeId);
+            _shopOrchestrationService.ActivateCharge(shop.ShopOwnerUserId, pwChargeId);
             return JsonNetResult.Success();
         }
 
@@ -126,6 +126,23 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
         
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult Uninstall(int shopId)
+        {
+            var pwShop = _shopRepository.RetrieveByShopId(shopId);
+            _shopOrchestrationService.UninstallShop(pwShop.ShopifyShopId);
+            return JsonNetResult.Success();
+        }
+
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult FinalizeUninstall(int shopId)
+        {
+            _shopOrchestrationService.FinalizeUninstallation(shopId);
+            return JsonNetResult.Success();
+        }
 
         [HttpGet]
         public ActionResult Maintenance()
@@ -141,3 +158,4 @@ namespace ProfitWise.Web.Controllers
         }
     }
 }
+

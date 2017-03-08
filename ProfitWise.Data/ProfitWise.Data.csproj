@@ -222,7 +222,6 @@
     <Compile Include="Repositories\Multitenant\CogsEntryRepository.cs" />
     <Compile Include="Repositories\Multitenant\ReportRepository.cs" />
     <Compile Include="Services\WebhookService.cs" />
-    <Compile Include="Services\BillingService.cs" />
     <Compile Include="Services\CatalogRetrievalService.cs" />
     <Compile Include="Services\ConsolidationService.cs" />
     <Compile Include="Services\CurrencyService.cs" />
@@ -241,7 +240,7 @@
     <Compile Include="Services\CogsService.cs" />
     <Compile Include="HangFire\HangFireService.cs" />
     <Compile Include="Services\DataService.cs" />
-    <Compile Include="Services\ShopSynchronizationService.cs" />
+    <Compile Include="Services\ShopOrchestrationService.cs" />
     <Compile Include="Utility\CredentialResultExtensions.cs" />
     <Compile Include="Utility\TimeZoneExtensions.cs" />
     <Compile Include="Services\TimeZoneTranslator.cs" />

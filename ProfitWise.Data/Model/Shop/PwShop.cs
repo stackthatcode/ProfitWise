@@ -27,6 +27,8 @@ namespace ProfitWise.Data.Model.Shop
         public int DateRangeDefault { get; set; }
         public int? TempFreeTrialOverride { get; set; }
         public long? ShopifyUninstallId { get; set; }
+        public DateTime? UninstallDateTime { get; set; }
+
 
 
         public static PwShop Make(
@@ -52,6 +54,9 @@ namespace ProfitWise.Data.Model.Shop
                 DefaultMargin = 20.0m,
                 ProfitRealization = Preferences.ProfitRealization.OrderReceived,
                 DateRangeDefault = DateRangeDefaults.Last7Days,
+
+                ShopifyUninstallId = null,
+                UninstallDateTime = null,
             };
 
             return newShop;

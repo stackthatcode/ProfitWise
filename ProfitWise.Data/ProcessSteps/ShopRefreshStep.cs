@@ -1,5 +1,8 @@
-﻿using ProfitWise.Data.Repositories.System;
+﻿using System;
+using System.Configuration;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using Push.Foundation.Utilities.Helpers;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -12,56 +15,67 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly BatchLogger _pushLogger;
         private readonly ShopRepository _shopDataRepository;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
-        private readonly ShopSynchronizationService _shopSynchronizationService;
-        private readonly BillingService _billingService;
+        private readonly ShopOrchestrationService _shopOrchestrationService;
 
         public ShopRefreshService(
                     BatchLogger pushLogger, 
                     ShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
-                    ShopSynchronizationService shopSynchronizationService, 
-                    BillingService billingService)
+                    ShopOrchestrationService shopSynchronizationService)
         {
             _pushLogger = pushLogger;
             _shopDataRepository = shopDataRepository;
             _apiRepositoryFactory = apiRepositoryFactory;
-            _shopSynchronizationService = shopSynchronizationService;
-            _billingService = billingService;
+            _shopOrchestrationService = shopSynchronizationService;
         }
-        
+
+        public readonly int UninstallationFinalizeHours =
+            ConfigurationManager.AppSettings.GetAndTryParseAsInt("UninstallationFinalizeHours", 2);
+
         public bool Execute(ShopifyCredentials credentials)
         {            
             _pushLogger.Info($"Shop Refresh Service for Shop: {credentials.ShopDomain}, UserId: {credentials.ShopOwnerUserId}");
             var shop = _shopDataRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
             
             // Routine check on Shop Status
-            if (shop.IsAccessTokenValid == false)
-            {
-                _pushLogger.Warn($"Shop {shop.PwShopId} is has an invalid Access Token");
-                return false;
-            }
             if (shop.IsProfitWiseInstalled == false)
             {
-                _pushLogger.Warn($"Shop {shop.PwShopId} is not installed");
+                if (shop.UninstallDateTime.HasValue &&
+                    shop.UninstallDateTime.Value.AddHours(UninstallationFinalizeHours) < DateTime.Now)
+                {
+                    _shopOrchestrationService.FinalizeUninstallation(shop.PwShopId);
+                    _pushLogger.Info($"Finalizing Uninstallation process for {shop.PwShopId}");
+                }
+                else
+                {
+                    _pushLogger.Warn($"Shop {shop.PwShopId} is not installed - skipping Refresh");
+                }
+                return false;
+            }
+            if (shop.IsAccessTokenValid == false)
+            {
+                _pushLogger.Warn($"Shop {shop.PwShopId} is has an invalid Access Token - skipping Refresh");
                 return false;
             }
 
             // Update Shop with the latest from Shopify
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(credentials);
             var shopFromShopify = shopApiRepository.Retrieve();
-            _shopSynchronizationService.UpdateShop(
-                credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
+            _shopOrchestrationService.UpdateShop(credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
 
             // Routine check on Billing Status            
-            var charge = _billingService.SyncAndRetrieveCurrentCharge(credentials.ShopOwnerUserId);
+            var charge = _shopOrchestrationService.SyncAndRetrieveCurrentCharge(credentials.ShopOwnerUserId);
             
             if (charge.LastStatus == ChargeStatus.Active)
             {
+                _shopDataRepository.UpdateIsBillingValid(shop.PwShopId, true);
                 return true; // All clear, nothing to do
             }
+
             if (charge.LastStatus == ChargeStatus.Accepted)
             {
-                _billingService.ActivateCharge(credentials.ShopOwnerUserId, charge);
+                _shopOrchestrationService.ActivateCharge(
+                        credentials.ShopOwnerUserId, charge.PwChargeId);
                 return true;
             }
 

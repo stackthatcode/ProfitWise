@@ -52,12 +52,11 @@ namespace ProfitWise.Data
             builder.RegisterType<CatalogBuilderService>();
             builder.RegisterType<CatalogRetrievalService>();
             builder.RegisterType<CurrencyService>();
-            builder.RegisterType<ShopSynchronizationService>();
+            builder.RegisterType<ShopOrchestrationService>();
             builder.RegisterType<ConsolidationService>();
             builder.RegisterType<CogsService>();
             builder.RegisterType<HangFireService>();
             builder.RegisterType<DataService>();
-            builder.RegisterType<BillingService>();
             builder.RegisterType<WebhookService>();
 
             builder.RegisterType<ShopRefreshProcess>();

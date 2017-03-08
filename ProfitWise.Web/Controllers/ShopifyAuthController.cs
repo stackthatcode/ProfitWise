@@ -32,10 +32,9 @@ namespace ProfitWise.Web.Controllers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IShopifyCredentialService _credentialService;
-        private readonly ShopSynchronizationService _shopSynchronizationService;
+        private readonly ShopOrchestrationService _shopOrchestrationService;
         private readonly OwinUserService _userService;
         private readonly HangFireService _hangFireService;
-        private readonly BillingService _billingService;
         private readonly ShopRepository _shopRepository;
         private readonly IPushLogger _logger;
         private readonly HmacCryptoService _hmacCryptoService;      
@@ -45,10 +44,9 @@ namespace ProfitWise.Web.Controllers
                 ApplicationUserManager userManager,
                 ApplicationSignInManager signInManager,
                 IShopifyCredentialService credentialService,
-                ShopSynchronizationService shopSynchronizationService,
+                ShopOrchestrationService shopSynchronizationService,
                 OwinUserService userService,
                 HangFireService hangFireService,
-                BillingService billingService,
                 IPushLogger logger, 
                 ShopRepository shopRepository, 
                 HmacCryptoService hmacCryptoService)
@@ -59,11 +57,10 @@ namespace ProfitWise.Web.Controllers
             _credentialService = credentialService;
             _userService = userService;
             _hangFireService = hangFireService;
-            _billingService = billingService;
             _logger = logger;
             _shopRepository = shopRepository;
             _hmacCryptoService = hmacCryptoService;
-            _shopSynchronizationService = shopSynchronizationService;
+            _shopOrchestrationService = shopSynchronizationService;
         }
 
 
@@ -161,11 +158,7 @@ namespace ProfitWise.Web.Controllers
 
         private PwShop UpsertShop(ExternalLoginInfo externalLoginInfo, ApplicationUser user)
         {
-            // TODO - add naughty Shop blacklist
-            //if (_shopSynchronizationService.ExistsButDisabled(user.Id))
-            //{
-            //    _logger.Warn($"Attempt to login with disabled Shop by {user.Id}");
-            //}
+            // TODO - add naughty Shop blacklist to configuration file
 
             var pwShop = _shopRepository.RetrieveByUserId(user.Id);
             var shopJson = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
@@ -173,16 +166,16 @@ namespace ProfitWise.Web.Controllers
 
             if (pwShop == null)
             {
-                using (var transaction = _shopSynchronizationService.InitiateTransaction())
+                using (var transaction = _shopOrchestrationService.InitiateTransaction())
                 {
                     var credentials = MakeCredentials(externalLoginInfo, user);
-                    pwShop = _shopSynchronizationService.CreateShop(user.Id, shop, credentials);
+                    pwShop = _shopOrchestrationService.CreateShop(user.Id, shop, credentials);
                     transaction.Commit();
                 }
             }
             else
             {
-                _shopSynchronizationService.UpdateShop(user.Id, shop.Currency, shop.TimeZone);
+                _shopOrchestrationService.UpdateShop(user.Id, shop.Currency, shop.TimeZone);
             }
             return pwShop;
         }
@@ -202,19 +195,18 @@ namespace ProfitWise.Web.Controllers
 
         private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
         {
-            var charge = _billingService.SyncAndRetrieveCurrentCharge(user.Id);
+            var charge = _shopOrchestrationService.SyncAndRetrieveCurrentCharge(user.Id);
             if (charge != null && charge.LastStatus == ChargeStatus.Pending)
             {
                 // Redirect for Shopify Charge approval
                 return View("ChargeConfirm",
                     new ChargeConfirmModel() { ConfirmationUrl = charge.ConfirmationUrl });
-            }
-            
+            }            
             if (charge == null || charge.SystemNeedsToCreateNewCharge)
             {
                 // Create ProfitWise subscription and save
                 var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
-                var newCharge = _billingService.CreateCharge(user.Id, verifyUrl);
+                var newCharge = _shopOrchestrationService.CreateCharge(user.Id, verifyUrl);
 
                 // Redirect for Shopify Charge approval
                 return View("ChargeConfirm", 
@@ -224,7 +216,6 @@ namespace ProfitWise.Web.Controllers
             return RedirectToLocal(returnUrl);
         }
 
-
         [HttpGet]
         public ActionResult VerifyBilling(string charge_id)
         {
@@ -232,19 +223,13 @@ namespace ProfitWise.Web.Controllers
             // ... or if userId is null, Redirect to Login
             
             var userId = HttpContext.User.ExtractUserId();
-            var charge = _billingService.SyncAndRetrieveCurrentCharge(userId);
-            var shop = _shopRepository.RetrieveByUserId(userId);
-            
-            if (charge.IsValid)
-            {                
-                _shopRepository.UpdateIsBillingValid(shop.PwShopId, true);
-                _hangFireService.AddOrUpdateInitialShopRefresh(userId);
+            var chargeAccepted =_shopOrchestrationService.VerifyChargeAcceptedByUser(userId);            
+            if (chargeAccepted)
+            {           
                 return Redirect("~");
             }
             else
             {
-                // TODO - should we remove this Charge Id from ProfitWise
-                _shopRepository.UpdateIsBillingValid(shop.PwShopId, false);
                 return BillingDeclined();
             }
         }
@@ -259,15 +244,21 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         public ActionResult Uninstall(UninstallWebhook message)
         {
+            _logger.Info($"App Uninstall Webhook invocation Shopify Shop Id: {message.id}");
             var shopifyHash = Request.Headers["X-Shopify-Hmac-Sha256"];
             Request.InputStream.Position = 0;
             var rawRequest = new StreamReader(Request.InputStream).ReadToEnd();
             var verifyHash = _hmacCryptoService.ToBase64EncodedSha256(rawRequest);
 
-            _logger.Debug(shopifyHash);
-            _logger.Debug(verifyHash);
+            if (rawRequest != verifyHash)
+            {
+                _logger.Warn($"Hash Verification failure {shopifyHash}/{verifyHash}");
+            }
+
+            _shopOrchestrationService.UninstallShop(message.id);
             return JsonNetResult.Success();
         }
+
 
 
         // Error pages
@@ -349,7 +340,6 @@ namespace ProfitWise.Web.Controllers
 
             return View("AuthorizationProblem", model);
         }
-
 
         private ActionResult RedirectToLocal(string returnUrl)
         {

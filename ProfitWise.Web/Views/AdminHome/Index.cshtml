@@ -94,6 +94,8 @@
             <a style="font-weight: 700;" class="btn btn-primary btn-sm"  href="#" data-bind="click: function() { $root.Impersonate(user.UserId); }">Impersonate User</a>
             <a style="font-weight: 700;" class="btn btn-primary btn-sm" href="#" data-bind="click: function() { $root.SetFreeTrialOverride(user.UserId); }">Set Free Trial</a>
             <a style="font-weight: 700;" class="btn btn-primary btn-sm" href="#" data-bind="click: function() { $root.ClearFreeTrialOverride(user.UserId); }">Clear Free Trial</a>
+            <a style="font-weight: 700;" class="btn btn-warning btn-sm" href="#" data-bind="click: function() { $root.Uninstall(user.PwShopId); }">Uninstall ProfitWise</a>
+            <a style="font-weight: 700;" class="btn btn-danger btn-sm" href="#" data-bind="click: function() { $root.FinalizeUninstall(user.PwShopId); }">Finalize Uninstall</a>
             
             <br />
             <br />
@@ -263,6 +265,45 @@
                     self.RefreshUser();
                 });
         };
+
+        self.Uninstall = function(shopId) {
+            var result = confirm("Are you ABSOLUTELY sure you want to uninstall ProfitWise for this Shop?");
+            if (!result) {
+                return;
+            }
+            flow.exec(
+                function () {
+                    var url = "/AdminHome/Uninstall";
+                    var data = { shopId: shopId };
+                    var token = self.AntiForgeryToken();
+
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpPost(url, data, this, token);
+                },
+                function () {
+                    self.RefreshUser();
+                });
+        };
+
+        self.FinalizeUninstall = function (shopId) {
+            var result = confirm("Are you ABSOLUTELY sure you want to finalize uninstall ProfitWise for this Shop?");
+            if (!result) {
+                return;
+            }
+            flow.exec(
+                function () {
+                    var url = "/AdminHome/FinalizeUninstall";
+                    var data = { shopId: shopId };
+                    var token = self.AntiForgeryToken();
+
+                    var ajax = self.AjaxFactory();
+                    ajax.HttpPost(url, data, this, token);
+                },
+                function () {
+                    self.RefreshUser();
+                });
+        };
+
 
         self.UserModel = ko.observable();
 
