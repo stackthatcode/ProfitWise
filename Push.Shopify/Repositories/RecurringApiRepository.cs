@@ -1,4 +1,5 @@
-﻿using Autofac.Extras.DynamicProxy2;
+﻿using System.Net;
+using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.Json;
 using Push.Foundation.Web.Http;
@@ -47,6 +48,10 @@ namespace Push.Shopify.Repositories
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
+            if (clientResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
 
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);

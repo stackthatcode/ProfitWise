@@ -45,7 +45,7 @@ namespace ProfitWise.Data.Services
                     CogsDateBlockContext.Make(
                         defaults, details, PwShop.CurrencyId, pwMasterVariantId: pwMasterVariantId);
 
-                UpdateCogsDataEntry(context);
+                SaveCogsDataEntryForMasterVariant(context);
                 UpdateGoodsOnHandForMasterVariant(dateBlockContexts);                    
                 UpdateOrderLinesAndReportEntries(dateBlockContexts);
 
@@ -63,7 +63,7 @@ namespace ProfitWise.Data.Services
                 foreach (var masterVariantId in masterVariantIds)
                 {
                     var context = MasterVariantUpdateContext.Make(masterVariantId, defaults, details);
-                    UpdateCogsDataEntry(context);
+                    SaveCogsDataEntryForMasterVariant(context);
                 }
 
                 var dateBlockContexts =
@@ -79,7 +79,7 @@ namespace ProfitWise.Data.Services
 
 
         // Data Entry storing functionality
-        private void UpdateCogsDataEntry(MasterVariantUpdateContext context)
+        private void SaveCogsDataEntryForMasterVariant(MasterVariantUpdateContext context)
         {
             var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(PwShop);
 

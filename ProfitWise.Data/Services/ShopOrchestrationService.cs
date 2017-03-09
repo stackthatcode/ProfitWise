@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Data;
-using System.Net;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
@@ -12,7 +11,6 @@ using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Json;
 using Push.Foundation.Utilities.Logging;
-using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -32,7 +30,7 @@ namespace ProfitWise.Data.Services
         private readonly IPushLogger _logger;
 
 
-        private readonly int _orderStartOffsetMonths = 
+        private static readonly int _orderStartOffsetMonths = 
                 ConfigurationManager.AppSettings.GetAndTryParseAsInt("InitialOrderStartDateOffsetMonths", 3);
 
         private static readonly bool TestRecurringCharges =

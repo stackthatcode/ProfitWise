@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[profitwiseprofitreportentry](
 	[NetSales] [decimal](15, 2) NULL,
 	[CoGS] [decimal](15, 2) NULL,
 	[Quantity] [int] NULL,
+	[PaymentCleared] [smallint] NOT NULL,
  CONSTRAINT [PK_profitwiseprofitreportentry_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,
@@ -30,6 +31,7 @@ CREATE TABLE [dbo].[profitwiseprofitreportentry](
 ) ON [PRIMARY]
 END
 GO
+
 
 
 

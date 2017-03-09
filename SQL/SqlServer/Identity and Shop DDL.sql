@@ -164,6 +164,7 @@ CREATE TABLE [dbo].[profitwiseshop](
 ) ON [PRIMARY]
 END
 
+
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisebatchstate]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[profitwisebatchstate](
@@ -204,19 +205,5 @@ CREATE TABLE [dbo].[profitwiserecurringcharge](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 END
-GO
-
-
-
-DROP VIEW IF EXISTS vw_profitwiseshop
-GO
-
-CREATE VIEW vw_profitwiseshop 
-AS
-
-SELECT t1.*, t2.LastStatus AS LastBillingStatus 
-FROM profitwiseshop t1
-	LEFT JOIN profitwiserecurringcharge t2
-		ON t1.PwShopId = t2.PwShopId AND t2.IsPrimary = 1;
 GO
 

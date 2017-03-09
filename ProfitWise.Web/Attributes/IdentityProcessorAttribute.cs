@@ -69,10 +69,11 @@ namespace ProfitWise.Web.Attributes
 
             if (!pwShop.IsBillingValid)
             {
+                AuthConfig.GlobalSignOut(signInManager);
+
                 // But what if it's null...?
                 if (pwShop.LastBillingStatus.UserMustLoginAgain())
                 {
-                    AuthConfig.GlobalSignOut(signInManager);
                     logger.Info($"PwShop {pwShop.PwShopId} has incomplete Billing - User logging in again");
                     filterContext.Result = GlobalConfig.Redirect(AuthConfig.BillingIncomplete, currentUrl);
                     return;

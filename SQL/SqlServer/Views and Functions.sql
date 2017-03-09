@@ -1,5 +1,116 @@
 use profitwise;
 
+
+
+
+
+DROP VIEW IF EXISTS vw_profitwiseshop
+GO
+
+CREATE VIEW vw_profitwiseshop 
+AS
+
+SELECT t1.*, t2.LastStatus AS LastBillingStatus 
+FROM profitwiseshop t1
+LEFT JOIN profitwiserecurringcharge t2
+ON t1.PwShopId = t2.PwShopId AND t2.IsPrimary = 1;
+GO
+
+
+
+
+
+DROP VIEW IF EXISTS [dbo].[vw_masterproductandvariantsearch]
+GO
+
+DROP VIEW IF EXISTS [dbo].[vw_standaloneproductandvariantsearch]
+GO
+
+DROP VIEW IF EXISTS [dbo].[vw_goodsonhand]
+GO
+
+
+
+-- TODO - this badly needs multi-tenant filtering (!!!)
+CREATE VIEW [dbo].[vw_masterproductandvariantsearch] (
+	[PwShopId], [PwMasterProductId], [ProductTitle], [Vendor], [ProductType], [PwMasterVariantId], [VariantTitle], [Sku])
+AS 
+   SELECT 
+      t1.PwShopId AS PwShopId, 
+      t1.PwMasterProductId AS PwMasterProductId, 
+      t1.Title AS ProductTitle, 
+      t1.Vendor AS Vendor, 
+      t1.ProductType AS ProductType, 
+      t3.PwMasterVariantId AS PwMasterVariantId, 
+      t3.Title AS VariantTitle, 
+      t3.Sku AS Sku
+   FROM profitwiseproduct  AS t1 
+      INNER JOIN profitwisemastervariant  AS t2 
+		ON t1.PwShopId = t2.PwShopId AND t1.PwMasterProductId = t2.PwMasterProductId
+      INNER JOIN profitwisevariant  AS t3 
+		ON t2.PwShopId = t3.PwShopId AND t2.PwMasterVariantId = t3.PwMasterVariantId
+   WHERE t1.IsPrimary = 1 AND t3.IsPrimary = 1 AND t2.Exclude = 0
+GO
+
+-- TODO - this badly needs multi-tenant filtering (!!!)
+CREATE VIEW [dbo].[vw_standaloneproductandvariantsearch] (
+	[PwShopId], [PwProductId], [ProductTitle], [Vendor], [ProductType], [PwVariantId], [VariantTitle], [Sku],
+	[IsProductActive], [IsVariantActive], [Inventory], [PwMasterVariantId], [StockedDirectly])
+AS 
+   SELECT 
+      t1.PwShopId AS PwShopId, 
+      t1.PwProductId,
+	  t1.Title AS ProductTitle, 
+      t1.Vendor AS Vendor, 
+      t1.ProductType AS ProductType, 
+      t3.PwVariantId,
+	  t3.Title AS VariantTitle, 
+      t3.Sku AS Sku,
+	  t1.IsActive AS IsProductActive,
+	  t3.IsActive AS IsVariantActive,
+	  t3.Inventory,
+	  t3.[PwMasterVariantId],
+	  t4.StockedDirectly
+   FROM profitwiseproduct AS t1 
+		INNER JOIN profitwisevariant AS t3
+			ON t1.PwShopId = t3.PwShopId AND t1.PwProductId = t3.PwProductId
+		INNER JOIN profitwisemastervariant AS t4
+			ON t3.[PwMasterVariantId] = t4.[PwMasterVariantId]
+GO
+
+
+CREATE VIEW [dbo].[vw_goodsonhand]
+AS 
+	SELECT * FROM [vw_standaloneproductandvariantsearch]
+	WHERE StockedDirectly = 1
+	AND Inventory IS NOT NULL
+	AND IsProductActive = 1
+	AND IsVariantActive = 1
+GO
+
+
+IF OBJECT_ID (N'dbo.ufnNegToZero', N'FN') IS NOT NULL  
+    DROP FUNCTION ufnNegToZero;  
+GO  
+CREATE FUNCTION dbo.ufnNegToZero(@input decimal(15, 2))  
+RETURNS int   
+AS   
+BEGIN  
+    DECLARE @output decimal(15, 2);  
+    SET @output = 0;
+
+    IF (@input IS NOT NULL AND @input > 0)   
+        SET @output = @input;  
+
+    RETURN @output;  
+END;  
+GO  
+
+
+
+
+
+
 DROP FUNCTION IF EXISTS dbo.batchstate
 GO
 CREATE FUNCTION dbo.batchstate(@PwShopId bigint)  
@@ -101,6 +212,7 @@ RETURNS TABLE
 AS  
 RETURN SELECT * FROM profitwiseprofitreportentry WHERE PwShopId = @PwShopId;
 GO
+
 
 
 DROP FUNCTION IF EXISTS dbo.recurringcharge

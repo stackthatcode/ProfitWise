@@ -115,12 +115,23 @@ CREATE TABLE [dbo].[systemstate](
 END
 GO
 
-INSERT INTO systemstate VALUES ('2017-02-20', 0, '');
-
-SELECT * FROM AspNetRoles;
+--INSERT INTO systemstate VALUES ('2017-02-20', 0, '');
 
 
 
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[systemprofitrealizationtostatus]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[systemprofitrealizationtostatus] (
+	[profitrealization] [smallint] NULL,
+	[paymentclearstatus] [smallint] NULL
+) ON [PRIMARY]
+END
+GO
+
+INSERT INTO [systemprofitrealizationtostatus] VALUES ( 1, 1 );
+INSERT INTO [systemprofitrealizationtostatus] VALUES ( 2, 0 );
+INSERT INTO [systemprofitrealizationtostatus] VALUES ( 2, 1 );
 
 
 
