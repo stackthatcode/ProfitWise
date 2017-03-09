@@ -12,8 +12,8 @@ namespace ProfitWise.Test.Automation
     {
         static IWebDriver driverGC;
 
-        //[AssemblyInitialize]
-        [TestInitialize]
+        [AssemblyInitialize]
+        //[TestInitialize]
         public static void SetUp(TestContext context)
         {
             ChromeOptions options = new ChromeOptions();
