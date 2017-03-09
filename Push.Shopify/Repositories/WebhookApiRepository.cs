@@ -48,6 +48,24 @@ namespace Push.Shopify.Repositories
             return clientResponse.Body.ToWebhook();
         }
 
+        public Webhook UpdateAddress(Webhook request)
+        {
+            var path = $"/admin/webhooks/{request.Id}.json";
+            var json = new
+            {
+                webhook = new
+                {
+                    id = request.Id,
+                    address = request.Address,
+                }
+            };
+
+            var content = json.SerializeToJson();
+            var httpRequest = _requestFactory.HttpPut(ShopifyCredentials, path, content);
+            var clientResponse = _client.ExecuteRequest(httpRequest);
+
+            return clientResponse.Body.ToWebhook();
+        }        
 
         public Webhook Retrieve(long id)
         {

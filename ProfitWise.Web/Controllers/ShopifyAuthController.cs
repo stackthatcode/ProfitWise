@@ -228,6 +228,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult BillingDeclined()
         {
             AuthConfig.GlobalSignOut(_signInManager);
@@ -235,6 +236,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public ActionResult Uninstall(UninstallWebhook message)
         {
             _logger.Info($"App Uninstall Webhook invocation Shopify Shop Id: {message.id}");

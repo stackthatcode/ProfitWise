@@ -14,21 +14,31 @@ namespace Push.Shopify.Model
         public DateTime Created_At { get; set; }
         public DateTime Updated_At { get; set; }
 
-        public static readonly string
-            WebhookAddress = ConfigurationManager
-                .AppSettings
-                .GetAndTryParseAsString("UninstallWebHookAddress", "");
 
-                public static Webhook MakeUninstallHookRequest()
-                {
-                    var request = new Webhook()
-                    {
-                        Address = WebhookAddress,
-                        Format = "json",
-                        Topic = "app/uninstalled",
-                    };
-                    return request;
-                }
+        public static readonly string
+                WebhookAddress = ConfigurationManager
+                    .AppSettings
+                    .GetAndTryParseAsString("UninstallWebHookAddress", "");
+
+        public static Webhook MakeUninstallHookRequest()
+        {
+            var request = new Webhook()
+            {
+                Address = WebhookAddress,
+                Format = "json",
+                Topic = "app/uninstalled",
+            };
+            return request;
+        }
+
+        public static Webhook MakeAddressUpdateRequest(long id)
+        {
+            return new Webhook()
+            {
+                Id = id,
+                Address = WebhookAddress,
+            };
+        }
     }
 
     public static class WebhookExtensions

@@ -39,6 +39,22 @@ namespace Push.Shopify.HttpClient
             return request;
         }
 
+        public HttpWebRequest HttpPut(ShopifyCredentials credentials, string path, string content)
+        {
+            var request = FactoryWorker(credentials, path);
+            request.Method = "PUT";
+
+            var byteArray = Encoding.ASCII.GetBytes(content);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json";
+
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+
+            return request;
+        }
+
         public HttpWebRequest HttpDelete(ShopifyCredentials credentials, string path)
         {
             var request = FactoryWorker(credentials, path);

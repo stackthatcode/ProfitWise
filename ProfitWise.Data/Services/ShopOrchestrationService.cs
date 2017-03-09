@@ -109,7 +109,7 @@ namespace ProfitWise.Data.Services
         }
 
 
-        // Webhook subscription
+        // Webhook subscription & maintenance service
         public void UpsertUninstallWebhook(ShopifyCredentials credentials)
         {
             // Create the Webhook via Shopify API
@@ -121,7 +121,9 @@ namespace ProfitWise.Data.Services
                 var existingWebhook = apiRepository.Retrieve(shop.ShopifyUninstallId.Value);
                 if (existingWebhook != null)
                 {
-                    // Existing Uninstall Webhook - nothing to do!
+                    var updateRequest = 
+                        Webhook.MakeAddressUpdateRequest(shop.ShopifyUninstallId.Value);
+                    apiRepository.UpdateAddress(updateRequest);
                     return;
                 }
             }
