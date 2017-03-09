@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Data;
+using System.Net;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
@@ -11,6 +12,7 @@ using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Json;
 using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
@@ -66,7 +68,7 @@ namespace ProfitWise.Data.Services
         }
         
 
-        // ProfitWise Shop dawtabase record methods
+        // ProfitWise Shop database record methods
         public PwShop CreateShop(string shopOwnerUserId, Shop shop, ShopifyCredentials credentials)
         {
             // Create the Shop record in SQL
@@ -82,16 +84,10 @@ namespace ProfitWise.Data.Services
             {
                 PwShopId = newShop.PwShopId,
             };
+
             profitWiseBatchStateRepository.Insert(state);
             _logger.Info($"Created Batch State for Shop - UserId: {newShop.ShopOwnerUserId}");
-
-            // Create the Webhook via Shopify API
-            var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);            
-            var request = Webhook.MakeUninstallHookRequest();
-            var webhook = apiRepository.Subscribe(request);
-
-            // Store the Webhook Id 
-            _shopRepository.UpdateShopifyUninstallId(shopOwnerUserId, webhook.Id);
+            
             return newShop;
         }
 
@@ -113,8 +109,33 @@ namespace ProfitWise.Data.Services
         }
 
 
+        // Webhook subscription
+        public void UpsertUninstallWebhook(ShopifyCredentials credentials)
+        {
+            // Create the Webhook via Shopify API
+            var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);
+            var shop = _shopRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
+
+            if (shop.ShopifyUninstallId.HasValue)
+            {
+                var existingWebhook = apiRepository.Retrieve(shop.ShopifyUninstallId.Value);
+                if (existingWebhook != null)
+                {
+                    // Existing Uninstall Webhook - nothing to do!
+                    return;
+                }
+            }
+
+            var request = Webhook.MakeUninstallHookRequest();
+            var webhook = apiRepository.Subscribe(request);
+
+            // Store the Webhook Id 
+            _shopRepository.UpdateShopifyUninstallId(credentials.ShopOwnerUserId, webhook.Id);
+        }
+
+
         // Recurring Application Charge methods
-        public static RecurringApplicationCharge MakeNewProfitWiseCharge()
+        public static RecurringApplicationCharge MakeCharge()
         {
             var charge = new RecurringApplicationCharge()
             {
@@ -133,7 +154,7 @@ namespace ProfitWise.Data.Services
             var shop = _shopRepository.RetrieveByUserId(userId);
 
             // Invoke Shopify API to create the Recurring Application Charge
-            var chargeParameter = MakeNewProfitWiseCharge();
+            var chargeParameter = MakeCharge();
             chargeParameter.return_url = returnUrl;
 
             var billingRepository = _factory.MakeBillingRepository(shop);

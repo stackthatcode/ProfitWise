@@ -13,11 +13,14 @@ namespace Push.Foundation.Web.Http
         private readonly IPushLogger _pushLogger;
         private HttpClientFacadeConfig _configuration;
 
-        private static readonly 
-            IDictionary<string, DateTime> _hostLastExecutionTime = new ConcurrentDictionary<string, DateTime>();
+        private static readonly IDictionary<string, DateTime> 
+            _hostLastExecutionTime = new ConcurrentDictionary<string, DateTime>();
 
         
-        public HttpClientFacade(IHttpClient httpClient, HttpClientFacadeConfig configuration, IPushLogger logger)
+        public HttpClientFacade(
+                IHttpClient httpClient, 
+                HttpClientFacadeConfig configuration, 
+                IPushLogger logger)
         {
             _configuration = configuration;
             _httpClient = httpClient;
@@ -54,6 +57,10 @@ namespace Push.Foundation.Web.Http
             _hostLastExecutionTime[hostname] = DateTime.Now;
             var response = _httpClient.ProcessRequest(request);
 
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new HttpClientResponse { StatusCode = HttpStatusCode.NotFound };
+            }
             if (response.StatusCode == (HttpStatusCode)429)
             {
                 throw new TooManyHttpRequestsException(response.Body);

@@ -1,4 +1,5 @@
-﻿using Autofac.Extras.DynamicProxy2;
+﻿using System.Net;
+using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.Json;
 using Push.Foundation.Web.Http;
@@ -53,6 +54,10 @@ namespace Push.Shopify.Repositories
             var path = $"/admin/webhooks/{id}.json";
             var httpRequest = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(httpRequest);
+            if (clientResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
 
             return clientResponse.Body.ToWebhook();
         }

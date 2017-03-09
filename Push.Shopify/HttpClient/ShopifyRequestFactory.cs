@@ -70,31 +70,6 @@ namespace Push.Shopify.HttpClient
             }
             return req;
         }
-
-
-
-
-        //public string HttpPut(string path, string json)
-        //{
-        //    var request = RequestFactory(path);
-        //    request.Method = "PUT";
-        //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-        //    {
-        //        streamWriter.Write(json);
-        //    }
-        //    return ProcessRequest(request);
-        //}
-
-        //public string HttpPost(string path, string json)
-        //{
-        //    var request = RequestFactory(path);
-        //    request.Method = "POST";
-        //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-        //    {
-        //        streamWriter.Write(json);
-        //    }
-        //    return ProcessRequest(request);
-        //}
     }
 }
 

@@ -164,12 +164,13 @@ namespace ProfitWise.Web.Controllers
             var pwShop = _shopRepository.RetrieveByUserId(user.Id);
             var shopJson = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyShopSerializedExternal);
             var shop = Shop.MakeFromJson(shopJson.Value);
+            var credentials = CredentialFactory.Make(externalLoginInfo, user);
 
+            // Create the Shop database records
             if (pwShop == null)
             {
                 using (var transaction = _shopOrchestrationService.InitiateTransaction())
                 {
-                    var credentials = MakeCredentials(externalLoginInfo, user);
                     pwShop = _shopOrchestrationService.CreateShop(user.Id, shop, credentials);
                     transaction.Commit();
                 }
@@ -178,23 +179,12 @@ namespace ProfitWise.Web.Controllers
             {
                 _shopOrchestrationService.UpdateShop(user.Id, shop.Currency, shop.TimeZone);
             }
+
+            // Ensure that the Uninstall Webhook is in place
+            _shopOrchestrationService.UpsertUninstallWebhook(credentials);
             return pwShop;
         }
         
-        private ShopifyCredentials MakeCredentials(
-            ExternalLoginInfo externalLoginInfo, ApplicationUser user)
-        {
-            var domainClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyDomainClaimExternal);
-            var accessTokenClaim = externalLoginInfo.ExternalClaim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal);
-            var credentials = new ShopifyCredentials()
-            {
-                ShopDomain = domainClaim.Value,
-                AccessToken = accessTokenClaim.Value,
-                ShopOwnerUserId = user.Id
-            };
-            return credentials;
-        }
-
         private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
         {
             var charge = _shopOrchestrationService.SyncAndRetrieveCurrentCharge(user.Id);

@@ -131,7 +131,7 @@
                         <a style="font-weight: 700;" class="btn btn-warning btn-sm" 
                            href="#" data-bind="click: function() { $root.Uninstall(user.PwShopId); }">Uninstall ProfitWise</a>
                     </span>
-                    <span data-bind="ifnot: !user.IsProfitWiseInstalled">
+                    <span data-bind="ifnot: user.IsProfitWiseInstalled">
                         <a style="font-weight: 700;" class="btn btn-danger btn-sm" 
                            href="#" data-bind="click: function() { $root.FinalizeUninstall(user.PwShopId); }">Finalize Uninstall</a>
                     </span>
