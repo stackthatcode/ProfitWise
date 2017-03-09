@@ -191,9 +191,13 @@ namespace ProfitWise.Data.ProcessSteps
             if (masterVariant == null)
             {
                 _pushLogger.Debug($"Unable to find Master Variant for Title: {context.Title} and Sku: {context.Sku}");
-                masterVariant = service.CreateMasterVariant(context);
+                var newMasterVariant = service.CreateMasterVariant(context);
 
-                context.MasterProduct.MasterVariants.Add(masterVariant);
+                context.MasterProduct.MasterVariants.Add(newMasterVariant);
+                context.MasterVariant = newMasterVariant;
+            }
+            else
+            {
                 context.MasterVariant = masterVariant;
             }
 
