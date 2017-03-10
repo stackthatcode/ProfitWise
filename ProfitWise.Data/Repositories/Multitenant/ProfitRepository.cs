@@ -81,7 +81,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 FROM profitquerystub(@PwShopId) t1
 	                INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitreportentry(@PwShopId) t3
+	                INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
 		                ON t2.PwProductId = t3.PwProductId 
 			                AND t2.PwVariantId = t3.PwVariantId
 			                AND t3.EntryDate >= @StartDate
@@ -116,7 +116,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"FROM profitquerystub(@PwShopId) t1
 		            INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitreportentry(@PwShopId) t3
+	                INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
 		                ON t2.PwProductId = t3.PwProductId 
                             AND t2.PwVariantId = t3.PwVariantId  
 			                AND t3.EntryDate >= @StartDate 
@@ -194,12 +194,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"SUM(t3.NetSales) As TotalRevenue,
                 SUM(t3.Quantity) AS TotalQuantitySold,
                 COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalOrders,
-		        SUM(t3.CoGS) AS TotalCogs, SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
-                CASE WHEN SUM(t3.NetSales) = 0 THEN 0 ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin
+		        SUM(t3.CoGS) AS TotalCogs, 
+                SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
+                CASE WHEN SUM(t3.NetSales) = 0 THEN 0 
+                    ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin
                 FROM profitquerystub(@PwShopId) t1
 		            INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitreportentry(@PwShopId) t3
+	                INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
 		                ON t2.PwProductId = t3.PwProductId 
                             AND t2.PwVariantId = t3.PwVariantId
                             AND t3.EntryDate >= @StartDate
@@ -284,7 +286,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var output = _connectionWrapper
                 .Query<DatePeriodTotal>(
                     query,
-                    new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate, FilterKeys = filterKeys, })
+                    new { PwShopId,
+                        PwShop.UseDefaultMargin,
+                        PwShop.DefaultCogsPercent,
+                        PwShop.MinPaymentStatus,
+                        PwReportId = reportId,
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        FilterKeys = filterKeys, })
                 .ToList();
 
             // ... and finally decorate these values
@@ -352,7 +361,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 FROM profitquerystub(@PwShopId) t1
 	                INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitreportentry(@PwShopId) t3
+	                INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
 		                ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
 	                INNER JOIN calendar_table t4
 		                ON t3.EntryDate = t4.dt
@@ -391,13 +400,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 FROM profitquerystub(@PwShopId) t1
 	                INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitreportentry(@PwShopId) t3
+	                INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
 		                ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
                 WHERE t1.PwReportID = @PwReportId AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
                 GROUP BY t3.EntryDate ORDER BY t3.EntryDate";
             
-            return _connectionWrapper.Query<DateTotal>(
-                    query, new { PwShopId, PwReportId = reportId, StartDate = startDate, EndDate = endDate })
+            return _connectionWrapper.Query<DateTotal>(query, 
+                    new { PwShopId, PwShop.UseDefaultMargin, PwShop.DefaultCogsPercent, PwShop.MinPaymentStatus,
+                            PwReportId = reportId, StartDate = startDate, EndDate = endDate })
                 .ToList();
         }
     }

@@ -116,7 +116,7 @@
                 <div class="radio">
                     <label>
                         <input type="radio" name="optionsRadios"
-                               data-bind="value:@ProfitRealization.OrderReceived,
+                               data-bind="value:@ProfitRealizationConstants.OrderReceived,
                                             checked: $root.ProfitRealization, 
                                             event: { change: $root.UpdateProfitRealization }">
                         When the order is created
@@ -125,7 +125,7 @@
                 <div class="radio">
                     <label>
                         <input type="radio" name="optionsRadios"
-                               data-bind="value:@ProfitRealization.PaymentClears,
+                               data-bind="value:@ProfitRealizationConstants.PaymentClears,
                                             checked: $root.ProfitRealization, 
                                             event: { change: $root.UpdateProfitRealization }">
                         When payment for the order is captured
