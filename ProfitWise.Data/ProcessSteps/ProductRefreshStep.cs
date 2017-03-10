@@ -201,7 +201,7 @@ namespace ProfitWise.Data.ProcessSteps
                 context.MasterVariant = masterVariant;
             }
 
-            var variant = masterVariant.FindVariant(context);
+            var variant = context.MasterVariant.FindVariant(context);
             if (variant == null)
             {
                 _pushLogger.Debug(

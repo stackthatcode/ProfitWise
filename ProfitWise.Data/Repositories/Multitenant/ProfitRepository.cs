@@ -255,11 +255,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
         
         // Date Period Bucketed Totals
         public List<DatePeriodTotal> RetrieveDatePeriodTotals(
-                long reportId, DateTime startDate, DateTime endDate, List<string> filterKeys,
+                long reportId, DateTime startDate, DateTime endDate, List<string> adHocFilterKeys,
                 ReportGrouping grouping, PeriodType periodType)
         {
-            var innerQuery = DatePeriodTotalsInnerQuery(filterKeys, grouping, periodType);
+            var reportRepository = _factory.MakeReportRepository(this.PwShop);
+            var reportHasFilters = reportRepository.HasFilters(reportId);
 
+            var innerQuery = DatePeriodTotalsInnerQuery(adHocFilterKeys, reportHasFilters, grouping, periodType);
+            
             // NOTE: for MySQL go back prior to 1/26/2017 for structuring of this query without CTE
             var cteQueryStart =
                 @"WITH InnerQuery ( Year, Quarter, Month, Week, Day, GroupingKey, GroupingName, NetSales, CoGS ) AS 
@@ -310,7 +313,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         PwReportId = reportId,
                         StartDate = startDate,
                         EndDate = endDate,
-                        FilterKeys = filterKeys, })
+                        FilterKeys = adHocFilterKeys, })
                 .ToList();
 
             // ... and finally decorate these values
@@ -322,7 +325,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return output;
         }
 
-        private static string DatePeriodTotalsInnerQuery(List<string> filterKeys, ReportGrouping grouping, PeriodType periodType)
+        private static string DatePeriodTotalsInnerQuery(
+                List<string> filterKeys, bool reportHasFilters, ReportGrouping grouping, PeriodType periodType)
         {
             string dateHeader;
             if (periodType == PeriodType.Year)
