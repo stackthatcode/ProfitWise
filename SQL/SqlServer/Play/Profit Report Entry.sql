@@ -1,4 +1,6 @@
 
+
+
 DECLARE @PwShopId int = 100001;
 DECLARE @OrderLineEntry int = 1, @RefundEntry int = 2, @AdjustmentEntry int = 3;
 
@@ -11,19 +13,18 @@ SELECT PwShopId, OrderDate, @OrderLineEntry AS EntryType, ShopifyOrderId, Shopif
 	PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, 
 	Quantity * ISNULL(UnitCogs, 0) AS CoGS, 	
 	Quantity AS Quantity, 
-	CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 1 ELSE 0 END AS PaymentStatus	 
+	CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END AS PaymentStatus                        
 FROM orderlineitem(@PwShopId);
 
 
 INSERT INTO profitreportentry(@PwShopId)                    
 SELECT t1.PwShopId, t1.RefundDate, @RefundEntry AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId,                     
 	t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, 
-	-t1.RestockQuantity * ISNULL(UnitPrice, 0) AS CoGS, 	
+	-t1.RestockQuantity * ISNULL(UnitCoGS, 0) AS CoGS, 	
 	-t1.RestockQuantity AS Quantity, 
-	CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 1 ELSE 0 END AS PaymentStatus                        
+	CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END AS PaymentStatus                        
 FROM orderrefund(@PwShopId) t1                
-	INNER JOIN orderlineitem(@PwShopId) t2                
-		ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId 
+	INNER JOIN orderlineitem(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId 
 
 
 INSERT INTO profitreportentry(@PwShopId)
@@ -31,7 +32,7 @@ SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.Shopify
 	t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 
 	0 AS CoGS, 
 	NULL AS Quantity,
-	CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 1 ELSE 0 END AS PaymentStatus
+	CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END AS PaymentStatus                        
 FROM orderadjustment(@PwShopId) t1                     
 	INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId;
 
