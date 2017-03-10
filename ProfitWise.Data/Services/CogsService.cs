@@ -135,8 +135,7 @@ namespace ProfitWise.Data.Services
 
             cogsDownstreamRepository.RefreshReportEntryData();
         }
-
-
+        
         
         // Updates both the CoGS and the Downstream
         public void SaveCogsForPickList(long pickListId, CogsDto defaults, List<CogsDto> details)

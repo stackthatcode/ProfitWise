@@ -212,8 +212,7 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var catalogBuilderService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
-            var cogsUpdateRepository = _multitenantFactory.MakeCogsDownstreamRepository(shop);
-
+            
             var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();                
             var orderIdList = importedOrders.Select(x => x.Id).ToList();
             var existingOrders = orderRepository.RetrieveOrdersFullDepth(orderIdList);
@@ -228,13 +227,13 @@ namespace ProfitWise.Data.ProcessSteps
             foreach (var importedOrder in importedOrders)
             {
                 WriteOrderToPersistence(importedOrder, context);
-            }
-                
-            cogsUpdateRepository.RefreshReportEntryData();            
+            }         
         }
 
         private void WriteOrderToPersistence(Order orderFromShopify, OrderRefreshContext context)
         {
+            var cogsUpdateRepository = _multitenantFactory.MakeCogsDownstreamRepository(context.PwShop);
+
             var existingOrder =
                 context.CurrentExistingOrders
                     .FirstOrDefault(x => x.ShopifyOrderId == orderFromShopify.Id);
@@ -252,9 +251,12 @@ namespace ProfitWise.Data.ProcessSteps
 
             using (var transaction = repository.InitiateTransaction())
             {
+                var refreshContext = new EntryRefreshContext() { ShopifyOrderId = orderFromShopify.Id };
+                
                 if (existingOrder == null)
                 {
                     InsertOrderToPersistence(orderFromShopify, context);
+                    cogsUpdateRepository.RefreshReportEntryData(refreshContext);
                 }
                 else
                 {

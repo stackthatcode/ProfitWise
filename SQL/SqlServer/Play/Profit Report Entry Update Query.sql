@@ -4,12 +4,55 @@
 -- #1 - Basic Query for Order Line
 DECLARE @PwShopId int = 100001;
 
+
+
+-- Order
+SELECT * FROM orderlineitem(100001);
+
+SELECT * FROM profitreportentry(100002);
+
+
 UPDATE t1
 SET CoGS = t1.Quantity * ISNULL(UnitCogs, 0),
 	PaymentStatus = CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END
 FROM profitreportentry(@PwShopId) t1
-	INNER JOIN orderlineitem(@PwShopId) t2
-		ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.SourceId = t2.ShopifyOrderLineId
+	INNER JOIN orderlineitem(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.SourceId = t2.ShopifyOrderLineId
+WHERE t1.ShopifyOrderId = 277050777
+
+
+-- Master Variant
+UPDATE t1
+SET CoGS = t1.Quantity * ISNULL(UnitCogs, 0),
+	PaymentStatus = CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END
+FROM profitreportentry(@PwShopId) t1
+	INNER JOIN orderlineitem(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.SourceId = t2.ShopifyOrderLineId
+	INNER JOIN variant(@PwShopId) t3 ON t2.PwVariantId = t3.PwVariantId	
+WHERE t3.PwMasterVariantId = 5;
+
+
+-- Master Product
+UPDATE t1
+SET CoGS = t1.Quantity * ISNULL(UnitCogs, 0),
+	PaymentStatus = CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END
+FROM profitreportentry(@PwShopId) t1
+	INNER JOIN orderlineitem(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.SourceId = t2.ShopifyOrderLineId
+	INNER JOIN variant(@PwShopId) t3 ON t2.PwVariantId = t3.PwVariantId
+	INNER JOIN mastervariant(@PwShopId) t4 ON t3.PwMasterVariantId = t4.PwMasterVariantId
+WHERE t4.PwMasterProductId = 2;
+
+-- Pick List
+UPDATE t1
+SET CoGS = t1.Quantity * ISNULL(UnitCogs, 0),
+	PaymentStatus = CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END
+FROM profitreportentry(@PwShopId) t1
+	INNER JOIN orderlineitem(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.SourceId = t2.ShopifyOrderLineId
+	INNER JOIN variant(@PwShopId) t3 ON t2.PwVariantId = t3.PwVariantId
+	INNER JOIN mastervariant(@PwShopId) t4 ON t3.PwMasterVariantId = t4.PwMasterVariantId
+WHERE t4.PwMasterProductId IN ( SELECT PwMasterProductId FROM picklistmasterproduct(@PwShopId) WHERE PwPickListId = 110403 );
+
+
+
+SELECT * FROM orderlineitem(100001);
 
 
 
@@ -25,10 +68,13 @@ FROM profitreportentry(@PwShopId) t1
 	INNER JOIN orderlineitem(@PwShopId) t3
 		ON t2.ShopifyOrderId = t3.ShopifyOrderId AND t2.ShopifyOrderLineId = t3.ShopifyOrderLineId
 
+	INNER JOIN variant(@PwShopId) t4
+		ON t3.PwProductId = t4.PwProductId AND t3.PwVariantId = t4.PwVariantId;
+
 
 
 -- #3 - Query for Updating Adjustments
-DECLARE @PwShopId int = 100001;
+--DECLARE @PwShopId int = 100001;
 
 UPDATE t1
 SET PaymentStatus = CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END 
@@ -37,11 +83,19 @@ FROM profitreportentry(@PwShopId) t1
 WHERE t1.EntryType = 3
 
 
-	
 
 /*
-SELECT * FROM orderlineitem(100001);
 
-SELECT * FROM orderrefund(100001);
+SELECT * FROM profitreportentry(100001) WHERE EntryType = 3;
+
+SELECT * FROM profitwisepicklistmasterproduct;
+
+SELECT * FROM ordertable(100001) WHERE ShopifyOrderId = 279448469;
+
+
+UPDATE ordertable(100001) 
+SET FinancialStatus = 2
+WHERE ShopifyOrderId = 279448469;
+
 */
 
