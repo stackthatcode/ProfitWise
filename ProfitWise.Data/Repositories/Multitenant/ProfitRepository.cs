@@ -389,6 +389,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     filterClause = "AND t1.Vendor in @FilterKeys ";
                 }
             }
+
             var innerQuery = @"SELECT " + dateHeader + groupingHeader + queryGuts + filterClause;
             return innerQuery;
         }

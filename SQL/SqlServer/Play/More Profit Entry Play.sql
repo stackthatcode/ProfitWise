@@ -25,21 +25,17 @@ SELECT * FROM dbo.profitreportentry(100001) WHERE PaymentCleared > -1
 
 
 
-DROP FUNCTION IF EXISTS dbo.profitreportentryprocessed
-GO
-CREATE FUNCTION dbo.profitreportentryprocessed (
-		@PwShopId bigint, @UseDefaultMargin tinyint, @DefaultCogsPercent decimal(15, 2), @MinPaymentStatus tinyint)  
-RETURNS TABLE
-AS  
-RETURN SELECT PwShopId, EntryDate, EntryType, ShopifyOrderId, SourceId, PwProductId, PwVariantId, NetSales, 
-	CASE WHEN (@UseDefaultMargin = 1 AND ISNULL(CoGS, 0) = 0) THEN NetSales * @DefaultCoGSPercent ELSE CoGS END AS CoGS, 
-	Quantity, PaymentStatus
-FROM dbo.profitreportentry(@PwShopId)
-WHERE PaymentStatus >= @MinPaymentStatus
-GO
+
+SELECT * FROM dbo.profitreportentry(100001);
 
 
-SELECT * FROM dbo.profitreportentryprocessed(100001, 1, 0.85, 1);
+
+SELECT SUM(NetSales) FROM dbo.profitreportentryprocessed(100001, 1, 0.85, 1) 
+WHERE EntryDate = '2016-01-11' AND EntryType = 3;
+
+
+SELECT * FROM dbo.profitreportentryprocessed(100001, 1, 0.85, 1) WHERE EntryDate = '2016-01-11' ORDER BY ShopifyOrderId
+
 
 
 
