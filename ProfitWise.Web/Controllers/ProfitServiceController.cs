@@ -292,7 +292,7 @@ namespace ProfitWise.Web.Controllers
             // Context #2 - Aggregate Date Totals
             var aggregateDateTotals =
                 queryRepository
-                    .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate)
+                    .RetrieveDateTotalsWithoutGrouping(report.PwReportId, report.StartDate, report.EndDate)
                     .ToDictionary(x => x.OrderDate, x => x);
 
             // Context #3 - Report Series hierarchical structure
@@ -366,7 +366,7 @@ namespace ProfitWise.Web.Controllers
             var periodType = (report.EndDate - report.StartDate).ToDefaultGranularity();
 
             var totals = queryRepository
-                .RetrieveDateTotals(report.PwReportId, report.StartDate, report.EndDate);
+                .RetrieveDateTotalsWithoutGrouping(report.PwReportId, report.StartDate, report.EndDate);
 
             var aggregateDateTotals = totals.ToDictionary(x => x.OrderDate, x => x);
 

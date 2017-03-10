@@ -415,18 +415,33 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return innerQuery;
         }
 
-        public List<DateTotal> RetrieveDateTotals(long reportId, DateTime startDate, DateTime endDate)
+        public List<DateTotal> RetrieveDateTotalsWithoutGrouping(long reportId, DateTime startDate, DateTime endDate)
         {
+            var reportRepository = _factory.MakeReportRepository(this.PwShop);
+            var hasFilters = reportRepository.HasFilters(reportId);
+
             var query =
-                @"SELECT t3.EntryDate AS OrderDate, SUM(t3.NetSales) AS TotalRevenue, SUM(t3.CoGS) AS TotalCogs
-                FROM profitquerystub(@PwShopId) t1
-	                INNER JOIN variant(@PwShopId) t2
-		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
-		                ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
-                WHERE t1.PwReportID = @PwReportId AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
-                GROUP BY t3.EntryDate ORDER BY t3.EntryDate";
-            
+                @"SELECT t3.EntryDate AS OrderDate, SUM(t3.NetSales) AS TotalRevenue, SUM(t3.CoGS) AS TotalCogs ";
+
+            if (hasFilters)
+            {
+                query +=
+                    @"FROM profitquerystub(@PwShopId) t1
+	                    INNER JOIN variant(@PwShopId) t2
+		                    ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                    INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
+		                    ON t2.PwProductId = t3.PwProductId AND t2.PwVariantId = t3.PwVariantId
+                    WHERE t1.PwReportID = @PwReportId AND t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
+                    GROUP BY t3.EntryDate ORDER BY t3.EntryDate";
+            }
+            else
+            {
+                query +=
+                    @"FROM profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
+                    WHERE t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate
+                    GROUP BY t3.EntryDate ORDER BY t3.EntryDate; ";
+            }
+
             return _connectionWrapper.Query<DateTotal>(query, 
                     new { PwShopId, PwShop.UseDefaultMargin, PwShop.DefaultCogsPercent, PwShop.MinPaymentStatus,
                             PwReportId = reportId, StartDate = startDate, EndDate = endDate })
