@@ -172,10 +172,11 @@
     <Compile Include="Model\GoodsOnHand\Totals.cs" />
     <Compile Include="Model\Preferences\DateRange.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
-    <Compile Include="Model\Preferences\ProfitRealization.cs" />
+    <Compile Include="Model\Preferences\ProfitRealizationConstants.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />
     <Compile Include="Model\Profit\GroupingKeyAndName.cs" />
     <Compile Include="Model\Profit\JsonSeries.cs" />
+    <Compile Include="Model\Profit\PaymentStatus.cs" />
     <Compile Include="Model\Profit\PeriodType.cs" />
     <Compile Include="Model\Profit\DatePeriodTotal.cs" />
     <Compile Include="Model\Profit\ExecutiveSummary.cs" />

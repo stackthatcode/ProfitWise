@@ -70,22 +70,20 @@ namespace ProfitWise.Data.Services
                 $"Create new Product: {productBuildContext.Title} (Id = {productBuildContext.ShopifyProductId})");
 
             // Create the new Product
-            PwProduct finalProduct = new PwProduct()
-            {
-                PwShopId = PwShop.PwShopId,
-                PwMasterProductId = masterProduct.PwMasterProductId,
-                ShopifyProductId = productBuildContext.ShopifyProductId,
-                Title = productBuildContext.Title,
-                Vendor = productBuildContext.Vendor,
-                ProductType = productBuildContext.ProductType,
-                Tags = productBuildContext.Tags,
-                IsActive = productBuildContext.IsActive,
-                IsPrimary = false,
-                IsPrimaryManual = false,
-                LastUpdated = DateTime.Now,
-                ParentMasterProduct = masterProduct,
-            };
-
+            PwProduct finalProduct = new PwProduct();
+            finalProduct.PwShopId = PwShop.PwShopId;
+            finalProduct.PwMasterProductId = masterProduct.PwMasterProductId;
+            finalProduct.ShopifyProductId = productBuildContext.ShopifyProductId;
+            finalProduct.Title = productBuildContext.Title;
+            finalProduct.Vendor = productBuildContext.Vendor;
+            finalProduct.ProductType = productBuildContext.ProductType;
+            finalProduct.Tags = productBuildContext.Tags;
+            finalProduct.IsActive = productBuildContext.IsActive;
+            finalProduct.IsPrimary = false;
+            finalProduct.IsPrimaryManual = false;
+            finalProduct.LastUpdated = DateTime.Now;
+            finalProduct.ParentMasterProduct = masterProduct;
+            
             var productId = productRepository.InsertProduct(finalProduct);
             finalProduct.PwProductId = productId;
             finalProduct.ParentMasterProduct = masterProduct;
@@ -133,25 +131,23 @@ namespace ProfitWise.Data.Services
         {
             _pushLogger.Debug($"Creating new Variant: {context.Title}, {context.Sku} (Id = {context.ShopifyVariantId})");
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
-            
-            var newVariant = new PwVariant()
-            {
-                PwShopId = this.PwShop.PwShopId,
-                PwProductId = context.Product.PwProductId,  // This is a permanent association :-)
-                PwMasterVariantId = context.MasterVariant.PwMasterVariantId,
-                ParentMasterVariant = context.MasterVariant,
-                ShopifyProductId = context.ShopifyProductId,
-                ShopifyVariantId = context.ShopifyVariantId,
-                Sku = context.Sku,
-                Title = context.Title.VariantTitleCorrection(),
-                LowPrice = 0m,      // defaults to "0", updated by 
-                HighPrice = 0m,
-                Inventory = null,
-                IsActive = context.IsActive,
-                IsPrimary = false,
-                IsPrimaryManual = false,
-                LastUpdated = DateTime.Now,
-            };
+
+            var newVariant = new PwVariant();
+            newVariant.PwShopId = this.PwShop.PwShopId;
+            newVariant.PwProductId = context.Product.PwProductId;  // This is a permanent association :-)
+            newVariant.PwMasterVariantId = context.MasterVariant.PwMasterVariantId;
+            newVariant.ParentMasterVariant = context.MasterVariant;
+            newVariant.ShopifyProductId = context.ShopifyProductId;
+            newVariant.ShopifyVariantId = context.ShopifyVariantId;
+            newVariant.Sku = context.Sku;
+            newVariant.Title = context.Title.VariantTitleCorrection();
+            newVariant.LowPrice = 0m;      // defaults to "0", updated by 
+            newVariant.HighPrice = 0m;
+            newVariant.Inventory = null;
+            newVariant.IsActive = context.IsActive;
+            newVariant.IsPrimary = false;
+            newVariant.IsPrimaryManual = false;
+            newVariant.LastUpdated = DateTime.Now;
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
             context.MasterVariant.Variants.Add(newVariant);

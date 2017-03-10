@@ -102,9 +102,8 @@ namespace ProfitWise.Web.Controllers
             var dataService = _factory.MakeDataService(userIdentity.PwShop);
 
             var report = repository.RetrieveReport(reportId);
-            var queryContext = new TotalQueryContext
+            var queryContext = new TotalQueryContext(userIdentity.PwShop)
             {
-                PwShopId = userIdentity.PwShop.PwShopId,
                 PwReportId = reportId,
                 StartDate = report.StartDate,
                 EndDate = report.EndDate,
@@ -215,10 +214,9 @@ namespace ProfitWise.Web.Controllers
         {
             var queryRepository = _factory.MakeProfitRepository(shop);
 
-            var queryContext = new TotalQueryContext
+            var queryContext = new TotalQueryContext(shop)
             {
                 PwReportId = report.PwReportId,
-                PwShopId = shop.PwShopId,
                 StartDate = report.StartDate,
                 EndDate = report.EndDate,
                 Grouping = report.GroupingId,

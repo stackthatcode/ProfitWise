@@ -74,8 +74,6 @@ namespace ProfitWise.Web.Controllers
             // Update the in-memory copy thereof...
             shop.UseDefaultMargin = useDefaultMargin;
             shop.DefaultMargin = defaultMargin;
-            var cogsRepository = _factory.MakeCogsDownstreamRepository(shop);
-            cogsRepository.RefreshReportEntryData();
             return JsonNetResult.Success();
         }
 
@@ -93,9 +91,6 @@ namespace ProfitWise.Web.Controllers
             var shop = HttpContext.IdentitySnapshot().PwShop;
             _shopRepository.UpdateProfitRealization(shop.PwShopId, profitRealizationId);
             shop.ProfitRealization = profitRealizationId; // Need to update the in-memory value!
-
-            var cogsRepository = _factory.MakeCogsDownstreamRepository(shop);
-            cogsRepository.RefreshReportEntryData();
             return JsonNetResult.Success();
         }
 

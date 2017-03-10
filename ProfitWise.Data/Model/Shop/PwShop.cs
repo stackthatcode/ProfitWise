@@ -1,5 +1,6 @@
 ﻿using System;
 using ProfitWise.Data.Model.Preferences;
+using ProfitWise.Data.Model.Profit;
 using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.Shop
@@ -28,6 +29,14 @@ namespace ProfitWise.Data.Model.Shop
         public decimal DefaultCogsPercent => UseDefaultMargin ? (100m - DefaultMargin) / 100m : 0m;
 
         public int ProfitRealization { get; set; }
+
+        // Passed to Profit Report Entry to exclude/include Report Entries based on Payment Status
+        // ... the Entries are filtered by a greater-than-or-equals of Payment Status
+        public int MinPaymentStatus =>
+                    ProfitRealization == ProfitRealizationConstants.PaymentClears 
+                        ? PaymentStatus.Captured 
+                        : PaymentStatus.NotCaptured;
+
         public int DateRangeDefault { get; set; }
         public int? TempFreeTrialOverride { get; set; }
         public long? ShopifyUninstallId { get; set; }
@@ -55,7 +64,7 @@ namespace ProfitWise.Data.Model.Shop
                         DateTime.Today.AddMonths(-Math.Abs(initialOrderStartDateOffsetMonths)),
                 UseDefaultMargin = true,
                 DefaultMargin = 20.0m,
-                ProfitRealization = Preferences.ProfitRealization.OrderReceived,
+                ProfitRealization = Preferences.ProfitRealizationConstants.OrderReceived,
                 DateRangeDefault = DateRangeDefaults.Last7Days,
 
                 ShopifyUninstallId = null,

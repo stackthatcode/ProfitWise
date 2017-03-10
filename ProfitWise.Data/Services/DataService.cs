@@ -38,9 +38,8 @@ namespace ProfitWise.Data.Services
                 var report = repository.RetrieveReport(reportId);
 
                 queryRepository.PopulateQueryStub(reportId);
-                var queryContext = new TotalQueryContext
+                var queryContext = new TotalQueryContext(PwShop)
                 {
-                    PwShopId = PwShop.PwShopId,
                     PwReportId = reportId,
                     StartDate = report.StartDate,
                     EndDate = report.EndDate,
