@@ -283,3 +283,5 @@ ProfitWise.Batch/App.config
 ProfitWise.Batch/App.Debug Jeremy.config
 ProfitWise.Web/Web.Debug Jeremy.config
 SQL/SqlServer/SQL Restore Script - Schema and Data.sql
+ProfitWise.Web/Web.config
+ProfitWise.Web/Web.config
