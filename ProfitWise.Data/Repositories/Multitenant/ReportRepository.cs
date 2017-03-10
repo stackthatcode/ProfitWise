@@ -98,6 +98,24 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .FirstOrDefault();
         }
 
+        public bool HasFilters(long reportId)
+        {
+            var systemReports = RetrieveSystemDefinedReports();
+            var systemReport = systemReports.FirstOrDefault(x => x.PwReportId == reportId);
+            if (systemReport != null)
+            {
+                return false;
+            }
+
+            var query = 
+                @"SELECT COUNT(PwFilterId) 
+                FROM reportfilter(@PwShopId) 
+                WHERE PwReportId = @reportId;";
+
+            var count =  _connectionWrapper.Query<int>(query, new { PwShopId, reportId }).FirstOrDefault();
+            return count > 0;
+        }
+
         public bool ReportExists(long reportId)
         {
             if (RetrieveSystemDefinedReportsIds().Any(x => x == reportId))

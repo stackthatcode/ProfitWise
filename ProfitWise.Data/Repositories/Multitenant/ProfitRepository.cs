@@ -72,8 +72,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         // Queries for generating Totals  
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
-        {            
-            var totalsQuery = @"SELECT " + QueryGutsForTotals();
+        {
+            var reportRepository = _factory.MakeReportRepository(this.PwShop);
+            var hasFilters = reportRepository.HasFilters(queryContext.PwReportId);
+
+            // We'll only include the Query Stub when the Report has Filters
+            var totalsQuery = @"SELECT " + QueryGutsForTotals(hasFilters);
             var totals = _connectionWrapper.Query<GroupedTotal>(totalsQuery, queryContext).First();
 
             var numberOfOrdersQuery =
@@ -140,7 +144,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query =
                 @"SELECT t1.PwMasterProductId AS GroupingKey, t1.ProductTitle AS GroupingName, " +
-                QueryGutsForTotals() +
+                QueryGutsForTotals(true) +
                 @"GROUP BY t1.PwMasterProductId, t1.ProductTitle " +
                 OrderingAndPagingForTotals(queryContext);
 
@@ -153,7 +157,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query =
                 @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) AS GroupingName, " +
-                QueryGutsForTotals() +
+                QueryGutsForTotals(true) +
                 @"GROUP BY t1.PwMasterVariantId, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) " +
                 OrderingAndPagingForTotals(queryContext);
 
@@ -166,7 +170,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query =
                 @"SELECT t1.ProductType AS GroupingKey, t1.ProductType AS GroupingName, " +
-                QueryGutsForTotals() +
+                QueryGutsForTotals(true) +
                 @"GROUP BY t1.ProductType " +
                 OrderingAndPagingForTotals(queryContext);
 
@@ -179,7 +183,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query =
                 @"SELECT t1.Vendor AS GroupingKey, t1.Vendor AS GroupingName, " +
-                QueryGutsForTotals() +
+                QueryGutsForTotals(true) +
                 @"GROUP BY t1.Vendor " +
                 OrderingAndPagingForTotals(queryContext);
 
@@ -188,25 +192,38 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 .AssignGrouping(ReportGrouping.Vendor);
         }
 
-        private string QueryGutsForTotals()
+        // CRUCIAL *** Joining with Query Stub enables Grouping, but at the expense of excluding Adjustments
+        private string QueryGutsForTotals(bool joinWithQueryStub)
         {
-            return
+            var queryFields =
                 @"SUM(t3.NetSales) As TotalRevenue,
                 SUM(t3.Quantity) AS TotalQuantitySold,
                 COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalOrders,
 		        SUM(t3.CoGS) AS TotalCogs, 
                 SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
                 CASE WHEN SUM(t3.NetSales) = 0 THEN 0 
-                    ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin
-                FROM profitquerystub(@PwShopId) t1
-		            INNER JOIN variant(@PwShopId) t2
-		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
-	                INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
-		                ON t2.PwProductId = t3.PwProductId 
-                            AND t2.PwVariantId = t3.PwVariantId
-                            AND t3.EntryDate >= @StartDate
-                            AND t3.EntryDate <= @EndDate             
-                WHERE t1.PwReportId = @PwReportId ";
+                    ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin ";
+
+            if (joinWithQueryStub)
+            {
+                return queryFields +
+                       @"FROM profitquerystub(@PwShopId) t1
+		                INNER JOIN variant(@PwShopId) t2
+		                    ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	                    INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
+		                    ON t2.PwProductId = t3.PwProductId 
+                                AND t2.PwVariantId = t3.PwVariantId
+                                AND t3.EntryDate >= @StartDate
+                                AND t3.EntryDate <= @EndDate             
+                    WHERE t1.PwReportId = @PwReportId ";
+            }
+            else
+            {
+                return queryFields +
+                       @"FROM profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
+		               WHERE t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate ";
+
+            }
         }
 
         private string OrderingAndPagingForTotals(TotalQueryContext queryContext)

@@ -13,7 +13,6 @@ namespace ProfitWise.Data.Model.Profit
         public decimal DefaultCogsPercent => PwShop.DefaultCogsPercent;
         public int MinPaymentStatus => PwShop.MinPaymentStatus;
 
-
         public long PwReportId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
@@ -23,6 +22,9 @@ namespace ProfitWise.Data.Model.Profit
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public int StartingIndex => (PageNumber - 1) * PageSize;
+
+        public bool IncludeAdjustments { get; set; }
+
 
         public TotalQueryContext(PwShop pwShop)
         {

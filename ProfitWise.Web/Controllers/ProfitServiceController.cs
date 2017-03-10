@@ -47,6 +47,7 @@ namespace ProfitWise.Web.Controllers
             {
                 var shopCurrencyId = userIdentity.PwShop.CurrencyId;
                 var report = reportRepository.RetrieveReport(reportId);
+                var includeAdjustments = reportRepository.HasFilters(reportId);
 
                 // First create the query stub...
                 queryRepository.PopulateQueryStub(reportId);
