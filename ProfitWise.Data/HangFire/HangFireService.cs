@@ -135,7 +135,7 @@ namespace ProfitWise.Data.HangFire
             }
         }
 
-        public void KillBackgroundJob(string userId)
+        public void KillInitialRefresh(string userId)
         {
             var shop = _shopRepository.RetrieveByUserId(userId);
             var batchRepository = _multitenantFactory.MakeBatchStateRepository(shop);

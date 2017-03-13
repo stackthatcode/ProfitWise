@@ -163,19 +163,22 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
 
         // Report Entry queries
-        public void RefreshReportEntryData(EntryRefreshContext context = null)
+        public void DeleteInsertReportEntryLedger(EntryRefreshContext context = null)
         {
+            context = context ?? new EntryRefreshContext();
+
             var query =
-                RefreshDeleteQuery(context) +
-                RefreshInsertLineItemQuery(context) +
-                RefreshInsertRefundQuery(context) +
-                RefreshInsertAdjustmentQuery(context);
+                DeleteEntriesQuery(context) +
+                InsertLineItemEntriesQuery(context) +
+                InsertRefundEntriesQuery(context) +
+                InsertAdjustmentEntriesQuery(context);
             
             _connectionWrapper.Execute(query, 
-                new { PwShopId, context.ShopifyOrderId, OrderLineEntry, AdjustmentEntry, RefundEntry });
+                new { PwShopId, context.ShopifyOrderId, context.PwMasterProductId, context.PwMasterVariantId,
+                    context.PwPickListId, OrderLineEntry, AdjustmentEntry, RefundEntry });
         }
         
-        private readonly string PaymentStatusFieldExpr =
+        private readonly string PaymentStatusInsertField =
             $@"CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN {PaymentStatus.Captured} 
             ELSE {PaymentStatus.NotCaptured} END AS PaymentStatus ";
 
@@ -185,7 +188,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return $"WHERE {prefix}ShopifyOrderId = @ShopifyOrderId ";
         }
 
-        private string RefreshInsertLineItemQuery(EntryRefreshContext context)
+        private string InsertLineItemEntriesQuery(EntryRefreshContext context)
         {
             var query =
                 @"INSERT INTO profitreportentry(@PwShopId)
@@ -193,7 +196,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, 
                         Quantity * ISNULL(UnitCogs, 0) AS CoGS,
                         Quantity AS Quantity, " + 
-                        PaymentStatusFieldExpr + 
+                        PaymentStatusInsertField + 
                         @" FROM orderlineitem(@PwShopId) ";
 
             if (context.ShopifyOrderId != null)
@@ -201,7 +204,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return query + "; ";
         }
 
-        private string RefreshInsertRefundQuery(EntryRefreshContext context)
+        private string InsertRefundEntriesQuery(EntryRefreshContext context)
         {
             var query =
                 @"INSERT INTO profitreportentry(@PwShopId)
@@ -209,7 +212,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, 	
                         -t1.RestockQuantity * ISNULL(UnitPrice, 0) AS CoGS, 	
 	                    -t1.RestockQuantity AS Quantity, " +
-                        PaymentStatusFieldExpr + 
+                        PaymentStatusInsertField + 
                 @"FROM orderrefund(@PwShopId) t1
 		            INNER JOIN orderlineitem(@PwShopId) t2
 			            ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId ";
@@ -219,13 +222,13 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return query + "; ";
         }
         
-        private string RefreshInsertAdjustmentQuery(EntryRefreshContext context)
+        private string InsertAdjustmentEntriesQuery(EntryRefreshContext context)
         {
             var query =
                 @"INSERT INTO profitreportentry(@PwShopId)
                 SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.ShopifyOrderId, 
                     t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 
-                    0 AS CoGS, NULL AS Quantity, " + PaymentStatusFieldExpr + 
+                    0 AS CoGS, NULL AS Quantity, " + PaymentStatusInsertField + 
                 @"FROM orderadjustment(@PwShopId) t1 
                     INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
 
@@ -234,12 +237,119 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return query + "; ";
         }
 
-        private string RefreshDeleteQuery(EntryRefreshContext context)
+        private string DeleteEntriesQuery(EntryRefreshContext context)
         {
             var query = @"DELETE FROM profitreportentry(@PwShopId) ";
 
             if (context.ShopifyOrderId != null)
                 query += OrderIdWhereClause();
+            return query + "; ";
+        }
+
+
+
+        public void UpdateReportEntryLedger(EntryRefreshContext context)
+        {
+            context = context ?? new EntryRefreshContext();
+
+            var query =
+                UpdateLineItemEntriesQuery(context) +
+                UpdateRefundEntriesQuery(context) +
+                UpdateAdjustmentEntriesQuery(context);
+
+            _connectionWrapper.Execute(query,
+                new
+                {
+                    PwShopId,
+                    context.ShopifyOrderId,
+                    context.PwMasterProductId,
+                    context.PwMasterVariantId,
+                    context.PwPickListId,
+                    OrderLineEntry,
+                    AdjustmentEntry,
+                    RefundEntry
+                });
+
+        }
+
+        private readonly string PaymentStatusUpdateField =
+            $@"pr.PaymentStatus =  CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN {PaymentStatus.Captured} 
+            ELSE {PaymentStatus.NotCaptured} END ";
+
+        private string UpdateLineItemEntriesQuery(EntryRefreshContext context)
+        {
+            var query =
+                @"UPDATE pr
+                SET pr.CoGS = pr.Quantity * ISNULL(ol.UnitCogs, 0), " +
+                PaymentStatusUpdateField + 
+                @" FROM profitreportentry(@PwShopId) pr
+	                INNER JOIN orderlineitem(@PwShopId) ol 
+                        ON pr.ShopifyOrderId = ol.ShopifyOrderId 
+                        AND pr.SourceId = ol.ShopifyOrderLineId ";
+                
+            return query + UpdateFilterAppender(query, "ol", context);
+        }
+
+        private string UpdateRefundEntriesQuery(EntryRefreshContext context)
+        {
+            var query =
+                @"UPDATE pr
+                SET pr.CoGS = -orf.RestockQuantity * ISNULL(oli.UnitCoGS, 0), " +
+                PaymentStatusUpdateField +
+                @" FROM profitreportentry(@PwShopId) pr
+	                INNER JOIN orderrefund(@PwShopId) orf
+		                ON pr.ShopifyOrderId = orf.ShopifyOrderId 
+                        AND pr.SourceId = orf.ShopifyOrderLineId
+	                INNER JOIN orderlineitem(@PwShopId) oli
+		                ON orf.ShopifyOrderId = oli.ShopifyOrderId 
+                        AND orf.ShopifyOrderLineId = oli.ShopifyOrderLineId ";
+            
+            return query + UpdateFilterAppender(query, "oli", context);
+        }
+
+        private string UpdateAdjustmentEntriesQuery(EntryRefreshContext context)
+        {
+            var query =
+                @"UPDATE pr SET " +
+                PaymentStatusUpdateField +
+                @" FROM profitreportentry(@PwShopId) pr
+                    INNER JOIN orderadjustment(@PwShopId) oa 
+                        ON pr.ShopifyOrderId = oa.ShopifyOrderId
+                        AND pr.SourceId = oa.ShopifyAdjustmentId
+                    INNER JOIN ordertable(@PwShopId) o 
+                        ON oa.ShopifyOrderId = o.ShopifyOrderId ";
+            return query + "; ";
+        }
+
+        private string UpdateFilterAppender(string query, string orderLineAlias, EntryRefreshContext context)
+        {
+            if (context.ShopifyOrderId != null)
+            {
+                return query + $"WHERE {orderLineAlias}.ShopifyOrderId = @ShopifyOrderId ";
+            }
+            if (context.PwMasterVariantId != null)
+            {
+                return query +
+                    $@" INNER JOIN variant(@PwShopId) v ON v.PwVariantId = {orderLineAlias}.PwVariantId	
+                    WHERE {orderLineAlias}.PwMasterVariantId = @PwMasterVariantId ";
+            }
+            if (context.PwMasterProductId != null)
+            {
+                return query +
+                    $@" INNER JOIN variant(@PwShopId) v ON {orderLineAlias}.PwVariantId = v.PwVariantId
+	                    INNER JOIN mastervariant(@PwShopId) mv ON v.PwMasterVariantId = mv.PwMasterVariantId
+                    WHERE mv.PwMasterProductId = @PwMasterProductId ";
+            }
+            if (context.PwPickListId != null)
+            {
+                return query +
+                    $@" INNER JOIN variant(@PwShopId) v ON {orderLineAlias}.PwVariantId = v.PwVariantId
+	                INNER JOIN mastervariant(@PwShopId) mv ON t3.PwMasterVariantId = mv.PwMasterVariantId
+                    WHERE mv.PwMasterProductId IN ( 
+                            SELECT PwMasterProductId FROM picklistmasterproduct(@PwShopId) 
+                            WHERE PwPickListId = @PwPickListId ) ";
+            }
+
             return query + "; ";
         }
     }

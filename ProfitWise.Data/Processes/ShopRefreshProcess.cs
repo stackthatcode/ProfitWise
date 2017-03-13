@@ -69,7 +69,7 @@ namespace ProfitWise.Data.Processes
             }
         }
 
-        [AutomaticRetry(Attempts = 3)]
+        [AutomaticRetry(Attempts = 1)]
         [Queue(ProfitWiseQueues.RoutineShopRefresh)]
         public void RoutineShopRefresh(string userId)
         {

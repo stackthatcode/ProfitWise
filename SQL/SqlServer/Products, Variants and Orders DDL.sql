@@ -29,20 +29,6 @@ DROP TABLE IF EXISTS [dbo].[profitwisepicklist]
 GO
 
 
-DROP TABLE IF EXISTS [dbo].[shopifyorderrefund]
-GO
-
-DROP TABLE IF EXISTS [dbo].[shopifyorderlineitem]
-GO
-
-DROP TABLE IF EXISTS [dbo].[shopifyorderadjustment]
-GO
-
-DROP TABLE IF EXISTS [dbo].[shopifyorder]
-GO
-
-
-
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisevariant]') AND type in (N'U'))
 BEGIN
@@ -242,6 +228,21 @@ CREATE TABLE [dbo].[profitwisepicklist](
 END
 GO
 
+
+
+
+
+DROP TABLE IF EXISTS [dbo].[shopifyorderrefund]
+GO
+
+DROP TABLE IF EXISTS [dbo].[shopifyorderlineitem]
+GO
+
+DROP TABLE IF EXISTS [dbo].[shopifyorderadjustment]
+GO
+
+DROP TABLE IF EXISTS [dbo].[shopifyorder]
+GO
 
 
 

@@ -232,7 +232,7 @@ namespace ProfitWise.Data.Services
             if (shop.IsBillingValid)
             {
                 // Protective measure to prevent multiple background updates
-                _hangFireService.KillBackgroundJob(userId);
+                _hangFireService.KillInitialRefresh(userId);
                 _hangFireService.KillRoutineRefresh(userId);
 
                 // ... and finally schedule an immediate update
@@ -342,7 +342,7 @@ namespace ProfitWise.Data.Services
 
             // Kill the Recurring Shop Refresh Job
             _hangFireService.KillRoutineRefresh(shop.ShopOwnerUserId);
-            _hangFireService.KillBackgroundJob(shop.ShopOwnerUserId);
+            _hangFireService.KillInitialRefresh(shop.ShopOwnerUserId);
 
             // Clear out any ProfitWise Charge records to force creation of a new Charge
             billingRepository.ClearPrimary();

@@ -47,10 +47,14 @@ namespace ProfitWise.Data.Services
 
                 SaveCogsDataEntryForMasterVariant(context);
                 UpdateGoodsOnHandForMasterVariant(dateBlockContexts);                    
-                UpdateOrderLinesAndReportEntries(dateBlockContexts);
+                UpdateOrderLinesCogs(dateBlockContexts);
+
+                var downStreamRepository = _multitenantFactory.MakeCogsDownstreamRepository(PwShop);
+                downStreamRepository.UpdateReportEntryLedger(
+                        new EntryRefreshContext { PwMasterVariantId = pwMasterVariantId });
 
                 transaction.Commit();
-            }            
+            }
         }
         
         public void SaveCogsForMasterProduct(long pwMasterProductId, CogsDto defaults, List<CogsDto> details)
@@ -71,7 +75,11 @@ namespace ProfitWise.Data.Services
                         defaults, details, PwShop.CurrencyId, pwMasterProductId: pwMasterProductId);
 
                 UpdateGoodsOnHandForMasterProduct(dateBlockContexts);
-                UpdateOrderLinesAndReportEntries(dateBlockContexts);
+                UpdateOrderLinesCogs(dateBlockContexts);
+
+                var downStreamRepository = _multitenantFactory.MakeCogsDownstreamRepository(PwShop);
+                downStreamRepository.UpdateReportEntryLedger(
+                        new EntryRefreshContext { PwMasterProductId = pwMasterProductId});
 
                 transaction.Commit();
             }
@@ -124,7 +132,7 @@ namespace ProfitWise.Data.Services
 
 
         // Report Entries for Non-PickList
-        public void UpdateOrderLinesAndReportEntries(IList<CogsDateBlockContext> dateBlockContexts)
+        public void UpdateOrderLinesCogs(IList<CogsDateBlockContext> dateBlockContexts)
         {
             var cogsDownstreamRepository = _multitenantFactory.MakeCogsDownstreamRepository(PwShop);
 
@@ -132,8 +140,6 @@ namespace ProfitWise.Data.Services
             {
                 cogsDownstreamRepository.UpdateOrderLines(dateBlockContext);
             }
-
-            cogsDownstreamRepository.RefreshReportEntryData();
         }
         
         
@@ -172,7 +178,8 @@ namespace ProfitWise.Data.Services
                 }
 
                 // Update the Report Entries
-                cogsUpdateRepository.RefreshReportEntryData();
+                cogsUpdateRepository.UpdateReportEntryLedger(
+                        new EntryRefreshContext { PwPickListId = pickListId });
 
                 trans.Commit();
             }

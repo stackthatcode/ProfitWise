@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -23,6 +24,7 @@ namespace ProfitWise.Web.Controllers
         private readonly MultitenantFactory _factory;
         private readonly ShopRepository _shopRepository;
         private readonly ShopOrchestrationService _shopOrchestrationService;
+        private readonly HangFireService _hangFire;
 
         public AdminHomeController(
                     IShopifyCredentialService shopifyCredentialService,
@@ -32,7 +34,8 @@ namespace ProfitWise.Web.Controllers
                     CurrencyService service,
                     MultitenantFactory factory,
                     ShopRepository shopRepository, 
-                    ShopOrchestrationService shopOrchestrationService)
+                    ShopOrchestrationService shopOrchestrationService,
+                    HangFireService hangFire)
         {
             _shopifyCredentialService = shopifyCredentialService;
             _applicationSignInManager = applicationSignInManager;
@@ -42,6 +45,7 @@ namespace ProfitWise.Web.Controllers
             _factory = factory;
             _shopRepository = shopRepository;
             _shopOrchestrationService = shopOrchestrationService;
+            _hangFire = hangFire;
         }
 
         
@@ -126,7 +130,43 @@ namespace ProfitWise.Web.Controllers
             _shopRepository.UpdateTempFreeTrialOverride(shop.PwShopId, days);
             return JsonNetResult.Success();
         }
-        
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult RecreateLedger(string userId)
+        {
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            var repository = _factory.MakeCogsDownstreamRepository(shop);
+            repository.DeleteInsertReportEntryLedger();
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult KillBatchJobs(string userId)
+        {
+            _hangFire.KillInitialRefresh(userId);
+            _hangFire.KillRoutineRefresh(userId);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult ScheduleInitialRefresh(string userId)
+        {
+            _hangFire.AddOrUpdateInitialShopRefresh(userId);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult ScheduleRoutineRefresh(string userId)
+        {
+            _hangFire.AddOrUpdateRoutineShopRefresh(userId);
+            return JsonNetResult.Success();
+        }
+
+
         [HttpPost]
         [ValidateJsonAntiForgeryToken]
         public ActionResult Uninstall(int shopId)
@@ -135,7 +175,6 @@ namespace ProfitWise.Web.Controllers
             _shopOrchestrationService.UninstallShop(pwShop.ShopifyShopId);
             return JsonNetResult.Success();
         }
-
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken]

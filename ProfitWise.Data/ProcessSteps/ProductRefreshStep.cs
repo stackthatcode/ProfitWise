@@ -139,7 +139,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                     FlagMissingVariantsAsInactive(shop, productBuildContext);
 
-                    service.CommitTransaction();
+                    transaction.Commit();
                 }
             }
         }

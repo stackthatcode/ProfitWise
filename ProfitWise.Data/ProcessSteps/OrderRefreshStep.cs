@@ -238,14 +238,15 @@ namespace ProfitWise.Data.ProcessSteps
                 context.CurrentExistingOrders
                     .FirstOrDefault(x => x.ShopifyOrderId == orderFromShopify.Id);
 
-            if (_diagnostic.PwShopId == context.PwShop.PwShopId && _diagnostic.OrderIds.Contains(orderFromShopify.Id))
+            if (_diagnostic.PwShopId == context.PwShop.PwShopId 
+                && _diagnostic.OrderIds.Contains(orderFromShopify.Id))
             {
                 _pushLogger.Debug(orderFromShopify.ToString());
             }
 
-            // If the Order is Void then Delete the Order            
             _pushLogger.Debug(
-                $"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} to ProfitWise data model");
+                $"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} " + 
+                "to ProfitWise data model");
 
             var repository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
 
@@ -256,11 +257,12 @@ namespace ProfitWise.Data.ProcessSteps
                 if (existingOrder == null)
                 {
                     InsertOrderToPersistence(orderFromShopify, context);
-                    cogsUpdateRepository.RefreshReportEntryData(refreshContext);
+                    cogsUpdateRepository.DeleteInsertReportEntryLedger(refreshContext);
                 }
                 else
                 {
                     UpdateOrderToPersistence(orderFromShopify, existingOrder, context);
+                    cogsUpdateRepository.UpdateReportEntryLedger(refreshContext);
                 }
 
                 transaction.Commit();
