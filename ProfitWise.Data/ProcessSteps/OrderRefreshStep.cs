@@ -292,6 +292,7 @@ namespace ProfitWise.Data.ProcessSteps
                 // In-memory CoGS computation
                 var cogsContexts = CogsDateBlockContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);                
                 var unitCogs = cogsService.AssignUnitCogsToLineItem(cogsContexts, translatedLineItem);
+                translatedLineItem.UnitCogs = unitCogs;
 
                 _pushLogger.Debug(
                     $"Computed CoGS for new Order Line Item: {translatedLineItem.ShopifyOrderLineId}  - {unitCogs}");

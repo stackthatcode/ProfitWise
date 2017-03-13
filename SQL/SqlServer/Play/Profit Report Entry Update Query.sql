@@ -17,8 +17,6 @@ SET CoGS = t1.Quantity * ISNULL(UnitCogs, 0),
 	PaymentStatus = CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2 ELSE 1 END
 FROM profitreportentry(@PwShopId) t1
 	INNER JOIN orderlineitem(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.SourceId = t2.ShopifyOrderLineId
-
-
 WHERE t1.ShopifyOrderId = 277050777
 
 
@@ -86,14 +84,17 @@ WHERE t1.EntryType = 3
 
 
 
-SELECT * FROM profitreportentry(100001)
+SELECT pr.*, mv.PwMasterVariantId, mv.PwMasterVariantId 
+FROM profitreportentry(100001) pr
+	LEFT JOIN variant(100001) v
+		ON pr.PwVariantId = v.PwVariantId
+	LEFT JOIN mastervariant(100001) mv
+		ON v.PwMasterVariantId = mv.PwMasterVariantId;
+
+SELECT * FROM mastervariant(100001) WHERE PwMasterVariantId = 542;
+
+SELECT * FROM ShopifyOrderLineItem;
 
 
 DELETE FROM profitreportentry(@PwShopId) ; 
-
-
-INSERT INTO profitreportentry(@PwShopId)                
-SELECT PwShopId, OrderDate, @OrderLineEntry AS EntryType, ShopifyOrderId, ShopifyOrderLineId AS SourceId,                 PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales,                         Quantity * ISNULL(UnitCogs, 0) AS CoGS,                        Quantity AS Quantity, CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2             ELSE 1 END AS PaymentStatus  FROM orderlineitem(@PwShopId) ; INSERT INTO profitreportentry(@PwShopId)                SELECT t1.PwShopId, t1.RefundDate, @RefundEntry AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId,                 t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales,                         -t1.RestockQuantity * ISNULL(UnitPrice, 0) AS CoGS,                     -t1.RestockQuantity AS Quantity, CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2             ELSE 1 END AS PaymentStatus FROM orderrefund(@PwShopId) t1            INNER JOIN orderlineitem(@PwShopId) t2            ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId ; INSERT INTO profitreportentry(@PwShopId)                SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.ShopifyOrderId,                     t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales,                     0 AS CoGS, NULL AS Quantity, CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN 2             ELSE 1 END AS PaymentStatus FROM orderadjustment(@PwShopId) t1                     INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ; "
-
-SELECT * FROM
 
