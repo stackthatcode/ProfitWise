@@ -7,9 +7,49 @@ DECLARE @PwShopId int = 100001;
 
 
 -- Order
-SELECT * FROM orderlineitem(100001);
 
-SELECT * FROM profitreportentry(100002);
+SELECT * FROM mastervariant(100001) WHERE PwMasterProductId = 72;
+
+SELECT * FROM variant(100001) WHERE PwMasterVariantId = 362;
+
+SELECT * FROM orderlineitem(100001) WHERE PwVariantId = 364;
+
+SELECT * FROM profitreportentry(100001) WHERE PwVariantId = 364;
+
+ ORDER BY UnitCoGS DESC;
+
+
+
+DECLARE @PwShopId bigint = 100001;
+
+SELECT pr.*
+FROM profitreportentry(@PwShopId) pr
+	INNER JOIN orderrefund(@PwShopId) orf
+		ON pr.ShopifyOrderId = orf.ShopifyOrderId 
+        AND pr.SourceId = orf.ShopifyRefundId
+	INNER JOIN orderlineitem(@PwShopId) oli
+		ON orf.ShopifyOrderId = oli.ShopifyOrderId 
+        AND orf.ShopifyOrderLineId = oli.ShopifyOrderLineId
+WHERE pr.ShopifyOrderId = 4466752978;
+
+
+SELECT * FROM profitreportentry(100001) WHERE ShopifyOrderId = 4466752978;
+
+SELECT * FROM orderrefund(100001) WHERE ShopifyOrderId = 4466752978;
+
+SELECT * FROM orderlineitem(100001) WHERE ShopifyOrderId = 4466752978;
+
+
+
+
+SELECT * FROM profitreportentry(100001) WHERE ShopifyOrderId = 4466752978;
+
+
+SELECT SUM(Quantity * UnitPrice), SUM(Quantity * UnitCogs) FROM orderlineitem(100001)
+
+
+
+SELECT * FROM profitreportentry(100001);
 
 
 UPDATE t1
@@ -92,9 +132,6 @@ FROM profitreportentry(100001) pr
 		ON v.PwMasterVariantId = mv.PwMasterVariantId;
 
 SELECT * FROM mastervariant(100001) WHERE PwMasterVariantId = 542;
-
-SELECT * FROM ShopifyOrderLineItem;
-
 
 DELETE FROM profitreportentry(@PwShopId) ; 
 

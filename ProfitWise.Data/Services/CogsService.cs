@@ -211,7 +211,7 @@ namespace ProfitWise.Data.Services
             }
             else
             {
-                return lineItem.UnitPrice * context.CogsPercentOfUnitPrice;
+                return lineItem.UnitPrice * context.CogsPercentOfUnitPrice / 100.0m;
             }
         }
 

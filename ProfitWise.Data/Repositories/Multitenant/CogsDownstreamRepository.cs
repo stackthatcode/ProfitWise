@@ -299,7 +299,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @" FROM profitreportentry(@PwShopId) pr
 	                INNER JOIN orderrefund(@PwShopId) orf
 		                ON pr.ShopifyOrderId = orf.ShopifyOrderId 
-                        AND pr.SourceId = orf.ShopifyOrderLineId
+                        AND pr.SourceId = orf.ShopifyRefundId
 	                INNER JOIN orderlineitem(@PwShopId) oli
 		                ON orf.ShopifyOrderId = oli.ShopifyOrderId 
                         AND orf.ShopifyOrderLineId = oli.ShopifyOrderLineId ";
