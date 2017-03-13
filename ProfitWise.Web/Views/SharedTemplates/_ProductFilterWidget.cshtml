@@ -223,7 +223,7 @@
         self.Callback = function() {
         };
 
-        self.KeyPressCallback = function() {
+        self.KeyPressCallback = function(data, event) {
             if (event.keyCode == 13) {
                 self.Callback();
                 return false;

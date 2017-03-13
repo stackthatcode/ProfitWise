@@ -130,13 +130,19 @@ ProfitWiseFunctions.Ajax = function (settings) {
         }
     };
 
+    self.AjaxUniqueUrl = function(url) {
+        var dateStampParam = "_=" + new Date().getTime();
+        return url.indexOf("?") == -1 ? url + "?" + dateStampParam : url + "&" + dateStampParam;
+
+    };
+
     self.HttpGet = function (url, successFunc) {
         flow.exec(
             function () {
                 self.ShowLoading();
                 $.ajax({
                     type: 'GET',
-                    url: self.Settings.BaseUrl + url,
+                    url: self.Settings.BaseUrl + self.AjaxUniqueUrl(url),
                     timeout: self.Settings.Timeout,
                     error: self.ErrorCallback,
                     success: this
@@ -163,7 +169,7 @@ ProfitWiseFunctions.Ajax = function (settings) {
                         request.setRequestHeader("__RequestVerificationToken", token);
                     },
                     contentType: 'application/json; charset=utf-8',
-                    url: self.Settings.BaseUrl + url,
+                    url: self.Settings.BaseUrl + self.AjaxUniqueUrl(url),
                     data: JSON.stringify(data),
                     timeout: self.Settings.Timeout,
                     error: self.ErrorCallback,
