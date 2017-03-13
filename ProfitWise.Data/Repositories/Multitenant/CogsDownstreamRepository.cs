@@ -331,7 +331,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             {
                 return query +
                     $@" INNER JOIN variant(@PwShopId) v ON v.PwVariantId = {orderLineAlias}.PwVariantId	
-                    WHERE {orderLineAlias}.PwMasterVariantId = @PwMasterVariantId ";
+                    WHERE v.PwMasterVariantId = @PwMasterVariantId ";
             }
             if (context.PwMasterProductId != null)
             {
@@ -344,7 +344,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             {
                 return query +
                     $@" INNER JOIN variant(@PwShopId) v ON {orderLineAlias}.PwVariantId = v.PwVariantId
-	                INNER JOIN mastervariant(@PwShopId) mv ON t3.PwMasterVariantId = mv.PwMasterVariantId
+	                INNER JOIN mastervariant(@PwShopId) mv ON v.PwMasterVariantId = mv.PwMasterVariantId
                     WHERE mv.PwMasterProductId IN ( 
                             SELECT PwMasterProductId FROM picklistmasterproduct(@PwShopId) 
                             WHERE PwPickListId = @PwPickListId ) ";
