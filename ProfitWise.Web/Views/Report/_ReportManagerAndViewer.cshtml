@@ -392,12 +392,11 @@
         self.Delete = function() {
             flow.exec(
                 function () {
-                    ProfitWiseShopify.Confirm({
-                        message: "Are you sure you want to delete the Report named '" + self.Name() + "'?",
-                        callback: this
-                    });
+                    ProfitWiseShopify.Confirm({ message: "Are you sure you want to delete the Report named '" + self.Name() + "'?",
+                        }, this);
                 },
                 function (result) {
+                    console.log('sup?');
                     if (!result) {
                         return;
                     }
