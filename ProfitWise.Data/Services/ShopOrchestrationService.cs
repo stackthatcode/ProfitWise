@@ -311,19 +311,37 @@ namespace ProfitWise.Data.Services
                 return;
             }
 
-            // Cancel the Charge in Shopify
             var credentials = _credentialService.Retrieve(userId).ToShopifyCredentials();
             var apiRepository = _apifactory.MakeRecurringApiRepository(credentials);
-            apiRepository.CancelCharge(charge.ShopifyRecurringChargeId);
+
+            // Cancel the Charge in Shopify
+            try
+            {
+               apiRepository.CancelCharge(charge.ShopifyRecurringChargeId);
+            }
+            catch (Exception e)
+            {
+                // Swallow the exception!
+                _logger.Error(e);
+            }
 
             // Retrieve the Charge from Shopify API
             var result = apiRepository.RetrieveCharge(charge.ShopifyRecurringChargeId);
+            if (result != null)
+            {
+                // If it exists, use its properties
+                charge.LastStatus = result.status.ToChargeStatus();
+                charge.LastJson = result.SerializeToJson();
+                charge.IsPrimary = false;
+            }
+            else
+            {
+                // Can't get it from Shopify? Fine - set it to Cancelled anyway
+                charge.LastStatus = ChargeStatus.Cancelled;
+                charge.IsPrimary = false;
+            }
 
-            // Update ProfitWise's database record
-            charge.ConfirmationUrl = result.confirmation_url;
-            charge.LastStatus = result.status.ToChargeStatus();
-            charge.LastJson = result.SerializeToJson();
-            billingRepository.Update(charge); 
+            billingRepository.Update(charge);
         }
 
 
