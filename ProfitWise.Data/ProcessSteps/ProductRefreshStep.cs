@@ -218,9 +218,8 @@ namespace ProfitWise.Data.ProcessSteps
                 $"Updating Variant {variant.PwVariantId} price range: " +
                 $"{context.Price} to {context.Price} and setting inventory to {inventory}");
 
-            variantRepository
-                .UpdateVariantPriceAndInventory(
-                    variant.PwVariantId, context.Price, context.Price, inventory);
+            variantRepository.UpdateVariant(
+                variant.PwVariantId, context.Price, context.Price, variant.Sku, inventory);
         }
 
         private IList<Event> RetrieveAllProductDestroyEvents(

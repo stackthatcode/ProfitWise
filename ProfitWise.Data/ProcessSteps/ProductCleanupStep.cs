@@ -130,7 +130,7 @@ namespace ProfitWise.Data.ProcessSteps
                     var highPrice = relatedLineItems.Max(x => x.UnitPrice);
 
                     _pushLogger.Debug($"Updating (inactive) Variant {variant.PwVariantId} price range: {lowPrice} to {highPrice} and setting inventory to NULL");
-                    variantRepository.UpdateVariantPriceAndInventory(variant.PwVariantId, lowPrice, highPrice, null);
+                    variantRepository.UpdateVariant(variant.PwVariantId, lowPrice, highPrice, variant.Sku, null);
                 }
             }
         }

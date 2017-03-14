@@ -236,21 +236,18 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper.Execute(query, variant);
         }
 
-        public void UpdateVariantPriceAndInventory(
-                    long pwVariantId, decimal lowPrice, decimal highPrice, int? inventory)
+        public void UpdateVariant(
+                long pwVariantId, decimal lowPrice, decimal highPrice, string sku, int? inventory)
         {
             var query = @"UPDATE variant(@PwShopId) 
-                        SET LowPrice = @lowPrice, HighPrice = @highPrice, Inventory = @inventory
+                        SET LowPrice = @lowPrice, 
+                            HighPrice = @highPrice, 
+                            Sku = @sku,
+                            Inventory = @inventory
                         WHERE PwVariantId = @pwVariantId;";
 
-            _connectionWrapper.Execute(query,
-                    new {
-                        PwShop.PwShopId,
-                        PwVariantId = pwVariantId,
-                        LowPrice = lowPrice,
-                        HighPrice = highPrice,
-                        Inventory = inventory,
-                    });
+            _connectionWrapper.Execute(
+                query, new { PwShop.PwShopId, pwVariantId, lowPrice, highPrice, inventory, sku, });
         }
 
         public void UpdateVariantsMasterVariant(PwVariant variant)
@@ -260,7 +257,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
                             WHERE PwVariantId = @PwVariantId";
             _connectionWrapper.Execute(query, variant);
         }
-
 
         public void DeleteChildlessMasterVariants()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Net;
 using Hangfire;
 using ProfitWise.Data.Database;
@@ -24,6 +25,8 @@ namespace ProfitWise.Data.Processes
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly BatchLogger _pushLogger;
 
+        private static readonly MultitenantMethodLock 
+                _routineRefreshLock = new MultitenantMethodLock("RoutineShopRefresh");
 
         public ShopRefreshProcess(
                 IShopifyCredentialService shopifyCredentialService,
@@ -60,7 +63,6 @@ namespace ProfitWise.Data.Processes
             {
                 _pushLogger.Error($"InitialShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
-                throw; // Need to do this so HangFire reschedules
             }
             finally
             {
@@ -68,22 +70,38 @@ namespace ProfitWise.Data.Processes
                 _hangFireService.AddOrUpdateRoutineShopRefresh(userId);
             }
         }
-
-        [AutomaticRetry(Attempts = 1)]
+       
+        [AutomaticRetry(Attempts = 3)]
         [Queue(ProfitWiseQueues.RoutineShopRefresh)]
         public void RoutineShopRefresh(string userId)
-        {
+        {  
             try
             {
+                var lockResult = _routineRefreshLock.AttemptToLockMethod(userId);
+                if (!lockResult.Success && lockResult.Exception != null)
+                {
+                    _pushLogger.Error(lockResult.Exception);
+                    return;
+                }
+                if (!lockResult.Success && lockResult.Exception == null)
+                {
+                    _pushLogger.Warn(lockResult.Message);
+                    return;
+                }
+
                 ExecuteInner(userId);
             }
             catch (Exception e)
             {
                 _pushLogger.Error($"RoutineShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
-                throw;  // Need to do this so HangFire reschedules
+            }
+            finally
+            {
+                _routineRefreshLock.FreeProcessLock(userId);
             }
         }
+
 
         private void ExecuteInner(string userId)
         {

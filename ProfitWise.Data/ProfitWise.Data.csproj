@@ -223,6 +223,8 @@
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
+    <Compile Include="Utility\MethodLockResult.cs" />
+    <Compile Include="Utility\MultitenantMethodLock.cs" />
     <Compile Include="Processes\SystemCleanupProcess.cs" />
     <Compile Include="ProcessSteps\BatchLogger.cs" />
     <Compile Include="Repositories\Multitenant\BillingRepository.cs" />

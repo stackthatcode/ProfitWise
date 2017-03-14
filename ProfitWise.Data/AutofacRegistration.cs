@@ -9,6 +9,7 @@ using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Utilities.CastleProxies;
 
@@ -62,7 +63,9 @@ namespace ProfitWise.Data
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();
             builder.RegisterType<SystemCleanupProcess>();
-            
+
+            builder.RegisterType<MultitenantMethodLock>();
+
             builder.RegisterType<ShopRequired>();
 
             builder.RegisterType<FixerApiConfig>();
