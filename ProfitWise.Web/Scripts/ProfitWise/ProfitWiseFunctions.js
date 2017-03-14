@@ -133,7 +133,6 @@ ProfitWiseFunctions.Ajax = function (settings) {
     self.AjaxUniqueUrl = function(url) {
         var dateStampParam = "_=" + new Date().getTime();
         return url.indexOf("?") == -1 ? url + "?" + dateStampParam : url + "&" + dateStampParam;
-
     };
 
     self.HttpGet = function (url, successFunc) {

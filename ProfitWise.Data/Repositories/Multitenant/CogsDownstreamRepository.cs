@@ -210,7 +210,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"INSERT INTO profitreportentry(@PwShopId)
                 SELECT 	t1.PwShopId, t1.RefundDate, @RefundEntry AS EntryType, t1.ShopifyOrderId, t1.ShopifyRefundId AS SourceId, 
 		                t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, 	
-                        -t1.RestockQuantity * ISNULL(UnitPrice, 0) AS CoGS, 	
+                        -t1.RestockQuantity * ISNULL(t2.UnitCoGS, 0) AS CoGS, 	
 	                    -t1.RestockQuantity AS Quantity, " +
                         PaymentStatusInsertField + 
                 @"FROM orderrefund(@PwShopId) t1
