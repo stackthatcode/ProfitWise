@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Shopify", "Push.Shopif
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.TestData", "ProfitWise.DataMocks\ProfitWise.TestData.csproj", "{5451AD2D-AACD-4050-9A53-CFED81F062DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Test", "ProfitWise.Test\ProfitWise.Test.csproj", "{81F30573-25F8-4EA7-8957-38F3D93DB690}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Push.Foundation.EncryptionBuddy", "Push.Foundation.EncryptionBuddy\Push.Foundation.EncryptionBuddy.csproj", "{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}"
 EndProject
 Global
@@ -78,12 +76,6 @@ Global
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.Debug Jeremy|Any CPU.Build.0 = Debug Jeremy|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5451AD2D-AACD-4050-9A53-CFED81F062DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Debug Aleks|Any CPU.ActiveCfg = Debug Aleks|Any CPU
-		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Debug Aleks|Any CPU.Build.0 = Debug Aleks|Any CPU
-		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Debug Jeremy|Any CPU.ActiveCfg = Debug Jeremy|Any CPU
-		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Debug Jeremy|Any CPU.Build.0 = Debug Jeremy|Any CPU
-		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81F30573-25F8-4EA7-8957-38F3D93DB690}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.Debug Aleks|Any CPU.ActiveCfg = Debug Aleks|Any CPU
 		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.Debug Aleks|Any CPU.Build.0 = Debug Aleks|Any CPU
 		{AC26FCA1-447E-44A8-A905-8CA8E0090CAF}.Debug Jeremy|Any CPU.ActiveCfg = Debug Jeremy|Any CPU
