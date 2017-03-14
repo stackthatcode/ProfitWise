@@ -9,38 +9,16 @@ UPDATE batchstate(100001) SET OrderDatasetStart = NULL, OrderDatasetEnd = NULL;
 DELETE FROM  profitreportentry(100001);
 */
 
-
-SELECT * FROM variant(100001) WHERE Sku LIKE '%Test%';
-
-SELECT * FROM  profitreportentry(100001) WHERE PwProductId IN ( SELECT PwProductId FROM product(100001) WHERE PwMasterProductId IN ( 161 ) );
-
-SELECT ShopifyOrderId, SUM(NetSales) FROM profitreportentry(100001) 
-WHERE ShopifyOrderId IN ( SELECT ShopifyOrderId FROM orderlineitem(100001) WHERE FinancialStatus = 7 )
-GROUP BY ShopifyOrderId
-ORDER BY SUM(NetSales)
-
-
-SELECT * FROM profitreportentry(100001) WHERE ShopifyOrderId = 691459204
-
-SELECT * FROM ordertable(100001) WHERE ShopifyOrderId = 691459204;
-SELECT * FROM orderadjustment(100001) WHERE ShopifyOrderId = 691459204;
-SELECT * FROM orderrefund(100001) WHERE ShopifyOrderId = 691459204;
-SELECT * FROM orderlineitem(100001) WHERE ShopifyOrderId = 691459204;
+SELECT * FROM profitreportentry(100001) WHERE EntryType = 4;
 
 
 
+DECLARE @ShopifyOrderId bigint = 1511488453;
+SELECT * FROM orderlineitem(100001) WHERE ShopifyOrderId = @ShopifyOrderId;
+SELECT * FROM orderrefund(100001) WHERE ShopifyOrderId = @ShopifyOrderId;
+SELECT * FROM orderadjustment(100001) WHERE ShopifyOrderId = @ShopifyOrderId;
+SELECT * FROM ordertable(100001) WHERE ShopifyOrderId = @ShopifyOrderId;
 
-
-
-ORDER BY CreatedAt DESC;
-
-
-
-SELECT * FROM orderlineitem(100001) WHERE ShopifyOrderId = 4694877394;
-
-SELECT * FROM orderrefund(100001) WHERE ShopifyOrderId = 4694877394;
-
-SELECT * FROM  profitreportentry(100001) WHERE ShopifyOrderId = 4694877394;
 
 
 

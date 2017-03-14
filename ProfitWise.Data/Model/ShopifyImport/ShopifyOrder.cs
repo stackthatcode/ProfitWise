@@ -24,18 +24,31 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
         // Entirely computational fields - nothing will be stored in SQL
         public decimal GrossSales => this.LineItems.Sum(x => x.GrossTotal);
+        public decimal NetTotal => this.LineItems.Sum(x => x.NetTotal);
+
         public decimal TotalDiscounts => this.LineItems.Sum(x => x.TotalDiscount);        
         public decimal TotalAdjustments => this.Adjustments.Sum(x => x.Amount);
         public decimal TotalLineItemRefunds => this.LineItems.SelectMany(x => x.Refunds).Sum(x => x.Amount);
         public decimal NetSales => GrossSales - TotalLineItemRefunds - TotalDiscounts + TotalAdjustments;
 
+        public decimal BalancingCorrection => NetSales < 0 ? -NetSales : 0m;
+
+        public DateTime LastActivityDate
+        {
+            get
+            {
+                var dates = new List<DateTime>() {this.OrderDate};
+                dates.AddRange(this.LineItems.SelectMany(x => x.Refunds).Select(x => x.RefundDate));
+                dates.AddRange(this.Adjustments.Select(x => x.AdjustmentDate));
+                return dates.Max();
+            }
+        }
 
         public int FinancialStatus { get; set; }
         public string Tags { get; set;  }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         
-        public decimal NetTotal => this.LineItems.Sum(x => x.NetTotal);
         public bool Cancelled { get; set; }
 
 

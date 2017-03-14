@@ -79,7 +79,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
                                 @Tags,
                                 @CreatedAt, 
                                 @UpdatedAt,
-                                @Cancelled )";
+                                @Cancelled,
+                                @BalancingCorrection,
+                                @LastActivityDate )";
             _connectionWrapper.Execute(query, order);
         }
 
@@ -91,7 +93,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
                                 FinancialStatus = @FinancialStatus,
                                 Tags = @Tags,
                                 UpdatedAt = @UpdatedAt,
-                                Cancelled = @Cancelled
+                                Cancelled = @Cancelled,
+                                BalancingCorrection = @BalancingCorrection,
+                                LastActivityDate = @LastActivityDate
                             WHERE ShopifyOrderId = @ShopifyOrderId";
             _connectionWrapper.Execute(query, order);
         }

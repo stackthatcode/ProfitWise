@@ -26,8 +26,7 @@ namespace ProfitWise.Data.Processes
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly BatchLogger _pushLogger;
 
-        private static readonly MultitenantMethodLock 
-                RoutineRefreshLock = new MultitenantMethodLock("RoutineShopRefresh");
+        private static readonly MultitenantMethodLock RefreshLock = new MultitenantMethodLock("ShopRefresh");
 
         public ShopRefreshProcess(
                 IShopifyCredentialService shopifyCredentialService,
@@ -58,7 +57,7 @@ namespace ProfitWise.Data.Processes
         {
             try
             {
-                ExecuteInner(userId);
+                ExecuteRefresh(userId);
             }
             catch (Exception e)
             {
@@ -78,28 +77,12 @@ namespace ProfitWise.Data.Processes
         {  
             try
             {
-                var lockResult = RoutineRefreshLock.AttemptToLockMethod(userId);
-                if (!lockResult.Success && lockResult.Exception != null)
-                {
-                    _pushLogger.Error(lockResult.Exception);
-                    return;
-                }
-                if (!lockResult.Success && lockResult.Exception == null)
-                {
-                    _pushLogger.Warn(lockResult.Message);
-                    return;
-                }
-
-                ExecuteInner(userId);
+                ExecuteRefresh(userId);
             }
             catch (Exception e)
             {
                 _pushLogger.Error($"RoutineShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
-            }
-            finally
-            {
-                RoutineRefreshLock.FreeProcessLock(userId);
             }
         }
 
@@ -134,7 +117,7 @@ namespace ProfitWise.Data.Processes
             return credentials;
         }
 
-        private void ExecuteInner(string userId)
+        private void ExecuteRefresh(string userId)
         {
             var id = _connectionWrapper.Identifier;
             _pushLogger.Debug($"Connection Wrapper Id: {id}");
@@ -144,11 +127,23 @@ namespace ProfitWise.Data.Processes
 
             try
             {
+                RefreshLock.FreeProcessLock(userId);
+                var lockResult = RefreshLock.AttemptToLockMethod(userId);
+                _pushLogger.Info($"AttemptToLockMethod for UserId: {userId} / Lock Result:{lockResult.Success}");
+
+                if (!lockResult.Success)
+                {
+                    if (lockResult.Exception != null)
+                    {
+                        _pushLogger.Error(lockResult.Exception);
+                    }
+                    return;
+                }
+
                 if (!_shopRefreshStep.Execute(credentials))
                 {
                     return;
                 }
-
                 _productRefreshStep.Execute(credentials);
                 _orderRefreshStep.Execute(credentials);
                 _productCleanupStep.Execute(credentials);
@@ -159,12 +154,18 @@ namespace ProfitWise.Data.Processes
             }
             catch (BadHttpStatusCodeException exception)
             {
+                RefreshLock.FreeProcessLock(userId);
+                
                 if (exception.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var shop = _pwShopRepository.RetrieveByUserId(userId);
                     _pwShopRepository.UpdateIsAccessTokenValid(shop.PwShopId, false);
                     _pushLogger.Info($"Access Token is no longer valid for Shop {shop.PwShopId}");
                 }
+            }
+            finally
+            {
+                RefreshLock.FreeProcessLock(userId);
             }
 
             _pushLogger.Info($"FIN - Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");

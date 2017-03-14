@@ -262,8 +262,6 @@ namespace ProfitWise.Data.ProcessSteps
 
             using (var transaction = repository.InitiateTransaction())
             {
-                var refreshContext = new EntryRefreshContext() { ShopifyOrderId = orderFromShopify.Id };
-                
                 if (existingOrder == null)
                 {
                     InsertOrderToPersistence(orderFromShopify, context);
@@ -273,6 +271,7 @@ namespace ProfitWise.Data.ProcessSteps
                     UpdateOrderToPersistence(orderFromShopify, existingOrder, context);
                 }
 
+                var refreshContext = new EntryRefreshContext() { ShopifyOrderId = orderFromShopify.Id };
                 cogsUpdateRepository.DeleteInsertReportEntryLedger(refreshContext);
                 transaction.Commit();
             }
@@ -286,7 +285,8 @@ namespace ProfitWise.Data.ProcessSteps
             var translatedOrder = orderFromShopify.ToShopifyOrder(context.PwShop.PwShopId);
 
             _pushLogger.Debug($"Inserting new Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
-            _pushLogger.Trace(Environment.NewLine + translatedOrder.ToString());
+            _pushLogger.Debug($"BalancingCorrection: {translatedOrder.BalancingCorrection}");
+            _pushLogger.Trace(Environment.NewLine + translatedOrder);
 
             foreach (var lineItem in orderFromShopify.LineItems)
             {
@@ -336,6 +336,8 @@ namespace ProfitWise.Data.ProcessSteps
             
             _pushLogger.Debug($"Updating existing Order: {importedOrder.OrderNumber}/{importedOrder.ShopifyOrderId}");
             orderRepository.UpdateOrder(importedOrder);
+
+            _pushLogger.Debug($"BalancingCorrection: {importedOrder.BalancingCorrection}");
 
             foreach (var importedLineItem in importedOrder.LineItems)
             {
