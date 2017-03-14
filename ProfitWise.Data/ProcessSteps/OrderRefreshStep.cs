@@ -257,14 +257,13 @@ namespace ProfitWise.Data.ProcessSteps
                 if (existingOrder == null)
                 {
                     InsertOrderToPersistence(orderFromShopify, context);
-                    cogsUpdateRepository.DeleteInsertReportEntryLedger(refreshContext);
                 }
                 else
                 {
                     UpdateOrderToPersistence(orderFromShopify, existingOrder, context);
-                    cogsUpdateRepository.UpdateReportEntryLedger(refreshContext);
                 }
 
+                cogsUpdateRepository.DeleteInsertReportEntryLedger(refreshContext);
                 transaction.Commit();
             }
         }

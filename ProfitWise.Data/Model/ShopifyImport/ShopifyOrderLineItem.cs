@@ -24,8 +24,10 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public long? PwVariantId { get; set; }
 
         public int Quantity { get; set; }           // From Shopify - we store this
-        public int NetQuantity => Quantity - Refunds.Sum(x => x.RestockQuantity);   // We store this
 
+        // We store this, although it's not used anywhere else, as Refund Entries are used as offsets
+        public int NetQuantity => Quantity - Refunds.Sum(x => x.RestockQuantity);  
+         
         public decimal UnitPrice { get; set; }      // From Shopify - we store this
         public decimal GrossTotal => Quantity * UnitPrice;
         public decimal LineDiscount { get; set; }   // From Shopify - we store this

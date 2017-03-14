@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs;
-using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Shop;
+
 
 namespace ProfitWise.Data.Repositories.Multitenant
 {
@@ -248,6 +247,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
 
 
+        // NOTE: this must never be called by the Order Refresh Process
         public void UpdateReportEntryLedger(EntryRefreshContext context)
         {
             context = context ?? new EntryRefreshContext();
@@ -287,7 +287,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         ON pr.ShopifyOrderId = ol.ShopifyOrderId 
                         AND pr.SourceId = ol.ShopifyOrderLineId ";
                 
-            return query + UpdateFilterAppender(query, "ol", context);
+            return query + UpdateFilterAppender(query, "ol", context) + "; ";
         }
 
         private string UpdateRefundEntriesQuery(EntryRefreshContext context)
@@ -304,7 +304,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                ON orf.ShopifyOrderId = oli.ShopifyOrderId 
                         AND orf.ShopifyOrderLineId = oli.ShopifyOrderLineId ";
             
-            return query + UpdateFilterAppender(query, "oli", context);
+            return query + UpdateFilterAppender(query, "oli", context) + "; ";
         }
 
         private string UpdateAdjustmentEntriesQuery(EntryRefreshContext context)
