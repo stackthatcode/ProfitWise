@@ -14,6 +14,28 @@ SELECT * FROM variant(100001) WHERE Sku LIKE '%Test%';
 
 SELECT * FROM  profitreportentry(100001) WHERE PwProductId IN ( SELECT PwProductId FROM product(100001) WHERE PwMasterProductId IN ( 161 ) );
 
+SELECT ShopifyOrderId, SUM(NetSales) FROM profitreportentry(100001) 
+WHERE ShopifyOrderId IN ( SELECT ShopifyOrderId FROM orderlineitem(100001) WHERE FinancialStatus = 7 )
+GROUP BY ShopifyOrderId
+ORDER BY SUM(NetSales)
+
+
+SELECT * FROM profitreportentry(100001) WHERE ShopifyOrderId = 691459204
+
+SELECT * FROM ordertable(100001) WHERE ShopifyOrderId = 691459204;
+SELECT * FROM orderadjustment(100001) WHERE ShopifyOrderId = 691459204;
+SELECT * FROM orderrefund(100001) WHERE ShopifyOrderId = 691459204;
+SELECT * FROM orderlineitem(100001) WHERE ShopifyOrderId = 691459204;
+
+
+
+
+
+
+ORDER BY CreatedAt DESC;
+
+
+
 SELECT * FROM orderlineitem(100001) WHERE ShopifyOrderId = 4694877394;
 
 SELECT * FROM orderrefund(100001) WHERE ShopifyOrderId = 4694877394;

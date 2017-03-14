@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
+using ProfitWise.DataMocks;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 
-namespace ProfitWise.DataMocks
+namespace ProfitWise.TestData.MockShopifyStore
 {
     [Intercept(typeof(ShopifyCredentialRequired))]
     public class FakeOrderApiRepository : IOrderApiRepository
@@ -83,6 +84,11 @@ namespace ProfitWise.DataMocks
         }
 
         public void Insert(string orderJson)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Order Retrieve(long orderId)
         {
             throw new NotImplementedException();
         }

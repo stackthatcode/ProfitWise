@@ -162,7 +162,15 @@ namespace ProfitWise.Web.Controllers
         [ValidateJsonAntiForgeryToken]
         public ActionResult ScheduleRoutineRefresh(string userId)
         {
-            _hangFire.AddOrUpdateRoutineShopRefresh(userId);
+            var result = _hangFire.AddOrUpdateRoutineShopRefresh(userId);
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult SingleOrderRefresh(string userId, long orderId)
+        {
+            _hangFire.ScheduleOneTimeOrderRefresh(userId, orderId);
             return JsonNetResult.Success();
         }
 

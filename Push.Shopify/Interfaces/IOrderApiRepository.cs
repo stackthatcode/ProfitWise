@@ -8,6 +8,7 @@ namespace Push.Shopify.Interfaces
     {
         int RetrieveCount(OrderFilter filter);
         IList<Order> Retrieve(OrderFilter filter, int page = 1, int limit = 250);
+        Order Retrieve(long orderId);
         void Insert(string orderJson);
     }
 }

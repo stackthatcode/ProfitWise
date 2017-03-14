@@ -89,8 +89,8 @@ namespace ProfitWise.Batch
             using (var scope = container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<HangFireService>();
-                service.ScheduleExchangeRateRefresh();
-                service.ScheduleSystemCleanupProcess();
+                service.AddOrUpdateExchangeRateRefresh();
+                service.AddOrUpdateSystemCleanupProcess();
 
                 ExitWithAnyKey();
             }

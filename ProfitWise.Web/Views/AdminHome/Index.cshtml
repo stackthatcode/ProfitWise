@@ -148,6 +148,8 @@
                        data-bind="click: function() { $root.ScheduleInitialRefresh(user.UserId); }">Schedule Initial Refresh</a>
                     <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
                        data-bind="click: function() { $root.ScheduleRoutineRefresh(user.UserId); }">Schedule Routine Refresh</a>
+                    <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
+                       data-bind="click: function() { $root.SingleOrderRefresh(user.UserId); }">Single Order Refresh</a>
                 </div>
             </div>
 
@@ -295,6 +297,19 @@
             var ajax = self.AjaxFactory();
             ajax.HttpPost(url, {}, function () { self.RefreshUser(); }, token);
         }
+
+        self.SingleOrderRefresh = function (userId) {
+            var orderId = prompt("Please enter Order Id");
+            if (!orderId) {
+                return;
+            }
+
+            var url = "/AdminHome/SingleOrderRefresh?userId=" + userId + "&orderId=" + orderId;
+            var token = self.AntiForgeryToken();
+            var ajax = self.AjaxFactory();
+            ajax.HttpPost(url, {}, function () { alert("Refresh Scheduled for " + orderId) }, token);
+        }
+
     
 
         self.Impersonate = function (userId) {

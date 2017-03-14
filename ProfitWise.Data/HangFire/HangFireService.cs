@@ -104,7 +104,7 @@ namespace ProfitWise.Data.HangFire
             return jobId;
         }
 
-        public void ScheduleExchangeRateRefresh()
+        public void AddOrUpdateExchangeRateRefresh()
         {
             var jobId = "ExchangeRateRefresh";
             _logger.Info($"Scheduling ExchangeRateRefreshProcess");
@@ -112,8 +112,14 @@ namespace ProfitWise.Data.HangFire
             RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(
                     jobId, x => x.Execute(), _exchangeRefreshInterval, HangFireTimeZone);
         }
+        
+        public void ScheduleOneTimeOrderRefresh(string userId, long orderId)
+        {
+            BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.RefreshSingleOrder(userId, orderId));
+        }
 
-        public void ScheduleSystemCleanupProcess()
+
+        public void AddOrUpdateSystemCleanupProcess()
         {
             var jobId = "SystemCleanupProcess";
             _logger.Info($"Scheduling SystemCleanupProcess");

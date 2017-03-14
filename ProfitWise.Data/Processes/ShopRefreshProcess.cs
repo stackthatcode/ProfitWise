@@ -9,6 +9,7 @@ using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
+using Push.Shopify.HttpClient;
 
 
 namespace ProfitWise.Data.Processes
@@ -26,7 +27,7 @@ namespace ProfitWise.Data.Processes
         private readonly BatchLogger _pushLogger;
 
         private static readonly MultitenantMethodLock 
-                _routineRefreshLock = new MultitenantMethodLock("RoutineShopRefresh");
+                RoutineRefreshLock = new MultitenantMethodLock("RoutineShopRefresh");
 
         public ShopRefreshProcess(
                 IShopifyCredentialService shopifyCredentialService,
@@ -71,13 +72,13 @@ namespace ProfitWise.Data.Processes
             }
         }
        
-        [AutomaticRetry(Attempts = 3)]
+        [AutomaticRetry(Attempts = 1)]
         [Queue(ProfitWiseQueues.RoutineShopRefresh)]
         public void RoutineShopRefresh(string userId)
         {  
             try
             {
-                var lockResult = _routineRefreshLock.AttemptToLockMethod(userId);
+                var lockResult = RoutineRefreshLock.AttemptToLockMethod(userId);
                 if (!lockResult.Success && lockResult.Exception != null)
                 {
                     _pushLogger.Error(lockResult.Exception);
@@ -98,16 +99,30 @@ namespace ProfitWise.Data.Processes
             }
             finally
             {
-                _routineRefreshLock.FreeProcessLock(userId);
+                RoutineRefreshLock.FreeProcessLock(userId);
             }
         }
 
-
-        private void ExecuteInner(string userId)
+        [AutomaticRetry(Attempts = 1)]
+        [Queue(ProfitWiseQueues.InitialShopRefresh)]
+        [DisableConcurrentExecution(600)]
+        public void RefreshSingleOrder(string userId, long orderId)
         {
-            var id = _connectionWrapper.Identifier;
-            _pushLogger.Debug($"Connection Wrapper Id: {id}");
+            try
+            {
+                var credentials = Credentials(userId);
+                _pushLogger.Info($"Executing RefreshSingleOrder for UserId:{userId}/OrderId:{orderId}");
+                _orderRefreshStep.ExecuteSingleOrder(credentials, orderId);
+            }
+            catch (Exception e)
+            {
+                _pushLogger.Error($"RefreshSingleOrder failure for UserId: {userId}, OrderId: {orderId}");
+                _pushLogger.Error(e);
+            }
+        }
 
+        private ShopifyCredentials Credentials(string userId)
+        {
             var shopifyFromClaims = _shopifyCredentialService.Retrieve(userId);
             if (shopifyFromClaims.Success == false)
             {
@@ -115,10 +130,17 @@ namespace ProfitWise.Data.Processes
                     $"ShopifyCredentialService unable to Retrieve for Shop: " +
                     $"{shopifyFromClaims.ShopDomain}, UserId: {userId} - {shopifyFromClaims.Message}");
             }
+            var credentials = shopifyFromClaims.ToShopifyCredentials();
+            return credentials;
+        }
 
-            var credentials = shopifyFromClaims.ToShopifyCredentials();            
+        private void ExecuteInner(string userId)
+        {
+            var id = _connectionWrapper.Identifier;
+            _pushLogger.Debug($"Connection Wrapper Id: {id}");
+
+            var credentials = Credentials(userId);
             _pushLogger.Info($"Starting Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
-            _pushLogger.Debug($"Retrieving Shopify Credentials Claims for Shop: {credentials.ShopDomain}, UserId: {userId}");
 
             try
             {

@@ -48,8 +48,9 @@ namespace ProfitWise.Data.ProcessSteps
             _shopRepository = shopRepository;
         }
 
+   
 
-        public virtual void Execute(ShopifyCredentials shopCredentials)
+        public void Execute(ShopifyCredentials shopCredentials)
         {
             // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
@@ -74,6 +75,15 @@ namespace ProfitWise.Data.ProcessSteps
             // CASE #3 - update to get the latest Orders since last update
             RoutineUpdateWorker(shopCredentials, shop);
         }
+
+        public void ExecuteSingleOrder(ShopifyCredentials shopifyCredentials, long orderId)
+        {
+            var shop = _shopRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
+            var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopifyCredentials);
+            var order = orderApiRepository.Retrieve(orderId);
+            WriteOrdersToPersistence(new List<Order> { order }, shop);
+        }
+
 
         private void RoutineUpdateWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
