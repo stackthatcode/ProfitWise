@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Web;
 using Autofac;
 using Microsoft.AspNet.Identity;
@@ -9,8 +8,6 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
-using Owin.Security.Providers.Shopify;
-using ProfitWise.Data.Configuration;
 using Push.Foundation.Web.Identity;
 
 
@@ -66,8 +63,7 @@ namespace ProfitWise.Web
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString(UnauthorizedAccessUrl),
-                SlidingExpiration = false,
-                ExpireTimeSpan = TimeSpan.MaxValue,
+
                 Provider = new CookieAuthenticationProvider
                 {
                     // Enables the application to validate the security stamp when the user logs in.
