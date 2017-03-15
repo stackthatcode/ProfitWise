@@ -1,4 +1,5 @@
-﻿@model ProfitWise.Web.Attributes.ErrorModel
+﻿@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Attributes.ErrorModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
 }
@@ -13,8 +14,8 @@
         Once our alerting system notifies us, we'll have that fixed as soon as possible.
     </p>
     <p>
-        Please try refreshing your browser. Or, you can click <a href="@Model.ReturnUrl">click here to navigate back</a>.
-        If the issue persists, please contact our support team.
+        You can <a href="@GlobalConfig.BaseUrl">click here</a> to navigate back to ProfitWise.
+        Or, you can try refreshing your browser. If the issue persists, please contact our support team.
     </p>
 </div>
 

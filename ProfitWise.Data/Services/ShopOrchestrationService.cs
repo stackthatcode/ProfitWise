@@ -77,6 +77,7 @@ namespace ProfitWise.Data.Services
             var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);
             var newShop = PwShop.Make(
                 shopOwnerUserId, shop.Id, currencyId, shop.TimeZone, shop.Domain, _orderStartOffsetMonths);
+
             newShop.PwShopId = _shopRepository.Insert(newShop);
             _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}");
 

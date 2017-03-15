@@ -3,21 +3,27 @@ GO
 
 
 
-DECLARE @UserId varchar(128) = 'fc519160-aba2-46fb-81a8-9bf87b6a9fb8';
+DECLARE @UserId varchar(128) = 'bb74e21c-a5ba-4523-8ee6-19a3ee4fde9b';
 
 DECLARE @PwShopId bigint;
 SELECT @PwShopId = PwShopId FROM profitwiseshop WHERE ShopOwnerUserId = @UserId;
 
-SELECT * FROM AspNetUsers WHERE UserId = @UserId;
 
+/** Uncomment to Delete!!
+DELETE FROM AspNetUsers WHERE Id = @UserId;
+DELETE FROM AspNetUserClaims WHERE UserId = @UserId;
+DELETE FROM AspNetUserRoles WHERE UserId = @UserId;
+DELETE FROM AspNetUserLogins WHERE UserId = @UserId;
+
+DELETE FROM shop(@PwShopId);
+DELETE FROM batchstate(@PwShopId);
+DELETE FROM recurringcharge(@PwShopId);
+**/
+SELECT * FROM AspNetUsers WHERE Id = @UserId;
 SELECT * FROM AspNetUserClaims WHERE UserId = @UserId;
-
 SELECT * FROM AspNetUserRoles WHERE UserId = @UserId;
-
 SELECT * FROM AspNetUserLogins WHERE UserId = @UserId;
 
-SELECT * FROM shop(
-
-SELECT * FROM batchstate(1;
-
-SELECT * FROM recurringcharge
+SELECT * FROM shop(@PwShopId);
+SELECT * FROM batchstate(@PwShopId);
+SELECT * FROM recurringcharge(@PwShopId);

@@ -124,12 +124,7 @@ namespace ProfitWise.Web.Controllers
             }
             
             // Create User
-            ApplicationUser user;
-            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                user = await UpsertAspNetUserAcct(profitWiseSignIn);
-                transaction.Complete();
-            }
+            ApplicationUser user = await UpsertAspNetUserAcct(profitWiseSignIn);
             if (user == null)
             {
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
@@ -178,63 +173,84 @@ namespace ProfitWise.Web.Controllers
         private async Task<ApplicationUser> UpsertAspNetUserAcct(ProfitWiseSignIn signin)
         {
             // FYI, UserName == Domain
-            var user = await _userManager.FindByNameAsync(signin.AspNetUserName);
-            if (user == null)
+            try
             {
-                var newUser = new ApplicationUser
+                var existingUser = await _userManager.FindByNameAsync(signin.AspNetUserName);
+                if (existingUser == null)
                 {
-                    UserName = signin.AspNetUserName, Email = signin.Shop.Email,
-                };
+                    using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                    {
+                        var newUser = new ApplicationUser
+                        {
+                            UserName = signin.AspNetUserName,
+                            Email = signin.Shop.Email,
+                        };
+                        var login = new UserLoginInfo("Shopify", signin.Shop.Id.ToString());
+                        if (!await _userService.CreateNewUser(newUser, login))
+                        {
+                            _logger.Warn($"UserService.CreateNewUser failed for {signin.AspNetUserName}");
+                            return null;
+                        }
 
-                var login = new UserLoginInfo("Shopify", signin.Shop.Id.ToString());
-                if (!await _userService.CreateNewUser(newUser, login))
-                {
-                    _logger.Warn($"UserService.CreateNewUser failed for {user.UserName}");
-                    return null;
+                        // Save the Domain and Access Token to the ASP.NET Claims
+                        _credentialService.SetUserCredentials(newUser.Id, signin.Shop.Domain, signin.AccessToken);
+                        _logger.Info($"Created new User, Shopify Login and Claims for {signin.AspNetUserName}");
+
+                        // Issue the OWIN cookie
+                        await _signInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+
+                        transaction.Complete();
+                        return newUser;
+                    }
                 }
-
-                _logger.Info($"Created new User, Shopify Login and Claims for {signin.AspNetUserName}");
-
-                // Save the Domain and Access Token to the ASP.NET Claims
-                _credentialService.SetUserCredentials(newUser.Id, signin.Shop.Domain, signin.AccessToken);
-                
-                // Issue the OWIN cookie
-                await _signInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
-
-                return newUser;
+                else
+                {
+                    await _signInManager.SignInAsync(existingUser, isPersistent: false, rememberBrowser: false);
+                    _credentialService.SetUserCredentials(existingUser.Id, signin.Shop.Domain, signin.AccessToken);
+                    _logger.Info($"Updated Claims  for {signin.AspNetUserName}");
+                    return existingUser;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                _credentialService.SetUserCredentials(user.Id, signin.Shop.Domain, signin.AccessToken);
-                _logger.Info($"Updated Claims  for {signin.AspNetUserName}");
-                return user;
+                _logger.Error(ex);
+                return null;
             }
         }
 
         private PwShop UpsertProfitWiseShop(ProfitWiseSignIn signIn, ApplicationUser user)
         {
-            var pwShop = _shopRepository.RetrieveByUserId(user.Id);
-            var credentials = ShopifyCredentials.Build(signIn.Shop.Domain, signIn.AccessToken);
-            
-            // Create the Shop database records
-            if (pwShop == null)
+            try
             {
-                using (var transaction = _shopOrchestrationService.InitiateTransaction())
+                var pwShop = _shopRepository.RetrieveByUserId(user.Id);
+                var credentials = ShopifyCredentials.Build(signIn.Shop.Domain, signIn.AccessToken);
+
+                // Create the Shop database records
+                if (pwShop == null)
                 {
-                    pwShop = _shopOrchestrationService.CreateShop(user.Id, signIn.Shop, credentials);
-                    transaction.Commit();
+                    using (var transaction = _shopOrchestrationService.InitiateTransaction())
+                    {
+                        pwShop = _shopOrchestrationService.CreateShop(user.Id, signIn.Shop, credentials);
+                        transaction.Commit();
+                    }
                 }
+                else
+                {
+                    _shopOrchestrationService.UpdateShop(user.Id, signIn.Shop.Currency, signIn.Shop.TimeZone);
+                }
+
+                // Ensure that the Uninstall Webhook is in place
+                _shopOrchestrationService.UpsertUninstallWebhook(credentials);
+                return pwShop;
             }
-            else
+            catch (Exception ex)
             {
-                _shopOrchestrationService.UpdateShop(user.Id, signIn.Shop.Currency, signIn.Shop.TimeZone);
+                _logger.Error(ex);
+                return null;
             }
 
-            // Ensure that the Uninstall Webhook is in place
-            _shopOrchestrationService.UpsertUninstallWebhook(credentials);
-            return pwShop;
         }
+
 
 
         [AllowAnonymous]
