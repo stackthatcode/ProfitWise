@@ -19,6 +19,7 @@ DELETE FROM shop(@PwShopId);
 DELETE FROM batchstate(@PwShopId);
 DELETE FROM recurringcharge(@PwShopId);
 **/
+
 SELECT * FROM AspNetUsers WHERE Id = @UserId;
 SELECT * FROM AspNetUserClaims WHERE UserId = @UserId;
 SELECT * FROM AspNetUserRoles WHERE UserId = @UserId;
