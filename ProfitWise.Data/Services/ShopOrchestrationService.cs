@@ -214,6 +214,10 @@ namespace ProfitWise.Data.Services
 
             // Invoke Shopify API to get the Charge
             var result = repository.RetrieveCharge(currentCharge.ShopifyRecurringChargeId);
+            if (result == null)
+            {
+                return null;
+            }
 
             // Update ProfitWise's local database record
             currentCharge.ConfirmationUrl = result.confirmation_url;

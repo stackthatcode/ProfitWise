@@ -52,6 +52,7 @@ namespace Push.Shopify.Repositories
             {
                 return null;
             }
+
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
 
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
