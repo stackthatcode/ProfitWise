@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
 using Autofac;
-using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -87,44 +85,7 @@ namespace ProfitWise.Web
                         }
                     },
                 }
-            });
-
-            // This enables the OAuth flow to create a temporary 
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-
-            // Shopify Authorization
-            var shopify_options = new ShopifyAuthenticationOptions()
-            {
-                ApiKey = ProfitWiseConfiguration.Settings.ShopifyApiKey,
-                ApiSecret = ProfitWiseConfiguration.Settings.ShopifyApiSecret,
-
-                Provider = new ShopifyAuthenticationProvider
-                {
-                    OnAuthenticated = async context =>
-                    {
-                        string accessToken = context.AccessToken;
-                        var domain = context.ShopifyDomain;
-                        var serializedShopInformation = context.Shop.ToString();
-
-                        // Currently unused Shop information
-                        string shopPrimaryEmailAddress = context.Email;
-
-                        // Add all this good stuff to these External Cookie Claims
-                        context.Identity.AddClaim(
-                            new Claim(SecurityConfig.ShopifyOAuthAccessTokenClaimExternal, accessToken));
-
-                        context.Identity.AddClaim(
-                            new Claim(SecurityConfig.ShopifyDomainClaimExternal, domain));
-
-                        context.Identity.AddClaim(
-                            new Claim(SecurityConfig.ShopifyShopSerializedExternal, serializedShopInformation));
-                    },
-                }
-            };
-
-            shopify_options.Scope.Add("read_orders");
-            shopify_options.Scope.Add("read_products");
-            app.UseShopifyAuthentication(shopify_options);
+            });            
         }
 
         public static void GlobalSignOut(ApplicationSignInManager signInManager)
