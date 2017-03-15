@@ -2,7 +2,8 @@
 {
     public class ShopifyCredentials
     {
-        public string ShopOwnerUserId { get; set; }
+        public string ShopOwnerUserId { get; set; } // This doesn't belong here!
+
         public string ShopDomain { get; set; }
         public string AccessToken { get; set; }
         public string ShopBaseUrl => ShopUrlFromDomain(ShopDomain);
@@ -15,6 +16,15 @@
         private static string ShopUrlFromDomain(string domain)
         {
             return $"https://{domain}";
+        }
+
+        public static ShopifyCredentials Build(string domain, string accessToken)
+        {
+            return new ShopifyCredentials()
+            {
+                ShopDomain = domain,
+                AccessToken = accessToken,
+            };
         }
     }
 }

@@ -19,5 +19,10 @@ namespace ProfitWise.Web.Plumbing
             }
             return new RedirectResult(url);
         }
+
+        public static string BuildUrl(string relativepath)
+        {
+            return $"{BaseUrl}{relativepath}";
+        }
     }
 }

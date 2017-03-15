@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.Helpers;
 
@@ -15,45 +17,59 @@ namespace Push.Shopify.Model
         public DateTime Updated_At { get; set; }
 
 
-        public static readonly string
-                WebhookAddress = ConfigurationManager
-                    .AppSettings
-                    .GetAndTryParseAsString("UninstallWebHookAddress", "");
+        public const string UninstallTopic = "app/uninstalled";
 
-        public static Webhook MakeUninstallHookRequest()
+        public static Webhook MakeUninstallHookRequest(string address)
         {
             var request = new Webhook()
             {
-                Address = WebhookAddress,
+                Address = address,
                 Format = "json",
-                Topic = "app/uninstalled",
+                Topic = UninstallTopic,
             };
             return request;
         }
 
-        public static Webhook MakeAddressUpdateRequest(long id)
+        public static Webhook MakeAddressUpdateRequest(long id, string address)
         {
             return new Webhook()
             {
                 Id = id,
-                Address = WebhookAddress,
+                Address = address,
             };
         }
     }
 
     public static class WebhookExtensions
     {
-        public static Webhook ToWebhook(this string json)
+        public static Webhook ToSingleWebhook(this string json)
         {
             dynamic parent = JsonConvert.DeserializeObject(json);
+            return ToSingleWebhook(parent.webhook);
+        }
+
+        public static List<Webhook> ToMultipleWebhooks(this string json)
+        {
+            dynamic parent = JsonConvert.DeserializeObject(json);
+            var output = new List<Webhook>();
+            foreach (var webhook in parent.webhooks)
+            {
+                output.Add(ToSingleWebhook(webhook));
+            }
+
+            return output;
+        }
+
+        public static Webhook ToSingleWebhook(dynamic webhook)
+        {
             var output = new Webhook
             {
-                Id = parent.webhook.id,
-                Address = parent.webhook.address,
-                Created_At = parent.webhook.created_at,
-                Updated_At = parent.webhook.updated_at,
-                Format = parent.webhook.format,
-                Topic = parent.webhook.topic,
+                Id = webhook.id,
+                Address = webhook.address,
+                Created_At = webhook.created_at,
+                Updated_At = webhook.updated_at,
+                Format = webhook.format,
+                Topic = webhook.topic,
             };
             return output;
         }

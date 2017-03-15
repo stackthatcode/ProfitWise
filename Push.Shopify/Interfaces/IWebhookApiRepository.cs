@@ -6,7 +6,7 @@ namespace Push.Shopify.Interfaces
     public interface IWebhookApiRepository : IShopifyCredentialConsumer
     {
         Webhook Subscribe(Webhook request);
-        Webhook Retrieve(long id);
+        Webhook Retrieve(string topic, string address);
         Webhook UpdateAddress(Webhook request);
     }
 }

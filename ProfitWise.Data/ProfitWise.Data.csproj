@@ -245,7 +245,6 @@
     <Compile Include="Repositories\System\ExchangeRateRepository.cs" />
     <Compile Include="Repositories\Multitenant\CogsEntryRepository.cs" />
     <Compile Include="Repositories\Multitenant\ReportRepository.cs" />
-    <Compile Include="Services\WebhookService.cs" />
     <Compile Include="Services\CatalogRetrievalService.cs" />
     <Compile Include="Services\ConsolidationService.cs" />
     <Compile Include="Services\CurrencyService.cs" />
@@ -266,6 +265,7 @@
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\ShopOrchestrationService.cs" />
     <Compile Include="Utility\CredentialResultExtensions.cs" />
+    <Compile Include="Utility\ShopifyStringExtensions.cs" />
     <Compile Include="Utility\TimeZoneExtensions.cs" />
     <Compile Include="Services\TimeZoneTranslator.cs" />
     <Compile Include="Utility\DapperExtensions.cs" />

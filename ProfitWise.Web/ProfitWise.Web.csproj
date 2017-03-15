@@ -125,8 +125,16 @@
       <HintPath>..\packages\Owin.Security.Providers.Shopify.2.1.1\lib\net452\Owin.Security.Providers.Shopify.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ServiceStack.Text, Version=4.5.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ServiceStack.Text.4.5.6\lib\net45\ServiceStack.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ShopifySharp, Version=3.5.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ShopifySharp.3.5.5\lib\net45\ShopifySharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -259,6 +267,7 @@
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
     <Compile Include="Models\ChargeConfirmModel.cs" />
     <Compile Include="Models\CogsDetailModel.cs" />
+    <Compile Include="Models\ProfitWiseSignIn.cs" />
     <Compile Include="Models\PwCogsMasterProductModel.cs" />
     <Compile Include="Models\CogsSearchParameters.cs" />
     <Compile Include="Models\AuthenticatedContext.cs" />

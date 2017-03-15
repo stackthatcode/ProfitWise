@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
+using System.Security.Policy;
+using System.Web;
 using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.Json;
@@ -45,7 +48,7 @@ namespace Push.Shopify.Repositories
             var httpRequest = _requestFactory.HttpPost(ShopifyCredentials, path, content);
             var clientResponse = _client.ExecuteRequest(httpRequest);
 
-            return clientResponse.Body.ToWebhook();
+            return clientResponse.Body.ToSingleWebhook();
         }
 
         public Webhook UpdateAddress(Webhook request)
@@ -64,20 +67,25 @@ namespace Push.Shopify.Repositories
             var httpRequest = _requestFactory.HttpPut(ShopifyCredentials, path, content);
             var clientResponse = _client.ExecuteRequest(httpRequest);
 
-            return clientResponse.Body.ToWebhook();
+            return clientResponse.Body.ToSingleWebhook();
         }        
 
-        public Webhook Retrieve(long id)
+        public Webhook Retrieve(string topic, string address)
         {
-            var path = $"/admin/webhooks/{id}.json";
+            var encodedTopic = HttpUtility.UrlEncode(topic);
+            var encodedAddress = HttpUtility.UrlEncode(address);
+
+            var path = $"/admin/webhooks.json?address={encodedAddress}&topic={encodedTopic}";
             var httpRequest = _requestFactory.HttpGet(ShopifyCredentials, path);
+
             var clientResponse = _client.ExecuteRequest(httpRequest);
             if (clientResponse.StatusCode == HttpStatusCode.NotFound)
             {
                 return null;
             }
 
-            return clientResponse.Body.ToWebhook();
+            var webhooks = clientResponse.Body.ToMultipleWebhooks();
+            return webhooks.FirstOrDefault();
         }
     }
 }

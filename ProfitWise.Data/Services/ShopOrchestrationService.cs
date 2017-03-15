@@ -36,6 +36,10 @@ namespace ProfitWise.Data.Services
         private static readonly bool TestRecurringCharges =
                 ConfigurationManager.AppSettings.GetAndTryParseAsBool("TestRecurringCharges", false);
 
+        private static readonly string
+                WebhookAddress = ConfigurationManager
+                    .AppSettings.GetAndTryParseAsString("UninstallWebHookAddress", "");
+
         private const int DefaultFreeTrial = 14;
         private const decimal ProfitWiseMonthlyPrice = 14.95m;
 
@@ -114,23 +118,20 @@ namespace ProfitWise.Data.Services
             var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);
             var shop = _shopRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
 
-            if (shop.ShopifyUninstallId.HasValue)
+            var existingWebhook = apiRepository.Retrieve(Webhook.UninstallTopic, WebhookAddress);
+            if (existingWebhook != null)
             {
-                var existingWebhook = apiRepository.Retrieve(shop.ShopifyUninstallId.Value);
-                if (existingWebhook != null)
-                {
-                    var updateRequest = 
-                        Webhook.MakeAddressUpdateRequest(shop.ShopifyUninstallId.Value);
-                    apiRepository.UpdateAddress(updateRequest);
-                    return;
-                }
+                var updateRequest = 
+                    Webhook.MakeAddressUpdateRequest(existingWebhook.Id, WebhookAddress);
+                apiRepository.UpdateAddress(updateRequest);
+                return;
             }
-
-            var request = Webhook.MakeUninstallHookRequest();
-            var webhook = apiRepository.Subscribe(request);
-
-            // Store the Webhook Id 
-            _shopRepository.UpdateShopifyUninstallId(credentials.ShopOwnerUserId, webhook.Id);
+            else
+            {
+                var request = Webhook.MakeUninstallHookRequest(WebhookAddress);
+                var webhook = apiRepository.Subscribe(request);
+                _shopRepository.UpdateShopifyUninstallId(credentials.ShopOwnerUserId, webhook.Id);
+            }
         }
 
 

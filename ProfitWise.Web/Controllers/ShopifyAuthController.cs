@@ -1,16 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using ProfitWise.Data.Configuration;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using ProfitWise.Data.Utility;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Logging;
@@ -20,8 +25,11 @@ using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Web.Json;
 using Push.Foundation.Web.Shopify;
+using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
+using ShopifySharp;
+using ShopifySharp.Enums;
 
 
 namespace ProfitWise.Web.Controllers
@@ -34,10 +42,10 @@ namespace ProfitWise.Web.Controllers
         private readonly IShopifyCredentialService _credentialService;
         private readonly ShopOrchestrationService _shopOrchestrationService;
         private readonly OwinUserService _userService;
-        private readonly HangFireService _hangFireService;
         private readonly ShopRepository _shopRepository;
         private readonly IPushLogger _logger;
-        private readonly HmacCryptoService _hmacCryptoService;      
+        private readonly HmacCryptoService _hmacCryptoService;
+        private readonly ApiRepositoryFactory _factory;    
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
@@ -46,20 +54,20 @@ namespace ProfitWise.Web.Controllers
                 IShopifyCredentialService credentialService,
                 ShopOrchestrationService shopSynchronizationService,
                 OwinUserService userService,
-                HangFireService hangFireService,
                 IPushLogger logger, 
                 ShopRepository shopRepository, 
-                HmacCryptoService hmacCryptoService)
+                HmacCryptoService hmacCryptoService, 
+                ApiRepositoryFactory factory)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _credentialService = credentialService;
             _userService = userService;
-            _hangFireService = hangFireService;
             _logger = logger;
             _shopRepository = shopRepository;
             _hmacCryptoService = hmacCryptoService;
+            _factory = factory;
             _shopOrchestrationService = shopSynchronizationService;
         }
 
@@ -75,8 +83,162 @@ namespace ProfitWise.Web.Controllers
             return new ShopifyChallengeResult(
                 Url.Action("ExternalLoginCallback", "ShopifyAuth", new { ReturnUrl = returnUrl }), null, correctedShopName);
         }
-        
+
         [AllowAnonymous]
+        public ActionResult LoginAlt(string shop, string returnUrl)
+        {
+            // First strip everything off so we can standardize
+            var correctedShopName = shop.ShopNameFromDomain();
+            
+            // Next create the Shop URL
+            // TODO - move to our Extensions methods thingy
+            var shopUrl = $"https://{correctedShopName}.myshopify.com";
+
+            // If the return url is empty, let's fix that - do we need Return URL...??
+            //returnUrl = returnUrl ?? $"{GlobalConfig.BaseUrl}/?shop={shop}";
+
+            var redirectUrl = GlobalConfig.BuildUrl("/ShopifyAuth/ShopifyReturn");
+
+            var scopes = new List<ShopifyAuthorizationScope>()
+            {
+                ShopifyAuthorizationScope.ReadOrders,
+                ShopifyAuthorizationScope.ReadProducts,
+            };
+
+            var authUrl = 
+                ShopifyAuthorizationService.BuildAuthorizationUrl(
+                    scopes, shopUrl, ProfitWiseConfiguration.Settings.ShopifyApiKey, redirectUrl);
+
+            return Redirect(authUrl.ToString());
+        }
+
+
+        [AllowAnonymous]
+        public async Task<ActionResult> ShopifyReturn(string returnUrl)
+        {
+            // Attempt to complete Shopify Authentication
+            var profitWiseSignIn = await CompleteShopifyAuth();
+            if (profitWiseSignIn == null)
+            {
+                return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl);
+            }
+            
+            // Create User
+            ApplicationUser user;
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                user = await UpsertAspNetUserAcct(profitWiseSignIn);
+                transaction.Complete();
+            }
+            if (user == null)
+            {
+                return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
+            }
+
+            // Create/Update the Shop
+            PwShop shop = UpsertProfitWiseShop(profitWiseSignIn, user);
+            if (shop == null)
+            {
+                return GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, returnUrl);
+            }
+
+            return UpsertBilling(user, returnUrl);
+        }
+        
+        private async Task<ProfitWiseSignIn> CompleteShopifyAuth()
+        {
+            string code = Request.QueryString["code"];
+            string shopDomain = Request.QueryString["shop"];
+            var apikey = ProfitWiseConfiguration.Settings.ShopifyApiKey;
+            var apisecret = ProfitWiseConfiguration.Settings.ShopifyApiSecret;
+
+            try
+            {
+                var accessToken = 
+                    await ShopifyAuthorizationService
+                        .Authorize(code, shopDomain, apikey, apisecret);
+
+                var credentials = ShopifyCredentials.Build(shopDomain, accessToken);
+                var shopApiRepository = _factory.MakeShopApiRepository(credentials);
+                var shopFromShopify = shopApiRepository.Retrieve();
+
+                return new ProfitWiseSignIn
+                {
+                    AccessToken = accessToken,
+                    Shop = shopFromShopify,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return null;
+            }
+        }
+
+        private async Task<ApplicationUser> UpsertAspNetUserAcct(ProfitWiseSignIn signin)
+        {
+            // FYI, UserName == Domain
+            var user = await _userManager.FindByNameAsync(signin.AspNetUserName);
+            if (user == null)
+            {
+                var newUser = new ApplicationUser
+                {
+                    UserName = signin.AspNetUserName, Email = signin.Shop.Email,
+                };
+
+                var login = new UserLoginInfo("Shopify", signin.Shop.Id.ToString());
+                if (!await _userService.CreateNewUser(newUser, login))
+                {
+                    _logger.Warn($"UserService.CreateNewUser failed for {user.UserName}");
+                    return null;
+                }
+
+                _logger.Info($"Created new User, Shopify Login and Claims for {signin.AspNetUserName}");
+
+                // Save the Domain and Access Token to the ASP.NET Claims
+                _credentialService.SetUserCredentials(newUser.Id, signin.Shop.Domain, signin.AccessToken);
+                
+                // Issue the OWIN cookie
+                await _signInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+
+                return newUser;
+            }
+            else
+            {
+                await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                _credentialService.SetUserCredentials(user.Id, signin.Shop.Domain, signin.AccessToken);
+                _logger.Info($"Updated Claims  for {signin.AspNetUserName}");
+                return user;
+            }
+        }
+
+        private PwShop UpsertProfitWiseShop(ProfitWiseSignIn signIn, ApplicationUser user)
+        {
+            var pwShop = _shopRepository.RetrieveByUserId(user.Id);
+            var credentials = ShopifyCredentials.Build(signIn.Shop.Domain, signIn.AccessToken);
+            
+            // Create the Shop database records
+            if (pwShop == null)
+            {
+                using (var transaction = _shopOrchestrationService.InitiateTransaction())
+                {
+                    pwShop = _shopOrchestrationService.CreateShop(user.Id, signIn.Shop, credentials);
+                    transaction.Commit();
+                }
+            }
+            else
+            {
+                _shopOrchestrationService.UpdateShop(user.Id, signIn.Shop.Currency, signIn.Shop.TimeZone);
+            }
+
+            // Ensure that the Uninstall Webhook is in place
+            _shopOrchestrationService.UpsertUninstallWebhook(credentials);
+            return pwShop;
+        }
+
+
+        [AllowAnonymous]
+        [Obsolete]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             // External Login Info is contained in the OWIN-issued cookie, and has information from the 
@@ -92,7 +254,7 @@ namespace ProfitWise.Web.Controllers
             ApplicationUser user;
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                user = await UpsertAspNetUserAndSignIn(externalLoginInfo);
+                user = await UpsertAspNetUserAcct(externalLoginInfo);
                 transaction.Complete();
             }
             if (user == null)
@@ -101,7 +263,7 @@ namespace ProfitWise.Web.Controllers
             }
 
             // Create/Update the Shop
-            PwShop shop = UpsertShop(externalLoginInfo, user);
+            PwShop shop = UpsertProfitWiseShop(externalLoginInfo, user);
             if (shop == null)
             {
                 return GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, returnUrl);
@@ -111,7 +273,8 @@ namespace ProfitWise.Web.Controllers
             return UpsertBilling(user, returnUrl);
         }
 
-        private async Task<ApplicationUser> UpsertAspNetUserAndSignIn(ExternalLoginInfo externalLoginInfo)
+        [Obsolete]
+        private async Task<ApplicationUser> UpsertAspNetUserAcct(ExternalLoginInfo externalLoginInfo)
         {            
             var externalLoginCookieResult =
                     await _signInManager.ExternalSignInAsync(externalLoginInfo, isPersistent: false);
@@ -129,6 +292,7 @@ namespace ProfitWise.Web.Controllers
                 }
 
                 SaveExternalInfoToClaims(newUser, externalLoginInfo);
+
                 await _signInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
 
                 _logger.Info($"Created new User, Shopify Login and Claims for {email}/{userName}");
@@ -150,6 +314,7 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
+        [Obsolete]
         private void SaveExternalInfoToClaims(ApplicationUser user, ExternalLoginInfo externalLoginInfo)
         {
             // Matches ASP.NET User with the User identified by the external cookie
@@ -157,7 +322,8 @@ namespace ProfitWise.Web.Controllers
             _logger.Info($"Successfully refreshed Identity Claims for User {externalLoginInfo.DefaultUserName}");
         }
 
-        private PwShop UpsertShop(ExternalLoginInfo externalLoginInfo, ApplicationUser user)
+        [Obsolete]
+        private PwShop UpsertProfitWiseShop(ExternalLoginInfo externalLoginInfo, ApplicationUser user)
         {
             // TODO - add naughty Shop blacklist to configuration file
 
@@ -185,6 +351,8 @@ namespace ProfitWise.Web.Controllers
             return pwShop;
         }
         
+
+
         private ActionResult UpsertBilling(ApplicationUser user, string returnUrl)
         {
             var charge = _shopOrchestrationService.SyncAndRetrieveCurrentCharge(user.Id);
@@ -347,4 +515,6 @@ namespace ProfitWise.Web.Controllers
         }
     }
 }
+
+
 

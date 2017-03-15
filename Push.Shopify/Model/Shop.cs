@@ -8,14 +8,18 @@ namespace Push.Shopify.Model
         public string Currency { get; set; }
         public string TimeZone { get; set; }
         public string Domain { get; set; }
-        
+        public string Email { get; set; }
+
+
         private Shop(string serializedJson)
         {
             dynamic parent = JsonConvert.DeserializeObject(serializedJson);
-            this.Id = parent.shop.id;
-            this.Currency = parent.shop.currency;
-            this.TimeZone = parent.shop.timezone;
-            this.Domain = parent.shop.myshopify_domain;
+            var shop = parent.shop;
+            this.Id = shop.id;
+            this.Currency = shop.currency;
+            this.TimeZone = shop.timezone;
+            this.Domain = shop.myshopify_domain;
+            this.Email = shop.email;
         }
 
         public static Shop MakeFromJson(string json)
