@@ -524,6 +524,7 @@
     <Content Include="Content\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff2" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Browsers\generic.browser" />
     <None Include="Properties\PublishProfiles\Rackspace Jonze Is At it!.pubxml" />
     <Content Include="Views\Shared\_Impersonation.cshtml" />
     <Content Include="Views\Error\Maintenance.cshtml" />

@@ -74,18 +74,6 @@ namespace ProfitWise.Web.Controllers
 
         // Shopify OAuth authentication & authorization flow
         [AllowAnonymous]
-        [Obsolete]
-        public ActionResult LoginOld(string shop, string returnUrl)
-        {
-            var correctedShopName = shop.Replace(".myshopify.com", "");
-            returnUrl = returnUrl ?? $"{GlobalConfig.BaseUrl}/?shop={shop}";
-
-            // Request a redirect to the external login provider
-            return new ShopifyChallengeResult(
-                Url.Action("ExternalLoginCallback", "ShopifyAuth", new { ReturnUrl = returnUrl }), null, correctedShopName);
-        }
-
-        [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
         {
             // First strip everything off so we can standardize
@@ -112,7 +100,6 @@ namespace ProfitWise.Web.Controllers
 
             return Redirect(authUrl.ToString());
         }
-
 
         [AllowAnonymous]
         public async Task<ActionResult> ShopifyReturn(string returnUrl)
@@ -198,7 +185,7 @@ namespace ProfitWise.Web.Controllers
                         _logger.Info($"Created new User, Shopify Login and Claims for {signin.AspNetUserName}");
 
                         // Issue the OWIN cookie
-                        await _signInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+                        await _signInManager.SignInAsync(newUser, isPersistent: true, rememberBrowser: true);
 
                         transaction.Complete();
                         return newUser;
@@ -261,7 +248,7 @@ namespace ProfitWise.Web.Controllers
                 // Redirect for Shopify Charge approval
                 return View("ChargeConfirm",
                     new ChargeConfirmModel() { ConfirmationUrl = charge.ConfirmationUrl });
-            }            
+            }
             if (charge == null || charge.LastStatus.SystemMustCreateNewCharge())
             {
                 // Create ProfitWise subscription and save
@@ -269,10 +256,10 @@ namespace ProfitWise.Web.Controllers
                 var newCharge = _shopOrchestrationService.CreateCharge(user.Id, verifyUrl);
 
                 // Redirect for Shopify Charge approval
-                return View("ChargeConfirm", 
+                return View("ChargeConfirm",
                     new ChargeConfirmModel() { ConfirmationUrl = newCharge.ConfirmationUrl });
             }
-            
+
             return RedirectToLocal(returnUrl);
         }
 
@@ -290,18 +277,14 @@ namespace ProfitWise.Web.Controllers
             }
             else
             {
-                return BillingDeclined();
+                AuthConfig.GlobalSignOut(_signInManager);
+                return View("BillingDeclined");
             }
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult BillingDeclined()
-        {
-            AuthConfig.GlobalSignOut(_signInManager);
-            return View("BillingDeclined");
-        }
 
+
+        // Webhook recipient
         [HttpPost]
         [AllowAnonymous]
         public ActionResult Uninstall(UninstallWebhook message)
