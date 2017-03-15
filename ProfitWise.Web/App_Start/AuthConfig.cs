@@ -66,6 +66,8 @@ namespace ProfitWise.Web
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString(UnauthorizedAccessUrl),
+                SlidingExpiration = false,
+                ExpireTimeSpan = TimeSpan.MaxValue,
                 Provider = new CookieAuthenticationProvider
                 {
                     // Enables the application to validate the security stamp when the user logs in.
