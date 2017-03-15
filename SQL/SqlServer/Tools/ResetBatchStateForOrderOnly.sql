@@ -1,6 +1,6 @@
 
 
--- 1.) Insert the approrioate PwShopId and execute 
+-- 1.) Insert the appropriate PwShopId and execute 
 
 DECLARE @PwShopId bigint = 100001;
 UPDATE batchstate(@PwShopId) SET OrderDatasetStart = NULL, OrderDatasetEnd = NULL;
