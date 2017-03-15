@@ -83,7 +83,7 @@ namespace ProfitWise.Web
                         }
                     },
                 }
-            });            
+            });
         }
 
         public static void GlobalSignOut(ApplicationSignInManager signInManager)

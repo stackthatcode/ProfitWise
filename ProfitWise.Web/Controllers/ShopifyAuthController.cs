@@ -15,6 +15,7 @@ using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
+using Push.Foundation.Utilities.Json;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Utilities.Security;
 using Push.Foundation.Web.Helpers;
@@ -258,6 +259,8 @@ namespace ProfitWise.Web.Controllers
                 return View("ChargeConfirm",
                     new ChargeConfirmModel() { ConfirmationUrl = newCharge.ConfirmationUrl });
             }
+
+            var cookies = Response.Cookies.SerializeToJson();
 
             _logger.Info(Request.Cookies["Test"] != null ? Request.Cookies["Test"].Value : "No cookie for you!");
 
