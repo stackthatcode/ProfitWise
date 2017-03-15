@@ -74,7 +74,8 @@ namespace ProfitWise.Web.Controllers
 
         // Shopify OAuth authentication & authorization flow
         [AllowAnonymous]
-        public ActionResult Login(string shop, string returnUrl)
+        [Obsolete]
+        public ActionResult LoginOld(string shop, string returnUrl)
         {
             var correctedShopName = shop.Replace(".myshopify.com", "");
             returnUrl = returnUrl ?? $"{GlobalConfig.BaseUrl}/?shop={shop}";
@@ -85,7 +86,7 @@ namespace ProfitWise.Web.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult LoginAlt(string shop, string returnUrl)
+        public ActionResult Login(string shop, string returnUrl)
         {
             // First strip everything off so we can standardize
             var correctedShopName = shop.ShopNameFromDomain();
