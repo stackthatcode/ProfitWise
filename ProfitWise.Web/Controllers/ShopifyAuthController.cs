@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -8,10 +7,8 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ProfitWise.Data.Configuration;
-using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
@@ -93,6 +90,8 @@ namespace ProfitWise.Web.Controllers
                 ShopifyAuthorizationScope.ReadOrders,
                 ShopifyAuthorizationScope.ReadProducts,
             };
+
+            Response.Cookies.Add(new HttpCookie("Test", "Test Cookie"));
 
             var authUrl = 
                 ShopifyAuthorizationService.BuildAuthorizationUrl(
@@ -260,6 +259,8 @@ namespace ProfitWise.Web.Controllers
                     new ChargeConfirmModel() { ConfirmationUrl = newCharge.ConfirmationUrl });
             }
 
+            _logger.Info(Request.Cookies["Test"] != null ? Request.Cookies["Test"].Value : "No cookie for you!");
+
             return RedirectToLocal(returnUrl);
         }
 
@@ -268,7 +269,8 @@ namespace ProfitWise.Web.Controllers
         {
             // Notice: we don't use charge_id, as we rely on our cookies - maybe we should use charge_id?
             // ... or if userId is null, Redirect to Login
-            
+            _logger.Info(Request.Cookies["Test"] != null ? Request.Cookies["Test"].Value : "No cookie for you!");
+
             var userId = HttpContext.User.ExtractUserId();
             var chargeAccepted =_shopOrchestrationService.VerifyChargeAndScheduleRefresh(userId);            
             if (chargeAccepted)
