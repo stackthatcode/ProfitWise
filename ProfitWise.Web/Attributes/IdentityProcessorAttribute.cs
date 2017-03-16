@@ -120,7 +120,7 @@ namespace ProfitWise.Web.Attributes
 
             var commonContext = new AuthenticatedContext
             {
-                Today = timeZoneTranslator.ToOtherTimeZone(DateTime.Today, pwShop.TimeZone),
+                Today = timeZoneTranslator.Today(pwShop.TimeZone),
                 ShopifyApiKey = ProfitWiseConfiguration.Settings.ShopifyApiKey,
                 IdentitySnapshot = identity,
             };

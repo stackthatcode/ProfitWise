@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Hangfire;
@@ -15,17 +16,18 @@ namespace ProfitWise.Batch
         private const string HangFireBackgroundServiceOption = "1";
         private const string ScheduleInitialShopRefreshOption = "2";
         private const string ScheduleBackgroundSystemJobsOption = "3";
+        private const string EmitTimeZones = "4";
+
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
 
 
-        private static void TestHmacVerification()
+
+        static void TestTimeZone()
         {
-            var input = System.IO.File.ReadAllText("Request.txt");
-            Console.ReadLine();
+            var id = "Central Standard Time";
+            var timezone = TimeZoneInfo.FindSystemTimeZoneById(id);
         }
-
-
 
         static void Main(string[] args)
         {
@@ -63,9 +65,30 @@ namespace ProfitWise.Batch
                 AppUninstallTest.Execute();
                 return;
             }
+            if (choice.Trim() == EmitTimeZones)
+            {
+                EmitTimeZonesToConsoleAndTextFile();
+                return;
+            }
 
             Console.WriteLine("Invalid option - exiting. Bye!");
         }
+
+        public static void EmitTimeZonesToConsoleAndTextFile()
+        {
+            var outputFileName = "timezones.txt";
+
+            Console.WriteLine($"Emitting all Time Zone Id's from current machine to {outputFileName}...");
+            var output = new List<string>();
+            foreach (TimeZoneInfo z in TimeZoneInfo.GetSystemTimeZones())
+            {
+                output.Add(z.Id);
+            }
+            System.IO.File.WriteAllLines(outputFileName, output);
+            Console.WriteLine("Finished - hit enter to exit.");
+            Console.ReadLine();
+        }
+
 
         public static void ExitWithAnyKey()
         {
@@ -79,6 +102,8 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{HangFireBackgroundServiceOption} - Run HangFire Background Service");
             Console.WriteLine($"{ScheduleInitialShopRefreshOption} - Schedule an Initial Shop Refresh");
             Console.WriteLine($"{ScheduleBackgroundSystemJobsOption} - Schedule the default ProfitWise System Jobs");
+            Console.WriteLine($"{EmitTimeZones} - Save all Time Zone Id's on the current machine to a text file");
+
             Console.WriteLine("");
             return Console.ReadLine();
         }
