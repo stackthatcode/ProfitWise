@@ -95,7 +95,8 @@
 
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.DateRanges = @Html.Raw(DateRangeDefaults.Factory(todayInShopTimeZone).SerializeToJson());    
+    ProfitWiseWidgets.DateRanges = 
+        @Html.Raw(DateRangeDefaults.Factory(todayInShopTimeZone).SerializeToJson());    
 
     ProfitWiseWidgets.DateRangeById = function(id) {
         return AQ(ProfitWiseWidgets.DateRanges)

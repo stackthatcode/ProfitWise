@@ -99,24 +99,12 @@ namespace ProfitWise.Web.Controllers
             return Redirect(authUrl.ToString());
         }
 
+        
         [AllowAnonymous]
-        public ActionResult ShopifyReturn(string returnUrl)
-        {
-            var model = new ShopifyReturnModel
-            {
-                Code = Request.QueryString["code"],
-                ShopDomain = Request.QueryString["shop"],
-                ReturnUrl = returnUrl,
-            };
-
-            return View(model);
-        }
-
-        [AllowAnonymous]
-        public async Task<ActionResult> ProfitWiseSignIn(string code, string shopDomain, string returnUrl)
+        public async Task<ActionResult> ShopifyReturn(string code, string shop, string returnUrl)
         {
             // Attempt to complete Shopify Authentication
-            var profitWiseSignIn = await CompleteShopifyAuth(code, shopDomain);
+            var profitWiseSignIn = await CompleteShopifyAuth(code, shop);
             if (profitWiseSignIn == null)
             {
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
@@ -130,8 +118,8 @@ namespace ProfitWise.Web.Controllers
             }
 
             // Create/Update the Shop
-            PwShop shop = UpsertProfitWiseShop(profitWiseSignIn, user);
-            if (shop == null)
+            PwShop profitWiseShop = UpsertProfitWiseShop(profitWiseSignIn, user);
+            if (profitWiseShop == null)
             {
                 return GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, returnUrl);
             }
@@ -269,12 +257,7 @@ namespace ProfitWise.Web.Controllers
                     JavaScriptRedirectModel.BuildForChargeConfirm(newCharge.ConfirmationUrl));
             }
 
-            return View("JavaScriptRedirect", new JavaScriptRedirectModel
-            {
-                Url = GlobalConfig.BaseUrl,
-                Header = "You've authenticated to ProfitWise",
-                SubTitle = "Loading system..."
-            });
+            return RedirectToLocal(GlobalConfig.BaseUrl);
         }
 
         [HttpGet]
