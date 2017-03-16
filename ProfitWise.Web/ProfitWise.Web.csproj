@@ -356,8 +356,6 @@
     <Content Include="Views\Report\_ViewStart.cshtml" />
     <Content Include="Views\Error\Http500.cshtml" />
     <Content Include="Views\Shared\_PageLayout.cshtml" />
-    <Content Include="Views\UserAuxiliary\About.cshtml" />
-    <Content Include="Views\UserAuxiliary\Contact.cshtml" />
     <Content Include="Views\AdminAuth\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\AdminAuth\ConfirmEmail.cshtml" />
     <Content Include="Views\AdminAuth\ForgotPassword.cshtml" />

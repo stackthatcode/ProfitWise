@@ -1,7 +1,13 @@
 ﻿@using ProfitWise.Data.Model.Reports
 @using Push.Foundation.Utilities.Json
 
+<style>
+    h2.report-title {
+    font-size: 19px;
+    font-weight: 700; 
+}
 
+</style>
 <!-- Acts a container that holds the Viewer and the Editor -->
 <script type="text/html" id="Report-Manager">
     <div data-bind="if: $data.InFilterEditMode">
@@ -41,7 +47,7 @@
 <script type="text/html" id="Report-Viewer-Header">
     <div class="col-xs-6 no-side-padding" data-bind="with: $data.ReportInterfaceModel">
         <div data-bind="if: ReportLoaded()">
-            <h2 style="display: inline-block; font-weight: 700;" data-bind="text: Name"></h2>
+            <h2 class="report-title" style="display: inline-block;" data-bind="text: Name"></h2>
 
             <div style="display:inline-block; " data-bind="if: CopyForEditing">
                 <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">

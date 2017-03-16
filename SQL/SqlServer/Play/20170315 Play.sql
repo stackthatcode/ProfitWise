@@ -4,6 +4,12 @@ GO
 
 SELECT * FROM profitwiseshop
 
+UPDATE profitwiseshop SET IsDataLoaded = 0;
+
+
+UPDATE recurringcharge(100001) SET ShopifyRecurringChargeId = 99999;
+
+
 
 /**
 
