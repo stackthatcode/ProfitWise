@@ -265,7 +265,7 @@
     <Compile Include="Models\AddVariantToConsolidationModel.cs" />
     <Compile Include="Models\BulkEditAllCogsModel.cs" />
     <Compile Include="Models\BulkEditProductCogsModel.cs" />
-    <Compile Include="Models\ChargeConfirmModel.cs" />
+    <Compile Include="Models\JavaScriptRedirectModel.cs" />
     <Compile Include="Models\CogsDetailModel.cs" />
     <Compile Include="Models\ProfitWiseSignIn.cs" />
     <Compile Include="Models\PwCogsMasterProductModel.cs" />
@@ -277,6 +277,7 @@
     <Compile Include="Models\ProductConsolidationSearchModel.cs" />
     <Compile Include="Models\SaveAsModel.cs" />
     <Compile Include="Models\SearchResultSelection.cs" />
+    <Compile Include="Models\ShopifyReturnModel.cs" />
     <Compile Include="Models\SimplePickList.cs" />
     <Compile Include="Models\SimpleMasterProduct.cs" />
     <Compile Include="Models\ProductVariantSelectionModel.cs" />
@@ -528,8 +529,9 @@
     <None Include="Properties\PublishProfiles\Rackspace Jonze Is At it!.pubxml" />
     <Content Include="Views\Shared\_Impersonation.cshtml" />
     <Content Include="Views\Error\Maintenance.cshtml" />
-    <Content Include="Views\ShopifyAuth\ChargeConfirm.cshtml" />
+    <Content Include="Views\ShopifyAuth\JavaScriptRedirect.cshtml" />
     <Content Include="Views\ShopifyAuth\BillingDeclined.cshtml" />
+    <Content Include="Views\ShopifyAuth\ShopifyReturn.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

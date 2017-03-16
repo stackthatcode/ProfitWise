@@ -92,8 +92,6 @@ namespace ProfitWise.Web.Controllers
                 ShopifyAuthorizationScope.ReadProducts,
             };
 
-            Response.Cookies.Add(new HttpCookie("Test", "Test Cookie"));
-
             var authUrl = 
                 ShopifyAuthorizationService.BuildAuthorizationUrl(
                     scopes, shopUrl, ProfitWiseConfiguration.Settings.ShopifyApiKey, redirectUrl);
@@ -102,10 +100,23 @@ namespace ProfitWise.Web.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> ShopifyReturn(string returnUrl)
+        public ActionResult ShopifyReturn(string returnUrl)
+        {
+            var model = new ShopifyReturnModel
+            {
+                Code = Request.QueryString["code"],
+                ShopDomain = Request.QueryString["shop"],
+                ReturnUrl = returnUrl,
+            };
+
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> ProfitWiseSignIn(string code, string shopDomain, string returnUrl)
         {
             // Attempt to complete Shopify Authentication
-            var profitWiseSignIn = await CompleteShopifyAuth();
+            var profitWiseSignIn = await CompleteShopifyAuth(code, shopDomain);
             if (profitWiseSignIn == null)
             {
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl);
@@ -128,10 +139,8 @@ namespace ProfitWise.Web.Controllers
             return UpsertBilling(user, returnUrl);
         }
         
-        private async Task<ProfitWiseSignIn> CompleteShopifyAuth()
+        private async Task<ProfitWiseSignIn> CompleteShopifyAuth(string code, string shopDomain)
         {
-            string code = Request.QueryString["code"];
-            string shopDomain = Request.QueryString["shop"];
             var apikey = ProfitWiseConfiguration.Settings.ShopifyApiKey;
             var apisecret = ProfitWiseConfiguration.Settings.ShopifyApiSecret;
 
@@ -246,8 +255,8 @@ namespace ProfitWise.Web.Controllers
             if (charge != null && charge.LastStatus == ChargeStatus.Pending)
             {
                 // Redirect for Shopify Charge approval
-                return View("ChargeConfirm",
-                    new ChargeConfirmModel() { ConfirmationUrl = charge.ConfirmationUrl });
+                return View("JavaScriptRedirect", 
+                    JavaScriptRedirectModel.BuildForChargeConfirm(charge.ConfirmationUrl));
             }
             if (charge == null || charge.LastStatus.SystemMustCreateNewCharge())
             {
@@ -256,15 +265,18 @@ namespace ProfitWise.Web.Controllers
                 var newCharge = _shopOrchestrationService.CreateCharge(user.Id, verifyUrl);
 
                 // Redirect for Shopify Charge approval
-                return View("ChargeConfirm",
-                    new ChargeConfirmModel() { ConfirmationUrl = newCharge.ConfirmationUrl });
+                return View("JavaScriptRedirect",
+                    JavaScriptRedirectModel.BuildForChargeConfirm(newCharge.ConfirmationUrl));
             }
 
-            var cookies = Response.Cookies.SerializeToJson();
+            Response.Cookies.Add(new HttpCookie("Test", "Test Cookie"));
 
-            _logger.Info(Request.Cookies["Test"] != null ? Request.Cookies["Test"].Value : "No cookie for you!");
-
-            return RedirectToLocal(returnUrl);
+            return View("JavaScriptRedirect", new JavaScriptRedirectModel
+            {
+                Url = GlobalConfig.BaseUrl,
+                Header = "You've authenticated to ProfitWise",
+                SubTitle = "Loading system..."
+            });
         }
 
         [HttpGet]

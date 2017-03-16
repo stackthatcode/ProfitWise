@@ -1,0 +1,11 @@
+@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Models.JavaScriptRedirectModel
+
+<div style="font-family: Arial; color: #AAA;">
+    <h2 class="header"></h2>
+    <h4></h4>
+    <img src="@GlobalConfig.BaseUrl/Content/images/spinner.gif"/>
+</div>
+<script>
+    window.top.location = '@Model.Url';
+</script>

@@ -1,0 +1,15 @@
+@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Models.ShopifyReturnModel
+@{
+    ViewBag.Title = "ProfitWise - Shopify Authentication";
+}
+
+<form id="form" method="post" action="@GlobalConfig.BuildUrl("/ShopifyAuth/ProfitWiseSignIn")">
+    <input type="hidden" name="shopDomain" value="@Model.ShopDomain" />
+    <input type="hidden" name="code" value="@Model.Code" />
+    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+</form>
+
+<script>
+    document.getElementById("form").submit();
+</script>
