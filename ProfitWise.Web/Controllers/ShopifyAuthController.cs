@@ -119,7 +119,7 @@ namespace ProfitWise.Web.Controllers
             var profitWiseSignIn = await CompleteShopifyAuth(code, shopDomain);
             if (profitWiseSignIn == null)
             {
-                return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl);
+                return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
             }
             
             // Create User
@@ -268,8 +268,6 @@ namespace ProfitWise.Web.Controllers
                 return View("JavaScriptRedirect",
                     JavaScriptRedirectModel.BuildForChargeConfirm(newCharge.ConfirmationUrl));
             }
-
-            Response.Cookies.Add(new HttpCookie("Test", "Test Cookie"));
 
             return View("JavaScriptRedirect", new JavaScriptRedirectModel
             {
