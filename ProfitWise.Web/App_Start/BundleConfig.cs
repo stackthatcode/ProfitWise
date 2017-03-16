@@ -35,7 +35,6 @@ namespace ProfitWise.Web
                 .Include("~/Content/bootstrap-3.3.7-dist/css/bootstrap.min.css"));
 
             bundles.Add(new StyleBundle("~/Content/Css")
-                .Include("~/Content/site.css")
                 .Include("~/Content/daterangepicker.css")
                 .Include("~/Content/datetimepicker.css"));
 

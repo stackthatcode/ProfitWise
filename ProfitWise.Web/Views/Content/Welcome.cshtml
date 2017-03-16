@@ -1,22 +1,29 @@
-﻿@model ProfitWise.Web.Models.WelcomeModel
+﻿@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
 }
 
 <script type="text/html" id="Welcome-Page">
-    <div class="system-page" style="text-align: center;">
-        <h2 class="header">Welcome to ProfitWise!</h2>
-        <h4>We are currently in the process of loading your Shopify store's data.</h4>
-        <div class="top-spacer"></div>
-        <p>
-            For first time Users, this can take as much as 1 hour complete.
-            Once your Shop data is loaded, you will be able to start using ProfitWise immediately.
-        </p>
-        <p>
-            While your data is loading, please visit the Edit Preferences page to review your ProfitWise
-            preferences. You'll find the Edit Preferences page under the Navigate To menu at the top of this page.
-        </p>
+    <div class="system-page" style="text-align: center; min-height: 600px;">
         
+        <img src="@GlobalConfig.BaseUrl/Content/images/Logo600x151HighRes.jpg" style="max-width:500px;"/>
+        
+        <div style="height:75px;"></div>
+
+        <h4>Welcome to ProfitWise! We are currently in the process of loading your Shopify store's data.</h4>
+        
+        <div class="top-spacer"></div>
+
+        <div style="max-width:85%; margin-left:auto; margin-right: auto;">
+            <p style="text-justify:inter-word">
+                For first time Users, it can take up to 1 hour for your data to load.
+                Once this completes, you will be able to start using ProfitWise immediately.
+                While waiting, you can visit the Edit Preferences page to review your ProfitWise
+                preferences. You'll find the Edit Preferences page under the "Navigate to..." menu, up top.
+            </p>
+        </div>
+
         <div data-bind="if: StoreDataLoaded" style="margin-top:40px; width:50%; margin-left:auto; margin-right: auto;">
             <div class="panel panel-default">
                 <div class="panel-body" style="padding:30px;">

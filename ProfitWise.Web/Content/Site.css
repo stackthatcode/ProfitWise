@@ -4,9 +4,9 @@
     margin: 0;
     height: 100%;
     background-color: rgb(235, 238, 240) !important;
-    font-size: 14px;
+    font-size: 13px;
     color: #555;
-    /*line-height: 32px;*/
+    line-height: 32px;
 }
 
 
@@ -244,7 +244,7 @@ h4 {
 
 
 .system-page {
-    margin: 30px; padding: 30px; background-color: #FFF;  min-height: 500px;
+    margin: 30px; padding: 50px; background-color: #FFF;  min-height: 500px;
 }
 
 .system-page h2.header {

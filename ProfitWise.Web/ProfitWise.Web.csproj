@@ -304,6 +304,10 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\images\Logo400x101HighRes.jpg" />
+    <Content Include="Content\images\Logo400x101MedRes.jpg" />
+    <Content Include="Content\images\Logo600x151HighRes.jpg" />
+    <Content Include="Content\images\Logo600x151MedRes.jpg" />
     <Content Include="Emergency\app_offline.htm" />
     <Content Include="Content\bootstrap-3.3.7-dist\css\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css" />
