@@ -363,7 +363,8 @@ namespace ProfitWise.Web.Controllers
             Response.TrySkipIisCustomErrors = true;
            
             var url = GlobalConfig.BaseUrl + $"/ShopifyAuth/Login";
-
+            var shopParameterExists = false;
+            
             if (returnUrl != null)
             {
                 url += $"?returnUrl={HttpUtility.UrlEncode(returnUrl)}";
@@ -372,14 +373,16 @@ namespace ProfitWise.Web.Controllers
                 if (shop != null)
                 {
                     url += $"&shop={shop}";
+                    shopParameterExists = true;
                 }
             }
+
             var model = 
                 new AuthorizationProblemModel(url)
                 {
                     Title = title,
                     Message = message,
-                    ShowLoginLink = showLoginLink,
+                    ShowLoginLink = shopParameterExists && showLoginLink,
                 };
 
             return View("AuthorizationProblem", model);

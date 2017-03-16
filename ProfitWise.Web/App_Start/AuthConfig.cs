@@ -26,13 +26,6 @@ namespace ProfitWise.Web
     public class AuthConfig
     {
         // For Convenient Access
-        public static string LoginUrl(string domain, string returnUrl = null)
-        {
-            var url = "/ShopifyAuth/Login?shop=" + domain +
-                (returnUrl != null ? $"&returnUrl={HttpUtility.UrlEncode(returnUrl)}" : "");
-            return url;
-        }
-
         public const string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
         public const string ExternalLoginFailureUrl = "/ShopifyAuth/ExternalLoginFailure";
         public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
