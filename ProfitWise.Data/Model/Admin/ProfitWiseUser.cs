@@ -12,7 +12,10 @@ namespace ProfitWise.Data.Model.Admin
         public string Domain { get; set; }
         public int CurrencyId { get; set; }
         public long PwShopId { get; set; }
-        public DateTime ProductsLastUpdated { get; set; }
+        public DateTime? ProductsLastUpdated { get; set; }
+        public DateTime? OrderDatasetStart { get; set; }
+        public DateTime? OrderDatasetEnd { get; set; }
+
 
         public bool IsAccessTokenValid { get; set; }
         public bool IsProfitWiseInstalled { get; set; }

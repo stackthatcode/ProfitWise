@@ -81,6 +81,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 $"ShopifyOrderLineId = {ShopifyOrderLineId}" + Environment.NewLine +
                 $"ShopifyOrderId = {ShopifyOrderId}" + Environment.NewLine +
                 $"PwProductId = {PwProductId}" + Environment.NewLine +
+                $"PwVariantId = {PwVariantId}" + Environment.NewLine +
                 $"Quantity = {Quantity}" + Environment.NewLine +
                 $"UnitPrice = {UnitPrice}" + Environment.NewLine +
                 $"GrossTotal = {GrossTotal}" + Environment.NewLine +

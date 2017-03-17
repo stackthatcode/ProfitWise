@@ -32,6 +32,8 @@ namespace ProfitWise.Data.ProcessSteps
             return ScopedPrefix == null ? content : $"{ScopedPrefix} - {content}";
         }
 
+        public bool IsTraceEnabled => _logger.IsTraceEnabled;
+
         public void Trace(string message)
         {
             _logger.Trace(MessageBuilder(message));

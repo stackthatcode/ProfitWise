@@ -32,39 +32,33 @@ namespace ProfitWise.Data.Services
         {
             var repository = _factory.MakeReportRepository(PwShop);
             var queryRepository = _factory.MakeProfitRepository(PwShop);
+            var report = repository.RetrieveReport(reportId);
 
-            using (var trans = _connectionWrapper.InitiateTransaction())
+            queryRepository.PopulateQueryStub(reportId);
+            var queryContext = new TotalQueryContext(PwShop)
             {
-                var report = repository.RetrieveReport(reportId);
+                PwReportId = reportId,
+                StartDate = report.StartDate,
+                EndDate = report.EndDate,
+                Grouping = grouping,
+                Ordering = ordering,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+            };
 
-                queryRepository.PopulateQueryStub(reportId);
-                var queryContext = new TotalQueryContext(PwShop)
-                {
-                    PwReportId = reportId,
-                    StartDate = report.StartDate,
-                    EndDate = report.EndDate,
-                    Grouping = grouping,
-                    Ordering = ordering,
-                    PageNumber = pageNumber,
-                    PageSize = pageSize,
-                };
+            var totals = queryRepository.RetrieveTotalsByContext(queryContext);
 
-                var totals = queryRepository.RetrieveTotalsByContext(queryContext);
+            var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
+            var allProfit = executiveSummary.TotalProfit;
 
-                var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
-                var allProfit = executiveSummary.TotalProfit;
-
-                // Compute Profit % for each line item
-                foreach (var groupTotal in totals)
-                {
-                    groupTotal.ProfitPercentage =
-                        allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
-                }
-
-                trans.Commit();
-
-                return totals;
+            // Compute Profit % for each line item
+            foreach (var groupTotal in totals)
+            {
+                groupTotal.ProfitPercentage =
+                    allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
             }
+                
+            return totals;
         }
 
         public List<Details> GoodsOnHandDetails(

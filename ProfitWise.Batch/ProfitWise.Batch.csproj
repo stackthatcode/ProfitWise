@@ -70,6 +70,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release Standalone|AnyCPU'">
+    <OutputPath>bin\Release Standalone\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
@@ -183,13 +186,10 @@
     <None Include="App.Debug Jeremy.config">
       <DependentUpon>App.config</DependentUpon>
     </None>
-    <None Include="App.Debug.config">
+    <None Include="App.Release Standalone.config">
       <DependentUpon>App.config</DependentUpon>
     </None>
     <None Include="App.Release.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
-    <None Include="App.ReleaseAzure.config">
       <DependentUpon>App.config</DependentUpon>
     </None>
     <None Include="packages.config" />

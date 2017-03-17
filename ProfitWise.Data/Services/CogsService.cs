@@ -194,7 +194,8 @@ namespace ProfitWise.Data.Services
             if (context == null)
             {
                 throw new Exception(
-                    $"Unable to locate OrderLineCogsContext for Order Line {lineItem.ShopifyOrderLineId}");
+                    $"Unable to locate OrderLineCogsContext for Order Line: {lineItem.ShopifyOrderLineId} /" +
+                    $"Order Date: {lineItem.OrderDate}");
             }
 
             if (context.CogsTypeId == CogsType.FixedAmount)

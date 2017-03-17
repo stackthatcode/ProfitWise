@@ -169,6 +169,7 @@ fieldset[disabled] .btn-sample.active {
     height: 28px; 
     background-color: rgb(233, 243, 255);
     font-size: 0.85em;
+        
 }
 
 .filter-description {
@@ -179,6 +180,8 @@ fieldset[disabled] .btn-sample.active {
     text-overflow: ellipsis; 
     white-space: nowrap;
     max-width: 150px;
+    line-height: 1.5em !important;
+
 }
 
 a.filter-remove i {

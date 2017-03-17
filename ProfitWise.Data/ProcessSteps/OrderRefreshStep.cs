@@ -183,7 +183,7 @@ namespace ProfitWise.Data.ProcessSteps
 
 
         // All the "worker" functions call Refresh Orders main function
-        private void RefreshOrders(OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop)
+        public void RefreshOrders(OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop)
         {
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopCredentials);
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
@@ -218,7 +218,7 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        protected virtual void WriteOrdersToPersistence(IList<Order> importedOrders, PwShop shop)
+        public void WriteOrdersToPersistence(IList<Order> importedOrders, PwShop shop)
         {
             var catalogBuilderService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
@@ -286,27 +286,43 @@ namespace ProfitWise.Data.ProcessSteps
 
             _pushLogger.Debug($"Inserting new Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
             _pushLogger.Debug($"BalancingCorrection: {translatedOrder.BalancingCorrection}");
-            _pushLogger.Trace(Environment.NewLine + translatedOrder);
 
             foreach (var lineItem in orderFromShopify.LineItems)
             {
                 var translatedLineItem = translatedOrder.LineItems.First(x => x.ShopifyOrderLineId == lineItem.Id);
 
+                if (_pushLogger.IsTraceEnabled)
+                {
+                    _pushLogger.Trace(translatedLineItem.ToString());
+                }
+
                 var productBuildContext = lineItem.ToProductBuildContext(context.MasterProducts);
                 var variantBuildContext = lineItem.ToVariantBuildContext(allMasterProducts: context.MasterProducts);
 
                 var pwVariant = FindCreateProductVariant(context.PwShop, productBuildContext, variantBuildContext);
+                _pushLogger.Debug("Matching Variant: " + pwVariant.ToString());
+
                 translatedLineItem.SetProfitWiseVariant(pwVariant);
 
                 // In-memory CoGS computation
-                var cogsContexts = CogsDateBlockContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);                
+                var cogsContexts = CogsDateBlockContext.Make(pwVariant.ParentMasterVariant, context.PwShop.CurrencyId);
+
+                if (_pushLogger.IsTraceEnabled)
+                {
+                    foreach (var cogs in cogsContexts)
+                    {
+                        _pushLogger.Trace(cogs.ToString());
+                    }
+                }
+
                 var unitCogs = cogsService.AssignUnitCogsToLineItem(cogsContexts, translatedLineItem);
                 translatedLineItem.UnitCogs = unitCogs;
 
                 _pushLogger.Debug(
                     $"Computed CoGS for new Order Line Item: {translatedLineItem.ShopifyOrderLineId}  - {unitCogs}");
             }
-
+            _pushLogger.Trace(Environment.NewLine + translatedOrder);
+            
             orderRepository.InsertOrder(translatedOrder);
 
             foreach (var item in translatedOrder.LineItems)

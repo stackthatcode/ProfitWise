@@ -10,6 +10,22 @@ namespace ProfitWise.Data.Model.Catalog
         public long PwMasterVariantId { get; set; }
         public PwMasterVariant ParentMasterVariant { get; set; }
 
+
+        public override string ToString()
+        {
+            return
+                "PwVariant" + Environment.NewLine +
+                $"PwShopId = {PwShopId}" + Environment.NewLine +
+                $"PwVariantId = {PwVariantId}" + Environment.NewLine +
+                $"PwMasterVariantId = {PwMasterVariantId}" + Environment.NewLine +
+                $"PwProductId = {PwProductId}" + Environment.NewLine +
+                $"ShopifyProductId = {ShopifyProductId}" + Environment.NewLine +
+                $"ShopifyVariantId = {ShopifyVariantId}" + Environment.NewLine +
+                $"Sku = {Sku}" + Environment.NewLine +
+                $"Title = {Title}" + Environment.NewLine;
+        }
+
+
         public long? ShopifyProductId { get; set; }
         public long? ShopifyVariantId { get; set; }
 

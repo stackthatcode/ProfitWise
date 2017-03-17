@@ -17,17 +17,24 @@ namespace ProfitWise.Batch
         private const string ScheduleInitialShopRefreshOption = "2";
         private const string ScheduleBackgroundSystemJobsOption = "3";
         private const string EmitTimeZones = "4";
+        private const string ManualShopRefresh = "5";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
 
-
-
-        static void TestTimeZone()
+        private static string SolicitUserInput()
         {
-            var id = "Central Standard Time";
-            var timezone = TimeZoneInfo.FindSystemTimeZoneById(id);
+            Console.WriteLine("Please select from the following options and hit enter");
+            Console.WriteLine($"{HangFireBackgroundServiceOption} - Run HangFire Background Service");
+            Console.WriteLine($"{ScheduleInitialShopRefreshOption} - Schedule an Initial Shop Refresh");
+            Console.WriteLine($"{ScheduleBackgroundSystemJobsOption} - Schedule the default ProfitWise System Jobs");
+            Console.WriteLine($"{EmitTimeZones} - Save all Time Zone Id's on the current machine to a text file");
+            Console.WriteLine($"{ManualShopRefresh} - Execute a manual Shop Refresh");
+
+            Console.WriteLine("");
+            return Console.ReadLine();
         }
+
 
         static void Main(string[] args)
         {
@@ -70,8 +77,27 @@ namespace ProfitWise.Batch
                 EmitTimeZonesToConsoleAndTextFile();
                 return;
             }
+            if (choice.Trim() == ManualShopRefresh)
+            {
+                ExecuteManualShopRefresh();
+                return;
+            }
 
             Console.WriteLine("Invalid option - exiting. Bye!");
+        }
+
+
+        public static void ExecuteManualShopRefresh()
+        {
+            Console.WriteLine("Please enter the Shop Owner's User Id");
+            string userId = Console.ReadLine();
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<ShopRefreshProcess>();
+                service.RoutineShopRefresh(userId);
+            }
+            ExitWithAnyKey();
         }
 
         public static void EmitTimeZonesToConsoleAndTextFile()
@@ -85,8 +111,7 @@ namespace ProfitWise.Batch
                 output.Add(z.Id);
             }
             System.IO.File.WriteAllLines(outputFileName, output);
-            Console.WriteLine("Finished - hit enter to exit.");
-            Console.ReadLine();
+            ExitWithAnyKey();
         }
 
 
@@ -96,17 +121,6 @@ namespace ProfitWise.Batch
             Console.ReadKey();
         }
 
-        public static string SolicitUserInput()
-        {
-            Console.WriteLine("Please select from the following options and hit enter");
-            Console.WriteLine($"{HangFireBackgroundServiceOption} - Run HangFire Background Service");
-            Console.WriteLine($"{ScheduleInitialShopRefreshOption} - Schedule an Initial Shop Refresh");
-            Console.WriteLine($"{ScheduleBackgroundSystemJobsOption} - Schedule the default ProfitWise System Jobs");
-            Console.WriteLine($"{EmitTimeZones} - Save all Time Zone Id's on the current machine to a text file");
-
-            Console.WriteLine("");
-            return Console.ReadLine();
-        }
 
         public static void ScheduleBackgroundSystemJobs()
         {

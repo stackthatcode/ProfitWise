@@ -45,6 +45,7 @@
     ProfitWiseWidgets.LoadPieChart = function (id, title, keyedDataset, currencyId) {
         var pieChartData =
             AQ(keyedDataset)
+                .where(function(item) { return item.TotalProfit > 0; })
                 .select(function (item) {
                     return {
                         name: item.GroupingName,

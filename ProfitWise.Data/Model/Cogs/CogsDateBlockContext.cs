@@ -31,6 +31,25 @@ namespace ProfitWise.Data.Model.Cogs
         public decimal? CogsAmount => Cogs.CogsAmount;
         public decimal CogsPercentOfUnitPrice => Cogs.CogsPercentOfUnitPrice;
 
+
+        public override string ToString()
+        {
+            return
+                "CogsDateBlockContext" + Environment.NewLine +
+                $"PwShopId = {PwShopId}" + Environment.NewLine +
+                $"PwMasterVariantId = {PwMasterVariantId}" + Environment.NewLine +
+                $"PwPickListId = {PwPickListId}" + Environment.NewLine +
+                $"PwMasterProductId = {PwMasterProductId}" + Environment.NewLine +
+                $"DestinationCurrencyId = {DestinationCurrencyId}" + Environment.NewLine +
+                $"StartDate = {StartDate}" + Environment.NewLine +
+                $"EndDate = {EndDate}" + Environment.NewLine +
+                $"CogsTypeId = {CogsTypeId}" + Environment.NewLine +
+                $"CogsCurrencyId = {CogsCurrencyId}" + Environment.NewLine +
+                $"CogsAmount = {CogsAmount}" + Environment.NewLine +
+                $"CogsPercentOfUnitPrice = {CogsPercentOfUnitPrice}" + Environment.NewLine;
+        }
+
+
         public int DestinationCurrencyId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
@@ -132,7 +151,7 @@ namespace ProfitWise.Data.Model.Cogs
         public static CogsDateBlockContext SelectContextByDate(
                 this IList<CogsDateBlockContext> contexts, DateTime orderDate)
         {
-            return contexts.FirstOrDefault(x => x.StartDate <= orderDate && x.EndDate > orderDate);
+            return contexts.FirstOrDefault(x => x.StartDate <= orderDate && x.EndDate >= orderDate);
         }
     }
 }

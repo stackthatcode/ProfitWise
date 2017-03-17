@@ -132,7 +132,7 @@ namespace ProfitWise.Batch
                 InstancePerBackgroundJobIfTrue<T1, T2, T3>(
                     this IRegistrationBuilder<T1, T2, T3>  input, bool expression)
         {
-            return expression ? input.InstancePerBackgroundJob() : input;
+            return expression ? input.InstancePerBackgroundJob() : input.InstancePerLifetimeScope();
         }
     }
 }
