@@ -7,11 +7,13 @@
     }
 
     .report-widget-label {
-        font-weight: 700;
-        color: #AAA;
-        font-size: 1.2em;
+        font-weight: 600;
+        color: #555;
+        font-size: 1.0em;
+        text-transform: uppercase;
+        letter-spacing: 0.30em;
     }
-
+    
     .report-widget-drilldown-link {
         font-weight:700; 
         margin-top:10px;
@@ -43,26 +45,31 @@
         text-align:right;
     }
 
+    .executive-summary {
+        padding-left: 30px;padding-right: 30px;
+    }
     .executive-summary h1 {
         font-weight: 700;
         margin-top: 6px;
+        margin-bottom: 0px;
     }
     .executive-summary-label {
-        font-weight: 700;
-        color: #999;
-        font-size:18p
+        font-weight: 400;
+        color: #777;
     }
     .executive-summary .summary-cell {
         text-align: left;
+        padding: 15px;
     }
 
     .summary-header {
-        text-align:center; border-bottom:1px dashed #CCC; overflow:auto;
+        text-align:center; overflow:auto;
     }
 
     .pie-chart {
         min-width: 310px; height: 400px; max-width: 600px;margin: 0 auto;clear: both;
     }
+
 
     #detail-report-table tr td:nth-child(1), #detail-report-table tr th:nth-child(1) {
         width: 22%;
@@ -109,7 +116,7 @@
 
     <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && SummaryActive()">
         <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px"
+        <div style="min-height: 600px; padding-bottom: 30px;"
                 data-bind="template: { name: 'Report-Profitability-Summary', data: $data }">
         </div>
     </div>
@@ -122,12 +129,16 @@
 </script>
 <script id="Report-Profitability-Detail" type="text/html">
     <div id="details-drillup-button" style="height:40px; overflow:auto;">
-        <a href="#" style="width:250px; font-weight:700;" data-bind="click: ExitDetailClick">
-            <i class="glyphicon glyphicon-arrow-left"></i> Navigate Back to Summary
+        <a href="#" class="btn btn-default" style="width:170px;" data-bind="click: ExitDetailClick">
+            <i class="glyphicon glyphicon-arrow-left"></i> Back to Summary
         </a>
     </div>
-
-    <div id="column-chart-detail" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    
+    <div class="panel panel-default" style="padding:15px;">
+        <h4 class="report-widget-label" style="text-align:center;">
+            <span>Profitability by </span><span data-bind="text:ProfitabilityDetailContext.GroupDescription"></span></h4>
+        <div id="column-chart-detail" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
 
     <div data-bind="with: ProfitabilityDetailContext">
         <div data-bind="if: Data().length == 0">
@@ -135,7 +146,6 @@
                 <i style="font-size: 6.0em; color: #DDD;" class="glyphicon glyphicon-tag"></i>
                 <h1 style="font-size:3em; color: #AAA; font-weight: 700;">No Data Found Here</h1>
                 <span style="color: #555;">Try refreshing the page or refining your filters</span>
-
             </div>
         </div>
 
@@ -149,48 +159,48 @@
                     <tr>
                         <th>Name</th>
                         <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 0, ColumnName: 'Items Sold', Model: SortingModel } }"></th>
+                            data: { ColumnIndex: 0, ColumnName: 'Items Sold', Model: SortingModel } }"></th>
                         <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 1, ColumnName: 'Average Margin', Model: SortingModel } }"></th>
+                            data: { ColumnIndex: 1, ColumnName: 'Average Margin', Model: SortingModel } }"></th>
                         <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 2, ColumnName: 'Net Sales', Model: SortingModel } }"></th>
+                            data: { ColumnIndex: 2, ColumnName: 'Net Sales', Model: SortingModel } }"></th>
                         <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 3, ColumnName: 'CoGS', Model: SortingModel } }"></th>
+                            data: { ColumnIndex: 3, ColumnName: 'CoGS', Model: SortingModel } }"></th>
                         <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 4, ColumnName: 'Profit', Model: SortingModel } }"></th>
+                            data: { ColumnIndex: 4, ColumnName: 'Profit', Model: SortingModel } }"></th>
                         <th data-bind="template: { name: 'Sortable-Column-Header',
-                                data: { ColumnIndex: 4, ColumnName: 'Profit %', Model: SortingModel } }"></th>
+                            data: { ColumnIndex: 4, ColumnName: 'Profit %', Model: SortingModel } }"></th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: Data">
                     <tr>
                         <td>
                             <div class="overflow-gracefully" style="max-width:350px;"
-                                 data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></div>
+                                    data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></div>
                         </td>
                         <td>
                             <span class="overflow-gracefully"
-                                  data-bind="text: TotalQuantitySold"></span>
+                                    data-bind="text: TotalQuantitySold"></span>
                         </td>
                         <td>
                             <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(AverageMargin)"></span>%
+                                    data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(AverageMargin)"></span>%
                         </td>
                         <td>
                             <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.Currency())"></span>
+                                    data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.Currency())"></span>
                         </td>
                         <td>
                             <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.Currency())"></span>
+                                    data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.Currency())"></span>
                         </td>
                         <td>
                             <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.Currency())"></span>
+                                    data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.Currency())"></span>
                         </td>
                         <td>
                             <span class="overflow-gracefully"
-                                  data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage)"></span>%
+                                    data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage)"></span>%
                         </td>
                     </tr>
                 </tbody>
@@ -200,49 +210,42 @@
         <div data-bind="if: Data().length > 0 && PagingModel.PageCount() > 1" style="text-align: right;">
             <div style="overflow:auto; margin-bottom: 30px;" data-bind="template: { name: 'Paging-Widget', data: PagingModel }"></div>
         </div>
-
     </div>
 </script>
 <script id="Report-Profitability-Summary" type="html/text">
     <!-- Executive Summary -->
-    <div class="row executive-summary" data-bind="with: ProfitabilitySummaryContext.Data">
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Number of Orders</div>
-            <h1 data-bind="text: ExecutiveSummary.TotalOrders"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Revenue</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Cost of Goods Sold</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Profit</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
-        </div>
-    </div>
+    <div class="panel panel-default">
+        <div class="row executive-summary"
+             data-bind="with: ProfitabilitySummaryContext.Data">
+            <div class="col-xs-3 summary-cell">
+                <h1 data-bind="text: ExecutiveSummary.TotalOrders"></h1>
+                <div class="executive-summary-label">Number of Orders</div>
 
-    <!-- Spacer -->
-    <div class="row">
-        <div class="col-xs-12" style="height:25px; overflow:auto;">
+            </div>
+            <div class="col-xs-3 summary-cell">
+                <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalRevenue, $data.CurrencyId)"></h1>
+                <div class="executive-summary-label">Total Revenue</div>
+            </div>
+            <div class="col-xs-3 summary-cell">
+                <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalCogs, $data.CurrencyId)"></h1>
+                <div class="executive-summary-label">Total Cost of Goods Sold</div>
+            </div>
+            <div class="col-xs-3 summary-cell">
+                <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(ExecutiveSummary.TotalProfit, $data.CurrencyId)"></h1>
+                <div class="executive-summary-label">Total Profit</div>
+            </div>
         </div>
     </div>
 
     <!-- Column Chart with drilldown -->
     <div class="row">
         <div class="col-xs-12" style="overflow:auto;">
-            <div style="text-align:center;">
-                <h4 style="font-weight:700; color:#AAA;">Profits by Time Period</h4>
+            <div class="panel panel-default" style="padding:30px;">
+                <div style="text-align:center;">
+                    <h4 class="report-widget-label">Total Profits by Time Period</h4>
+                </div>
+                <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
             </div>
-            <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-        </div>
-    </div>
-
-    <!-- Spacer -->
-    <div class="row">
-        <div class="col-xs-12" style="height:50px; overflow:auto;">
         </div>
     </div>
 
@@ -251,70 +254,74 @@
         <div data-bind="if: Data().ExecutiveSummary.TotalQuantitySold > 0">
             <div class="row">
                 <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Products</h4>
-                        <a href="#" id="product-detail-link" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Product') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Detail
-                        </a>
-                    </div>
-                    <div id="products-pie-chart" class="pie-chart" style="clear:both;"></div>
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                        data: { ProfitData: Data().ProductsByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }">
+                    <div class="panel panel-default" style="padding:15px;">
+                        <div class="summary-header">
+                            <h4 class="report-widget-label pull-left">Top Performing Products</h4>
+                            <a href="#" id="product-detail-link" 
+                                    class="btn btn-default pull-right"
+                               data-bind="click: function() { DetailCallback('@ReportGrouping.Product') }">
+                                <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Detail
+                            </a>
+                        </div>
+                        <div id="products-pie-chart" class="pie-chart" style="clear:both;"></div>
+                        <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
+                                    data: { ProfitData: Data().ProductsByMostProfitable,
+                                            CurrencyId: Data().CurrencyId } }">
+                        </div>
                     </div>
                 </div>
 
                 <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Vendors</h4>
-                        <a href="#" id="vendor-detail-link" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Vendor') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Vendor Detail
-                        </a>
-                    </div>
-                    <div id="vendors-pie-chart" class="pie-chart"></div>
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                        data: { ProfitData: Data().VendorsByMostProfitable,
-                                                CurrencyId: Data().CurrencyId } }">
+                    <div class="panel panel-default" style="padding:15px;">
+                        <div class="summary-header">
+                            <h4 class="report-widget-label pull-left">Top Performing Vendors</h4>
+                            <a href="#" id="vendor-detail-link" class="btn btn-default pull-right"
+                               data-bind="click: function() { DetailCallback('@ReportGrouping.Vendor') }">
+                                <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Vendor Detail
+                            </a>
+                        </div>
+                        <div id="vendors-pie-chart" class="pie-chart"></div>
+                        <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
+                                    data: { ProfitData: Data().VendorsByMostProfitable,
+                                            CurrencyId: Data().CurrencyId } }">
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-xs-12" style="height:50px; overflow:auto;">
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Variants</h4>
-                        <a href="#" id="variant-detail-link" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.Variant') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Variant Detail
-                        </a>
-                    </div>
-                    <div id="variants-pie-chart" class="pie-chart"></div>
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                            data: { ProfitData: Data().VariantByMostProfitable,
-                                                    CurrencyId: Data().CurrencyId } }"></div>
-                </div>
-
-                <div class="col-xs-6">
-                    <div class="summary-header">
-                        <h4 class="report-widget-label pull-left">Top Performing Product Types</h4>
-                        <a href="#" id="product-type-detail-link" class="report-widget-drilldown-link pull-right"
-                           data-bind="click: function() { DetailCallback('@ReportGrouping.ProductType') }">
-                            <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Type Detail
-                        </a>
-                    </div>
-
-                    <div id="product-types-pie-chart" class="pie-chart"></div>
-
-                    <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
-                                        data: { ProfitData: Data().ProductTypeByMostProfitable,
+                    <div class="panel panel-default" style="padding:15px;">
+                        <div class="summary-header">
+                            <h4 class="report-widget-label pull-left">Top Performing Variants</h4>
+                            <a href="#" id="variant-detail-link" class="btn btn-default pull-right"
+                               data-bind="click: function() { DetailCallback('@ReportGrouping.Variant') }">
+                                <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Variant Detail
+                            </a>
+                        </div>
+                        <div id="variants-pie-chart" class="pie-chart"></div>
+                        <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
+                                        data: { ProfitData: Data().VariantByMostProfitable,
                                                 CurrencyId: Data().CurrencyId } }"></div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="panel panel-default" style="padding:15px;">
+                        <div class="summary-header">
+                            <h4 class="report-widget-label pull-left">Top Performing Product Types</h4>
+                            <a href="#" id="product-type-detail-link" class="btn btn-default pull-right"
+                               data-bind="click: function() { DetailCallback('@ReportGrouping.ProductType') }">
+                                <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Type Detail
+                            </a>
+                        </div>
+
+                        <div id="product-types-pie-chart" class="pie-chart"></div>
+
+                        <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
+                                    data: { ProfitData: Data().ProductTypeByMostProfitable,
+                                            CurrencyId: Data().CurrencyId } }"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -326,6 +333,7 @@
         </div>
     </div>
 </script>
+
 <script id="Report-Profitability-Summary-Widget" type="text/html">
     <!-- Expects to bind to: ProfitData, HeadingLabel, CurrencyId -->
     <div data-bind="if: ProfitData.length > 0">
@@ -401,8 +409,25 @@
 
         self.Data = ko.observableArray();
         self.Grouping = ko.observable('@ReportGrouping.Product');
-        self.Currency = ko.observable(@ProfitWise.Data.Model.System.Currency.DefaultCurrencyId);
         
+        self.GroupDescription = ko.computed(function() {
+            if (self.Grouping() == '@ReportGrouping.Product') {
+                return "Product";
+            }
+            if (self.Grouping() == '@ReportGrouping.Vendor') {
+                return "Vendor";
+            }
+            if (self.Grouping() == '@ReportGrouping.ProductType') {
+                return "Product Type";
+            }
+            if (self.Grouping() == '@ReportGrouping.Variant') {
+                return "Variant";
+            }
+            return "No Grouping";
+        });
+
+        self.Currency = ko.observable(@ProfitWise.Data.Model.System.Currency.DefaultCurrencyId);
+
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
         self.PagingModel.Callback = function() {
             self.LoadDataset(self.ReportId());

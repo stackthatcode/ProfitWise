@@ -5,13 +5,15 @@
     .report-viewer-top-button {
         width: 130px;
     }
-
+    
     .report-widget-label {
-        font-weight: 700;
-        color: #AAA;
-        font-size: 1.2em;
+        font-weight: 600;
+        color: #555;
+        font-size: 1.0em;
+        text-transform: uppercase;
+        letter-spacing: 0.30em;
     }
-
+    
     .report-widget-drilldown-link {
         font-weight:700; 
         margin-top:10px;
@@ -42,14 +44,15 @@
     .executive-summary h1 {
         font-weight: 700;
         margin-top: 6px;
+        margin-bottom: 0px;
     }
     .executive-summary-label {
-        font-weight: 700;
-        color: #999;
-        font-size:18p
+        font-weight: 400;
+        color: #777;
     }
     .executive-summary .summary-cell {
         text-align: left;
+        padding: 15px;
     }
 
     .summary-header {
@@ -116,11 +119,14 @@
                     <a href="#" class="btn btn-default" data-bind="click: BackClick"
                        style="width:100px; z-index: 1000; position: absolute; margin-top:0px;">
                         <i class="glyphicon glyphicon-arrow-left"></i> Back
-                     </a>
+                    </a>
                 </div>
             </div>
-
-            <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            
+            <div class="panel panel-default" style="padding:15px;">
+                <div class="report-widget-label" style="text-align:center;">Value of Goods on Hand</div>
+                <div id="column-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            </div>
 
             <!-- Table -->
             <div data-bind="template: { name: 'Report-Goods-On-Hand-Details'  }"></div>
@@ -131,29 +137,24 @@
 </script>
 <script id="Report-Goods-On-Hand-Totals" type="text/html">
     <!-- Executive Summary -->
-    <div class="row executive-summary" data-bind="with: Data">        
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Cost of Goods on Hand</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalCostOfGoodsOnHand, CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Potential Revenue</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialRevenue, CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-            <div class="executive-summary-label">Potential Profit</div>
-            <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialProfit, CurrencyId)"></h1>
-        </div>
-        <div class="col-xs-3 summary-cell">
-        </div>
-    </div>
-
-    <!-- Spacer -->
-    <div class="row">
-        <div class="col-xs-12" style="height:25px; overflow:auto;">
+    <div class="panel panel-default" style="padding-left:30px; padding-right:30px;">
+        <div class="row executive-summary" data-bind="with: Data">
+            <div class="col-xs-3 summary-cell">
+                <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalCostOfGoodsOnHand, CurrencyId)"></h1>
+                <div class="executive-summary-label">Cost of Goods on Hand</div>
+            </div>
+            <div class="col-xs-3 summary-cell">
+                <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialRevenue, CurrencyId)"></h1>
+                <div class="executive-summary-label">Potential Revenue</div>
+            </div>
+            <div class="col-xs-3 summary-cell">
+                <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialProfit, CurrencyId)"></h1>
+                <div class="executive-summary-label">Potential Profit</div>
+            </div>
+            <div class="col-xs-3 summary-cell">
+            </div>
         </div>
     </div>
-    
 </script>
 
 <script id="Report-Goods-On-Hand-Details" type="text/html">
