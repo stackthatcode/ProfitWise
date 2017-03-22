@@ -156,9 +156,15 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 return true;
             }
 
-            var query = @"SELECT * FROM report(@PwShopId) WHERE CopyForEditing = 0 AND Name = @name;";
+            var report = RetrieveReport(reportId);
+            var reportTypeId = report.ReportTypeId;
+
+            var query = @"SELECT * FROM report(@PwShopId) 
+                        WHERE CopyForEditing = 0 
+                        AND ReportTypeId = @reportTypeId
+                        AND Name = @name;";
             return _connectionWrapper
-                    .Query<PwReport>(query, new { PwShopId, reportId, name })
+                    .Query<PwReport>(query, new { PwShopId, reportId, reportTypeId, name })
                     .Any();
         }
 
