@@ -162,6 +162,7 @@
     <Compile Include="Model\Cogs\CogsDto.cs" />
     <Compile Include="Model\Cogs\CogsDateBlockContext.cs" />
     <Compile Include="Model\Cogs\EntryRefreshContext.cs" />
+    <Compile Include="Model\Cogs\EntryType.cs" />
     <Compile Include="Model\Cogs\MoneyRange.cs" />
     <Compile Include="Model\Cogs\PwCogsDetail.cs" />
     <Compile Include="Model\Cogs\CogsType.cs" />

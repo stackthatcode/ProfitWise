@@ -1,4 +1,5 @@
 ﻿using System;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
 
@@ -22,9 +23,9 @@ namespace ProfitWise.Data.Model.Profit
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public int StartingIndex => (PageNumber - 1) * PageSize;
-
-        public bool IncludeAdjustments { get; set; }
-
+        
+        // Referred to by the query that totals Adjustments
+        public int AdjustmentEntry => EntryType.AdjustmentEntry;
 
         public TotalQueryContext(PwShop pwShop)
         {

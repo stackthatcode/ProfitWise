@@ -17,11 +17,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
 
-        public const int OrderLineEntry = 1;
-        public const int RefundEntry = 2;
-        public const int AdjustmentEntry = 3;
-        public const int CorrectionEntry = 4;
-
 
         public CogsDownstreamRepository(ConnectionWrapper connectionWrapper)
         {
@@ -174,9 +169,16 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 InsertAdjustmentEntriesQuery(context) +
                 InsertCorrectionEntriesQuery(context);
             
-            _connectionWrapper.Execute(query, 
-                new { PwShopId, context.ShopifyOrderId, context.PwMasterProductId, context.PwMasterVariantId,
-                    context.PwPickListId, OrderLineEntry, AdjustmentEntry, RefundEntry, CorrectionEntry });
+            _connectionWrapper.Execute(query, new {
+                    PwShopId,
+                    context.ShopifyOrderId,
+                    context.PwMasterProductId,
+                    context.PwMasterVariantId,
+                    context.PwPickListId,
+                    EntryType.OrderLineEntry,
+                    EntryType.AdjustmentEntry,
+                    EntryType.RefundEntry,
+                    EntryType.CorrectionEntry });
         }
         
         private readonly string PaymentStatusInsertField =
@@ -277,7 +279,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper.Execute(query, new
                 {
                     PwShopId, context.ShopifyOrderId, context.PwMasterProductId, context.PwMasterVariantId,
-                    context.PwPickListId, OrderLineEntry, AdjustmentEntry, RefundEntry, CorrectionEntry
+                    context.PwPickListId, EntryType.OrderLineEntry, EntryType.AdjustmentEntry,
+                    EntryType.RefundEntry, EntryType.CorrectionEntry
                 });
 
         }
@@ -337,7 +340,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 $@" FROM profitreportentry(@PwShopId) pr
                     INNER JOIN ordertable(@PwShopId) o 
                         ON pr.ShopifyOrderId = o.ShopifyOrderId 
-                        AND pr.EntryType = {CorrectionEntry} ";
+                        AND pr.EntryType = {EntryType.CorrectionEntry} ";
             return query + "; ";
         }
         private string UpdateFilterAppender(string query, string orderLineAlias, EntryRefreshContext context)
