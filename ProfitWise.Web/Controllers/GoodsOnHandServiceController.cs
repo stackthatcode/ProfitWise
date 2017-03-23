@@ -69,9 +69,9 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult Export(
                    long reportId, ColumnOrdering ordering, ReportGrouping? grouping = null,
-                   string productType = null, string vendor = null, long? pwProductId = null,
-                   int pageNumber = 1)
+                   string productType = null, string vendor = null, long? pwProductId = null)
         {
+            int pageNumber = 1;
             var userIdentity = HttpContext.IdentitySnapshot();
             if (grouping == null)
             {
