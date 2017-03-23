@@ -10,15 +10,13 @@
 </style>
 
 <script type="text/html" id="Paging-Widget-Popover">
-    <!--<div id="pagination-popover-content"> <!-- style="display: none;"-->
-    <div id="pagination-popover" class="input-group">
+    <div class="input-group">
         <input type="text" class="form-control jump-to-page-class"
                placeholder="Jump to page number..." maxlength="5"
                style="height:36px;"
                data-bind="value: JumpToPage, 
-                    valueUpdate: 'afterkeydown', 
-                    hasFocus: true,
-                    event: { keyup: JumpToPageOnEnter }" />
+                        valueUpdate: 'afterkeydown', 
+                        event: { keyup: JumpToPageOnEnter }" />
 
         <span class="input-group-btn"  style="height:36px;">
             <a href="#" class="btn btn-default" data-bind="click: JumpToPageFunction" type="button">Go!</a>
@@ -52,7 +50,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" rel="popover" class="popover-launcher"
+                    <a href="javascript://" rel="popover" class="popover-launcher"
                        data-bind="popover: { options: { placement: 'bottom', trigger: 'click', },  template: 'Paging-Widget-Popover', data: $data }">
                         Page <span data-bind="text: PageNumber"></span> of <span data-bind="text: PageCount"></span></a>
                 </li>
