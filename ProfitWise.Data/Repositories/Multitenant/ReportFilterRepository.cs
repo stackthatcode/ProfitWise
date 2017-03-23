@@ -136,10 +136,13 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 .ToList();
         }
 
-        public IList<MasterProductOption> RetrieveProductOptions(long pwReportId)
+
+
+        // This is strictly used only for Inventory Valuation, hence the IsStockedDirectly = 1
+        public IList<ProductOption> RetrieveProductOptions(long pwReportId)
         {
             var query =
-                @"SELECT t1.PwProductId, t1.Vendor, t1.Title, COUNT(*) AS VariantCount
+                @"SELECT t1.PwProductId, t1.Vendor, t1.ProductType, t1.Title, COUNT(*) AS VariantCount
                 FROM product(@PwShopId) t1 
 	                INNER JOIN variant(@PwShopId) t2 ON t1.PwProductId = t2.PwProductId
                     INNER JOIN mastervariant(@PwShopId) t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
@@ -165,13 +168,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
                                 WHERE PwReportId = @pwReportId AND FilterType = @vendorTypeFilter ) ";
             }
 
-            query += " GROUP BY t1.PwProductId, t1.Vendor, t1.Title;";
+            query += " GROUP BY t1.PwProductId, t1.Vendor, t1.ProductType, t1.Title;";
 
-            return _connectionWrapper.Query<MasterProductOption>(
+            return _connectionWrapper.Query<ProductOption>(
                             query, new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter }).ToList();
         }
 
-        public IList<MasterVariantOption> RetrieveVariantOptions(long pwReportId)
+        // This is strictly used only for Inventory Valuation, hence the IsStockedDirectly = 1
+        public IList<VariantOption> RetrieveVariantOptions(long pwReportId)
         {
             var query =
                 @"SELECT t1.PwProductId, t2.PwVariantId, t1.Vendor, t1.Title AS ProductTitle, 
@@ -187,7 +191,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var filters = RetrieveFilters(pwReportId);
             var productTypeFilter = PwReportFilter.ProductType;
             var vendorTypeFilter = PwReportFilter.Vendor;
-            var productFilter = PwReportFilter.MasterProduct;
+            var productFilter = PwReportFilter.Product;
 
             if (filters.Count(x => x.FilterType == PwReportFilter.ProductType) > 0)
             {
@@ -210,8 +214,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             query += " ORDER BY t1.Title, t2.Title, t2.Sku";
             return _connectionWrapper
-                .Query<MasterVariantOption>(query,
-                            new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter, productFilter })
+                .Query<VariantOption>(
+                    query, new { PwShopId, @pwReportId, productTypeFilter, vendorTypeFilter, productFilter })
                 .ToList();
         }
 

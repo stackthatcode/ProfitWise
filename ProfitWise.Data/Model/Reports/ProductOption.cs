@@ -4,6 +4,7 @@
     {
         public long PwProductId { get; set; }
         public string Vendor { get; set; }
+        public string ProductType { get; set; }
         public string Title { get; set; }
         public int VariantCount { get; set; }
     }

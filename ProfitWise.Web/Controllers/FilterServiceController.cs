@@ -51,7 +51,7 @@ namespace ProfitWise.Web.Controllers
             // NOTE: this is domain logic living on the controller...
             var output = data.Select(x => new
             {
-                Key = x.Vendor,
+                Key = x.Vendor,   // Otherwise, Vendor can come across as null..
                 Title = x.Vendor.IsNullOrEmptyAlt("(No Vendor)"),
                 ProductCount = x.Count,
             }).ToList();
@@ -116,10 +116,12 @@ namespace ProfitWise.Web.Controllers
 
             var output = data.Select(x => new
             {
-                Key = x.PwMasterProductId,
+                Key = x.PwProductId,
                 Title = x.Title.IsNullOrEmptyAlt("(No Product Title)"),
-                Vendor = x.Vendor,
-                VariantCount = x.VariantCount,
+
+                x.ProductType,
+                x.Vendor,
+                x.VariantCount,
             }).ToList();
 
             return new JsonNetResult(output);
@@ -134,13 +136,15 @@ namespace ProfitWise.Web.Controllers
 
             var output = data.Select(x => new
             {
-                Key = x.PwMasterVariantId,
+                Key = x.PwVariantId,
+                Title = x.Sku.IsNullOrEmptyAlt("(No Sku)") + " - " + 
+                        x.VariantTitle.IsNullOrEmptyAlt("(No Variant Title)"),
+
                 x.VariantTitle,
                 x.ProductTitle,
+                x.ProductType,
+                x.Vendor,
                 x.Sku,
-                Title = x.Sku.IsNullOrEmptyAlt("(No Sku)") +
-                            " - " + x.VariantTitle.IsNullOrEmptyAlt("(No Variant Title)"),
-                Vendor = x.Vendor,
             }).ToList();
 
             return new JsonNetResult(output);

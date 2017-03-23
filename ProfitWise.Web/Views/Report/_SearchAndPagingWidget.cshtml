@@ -1,7 +1,7 @@
 ﻿<!-- Depends on Paging Widget *** please include -->
 
 <!-- Requires FilterPagingWidget model to be passed in KO $data parameter -->
-<script type="text/html" id="Filter-Paging-Widget">
+<script type="text/html" id="Search-And-Paging-Widget">
     <!-- This element is 120px tall -->
     <div class="row-fluid" style="height: 60px; overflow: auto;">
         <div class="col-xs-12 no-side-padding" style="padding-top: 25px;">
@@ -34,7 +34,7 @@
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
-    ProfitWiseWidgets.FilterPagingWidgetModel = function() {
+    ProfitWiseWidgets.SearchAndPagingWidgetModel = function() {
         var self = this;
         self.SearchText = ko.observable();
         self.PlaceHolderText = ko.observable("Search...");
@@ -87,6 +87,9 @@
             self.RefreshCallback();
         };
 
+        self.ClearSearchText = function() {
+            self.SearchText("");
+        };
 
         // Back-end functions
         self.SearchKeyCallback = function(model, event) {

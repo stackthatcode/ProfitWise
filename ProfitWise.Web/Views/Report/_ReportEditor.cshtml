@@ -67,11 +67,11 @@
                     <!-- ko if: ReportTypeId() == @ReportType.Profitability -->
                     <li role="presentation">
                         <a href="#report-filter-master-product" data-bind="click: MasterProductClick"
-                           aria-controls="messages" role="tab" data-toggle="tab">Master Products</a>
+                           aria-controls="messages" role="tab" data-toggle="tab">Products</a>
                     </li>
                     <li role="presentation">
                         <a href="#report-filter-master-variant" data-bind="click: MasterVariantClick"
-                           aria-controls="settings" role="tab" data-toggle="tab">Master Variants</a>
+                           aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
                     </li>
                     <!-- /ko -->
                     
@@ -182,7 +182,7 @@
                     "/FilterService/ProductTypes");
         self.ProductTypeFilterModel.RegisterNotifyCallback(
                 function () {
-                    self.RefreshFilterSummaryAndCount();
+                    self.RefreshFilterBullpenAndCount();
                 });
 
         self.VendorFilterModel =
@@ -192,7 +192,7 @@
                     "/FilterService/Vendors");
         self.VendorFilterModel.RegisterNotifyCallback(
                 function () {
-                    self.RefreshFilterSummaryAndCount();
+                    self.RefreshFilterBullpenAndCount();
                 });
 
         self.MasterProductFilterModel =
@@ -202,7 +202,7 @@
                     "/FilterService/MasterProducts");
         self.MasterProductFilterModel.RegisterNotifyCallback(
                 function () {
-                    self.RefreshFilterSummaryAndCount();
+                    self.RefreshFilterBullpenAndCount();
                 });
         self.MasterProductFilterModel.RegisterSearchTextFunction(
                 function (item, searchText) {
@@ -217,7 +217,7 @@
                     "/FilterService/MasterVariants");
         self.MasterVariantFilterModel.RegisterNotifyCallback(
                 function () {
-                    self.RefreshFilterSummaryAndCount();
+                    self.RefreshFilterBullpenAndCount();
                 });
         self.MasterVariantFilterModel.RegisterSearchTextFunction(
                 function (item, searchText) {
@@ -234,7 +234,7 @@
                     "/FilterService/Products");
         self.ProductFilterModel.RegisterNotifyCallback(
                 function () {
-                    self.RefreshFilterSummaryAndCount();
+                    self.RefreshFilterBullpenAndCount();
                 });
         self.ProductFilterModel.RegisterSearchTextFunction(
                 function (item, searchText) {
@@ -249,7 +249,7 @@
                     "/FilterService/Variants");
         self.VariantFilterModel.RegisterNotifyCallback(
                 function () {
-                    self.RefreshFilterSummaryAndCount();
+                    self.RefreshFilterBullpenAndCount();
                 });
         self.VariantFilterModel.RegisterSearchTextFunction(
                 function (item, searchText) {
@@ -292,9 +292,11 @@
         self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel(self.ReportTypeId());
         self.FilterBullpenModel.RegisterRemoveCallback(function (filterType, key) {
             var filterModel = filterModelByFilterType(filterType);
+            
             filterModel
                 .SelectionModel
                 .SetCheckedItemByKey(key, false);
+
             self.ProductCountModel.Refresh();
         });
 
@@ -303,6 +305,7 @@
             flow.exec(
                 function () {
                     self.SelectedFilterModel(newFilterModel);
+                    self.SelectedFilterModel().SearchAndPagingModel.ClearSearchText();
                     self.SelectedFilterModel().Refresh(this);
                 },
                 function () {
@@ -338,7 +341,7 @@
         };
 
         // Report data bootstrapping function
-        self.RefreshFilterSummaryAndCount = function (callback) {
+        self.RefreshFilterBullpenAndCount = function (callback) {
             flow.exec(
                 function () {
                     self.FilterBullpenModel.Refresh(this);
@@ -382,7 +385,7 @@
                     self.ProductCountModel.ReportId(reportId);
                     self.FilterBullpenModel.ReportId(reportId);
 
-                    self.RefreshFilterSummaryAndCount(this);
+                    self.RefreshFilterBullpenAndCount(this);
                 },
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();

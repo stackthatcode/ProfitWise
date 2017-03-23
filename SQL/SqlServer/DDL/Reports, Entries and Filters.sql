@@ -32,6 +32,10 @@ CREATE TABLE [dbo].[profitwiseprofitreportentry](
 END
 GO
 
+-- PW-135 fix
+ALTER TABLE profitwiseprofitreportentry
+ALTER COLUMN CoGS decimal(15, 6);
+
 
 
 

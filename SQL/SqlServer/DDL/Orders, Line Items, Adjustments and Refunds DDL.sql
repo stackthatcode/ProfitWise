@@ -110,3 +110,8 @@ CREATE TABLE [dbo].[shopifyorderrefund](
 END
 GO
 
+
+-- PW-135 fix
+ALTER TABLE shopifyorderlineitem
+ALTER COLUMN UnitCogs decimal(15, 6);
+

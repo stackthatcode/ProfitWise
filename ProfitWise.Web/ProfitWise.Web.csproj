@@ -436,7 +436,7 @@
     <Content Include="Views\Report\_ReportEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Report\_FilterPagingWidget.cshtml" />
+    <Content Include="Views\Report\_SearchAndPagingWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Report\_FilterTemplates.cshtml" />

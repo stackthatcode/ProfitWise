@@ -75,8 +75,8 @@ namespace ProfitWise.Data.Services
             finalProduct.PwMasterProductId = masterProduct.PwMasterProductId;
             finalProduct.ShopifyProductId = productBuildContext.ShopifyProductId;
             finalProduct.Title = productBuildContext.Title;
-            finalProduct.Vendor = productBuildContext.Vendor;
-            finalProduct.ProductType = productBuildContext.ProductType;
+            finalProduct.Vendor = productBuildContext.Vendor ?? "";
+            finalProduct.ProductType = productBuildContext.ProductType ?? "";
             finalProduct.Tags = productBuildContext.Tags;
             finalProduct.IsActive = productBuildContext.IsActive;
             finalProduct.IsPrimary = false;

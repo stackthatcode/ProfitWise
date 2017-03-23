@@ -35,7 +35,7 @@
     <div>
         <div class="row-fluid">
             <div class="col-xs-12 no-side-padding" style="height: 120px; text-align:right;">
-                <div data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
+                <div data-bind="template: { name: 'Search-And-Paging-Widget', data: $data.SearchAndPagingModel }"></div>
             </div>
         </div>
 
@@ -85,7 +85,7 @@
     <div>
         <div class="row-fluid">
             <div class="col-xs-12 no-side-padding" style="height: 120px; text-align:right;">
-                <div class="pull-right" data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
+                <div class="pull-right" data-bind="template: { name: 'Search-And-Paging-Widget', data: $data.SearchAndPagingModel }"></div>
             </div>
         </div>
 
@@ -134,7 +134,7 @@
     <div>
         <div class="row-fluid">
             <div class="col-xs-12 no-side-padding" style="height: 120px; text-align:right;">
-                <div class="pull-right" data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
+                <div class="pull-right" data-bind="template: { name: 'Search-And-Paging-Widget', data: $data.SearchAndPagingModel }"></div>
             </div>
         </div>
 
@@ -187,7 +187,7 @@
     <div>
         <div class="row-fluid">
             <div class="col-xs-12 no-side-padding" style="height: 120px; text-align:right;">
-                <div class="pull-right" data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
+                <div class="pull-right" data-bind="template: { name: 'Search-And-Paging-Widget', data: $data.SearchAndPagingModel }"></div>
             </div>
         </div>
 
@@ -242,7 +242,7 @@
     <div>
         <div class="row-fluid">
             <div class="col-xs-12 no-side-padding" style="height: 120px; text-align:right;">
-                <div class="pull-right" data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
+                <div class="pull-right" data-bind="template: { name: 'Search-And-Paging-Widget', data: $data.SearchAndPagingModel }"></div>
             </div>
         </div>
 
@@ -295,7 +295,7 @@
     <div>
         <div class="row-fluid">
             <div class="col-xs-12 no-side-padding" style="height: 120px; text-align:right;">
-                <div class="pull-right" data-bind="template: { name: 'Filter-Paging-Widget', data: $data.FilterModel }"></div>
+                <div class="pull-right" data-bind="template: { name: 'Search-And-Paging-Widget', data: $data.SearchAndPagingModel }"></div>
             </div>
         </div>
 
@@ -458,12 +458,12 @@
         self.FilterAjaxUrl = filterAjaxUrl;
         
         // Paging and Filtering model
-        self.FilterModel = new ProfitWiseWidgets.FilterPagingWidgetModel();
-        self.FilterModel.PlaceHolderText(placeHolderText);
-        self.FilterModel.RegisterRefreshCallback(function () {
+        self.SearchAndPagingModel = new ProfitWiseWidgets.SearchAndPagingWidgetModel();
+        self.SearchAndPagingModel.PlaceHolderText(placeHolderText);
+        self.SearchAndPagingModel.RegisterRefreshCallback(function () {
             self.ApplyFiltersAndPaging();
         });
-        self.FilterModel.SetPageSize(50);
+        self.SearchAndPagingModel.SetPageSize(50);
 
         // The paging model puts the data here after filtering and paging ops are done...
         self.CurrentPageOfItems = ko.observableArray();
@@ -488,6 +488,7 @@
 
         // Why is the title not being handled by the server ** TODO 
         self.UpdateFilter = function (key, title, selected) {
+            
             flow.exec(
                 function () {
                     var ajax = new ProfitWiseFunctions.Ajax();
@@ -529,7 +530,7 @@
         };
 
         self.Refresh = function (callback) {
-            self.FilterModel.SetPageNumber(1);
+            self.SearchAndPagingModel.SetPageNumber(1);
             var ajax = new ProfitWiseFunctions.Ajax();
 
             flow.exec(
@@ -548,9 +549,11 @@
         self.ApplyFiltersAndPaging = function () {
             var filterResults =
                 self.SelectionModel.ApplyFiltersAndPaging(
-                    self.FilterModel.SearchText(), self.FilterModel.GetPageNumber(), self.FilterModel.GetPageSize());
+                    self.SearchAndPagingModel.SearchText(),
+                    self.SearchAndPagingModel.GetPageNumber(),
+                    self.SearchAndPagingModel.GetPageSize());
 
-            self.FilterModel.SetRecordCount(filterResults.NumberOfFilteredItems);
+            self.SearchAndPagingModel.SetRecordCount(filterResults.NumberOfFilteredItems);
             self.CurrentPageOfItems(filterResults.PagedItems);
         };
 

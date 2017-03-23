@@ -192,6 +192,7 @@
     <Compile Include="Model\Profit\ReportSearchStub.cs" />
     <Compile Include="Model\Profit\TotalQueryContext.cs" />
     <Compile Include="Model\Billing\PwRecurringCharge.cs" />
+    <Compile Include="Model\Reports\VariantOption.cs" />
     <Compile Include="Model\Reports\ProductOption.cs" />
     <Compile Include="Model\Reports\ReportGrouping.cs" />
     <Compile Include="Model\Reports\ReportOrdering.cs" />
