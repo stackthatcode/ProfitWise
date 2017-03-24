@@ -41,10 +41,6 @@ namespace ProfitWise.Web
                 NLoggerImpl.LoggerFactory("ProfitWise.Web", ActivityId.MessageFormatter);
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
 
-            // Timezone
-            var machineTimeZone = ConfigurationManager.AppSettings["Machine_TimeZone"];
-            builder.Register(x => new TimeZoneTranslator(machineTimeZone));
-
             // Push.Shopify API registration
             Push.Shopify.AutofacRegistration.Build(builder);
             builder.Register(x => new ShopifyClientConfig()

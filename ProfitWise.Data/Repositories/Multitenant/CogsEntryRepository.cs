@@ -7,6 +7,7 @@ using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
+using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Repositories.Multitenant
 {
@@ -16,11 +17,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public PwShop PwShop { get; set; }
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
 
-
-        public CogsEntryRepository(ConnectionWrapper connectionWrapper)
+        public CogsEntryRepository(
+                ConnectionWrapper connectionWrapper, 
+                TimeZoneTranslator timeZoneTranslator)
         {
             _connectionWrapper = connectionWrapper;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
         public IDbTransaction InitiateTransaction()
@@ -35,9 +39,13 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 FROM product(@PwShopId)
                 WHERE PwMasterProductId = @PwMasterProductId AND IsPrimary = 1;";
 
-            return _connectionWrapper
-                .Query<PwCogsProductSummary>(query, new { PwShop.PwShopId, PwMasterProductId = masterProductId })
-                .FirstOrDefault();
+            var output =
+                _connectionWrapper
+                    .Query<PwCogsProductSummary>(query, new { PwShop.PwShopId, PwMasterProductId = masterProductId })
+                    .FirstOrDefault();
+
+            output.DateToday = _timeZoneTranslator.Today(this.PwShop.TimeZone);
+            return output;
         }
         
         public void TouchPickList(long pickListId)
@@ -83,8 +91,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query = ResultsQueryGen(sortByColumn, sortByDirectionDown);
             var startRecord = (pageNumber - 1) * resultsPerPage;
 
-            return _connectionWrapper.Query<PwCogsProductSummary>(query, 
-                new { PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage }).ToList();
+            var output = _connectionWrapper.Query<PwCogsProductSummary>(
+                query, new { PwShop.PwShopId, pickListId, StartRecord = startRecord, ResultsPerPage = resultsPerPage }).ToList();
+
+            var today = _timeZoneTranslator.Today(this.PwShop.TimeZone);
+            output.ForEach(x => x.DateToday = today);
+            return output;
         }        
 
         public IList<PwCogsVariantSummary> RetrieveVariants(IList<long> masterProductIds)
@@ -107,8 +119,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
 	                INNER JOIN CTE_PriceSummary t5 ON t3.PwMasterVariantId = t5.PwMasterVariantId
                 WHERE t3.IsPrimary = 1 AND t2.PwMasterProductId IN @MasterProductIds;";
 
-            return _connectionWrapper.Query<PwCogsVariantSummary>(
+            var output = _connectionWrapper.Query<PwCogsVariantSummary>(
                 query, new {this.PwShopId, MasterProductIds = masterProductIds}).ToList();
+            var today = _timeZoneTranslator.Today(this.PwShop.TimeZone);
+            output.ForEach(x => x.DateToday = today);
+            return output;
         }
 
         public PwCogsVariantSummary RetrieveVariant(long masterVariantId)

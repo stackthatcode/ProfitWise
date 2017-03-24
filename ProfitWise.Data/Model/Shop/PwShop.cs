@@ -23,7 +23,7 @@ namespace ProfitWise.Data.Model.Shop
 
         public bool IsDataLoaded { get; set; }
 
-        public DateTime? StartingDateForOrders { get; set; }
+        public DateTime StartingDateForOrders { get; set; }
         public bool UseDefaultMargin { get; set; }
         public decimal DefaultMargin { get; set; }
         public decimal DefaultCogsPercent => UseDefaultMargin ? (100m - DefaultMargin) / 100m : 0m;
@@ -46,7 +46,7 @@ namespace ProfitWise.Data.Model.Shop
 
         public static PwShop Make(
                 string shopifyUserId, long shopId, int shopCurrencyId, string shopTimeZone, 
-                string shopDomain, int initialOrderStartDateOffsetMonths)
+                string shopDomain, DateTime startDateForOrders)
         {
             var newShop = new PwShop
             {
@@ -60,11 +60,10 @@ namespace ProfitWise.Data.Model.Shop
                 IsProfitWiseInstalled = true,
                 IsDataLoaded = false,
 
-                StartingDateForOrders = 
-                        DateTime.Today.AddMonths(-Math.Abs(initialOrderStartDateOffsetMonths)),
+                StartingDateForOrders = startDateForOrders,
                 UseDefaultMargin = true,
                 DefaultMargin = 20.0m,
-                ProfitRealization = Preferences.ProfitRealizationConstants.OrderReceived,
+                ProfitRealization = ProfitRealizationConstants.OrderReceived,
                 DateRangeDefault = DateRangeDefaults.Last7Days,
 
                 ShopifyUninstallId = null,

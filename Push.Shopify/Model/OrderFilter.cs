@@ -46,7 +46,6 @@ namespace Push.Shopify.Model
             return $"Order Filter dump: ProcessedAtMin: {ProcessedAtMin} - ProcessedAtMax: {ProcessedAtMax} - UpdatedAtMin: {UpdatedAtMin}";
         }
 
-
         public OrderFilter OrderByProcessAtDescending()
         {
             _orderByClause = "processed_at desc";
@@ -60,9 +59,7 @@ namespace Push.Shopify.Model
             _shopifySortOrder = ShopifySortOrder.Ascending;
             return this;
         }
-
-
-
+        
         public QueryStringBuilder ToQueryStringBuilder()
         {
             var builder = 

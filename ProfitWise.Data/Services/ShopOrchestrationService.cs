@@ -27,6 +27,7 @@ namespace ProfitWise.Data.Services
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly HangFireService _hangFireService;
         private readonly IShopifyCredentialService _credentialService;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
         private readonly IPushLogger _logger;
 
 
@@ -52,6 +53,7 @@ namespace ProfitWise.Data.Services
                     ApiRepositoryFactory apifactory, 
                     HangFireService hangFireService, 
                     IShopifyCredentialService credentialService,
+                    TimeZoneTranslator timeZoneTranslator,
                     IPushLogger logger)
         {
             _currencyService = currencyService;
@@ -62,6 +64,7 @@ namespace ProfitWise.Data.Services
             _apifactory = apifactory;
             _hangFireService = hangFireService;
             _credentialService = credentialService;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
         public IDbTransaction InitiateTransaction()
@@ -75,8 +78,11 @@ namespace ProfitWise.Data.Services
         {
             // Create the Shop record in SQL
             var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);
+
+            var orderDatasetStartDate = DateTime.UtcNow.AddMonths(-Math.Abs(_orderStartOffsetMonths));
+            
             var newShop = PwShop.Make(
-                shopOwnerUserId, shop.Id, currencyId, shop.TimeZone, shop.Domain, _orderStartOffsetMonths);
+                shopOwnerUserId, shop.Id, currencyId, shop.TimeZone, shop.Domain, orderDatasetStartDate);
 
             newShop.PwShopId = _shopRepository.Insert(newShop);
             _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}");

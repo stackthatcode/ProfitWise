@@ -430,7 +430,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return innerQuery;
         }
 
-        public List<DateTotal> RetrieveDateTotalsWithoutGrouping(long reportId, DateTime startDate, DateTime endDate)
+        public List<DateTotal> 
+                RetrieveDateTotalsWithoutGrouping(long reportId, DateTime startDate, DateTime endDate)
         {
             var reportRepository = _factory.MakeReportRepository(this.PwShop);
             var hasFilters = reportRepository.HasFilters(reportId);

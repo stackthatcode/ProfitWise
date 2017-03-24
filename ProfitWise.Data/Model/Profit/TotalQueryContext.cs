@@ -2,6 +2,7 @@
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
+using ProfitWise.Data.Services;
 
 namespace ProfitWise.Data.Model.Profit
 {
@@ -15,8 +16,10 @@ namespace ProfitWise.Data.Model.Profit
         public int MinPaymentStatus => PwShop.MinPaymentStatus;
 
         public long PwReportId { get; set; }
+
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        
         public ReportGrouping Grouping { get; set; }
         public ColumnOrdering Ordering { get; set; }
 
@@ -27,10 +30,10 @@ namespace ProfitWise.Data.Model.Profit
         // Referred to by the query that totals Adjustments
         public int AdjustmentEntry => EntryType.AdjustmentEntry;
 
+
         public TotalQueryContext(PwShop pwShop)
         {
             PwShop = pwShop;
-
             PageNumber = 1;
             PageSize = 10;
             Grouping = ReportGrouping.Product;

@@ -189,10 +189,9 @@ namespace ProfitWise.Web.Controllers
             report.GroupingId = groupingId;
             report.OrderingId = orderingId;
 
-            var shopTimeZone = userIdentity.PwShop.TimeZone;
-            report.StartDate = _timeZoneTranslator.ToServerTime(startDate, shopTimeZone);
-            report.EndDate = _timeZoneTranslator.ToServerTime(endDate, shopTimeZone);
-            report.LastAccessedDate = DateTime.Now;
+            report.StartDate = startDate;
+            report.EndDate = endDate;
+            report.LastAccessedDate = DateTime.UtcNow;
             
             repository.UpdateReport(report);
             return JsonNetResult.Success();

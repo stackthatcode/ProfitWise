@@ -13,7 +13,7 @@ using Push.Shopify.Model;
 namespace Push.Shopify.Repositories
 {
     [Intercept(typeof(ShopifyCredentialRequired))]
-    public class OrderApiRepository : IShopifyCredentialConsumer, IOrderApiRepository/**/
+    public class OrderApiRepository : IShopifyCredentialConsumer, IOrderApiRepository
     {
         private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;

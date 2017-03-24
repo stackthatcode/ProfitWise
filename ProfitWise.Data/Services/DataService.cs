@@ -17,13 +17,18 @@ namespace ProfitWise.Data.Services
     {
         private readonly MultitenantFactory _factory;
         private readonly ConnectionWrapper _connectionWrapper;
+        private readonly TimeZoneTranslator _timeZoneTranslator;
 
         public PwShop PwShop { get; set; }
 
-        public DataService(MultitenantFactory factory, ConnectionWrapper connectionWrapper)
+        public DataService(
+                MultitenantFactory factory, 
+                ConnectionWrapper connectionWrapper, 
+                TimeZoneTranslator timeZoneTranslator)
         {
             _factory = factory;
             _connectionWrapper = connectionWrapper;
+            _timeZoneTranslator = timeZoneTranslator;
         }
 
         public List<GroupedTotal> ProfitabilityDetails(

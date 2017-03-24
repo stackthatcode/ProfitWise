@@ -89,10 +89,6 @@ namespace ProfitWise.Batch
                     ConfigurationManager.AppSettings.GetAndTryParseAsBool("FixerApiRetriesEnabled", true)
             });
 
-            // Timezone
-            var machineTimeZone = ConfigurationManager.AppSettings["Machine_TimeZone"];
-            builder.Register(x => new TimeZoneTranslator(machineTimeZone));            
-
             // Push.Foundation.Web relies on consumers to supply Key and IV for its Encryption Service
             Push.Foundation.Web.AutofacRegistration.Build(builder,
                     ProfitWiseConfiguration.Settings.ClaimKey, 

@@ -55,13 +55,14 @@ namespace ProfitWise.Data.Model.Cogs
         [JsonIgnore]
         public IList<PwCogsDetail> CogsDetails { get; set; }
 
+        public DateTime DateToday { get; set; }
+
         [JsonIgnore]
         public PwCogsDetail MostRecentCogsDetail
         {
             get
             {
-                // *** NOTE - no timezone translation
-                return CogsDetails?.Where(x => x.CogsDate <= DateTime.Now)
+                return CogsDetails?.Where(x => x.CogsDate <= DateToday)
                     .OrderByDescending(x => x.CogsDate)
                     .FirstOrDefault();
             }

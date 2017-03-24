@@ -60,8 +60,13 @@ namespace Push.Foundation.Utilities.Helpers
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday);
         }
 
+        public static DateTime DateOnly(this DateTime input)
+        {
+            return new DateTime(input.Year, input.Month, input.Day);
+        }
 
-        
+
+
         public static DateTime FirstOfMonth(this DateTime input)
         {
             return new DateTime(input.Year, input.Month, 1);

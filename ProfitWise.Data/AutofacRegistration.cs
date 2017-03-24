@@ -70,9 +70,6 @@ namespace ProfitWise.Data
             builder.RegisterType<FixerApiConfig>();
             builder.RegisterType<FixerApiRepository>();
             builder.RegisterType<FixerApiRequestFactory>();
-
-            // Chicago, by default!
-            builder.Register(x => new TimeZoneTranslator(-6, 0));
         }
     }
 }

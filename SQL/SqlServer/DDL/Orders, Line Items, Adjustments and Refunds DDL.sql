@@ -30,7 +30,7 @@ CREATE TABLE [dbo].[shopifyorder](
 	[UpdatedAt] [datetime] NOT NULL,
 	[Cancelled] [smallint] NOT NULL,
 	[BalancingCorrection] [decimal](15, 2) NOT NULL,
-	[LastActivityDate] [datetime] NOT NULL,
+	[LastActivityDate] [date] NOT NULL,
  CONSTRAINT [PK_shopifyorder_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,

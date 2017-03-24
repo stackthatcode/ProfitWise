@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Model.Catalog;
+using ProfitWise.Data.Model.Shop;
+using ProfitWise.Data.Services;
 using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.ShopifyImport
@@ -49,15 +51,23 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
 
 
-        public static ShopifyOrder ToShopifyOrder(this Order order, int pwShopId)
+        public static ShopifyOrder ToShopifyOrder(
+                    this Order order, PwShop pwshop, TimeZoneTranslator timeZoneTranslator)
         {
             var shopifyOrder = new ShopifyOrder()
             {
-                PwShopId = pwShopId,
+                PwShopId = pwshop.PwShopId,
                 ShopifyOrderId = order.Id,
                 Email = order.Email,
                 OrderNumber = order.Name,
+
+                // This is monumentally important => we use the Date from the Shopify Shop's timezone
                 OrderDate = order.CreatedAt.Date,
+                
+                // OTOH, these dates will be translated to UTC   
+                CreatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.CreatedAt, pwshop.TimeZone),
+                UpdatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.UpdatedAt, pwshop.TimeZone),
+
                 OrderLevelDiscount = order.OrderDiscount,
                 FinancialStatus = order.FinancialStatus.ToFinancialStatus(),
                 Tags = order.Tags,
@@ -65,26 +75,24 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 LineItems = new List<ShopifyOrderLineItem>(),
                 Adjustments = new List<ShopifyOrderAdjustment>(),
 
-                CreatedAt = order.CreatedAt,
-                UpdatedAt = order.UpdatedAt,
                 Cancelled = order.CancelledAt.HasValue, // only used during Refresh to DELETE Cancelled Orders
             };
 
             foreach (var lineItem in order.LineItems)
             {
-                shopifyOrder.LineItems.Add(lineItem.ToShopifyOrderLineItem(pwShopId, shopifyOrder));
+                shopifyOrder.LineItems.Add(lineItem.ToShopifyOrderLineItem(pwshop.PwShopId, shopifyOrder));
             }
 
             foreach (var adjustment in order.NonShippingAdjustments)
             {
-                shopifyOrder.Adjustments.Add(adjustment.ToShopifyOrderAdjustment(pwShopId, shopifyOrder));
+                shopifyOrder.Adjustments.Add(adjustment.ToShopifyOrderAdjustment(pwshop.PwShopId, shopifyOrder));
             }
 
             var difference = shopifyOrder.OrderLevelDiscount - shopifyOrder.LineItems.Sum(x => x.PortionOfOrderDiscount);
             if (Math.Abs(difference) > 0)
             {
                 var balancingAdjustment = new ShopifyOrderAdjustment();
-                balancingAdjustment.PwShopId = pwShopId;
+                balancingAdjustment.PwShopId = pwshop.PwShopId;
                 balancingAdjustment.Order = shopifyOrder;
 
                 // I know, I know... but we don't have any other way to provision numbers for this
@@ -110,8 +118,11 @@ namespace ProfitWise.Data.Model.ShopifyImport
             var newLineItem = new ShopifyOrderLineItem();
             newLineItem.PwShopId = pwShopId;
             newLineItem.ParentOrder = parentOrder;
-            newLineItem.OrderDate = parentOrder.CreatedAt.Date;
+
+            // Monumentally important => these are being properly set by parent Order
+            newLineItem.OrderDate = parentOrder.OrderDate;
             newLineItem.OrderDateTimestamp = parentOrder.CreatedAt;
+
             newLineItem.ShopifyOrderId = parentOrder.ShopifyOrderId;
             newLineItem.ShopifyOrderLineId = lineFromShopify.Id;
             newLineItem.UnitPrice = lineFromShopify.Price;
@@ -136,7 +147,10 @@ namespace ProfitWise.Data.Model.ShopifyImport
             newRefund.ShopifyRefundId = refundLineFromShopify.Id;
             newRefund.ShopifyOrderId = parentOrder.ShopifyOrderId;
             newRefund.ShopifyOrderLineId = refundLineFromShopify.LineItemId;
-            newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt;
+
+            // Monumentally important => uses Date-only from Shopify Shop timezone
+            newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt.Date;
+
             newRefund.OrderLineItem = parentLineItem;
             newRefund.Amount = refundLineFromShopify.SubTotal;
             newRefund.RestockQuantity = refundLineFromShopify.RestockQuantity;

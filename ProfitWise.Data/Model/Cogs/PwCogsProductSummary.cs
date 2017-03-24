@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using Newtonsoft.Json;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Helpers;
@@ -22,6 +23,20 @@ namespace ProfitWise.Data.Model.Cogs
         public IList<PwCogsVariantSummary> Variants { get; set; }
 
         public int VariantCount => Variants.Count();
+
+        
+        private DateTime _dateToday;
+
+        [JsonIgnore]
+        public DateTime DateToday
+        {
+            get { return _dateToday; }
+            set
+            {
+                _dateToday = value;
+                Variants.ForEach(x => x.DateToday = _dateToday);
+            }
+        }
 
         [JsonIgnore]
         public IList<PwCogsDetail> ActiveCostOfGoods => Variants.Select(x => x.ActiveCostOfGoods).ToList();
@@ -104,6 +119,7 @@ namespace ProfitWise.Data.Model.Cogs
 
         public PwCogsProductSummary()
         {
+            DateToday = DateTime.Today; // Consumers will want to correct this as needed
             Variants = new List<PwCogsVariantSummary>();
         }
 

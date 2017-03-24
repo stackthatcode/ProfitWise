@@ -13,7 +13,7 @@ namespace ProfitWise.Data.Model.Cogs
         public int? CogsCurrencyId { get; set; }
         public decimal? CogsAmount { get; set; }
         public decimal? CogsMarginPercent { get; set; }
-        public DateTime CogsDate { get; set; } // Don't like that this may not be nullable
+        public DateTime CogsDate { get; set; }
 
         public decimal CogsPercentOfUnitPrice => 100m - CogsMarginPercent ?? 0m;
 

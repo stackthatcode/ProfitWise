@@ -72,7 +72,7 @@ namespace ProfitWise.Data.ProcessSteps
             SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
 
             // Update Batch State
-            batchState.ProductsLastUpdated = DateTime.Now.AddMinutes(-15);
+            batchState.ProductsLastUpdated = DateTime.UtcNow.AddMinutes(-15);
             batchStateRepository.Update(batchState);
         }
 
@@ -86,7 +86,7 @@ namespace ProfitWise.Data.ProcessSteps
             {
                 var lastUpdatedInShopifyTime =
                     _timeZoneTranslator
-                        .ToOtherTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
+                        .FromUtcToShopifyTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
                         .AddMinutes(-MinutesFudgeFactor);
 
                 filter.UpdatedAtMin = lastUpdatedInShopifyTime;
@@ -228,7 +228,7 @@ namespace ProfitWise.Data.ProcessSteps
             var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
 
             var fromDateInShopify = 
-                _timeZoneTranslator.ToOtherTimeZone(fromDate, shop.TimeZone)
+                _timeZoneTranslator.FromUtcToShopifyTimeZone(fromDate, shop.TimeZone)
                                 .AddMinutes(-MinutesFudgeFactor);
 
             var filter = new EventFilter()

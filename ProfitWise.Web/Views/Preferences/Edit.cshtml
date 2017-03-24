@@ -179,8 +179,9 @@
         // This must be populated with Javascript Date object
         self.StartingDateForOrders = ko.observable(data.StartingDateForOrders.parseToJavascriptDate());        
         self.OldStartingDateForOrders = ko.observable(data.StartingDateForOrders.parseToJavascriptDate());
+
         self.StartingDateChange = function(newdate) {
-            if (newdate > self.OldStartingDateForOrders()) {
+            if (newdate >= self.OldStartingDateForOrders()) {
                 ShopifyApp.Modal.alert({
                     title: "ProfitWise",
                     message: "The Starting Date for the Historical Data Import can only be set to an earlier date.",
