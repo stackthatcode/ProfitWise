@@ -33,7 +33,7 @@ namespace ProfitWise.Data.Processes
                 ConfigurationManager.AppSettings
                     .GetAndTryParseAsInt("PickListExpirationSeconds", 15 * 60);
 
-            var pickListCutOffDate = DateTime.Now.AddSeconds(-expirationSeconds);
+            var pickListCutOffDate = DateTime.UtcNow.AddSeconds(-expirationSeconds);
             _systemRepository.DeletePickListByDate(pickListCutOffDate);
 
             _pushLogger.Info("System Clean-up Service for Pick List - FIN");
@@ -43,7 +43,7 @@ namespace ProfitWise.Data.Processes
                 ConfigurationManager.AppSettings
                     .GetAndTryParseAsInt("ReportDataExpirationSeconds", 15 * 60);
 
-            var reportDataCutOffDate = DateTime.Now.AddSeconds(-reportDataExpirationSeconds);
+            var reportDataCutOffDate = DateTime.UtcNow.AddSeconds(-reportDataExpirationSeconds);
 
             _systemRepository.CleanupReportData(reportDataCutOffDate);
 

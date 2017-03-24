@@ -81,7 +81,7 @@ namespace ProfitWise.Data.Services
             finalProduct.IsActive = productBuildContext.IsActive;
             finalProduct.IsPrimary = false;
             finalProduct.IsPrimaryManual = false;
-            finalProduct.LastUpdated = DateTime.Now;
+            finalProduct.LastUpdated = DateTime.UtcNow;
             finalProduct.ParentMasterProduct = masterProduct;
             
             var productId = productRepository.InsertProduct(finalProduct);
@@ -147,7 +147,7 @@ namespace ProfitWise.Data.Services
             newVariant.IsActive = context.IsActive;
             newVariant.IsPrimary = false;
             newVariant.IsPrimaryManual = false;
-            newVariant.LastUpdated = DateTime.Now;
+            newVariant.LastUpdated = DateTime.UtcNow;
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
             context.MasterVariant.Variants.Add(newVariant);

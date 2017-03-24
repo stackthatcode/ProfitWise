@@ -361,7 +361,7 @@ namespace ProfitWise.Data.Services
         public void UninstallShop(long shopifyShopId)
         {
             var shop = _shopRepository.RetrieveByShopifyShopId(shopifyShopId);
-            _shopRepository.UpdateIsProfitWiseInstalled(shop.PwShopId, false, DateTime.Now);
+            _shopRepository.UpdateIsProfitWiseInstalled(shop.PwShopId, false, DateTime.UtcNow);
         }
 
         // Kills the Background Jobs from Refreshing and nukes the Billing (if it isn't already!)

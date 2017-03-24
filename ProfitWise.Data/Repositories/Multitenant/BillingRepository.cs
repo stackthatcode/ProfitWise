@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
@@ -72,9 +73,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public void Insert(PwRecurringCharge charge)
         {
+            charge.DateCreated = DateTime.UtcNow;
+            charge.LastUpdated = DateTime.UtcNow;
+
             var query = @"INSERT INTO recurringcharge(@PwShopId) VALUES (
                             @PwShopId, @PwChargeId, @ShopifyRecurringChargeId, @ConfirmationUrl, 
-                            @LastStatus, @IsPrimary, getdate(), getdate(), @LastJson );";
+                            @LastStatus, @IsPrimary, @DateCreated, @LastUpdated, @LastJson );";
             _connectionWrapper.Execute(query, charge);
         }
 
@@ -83,7 +87,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query = @"UPDATE recurringcharge(@PwShopId) 
                         SET ConfirmationUrl	= @ConfirmationUrl,
                             LastStatus = @LastStatus, 
-                            LastUpdated = getdate(),
+                            LastUpdated = @LastUpdated,
                             LastJson = @LastJson,
                             IsPrimary = @IsPrimary
                         WHERE PwChargeId = @PwChargeId;";

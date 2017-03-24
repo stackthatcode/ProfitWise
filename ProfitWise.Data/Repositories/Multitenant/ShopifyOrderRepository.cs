@@ -143,7 +143,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public virtual void InsertLineItem(ShopifyOrderLineItem lineitem)
         {
             lineitem.PwShopId = PwShopId;
-            lineitem.OrderDateTimestamp = DateTime.Now;
             var query =
                 @"INSERT INTO orderlineitem(@PwShopId) ( 
                     PwShopId, ShopifyOrderId, ShopifyOrderLineId, OrderDateTimestamp, OrderDate, FinancialStatus, PwProductId, PwVariantId, 

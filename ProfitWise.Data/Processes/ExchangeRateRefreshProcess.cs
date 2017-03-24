@@ -49,7 +49,7 @@ namespace ProfitWise.Data.Processes
         {
             var lastDate = _systemRepository.RetrieveLastExchangeRateDate();
             var startDate = lastDate?.AddDays(1) ?? DefaultStartDateOfDataset;
-            var endDate = DateTime.Today;
+            var endDate = DateTime.UtcNow.Date;
              
             if (startDate > endDate)
             {

@@ -40,7 +40,7 @@ namespace ProfitWise.Data.ProcessSteps
             if (shop.IsProfitWiseInstalled == false)
             {
                 if (shop.UninstallDateTime.HasValue &&
-                    shop.UninstallDateTime.Value.AddHours(UninstallationFinalizeHours) < DateTime.Now)
+                    shop.UninstallDateTime.Value.AddHours(UninstallationFinalizeHours) < DateTime.UtcNow)
                 {
                     _shopOrchestrationService.FinalizeUninstallation(shop.PwShopId);
                     _pushLogger.Info($"Finalizing Uninstallation process for {shop.PwShopId}");

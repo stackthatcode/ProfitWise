@@ -113,7 +113,7 @@ namespace ProfitWise.Data.Model.Cogs
             {
                 NormalizedCogsAmount = currencyService.Convert(
                     ActiveCostOfGoods.CogsAmount.Value, ActiveCostOfGoods.CogsCurrencyId.Value, 
-                    shopCurrencyId, DateTime.Now);
+                    shopCurrencyId, DateToday);
             }
         }
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.System;
-using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Repositories.System;
 using Push.Foundation.Utilities.Logging;
 
@@ -22,7 +21,7 @@ namespace ProfitWise.Data.Services
         private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(0, 0, 15, 0);
 
         // This sets the next allowed time to the past, thus guaraneteeing a refresh
-        private static DateTime _nextRateRefreshAllowed = DateTime.Now.Add(-CacheRefreshLockInterval);
+        private static DateTime _nextRateRefreshAllowed = DateTime.UtcNow.Add(-CacheRefreshLockInterval);
 
         private static readonly object ExchangeRateLock = new object();
         private static readonly object CurrencyLock = new object();
@@ -71,7 +70,7 @@ namespace ProfitWise.Data.Services
         {
             get
             {
-                if (!_rateCacheLoaded || DateTime.Now > _nextRateRefreshAllowed)
+                if (!_rateCacheLoaded || DateTime.UtcNow > _nextRateRefreshAllowed)
                 {
                     lock (ExchangeRateLock)
                     {
@@ -116,7 +115,7 @@ namespace ProfitWise.Data.Services
 
             _rateCacheLoaded = true;
             _logger.Info($"Exchange Rates cached from {_ratecache.Keys.Min()} through {_ratecache.Keys.Max()}");
-            _nextRateRefreshAllowed = DateTime.Now.Add(CacheRefreshLockInterval);
+            _nextRateRefreshAllowed = DateTime.UtcNow.Add(CacheRefreshLockInterval);
             _logger.Info($"Next Rate Refresh allowed at: {_nextRateRefreshAllowed}");
         }
         

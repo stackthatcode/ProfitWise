@@ -50,7 +50,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void ExecuteAuxillary(ShopifyCredentials shopCredentials)
         {
-            var processStepStartTime = DateTime.Now;
+            var processStepStartTime = DateTime.UtcNow;
 
             // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
@@ -174,7 +174,7 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Debug($"Updating existing Product: {product.Title}");
                 product.Tags = context.Tags;
                 product.ProductType = context.ProductType;
-                product.LastUpdated = DateTime.Now;
+                product.LastUpdated = DateTime.UtcNow;
                 
                 var productRepository = this._multitenantFactory.MakeProductRepository(shop);
                 productRepository.UpdateProduct(product);

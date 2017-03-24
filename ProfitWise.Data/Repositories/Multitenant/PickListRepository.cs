@@ -36,7 +36,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 SELECT SCOPE_IDENTITY();";
 
             return _connectionWrapper.Query<long>(query,
-                    new { PwShop.PwShopId, createdDate = DateTime.Now }).First();
+                    new { PwShop.PwShopId, createdDate = DateTime.UtcNow }).First();
         }        
 
         public void Delete(long pickListId)

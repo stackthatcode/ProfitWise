@@ -14,7 +14,7 @@ namespace ProfitWise.Data.Repositories.System
 
         private static bool _maintenanceActiveCache = false;
         private static DateTime? _lastMaintenanceActiveCheck;
-        private DateTime NextMaintenanceCheck => _lastMaintenanceActiveCheck ?? DateTime.Now;
+        private DateTime NextMaintenanceCheck => _lastMaintenanceActiveCheck ?? DateTime.UtcNow;
         private readonly object maintenanceConcurrencyLock = new object();
 
         public SystemRepository(ConnectionWrapper connectionWrapper)
@@ -32,13 +32,13 @@ namespace ProfitWise.Data.Repositories.System
         {
             lock (maintenanceConcurrencyLock)
             {
-                if (DateTime.Now >= NextMaintenanceCheck)
+                if (DateTime.UtcNow >= NextMaintenanceCheck)
                 {
                     var query = "SELECT [MaintenanceActive] FROM systemstate;";
                     _maintenanceActiveCache = Connection.Query<bool>(query, new { }).First();
 
                     // Think ... this could go way farther out to the future
-                    _lastMaintenanceActiveCheck = DateTime.Now.AddMinutes(1);
+                    _lastMaintenanceActiveCheck = DateTime.UtcNow.AddMinutes(1);
                 }
                 return _maintenanceActiveCache;
             }

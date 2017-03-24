@@ -54,7 +54,7 @@ namespace Push.Foundation.Web.Http
             ProcessIntentionalDelay(hostname);
 
             _pushLogger.Debug($"Invoking HTTP {request.Method} on {request.RequestUri.AbsoluteUri}");
-            _hostLastExecutionTime[hostname] = DateTime.Now;
+            _hostLastExecutionTime[hostname] = DateTime.UtcNow;
             var response = _httpClient.ProcessRequest(request);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
@@ -73,7 +73,7 @@ namespace Push.Foundation.Web.Http
                 throw new BadHttpStatusCodeException(response.StatusCode, response.Body);
             }
             
-            var executionTime = DateTime.Now - _hostLastExecutionTime[hostname];
+            var executionTime = DateTime.UtcNow - _hostLastExecutionTime[hostname];
             _pushLogger.Debug($"Call performance - {executionTime} ms");
             return response;
         }
@@ -83,7 +83,7 @@ namespace Push.Foundation.Web.Http
             if (_hostLastExecutionTime.ContainsKey(hostname))
             {
                 var lastExecutionTime = _hostLastExecutionTime[hostname];
-                var timeSinceLastExecution = DateTime.Now - lastExecutionTime;
+                var timeSinceLastExecution = DateTime.UtcNow - lastExecutionTime;
 
                 var throttlingDelay = new TimeSpan(0, 0, 0, 0, _configuration.ThrottlingDelay);
 

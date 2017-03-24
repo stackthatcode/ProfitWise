@@ -51,8 +51,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public void TouchPickList(long pickListId)
         {
             var touchQuery =
-                @"UPDATE picklist(@PwShopId) SET LastAccessed = getdate() WHERE PwPickListId = @pickListId";
-            _connectionWrapper.Execute(touchQuery, new { PwShopId, pickListId });
+                @"UPDATE picklist(@PwShopId) SET LastAccessed = @now WHERE PwPickListId = @pickListId";
+            _connectionWrapper.Execute(touchQuery, new { PwShopId, pickListId, now = DateTime.UtcNow });
         }
 
         private string ResultsQueryGen(int sortByColumn, bool sortByDirectionDown, bool primaryOnly = true)

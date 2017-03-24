@@ -102,7 +102,7 @@ namespace ProfitWise.DataMocks
                         Inventory = HelperExtensions.GenerateRandomInteger(100),
                         ParentProduct = product,
                         Price = HelperExtensions.GenerateRandomInteger(100) * 20 - 0.01m,
-                        UpdatedAt = DateTime.Now.AddDays(-HelperExtensions.GenerateRandomInteger(720)),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-HelperExtensions.GenerateRandomInteger(720)),
                         InventoryManagement = HelperExtensions.GenerateRandomInteger(10) > 3 ? "Shopfiy" : null,                        
                     };
 

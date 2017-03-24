@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
@@ -169,13 +170,16 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public long InsertReport(PwReport report)
         {
+            report.CreatedDate = DateTime.UtcNow;
+            report.LastAccessedDate = DateTime.UtcNow;
+            
             var query =
                 @"INSERT INTO report(@PwShopId) (
                     PwShopId, ReportTypeId, Name, IsSystemReport, CopyForEditing, OriginalReportId, 
                     StartDate, EndDate, GroupingId, OrderingId, CreatedDate, LastAccessedDate ) 
                 VALUES ( 
                     @PwShopId, @ReportTypeId, @Name, @IsSystemReport, @CopyForEditing, @OriginalReportId, 
-                    @StartDate, @EndDate, @GroupingId, @OrderingId, getdate(), getdate() );
+                    @StartDate, @EndDate, @GroupingId, @OrderingId, @CreatedDate, @LastAccessedDate );
                 
                 SELECT SCOPE_IDENTITY();";
 
@@ -185,7 +189,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public void UpdateReport(PwReport report)
         {
             report.PwShopId = PwShopId;
-
+            report.LastAccessedDate = DateTime.UtcNow;
+            
             var query = @"UPDATE report(@PwShopId) SET 
                             Name = @Name,
                             IsSystemReport = @IsSystemReport,
@@ -195,15 +200,15 @@ namespace ProfitWise.Data.Repositories.Multitenant
                             EndDate = @EndDate,
                             GroupingId = @GroupingId,
                             OrderingId = @OrderingId,
-                            LastAccessedDate = getdate()                     
+                            LastAccessedDate = @LastAccessedDate                     
                         WHERE PwReportId = @PwReportId;";
             _connectionWrapper.Execute(query, report );
         }
 
         public void UpdateReportLastAccessed(long reportId)
         {
-            var query = @"UPDATE report(@PwShopId) SET LastAccessedDate = getdate() WHERE PwReportId = @reportId;";
-            _connectionWrapper.Execute(query, new { this.PwShopId, reportId });
+            var query = @"UPDATE report(@PwShopId) SET LastAccessedDate = @now WHERE PwReportId = @reportId;";
+            _connectionWrapper.Execute(query, new { this.PwShopId, reportId, now = DateTime.UtcNow });
         }
 
         public void DeleteReport(long reportId)

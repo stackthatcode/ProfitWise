@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model.Preferences;
 
 namespace ProfitWise.Data.Model.Reports
 {
@@ -46,8 +45,8 @@ namespace ProfitWise.Data.Model.Reports
                 EndDate = this.EndDate,
                 GroupingId = this.GroupingId,
                 OrderingId = this.OrderingId,
-                CreatedDate = DateTime.Now,
-                LastAccessedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
+                LastAccessedDate = DateTime.UtcNow,
             };
         }
 
@@ -55,7 +54,7 @@ namespace ProfitWise.Data.Model.Reports
         {
             CopyForEditing = false;
             Name = name;
-            LastAccessedDate = DateTime.Now;
+            LastAccessedDate = DateTime.UtcNow;
         }
     }
 

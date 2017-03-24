@@ -22,7 +22,7 @@ namespace ProfitWise.TestData.MockShopifyStore
 
             while (orderId <= NumberOfOrders)
             {
-                var createdAt = DateTime.Now.AddDays(-HelperExtensions.GenerateRandomInteger(1000));
+                var createdAt = DateTime.UtcNow.AddDays(-HelperExtensions.GenerateRandomInteger(1000));
 
                 var order = new Order()
                 {
