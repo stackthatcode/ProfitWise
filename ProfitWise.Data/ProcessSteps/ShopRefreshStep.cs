@@ -68,7 +68,8 @@ namespace ProfitWise.Data.ProcessSteps
             // Update Shop with the latest from Shopify API
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(credentials);
             var shopFromShopify = shopApiRepository.Retrieve();
-            _shopOrchestrationService.UpdateShop(credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZone);
+            _shopOrchestrationService.UpdateShop(
+                credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZoneIana);
 
             return true;
         }

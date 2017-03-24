@@ -5,7 +5,6 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.ProcessSteps;
-using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
@@ -70,6 +69,8 @@ namespace ProfitWise.Data
             builder.RegisterType<FixerApiConfig>();
             builder.RegisterType<FixerApiRepository>();
             builder.RegisterType<FixerApiRequestFactory>();
+
+            builder.RegisterType<TimeZoneTranslator>();
         }
     }
 }

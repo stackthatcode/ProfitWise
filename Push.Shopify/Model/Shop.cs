@@ -7,6 +7,7 @@ namespace Push.Shopify.Model
         public long Id { get; set; }
         public string Currency { get; set; }
         public string TimeZone { get; set; }
+        public string TimeZoneIana { get; set; }
         public string Domain { get; set; }
         public string Email { get; set; }
 
@@ -18,6 +19,7 @@ namespace Push.Shopify.Model
             this.Id = shop.id;
             this.Currency = shop.currency;
             this.TimeZone = shop.timezone;
+            this.TimeZoneIana = shop.iana_timezone;
             this.Domain = shop.myshopify_domain;
             this.Email = shop.email;
         }

@@ -82,7 +82,7 @@ namespace ProfitWise.Data.Services
             var orderDatasetStartDate = DateTime.UtcNow.AddMonths(-Math.Abs(_orderStartOffsetMonths));
             
             var newShop = PwShop.Make(
-                shopOwnerUserId, shop.Id, currencyId, shop.TimeZone, shop.Domain, orderDatasetStartDate);
+                shopOwnerUserId, shop.Id, currencyId, shop.TimeZoneIana, shop.Domain, orderDatasetStartDate);
 
             newShop.PwShopId = _shopRepository.Insert(newShop);
             _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}");

@@ -1,6 +1,7 @@
 ﻿using System;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Profit;
+using ProfitWise.Data.Services;
 using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.Shop
@@ -24,6 +25,11 @@ namespace ProfitWise.Data.Model.Shop
         public bool IsDataLoaded { get; set; }
 
         public DateTime StartingDateForOrders { get; set; }
+
+        public DateTime 
+            StartingDateForOrdersInShopTime
+                => StartingDateForOrders.FromUtcToShopifyTimeZone(this.TimeZone);
+
         public bool UseDefaultMargin { get; set; }
         public decimal DefaultMargin { get; set; }
         public decimal DefaultCogsPercent => UseDefaultMargin ? (100m - DefaultMargin) / 100m : 0m;

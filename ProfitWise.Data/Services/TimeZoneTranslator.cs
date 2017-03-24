@@ -1,6 +1,7 @@
 ﻿using System;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Helpers;
+using TimeZoneConverter;
 
 namespace ProfitWise.Data.Services
 {
@@ -14,18 +15,40 @@ namespace ProfitWise.Data.Services
 
         public DateTime FromUtcToShopifyTimeZone(DateTime dateTimeUtc, string shopifyTimeZone)
         {
-            var hourAdjustment = shopifyTimeZone.ParseShopifyTimeZoneHours();
-            var minuteAdjustment = shopifyTimeZone.ParseShopifyTimeZoneMinutes();
-
-            return dateTimeUtc.Add(new TimeSpan(0, hourAdjustment, minuteAdjustment, 0));
+            var timeZoneId = TZConvert.IanaToWindows(shopifyTimeZone);
+            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            return TimeZoneInfo.ConvertTimeFromUtc(dateTimeUtc, timeZoneInfo);
         }
 
-        public DateTime ToUtcFromShopifyTimeZone(DateTime input, string shopifyTimeZone)
+        public DateTime ToUtcFromShopifyTimeZone(DateTime dateTimeLocalTz, string shopifyTimeZone)
         {
-            var hourAdjustment = -shopifyTimeZone.ParseShopifyTimeZoneHours();
-            var minAdjustment = -shopifyTimeZone.ParseShopifyTimeZoneMinutes();
+            DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            var timeZoneId = TZConvert.IanaToWindows(shopifyTimeZone);
+            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            return TimeZoneInfo.ConvertTimeToUtc(dateTimeLocalTz, timeZoneInfo);
+        }
+    }
 
-            return input.Add(new TimeSpan(0, hourAdjustment, minAdjustment, 0));
-        }        
+
+    // After all that dependency injecting hemming and hawwing, eh?
+    public static class TimeZoneTranslatorExtensions
+    {
+        private static readonly TimeZoneTranslator _translator = new TimeZoneTranslator();
+
+        public static DateTime Today(string shopifyTimeZone)
+        {
+            return _translator.Today(shopifyTimeZone);
+        }
+
+        public static DateTime FromUtcToShopifyTimeZone(this DateTime dateTimeUtc, string shopifyTimeZone)
+        {
+            return _translator.FromUtcToShopifyTimeZone(dateTimeUtc, shopifyTimeZone);
+        }
+
+        public static DateTime ToUtcFromShopifyTimeZone(this DateTime dateTimeUtc, string shopifyTimeZone)
+        {
+            return _translator.ToUtcFromShopifyTimeZone(dateTimeUtc, shopifyTimeZone);
+        }
     }
 }
+

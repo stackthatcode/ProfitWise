@@ -30,19 +30,26 @@ ProfitWiseFunctions.SynchronizeWidth = function (sourceSelector, targetSelector)
 }
 
 
-String.prototype.trunc = String.prototype.trunc ||
-    function (n) {
-        return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
-    };
+String.prototype.trunc = function (n) {
+    return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
+};
 
-String.prototype.parseToJavascriptDate = String.prototype.parseToJavascriptDate ||
-    function() {
+String.prototype.parseToJavascriptDate = function (params) {        
+    if (params && params.parseTimeZone) {
+        return moment(this).toDate();
+    } else {
         return moment(this.substring(0, 10)).toDate();
-    };
+    }
+};
+
+ProfitWiseFunctions.parseToJavascriptDate = function (input) {
+    return moment(input).toDate();
+};
+
 
 ProfitWiseFunctions.ToDecimalPlaces = function(input) {
     return parseFloat(Math.round(input * 100) / 100).toFixed(2);
-}
+};
 
 ProfitWiseFunctions.MomentStartOfDay =
     function (momentObject) {
