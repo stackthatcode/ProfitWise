@@ -42,6 +42,7 @@ SELECT * FROM product(100001) WHERE Title LIKE '%Ultimaker 3%'
 SELECT * FROM variant(100001) WHERE SKU LIKE '%UM3%'
 
 
-UPDATE shop(100001) SET TimeZone = '(GMT-05:00) Eastern Time'
+
+SELECT * FROM profitwiseshop;
 
 

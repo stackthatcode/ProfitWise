@@ -127,9 +127,9 @@ namespace ProfitWise.Data.Processes
 
             try
             {
-                RefreshLock.FreeProcessLock(userId);
                 var lockResult = RefreshLock.AttemptToLockMethod(userId);
-                _pushLogger.Info($"AttemptToLockMethod for UserId: {userId} / Lock Result:{lockResult.Success}");
+                _pushLogger.Info(
+                    $"Process Lock -> AttemptToLockMethod for UserId:{userId} / Lock Result:{lockResult.Success}");                
 
                 if (!lockResult.Success)
                 {
@@ -144,6 +144,7 @@ namespace ProfitWise.Data.Processes
                 {
                     return;
                 }
+
                 _productRefreshStep.Execute(credentials);
                 _orderRefreshStep.Execute(credentials);
                 _productCleanupStep.Execute(credentials);

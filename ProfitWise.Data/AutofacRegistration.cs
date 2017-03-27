@@ -61,9 +61,7 @@ namespace ProfitWise.Data
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();
             builder.RegisterType<SystemCleanupProcess>();
-
-            builder.RegisterType<MultitenantMethodLock>();
-
+            
             builder.RegisterType<ShopRequired>();
 
             builder.RegisterType<FixerApiConfig>();

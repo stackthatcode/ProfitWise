@@ -31,6 +31,7 @@ namespace Push.Foundation.Web.Helpers
                 Dictionary.Select(
                     x => $"{HttpUtility.UrlEncode(x.Key)}={HttpUtility.UrlEncode(x.Value)}")
                     .ToArray();
+
             return string.Join("&", array);
         }
     }

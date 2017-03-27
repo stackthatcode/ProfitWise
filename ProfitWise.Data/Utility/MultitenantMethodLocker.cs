@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Utility
 {
     public class MultitenantMethodLock
     {
-        private readonly IPushLogger _logger;
-
         private readonly
             ConcurrentDictionary<string, string>
-            _processing = new ConcurrentDictionary<string, string>();
+                _processing = new ConcurrentDictionary<string, string>();
 
         private readonly object _lock = new object();
 
@@ -50,7 +47,6 @@ namespace ProfitWise.Data.Utility
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e);
                     return new MethodLockResult
                     {
                         Success = false,
@@ -61,7 +57,7 @@ namespace ProfitWise.Data.Utility
             }
         }
 
-        public void FreeProcessLock(string userId)
+        public bool FreeProcessLock(string userId)
         {
             lock (_lock)
             {
@@ -70,11 +66,11 @@ namespace ProfitWise.Data.Utility
                     var key = BuildKey(userId);
                     string keyOut;
                     _processing.TryRemove(key, out keyOut);
-
+                    return true;
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e);
+                    return false;
                 }
             }
         }
