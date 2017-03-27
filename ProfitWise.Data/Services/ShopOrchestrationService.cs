@@ -100,11 +100,11 @@ namespace ProfitWise.Data.Services
             return newShop;
         }
 
-        public void UpdateShop(string userId, string currencySymbol, string timezone)
+        public void UpdateShop(string userId, string currencySymbol, string timeZoneIana)
         {
             var pwShop = _shopRepository.RetrieveByUserId(userId);
             pwShop.CurrencyId = _currencyService.AbbreviationToCurrencyId(currencySymbol); ;
-            pwShop.TimeZone = timezone;
+            pwShop.TimeZone = timeZoneIana;
 
             using (var transaction = _shopRepository.InitiateTransaction())
             {

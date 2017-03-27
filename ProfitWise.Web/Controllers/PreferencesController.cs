@@ -51,14 +51,13 @@ namespace ProfitWise.Web.Controllers
         {
             var shop = HttpContext.IdentitySnapshot().PwShop;
 
-            var startDateInUtc = _timeZoneTranslator.ToUtcFromShopifyTimeZone(startDate, shop.TimeZone);
-            if (startDateInUtc > shop.StartingDateForOrders)
+            if (startDate > shop.StartingDateForOrders)
             {
-                throw new Exception($"User attempted to set Start Date to {startDateInUtc} for shop {shop.PwShopId}");
+                throw new Exception($"User attempted to set Start Date to {startDate} for shop {shop.PwShopId}");
             }
             else
             {
-                _shopRepository.UpdateStartingDateForOrders(shop.PwShopId, startDateInUtc);
+                _shopRepository.UpdateStartingDateForOrders(shop.PwShopId, startDate);
                 return JsonNetResult.Success();
             }
         }

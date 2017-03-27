@@ -49,6 +49,14 @@ namespace ProfitWise.Data.Services
         {
             return _translator.ToUtcFromShopifyTimeZone(dateTimeUtc, shopifyTimeZone);
         }
+
+        public static DateTime FromUnspecifiedToLocalTimeZone(
+                this DateTime unspecifiedDateTime, string targetTimeZone)
+        {
+            var dateTimeUtc = 
+                _translator.ToUtcFromShopifyTimeZone(unspecifiedDateTime, targetTimeZone);
+            return _translator.FromUtcToShopifyTimeZone(dateTimeUtc, targetTimeZone);
+        }
     }
 }
 

@@ -176,8 +176,7 @@
         var self = this;
         self.DateRangeOptions = ProfitWiseWidgets.DateRanges;
 
-        var startingDate = ProfitWiseFunctions.parseToJavascriptDate(data.StartingDateForOrdersInShopTime);
-        
+        var startingDate = ProfitWiseFunctions.parseToJavascriptDate(data.StartingDateForOrders);        
         self.StartingDateForOrders = ko.observable(startingDate);
         self.OldStartingDateForOrders = ko.observable(startingDate);
         
@@ -193,8 +192,9 @@
                 return;
             }
 
+            console.log('Date Comparison', newdate, self.OldStartingDateForOrders());
+                
             if (newdate < self.OldStartingDateForOrders()) {
-                console.log(newdate, self.OldStartingDateForOrders());
                 console.log(typeof newdate, typeof self.OldStartingDateForOrders());
 
                 flow.exec(
