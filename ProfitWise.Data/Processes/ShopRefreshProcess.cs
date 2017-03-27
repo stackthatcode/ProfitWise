@@ -118,14 +118,8 @@ namespace ProfitWise.Data.Processes
             return credentials;
         }
 
-        private void ExecuteRefresh(string userId)
+        private bool RetrieveMethodLock(string userId)
         {
-            var id = _connectionWrapper.Identifier;
-            _pushLogger.Debug($"Connection Wrapper Id: {id}");
-
-            var credentials = Credentials(userId);
-            _pushLogger.Info($"Starting Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
-
             var lockResult = RefreshLock.AttemptToLockMethod(userId);
             _pushLogger.Info(
                 $"Process Lock -> AttemptToLockMethod for UserId:{userId} / Lock Result:{lockResult.Success}");
@@ -133,11 +127,28 @@ namespace ProfitWise.Data.Processes
             {
                 if (lockResult.Exception != null)
                     _pushLogger.Error(lockResult.Exception);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void ExecuteRefresh(string userId)
+        {
+            if (!RetrieveMethodLock(userId))
+            {
                 return;
             }
+            var credentials = Credentials(userId);
+            _pushLogger.Info($"Starting Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
 
             try
             {
+                var id = _connectionWrapper.Identifier;
+                _pushLogger.Debug($"Connection Wrapper Id: {id}");
+
                 if (!_shopRefreshStep.Execute(credentials))
                 {
                     return;

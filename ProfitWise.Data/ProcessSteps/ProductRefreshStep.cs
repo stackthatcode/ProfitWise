@@ -227,14 +227,12 @@ namespace ProfitWise.Data.ProcessSteps
                                 ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDate)
         {
             var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
-
             var fromDateInShopify = 
-                _timeZoneTranslator.FromUtcToShopifyTimeZone(fromDate, shop.TimeZone)
-                                .AddMinutes(MinutesFudgeFactor);
+                _timeZoneTranslator.FromUtcToShopifyTimeZone(fromDate, shop.TimeZone);
 
             var filter = new EventFilter()
             {
-                CreatedAtMin = fromDateInShopify,
+                CreatedAtMin = fromDateInShopify.AddMinutes(MinutesFudgeFactor),
                 Verb = EventVerbs.Destroy,
                 Filter = EventTypes.Product
             };
