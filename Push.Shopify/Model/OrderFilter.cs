@@ -36,6 +36,7 @@ namespace Push.Shopify.Model
 
         public string Status { get; set;  }
 
+        // At time of writing, these are all represented in the actual Shop's timezone i.e. the offset is implicit
         public DateTime? ProcessedAtMin { get; set; }
         public DateTime? ProcessedAtMax { get; set; }
         public DateTime? UpdatedAtMin { get; set; }
@@ -69,18 +70,15 @@ namespace Push.Shopify.Model
 
             if (ProcessedAtMin != null)
             {
-                builder.Add("processed_at_min",
-                    ProcessedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+                builder.Add("processed_at_min", ProcessedAtMin.Value);
             }
             if (ProcessedAtMax != null)
             {
-                builder.Add("processed_at_max",
-                     ProcessedAtMax.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+                builder.Add("processed_at_max", ProcessedAtMax.Value);
             }
             if (UpdatedAtMin != null)
             {
-                builder.Add("updated_at_min",
-                     UpdatedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+                builder.Add("updated_at_min", UpdatedAtMin.Value);
             }
 
             return builder;

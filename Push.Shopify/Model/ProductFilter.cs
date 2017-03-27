@@ -13,8 +13,7 @@ namespace Push.Shopify.Model
 
             if (UpdatedAtMin != null)
             {
-                builder.Add("updated_at_min",
-                    UpdatedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+                builder.Add("updated_at_min", UpdatedAtMin.Value);
             }
             return builder;
         }

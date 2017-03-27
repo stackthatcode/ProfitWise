@@ -26,8 +26,7 @@ namespace Push.Shopify.Model
 
             if (CreatedAtMin != null)
             {
-                builder.Add("created_at_min",
-                    CreatedAtMin.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture));
+                builder.Add("created_at_min", CreatedAtMin.Value);
             }
             if (Verb != null)
             {
