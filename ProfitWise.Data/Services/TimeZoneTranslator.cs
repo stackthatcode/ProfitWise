@@ -20,9 +20,9 @@ namespace ProfitWise.Data.Services
             return TimeZoneInfo.ConvertTimeFromUtc(dateTimeUtc, timeZoneInfo);
         }
 
-        public DateTime ToUtcFromShopifyTimeZone(DateTime dateTimeLocalTz, string shopifyTimeZone)
+        public DateTime ToUtcFromShopifyTimeZone(DateTime dateTimeLocal, string shopifyTimeZone)
         {
-            DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            var dateTimeLocalTz = DateTime.SpecifyKind(dateTimeLocal, DateTimeKind.Unspecified);
             var timeZoneId = TZConvert.IanaToWindows(shopifyTimeZone);
             var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
             return TimeZoneInfo.ConvertTimeToUtc(dateTimeLocalTz, timeZoneInfo);
@@ -51,7 +51,7 @@ namespace ProfitWise.Data.Services
         }
 
         public static DateTime FromUnspecifiedToLocalTimeZone(
-                this DateTime unspecifiedDateTime, string targetTimeZone)
+                    this DateTime unspecifiedDateTime, string targetTimeZone)
         {
             var dateTimeUtc = 
                 _translator.ToUtcFromShopifyTimeZone(unspecifiedDateTime, targetTimeZone);

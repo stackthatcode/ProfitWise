@@ -23,7 +23,7 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly TimeZoneTranslator _timeZoneTranslator;
 
         // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
-        public const int MinutesFudgeFactor = 75;
+        public const int MinutesFudgeFactor = -75;
         
 
         public ProductRefreshStep(
@@ -68,11 +68,12 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Retrieve existing catalog from ProfitWise
             var masterProducts = service.RetrieveFullCatalog();
-            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime.AddMinutes(-15);
+            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime;
+            
             SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
 
             // Update Batch State
-            batchState.ProductsLastUpdated = DateTime.UtcNow.AddMinutes(-15);
+            batchState.ProductsLastUpdated = DateTime.UtcNow;
             batchStateRepository.Update(batchState);
         }
 
@@ -87,7 +88,7 @@ namespace ProfitWise.Data.ProcessSteps
                 var lastUpdatedInShopifyTime =
                     _timeZoneTranslator
                         .FromUtcToShopifyTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
-                        .AddMinutes(-MinutesFudgeFactor);
+                        .AddMinutes(MinutesFudgeFactor);
 
                 filter.UpdatedAtMin = lastUpdatedInShopifyTime;
             };
@@ -229,7 +230,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             var fromDateInShopify = 
                 _timeZoneTranslator.FromUtcToShopifyTimeZone(fromDate, shop.TimeZone)
-                                .AddMinutes(-MinutesFudgeFactor);
+                                .AddMinutes(MinutesFudgeFactor);
 
             var filter = new EventFilter()
             {

@@ -26,7 +26,8 @@ namespace ProfitWise.Data.Processes
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly BatchLogger _pushLogger;
 
-        private static readonly MultitenantMethodLock RefreshLock = new MultitenantMethodLock("ShopRefresh");
+        private static readonly 
+                MultitenantMethodLock RefreshLock = new MultitenantMethodLock("ShopRefresh");
 
         public ShopRefreshProcess(
                 IShopifyCredentialService shopifyCredentialService,
@@ -125,21 +126,18 @@ namespace ProfitWise.Data.Processes
             var credentials = Credentials(userId);
             _pushLogger.Info($"Starting Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
 
+            var lockResult = RefreshLock.AttemptToLockMethod(userId);
+            _pushLogger.Info(
+                $"Process Lock -> AttemptToLockMethod for UserId:{userId} / Lock Result:{lockResult.Success}");
+            if (!lockResult.Success)
+            {
+                if (lockResult.Exception != null)
+                    _pushLogger.Error(lockResult.Exception);
+                return;
+            }
+
             try
             {
-                var lockResult = RefreshLock.AttemptToLockMethod(userId);
-                _pushLogger.Info(
-                    $"Process Lock -> AttemptToLockMethod for UserId:{userId} / Lock Result:{lockResult.Success}");                
-
-                if (!lockResult.Success)
-                {
-                    if (lockResult.Exception != null)
-                    {
-                        _pushLogger.Error(lockResult.Exception);
-                    }
-                    return;
-                }
-
                 if (!_shopRefreshStep.Execute(credentials))
                 {
                     return;

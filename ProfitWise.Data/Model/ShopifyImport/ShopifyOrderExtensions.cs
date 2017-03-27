@@ -166,7 +166,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
             adjustment.ShopifyAdjustmentId = shopifyAdjustment.Id;
             adjustment.ShopifyOrderId = parentOrder.ShopifyOrderId;
             adjustment.Order = parentOrder;
-            adjustment.AdjustmentDate = shopifyAdjustment.Refund.CreatedAt;
+            adjustment.AdjustmentDate = shopifyAdjustment.Refund.CreatedAt.Date;
             adjustment.Amount = shopifyAdjustment.Amount;
             adjustment.TaxAmount = shopifyAdjustment.TaxAmount;
             adjustment.Kind = shopifyAdjustment.Kind;
