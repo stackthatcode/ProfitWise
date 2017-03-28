@@ -102,8 +102,7 @@ namespace ProfitWise.Web.Controllers
                         reportId, grouping, productType, vendor, pwProductId);
 
             var details = queryRepository.RetrieveDetails(
-                    reportId, grouping, ordering, pageNumber, FixedPageSize,
-                    productType, vendor, pwProductId);
+                reportId, grouping, ordering, pageNumber, FixedPageSize, productType, vendor, pwProductId);
 
             var chartElements = new List<HighChartElement>();
 
