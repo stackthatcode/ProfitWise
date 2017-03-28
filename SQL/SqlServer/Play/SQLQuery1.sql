@@ -26,5 +26,8 @@ SELECT * FROM variant(100001) WHERE SKU LIKE '%UM2%'
 
 SELECT * FROM batchstate(100001);
 
+SELECT * FROM picklist(100001);
 
+SELECT * FROM systemstate;
 
+SELECT * FROM profitwiserecurringcharge;
