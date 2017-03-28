@@ -141,10 +141,12 @@
             </td>
 
             <td class="overflow-gracefully">
-                <a href="#" 
-                   data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor,
-                            tooltip: { title: ProductTitle + ' [ID=' + PwMasterProductId + ']', 
-                                        placement: 'bottom' }"></a>
+                <a href="#" data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor,
+                            tooltip: { title: ProductTitle, placement: 'bottom' }"></a>
+                @if (HttpContext.Current.AuthenticatedContext().IsImpersonated)
+                {
+                    <span>MPID</span> <span data-bind="text: PwMasterProductId"></span>
+                }
             </td>
             
             <td>

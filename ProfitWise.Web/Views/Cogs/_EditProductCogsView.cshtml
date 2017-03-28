@@ -91,11 +91,16 @@
         <tbody data-bind="foreach: $data.Grid">
         <tr>
             <td class="overflow-gracefully">
-                <span style="font-weight: 700;" data-bind="text: SkuCorrected"></span><br/>
-                <span data-bind="text: Title, tooltip: { title: CombinedTitle, placement: 'bottom' }"></span>
-                
-                <br/>
-                <span style="font-size: 0.8em;" data-bind="text: InventoryText"></span> 
+                <div data-bind="tooltip: { title: CombinedTitle, placement: 'bottom' }">
+                    <span style="font-weight: 700;" data-bind="text: SkuCorrected"></span><br/>
+                    <span data-bind="text: Title"></span>
+                    @if (HttpContext.Current.AuthenticatedContext().IsImpersonated)
+                    {
+                        <span>MVID =</span>
+                        <span data-bind="text: PwMasterVariantId"></span>
+                    }
+                </div>
+                <span style="font-size: 0.9em; color:#999;" data-bind="text: InventoryText"></span> 
             </td>
 
             <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
