@@ -141,11 +141,11 @@
             </td>
 
             <td class="overflow-gracefully">
-                <a href="#" data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor"></a>
-                @if (HttpContext.Current.IsDebuggingEnabled)
-                {
-                    <div>MPID: <span data-bind="text: PwMasterProductId"></span></div>
-                }
+                <a href="#" 
+                   data-bind="text: ProductTitle, 
+                            click: $root.DrilldownToCogsEditor,
+                            tooltip: { title: ProductTitle + ' (' + PwMasterProductId + ')', 
+                                        placement: 'bottom' }"></a>
             </td>
             
             <td>
