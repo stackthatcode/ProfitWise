@@ -454,6 +454,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
             {
                 query +=
                     @"FROM profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
+                        INNER JOIN variant(@PwShopId) t4 ON t3.PwVariantId = t4.PwVariantId
+                        INNER JOIN mastervariant(@PwShopId) t5 
+                            ON t4.PwMasterVariantId = t5.PwMasterVariantId AND t5.Exclude = 0                      
                     WHERE t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate
                     GROUP BY t3.EntryDate ORDER BY t3.EntryDate; ";
             }

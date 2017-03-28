@@ -14,7 +14,7 @@ namespace ProfitWise.Data.Model.Cogs
         public string Title { get; set; }
 
         public string ProductTitle { get; set; }
-        public string CombinedTitle => Title + " (" + ProductTitle + ") - " + PwMasterVariantId;
+        public string CombinedTitle => Title + " (" + ProductTitle + ") - [ID=" + PwMasterVariantId + "]";
         
         public string Sku { get; set; }
         public string SkuCorrected => Sku.IsNullOrEmpty() ? "(No SKU)" : Sku;
