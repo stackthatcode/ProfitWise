@@ -37,14 +37,14 @@ namespace Push.Shopify.Model
         public string Status { get; set;  }
 
         // At time of writing, these are all represented in the actual Shop's timezone i.e. the offset is implicit
-        public DateTime? ProcessedAtMin { get; set; }
-        public DateTime? ProcessedAtMax { get; set; }
-        public DateTime? UpdatedAtMin { get; set; }
+        public DateTime? ProcessedAtMinShopTz { get; set; }
+        public DateTime? ProcessedAtMaxShopTz { get; set; }
+        public DateTime? UpdatedAtMinShopTz { get; set; }
 
 
         public override string ToString()
         {
-            return $"Order Filter dump: ProcessedAtMin: {ProcessedAtMin} - ProcessedAtMax: {ProcessedAtMax} - UpdatedAtMin: {UpdatedAtMin}";
+            return $"Order Filter dump: ProcessedAtMin: {ProcessedAtMinShopTz} - ProcessedAtMax: {ProcessedAtMaxShopTz} - UpdatedAtMin: {UpdatedAtMinShopTz}";
         }
 
         public OrderFilter OrderByProcessAtDescending()
@@ -68,17 +68,17 @@ namespace Push.Shopify.Model
                     .Add("status", this.Status)
                     .Add("order", this.OrderByClause);
 
-            if (ProcessedAtMin != null)
+            if (ProcessedAtMinShopTz != null)
             {
-                builder.Add("processed_at_min", ProcessedAtMin.Value);
+                builder.Add("processed_at_min", ProcessedAtMinShopTz.Value);
             }
-            if (ProcessedAtMax != null)
+            if (ProcessedAtMaxShopTz != null)
             {
-                builder.Add("processed_at_max", ProcessedAtMax.Value);
+                builder.Add("processed_at_max", ProcessedAtMaxShopTz.Value);
             }
-            if (UpdatedAtMin != null)
+            if (UpdatedAtMinShopTz != null)
             {
-                builder.Add("updated_at_min", UpdatedAtMin.Value);
+                builder.Add("updated_at_min", UpdatedAtMinShopTz.Value);
             }
 
             return builder;

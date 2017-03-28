@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -128,7 +129,8 @@ namespace ProfitWise.Data.ProcessSteps
                     var highPrice = relatedLineItems.Max(x => x.UnitPrice);
 
                     _pushLogger.Debug($"Updating (inactive) Variant {variant.PwVariantId} price range: {lowPrice} to {highPrice} and setting inventory to NULL");
-                    variantRepository.UpdateVariant(variant.PwVariantId, lowPrice, highPrice, variant.Sku, null);
+                    variantRepository.UpdateVariant(
+                        variant.PwVariantId, lowPrice, highPrice, variant.Sku, null, DateTime.UtcNow);
                 }
             }
         }

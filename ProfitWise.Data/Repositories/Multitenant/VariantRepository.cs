@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
@@ -108,8 +109,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             return output.ToList();
         }
-
-
+        
         public long InsertMasterVariant(PwMasterVariant masterVariant)
         {
             var query =
@@ -181,8 +181,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return _connectionWrapper.Query<long>(
                 query, new { PwShop.PwShopId, pwMasterProductId }).ToList();
         }
-
-
+        
         public IList<PwVariant> RetrieveVariantsForMasterVariant(long pwMasterVariantId)
         {
             var query = @"SELECT t1.* FROM variant(@PwShopId) t1 WHERE t1.PwMasterVariantId = @pwMasterVariantId";
@@ -236,18 +235,19 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper.Execute(query, variant);
         }
 
-        public void UpdateVariant(
-                long pwVariantId, decimal lowPrice, decimal highPrice, string sku, int? inventory)
+        public void UpdateVariant(long pwVariantId, 
+                decimal lowPrice, decimal highPrice, string sku, int? inventory, DateTime lastUpdated)
         {
             var query = @"UPDATE variant(@PwShopId) 
                         SET LowPrice = @lowPrice, 
                             HighPrice = @highPrice, 
                             Sku = @sku,
-                            Inventory = @inventory
+                            Inventory = @inventory,
+                            LastUpdated = @lastUpdated
                         WHERE PwVariantId = @pwVariantId;";
 
             _connectionWrapper.Execute(
-                query, new { PwShop.PwShopId, pwVariantId, lowPrice, highPrice, inventory, sku, });
+                query, new { PwShop.PwShopId, pwVariantId, lowPrice, highPrice, inventory, sku, lastUpdated });
         }
 
         public void UpdateVariantsMasterVariant(PwVariant variant)

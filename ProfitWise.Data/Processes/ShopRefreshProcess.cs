@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Net;
 using Hangfire;
 using ProfitWise.Data.Database;
@@ -158,7 +157,7 @@ namespace ProfitWise.Data.Processes
                 _orderRefreshStep.Execute(credentials);
                 _productCleanupStep.Execute(credentials);
 
-                // Change the store's status...
+                // Set Shop's IsDataLoaded => true
                 var shop = _pwShopRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
                 _pwShopRepository.UpdateIsDataLoaded(shop.PwShopId, true);
             }

@@ -40,12 +40,12 @@ namespace ProfitWise.Data.Services
             return _translator.Today(shopifyTimeZone);
         }
 
-        public static DateTime FromUtcToShopifyTimeZone(this DateTime dateTimeUtc, string shopifyTimeZone)
+        public static DateTime ToShopTimeZone(this DateTime dateTimeUtc, string shopifyTimeZone)
         {
             return _translator.FromUtcToShopifyTimeZone(dateTimeUtc, shopifyTimeZone);
         }
 
-        public static DateTime ToUtcFromShopifyTimeZone(this DateTime dateTimeUtc, string shopifyTimeZone)
+        public static DateTime ToUtc(this DateTime dateTimeUtc, string shopifyTimeZone)
         {
             return _translator.ToUtcFromShopifyTimeZone(dateTimeUtc, shopifyTimeZone);
         }

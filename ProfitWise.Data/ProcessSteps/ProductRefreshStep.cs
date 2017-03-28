@@ -50,26 +50,22 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void ExecuteAuxillary(ShopifyCredentials shopCredentials)
         {
-            var processStepStartTime = DateTime.UtcNow;
-
-            // Get Shopify Shop
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var service = this._multitenantFactory.MakeCatalogRetrievalService(shop);
-
-            // Load Batch State
+            
+            // Retrieve Batch State and compute Event parameter
             var batchState = batchStateRepository.Retrieve();
+            var processStepStartTime = DateTime.UtcNow;
+            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime;
 
             // Write Products to our database
             WriteAllProductsFromShopify(shop, shopCredentials, batchState);
 
             // Delete all Products with "destroy" Events
-            // If this is the first time, we'll use the start time of this Refresh Step (minus a fudge factor)
-
-            // Retrieve existing catalog from ProfitWise
-            var masterProducts = service.RetrieveFullCatalog();
-            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime;
             
+            // Retrieve the full catalog against which to update Active Status on
+            var masterProducts = service.RetrieveFullCatalog();            
             SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
 
             // Update Batch State
@@ -86,15 +82,13 @@ namespace ProfitWise.Data.ProcessSteps
             if (batchState.ProductsLastUpdated != null)
             {
                 var lastUpdatedInShopifyTime =
-                    _timeZoneTranslator
-                        .FromUtcToShopifyTimeZone(batchState.ProductsLastUpdated.Value, shop.TimeZone)
-                        .AddMinutes(MinutesFudgeFactor);
+                    _timeZoneTranslator.FromUtcToShopifyTimeZone(
+                        batchState.ProductsLastUpdated.Value, shop.TimeZone);
 
-                filter.UpdatedAtMin = lastUpdatedInShopifyTime;
-            };
+                filter.UpdatedAtMinShopTz = lastUpdatedInShopifyTime.AddMinutes(MinutesFudgeFactor);
+            }
 
             var count = productApiRepository.RetrieveCount(filter);
-
             _pushLogger.Info($"Executing Refresh for {count} Products");
 
             var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
@@ -112,7 +106,6 @@ namespace ProfitWise.Data.ProcessSteps
 
             return results;
         }
-
 
         private void WriteProductsToDatabase(PwShop shop, IList<Product> importedProducts)
         {
@@ -220,28 +213,29 @@ namespace ProfitWise.Data.ProcessSteps
                 $"{context.Price} to {context.Price} and setting inventory to {inventory}");
 
             variantRepository.UpdateVariant(
-                variant.PwVariantId, context.Price, context.Price, variant.Sku, inventory);
+                variant.PwVariantId, context.Price, context.Price, variant.Sku, inventory, DateTime.UtcNow);
         }
 
         private IList<Event> RetrieveAllProductDestroyEvents(
                                 ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDate)
         {
             var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
-            var fromDateInShopify = 
+            var fromDateShopTz = 
                 _timeZoneTranslator.FromUtcToShopifyTimeZone(fromDate, shop.TimeZone);
 
+            // Includes Fudge Factor 
             var filter = new EventFilter()
             {
-                CreatedAtMin = fromDateInShopify.AddMinutes(MinutesFudgeFactor),
+                CreatedAtMinShopTz = fromDateShopTz.AddMinutes(MinutesFudgeFactor),
                 Verb = EventVerbs.Destroy,
                 Filter = EventTypes.Product
             };
 
             var count = eventApiRepository.RetrieveCount(filter);
+            _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
+
             var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
             var results = new List<Event>();
-
-            _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {

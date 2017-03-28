@@ -13,7 +13,7 @@ namespace Push.Shopify.Model
         public decimal TotalTax { get; set; }
         public decimal SubTotal { get; set; }
 
-        // Coming from Shopify, these include the TimeZone of the Shop
+        // All of these dates are represented in Shop Timezone
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? CancelledAt { get; set; }
