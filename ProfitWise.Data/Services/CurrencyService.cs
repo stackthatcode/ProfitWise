@@ -18,7 +18,7 @@ namespace ProfitWise.Data.Services
 
         private const int MaxDaysOfRateProjection = 30;
 
-        private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(0, 0, 15, 0);
+        private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(4, 0, 0);
 
         // This sets the next allowed time to the past, thus guaraneteeing a refresh
         private static DateTime _nextRateRefreshAllowed = DateTime.UtcNow.Add(-CacheRefreshLockInterval);
@@ -74,7 +74,10 @@ namespace ProfitWise.Data.Services
                 {
                     lock (ExchangeRateLock)
                     {
-                        LoadExchangeRateCache();
+                        if (!_rateCacheLoaded || DateTime.UtcNow > _nextRateRefreshAllowed)
+                        {
+                            LoadExchangeRateCache();
+                        }
                     }
                 }
                 return _ratecache;

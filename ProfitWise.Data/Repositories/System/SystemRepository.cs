@@ -30,18 +30,18 @@ namespace ProfitWise.Data.Repositories.System
 
         public bool RetrieveMaintenanceActive()
         {
-            lock (maintenanceConcurrencyLock)
+            if (DateTime.UtcNow >= NextMaintenanceCheck)
             {
-                if (DateTime.UtcNow >= NextMaintenanceCheck)
+                lock (maintenanceConcurrencyLock)
                 {
                     var query = "SELECT [MaintenanceActive] FROM systemstate;";
-                    _maintenanceActiveCache = Connection.Query<bool>(query, new { }).First();
+                    _maintenanceActiveCache = Connection.Query<bool>(query, new {}).First();
 
                     // Think ... this could go way farther out to the future
                     _lastMaintenanceActiveCheck = DateTime.UtcNow.AddMinutes(1);
                 }
-                return _maintenanceActiveCache;
             }
+            return _maintenanceActiveCache;
         }
 
         public SystemState Retrieve()

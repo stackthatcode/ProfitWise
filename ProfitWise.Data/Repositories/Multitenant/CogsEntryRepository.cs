@@ -136,9 +136,13 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         INNER JOIN variant(@PwShopId) t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
 	            WHERE t3.IsPrimary = 1 AND t2.PwMasterVariantId = @masterVariantId";
 
-            return _connectionWrapper
-                .Query<PwCogsVariantSummary>(query, new { this.PwShopId, masterVariantId })
-                .FirstOrDefault();
+            var variant =
+                _connectionWrapper
+                    .Query<PwCogsVariantSummary>(query, new { this.PwShopId, masterVariantId })
+                    .FirstOrDefault();
+
+            variant.DateToday = _timeZoneTranslator.Today(PwShop.TimeZone);
+            return variant;
         }        
 
 

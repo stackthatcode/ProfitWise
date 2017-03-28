@@ -1,7 +1,6 @@
 ﻿using System;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Profit;
-using ProfitWise.Data.Services;
 using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Model.Shop
