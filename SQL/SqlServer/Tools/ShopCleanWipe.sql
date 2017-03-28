@@ -1,5 +1,7 @@
 
 
+/**** A P O C A L Y P S E - S C R I P T ****/
+
 /**** WARNING - This script will completely destroy a store's data ****/
  
 USE ProfitWise
@@ -7,7 +9,7 @@ GO
 
 
 /*** Insert the appropriate PwShopId and uncomment the below line ***/
-DECLARE @PwShopId bigint = 100001;
+--DECLARE @PwShopId bigint = 100001;
 
 
 DELETE FROM reportquerystub(@PwShopId);
