@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using Newtonsoft.Json;
-using Push.Foundation.Utilities.Helpers;
 
 namespace Push.Shopify.Model
 {
@@ -13,8 +10,8 @@ namespace Push.Shopify.Model
         public string Topic { get; set; }
         public string Address { get; set; }
         public string Format { get; set; }
-        public DateTime Created_At { get; set; }
-        public DateTime Updated_At { get; set; }
+        public DateTime Created_At_ShopTz { get; set; }
+        public DateTime Updated_At_ShopTz { get; set; }
 
 
         public const string UninstallTopic = "app/uninstalled";
@@ -66,8 +63,8 @@ namespace Push.Shopify.Model
             {
                 Id = webhook.id,
                 Address = webhook.address,
-                Created_At = webhook.created_at,
-                Updated_At = webhook.updated_at,
+                Created_At_ShopTz = webhook.created_at,
+                Updated_At_ShopTz = webhook.updated_at,
                 Format = webhook.format,
                 Topic = webhook.topic,
             };

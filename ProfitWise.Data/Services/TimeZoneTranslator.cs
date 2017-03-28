@@ -10,10 +10,10 @@ namespace ProfitWise.Data.Services
         // Returns Date + Midnight of that Date in another Time Zone based on *now* in UTC
         public DateTime Today(string shopifyTimeZone)
         {
-            return FromUtcToShopifyTimeZone(DateTime.UtcNow, shopifyTimeZone).DateOnly();
+            return FromUtcToShopTz(DateTime.UtcNow, shopifyTimeZone).DateOnly();
         }
 
-        public DateTime FromUtcToShopifyTimeZone(DateTime dateTimeUtc, string shopifyTimeZone)
+        public DateTime FromUtcToShopTz(DateTime dateTimeUtc, string shopifyTimeZone)
         {
             var timeZoneId = TZConvert.IanaToWindows(shopifyTimeZone);
             var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
@@ -42,20 +42,20 @@ namespace ProfitWise.Data.Services
 
         public static DateTime ToShopTimeZone(this DateTime dateTimeUtc, string shopifyTimeZone)
         {
-            return _translator.FromUtcToShopifyTimeZone(dateTimeUtc, shopifyTimeZone);
+            return _translator.FromUtcToShopTz(dateTimeUtc, shopifyTimeZone);
         }
 
-        public static DateTime ToUtc(this DateTime dateTimeUtc, string shopifyTimeZone)
+        public static DateTime ToUtcFromShopTz(this DateTime dateTimeUtc, string shopifyTimeZone)
         {
             return _translator.ToUtcFromShopifyTimeZone(dateTimeUtc, shopifyTimeZone);
         }
 
-        public static DateTime FromUnspecifiedToLocalTimeZone(
+        public static DateTime FromUnspecifiedToTimeZone(
                     this DateTime unspecifiedDateTime, string targetTimeZone)
         {
             var dateTimeUtc = 
                 _translator.ToUtcFromShopifyTimeZone(unspecifiedDateTime, targetTimeZone);
-            return _translator.FromUtcToShopifyTimeZone(dateTimeUtc, targetTimeZone);
+            return _translator.FromUtcToShopTz(dateTimeUtc, targetTimeZone);
         }
 
         public static DateTime? AsUtc(this DateTime? unspecifiedDateTime)

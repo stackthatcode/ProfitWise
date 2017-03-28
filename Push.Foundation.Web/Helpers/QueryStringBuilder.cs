@@ -12,7 +12,7 @@ namespace Push.Foundation.Web.Helpers
 
         public QueryStringBuilder Add(string key, object value)
         {
-            Dictionary[key] = value is DateTime ? ((DateTime)value).ToIso8601() : value.ToString();
+            Dictionary[key] = value is DateTime ? ((DateTime)value).ToIso8601Utc() : value.ToString();
             return this;
         }
 

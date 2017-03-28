@@ -28,15 +28,15 @@ namespace ProfitWise.TestData.MockShopifyStore
                 {
                     Id = orderId,
                     LineItems = new List<OrderLineItem>(),
-                    CancelledAt = null,
+                    CancelledAtShopTz = null,
                     Tags = null,
                     Name = HelperExtensions.GenerateRandomString(30),
                     Refunds = new List<Refund>(),
-                    CreatedAt = createdAt,
+                    CreatedAtShopTz = createdAt,
                     TotalTax = HelperExtensions.GenerateRandomInteger(1000),
                     FinancialStatus = null,
                     Email = HelperExtensions.GenerateRandomString(20),
-                    UpdatedAt = createdAt,
+                    UpdatedAtShopTz = createdAt,
                     OrderDiscount = 0,
                     SubTotal = HelperExtensions.GenerateRandomInteger(1000),
                 };

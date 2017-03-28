@@ -43,6 +43,14 @@ SELECT * FROM variant(100001) WHERE SKU LIKE '%UM3%'
 
 
 
---UPDATE profitwiseshop SET StartingDateForOrders = '2016-12-30';
+UPDATE profitwiseshop SET StartingDateForOrders = '2016-12-30';
 
-SELECT * FROM profitwiseshop;
+SELECT * FROM shop(100001);
+
+SELECT * FROM product(100001);
+
+SELECT * FROM variant(100001);
+
+SELECT * FROM batchstate(100001);
+
+

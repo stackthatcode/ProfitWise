@@ -7,7 +7,7 @@ namespace Push.Shopify.Model
     public class Refund
     {
         public long Id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAtShopTz { get; set; }
 
         public Order ParentOrder { get; set; }
         public IList<RefundLineItem> LineItems { get; set; }

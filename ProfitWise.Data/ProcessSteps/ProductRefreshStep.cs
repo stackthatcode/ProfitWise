@@ -22,7 +22,8 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly ShopRepository _shopRepository;
         private readonly TimeZoneTranslator _timeZoneTranslator;
 
-        // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
+        // This is to account for a whole range of possibilities, from clock offsets,
+        // ... to the shop's Timezone changing
         public const int MinutesFudgeFactor = -75;
         
 
@@ -52,24 +53,25 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-            var service = this._multitenantFactory.MakeCatalogRetrievalService(shop);
+            var service = _multitenantFactory.MakeCatalogRetrievalService(shop);
             
             // Retrieve Batch State and compute Event parameter
             var batchState = batchStateRepository.Retrieve();
-            var processStepStartTime = DateTime.UtcNow;
-            var fromDateForDestroy = batchState.ProductsLastUpdated ?? processStepStartTime;
+            var processStartTimeUtc = DateTime.UtcNow;
+            var fromDateForDestroyUtc = batchState.ProductsLastUpdated ?? processStartTimeUtc;
 
             // Write Products to our database
             WriteAllProductsFromShopify(shop, shopCredentials, batchState);
 
-            // Delete all Products with "destroy" Events
-            
             // Retrieve the full catalog against which to update Active Status on
-            var masterProducts = service.RetrieveFullCatalog();            
-            SetProductsDeletedByShopifyToInactive(shop, masterProducts, shopCredentials, fromDateForDestroy);
+            var masterProducts = service.RetrieveFullCatalog();
+
+            // Delete all Products with "destroy" Events
+            SetDeletedProductsToInactive(shop, masterProducts, shopCredentials, fromDateForDestroyUtc);
 
             // Update Batch State
-            batchState.ProductsLastUpdated = DateTime.UtcNow;
+            batchState.ProductsLastUpdated = processStartTimeUtc;
+            _pushLogger.Debug($"Updating BatchState -> ProductsLastUpdated to {batchState.ProductsLastUpdated}");
             batchStateRepository.Update(batchState);
         }
 
@@ -81,11 +83,9 @@ namespace ProfitWise.Data.ProcessSteps
 
             if (batchState.ProductsLastUpdated != null)
             {
-                var lastUpdatedInShopifyTime =
-                    _timeZoneTranslator.FromUtcToShopifyTimeZone(
-                        batchState.ProductsLastUpdated.Value, shop.TimeZone);
-
-                filter.UpdatedAtMinShopTz = lastUpdatedInShopifyTime.AddMinutes(MinutesFudgeFactor);
+                filter.UpdatedAtMinUtc = 
+                    batchState.ProductsLastUpdated.Value.AddMinutes(MinutesFudgeFactor);
+                _pushLogger.Debug($"Retrieving Products Updated after {filter.UpdatedAtMinUtc}");
             }
 
             var count = productApiRepository.RetrieveCount(filter);
@@ -100,7 +100,6 @@ namespace ProfitWise.Data.ProcessSteps
 
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
-
                 WriteProductsToDatabase(shop, products);
             }
 
@@ -216,44 +215,14 @@ namespace ProfitWise.Data.ProcessSteps
                 variant.PwVariantId, context.Price, context.Price, variant.Sku, inventory, DateTime.UtcNow);
         }
 
-        private IList<Event> RetrieveAllProductDestroyEvents(
-                                ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDate)
-        {
-            var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
-            var fromDateShopTz = 
-                _timeZoneTranslator.FromUtcToShopifyTimeZone(fromDate, shop.TimeZone);
-
-            // Includes Fudge Factor 
-            var filter = new EventFilter()
-            {
-                CreatedAtMinShopTz = fromDateShopTz.AddMinutes(MinutesFudgeFactor),
-                Verb = EventVerbs.Destroy,
-                Filter = EventTypes.Product
-            };
-
-            var count = eventApiRepository.RetrieveCount(filter);
-            _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
-
-            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
-            var results = new List<Event>();
-
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
-            {
-                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
-                var events = eventApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
-                results.AddRange(events);
-            }
-
-            return results;
-        }
-
-        private void SetProductsDeletedByShopifyToInactive(
-                    PwShop shop, IList<PwMasterProduct> masterProducts, ShopifyCredentials shopCredentials, DateTime fromDateForDestroy)
+        private void SetDeletedProductsToInactive(
+                PwShop shop, IList<PwMasterProduct> masterProducts, ShopifyCredentials shopCredentials, 
+                DateTime fromDateUtc)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var catalogService = this._multitenantFactory.MakeCatalogBuilderService(shop);
 
-            var events = RetrieveAllProductDestroyEvents(shopCredentials, shop, fromDateForDestroy);
+            var events = RetrieveAllProductDestroyEvents(shopCredentials, shop, fromDateUtc);
             foreach (var @event in events)
             {
                 if (@event.Verb == EventVerbs.Destroy && @event.SubjectType == EventTypes.Product)
@@ -273,6 +242,36 @@ namespace ProfitWise.Data.ProcessSteps
                     }
                 }
             }
+        }
+
+        private IList<Event> RetrieveAllProductDestroyEvents(
+                ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDateUtc)
+        {
+            var eventApiRepository = _apiRepositoryFactory.MakeEventApiRepository(shopCredentials);
+
+            var fromDateShopTz = _timeZoneTranslator.FromUtcToShopTz(fromDateUtc, shop.TimeZone);
+            var filter = new EventFilter
+            {
+                CreatedAtMinUtc = fromDateShopTz.AddMinutes(MinutesFudgeFactor),
+                Verb = EventVerbs.Destroy,
+                Filter = EventTypes.Product
+            };
+
+            _pushLogger.Debug($"Retrieve all Product Destroy Events from {filter.CreatedAtMinUtc}");
+            var count = eventApiRepository.RetrieveCount(filter);
+
+            _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
+            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
+            var results = new List<Event>();
+
+            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
+            {
+                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
+                var events = eventApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
+                results.AddRange(events);
+            }
+
+            return results;
         }
 
         private void FlagMissingVariantsAsInactive(PwShop shop, ProductBuildContext context)

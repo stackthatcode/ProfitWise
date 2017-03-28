@@ -62,11 +62,11 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 OrderNumber = order.Name,
 
                 // This is monumentally important => we use the Date from the Shopify Shop's timezone
-                OrderDate = order.CreatedAt.Date,
+                OrderDate = order.CreatedAtShopTz.Date,
                 
                 // OTOH, these dates will be translated to UTC   
-                CreatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.CreatedAt, pwshop.TimeZone),
-                UpdatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.UpdatedAt, pwshop.TimeZone),
+                CreatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.CreatedAtShopTz, pwshop.TimeZone),
+                UpdatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.UpdatedAtShopTz, pwshop.TimeZone),
 
                 OrderLevelDiscount = order.OrderDiscount,
                 FinancialStatus = order.FinancialStatus.ToFinancialStatus(),
@@ -75,7 +75,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 LineItems = new List<ShopifyOrderLineItem>(),
                 Adjustments = new List<ShopifyOrderAdjustment>(),
 
-                Cancelled = order.CancelledAt.HasValue, // only used during Refresh to DELETE Cancelled Orders
+                Cancelled = order.CancelledAtShopTz.HasValue, // only used during Refresh to DELETE Cancelled Orders
             };
 
             foreach (var lineItem in order.LineItems)
@@ -98,7 +98,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 // I know, I know... but we don't have any other way to provision numbers for this
                 balancingAdjustment.ShopifyAdjustmentId = shopifyOrder.ShopifyOrderId;
                 balancingAdjustment.ShopifyOrderId = shopifyOrder.ShopifyOrderId;
-                balancingAdjustment.AdjustmentDate = order.CreatedAt;
+                balancingAdjustment.AdjustmentDate = order.CreatedAtShopTz;
 
                 balancingAdjustment.Amount = -difference;
                 balancingAdjustment.TaxAmount = 0;
@@ -149,7 +149,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
             newRefund.ShopifyOrderLineId = refundLineFromShopify.LineItemId;
 
             // Monumentally important => uses Date-only from Shopify Shop timezone
-            newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAt.Date;
+            newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAtShopTz.Date;
 
             newRefund.OrderLineItem = parentLineItem;
             newRefund.Amount = refundLineFromShopify.SubTotal;
@@ -166,7 +166,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
             adjustment.ShopifyAdjustmentId = shopifyAdjustment.Id;
             adjustment.ShopifyOrderId = parentOrder.ShopifyOrderId;
             adjustment.Order = parentOrder;
-            adjustment.AdjustmentDate = shopifyAdjustment.Refund.CreatedAt.Date;
+            adjustment.AdjustmentDate = shopifyAdjustment.Refund.CreatedAtShopTz.Date;
             adjustment.Amount = shopifyAdjustment.Amount;
             adjustment.TaxAmount = shopifyAdjustment.TaxAmount;
             adjustment.Kind = shopifyAdjustment.Kind;

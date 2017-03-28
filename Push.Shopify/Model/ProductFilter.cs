@@ -5,15 +5,15 @@ namespace Push.Shopify.Model
 {
     public class ProductFilter
     {
-        public DateTime ? UpdatedAtMinShopTz { get; set; }
+        public DateTime ? UpdatedAtMinUtc { get; set; }
 
         public QueryStringBuilder ToQueryStringBuilder()
         {
             var builder = new QueryStringBuilder();
 
-            if (UpdatedAtMinShopTz != null)
+            if (UpdatedAtMinUtc != null)
             {
-                builder.Add("updated_at_min", UpdatedAtMinShopTz.Value);
+                builder.Add("updated_at_min", UpdatedAtMinUtc.Value);
             }
             return builder;
         }

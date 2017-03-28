@@ -141,7 +141,8 @@ namespace ProfitWise.Data.Processes
                 return;
             }
             var credentials = Credentials(userId);
-            _pushLogger.Info($"Starting Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
+            _pushLogger.Info(
+                $"Starting Refresh Process for Shop: {credentials.ShopDomain}, UserId: {userId}");
 
             try
             {

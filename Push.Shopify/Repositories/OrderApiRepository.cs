@@ -104,12 +104,12 @@ namespace Push.Shopify.Repositories
                     Name = order.name,
                     SubTotal = order.subtotal_price,
                     TotalTax = order.total_tax,
-                    CreatedAt = order.processed_at,
-                    UpdatedAt = order.updated_at,
+                    CreatedAtShopTz = order.processed_at,
+                    UpdatedAtShopTz = order.updated_at,
                     LineItems = new List<OrderLineItem>(),
                     Refunds = new List<Refund>(),
                     OrderDiscount = 0.00m,
-                    CancelledAt = order.cancelled_at,
+                    CancelledAtShopTz = order.cancelled_at,
                     FinancialStatus = order.financial_status,
                     Tags = order.tags,
                 };
@@ -150,7 +150,7 @@ namespace Push.Shopify.Repositories
                 var refundResult = new Refund();
                 refundResult.ParentOrder = orderResult;
                 refundResult.Id = refund.id;
-                refundResult.CreatedAt = refund.created_at;
+                refundResult.CreatedAtShopTz = refund.created_at;
                 refundResult.LineItems = new List<RefundLineItem>();
                 refundResult.OrderAdjustments = new List<OrderAdjustment>();
                 refundResult.Transactions = new List<Transaction>();

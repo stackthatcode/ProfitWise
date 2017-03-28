@@ -8,7 +8,6 @@ using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
-using ProfitWise.Data.Utility;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -19,16 +18,16 @@ namespace ProfitWise.Data.ProcessSteps
     public class OrderRefreshStep
     {
         private readonly BatchLogger _pushLogger;
-        private readonly ShopifyOrderDiagnosticShim _diagnostic;
         private readonly TimeZoneTranslator _timeZoneTranslator;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _refreshServiceConfiguration;
         private readonly ShopRepository _shopRepository;
 
-        // 60 minutes to account for daylight savings + 15 minutes to account for clock inaccuracies
-        public const int OrderStartFudgeFactorMin = -75;
-
+        // This is to account for a whole range of possibilities, from clock offsets,
+        // ... to the Shop's Timezone changing
+        public const int OrderStartFudgeFactor = -75;
+        public const int OrderEndFudgeFactor = 75;
 
         public OrderRefreshStep(
                 ApiRepositoryFactory apiRepositoryFactory,
@@ -36,18 +35,16 @@ namespace ProfitWise.Data.ProcessSteps
                 RefreshServiceConfiguration refreshServiceConfiguration,
                 ShopRepository shopRepository,
                 BatchLogger logger,
-                ShopifyOrderDiagnosticShim diagnostic,
                 TimeZoneTranslator timeZoneTranslator)
         {
             _pushLogger = logger;
-            _diagnostic = diagnostic;
             _timeZoneTranslator = timeZoneTranslator;
             _apiRepositoryFactory = apiRepositoryFactory;
             _multitenantFactory = multitenantFactory;
             _refreshServiceConfiguration = refreshServiceConfiguration;
             _shopRepository = shopRepository;
         }
-   
+        
 
         public void Execute(ShopifyCredentials shopCredentials)
         {
@@ -66,7 +63,8 @@ namespace ProfitWise.Data.ProcessSteps
             }
 
             // CASE #2 - Order Dataset Start Date has moved back in time
-            if (shop.StartingDateForOrders.ToUtc(shop.TimeZone) < batchState.OrderDatasetStart )
+            var preferenceStartDateUtc = shop.StartingDateForOrders.ToUtcFromShopTz(shop.TimeZone);
+            if (preferenceStartDateUtc < batchState.OrderDatasetStart)
             {
                 EarlierStartDateWorker(shopCredentials, shop);
             }
@@ -82,8 +80,7 @@ namespace ProfitWise.Data.ProcessSteps
             var order = orderApiRepository.Retrieve(orderId);
             WriteOrdersToPersistence(new List<Order> { order }, shop);
         }
-
-
+        
         private void RoutineUpdateWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
             _pushLogger.Info($"Routine Order Refresh");
@@ -91,22 +88,23 @@ namespace ProfitWise.Data.ProcessSteps
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
-            // The Batch State stores everything in the Server's Time Zone,
-            // ... thus we need to translate to the Shop's Time Zone
+            // The Batch State stores everything in UTC, thus we need to translate to the Shop's Timezone
             var updatedAtMinUtc = preBatchState.OrderDatasetEnd.Value;  
-            var updatedAtMinShopTime = 
-                    _timeZoneTranslator.FromUtcToShopifyTimeZone(updatedAtMinUtc, shop.TimeZone)
-                            .AddMinutes(OrderStartFudgeFactorMin);
-            
-            var updatefilter = 
-                new OrderFilter() { UpdatedAtMinShopTz = updatedAtMinShopTime }.OrderByUpdateAtAscending();
+            var processStartUtc = DateTime.UtcNow;
+
+            var updatefilter = new OrderFilter
+                {
+                    UpdatedAtMinUtc = updatedAtMinUtc.AddMinutes(OrderStartFudgeFactor)
+                }
+                .OrderByUpdateAtAscending();
 
             RefreshOrders(updatefilter, shopCredentials, shop);
 
             // Update Batch State End to now-ish
             var postBatchState = batchStateRepository.Retrieve();
-            postBatchState.OrderDatasetEnd = DateTime.UtcNow.AddMinutes(-15); // Fudge factor for clock disparities
+            postBatchState.OrderDatasetEnd = processStartUtc;
             batchStateRepository.Update(postBatchState);
+
             _pushLogger.Info("Complete: " + postBatchState);
         }
         
@@ -117,24 +115,16 @@ namespace ProfitWise.Data.ProcessSteps
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
             var preBatchState = batchStateRepository.Retrieve();
 
-            // Preferences -> Starting Date for Orders stores a "pure" Date i.e. unspecified, 
+            // Preferences -> Starting Date for Orders stores a "pure" Date i.e. Timezone unspecified, 
             // ... that's implied to exist in the Shop's Timezone
-            var startDateShopifyTime =
-                    shop.StartingDateForOrders
-                        .FromUnspecifiedToLocalTimeZone(shop.TimeZone);
-
-            // The Batch State stores everything in UTC, thus we need to translate to the Shop's Timezone
+            var startDateFromPreferencesUtc = shop.StartingDateForOrders.ToUtcFromShopTz(shop.TimeZone);
             var oldStartDateUtc = preBatchState.OrderDatasetStart.Value;
 
-            var endDateShopifyTime =
-                    oldStartDateUtc
-                        .ToShopTimeZone(shop.TimeZone)
-                        .AddMinutes(OrderStartFudgeFactorMin);
-
+            // ** Critical => OrderEndFudgeFactor accounts for any changes to Timezone
             var filter = new OrderFilter()
                 {
-                    ProcessedAtMinShopTz = startDateShopifyTime.AddMinutes(OrderStartFudgeFactorMin),
-                    ProcessedAtMaxShopTz = endDateShopifyTime,
+                    ProcessedAtMinUtc = startDateFromPreferencesUtc.AddMinutes(OrderStartFudgeFactor),
+                    ProcessedAtMaxUtc = oldStartDateUtc.AddMinutes(OrderEndFudgeFactor),
                 }
                 .OrderByProcessAtDescending();
 
@@ -142,7 +132,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             // When updating Batch State, simply move Start to Preferences' new Start in UTC
             var postBatchState = batchStateRepository.Retrieve();
-            postBatchState.OrderDatasetStart = startDateShopifyTime.ToUtc(shop.TimeZone);
+            postBatchState.OrderDatasetStart = startDateFromPreferencesUtc;
             batchStateRepository.Update(postBatchState);
             
             _pushLogger.Info("Complete: " + postBatchState);
@@ -151,27 +141,23 @@ namespace ProfitWise.Data.ProcessSteps
         private void FirstTimeLoadWorker(ShopifyCredentials shopCredentials, PwShop shop)
         {
             _pushLogger.Info($"Loading Orders first time for Shop {shop.PwShopId}");
-
-            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-            var preBatchState = batchStateRepository.Retrieve();
-
+            
             // Translate the Starting Date for Orders to Shop Timezone for the API invocation
-            var startDateShopifyTime =
-                    shop.StartingDateForOrders.FromUnspecifiedToLocalTimeZone(shop.TimeZone);
-
-            var endDateShopifyTime = DateTime.UtcNow.ToShopTimeZone(shop.TimeZone);
-
-            var filter = 
-                new OrderFilter
-                    {
-                        ProcessedAtMinShopTz = startDateShopifyTime.AddMinutes(OrderStartFudgeFactorMin),
-                        ProcessedAtMaxShopTz = endDateShopifyTime,
+            var startDateShopUtc = shop.StartingDateForOrders.ToUtcFromShopTz(shop.TimeZone);
+            var endDateShopUtc = DateTime.UtcNow;
+            
+            var filter = new OrderFilter
+                {
+                    ProcessedAtMinUtc = startDateShopUtc.AddMinutes(OrderStartFudgeFactor),
+                    ProcessedAtMaxUtc = endDateShopUtc.AddMinutes(OrderEndFudgeFactor),
                 }
-                    .OrderByProcessAtDescending();
+                .OrderByProcessAtDescending();
 
             // The Batch State stores everything in UTC, thus we need to translate to the Shop's Time Zone
             // Set the Batch State Order End point to UTC now... 
-            preBatchState.OrderDatasetEnd = endDateShopifyTime.ToUtc(shop.TimeZone);
+            var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
+            var preBatchState = batchStateRepository.Retrieve();
+            preBatchState.OrderDatasetEnd = endDateShopUtc;
             batchStateRepository.Update(preBatchState);
 
             // ... then walk backward through time
@@ -179,13 +165,11 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Update Post Batch State so Start Date in UTC that equals that which is in Preferences
             var postBatchState = batchStateRepository.Retrieve();
-            postBatchState.OrderDatasetStart = startDateShopifyTime.ToUtc(shop.TimeZone);
+            postBatchState.OrderDatasetStart = startDateShopUtc;
             batchStateRepository.Update(postBatchState);
 
             _pushLogger.Info("Complete: " + postBatchState);
         }
-
-
 
         // All the "worker" functions call Refresh Orders main function
         public void RefreshOrders(OrderFilter filter, ShopifyCredentials shopCredentials, PwShop shop)
@@ -211,17 +195,13 @@ namespace ProfitWise.Data.ProcessSteps
                 var batchState = batchStateRepository.Retrieve();
                 if (filter.ShopifySortOrder == ShopifySortOrder.Ascending)
                 {
-                    var latestOrderUpdated = importedOrders.Max(x => x.UpdatedAt);
-
-                    batchState.OrderDatasetEnd = 
-                        latestOrderUpdated.ToUtc(shop.TimeZone);
+                    var latestOrderUpdatedShopTz = importedOrders.Max(x => x.UpdatedAtShopTz);
+                    batchState.OrderDatasetEnd = latestOrderUpdatedShopTz.ToUtcFromShopTz(shop.TimeZone);
                 }
                 else
                 {
-                    var earlierOrderCreated = importedOrders.Min(x => x.CreatedAt);
-
-                    batchState.OrderDatasetStart = 
-                        earlierOrderCreated.ToUtc(shop.TimeZone);
+                    var earliestOrderCreatedShopTz = importedOrders.Min(x => x.CreatedAtShopTz);
+                    batchState.OrderDatasetStart = earliestOrderCreatedShopTz.ToUtcFromShopTz(shop.TimeZone);
                 }
                 batchStateRepository.Update(batchState);
             }

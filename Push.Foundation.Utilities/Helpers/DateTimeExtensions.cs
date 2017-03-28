@@ -101,9 +101,9 @@ namespace Push.Foundation.Utilities.Helpers
             return input.FirstOfYear().AddYears(1).AddDays(-1);
         }
 
-        public static string ToIso8601(this DateTime input)
+        public static string ToIso8601Utc(this DateTime input)
         {
-            return input.ToString("s", CultureInfo.InvariantCulture);
+            return input.ToString("s", CultureInfo.InvariantCulture) + "-00:00";
         }
     }
 }

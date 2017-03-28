@@ -5,28 +5,28 @@ namespace Push.Shopify.Model
 {
     public class EventFilter
     {
-        public DateTime? CreatedAtMinShopTz { get; set; }
+        public DateTime? CreatedAtMinUtc { get; set; }
         public string Verb { get; set; }
         public string Filter { get; set; }
 
 
         public EventFilter()
         {
-            CreatedAtMinShopTz = DateTime.Today;
+            CreatedAtMinUtc = DateTime.Today;
         }
 
         public override string ToString()
         {
-            return $"Event Filter dump: CreatedAtMin: {CreatedAtMinShopTz} - Verb: {Verb} - Filter: {Filter}";
+            return $"Event Filter dump: CreatedAtMin: {CreatedAtMinUtc} - Verb: {Verb} - Filter: {Filter}";
         }
 
         public QueryStringBuilder ToQueryStringBuilder()
         {
             var builder = new QueryStringBuilder();
 
-            if (CreatedAtMinShopTz != null)
+            if (CreatedAtMinUtc != null)
             {
-                builder.Add("created_at_min", CreatedAtMinShopTz.Value);
+                builder.Add("created_at_min", CreatedAtMinUtc.Value);
             }
             if (Verb != null)
             {
