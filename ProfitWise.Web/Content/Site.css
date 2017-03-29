@@ -9,7 +9,9 @@
     line-height: 32px;
 }
 
-
+.radio label {
+    line-height: 20px !important;
+}
 
 /** Adjustment for Bootstrap Input Groups heights */
 .input-group {
