@@ -42,6 +42,11 @@ ProfitWiseShopify.BarInitialize = function (title) {
                         links: [
                             linkBuilder("/Content/About", "About ProfitWise"),
                             linkBuilder("/Content/Contact", "Contact Us"),
+                            {
+                                label: "ProfitWise User Manual",
+                                href: "https://drive.google.com/file/d/0B7IZ4iPA1DJZM0gzM2R5UGlQX00/view?usp=sharing",
+                                target: "_blank"
+                            },
                         ]
                     },
                 ]
