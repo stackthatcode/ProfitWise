@@ -137,7 +137,7 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        private PwProduct WriteProductToDatabase(PwShop shop, ProductBuildContext context)
+        public PwProduct WriteProductToDatabase(PwShop shop, ProductBuildContext context)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
             var masterProduct = context.MasterProducts.FindMasterProduct(context);
@@ -175,7 +175,7 @@ namespace ProfitWise.Data.ProcessSteps
             return product;
         }
 
-        private void WriteVariantToDatabase(PwShop shop, VariantBuildContext context)
+        public void WriteVariantToDatabase(PwShop shop, VariantBuildContext context)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
             var variantRepository = _multitenantFactory.MakeVariantRepository(shop);

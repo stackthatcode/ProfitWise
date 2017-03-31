@@ -7,11 +7,11 @@ using Castle.Core.Internal;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
-using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 using Push.Foundation.Utilities.Logging;
+
 
 namespace ProfitWise.Data.Services
 {

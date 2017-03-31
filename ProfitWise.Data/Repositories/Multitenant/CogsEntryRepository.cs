@@ -102,22 +102,25 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public IList<PwCogsVariantSummary> RetrieveVariants(IList<long> masterProductIds)
         {
             var query =
-                $@"WITH CTE_PriceSummary ( PwMasterVariantId, LowPriceAll, HighPriceAll, TotalInventory ) AS 
+                $@"WITH CTE_PriceSummary ( 
+		                PwMasterProductId, PwMasterVariantId, Exclude, StockedDirectly, CogsTypeId, CogsMarginPercent, 
+		                CogsCurrencyId, CogsAmount, CogsDetail, HighPriceAll, LowPriceAll, TotalInventory ) AS
                 (
-	                SELECT t2.PwMasterVariantId, MAX(t3.HighPrice), MIN(t3.LowPrice), SUM(Inventory)
+	                SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t2.Exclude, t2.StockedDirectly, t2.CogsTypeId, t2.CogsMarginPercent, 
+				                t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail, MAX(t3.HighPrice), MIN(t3.LowPrice), SUM(Inventory)
 	                FROM mastervariant(@PwShopId) t2 
 		                INNER JOIN variant(@PwShopId) t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
 	                WHERE t2.PwMasterProductId IN @MasterProductIds
-	                GROUP BY t2.PwMasterVariantId
+	                GROUP BY t2.PwMasterProductId, t2.PwMasterVariantId, t2.Exclude, t2.StockedDirectly, t2.CogsTypeId, t2.CogsMarginPercent, 
+			                t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail
                 )
-                SELECT t2.PwMasterProductId, t2.PwMasterVariantId, t3.Title, t4.Title AS ProductTitle, t3.Sku, 
-                    t2.Exclude, t2.StockedDirectly, t2.CogsTypeId, t2.CogsMarginPercent, t2.CogsCurrencyId, 
-                    t2.CogsAmount, t2.CogsDetail, t5.LowPriceAll AS LowPrice, t5.HighPriceAll AS HighPrice, t5.TotalInventory AS Inventory
-                FROM mastervariant(@PwShopId) t2 
-	                INNER JOIN variant(@PwShopId) t3 ON t2.PwMasterVariantId = t3.PwMasterVariantId
-                    INNER JOIN product(@PwShopId) t4 ON t3.PwProductId = t4.PwProductId
-	                INNER JOIN CTE_PriceSummary t5 ON t3.PwMasterVariantId = t5.PwMasterVariantId
-                WHERE t3.IsPrimary = 1 AND t2.PwMasterProductId IN @MasterProductIds;";
+                SELECT t1.PwMasterProductId, t1.PwMasterVariantId, t1.Exclude, t1.StockedDirectly, t1.CogsTypeId, t1.CogsMarginPercent, 
+				                t1.CogsCurrencyId, t1.CogsAmount, t1.CogsDetail, t1.HighPriceAll, t1.LowPriceAll, t1.TotalInventory,
+				                t3.Title, t3.Sku, t4.Title AS ProductTitle
+                FROM CTE_PriceSummary t1
+	                INNER JOIN variant(@PwShopId) t3 ON t1.PwMasterVariantId = t3.PwMasterVariantId
+	                    INNER JOIN product(@PwShopId) t4 ON t3.PwProductId = t4.PwProductId
+                WHERE t3.IsPrimary = 1 AND t4.PwMasterProductId IN @MasterProductIds;";
 
             var output = _connectionWrapper.Query<PwCogsVariantSummary>(
                 query, new {this.PwShopId, MasterProductIds = masterProductIds}).ToList();

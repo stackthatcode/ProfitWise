@@ -7,7 +7,6 @@ using ProfitWise.Data.Model.GoodsOnHand;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
-using ServiceStack.Text;
 
 namespace ProfitWise.Data.Services
 {

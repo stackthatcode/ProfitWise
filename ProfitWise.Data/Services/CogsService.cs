@@ -85,7 +85,6 @@ namespace ProfitWise.Data.Services
             }
         }
 
-
         // Data Entry storing functionality
         private void SaveCogsDataEntryForMasterVariant(MasterVariantUpdateContext context)
         {
