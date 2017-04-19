@@ -7,6 +7,7 @@ namespace Push.Foundation.Utilities.Security
     {
         private readonly string _secret;
 
+        // This is actually a bad idea - this constrains the secret to instance-level configuration
         public HmacCryptoService(string secret)
         {
             _secret = secret;

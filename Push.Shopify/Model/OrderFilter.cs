@@ -40,6 +40,7 @@ namespace Push.Shopify.Model
         public DateTime? ProcessedAtMinUtc { get; set; }
         public DateTime? ProcessedAtMaxUtc { get; set; }
         public DateTime? UpdatedAtMinUtc { get; set; }
+        public DateTime? UpdatedAtMaxUtc { get; set; }
 
 
         public override string ToString()
@@ -47,9 +48,9 @@ namespace Push.Shopify.Model
             return $"Order Filter dump: ProcessedAtMin: {ProcessedAtMinUtc} - ProcessedAtMax: {ProcessedAtMaxUtc} - UpdatedAtMin: {UpdatedAtMinUtc}";
         }
 
-        public OrderFilter OrderByProcessAtDescending()
+        public OrderFilter OrderByUpdateAtDescending()
         {
-            _orderByClause = "processed_at desc";
+            _orderByClause = "updated_at desc";
             _shopifySortOrder = ShopifySortOrder.Descending;
             return this;
         }
@@ -80,7 +81,11 @@ namespace Push.Shopify.Model
             {
                 builder.Add("updated_at_min", UpdatedAtMinUtc.Value);
             }
-
+            if (UpdatedAtMaxUtc != null)
+            {
+                builder.Add("updated_at_max", UpdatedAtMaxUtc.Value);
+            }
+            
             return builder;
         }
     }

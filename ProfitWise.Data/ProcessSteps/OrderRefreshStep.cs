@@ -123,10 +123,10 @@ namespace ProfitWise.Data.ProcessSteps
             // ** Critical => OrderEndFudgeFactor accounts for any changes to Timezone
             var filter = new OrderFilter()
                 {
-                    ProcessedAtMinUtc = startDateFromPreferencesUtc.AddMinutes(OrderStartFudgeFactor),
-                    ProcessedAtMaxUtc = oldStartDateUtc.AddMinutes(OrderEndFudgeFactor),
+                    UpdatedAtMinUtc = startDateFromPreferencesUtc.AddMinutes(OrderStartFudgeFactor),
+                    UpdatedAtMaxUtc = oldStartDateUtc.AddMinutes(OrderEndFudgeFactor),
                 }
-                .OrderByProcessAtDescending();
+                .OrderByUpdateAtDescending();
 
             RefreshOrders(filter, shopCredentials, shop);
 
@@ -147,11 +147,11 @@ namespace ProfitWise.Data.ProcessSteps
             var endDateShopUtc = DateTime.UtcNow;
             
             var filter = new OrderFilter
-                {
-                    ProcessedAtMinUtc = startDateShopUtc.AddMinutes(OrderStartFudgeFactor),
-                    ProcessedAtMaxUtc = endDateShopUtc.AddMinutes(OrderEndFudgeFactor),
+                {                
+                    UpdatedAtMinUtc = startDateShopUtc.AddMinutes(OrderStartFudgeFactor),
+                    UpdatedAtMaxUtc = endDateShopUtc.AddMinutes(OrderEndFudgeFactor),
                 }
-                .OrderByProcessAtDescending();
+                .OrderByUpdateAtDescending();
 
             // The Batch State stores everything in UTC, thus we need to translate to the Shop's Time Zone
             // Set the Batch State Order End point to UTC now... 
@@ -236,11 +236,7 @@ namespace ProfitWise.Data.ProcessSteps
             var existingOrder =
                 context.CurrentExistingOrders
                     .FirstOrDefault(x => x.ShopifyOrderId == orderFromShopify.Id);            
-
-            _pushLogger.Debug(
-                $"Translating Order from Shopify {orderFromShopify.Name}/{orderFromShopify.Id} " + 
-                "to ProfitWise data model");
-
+            
             var repository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
 
             using (var transaction = repository.InitiateTransaction())
@@ -265,10 +261,10 @@ namespace ProfitWise.Data.ProcessSteps
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
             var cogsService = _multitenantFactory.MakeCogsService(context.PwShop);
 
-            var translatedOrder = orderFromShopify.ToShopifyOrder(context.PwShop, _timeZoneTranslator);
-
             _pushLogger.Debug($"Inserting new Order: {orderFromShopify.Name}/{orderFromShopify.Id}");
-            _pushLogger.Debug($"BalancingCorrection: {translatedOrder.BalancingCorrection}");
+
+            var translatedOrder = orderFromShopify.ToShopifyOrder(context.PwShop, _timeZoneTranslator);
+            _pushLogger.Trace($"BalancingCorrection: {translatedOrder.BalancingCorrection}");
 
             foreach (var lineItem in orderFromShopify.LineItems)
             {
@@ -283,7 +279,7 @@ namespace ProfitWise.Data.ProcessSteps
                 var variantBuildContext = lineItem.ToVariantBuildContext(allMasterProducts: context.MasterProducts);
 
                 var pwVariant = FindCreateProductVariant(context.PwShop, productBuildContext, variantBuildContext);
-                _pushLogger.Debug("Matching Variant: " + pwVariant.ToString());
+                _pushLogger.Trace("Matching Variant: " + pwVariant.ToString());
 
                 translatedLineItem.SetProfitWiseVariant(pwVariant);
 
@@ -301,7 +297,7 @@ namespace ProfitWise.Data.ProcessSteps
                 var unitCogs = cogsService.AssignUnitCogsToLineItem(cogsContexts, translatedLineItem);
                 translatedLineItem.UnitCogs = unitCogs;
 
-                _pushLogger.Debug(
+                _pushLogger.Trace(
                     $"Computed CoGS for new Order Line Item: {translatedLineItem.ShopifyOrderLineId}  - {unitCogs}");
             }
             _pushLogger.Trace(Environment.NewLine + translatedOrder);
@@ -310,19 +306,19 @@ namespace ProfitWise.Data.ProcessSteps
 
             foreach (var item in translatedOrder.LineItems)
             {
-                _pushLogger.Debug($"Inserting new Order Line Item: {item.ShopifyOrderLineId}");                
+                _pushLogger.Trace($"Inserting new Order Line Item: {item.ShopifyOrderLineId}");                
                 orderRepository.InsertLineItem(item);
 
                 foreach (var refund in item.Refunds)
                 {
-                    _pushLogger.Debug($"Inserting new Refund: {refund.ShopifyRefundId}");
+                    _pushLogger.Trace($"Inserting new Refund: {refund.ShopifyRefundId}");
                     orderRepository.InsertRefund(refund);
                 }
             }
 
             foreach (var adjustment in translatedOrder.Adjustments)
             {
-                _pushLogger.Debug($"Inserting new Order Adjustment: {adjustment.ShopifyAdjustmentId}");
+                _pushLogger.Trace($"Inserting new Order Adjustment: {adjustment.ShopifyAdjustmentId}");
                 orderRepository.InsertAdjustment(adjustment);
             }
         }

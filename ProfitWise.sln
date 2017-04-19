@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Server", "ProfitWise.Server\ProfitWise.Server.csproj", "{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Data", "ProfitWise.Data\ProfitWise.Data.csproj", "{CE56511C-1D8F-4537-96B9-EF03DA326F90}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitWise.Batch", "ProfitWise.Batch\ProfitWise.Batch.csproj", "{6BBA037F-DA5C-48E3-8D74-AF67B93AC37F}"
@@ -32,16 +30,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Debug Aleks|Any CPU.ActiveCfg = Debug Aleks|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Debug Aleks|Any CPU.Build.0 = Debug Aleks|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Debug Jeremy|Any CPU.ActiveCfg = Debug Jeremy|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Debug Jeremy|Any CPU.Build.0 = Debug Jeremy|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Release Standalone|Any CPU.ActiveCfg = Release|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Release Standalone|Any CPU.Build.0 = Release|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB5BA8B0-A8F0-47F3-A58E-33355126EB89}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CE56511C-1D8F-4537-96B9-EF03DA326F90}.Debug Aleks|Any CPU.ActiveCfg = Debug Aleks|Any CPU
 		{CE56511C-1D8F-4537-96B9-EF03DA326F90}.Debug Aleks|Any CPU.Build.0 = Debug Aleks|Any CPU
 		{CE56511C-1D8F-4537-96B9-EF03DA326F90}.Debug Jeremy|Any CPU.ActiveCfg = Debug Jeremy|Any CPU

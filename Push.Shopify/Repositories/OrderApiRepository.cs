@@ -94,7 +94,7 @@ namespace Push.Shopify.Repositories
                                 JsonConvert.SerializeObject(order));
             }
 
-            _logger.Debug($"Translating Order {order.name} ({order.id})");
+            _logger.Trace($"Translating Order {order.name} ({order.id})");
 
             var orderResult
                 = new Order
