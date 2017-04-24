@@ -23,7 +23,6 @@ CREATE NONCLUSTERED INDEX IX_Variant_RetrieveVariants
     ON profitwisevariant (PwShopId, IsPrimary) INCLUDE (PwProductId, PwVariantId, PwMasterVariantId, Sku, Title);
 GO 
 
-
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Variant_PwProductId_And_PwMasterVariantId')   
     DROP INDEX IX_Variant_PwProductId_And_PwMasterVariantId ON profitwisevariant;   
 GO  
@@ -31,22 +30,14 @@ CREATE NONCLUSTERED INDEX IX_Variant_PwProductId_And_PwMasterVariantId
     ON profitwisevariant (PwShopId, IsPrimary) INCLUDE ( PwProductId, PwMasterVariantId )
 GO 
 
+-- This serves the Inventory Valuation Report query
+IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Variant_IsActive_And_Inventory')   
+    DROP INDEX IX_Variant_IsActive_And_Inventory ON profitwisevariant;   
+GO  
+CREATE NONCLUSTERED INDEX IX_Variant_IsActive_And_Inventory   
+    ON profitwisevariant (PwShopId, IsActive, Inventory) INCLUDE ( PwMasterVariantId, PwProductId, HighPrice )
+GO 
 
--- Are these truly necessary...? We have a ton of database writes...
-/*
-IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Variant_PwMasterVariantId_And_HighLowPrice_AndInventory')   
-    DROP INDEX IX_Variant_PwMasterVariantId_And_HighLowPrice_AndInventory ON profitwisevariant;   
-GO  
-CREATE NONCLUSTERED INDEX IX_Variant_PwMasterVariantId_And_HighLowPrice_AndInventory   
-    ON profitwisevariant (PwShopId) INCLUDE ( PwMasterVariantId, HighPrice, LowPrice, Inventory )
-GO 
-IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Variant_PwMasterVariantId_And_Sku_And_Title')   
-    DROP INDEX IX_Variant_PwMasterVariantId_And_Sku_And_Title ON profitwisevariant;   
-GO  
-CREATE NONCLUSTERED INDEX IX_Variant_PwMasterVariantId_And_Sku_And_Title   
-    ON profitwisevariant (PwShopId, PwProductId, IsPrimary) INCLUDE ( PwMasterVariantId, Sku, Title )
-GO 
-*/
 
 
 
@@ -99,6 +90,29 @@ CREATE NONCLUSTERED INDEX IX_MasterVariant_PwMasterProductId
 GO 
 
 
+
+
+
+
+
+
+
+
+-- Are these truly necessary...? We have a ton of database writes...
+/*
+IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Variant_PwMasterVariantId_And_HighLowPrice_AndInventory')   
+    DROP INDEX IX_Variant_PwMasterVariantId_And_HighLowPrice_AndInventory ON profitwisevariant;   
+GO  
+CREATE NONCLUSTERED INDEX IX_Variant_PwMasterVariantId_And_HighLowPrice_AndInventory   
+    ON profitwisevariant (PwShopId) INCLUDE ( PwMasterVariantId, HighPrice, LowPrice, Inventory )
+GO 
+IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Variant_PwMasterVariantId_And_Sku_And_Title')   
+    DROP INDEX IX_Variant_PwMasterVariantId_And_Sku_And_Title ON profitwisevariant;   
+GO  
+CREATE NONCLUSTERED INDEX IX_Variant_PwMasterVariantId_And_Sku_And_Title   
+    ON profitwisevariant (PwShopId, PwProductId, IsPrimary) INCLUDE ( PwMasterVariantId, Sku, Title )
+GO 
+*/
 
 /**** TODO - Revisit
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Product_Tags')   
