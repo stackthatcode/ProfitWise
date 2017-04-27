@@ -28,7 +28,10 @@ namespace ProfitWise.Data.Model.Profit
         public int StartingIndex => (PageNumber - 1) * PageSize;
         
         // Referred to by the query that totals Adjustments
+        public int OrderLineEntry => EntryType.OrderLineEntry;
+        public int RefundEntry => EntryType.RefundEntry;
         public int AdjustmentEntry => EntryType.AdjustmentEntry;
+        public bool HasFilters { get; set; }
 
 
         public TotalQueryContext(PwShop pwShop)

@@ -8,6 +8,19 @@ namespace ProfitWise.Data.Model.Profit
 {
     public class GroupedTotal
     {
+        public GroupedTotal()
+        {
+            TotalCogs = 0m;
+            TotalRevenue = 0m;
+            TotalProfit = 0m;
+            TotalQuantitySold = 0;
+            TotalOrders = 0;
+            AverageMargin = 0m;
+            ProfitPercentage = 0m;
+        }
+
+
+
         [IgnoreDataMember]
         public ReportGrouping ReportGrouping { get; set; }
 

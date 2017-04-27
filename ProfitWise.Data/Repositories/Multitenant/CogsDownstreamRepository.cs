@@ -3,6 +3,7 @@ using System.Data;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
+using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Shop;
@@ -158,32 +159,42 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
 
         // Report Entry queries
-        public void DeleteInsertReportEntryLedger(EntryRefreshContext context = null)
+        public void DeleteEntryLedger(EntryRefreshContext context)
         {
-            context = context ?? new EntryRefreshContext();
-
-            var query =
-                DeleteEntriesQuery(context) +
-                InsertLineItemEntriesQuery(context) +
-                InsertRefundEntriesQuery(context) +
-                InsertAdjustmentEntriesQuery(context) +
-                InsertCorrectionEntriesQuery(context);
-            
-            _connectionWrapper.Execute(query, new {
-                    PwShopId,
-                    context.ShopifyOrderId,
-                    context.PwMasterProductId,
-                    context.PwMasterVariantId,
-                    context.PwPickListId,
-                    EntryType.OrderLineEntry,
-                    EntryType.AdjustmentEntry,
-                    EntryType.RefundEntry,
-                    EntryType.CorrectionEntry });
+            var query = DeleteEntriesQuery(context);
+            ExecuteLedgeQuery(context, query);
         }
-        
+
+        public void RefreshEntryLedger(EntryRefreshContext context)
+        {
+            var query = InsertLineItemEntriesQuery(context) +
+                        InsertRefundEntriesQuery(context) +
+                        InsertAdjustmentEntriesQuery(context) +
+                        InsertCorrectionEntriesQuery(context);
+
+            ExecuteLedgeQuery(context, query);
+        }
+
+        private void ExecuteLedgeQuery(EntryRefreshContext context, string query)
+        {
+            _connectionWrapper.Execute(query, new
+            {
+                PwShopId,
+                context.ShopifyOrderId,
+                context.PwMasterProductId,
+                context.PwMasterVariantId,
+                context.PwPickListId,
+                EntryType.OrderLineEntry,
+                EntryType.AdjustmentEntry,
+                EntryType.RefundEntry,
+                EntryType.CorrectionEntry
+            });
+        }
+
         private readonly string PaymentStatusInsertField =
-            $@"CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN {PaymentStatus.Captured} 
-            ELSE {PaymentStatus.NotCaptured} END AS PaymentStatus ";
+            $@"CASE WHEN FinancialStatus IN 
+                ({FinancialStatus.PartiallyPaid}, {FinancialStatus.Paid}, {FinancialStatus.PartiallyRefunded}, {FinancialStatus.Refunded}) 
+            THEN {PaymentStatus.Captured} ELSE {PaymentStatus.NotCaptured} END AS PaymentStatus ";
 
         private string OrderIdWhereClause(string alias = null, string clausePrefix = "WHERE")
         {
@@ -282,7 +293,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     context.PwPickListId, EntryType.OrderLineEntry, EntryType.AdjustmentEntry,
                     EntryType.RefundEntry, EntryType.CorrectionEntry
                 });
-
         }
 
         private readonly string PaymentStatusUpdateField =
@@ -300,7 +310,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         ON pr.ShopifyOrderId = ol.ShopifyOrderId 
                         AND pr.SourceId = ol.ShopifyOrderLineId ";
                 
-            return query + UpdateFilterAppender(query, "ol", context) + "; ";
+            return UpdateFilterAppender(query, "ol", context) + "; ";
         }
 
         private string UpdateRefundEntriesQuery(EntryRefreshContext context)
@@ -317,7 +327,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                ON orf.ShopifyOrderId = oli.ShopifyOrderId 
                         AND orf.ShopifyOrderLineId = oli.ShopifyOrderLineId ";
             
-            return query + UpdateFilterAppender(query, "oli", context) + "; ";
+            return UpdateFilterAppender(query, "oli", context) + "; ";
         }
 
         private string UpdateAdjustmentEntriesQuery(EntryRefreshContext context)
@@ -333,6 +343,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         ON oa.ShopifyOrderId = o.ShopifyOrderId ";
             return query + "; ";
         }
+
         private string UpdateCorrectionEntriesQuery(EntryRefreshContext context)
         {
             var query =
@@ -343,6 +354,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         AND pr.EntryType = {EntryType.CorrectionEntry} ";
             return query + "; ";
         }
+
         private string UpdateFilterAppender(string query, string orderLineAlias, EntryRefreshContext context)
         {
             if (context.ShopifyOrderId != null)

@@ -23,10 +23,8 @@ namespace ProfitWise.Data.Services
         public PwShop PwShop { get; set; }
 
         public CogsService(
-                IPushLogger logger, 
-                MultitenantFactory multitenantFactory, 
-                CurrencyService currencyService,
-                ConnectionWrapper connectionWrapper)
+                IPushLogger logger, MultitenantFactory multitenantFactory, 
+                CurrencyService currencyService, ConnectionWrapper connectionWrapper)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
@@ -57,7 +55,8 @@ namespace ProfitWise.Data.Services
             }
         }
         
-        public void SaveCogsForMasterProduct(long pwMasterProductId, CogsDto defaults, List<CogsDto> details)
+        public void SaveCogsForMasterProduct(
+                long pwMasterProductId, CogsDto defaults, List<CogsDto> details)
         {
             using (var transaction = _connectionWrapper.InitiateTransaction())
             {

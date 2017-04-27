@@ -81,6 +81,8 @@ GO
 
 
 
+
+
 -- *** profitwisemastervariant Index Scripting
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_MasterVariant_PwMasterProductId')   
     DROP INDEX IX_MasterVariant_PwMasterProductId ON profitwisemastervariant;   
@@ -91,6 +93,37 @@ GO
 
 
 
+
+-- *** shopifyorderlineitem Indexes
+
+-- This serves the Inventory Valuation Report query
+IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_OrderLineItem_PickListUpdate')   
+    DROP INDEX IX_OrderLineItem_PickListUpdate ON shopifyorderlineitem;   
+GO  
+CREATE NONCLUSTERED INDEX IX_OrderLineItem_PickListUpdate   
+    ON shopifyorderlineitem (PwShopId) INCLUDE ( ShopifyOrderId, ShopifyOrderLineId, OrderDate, PwProductId, PwVariantId, UnitPrice )
+GO 
+
+
+IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_OrderLineItem_LedgerUpdate')   
+    DROP INDEX IX_OrderLineItem_LedgerUpdate ON shopifyorderlineitem;   
+GO  
+CREATE NONCLUSTERED INDEX IX_OrderLineItem_LedgerUpdate   
+    ON shopifyorderlineitem (PwShopId) INCLUDE ( ShopifyOrderId, ShopifyOrderLineId, UnitCogs, PwVariantId, FinancialStatus )
+GO 
+
+
+
+
+-- *** profitwiseprofitreportentry Indexes
+
+-- This serves the Inventory Valuation Report query
+IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_ProfitReportEntry_UpdateIndex')   
+    DROP INDEX IX_ProfitReportEntry_UpdateIndex ON shopifyorderlineitem;   
+GO  
+CREATE NONCLUSTERED INDEX IX_ProfitReportEntry_UpdateIndex   
+    ON profitwiseprofitreportentry (PwShopId) INCLUDE ( EntryDate, EntryType, ShopifyOrderId, SourceId, Quantity )
+GO 
 
 
 

@@ -251,7 +251,12 @@ namespace ProfitWise.Data.ProcessSteps
                 }
 
                 var refreshContext = new EntryRefreshContext() { ShopifyOrderId = orderFromShopify.Id };
-                cogsUpdateRepository.DeleteInsertReportEntryLedger(refreshContext);
+                cogsUpdateRepository.DeleteEntryLedger(refreshContext);
+                if (!orderFromShopify.Cancelled)
+                {
+                    cogsUpdateRepository.RefreshEntryLedger(refreshContext);
+                }
+
                 transaction.Commit();
             }
         }

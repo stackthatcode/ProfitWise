@@ -208,15 +208,20 @@ namespace ProfitWise.Web.Controllers
         private Summary BuildSummary(PwReport report, PwShop shop)
         {
             var queryRepository = _factory.MakeProfitRepository(shop);
+            var reportRepository = _factory.MakeReportRepository(shop);
+            var hasFilters = reportRepository.HasFilters(report.PwReportId);
 
             var queryContext = new TotalQueryContext(shop)
             {
                 PwReportId = report.PwReportId,
+                HasFilters = hasFilters,
                 StartDate = report.StartDate,
                 EndDate = report.EndDate,
                 Grouping = report.GroupingId,
                 Ordering = ColumnOrdering.ProfitDescending,
             };
+
+            // Must determine if Report has filters?
 
             var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
 

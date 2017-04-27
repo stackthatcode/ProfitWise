@@ -81,17 +81,19 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             // We'll only include the Query Stub when the Report has Filters
             var totalsQuery = @"SELECT " + QueryGutsForTotals();
-            var nonAdjustmentTotals = 
-                _connectionWrapper.Query<GroupedTotal>(totalsQuery, queryContext).First();
+            var nonAdjustmentTotals = _connectionWrapper.Query<GroupedTotal>(totalsQuery, queryContext).First();
             
-            var adjustmentTotalsQuery = 
-                @"SELECT " + TotalsFields +
-                @" FROM profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
-		        WHERE t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
-                AND t3.EntryType = @AdjustmentEntry";
+            var adjustmentTotals = new GroupedTotal();
+            if (!queryContext.HasFilters)
+            {
+                var adjustmentTotalsQuery =
+                    @"SELECT " + TotalsFields +
+                    @" FROM profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus) t3
+		                        WHERE t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
+                                AND t3.EntryType = @AdjustmentEntry";
 
-            var adjustmentTotals = 
-                _connectionWrapper.Query<GroupedTotal>(adjustmentTotalsQuery, queryContext).First();
+                adjustmentTotals = _connectionWrapper.Query<GroupedTotal>(adjustmentTotalsQuery, queryContext).First();
+            }
 
             var orderCountQuery =
                 @"SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 

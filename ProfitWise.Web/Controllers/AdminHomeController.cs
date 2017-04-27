@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -137,7 +138,8 @@ namespace ProfitWise.Web.Controllers
         {
             var shop = _shopRepository.RetrieveByUserId(userId);
             var repository = _factory.MakeCogsDownstreamRepository(shop);
-            repository.DeleteInsertReportEntryLedger();
+            repository.DeleteEntryLedger(new EntryRefreshContext());
+            repository.RefreshEntryLedger(new EntryRefreshContext());
             return JsonNetResult.Success();
         }
 
