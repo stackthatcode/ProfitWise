@@ -13,6 +13,7 @@ namespace Push.Shopify.Model
         public IList<RefundLineItem> LineItems { get; set; }
         public List<OrderAdjustment> OrderAdjustments { get; set; }
         public IList<Transaction> Transactions { get; set; }
+        public bool IsValid => Transactions.Any() && Transactions.All(x => x.IsSuccess);
 
         public bool IsOrderLevel => !LineItems.Any();
 

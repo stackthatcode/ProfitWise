@@ -107,7 +107,7 @@ namespace Push.Shopify.Repositories
                     CreatedAtShopTz = order.processed_at,
                     UpdatedAtShopTz = order.updated_at,
                     LineItems = new List<OrderLineItem>(),
-                    Refunds = new List<Refund>(),
+                    AllRefunds = new List<Refund>(),
                     OrderDiscount = 0.00m,
                     CancelledAtShopTz = order.cancelled_at,
                     FinancialStatus = order.financial_status,
@@ -185,16 +185,14 @@ namespace Push.Shopify.Repositories
 
                 foreach (var transaction in refund.transactions)
                 {
-                    if (transaction.status == "success")
-                    {
-                        var transactionItem = new Transaction();
-                        transactionItem.Id = transaction.id;
-                        transactionItem.Amount = transaction.amount;
-                        refundResult.Transactions.Add(transactionItem);
-                    }
+                    var transactionItem = new Transaction();
+                    transactionItem.Id = transaction.id;
+                    transactionItem.Amount = transaction.amount;
+                    transactionItem.Status = transaction.status;
+                    refundResult.Transactions.Add(transactionItem);
                 }
 
-                orderResult.Refunds.Add(refundResult);
+                orderResult.AllRefunds.Add(refundResult);
             }
 
             return orderResult;

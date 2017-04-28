@@ -2,6 +2,8 @@
 {
     public class RefundLineItem
     {
+        public RefundLineItem(){ }
+
         public Refund ParentRefund { get; set; }
         public long Id { get; set; }
         public long LineItemId { get; set; }

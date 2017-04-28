@@ -27,7 +27,8 @@ namespace Push.Shopify.Model
         public decimal OrderDiscount { get; set; }
 
         public IList<OrderLineItem> LineItems { get; set; }
-        public IList<Refund> Refunds { get; set; }
+        public IEnumerable<Refund> Refunds => AllRefunds.Where(x => x.IsValid);
+        public IList<Refund> AllRefunds { get; set; }
 
         public IEnumerable<OrderAdjustment> Adjustments => Refunds.SelectMany(x => x.OrderAdjustments);
         public IEnumerable<OrderAdjustment> NonShippingAdjustments => Adjustments.Where(x => !x.IsShippingAdjustment);

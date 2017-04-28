@@ -31,7 +31,7 @@ namespace ProfitWise.TestData.MockShopifyStore
                     CancelledAtShopTz = null,
                     Tags = null,
                     Name = HelperExtensions.GenerateRandomString(30),
-                    Refunds = new List<Refund>(),
+                    AllRefunds = new List<Refund>(),
                     CreatedAtShopTz = createdAt,
                     TotalTax = HelperExtensions.GenerateRandomInteger(1000),
                     FinancialStatus = null,
