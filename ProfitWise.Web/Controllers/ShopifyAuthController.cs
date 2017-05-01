@@ -89,9 +89,6 @@ namespace ProfitWise.Web.Controllers
             {
                 ShopifyAuthorizationScope.ReadOrders,
                 ShopifyAuthorizationScope.ReadProducts,
-                #if (DEBUG)
-                    ShopifyAuthorizationScope.WriteOrders,
-                #endif
             };
 
             var authUrl = 
