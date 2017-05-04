@@ -20,13 +20,8 @@
 @Html.Partial("~/Views/Cogs/_EditProductConsolidationView.cshtml")
 
 <style>
-    table#product-search-grid tr td {
-        height: 80px !important; font-size: 14px; vertical-align: middle !important;
-    }
-
-    table#product-search-grid th {
-        font-size: 14px !important; font-weight: 700; color: #777;
-    }
+    table#product-search-grid tr td { height: 80px !important; vertical-align: middle !important; }
+    table#product-search-grid th { font-weight: 700; color: #777; }
 
     #product-search-grid tr td:nth-child(1), #product-search-heading tr th:nth-child(1) { width: 15%; }
     #product-search-grid tr td:nth-child(2), #product-search-heading tr th:nth-child(2) { width: 25%; }
@@ -43,20 +38,20 @@
 
 <script type="text/html" id="Product-Search-Header">
     <!-- Filtering and Paging -->
-    <div class="row" style="height:100px;">
+    <div class="row">
         <!-- Filtering Widget -->
-        <div class="col-xs-6" style="padding-top: 20px;">
+        <div class="col-lg-6">
+            <div style="height: 20px;"></div>
             <div class="pull-left;"
                  data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
             </div>
         </div>
 
         <!-- Paging Widget -->
-        <div class="col-xs-6">
-            <div style="height: 20px;"></div>
+        <div class="col-lg-6">
+            <div style="height: 20px;" class="visible-lg"></div>
             <div data-bind="visible: $root.CurrentGrid().length > 0">
-                <div style="min-width: 500px; text-align: right;" 
-                     data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                <div style="text-align: right;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
                 </div>
             </div>
         </div>
@@ -65,7 +60,7 @@
     <div class="row" data-bind="visible: $root.CurrentGrid().length > 0">
         <div class="col-xs-12">
             <!-- The margin bumps this downward so it hugs the bottom of the header -->
-            <table class="table" id="product-search-heading" style="margin-top: 43px; margin-bottom: 0px;">
+            <table class="table" id="product-search-heading" style="margin-top: 20px; margin-bottom: 0px;">
                 <thead>
                 <tr>
                     <th data-bind="template: { name: 'Sortable-Column-Header',
@@ -81,7 +76,7 @@
                         <a href="#" class="popover-launcher"
                            data-bind="popover: { options: { placement: 'bottom' , trigger: 'click' , },
                                             template: 'Product-Bulk-Edit-Cogs-Confirm', data: $data }">
-                        CoGS</a>                    
+                            CoGS</a>                    
                     </th>
 
                     <th style="text-align: center;"><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked<br />Directly</a></th>
@@ -91,7 +86,7 @@
             </table>
 
         </div>
-    </div>
+    </div>    
 </script>
 
 <script type="text/html" id="Product-Bulk-Edit-Cogs-Confirm">
@@ -119,10 +114,10 @@
     <!-- No Products Found matching XYZ -->
     <div id="no-products-found" style="width: 100%;"
          data-bind="visible: $root.ShowNoProductsFound() && $root.CurrentGrid().length == 0">
-        <div style="text-align: center; padding-top: 20px; padding-bottom: 100px;">
+        <div style="text-align: center; padding-top: 100px; padding-bottom: 100px;">
             <i style="font-size: 6.0em; color: #CCC;" class="glyphicon glyphicon-tag"></i>
             <h3 style="color: #555; font-weight: 300;">Could not find any products</h3>
-            <span style="color: #AAA;">Try changing the filters or search term</span>
+            <span style="color: #AAA;">Try changing the filters or search terms.</span>
         </div>
     </div>
 
@@ -195,10 +190,10 @@
 </script>
 
 <script type="text/html" id="Main-Template">
-    <div class="fixed-header-container std-outer-padding">
-        <div class="standard-header-sleeve" style="height: 220px; min-width:1140px;">
+    <div class="std-outer-padding">
+        <div style="min-width:640px; background-color:#FFF;">
             <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header top-border-facade std-inner-padding">
+            <div class="top-border-facade std-inner-padding">
                 <div data-bind="if: CogsEditorVisible">
                     <div data-bind="template: { name: 'Product-Edit-Header', data: $root.EditProductCogsModel }"></div>
                 </div>
@@ -213,7 +208,7 @@
     </div>
 
     <div class="page-content-sleeve">
-        <div class="page-content std-inner-padding" style="margin-top: 219px; min-height: 300px; min-width:1140px;">
+        <div class="std-inner-padding" style="background-color:#FFF; min-height: 400px; min-width:640px;">
             <div data-bind="if: CogsEditorVisible">
                 <div data-bind="template: { name: 'Product-Edit-Body', data: $root.EditProductCogsModel }"></div>
             </div>
@@ -225,6 +220,21 @@
             </div>
         </div>
     </div>
+    
+    <div class="std-outer-padding" data-bind="if: SearchVisible">
+        <div class="std-inner-padding" style="background-color:#FFF; min-width:640px; ">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div data-bind="visible: $root.CurrentGrid().length > 0"
+                            style="padding-top:20px; height:135px;">
+                        <div style="text-align: right;" data-bind="template: { name: 'Paging-Widget', data: $root.PagingModel }">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+
 </script>
 
 <!-- KnockoutJS Root View -->
@@ -521,8 +531,6 @@
             ProfitWiseFunctions.SynchronizeWidth(
                 "table#product-search-grid tbody tr td",
                 "table#product-search-heading thead tr th");
-
-            ProfitWiseFunctions.FixedHeaderScrollingInit(".standard-header");            
             ProfitWiseFunctions.PopOverAutoCloseInit();
 
             self.EditProductCogsModel.JQueryInit();

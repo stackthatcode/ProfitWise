@@ -34,15 +34,6 @@ td.overflow-gracefully {
 
 
 
-/** Page Header common styling **/
-.fixed-header-container {
-    position: fixed; 
-    width: 100%; 
-    top: 0; 
-    z-index: 100;
-}
-
-
 
 /** Standardized Header and Page Content CSS **/
 .standard-header-sleeve {

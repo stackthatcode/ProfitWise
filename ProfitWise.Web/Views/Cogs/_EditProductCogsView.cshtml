@@ -1,5 +1,4 @@
 ﻿@using ProfitWise.Web.Attributes
-
 @{
     var commonContext = Context.AuthenticatedContext();
     var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
@@ -7,22 +6,20 @@
 
 <style>
      #product-edit-grid td {
-        height: 90px !important;
-        font-size: 14px;
+        min-height: 90px !important;
         vertical-align: middle !important;
     }
 
     #product-edit-grid th {
-        font-size: 14px !important;
         font-weight: 700;
         color: #777;
-        height: 50px;
+        min-height: 50px;
     }
 
     #product-edit-heading tr th { border-bottom: none; }
-    #product-edit-grid tr td:nth-child(1), #product-edit-heading tr th:nth-child(1) { width: 40%; }
-    #product-edit-grid tr td:nth-child(2), #product-edit-heading tr th:nth-child(2) { width: 20%; text-align: center; }
-    #product-edit-grid tr td:nth-child(3), #product-edit-heading tr th:nth-child(3) { width: 20%; text-align: center; }
+    #product-edit-grid tr td:nth-child(1), #product-edit-heading tr th:nth-child(1) { width: 30%; }
+    #product-edit-grid tr td:nth-child(2), #product-edit-heading tr th:nth-child(2) { width: 25%; text-align: center; }
+    #product-edit-grid tr td:nth-child(3), #product-edit-heading tr th:nth-child(3) { width: 25%;min-width: 200px; text-align: center; }
     #product-edit-grid tr td:nth-child(4), #product-edit-heading tr th:nth-child(4) { width: 10%; text-align: center; }
     #product-edit-grid tr td:nth-child(5), #product-edit-heading tr th:nth-child(5) { width: 10%; text-align: center; }
 
@@ -41,7 +38,7 @@
             <div style="height:5px;"></div>
 
             <div class="return-link">
-                <a href="#" class="btn btn-default" data-bind="click: ExitCallback">
+                <a href="#" class="btn btn-default btn-sm" data-bind="click: ExitCallback">
                     <i class="glyphicon glyphicon-arrow-left"></i> &nbsp;Go Back
                 </a>
             </div>

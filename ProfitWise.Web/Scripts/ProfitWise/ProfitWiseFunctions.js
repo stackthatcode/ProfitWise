@@ -1,13 +1,6 @@
 ﻿
 var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
-ProfitWiseFunctions.FixedHeaderScrollingInit = function (movingElementSelector) {
-    $(window)
-        .scroll(function() {
-            $(movingElementSelector).css('left', -($(this).scrollLeft()) + "px");
-        });
-}
-
 ProfitWiseFunctions.SynchronizeWidth = function (sourceSelector, targetSelector) {
     var columnFixed = function () {
         var sourceCells = $(sourceSelector);
