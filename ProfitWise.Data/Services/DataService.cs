@@ -51,8 +51,8 @@ namespace ProfitWise.Data.Services
             };
 
             var totals = queryRepository.RetrieveTotalsByContext(queryContext);
-
             var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
+
             var allProfit = executiveSummary.TotalProfit;
 
             // Compute Profit % for each line item

@@ -30,8 +30,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             return _connectionWrapper.InitiateTransaction();
         }
-
-
+        
         // Profit Query output
         public void PopulateQueryStub(long reportId)
         {
@@ -68,20 +67,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 _connectionWrapper.Query<PwReportSearchStub>(query, new { PwShopId, reportId }).ToList();
             return results;
         }
-
-        public int QueryStubCount(long reportId)
-        {
-            var query = @"SELECT COUNT(*) FROM profitquerystub(@PwShopId)
-                        WHERE PwReportId = @reportId;";
-            return _connectionWrapper.Query<int>(query, new { this.PwShopId, reportId }).First();
-        }
-
+        
         // Queries for generating Totals  
         public GroupedTotal RetreiveTotalsForAll(TotalQueryContext queryContext)
         {
             // We'll only include the Query Stub when the Report has Filters
             var totalsQuery = @"SELECT " + QueryGutsForTotals();
-            var nonAdjustmentTotals = _connectionWrapper.Query<GroupedTotal>(totalsQuery, queryContext).First();
+            var nonAdjustmentTotals = 
+                    _connectionWrapper.Query<GroupedTotal>(totalsQuery, queryContext).First();
             
             var adjustmentTotals = new GroupedTotal();
             if (!queryContext.HasFilters)
@@ -92,11 +85,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                        WHERE t3.EntryDate >= @StartDate AND t3.EntryDate <= @EndDate 
                                 AND t3.EntryType = @AdjustmentEntry";
 
-                adjustmentTotals = _connectionWrapper.Query<GroupedTotal>(adjustmentTotalsQuery, queryContext).First();
+                adjustmentTotals = 
+                    _connectionWrapper.Query<GroupedTotal>(adjustmentTotalsQuery, queryContext).First();
             }
 
             var orderCountQuery =
-                @"SELECT COUNT(DISTINCT(t3.ShopifyOrderId)) 
+                @"SELECT COUNT(DISTINCT(t3.OrderCountOrderId)) 
                 FROM profitquerystub(@PwShopId) t1
 	                INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId 
@@ -120,14 +114,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 AverageMargin = nonAdjustmentTotals.AverageMargin + adjustmentTotals.AverageMargin,
                 TotalOrders = orderCount
             };
+
             return finalTotals;
         }
-
 
         private string TotalsFields =
                 @"SUM(t3.NetSales) As TotalRevenue,
                 SUM(t3.Quantity) AS TotalQuantitySold,
-                COUNT(DISTINCT(t3.ShopifyOrderId)) AS TotalOrders,
+                COUNT(DISTINCT(t3.OrderCountOrderId)) AS TotalOrders,
 		        SUM(t3.CoGS) AS TotalCogs, 
                 SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
                 CASE WHEN SUM(t3.NetSales) = 0 THEN 0 
@@ -147,8 +141,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         AND t3.EntryDate <= @EndDate             
                 WHERE t1.PwReportId = @PwReportId ";
         }
-
-
+        
         public List<GroupedTotal> RetrieveTotalsByContext(TotalQueryContext queryContext)
         {
             if (queryContext.Grouping == ReportGrouping.Product)
@@ -240,9 +233,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Vendor);
         }
-
-
-
+        
         private string OrderingAndPagingForTotals(TotalQueryContext queryContext)
         {
             string orderByClause = "";

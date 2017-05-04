@@ -221,7 +221,7 @@ RETURNS TABLE
 AS  
 RETURN SELECT PwShopId, EntryDate, EntryType, ShopifyOrderId, SourceId, PwProductId, PwVariantId, NetSales, 
 	CASE WHEN (@UseDefaultMargin = 1 AND ISNULL(CoGS, 0) = 0) THEN NetSales * @DefaultCoGSPercent ELSE CoGS END AS CoGS, 
-	Quantity, PaymentStatus
+	Quantity, PaymentStatus, OrderCountOrderId
 FROM dbo.profitreportentry(@PwShopId)
 WHERE PaymentStatus >= @MinPaymentStatus
 GO

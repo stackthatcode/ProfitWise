@@ -17,9 +17,10 @@ CREATE TABLE [dbo].[profitwiseprofitreportentry](
 	[PwProductId] [bigint] NULL,
 	[PwVariantId] [bigint] NULL,
 	[NetSales] [decimal](15, 2) NULL,
-	[CoGS] [decimal](15, 2) NULL,
+	[CoGS] [decimal](15, 6) NULL,
 	[Quantity] [int] NULL,
 	[PaymentStatus] [smallint] NOT NULL,
+	[OrderCountOrderId] [bigint] NULL,
  CONSTRAINT [PK_profitwiseprofitreportentry_PwShopId] PRIMARY KEY CLUSTERED 
 (
 	[PwShopId] ASC,
@@ -31,10 +32,6 @@ CREATE TABLE [dbo].[profitwiseprofitreportentry](
 ) ON [PRIMARY]
 END
 GO
-
--- PW-135 fix
-ALTER TABLE profitwiseprofitreportentry
-ALTER COLUMN CoGS decimal(15, 6);
 
 
 

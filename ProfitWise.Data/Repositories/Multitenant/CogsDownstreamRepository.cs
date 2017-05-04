@@ -155,8 +155,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             output += "AND t3.OrderDate <= @EndDate ";
             return output;
         }
-
-
+        
 
         // Report Entry queries
         public void DeleteEntryLedger(EntryRefreshContext context)
@@ -169,9 +168,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query = InsertLineItemEntriesQuery(context) +
                         InsertRefundEntriesQuery(context) +
-                        InsertAdjustmentEntriesQuery(context) +
-                        InsertCorrectionEntriesQuery(context);
-
+                        InsertAdjustmentEntriesQuery(context);
             ExecuteLedgeQuery(context, query);
         }
 
@@ -191,9 +188,10 @@ namespace ProfitWise.Data.Repositories.Multitenant
             });
         }
 
-        private readonly string PaymentStatusInsertField =
-            $@"CASE WHEN FinancialStatus IN 
-                ({FinancialStatus.PartiallyPaid}, {FinancialStatus.Paid}, {FinancialStatus.PartiallyRefunded}, {FinancialStatus.Refunded}) 
+        private readonly string _paymentStatusInsertField =
+            $@"CASE WHEN FinancialStatus IN (
+                {FinancialStatus.PartiallyPaid}, {FinancialStatus.Paid}, {FinancialStatus.PartiallyRefunded}, 
+                {FinancialStatus.Refunded} ) 
             THEN {PaymentStatus.Captured} ELSE {PaymentStatus.NotCaptured} END AS PaymentStatus ";
 
         private string OrderIdWhereClause(string alias = null, string clausePrefix = "WHERE")
@@ -210,8 +208,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                PwProductId, PwVariantId, TotalAfterAllDiscounts AS NetSales, 
                         Quantity * ISNULL(UnitCogs, 0) AS CoGS,
                         Quantity AS Quantity, " + 
-                        PaymentStatusInsertField + 
-                        @" FROM orderlineitem(@PwShopId) ";
+                        _paymentStatusInsertField +
+                        @", ShopifyOrderId FROM orderlineitem(@PwShopId) ";
 
             if (context.ShopifyOrderId != null)
                 query += OrderIdWhereClause();
@@ -226,8 +224,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, 	
                         -t1.RestockQuantity * ISNULL(t2.UnitCoGS, 0) AS CoGS, 	
 	                    -t1.RestockQuantity AS Quantity, " +
-                        PaymentStatusInsertField + 
-                @"FROM orderrefund(@PwShopId) t1
+                        _paymentStatusInsertField + @", NULL " + 
+                    @" FROM orderrefund(@PwShopId) t1
 		            INNER JOIN orderlineitem(@PwShopId) t2
 			            ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId ";
 
@@ -242,7 +240,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"INSERT INTO profitreportentry(@PwShopId)
                 SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.ShopifyOrderId, 
                     t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 
-                    0 AS CoGS, NULL AS Quantity, " + PaymentStatusInsertField + 
+                    0 AS CoGS, NULL AS Quantity, " + _paymentStatusInsertField + @", NULL " +
                 @"FROM orderadjustment(@PwShopId) t1 
                     INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
 
@@ -251,13 +249,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return query + "; ";
         }
 
+        [Obsolete("Should not need these corrections - provided Shopify rectifies their reporting")]
         private string InsertCorrectionEntriesQuery(EntryRefreshContext context)
         {
             var query =
                 @"INSERT INTO profitreportentry(@PwShopId)
                 SELECT	PwShopId, LastActivityDate, @CorrectionEntry AS EntryType, ShopifyOrderId, ShopifyOrderId, 
 		                NULL, NULL, BalancingCorrection AS NetSales, 0 AS CoGS, NULL AS Quantity, " + 
-                PaymentStatusInsertField +
+                _paymentStatusInsertField +
                 @" FROM ordertable(@PwShopId) o WHERE BalancingCorrection <> 0 ";
 
             if (context.ShopifyOrderId != null)
@@ -275,17 +274,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }
 
 
-
         // NOTE: this must never be called by the Order Refresh Process
         public void UpdateReportEntryLedger(EntryRefreshContext context)
         {
             context = context ?? new EntryRefreshContext();
-
             var query =
                 UpdateLineItemEntriesQuery(context) +
                 UpdateRefundEntriesQuery(context) +
-                UpdateAdjustmentEntriesQuery(context) +
-                UpdateCorrectionEntriesQuery(context);
+                UpdateAdjustmentEntriesQuery(context);
 
             _connectionWrapper.Execute(query, new
                 {
@@ -296,7 +292,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }
 
         private readonly string PaymentStatusUpdateField =
-            $@"pr.PaymentStatus =  CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN {PaymentStatus.Captured} 
+            $@"pr.PaymentStatus = CASE WHEN FinancialStatus IN (3, 4, 5, 6) THEN {PaymentStatus.Captured} 
             ELSE {PaymentStatus.NotCaptured} END ";
 
         private string UpdateLineItemEntriesQuery(EntryRefreshContext context)
@@ -344,6 +340,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return query + "; ";
         }
 
+        [Obsolete]
         private string UpdateCorrectionEntriesQuery(EntryRefreshContext context)
         {
             var query =

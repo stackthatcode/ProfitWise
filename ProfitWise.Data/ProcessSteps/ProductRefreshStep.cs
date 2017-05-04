@@ -131,7 +131,6 @@ namespace ProfitWise.Data.ProcessSteps
                     }
 
                     FlagMissingVariantsAsInactive(shop, productBuildContext);
-
                     transaction.Commit();
                 }
             }
