@@ -25,3 +25,8 @@ WHERE PaymentStatus >= @MinPaymentStatus
 GO
 
 
+
+-- #### IMPORTANT - DON'T FORGET TO RUN THE VIEWS AND FUNCTIONS DDL ####
+
+
+

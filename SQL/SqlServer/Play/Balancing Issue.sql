@@ -178,10 +178,13 @@ GROUP BY EntryType;
 SELECT *  FROM profitreportentryprocessed(100001, 1, 0.80, 1) 
 WHERE EntryDate >= '2017-05-02' AND EntryDate <= '2017-05-02' ORDER BY ShopifyOrderId;
 
-SELECT * FROM profitreportentry(100006) WHERE PwProductID = 0;
-
+SELECT * FROM profitreportentry(100001) WHERE PwProductID = 0;
 
 SELECT * FROM orderrefund(100001) WHERE PwProductId = 0;
+
+SELECT 214261.26 + 962.80
+
+SELECT 282205.81 - 7866.20;
 
 
 

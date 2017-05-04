@@ -256,22 +256,9 @@
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
         self.SortingModel.Callback = function() { self.LoadDataForCurrentPage(); };
         
-        // *** Launch Bulk Edit Popup
+        // *** Launch Bulk Edit Popup *** //
         self.BulkEditPopUp = function() {            
             ProfitWiseFunctions.PopOverCloseAll();
-
-            if (self.PagingModel.RecordCount() > 100) {
-                var msg = "There are too many Products in your current Product Search. " +
-                            "Bulk Cost of Goods Updates are only allowed for up 100 Products.";
-
-                ProfitWiseShopify.Confirm({
-                    title: "Too many Products for Bulk CoGS Update",
-                    message: msg,
-                    okButton: "OK",
-                    style: "danger"
-                });
-                return;
-            }
 
             var url = ProfitWiseConfig.BaseUrl + '/Cogs/CogsDetail?pwPickListId=' + self.PickListId();            
             ProfitWiseShopify.LaunchModal({

@@ -156,6 +156,7 @@ namespace ProfitWise.Data.Services
                 var cogsDetail = details != null && details.Any();
                 cogsEntryRepository
                     .UpdatePickListDefaultCogs(pickListId, defaults.ToPwCogsDetail(null), cogsDetail);
+
                 foreach (var detail in details)
                 {
                     cogsEntryRepository.InsertCogsDetailByPickList(pickListId, detail.ToPwCogsDetail(null));

@@ -92,19 +92,7 @@ namespace ProfitWise.Web.Controllers
                 });
             }
         }
-
-
-        [HttpGet]
-        public ActionResult BulkEditCogs(long pickListId)
-        {
-            var identity = this.HttpContext.IdentitySnapshot();
-            var model = new BulkEditAllCogsModel()
-            {
-                PickListId = pickListId,
-                DefaultMargin = identity.PwShop.DefaultMargin,
-            };
-            return View(model);
-        }
+        
 
         // Search pop-up
         [HttpGet]
