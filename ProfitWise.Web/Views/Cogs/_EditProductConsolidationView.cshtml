@@ -17,16 +17,15 @@
     input[type='text'] { width: 100px; }
 </style>
 
-<script type="text/html" id="Product-Consolidation-Header">
+<script type="text/html" id="Product-Consolidation-Template">
     <!-- Filtering and Paging -->
     <div class="row">
-        <div class="col-xs-6" style="padding-top: 20px;">
-            
-            <h3 class="edit-product-header overflow-gracefully" 
+        <div class="col-xs-6" style="padding-top: 20px;">            
+            <h3 class="drilldown-header overflow-gracefully" 
                 data-bind="text: MasterProductTitle"></h3>
-            <div class="edit-product-subtitle" data-bind="text: VariantTitle"></div>
+            <div class="drilldown-subtitle" data-bind="text: VariantTitle"></div>
             
-            <div class="edit-product-spacer"></div>
+            <div class="drilldown-spacer"></div>
 
             <div class="return-link">
                 <a href="#" class="btn btn-default" data-bind="click: ExitCallback">
@@ -42,8 +41,32 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-xs-12 edit-product-table-header">
+    <div style="padding-top: 40px; padding-bottom: 30px;">
+        <div class="row" style="height: 50px;">
+            <div class="col-xs-12">
+                <div class="consol-category-label">Product Consolidations</div>
+            </div>
+        </div>
+
+        <div data-bind="with: PrimaryProduct">
+            <div data-bind="template: { name: 'Product-Consolidation-Product-Widget' }">
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="height: 40px; border-top: 1px solid #CCC;">
+        <div class="col-xs-10"></div>
+    </div>
+
+    <div class="row" style="height: 50px;">
+        <div class="col-xs-12">
+            <div class="consol-category-label">Variant Consolidations</div>
+        </div>
+    </div>
+
+    <div data-bind="foreach: PrimaryVariantGrid">
+        <div data-bind="template: { name: 'Product-Consolidation-Variant-Widget' }"
+             style="padding-bottom: 30px;">
         </div>
     </div>
 </script>
@@ -75,40 +98,9 @@
     </span>
 </script>
 
-<script type="text/html" id="Product-Consolidation-Body">
-    <div style="padding-top: 40px; padding-bottom: 30px;">
-        <div class="row" style="height: 50px;">
-            <div class="col-xs-12">
-                <div class="consol-category-label">Product Consolidations</div>
-            </div>
-        </div>
-
-        <div data-bind="with: PrimaryProduct">
-            <div data-bind="template: { name: 'Product-Consolidation-Product-Widget' }">
-            </div>
-        </div>        
-    </div>
-
-    <div class="row" style="height: 40px; border-top: 1px solid #CCC;">
-        <div class="col-xs-10"></div>
-    </div>
-
-    <div class="row" style="height: 50px;">
-        <div class="col-xs-12">
-            <div class="consol-category-label">Variant Consolidations</div>
-        </div>
-    </div>
-
-    <div data-bind="foreach: PrimaryVariantGrid">
-        <div data-bind="template: { name: 'Product-Consolidation-Variant-Widget' }" 
-             style="padding-bottom: 30px;">
-        </div>
-    </div>
-</script>
-
 <script type="text/html" id="Product-Consolidation-Product-Widget">
     <div class="row">
-        <div class="col-xs-10">
+        <div class="col-sm-10 col-xs-12">
             <table class="table product-consol">
                 <tbody>
                 <tr class="consol-primary active ">
@@ -118,7 +110,7 @@
 
                     <td><span data-bind="text: VendorText"></span></td>
                     <td><span data-bind="text: ActiveText"></span></td>
-                    <td><span><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
+                    <td><span style="white-space:nowrap;"><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
                     <td>&nbsp;</td>
                 </tr>
 
@@ -156,50 +148,50 @@
 
 <script type="text/html" id="Product-Consolidation-Variant-Widget">
     <div class="row">
-        <div class="col-xs-10">
+        <div class="col-sm-10 col-xs-12">
             <table class="table product-consol">
                 <tbody>
-                <tr class="consol-primary active">
-                    <td class="overflow-gracefully">
-                        <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />                            
-                    </td>
-                    <td class="overflow-gracefully">
-                        <span data-bind="text: Product.Title, tooltip: { title: Product.Title }"></span>
-                    </td>
-                    <td><span data-bind="text: ActiveText"></span></td>
-                    <td><span><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
-                    <td>&nbsp;</td>
-                </tr>
+                    <tr class="consol-primary active">
+                        <td class="overflow-gracefully">
+                            <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />
+                        </td>
+                        <td class="overflow-gracefully">
+                            <span data-bind="text: Product.Title, tooltip: { title: Product.Title }"></span>
+                        </td>
+                        <td><span data-bind="text: ActiveText"></span></td>
+                        <td><span style="white-space:nowrap;"><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
+                        <td>&nbsp;</td>
+                    </tr>
 
-                <!-- ko if: ShowConsolidations -->
-                <!-- ko foreach: Consolidations -->
-                <tr>
-                    <td class="overflow-gracefully">
-                        <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />
-                    </td>
-                    <td class="overflow-gracefully">
-                        <span data-bind="text:Product.Title, tooltip: { title: Product.Title }"></span>
-                    </td>
+                    <!-- ko if: ShowConsolidations -->
+                    <!-- ko foreach: Consolidations -->
+                    <tr>
+                        <td class="overflow-gracefully">
+                            <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />
+                        </td>
+                        <td class="overflow-gracefully">
+                            <span data-bind="text:Product.Title, tooltip: { title: Product.Title }"></span>
+                        </td>
 
-                    <td><span data-bind="text: ActiveText"></span></td>
-                    <td><a href="#" data-bind="click: SetPrimary">Set to Primary</a></td>
-                    <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
-                </tr>
-                <!-- /ko -->
-                <!-- /ko -->
-                        
-                <tr>
-                    <td colspan="5">
-                        <span data-bind="visible: $parent.AddVariantVisible">
-                            <a href="#" class="consol-link-control"
-                               data-bind="click: $parent.AddVariantConsolidationPopup">
-                                <i class="glyphicon glyphicon-plus"></i> Add Variant
-                            </a>
-                        </span>
-                        <span style="display: inline-block; width:10px;"></span>
-                        <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>                        
-                    </td>
-                </tr>
+                        <td><span data-bind="text: ActiveText"></span></td>
+                        <td><a href="#" data-bind="click: SetPrimary">Set to Primary</a></td>
+                        <td><a href="#" data-bind="click: Deconsolidate"><i class="glyphicon glyphicon-remove"></i> Remove</a></td>
+                    </tr>
+                    <!-- /ko -->
+                    <!-- /ko -->
+
+                    <tr>
+                        <td colspan="5">
+                            <span data-bind="visible: $parent.AddVariantVisible">
+                                <a href="#" class="consol-link-control"
+                                   data-bind="click: $parent.AddVariantConsolidationPopup">
+                                    <i class="glyphicon glyphicon-plus"></i> Add Variant
+                                </a>
+                            </span>
+                            <span style="display: inline-block; width:10px;"></span>
+                            <span data-bind="template: { name: 'Consolidation-Expander-Synopsis' }"></span>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

@@ -6,7 +6,7 @@
 
 <style>
      #product-edit-grid td {
-        min-height: 90px !important;
+        height: 90px !important;
         vertical-align: middle !important;
     }
 
@@ -16,24 +16,24 @@
         min-height: 50px;
     }
 
-    #product-edit-heading tr th { border-bottom: none; }
-    #product-edit-grid tr td:nth-child(1), #product-edit-heading tr th:nth-child(1) { width: 30%; }
-    #product-edit-grid tr td:nth-child(2), #product-edit-heading tr th:nth-child(2) { width: 25%; text-align: center; }
-    #product-edit-grid tr td:nth-child(3), #product-edit-heading tr th:nth-child(3) { width: 25%;min-width: 200px; text-align: center; }
-    #product-edit-grid tr td:nth-child(4), #product-edit-heading tr th:nth-child(4) { width: 10%; text-align: center; }
-    #product-edit-grid tr td:nth-child(5), #product-edit-heading tr th:nth-child(5) { width: 10%; text-align: center; }
+    #product-edit-grid tr th { border-bottom: none; }
+    #product-edit-grid tr td:nth-child(1), #product-edit-grid tr th:nth-child(1) { width: 30%; }
+    #product-edit-grid tr td:nth-child(2), #product-edit-grid tr th:nth-child(2) { width: 25%; text-align: center; }
+    #product-edit-grid tr td:nth-child(3), #product-edit-grid tr th:nth-child(3) { width: 25%; min-width: 200px; text-align: center; }
+    #product-edit-grid tr td:nth-child(4), #product-edit-grid tr th:nth-child(4) { width: 10%; text-align: center; }
+    #product-edit-grid tr td:nth-child(5), #product-edit-grid tr th:nth-child(5) { width: 10%; text-align: center; }
 
     input[type='text'] { width: 100px; }
 </style>
 
-<script type="text/html" id="Product-Edit-Header">
+<script type="text/html" id="Product-Edit-Template">
     <!-- Filtering and Paging -->
     <div class="row">
         <div class="col-xs-6" style="padding-top: 20px;">
             
-            <h3 class="edit-product-header overflow-gracefully" 
+            <h3 class="drilldown-header overflow-gracefully" 
                 data-bind="text: MasterProductTitle"></h3>
-            <div class="edit-product-subtitle" data-bind="text: VariantTitle"></div>
+            <div class="drilldown-subtitle" data-bind="text: VariantTitle"></div>
             
             <div style="height:5px;"></div>
 
@@ -52,8 +52,8 @@
     </div>
 
     <div class="row" data-bind="visible: $data.Grid().length > 0">
-        <div class="col-xs-12 edit-product-table-header">
-            <table class="table" id="product-edit-heading" style="margin-bottom: 0px;">
+        <div class="col-xs-12">
+            <table class="table" id="product-edit-grid" style="margin-bottom: 0px;">
                 <thead>
                 <tr>
                     <th>
@@ -76,64 +76,60 @@
                     </th>
                 </tr>
                 </thead>
+                <tbody data-bind="foreach: $data.Grid">
+                <tr>
+                    <td class="overflow-gracefully">
+                        <div data-bind="tooltip: { title: CombinedTitle, placement: 'bottom' }">
+                            <span style="font-weight: 700;" data-bind="text: SkuCorrected"></span><br />
+                            <span data-bind="text: Title"></span>
+
+                                @if (HttpContext.Current.AuthenticatedContext().IsImpersonated)
+                                {
+                                    <span>MVID =</span>
+                                    <span data-bind="text: PwMasterVariantId"></span>
+                                }
+                        </div>
+                        <span style="font-size: 0.9em; color:#999;" data-bind="text: InventoryText"></span>
+                    </td>
+
+                    <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
+
+                    <td>
+                        <div data-bind="ifnot: EditorVisible">
+                            <span data-bind="template: { name: 'Cogs-Summary-Widget', data: SummaryModel }">
+                            </span>
+                        </div>
+
+                        <div data-bind="if: EditorVisible">
+                            <div style="overflow:visible;" data-bind="template: { name: 'Cogs-Editor-Widget', data: EditorModel }">
+                            </div>
+
+                            <div style="height: 7px;"></div>
+
+                            <a href="#" style="font-size: 0.8em; font-weight: 600;" data-bind="click: CancelAndHide">
+                                <span><i class="glyphicon glyphicon-remove"></i> Cancel</span>
+                            </a>
+                            <span>|</span>
+                            <a href="#" style="font-size: 0.8em; font-weight: 600;" data-bind="click: UpdateAndHide">
+                                <span><i class="glyphicon glyphicon-ok"></i> Save</span>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                               data-bind="click: $parent.StockedDirectlyCheckboxClick, checked: $data.CurrentStockedDirectly" />
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                               data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.CurrentExcluded" />
+                    </td>
+                </tr>
+                </tbody>
             </table>
         </div>
     </div>
-</script>
-
-<script type="text/html" id="Product-Edit-Body">
-    <!-- Search Results -->
-    <table id="product-edit-grid" class="table" 
-           style="width: 100%; height: 100%; margin: 0;">
-        <tbody data-bind="foreach: $data.Grid">
-        <tr>
-            <td class="overflow-gracefully">
-                <div data-bind="tooltip: { title: CombinedTitle, placement: 'bottom' }">
-                    <span style="font-weight: 700;" data-bind="text: SkuCorrected"></span><br/>
-                    <span data-bind="text: Title"></span>
-                    @if (HttpContext.Current.AuthenticatedContext().IsImpersonated)
-                    {
-                        <span>MVID =</span>
-                        <span data-bind="text: PwMasterVariantId"></span>
-                    }
-                </div>
-                <span style="font-size: 0.9em; color:#999;" data-bind="text: InventoryText"></span> 
-            </td>
-
-            <td data-bind="template: { name: 'Money-Range-Widget-Vertical', data: Price }"></td>
-
-            <td>
-                <div data-bind="ifnot: EditorVisible">
-                    <span data-bind="template: { name: 'Cogs-Summary-Widget', data: SummaryModel }">
-                    </span>                    
-                </div>
-
-                <div data-bind="if: EditorVisible">
-                    <div style="overflow:visible;" data-bind="template: { name: 'Cogs-Editor-Widget', data: EditorModel }">
-                    </div>
-                    
-                    <div style="height: 7px;"></div>
-                    
-                    <a href="#" style="font-size: 0.8em; font-weight: 600;" data-bind="click: CancelAndHide">
-                        <span><i class="glyphicon glyphicon-remove"></i> Cancel</span>
-                    </a>
-                    <span>|</span>
-                    <a href="#" style="font-size: 0.8em; font-weight: 600;" data-bind="click: UpdateAndHide">
-                        <span><i class="glyphicon glyphicon-ok"></i> Save</span>
-                    </a>
-                </div>
-            </td>
-            <td>
-                <input type="checkbox"
-                       data-bind="click: $parent.StockedDirectlyCheckboxClick, checked: $data.CurrentStockedDirectly"/>
-            </td>
-            <td>
-                <input type="checkbox"
-                       data-bind="click: $parent.ExcludedCheckboxClick, checked: $data.CurrentExcluded"/>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    
+    <div style="height:100px;"></div>
 </script>
 
 <script>
@@ -388,7 +384,7 @@
         self.JQueryInit = function() {
             ProfitWiseFunctions.SynchronizeWidth(
                 "table#product-edit-grid tbody tr td",
-                "table#product-edit-heading thead tr th");
+                "table#product-edit-grid thead tr th");
         };
 
         return self;

@@ -10,20 +10,20 @@
 <script id="Main-Template" type="text/html">
     <h4 style="font-weight: 600;" data-bind="text: $data.ProductTitle"></h4>
     <p>
-        Would you like to Include/Exclude all Products in the current search results from ProfitWise reporting?
+        You can either INCLUDE or EXCLUDE all of the Variants to Stocked Directly for your current search results.
     </p>
 
-    <div style="height: 24px;"></div>
+    <div style="height: 10px;"></div>
 
     <div class="alert alert-warning" role="alert">
         <strong>WARNING!</strong> Clicking either button will affect all Variants of all Products in your search
     </div>
-    <div style="height: 24px;"></div>
+    <div style="height: 10px;"></div>
 
     <form class="form-inline">
         <div class="form-group">
-            <a href="#" data-bind="click: $root.IncludeAllProducts" class="form-control btn btn-default" style="width: 48%;"><i class="glyphicon glyphicon-eye-open"></i> &nbsp; Include ALL Products</a>
-            <a href="#" data-bind="click: $root.ExcludeAllProducts" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-eye-close"></i> &nbsp; Exclude ALL Products</a>
+            <a href="#" data-bind="click: $root.IncludeAllProducts" class="form-control btn btn-default" style="width: 48%;"><i class="glyphicon glyphicon-eye-open"></i> &nbsp; Include ALL</a>
+            <a href="#" data-bind="click: $root.ExcludeAllProducts" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-eye-close"></i> &nbsp; Exclude ALL</a>
         </div>
     </form>
 </script>

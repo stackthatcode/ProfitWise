@@ -19,7 +19,7 @@
 
 <style>
     body {
-        overflow-y: scroll !important;
+        overflow: scroll !important;
         padding: 0px !important;
 
     }
@@ -36,6 +36,15 @@
     } 
     .edit-cogs-grid-header a, .detail-grid a {
         font-weight: 700;
+    }
+
+    .header-right-side {
+        text-align: left;
+    }
+    @@media only screen and (min-width: 768px) {
+        .header-right-side {
+            text-align: right;
+        }
     }
 </style>
 
@@ -55,34 +64,32 @@
 </script>
 
 <script type="text/html" id="Cogs-Detail-Main-Template">
-    <div class="fixed-header-container" style="padding-left: 0px; padding-right: 0px;">
-        <div class="standard-header-sleeve" style="height: 170px;">
-
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header" 
-                 style="width:100% !important; min-width: 950px !important; padding-top:20px; padding-right:20px; padding-left:20px; border-bottom: 1px dashed #CCC;">
-                
-                <div class="row">
-                    <div class="col-xs-6 pull-left">
-                        <div style="margin-bottom: 15px;">
-                            <span style="font-size:1.0em; font-weight:700; color:#666;">
-                                Enter the default Cost of Goods Sold
-                            </span>
-                        </div>
-
-                        <div data-bind="template: { name: 'Cogs-Editor-Widget', data: DefaultEditorModel }"></div>
+    <div style="padding-left: 0px; padding-right: 0px;">
+        <div style="width:100%; padding:20px; border-bottom: 1px dashed #CCC; min-width:480px;">
+            <div class="row">
+                <div class="col-xs-12 col-sm-7 pull-left">
+                    <div style="margin-bottom: 15px;">
+                        <span style="font-size:1.0em; font-weight:700; color:#666;">
+                            Enter the default Cost of Goods Sold
+                        </span>
                     </div>
 
-                    <div class="col-xs-6 popover-container" style="text-align:right; padding-top:45px;">
+                    <div data-bind="template: { name: 'Cogs-Editor-Widget', data: DefaultEditorModel }"></div>
+                </div>
+                
+                <div class="col-xs-12 col-sm-5 popover-container header-right-side">
+                    <div class="hidden-xs" style="height:50px;"></div>
+
+                    <div>
                         <a href="#" data-bind="click: CloseClick" style="width:100px;" class="btn btn-default">
-                            <i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel                            
+                            <i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel
                         </a>
                         &nbsp;
                         <span data-bind="if: PwMasterVariantId">
-                            <a href="#"
+                            <a href="#" 
                                data-bind="popover: { options: { placement: 'bottom' , trigger: 'click' , },
-                                            template: 'Cogs-Detail-Copy-Confirmation', data: $data }"
-                               style="" class="btn btn-warning popover-launcher">
+                                         template: 'Cogs-Detail-Copy-Confirmation', data: $data }"
+                               class="btn btn-warning popover-launcher">
                                 <i class="glyphicon glyphicon-flash"></i> &nbsp; Copy to all Variants
                             </a>
                             &nbsp;
@@ -97,75 +104,67 @@
                                 <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
                             </a>
                         </span>
-                    </div>
+                    </div>                    
                 </div>
                 
-                <div class="row">
-                    <div class="col-xs-6" style="padding-top:22px;">
-                        <span style="color:#F66; font-weight:700;" data-bind="text: ValidationMessage"></span>
-                    </div>
-                    <div class="col-xs-6 edit-cogs-grid-header" 
-                         style="text-align:right; padding-top:22px;">                       
-                        <a href="#" data-bind="click: AddDetailEntry">
-                            <i class="glyphicon glyphicon-plus"></i> Add Detail Entry
-                        </a>
-                        &nbsp;
-                        &nbsp;
-                        <a href="#" data-bind="click: RemoveAllDetail">
-                            <i class="glyphicon glyphicon-remove"></i> Remove All Detail
-                        </a>
-                    </div>
+                <div class="col-xs-12 col-sm-6" style="height:40px; padding-top:10px; font-weight:700;">
+                    <a href="#" data-bind="click: AddDetailEntry">
+                        <i class="glyphicon glyphicon-plus"></i> Add Detail Entry
+                    </a>
+                    &nbsp;&nbsp;
+                    <a href="#" data-bind="click: RemoveAllDetail">
+                        <i class="glyphicon glyphicon-remove"></i> Remove All Detail
+                    </a>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="padding-top:10px; color:#F66; font-weight:700;">
+                    <div class="hidden-xs" style="text-align:right;" data-bind="text: ValidationMessage"></div>
+                    <div class="visible-xs" style="text-align:left;" data-bind="text: ValidationMessage"></div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <div style="position: absolute; overflow: visible; width:100%;">
-        <div style="height: 170px;"></div>
-
-        <div class="scrolling-popout-layout">
-            <div data-bind="visible: CogsDetail().length == 0" style="text-align:center; padding-top:60px;">
-                <h1 style="font-weight:700; font-size:2.5em; color:#CCC;">No CoGS Detail</h1>
-                <h4 style="font-weight:100;">Click "Add Detail Entry" to begin</h4>
-            </div>
+<div class="scrolling-popout-layout">
+    <div data-bind="visible: CogsDetail().length == 0" style="text-align:center; padding-top:60px;">
+        <h1 style="font-weight:700; font-size:2.5em; color:#CCC;">No CoGS Detail</h1>
+        <h4 style="font-weight:100;">Click "Add Detail Entry" to begin</h4>
+    </div>
             
-            <div data-bind="visible: CogsDetail().length > 0">
-                <div class="row" style="padding-top: 15px; min-width: 920px !important;">
-                    <div class="col-xs-9" style="color:#666; font-weight:700;">
-                        <span style="display:inline-block; margin-right:115px;">
-                            CoGS Type
-                        </span>
-                        <span style="display:inline-block; margin-right:137px;">
-                            CoGS Value
-                        </span>
-                        <span style="display:inline-block;">
-                            On or After Date
-                        </span>
-                    </div>
-                    <div class="col-xs-3">
-                    </div>
-                </div>
+    <div data-bind="visible: CogsDetail().length > 0">
+        <div class="row" style="padding-top: 15px; min-width: 920px !important;">
+            <div class="col-xs-9" style="color:#666; font-weight:700;">
+                <span style="display:inline-block; margin-right:115px;">
+                    CoGS Type
+                </span>
+                <span style="display:inline-block; margin-right:137px;">
+                    CoGS Value
+                </span>
+                <span style="display:inline-block;">
+                    On or After Date
+                </span>
+            </div>
+            <div class="col-xs-3">
+            </div>
+        </div>
 
-                <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom:300px;">
-                    <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
-                        <div class="row">
-                            <div class="col-xs-9">
-                                <div data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
-                                <div style="display: inline-block; position: relative; margin-left:10px;"
-                                     data-bind="template: { name: 'Date-Picker-Widget', data: { value: CogsDate } }"></div>
-                            </div>
-                            <div class="col-xs-3" style="padding-top:7px; text-align: right;">
-                                <a href="#" data-bind="click: $parent.RemoveDetailEntry">
-                                    <i class="glyphicon glyphicon-remove"></i> Remove
-                                </a>
-                            </div>
-                        </div>
+        <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom:300px;">
+            <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
+                <div class="row">
+                    <div class="col-xs-9">
+                        <div data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
+                        <div style="display: inline-block; position: relative; margin-left:10px;"
+                                data-bind="template: { name: 'Date-Picker-Widget', data: { value: CogsDate } }"></div>
+                    </div>
+                    <div class="col-xs-3" style="padding-top:7px; text-align: right;">
+                        <a href="#" data-bind="click: $parent.RemoveDetailEntry">
+                            <i class="glyphicon glyphicon-remove"></i> Remove
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </script>
 
 <!-- KnockoutJS Root Element -->
