@@ -389,7 +389,6 @@
     <Content Include="Views\SharedTemplates\_MoneyEditorWidget.cshtml" />
     <Content Include="Views\Shared\_DialogLayout.cshtml" />
     <Content Include="Views\Shared\_StyleAndScripts.cshtml" />
-    <Content Include="Views\Cogs\BulkEditCogs.cshtml" />
     <Content Include="Views\SharedTemplates\_MoneyRangeWidget.cshtml" />
     <Content Include="Views\Cogs\StockedProductPopup.cshtml" />
     <Content Include="Views\Cogs\ExcludedPickListPopup.cshtml" />
