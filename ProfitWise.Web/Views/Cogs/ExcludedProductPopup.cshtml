@@ -9,15 +9,23 @@
 
 <script id="Main-Template" type="text/html">
     <h4 style="font-weight: 600;" data-bind="text: $data.ProductTitle"></h4>
-    <p>
-        Would you like to Include or Exclude all <span data-bind="text: VariantCount"></span> Variants?
-    </p>
+    <p>Would you like to Include or Exclude all <span data-bind="text: VariantCount"></span> Variants?</p>
 
     <div style="height: 24px;"></div>
     <form class="form-inline">
         <div class="form-group">
-            <a href="#" data-bind="click: $root.IncludeAllProductVariants" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-eye-open"></i> &nbsp; Include ALL Variants</a>
-            <a href="#" data-bind="click: $root.ExcludeAllProductVariants" class="form-control btn btn-primary" style="width: 48%;"><i class="glyphicon glyphicon-eye-close"></i> &nbsp; Exclude ALL Variants</a>
+            <a href="#" 
+               data-bind="click: $root.IncludeAllProductVariants" 
+               class="form-control btn btn-primary" 
+               style="width: 48%;">
+                <i class="glyphicon glyphicon-eye-open"></i> &nbsp; Include
+            </a>
+            <a href="#" 
+               data-bind="click: $root.ExcludeAllProductVariants" 
+               class="form-control btn btn-primary" 
+               style="width: 48%;">
+                <i class="glyphicon glyphicon-eye-close"></i> &nbsp; Exclude
+            </a>
         </div>
     </form>
 </script>

@@ -38,12 +38,18 @@
         font-weight: 700;
     }
 
-    .header-right-side {
+    .left-side-xs {
         text-align: left;
     }
+    .right-side-xs {
+        text-align: right;
+    }
     @@media only screen and (min-width: 768px) {
-        .header-right-side {
+        .left-side-xs {
             text-align: right;
+        }
+        .right-side-xs {
+            text-align: left;
         }
     }
 </style>
@@ -64,111 +70,99 @@
 </script>
 
 <script type="text/html" id="Cogs-Detail-Main-Template">
-    <div style="padding-left: 0px; padding-right: 0px;">
-        <div style="width:100%; padding:20px; border-bottom: 1px dashed #CCC; min-width:480px;">
-            <div class="row">
-                <div class="col-xs-12 col-sm-7 pull-left">
-                    <div style="margin-bottom: 15px;">
-                        <span style="font-size:1.0em; font-weight:700; color:#666;">
-                            Enter the default Cost of Goods Sold
-                        </span>
-                    </div>
-
-                    <div data-bind="template: { name: 'Cogs-Editor-Widget', data: DefaultEditorModel }"></div>
+    <div style="width:100%; padding:20px; border-bottom: 1px dashed #CCC;">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 pull-left">
+                <div style="margin-bottom: 5px;">
+                    <span style="font-size:1.0em; font-weight:700; color:#777;">
+                        Enter the default Cost of Goods Sold
+                    </span>
                 </div>
-                
-                <div class="col-xs-12 col-sm-5 popover-container header-right-side">
-                    <div class="hidden-xs" style="height:50px;"></div>
 
-                    <div>
-                        <a href="#" data-bind="click: CloseClick" style="width:100px;" class="btn btn-default">
-                            <i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel
+                <div data-bind="template: { name: 'Cogs-Editor-Widget', data: DefaultEditorModel }"></div>
+            </div>
+            
+            <div class="col-xs-12 col-sm-6 popover-container left-side-xs">
+                <div class="hidden-xs" style="height:30px;"></div>
+                <div style="height:10px;"></div>
+
+                <div>
+                    <a href="#" data-bind="click: CloseClick" style="width:100px;" class="btn btn-default">
+                        <i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel
+                    </a>
+                    &nbsp;
+                    <span data-bind="if: PwMasterVariantId">
+                        <a href="#" 
+                           data-bind="popover: { options: { placement: 'bottom' , trigger: 'click' , },
+                                    template: 'Cogs-Detail-Copy-Confirmation', data: $data }"
+                           class="btn btn-warning popover-launcher">
+                            <i class="glyphicon glyphicon-flash"></i> &nbsp; Copy to all Variants
                         </a>
                         &nbsp;
-                        <span data-bind="if: PwMasterVariantId">
-                            <a href="#" 
-                               data-bind="popover: { options: { placement: 'bottom' , trigger: 'click' , },
-                                         template: 'Cogs-Detail-Copy-Confirmation', data: $data }"
-                               class="btn btn-warning popover-launcher">
-                                <i class="glyphicon glyphicon-flash"></i> &nbsp; Copy to all Variants
-                            </a>
-                            &nbsp;
-                        </span>
-                        <span data-bind="if: PwMasterVariantId">
-                            <a href="#" data-bind="click: SaveClick" style="width:100px;" class="btn btn-primary">
-                                <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
-                            </a>
-                        </span>
-                        <span data-bind="if: PwPickListId">
-                            <a href="#" data-bind="click: SavePickListClick" style="width:100px;" class="btn btn-danger">
-                                <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
-                            </a>
-                        </span>
-                    </div>                    
-                </div>
-                
-                <div class="col-xs-12 col-sm-6" style="height:40px; padding-top:10px; font-weight:700;">
-                    <a href="#" data-bind="click: AddDetailEntry">
-                        <i class="glyphicon glyphicon-plus"></i> Add Detail Entry
-                    </a>
-                    &nbsp;&nbsp;
-                    <a href="#" data-bind="click: RemoveAllDetail">
-                        <i class="glyphicon glyphicon-remove"></i> Remove All Detail
-                    </a>
-                </div>
-                <div class="col-xs-12 col-sm-6" style="padding-top:10px; color:#F66; font-weight:700;">
-                    <div class="hidden-xs" style="text-align:right;" data-bind="text: ValidationMessage"></div>
-                    <div class="visible-xs" style="text-align:left;" data-bind="text: ValidationMessage"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<div class="scrolling-popout-layout">
-    <div data-bind="visible: CogsDetail().length == 0" style="text-align:center; padding-top:60px;">
-        <h1 style="font-weight:700; font-size:2.5em; color:#CCC;">No CoGS Detail</h1>
-        <h4 style="font-weight:100;">Click "Add Detail Entry" to begin</h4>
-    </div>
-            
-    <div data-bind="visible: CogsDetail().length > 0">
-        <div class="row" style="padding-top: 15px; min-width: 920px !important;">
-            <div class="col-xs-9" style="color:#666; font-weight:700;">
-                <span style="display:inline-block; margin-right:115px;">
-                    CoGS Type
-                </span>
-                <span style="display:inline-block; margin-right:137px;">
-                    CoGS Value
-                </span>
-                <span style="display:inline-block;">
-                    On or After Date
-                </span>
-            </div>
-            <div class="col-xs-3">
-            </div>
-        </div>
-
-        <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom:300px;">
-            <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
-                <div class="row">
-                    <div class="col-xs-9">
-                        <div data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
-                        <div style="display: inline-block; position: relative; margin-left:10px;"
-                                data-bind="template: { name: 'Date-Picker-Widget', data: { value: CogsDate } }"></div>
-                    </div>
-                    <div class="col-xs-3" style="padding-top:7px; text-align: right;">
-                        <a href="#" data-bind="click: $parent.RemoveDetailEntry">
-                            <i class="glyphicon glyphicon-remove"></i> Remove
+                    </span>
+                    <span data-bind="if: PwMasterVariantId">
+                        <a href="#" data-bind="click: SaveClick" style="width:100px;" class="btn btn-primary">
+                            <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
                         </a>
+                    </span>
+                    <span data-bind="if: PwPickListId">
+                        <a href="#" data-bind="click: SavePickListClick" style="width:100px;" class="btn btn-danger">
+                            <i class="glyphicon glyphicon-floppy-disk"></i> &nbsp;Save
+                        </a>
+                    </span>
+                </div>                    
+            </div>
+            
+            <div class="col-xs-12" style="clear:both; height:45px; padding-top:15px; font-weight:700;">
+                <a href="#" data-bind="click: AddDetailEntry">
+                    <i class="glyphicon glyphicon-plus"></i> Add Detail Entry
+                </a>
+                &nbsp;&nbsp;
+                <a href="#" data-bind="click: RemoveAllDetail">
+                    <i class="glyphicon glyphicon-remove"></i> Remove All Detail
+                </a>
+            </div>
+
+            <div class="col-xs-12" style="color:#F66; font-weight:700;">
+                <div style="text-align:left;" data-bind="text: ValidationMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scrolling-popout-layout">
+        <div data-bind="visible: CogsDetail().length == 0" style="text-align:center; padding-top:60px;">
+            <h1 style="font-weight:700; font-size:2.5em; color:#777;">No CoGS Detail</h1>
+            <h4 style="font-weight:100;">Click "Add Detail Entry" to begin</h4>
+        </div>
+            
+        <div data-bind="visible: CogsDetail().length > 0">
+            <div data-bind="foreach: CogsDetail" class="detail-grid" style="padding-bottom:300px;">
+                <div style="width:100%; padding-top:15px; height:50px; clear:both; ">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <div style="font-weight:700; color:#777;">Cost of Goods Type and Amount</div>
+                            <div data-bind="template: { name: 'Cogs-Editor-Widget', data: $data.EditorModel }"></div>
+                        </div>
+                        <div class="col-xs-6 col-sm-3">
+                            <div style="font-weight:700; color:#777;">CoGS Date</div>
+                            <div style="display: inline-block; position: relative;"
+                                 data-bind="template: { name: 'Date-Picker-Widget', data: { value: CogsDate } }"></div>
+                        </div>
+                        <div class="col-xs-6 col-sm-3 left-side-xs" style="padding-top:32px;">                            
+                            <a href="#" class="btn btn-default" 
+                               data-bind="click: $parent.RemoveDetailEntry">
+                                <i class="glyphicon glyphicon-remove"></i> Remove
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </script>
 
 <!-- KnockoutJS Root Element -->
-<div data-bind="template: { name: 'Cogs-Detail-Main-Template' }"></div>
+<div data-bind="template: { name: 'Cogs-Detail-Main-Template' }" style="min-width:480px;"></div>
 
 <script>
     var ProfitWiseWidgets = ProfitWiseWidgets || {};
