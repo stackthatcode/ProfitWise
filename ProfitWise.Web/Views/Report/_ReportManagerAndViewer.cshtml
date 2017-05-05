@@ -14,26 +14,20 @@
         <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
     </div>
 
-    <div data-bind="ifnot: $data.InFilterEditMode">
+    <div data-bind="ifnot: $data.InFilterEditMode" style="min-width: 768px;">
         <div data-bind="template: { name: 'Report-Viewer', data: ReportViewerModel }"></div>
     </div>
 </script>
 
 <!-- Report Viewing-specific templates -->
 <script id="Report-Viewer" type="text/html">
-    <div id="report-viewer-header" class="std-outer-padding" style="min-width:1200px;">
-        <div class="standard-header-sleeve" style="height: 205px;">
-            <div class="standard-header std-inner-padding top-border-facade" 
-                 style="overflow: visible; padding-top:20px;">
-                
-                <div  data-bind="template: { name: 'Report-Viewer-Header' }"></div>         
+    <div id="report-viewer-header" class="std-outer-padding">
+        <div style="background-color:#FFF;" class="shadow">
+            <div style="overflow: visible; padding-top:20px; margin-top:20px;" class="std-inner-padding">
+                <div data-bind="template: { name: 'Report-Viewer-Header' }"></div>
             </div>
-        </div>
-    </div>
 
-    <div id="report-viewer-body" class="container page-content-sleeve" style="min-width:1200px;">
-        <div class="page-content std-inner-padding">
-            <div style="position: relative; width: 100%;">
+            <div style="overflow: auto; clear:both; position: relative; width: 100%;">
                 <div data-bind="if: ReportTypeId() == ProfitabilityId">
                     <div data-bind="template: { name: 'Report-Profitability', data: ReportDataModel }"></div>
                 </div>
@@ -44,12 +38,16 @@
         </div>
     </div>
 </script>
-<script type="text/html" id="Report-Viewer-Header">
-    <div class="col-xs-6 no-side-padding" data-bind="with: $data.ReportInterfaceModel">
-        <div data-bind="if: ReportLoaded()">
-            <h2 class="report-title" style="display: inline-block;" data-bind="text: Name"></h2>
 
-            <div style="display:inline-block; " data-bind="if: CopyForEditing">
+<script type="text/html" id="Report-Viewer-Header">
+    <div class="col-xs-6 col-sm-6 no-side-padding" 
+         style="height:200px;" data-bind="with: $data.ReportInterfaceModel">
+        <div data-bind="if: ReportLoaded()">
+            <div style="display: inline-block; ">
+                <h2 class="report-title" style="" data-bind="text: Name"></h2>
+            </div>
+
+            <div style="display:inline-block;" data-bind="if: CopyForEditing">
                 <div style="margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
                     (EDITING)
                 </div>
@@ -57,7 +55,7 @@
             
             @if (HttpContext.Current.IsDebuggingEnabled)
             {
-                <div style="display:inline-block; margin-left:7px; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
+                <div style="display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">
                     Report Id: <span data-bind="text: ReportId"></span>
                 </div>
             }
@@ -79,14 +77,13 @@
         </div>
     </div>
 
-    <div class="col-xs-6 no-side-padding" style="padding-top:10px; min-width:500px;">
+    <div class="col-xs-6 col-sm-6 no-side-padding" style="height:150px; padding-top:10px;">
         <div class="btn-group pull-right"
              data-bind="template: { name: 'Report-Viewer-Report-Selector',
                                     data: { SystemDefinedReports: $data.SystemDefinedReports,
                                             UserDefinedReports: $data.UserDefinedReports,
                                             SelectReportClick: $data.SelectReportClick} }">
         </div>
-
         <div class="pull-right" data-bind="with: ReportInterfaceModel" >
             <!-- ko if: OnlySaveAsAllowed -->
             <div class="pull-right" style="margin-right: 7px;">
@@ -124,15 +121,15 @@
             <!-- /ko -->
         </div>
 
-        <div style="clear: both; height: 20px;"></div>
-
+        <div style="clear: both; height: 10px;"></div>
         <div id="report-date-picker" class="pull-right" style="margin-left: 7px;"
              data-bind="with: ReportInterfaceModel">
             <div data-bind="if: DatePickerEnabled">
                 <div data-bind="template: { name: 'Date-Range-Picker-Widget-2',
-                                        data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
+                                data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
             </div>
         </div>
+        <div style="clear: both; height: 10px;"></div>
 
         <div class="pull-right">
             <a href="#" class="btn btn-default report-viewer-top-button" 
@@ -142,6 +139,7 @@
         </div>
     </div>     
 </script>
+
 <script type="text/html" id="Report-Viewer-Report-Selector">
     <a href="#" id="Report-Selector" class="btn btn-primary dropdown-toggle report-viewer-top-button"
        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -32,8 +32,10 @@ td.overflow-gracefully {
 }
 
 
-
-
+/** Standard Shadow **/
+.shadow {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 
 /** Standardized Header and Page Content CSS **/
 .standard-header-sleeve {
@@ -57,6 +59,15 @@ td.overflow-gracefully {
     padding-left: 0px !important;
     padding-right: 0px !important;
 }
+
+.pad-less {
+    padding: 0px;
+}
+
+.margin-less {
+    margin: 0px;
+}
+
 
 .std-outer-padding {
     padding-left: 20px !important;     /* standard outside padding */
