@@ -34,8 +34,7 @@ namespace ProfitWise.Batch
             Console.WriteLine("");
             return Console.ReadLine();
         }
-
-
+        
         static void Main(string[] args)
         {
             Console.WriteLine("ProfitWise.Batch v1.0 - Push Automated Commerce LLC");
