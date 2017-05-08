@@ -2,12 +2,13 @@
 @using Push.Foundation.Utilities.Json
 
 <style>
-h2.report-title {
-    font-size: 25px;
-    font-weight: 700;
-    line-height: 30px;
-}
+    h2.report-title {
+        font-size: 25px;
+        font-weight: 700;
+        line-height: 30px;
+    }
 </style>
+
 <!-- Acts a container that holds the Viewer and the Editor -->
 <script type="text/html" id="Report-Manager">
     <div data-bind="if: $data.InFilterEditMode" style="min-width: 768px;">
@@ -38,7 +39,6 @@ h2.report-title {
         </div>
     </div>
 </script>
-
 <script type="text/html" id="Report-Viewer-Header">
     <div class="col-xs-6 col-sm-6 no-side-padding" style="height:200px;" data-bind="with: $data.ReportInterfaceModel">
         <div data-bind="if: ReportLoaded()" style="overflow: auto;">
@@ -136,7 +136,6 @@ h2.report-title {
             <!-- /ko -->
     </div>     
 </script>
-
 <script type="text/html" id="Report-Viewer-Report-Selector">
     <a href="#" id="Report-Selector" class="btn btn-primary dropdown-toggle report-viewer-top-button"
        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -172,7 +171,6 @@ h2.report-title {
         <!-- /ko -->
     </ul>
 </script>
-
 <script id="Report-Interface-Model">
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 

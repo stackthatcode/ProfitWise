@@ -110,24 +110,22 @@
 
 <!-- Profitability Views -->
 <script id="Report-Profitability" type="text/html">
-    <div style="min-width: 768px;">
-        <div data-bind="ifnot: ProfitabilitySummaryContext.DatasetLoaded">
-            <div style="min-height: 600px;">
-                <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">No Report Loaded Yet</h1>
-            </div>
+    <div data-bind="ifnot: ProfitabilitySummaryContext.DatasetLoaded">
+        <div style="min-height: 600px;">
+            <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">No Report Loaded Yet</h1>
         </div>
+    </div>
 
-        <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && SummaryActive()">
-            <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-            <div style="min-height: 600px; padding-bottom: 30px;"
-                 data-bind="template: { name: 'Report-Profitability-Summary', data: $data }">
-            </div>
+    <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && SummaryActive()">
+        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
+        <div style="min-height: 600px; padding-bottom: 30px;"
+             data-bind="template: { name: 'Report-Profitability-Summary', data: $data }">
         </div>
-        <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && !SummaryActive()">
-            <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-            <div style="min-height: 600px; padding-left: 15px; padding-right: 15px;"
-                 data-bind="template: { name: 'Report-Profitability-Detail', data: $data }">
-            </div>
+    </div>
+    <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && !SummaryActive()">
+        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
+        <div style="min-height: 600px; padding-left:15px; padding-right:15px; "
+             data-bind="template: { name: 'Report-Profitability-Detail', data: $data }">
         </div>
     </div>
 </script>
