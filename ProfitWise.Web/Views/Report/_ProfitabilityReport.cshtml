@@ -70,7 +70,9 @@
         min-width: 310px; height: 400px; max-width: 600px;margin: 0 auto;clear: both;
     }
 
-
+    #detail-report-table {
+        min-width: 600px;
+    }
     #detail-report-table tr td:nth-child(1), #detail-report-table tr th:nth-child(1) {
         width: 22%;
     }
@@ -108,22 +110,24 @@
 
 <!-- Profitability Views -->
 <script id="Report-Profitability" type="text/html">
-    <div data-bind="ifnot: ProfitabilitySummaryContext.DatasetLoaded">
-        <div style="min-height: 600px;">
-            <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">No Report Loaded Yet</h1>
+    <div style="min-width: 768px;">
+        <div data-bind="ifnot: ProfitabilitySummaryContext.DatasetLoaded">
+            <div style="min-height: 600px;">
+                <h1 style="margin-top: 100px; text-align: center; font-weight: 700; font-size: 6em; color: #EEE;">No Report Loaded Yet</h1>
+            </div>
         </div>
-    </div>
 
-    <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px; padding-bottom: 30px;"
-             data-bind="template: { name: 'Report-Profitability-Summary', data: $data }">
+        <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && SummaryActive()">
+            <!-- Note: the context of $data at this level is ReportInterfaceModel -->
+            <div style="min-height: 600px; padding-bottom: 30px;"
+                 data-bind="template: { name: 'Report-Profitability-Summary', data: $data }">
+            </div>
         </div>
-    </div>
-    <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && !SummaryActive()">
-        <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px; padding-left:15px; padding-right:15px; "
-             data-bind="template: { name: 'Report-Profitability-Detail', data: $data }">
+        <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && !SummaryActive()">
+            <!-- Note: the context of $data at this level is ReportInterfaceModel -->
+            <div style="min-height: 600px; padding-left: 15px; padding-right: 15px;"
+                 data-bind="template: { name: 'Report-Profitability-Detail', data: $data }">
+            </div>
         </div>
     </div>
 </script>
@@ -175,9 +179,8 @@
                 </thead>
                 <tbody data-bind="foreach: Data">
                 <tr>
-                    <td>
-                        <div class="overflow-gracefully" style="max-width:350px;"
-                             data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></div>
+                    <td class="overflow-gracefully" style="max-width:350px;"
+                             data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }">
                     </td>
                     <td>
                         <span class="overflow-gracefully"
