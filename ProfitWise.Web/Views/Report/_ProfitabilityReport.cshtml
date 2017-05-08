@@ -122,7 +122,7 @@
     </div>
     <div data-bind="if: ProfitabilitySummaryContext.DatasetLoaded() && !SummaryActive()">
         <!-- Note: the context of $data at this level is ReportInterfaceModel -->
-        <div style="min-height: 600px"
+        <div style="min-height: 600px; padding-left:15px; padding-right:15px; "
              data-bind="template: { name: 'Report-Profitability-Detail', data: $data }">
         </div>
     </div>

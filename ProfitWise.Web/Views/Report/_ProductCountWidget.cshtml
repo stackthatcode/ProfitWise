@@ -5,31 +5,31 @@
         #product-variant-count-container .popover { max-width: 300px; }
     </style>
 
-    <div id="product-variant-count-container">
-        <p>
-            <div style="display:inline-block;">This Report includes</div>
+    <span id="product-variant-count-container">
+        <div style="display:inline-block;">This Report includes</div>
 
-            <div class="popover-container" style="display: inline-block">
-                <a href="#" rel="popover" style="font-weight:700;" class="popover-launcher" 
-                   data-bind="click: LaunchProductSelectionPopup"><span data-bind="text: ProductCount"></span> Products</a>
-            </div>
+        <div class="popover-container" style="display: inline-block">
+            <a href="#" rel="popover" style="font-weight:700;" class="popover-launcher" 
+                data-bind="click: LaunchProductSelectionPopup">
+                <span data-bind="text: ProductCount"></span> Products
+            </a>
+        </div>
 
-            <div class="popover-container" style="display: inline-block">
-                (<a href="#" rel="popover" style="font-weight:700;" class="popover-launcher"
-                    data-bind="click: LaunchVariantSelectionPopup"><span data-bind="text: VariantCount"></span> Variants)</a>.
-            </div>
+        <div class="popover-container" style="display: inline-block">
+            (<a href="#" rel="popover" style="font-weight:700;" class="popover-launcher"
+                data-bind="click: LaunchVariantSelectionPopup"><span data-bind="text: VariantCount"></span> Variants)</a>.
+        </div>
             
-            <div style="display: inline-block;" data-bind="if: ProductCount() == 0 && VariantCount() == 0">
-                <div style="display: inline-block; position: absolute;">
-                    <div style="position:relative; color:#999; left:4px; top:-20px; font-size:22px;"
-                         data-bind="popover : { options: { placement: 'bottom', trigger: 'hover' },
-                                        template: 'Report-No-Products-Or-Variants' }">
-                        <i class="glyphicon glyphicon-ban-circle"></i>
-                    </div>
+        <div style="display: inline-block;" data-bind="if: ProductCount() == 0 && VariantCount() == 0">
+            <div style="display: inline-block; position: absolute;">
+                <div style="position:relative; color:#999; left:4px; top:-20px; font-size:22px;"
+                        data-bind="popover : { options: { placement: 'bottom', trigger: 'hover' },
+                                    template: 'Report-No-Products-Or-Variants' }">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
                 </div>
             </div>
-        </p>
-    </div>
+        </div>
+    </span>
 </script>
 
 <script type="text/html" id="Report-No-Products-Or-Variants">
@@ -49,7 +49,7 @@
         self.ReportId = ko.observable();
         self.ProductCount = ko.observable(0);
         self.VariantCount = ko.observable(0);
-
+        
         self.ProductSelections = ko.observableArray([]);
         self.VariantSelections = ko.observableArray([]);
         

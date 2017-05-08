@@ -200,7 +200,8 @@
       color: #fff; }
 
 /*  Larger Screen Styling */
-@media (min-width: 564px) {
+/** ProfitWise modification - changed min-width to 564px **/
+@media (min-width: 0px) {
   .daterangepicker {
     width: auto; }
     .daterangepicker .ranges ul {

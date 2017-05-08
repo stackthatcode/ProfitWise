@@ -1,133 +1,123 @@
 ﻿@using ProfitWise.Data.Model.Reports
 
 <script type="text/html" id="Report-Editor-Top-Level">
-    <!-- Move this to the Report Editor...? -->
-    <div class="fixed-header-container std-outer-padding" style="top: 145px;">
-        <!-- Space -->
-        <div class="standard-header-sleeve" style="height: 178px;">
-            <div class="standard-header std-inner-padding header-scrollfix" style="overflow: visible;">
+    <div class="std-outer-padding" style="padding-top:20px;">
+        <div style="background-color:#FFF; overflow:auto;" class="shadow">
+            <div class="std-inner-padding">
+                <div style="height: 110px;">            
+                    <div style="overflow: visible; padding-top:20px;">
+                        <div class="col-xs-6 no-side-padding">
+                            <div class="popover-container" data-bind="if: ReportContext">
+                                <h2 class="report-title overflow-gracefully"  data-bind="text: ReportContext().Name"></h2>
+                                <div style="display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)</div>
+                            </div>
+                        </div>
 
-                <!-- Report Editor component -->
-                <div data-bind="template: { name: 'Report-Editor-Header' }"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="fixed-header-container std-outer-padding" id="report-editor-header-top">
-        <div class="standard-header-sleeve" style="height: 150px; border-bottom: 1px solid #FFF; background-color: teal;">
-            
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header header-scrollfix std-inner-padding top-border-facade" style="overflow: visible; padding-top:20px;">
-                <div class="col-xs-6 no-side-padding">
-                    <div class="popover-container" data-bind="if: ReportContext">
-                        <h4 style="display:inline-block; font-weight:700;" data-bind="text: ReportContext().Name"></h4>
-
-                        <div style="margin-left:7px; display:inline-block; letter-spacing: 0.1em; font-size:0.9em; color:#888;">(EDITING)</div>
+                        <div class="col-xs-6 no-side-padding">
+                            <div class="pull-right" style="padding-top: 20px;">
+                                <a href="#" class="btn btn-primary" style="width:150px; margin-left:10px;"
+                                   data-bind="click: OkButtonClick">
+                                    Done <i class="glyphicon glyphicon-ok"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="visible-xs visible-sm col-xs-12 no-side-padding">
+                            <p>
+                                <span data-bind="template: { name: 'Report-Editor-Filter-Summary-Condensed', 
+                                                data: FilterBullpenModel }"></span>
+                                <span data-bind="template: { name: 'Report-Selection-Preview', 
+                                                data: ProductCountModel }"></span>
+                                Add or remove filters from Report, then hit <strong>Done</strong> to view the updated results.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-xs-6 no-side-padding">
-                    <div class="pull-right" style="padding-top: 10px;">
-                        <a href="#" class="btn btn-primary" style="width:150px; margin-left:10px;"
-                           data-bind="click: OkButtonClick">
-                            Done <i class="glyphicon glyphicon-ok"></i>
-                        </a>
+                <div style="min-height:300px;">
+                    <div style="height: 15px;"></div>
+                    <div class="row" style="height: 43px;">
+                        <div class="col-xs-12 col-sm-12 col-md-7">
+                            <div style="overflow:auto; height:40px;">
+                                <ul class="nav nav-tabs" role="tablist" style="width: 100%;">
+                                    <li role="presentation" class="active">
+                                        <a href="#report-filter-product-type" data-bind="click: ProductTypeClick"
+                                           aria-controls="home" role="tab" data-toggle="tab">Product Types</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#report-filter-vendor" data-bind="click: VendorClick"
+                                           aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
+                                    </li>
+                                    <!-- ko if: ReportTypeId() == @ReportType.Profitability -->
+                                    <li role="presentation">
+                                        <a href="#report-filter-master-product" data-bind="click: MasterProductClick"
+                                           aria-controls="messages" role="tab" data-toggle="tab">Products</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#report-filter-master-variant" data-bind="click: MasterVariantClick"
+                                           aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
+                                    </li>
+                                    <!-- /ko -->
+                                    <!-- ko if: ReportTypeId() == @ReportType.GoodsOnHand -->
+                                    <li role="presentation">
+                                        <a href="#report-filter-product" data-bind="click: ProductClick"
+                                           aria-controls="messages" role="tab" data-toggle="tab">Products</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#report-filter-variant" data-bind="click: VariantClick"
+                                           aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
+                                    </li>
+                                    <!-- /ko -->
+                                </ul>
+                            </div>
+
+                            <div class="tab-content" style="clear: both;">
+                                <div id="report-filter-product-type" role="tabpanel" class="tab-pane active reduced-padding"
+                                     data-bind="template: { name: 'Report-Editor-Header-Product-Type', data: ProductTypeFilterModel }">
+                                </div>
+                                <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
+                                     data-bind="template: { name: 'Report-Editor-Header-Vendor', data: VendorFilterModel }">
+                                </div>
+                                <div id="report-filter-master-product" role="tabpanel" class="tab-pane reduced-padding"
+                                     data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: MasterProductFilterModel }">
+                                </div>
+                                <div id="report-filter-master-variant" role="tabpanel" class="tab-pane reduced-padding"
+                                     data-bind="template: { name: 'Report-Editor-Header-Master-Variant', data: MasterVariantFilterModel }">
+                                </div>
+
+                                <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
+                                     data-bind="template: { name: 'Report-Editor-Header-Product', data: ProductFilterModel }">
+                                </div>
+                                <div id="report-filter-variant" role="tabpanel" class="tab-pane reduced-padding"
+                                     data-bind="template: { name: 'Report-Editor-Header-Variant', data: VariantFilterModel }">
+                                </div>
+                            </div>
+
+                            <div data-bind="template: { name: 'Report-Editor-Body' }">
+                            </div>
+                        </div>
+
+                        <div class="visible-lg visible-md col-md-5 increased-side-padding">
+                            <div style="font-size:1.0em; padding-top:8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;">
+                                Select Filters to add to your Report
+                            </div>
+                            <p>
+                                <span data-bind="template: { name: 'Report-Selection-Preview', data: ProductCountModel }"></span>
+                                Add or remove filters from Report, then hit <strong>Done</strong> to view the updated results.
+                            </p>
+                            <div data-bind="template: { 
+                                    name: 'Report-Editor-Filter-Bullpen',
+                                    data: FilterBullpenModel }"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="report-editor-body" class="container page-content-sleeve">
-        <!-- Will move/transistion when the filters appear -->
-        <div class="page-content" style="margin-top: 150px; padding-top: 30px; overflow: auto;">
-            <div data-bind="template: { name: 'Report-Editor-Body' }" style="margin-top:140px;">
             </div>
         </div>
     </div>
 </script>
 
-<script type="text/html" id="Report-Editor-Header">
-    <!-- Spacer - 15px -->
-    <div style="height: 15px;"></div>
+<script type="text/html" id="Report-Editor-Top-Filter-Summary">
 
-    <!-- Nav tabs - 43px -->
-    <div class="row-fluid" style="height: 43px;">
-        <div class="col-xs-7 no-side-padding">
-            <div style="overflow:auto; height:40px;">
-                <ul class="nav nav-tabs" role="tablist" style="position: absolute; width: 100%;">
-                    <li role="presentation" class="active">
-                        <a href="#report-filter-product-type" data-bind="click: ProductTypeClick"
-                           aria-controls="home" role="tab" data-toggle="tab">Product Types</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#report-filter-vendor" data-bind="click: VendorClick"
-                           aria-controls="profile" role="tab" data-toggle="tab">Vendors</a>
-                    </li>
-                    <!-- ko if: ReportTypeId() == @ReportType.Profitability -->
-                    <li role="presentation">
-                        <a href="#report-filter-master-product" data-bind="click: MasterProductClick"
-                           aria-controls="messages" role="tab" data-toggle="tab">Products</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#report-filter-master-variant" data-bind="click: MasterVariantClick"
-                           aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
-                    </li>
-                    <!-- /ko -->
-                    
-                    <!-- ko if: ReportTypeId() == @ReportType.GoodsOnHand -->
-                    <li role="presentation">
-                        <a href="#report-filter-product" data-bind="click: ProductClick"
-                           aria-controls="messages" role="tab" data-toggle="tab">Products</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#report-filter-variant" data-bind="click: VariantClick"
-                           aria-controls="settings" role="tab" data-toggle="tab">Variants</a>
-                    </li>
-                    <!-- /ko -->
-                </ul>
-            </div>
-
-            <!-- Tab panes -->
-            <div class="tab-content" style="clear: both;">
-                <!-- Height - 120px -->
-                <div id="report-filter-product-type" role="tabpanel" class="tab-pane active reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Product-Type', data: ProductTypeFilterModel }">
-                </div>
-                <div id="report-filter-vendor" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Vendor', data: VendorFilterModel }">
-                </div>
-                
-                <div id="report-filter-master-product" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Master-Product', data: MasterProductFilterModel }">
-                </div>
-                <div id="report-filter-master-variant" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Master-Variant', data: MasterVariantFilterModel }">
-                </div>
-
-                <div id="report-filter-product" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Product', data: ProductFilterModel }">
-                </div>
-                <div id="report-filter-variant" role="tabpanel" class="tab-pane reduced-padding"
-                     data-bind="template: { name: 'Report-Editor-Header-Variant', data: VariantFilterModel }">
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xs-5 std-inner-padding" style="background-color:white; height: 300px; padding-left:45px; ">
-            <div style="font-size:1.0em; height:40px; padding-top:8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;">
-                Select Filters to add to your Report
-            </div>
-            
-            <div data-bind="template: { name: 'Report-Selection-Preview', data: ProductCountModel }"></div>
-
-            <p>Add or remove filters from Report, then hit "Ok" to view the updated results.</p>
-
-            <div style="overflow-y:auto; height:300px;">
-                <div data-bind="template: { name: 'Report-Editor-Filter-Bullpen', data: FilterBullpenModel }"></div>
-            </div>
-        </div>
-    </div>
 </script>
 
 <script type="text/html" id="Report-Editor-Body">
@@ -138,7 +128,7 @@
     <div data-bind="if: SelectedFilterModel() == VendorFilterModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Vendor', data: VendorFilterModel }"></div>
     </div>
-    
+
     <div data-bind="if: SelectedFilterModel() == MasterProductFilterModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Master-Product', data: MasterProductFilterModel }"></div>
     </div>
@@ -146,7 +136,7 @@
     <div data-bind="if: SelectedFilterModel() == MasterVariantFilterModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Master-Variant', data: MasterVariantFilterModel }"></div>
     </div>
-    
+
     <div data-bind="if: SelectedFilterModel() == ProductFilterModel">
         <div data-bind="template: { name: 'Report-Editor-Body-Product', data: ProductFilterModel }"></div>
     </div>
@@ -155,7 +145,6 @@
         <div data-bind="template: { name: 'Report-Editor-Body-Variant', data: VariantFilterModel }"></div>
     </div>
 </script>
-
 
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
@@ -241,7 +230,7 @@
                     return ProfitWiseFunctions.CaseInsensitiveContains(item.Title, searchText) ||
                         ProfitWiseFunctions.CaseInsensitiveContains(item.Vendor, searchText);
                 });
-        
+
         self.VariantFilterModel =
                 new ProfitWiseWidgets.ReportFilterModel(
                     ProfitWiseWidgets.VariantFilter,
@@ -292,7 +281,7 @@
         self.FilterBullpenModel = new ProfitWiseWidgets.FilterBullpenModel(self.ReportTypeId());
         self.FilterBullpenModel.RegisterRemoveCallback(function (filterType, key) {
             var filterModel = filterModelByFilterType(filterType);
-            
+
             filterModel
                 .SelectionModel
                 .SetCheckedItemByKey(key, false);

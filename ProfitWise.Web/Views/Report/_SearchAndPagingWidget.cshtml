@@ -31,6 +31,19 @@
     </div>
 </script>
 
+<script type="text/html" id="Standalone-Paging-Widget">
+    <div class="row-fluid">
+        <div class="col-xs-5 no-side-padding">
+        </div>
+
+        <div class="col-xs-7 no-side-padding" style="padding-top: 15px; overflow:visible;"
+             data-bind="if: $data.PagingModel.PageCount() > 1">
+            <div data-bind="template: { name: 'Paging-Widget', data: $data.PagingModel }">
+            </div>
+        </div>
+    </div>
+</script>
+
 <script>
     ProfitWiseWidgets = ProfitWiseWidgets || {};
 
@@ -109,3 +122,4 @@
         return self;
     };
 </script>
+
