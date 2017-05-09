@@ -304,6 +304,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-tour.css" />
     <Content Include="Content\images\Logo400x101HighRes.jpg" />
     <Content Include="Content\images\Logo400x101MedRes.jpg" />
     <Content Include="Content\images\Logo600x151HighRes.jpg" />
@@ -338,6 +339,7 @@
     <Content Include="Scripts\Bootstrap\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\Bootstrap\daterangepicker.js" />
     <Content Include="Content\datetimepicker.css" />
+    <Content Include="Scripts\Utility\bootstrap-tour.min.js" />
     <Content Include="Scripts\Utility\flow.js" />
     <Content Include="Scripts\Highcharts\js\highcharts.js" />
     <Content Include="Scripts\Highcharts\js\modules\data.js" />

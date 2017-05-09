@@ -11,6 +11,7 @@ namespace ProfitWise.Web
                 .Include("~/Scripts/Utility/aQuery-1.0-min.js")
                 .Include("~/Scripts/Utility/flow.js")
                 .Include("~/Scripts/Utility/numeral.min.js")
+                .Include("~/Scripts/Utility/bootstrap-tour.min.js")
                 //.Include("~/Scripts/Utility/modernizr-2.6.2.js")
                 .Include("~/Scripts/Utility/moment.js"));
 
@@ -27,16 +28,23 @@ namespace ProfitWise.Web
                  .Include("~/Scripts/KO/knockout-3.3.0.js")
                  .Include("~/Scripts/KO/knockstrap.min.js"));
 
-            //bundles.Add(new ScriptBundle("~/Bundles/ProfitWise")
-            //    .Include("~/Scripts/ProfitWise/ProfitWiseFunctions.js")
-            //    .Include("~/Scripts/ProfitWise/ProfitWiseCurrency.js"));
+            bundles.Add(new ScriptBundle("~/Bundles/ProfitWiseFunctions")
+                .Include("~/Scripts/ProfitWise/ProfitWiseCurrency.js")
+                .Include("~/Scripts/ProfitWise/ProfitWiseFunctions.js")
+                .Include("~/Scripts/ProfitWise/ProfitWiseShopify.js"));
+
+            bundles.Add(new ScriptBundle("~/Bundles/ProfitWiseFunctionsImpersonated")
+                .Include("~/Scripts/ProfitWise/ProfitWiseCurrency.js")
+                .Include("~/Scripts/ProfitWise/ProfitWiseFunctions.js")
+                .Include("~/Scripts/ProfitWise/ProfitWiseShopifyImpersonated.js"));
 
             bundles.Add(new StyleBundle("~/Content/Bootstrap")
                 .Include("~/Content/bootstrap-3.3.7-dist/css/bootstrap.min.css"));
 
             bundles.Add(new StyleBundle("~/Content/Css")
                 .Include("~/Content/daterangepicker.css")
-                .Include("~/Content/datetimepicker.css"));
+                .Include("~/Content/datetimepicker.css")
+                .Include("~/Content/bootstrap-tour.min.js"));
 
             // BundleTable.EnableOptimizations = true;
         }

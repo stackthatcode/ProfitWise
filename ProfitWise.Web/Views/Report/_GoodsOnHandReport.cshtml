@@ -137,15 +137,15 @@
     <!-- Executive Summary -->
     <div class="panel panel-default" style="padding-left:30px; padding-right:30px;">
         <div class="row executive-summary" data-bind="with: Data">
-            <div class="col-xs-6 col-sm-6 col-md-4 summary-cell">
+            <div class="col-xs-12 col-sm-6 col-md-4 summary-cell">
                 <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalCostOfGoodsOnHand, CurrencyId)"></h1>
                 <div class="executive-summary-label">Cost of Goods on Hand</div>
             </div>
-            <div class="col-xs-6 col-sm-6 col-md-4 summary-cell">
+            <div class="col-xs-12 col-sm-6 col-md-4 summary-cell">
                 <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialRevenue, CurrencyId)"></h1>
                 <div class="executive-summary-label">Potential Revenue</div>
             </div>
-            <div class="col-xs-6 col-sm-6 col-md-4 summary-cell">
+            <div class="col-xs-12 col-sm-6 col-md-4 summary-cell">
                 <h1 data-bind="text: ProfitWiseFunctions.FormatCurrency(Totals.TotalPotentialProfit, CurrencyId)"></h1>
                 <div class="executive-summary-label">Potential Profit</div>
             </div>
@@ -167,8 +167,9 @@
             <thead>
             <tr>
                 <th>Name</th>
-                <th style="text-align: center;">Unit Price</th>
-                <th data-bind="template: { name: 'Sortable-Column-Header',
+                <th class="hidden-xs" style="text-align: center;">Unit Price</th>
+                <th class="hidden-xs" 
+                    data-bind="template: { name: 'Sortable-Column-Header',
                                 data: { ColumnIndex: 0, ColumnName: '# In Stock', Model: SortingModel } }"></th>
                 <th data-bind="template: { name: 'Sortable-Column-Header',
                                 data: { ColumnIndex: 1, ColumnName: 'Total CoGS', Model: SortingModel } }"></th>
@@ -182,12 +183,9 @@
             <!-- ko with: Data() -->
             <tbody data-bind="foreach: Details">
             <tr>
-                <td>
-                    <div class="overflow-gracefully" style="max-width:350px;"
-                         data-bind="text: Name, tooltip: { title: Name, placement: 'bottom' }"></div>
-                </td>
-
-                <td style="text-align: center;">
+                <td class="overflow-gracefully"
+                         data-bind="text: Name, tooltip: { title: Name, placement: 'bottom' }"></td>
+                <td class="hidden-xs" style="text-align: center;">
                     <div data-bind="if: MinimumPrice != MaximumPrice">
                         <span class="overflow-gracefully"
                               data-bind="text: ProfitWiseFunctions.FormatCurrency(MinimumPrice, $parent.CurrencyId)"></span>
@@ -200,24 +198,10 @@
                               data-bind="text: ProfitWiseFunctions.FormatCurrency(MaximumPrice, $parent.CurrencyId)"></span>
                     </div>
                 </td>
-
-                <td>
-                    <span class="overflow-gracefully"
-                          data-bind="text: TotalInventory"></span>
-                </td>
-
-                <td>
-                    <span class="overflow-gracefully"
-                          data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCostOfGoodsSold, $parent.CurrencyId)"></span>
-                </td>
-                <td>
-                    <span class="overflow-gracefully"
-                          data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialRevenue, $parent.CurrencyId)"></span>
-                </td>
-                <td>
-                    <span class="overflow-gracefully"
-                          data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialProfit, $parent.CurrencyId)"></span>
-                </td>
+                <td class="hidden-xs" data-bind="text: TotalInventory"></td>
+                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCostOfGoodsSold, $parent.CurrencyId)"></td>
+                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialRevenue, $parent.CurrencyId)"></td>
+                <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialProfit, $parent.CurrencyId)"></td>
             </tr>
             </tbody>
             <!-- /ko -->

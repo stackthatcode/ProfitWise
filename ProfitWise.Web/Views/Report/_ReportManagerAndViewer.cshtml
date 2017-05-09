@@ -7,15 +7,26 @@
         font-weight: 700;
         line-height: 30px;
     }
+
+    /*
+    .float-left-mobile {
+        float: left !important;
+    }*/
+
+    @@media (min-width: 0px) {
+        .float-left-mobile {
+            float: right !important;
+        }
+    }
 </style>
 
 <!-- Acts a container that holds the Viewer and the Editor -->
 <script type="text/html" id="Report-Manager">
-    <div data-bind="if: $data.InFilterEditMode" style="min-width: 768px;">
+    <div data-bind="if: $data.InFilterEditMode" style="min-width: 568px;">
         <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
     </div>
 
-    <div data-bind="ifnot: $data.InFilterEditMode" style="min-width: 768px;">
+    <div data-bind="ifnot: $data.InFilterEditMode" style="min-width: 568px;">
         <div data-bind="template: { name: 'Report-Viewer', data: ReportViewerModel }"></div>
     </div>
 </script>
@@ -23,7 +34,7 @@
 <!-- Report-specific templates -->
 <script id="Report-Viewer" type="text/html">
     <div id="report-viewer-header" class="std-outer-padding">
-        <div style="background-color:#FFF; min-width: 768px;" class="shadow">
+        <div style="background-color:#FFF;" class="shadow">
             <div style="overflow: visible; padding-top:20px; margin-top:20px;" class="std-inner-padding">
                 <div data-bind="template: { name: 'Report-Viewer-Header' }"></div>
             </div>
@@ -40,7 +51,7 @@
     </div>
 </script>
 <script type="text/html" id="Report-Viewer-Header">
-    <div class="col-xs-6 col-sm-6 no-side-padding" style="height:200px;" data-bind="with: $data.ReportInterfaceModel">
+    <div class="col-xs-12 col-sm-6 no-side-padding" style="height:200px;" data-bind="with: $data.ReportInterfaceModel">
         <div data-bind="if: ReportLoaded()" style="overflow: auto;">
             <h2 class="report-title overflow-gracefully" data-bind="text: Name"></h2>
 
@@ -74,16 +85,18 @@
         </div>
     </div>
 
-    <div class="col-xs-6 col-sm-6 no-side-padding" style="height:150px; padding-top:20px;">
-        <div class="btn-group pull-right"
+    <div class="col-xs-12 col-sm-6 no-side-padding" style="height:150px;">
+        <div style="height:20px" class="hidden-xs"></div>
+        <div class="btn-group float-left-mobile"
              data-bind="template: { name: 'Report-Viewer-Report-Selector',
                                     data: { SystemDefinedReports: $data.SystemDefinedReports,
                                             UserDefinedReports: $data.UserDefinedReports,
                                             SelectReportClick: $data.SelectReportClick} }">
         </div>
-        <div class="pull-right" data-bind="with: ReportInterfaceModel" >
+        <div class="float-left-mobile" data-bind="with: ReportInterfaceModel" >
             <!-- ko if: OnlySaveAsAllowed -->
-            <div class="pull-right" style="margin-right: 7px;">
+            <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
+            <div class="float-left-mobile">
                 <a href="#" data-bind="click: SaveAs" class="btn btn-primary report-viewer-top-button">
                     Save As &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
                 </a>
@@ -91,12 +104,17 @@
             <!-- /ko -->
 
             <!-- ko ifnot: OnlySaveAsAllowed -->
-            <div class="pull-right" style="margin-right: 7px;">
+            <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
+
+            <div class="float-left-mobile">
                 <a href="#" data-bind="click: Save" class="btn btn-primary report-viewer-top-button">
                     Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
                 </a>
             </div>
-            <div class="pull-right btn-group" style="margin-right: 7px;">
+            
+            <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
+
+            <div class="float-left-mobile btn-group">
                 <button type="button" class="btn btn-primary dropdown-toggle" 
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</button>
 
@@ -107,33 +125,31 @@
             </div>
             <!-- /ko -->
         </div>
-
         <div style="clear: both; height: 10px;"></div>
-        <div id="report-date-picker" class="pull-right" style="margin-left: 7px;"
-             data-bind="with: ReportInterfaceModel">
+        <div id="report-date-picker" class="float-left-mobile" data-bind="with: ReportInterfaceModel">
             <div data-bind="if: DatePickerEnabled">
                 <div data-bind="template: { name: 'Date-Range-Picker-Widget-2',
                                 data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
             </div>
         </div>
         <div style="clear: both; height: 10px;"></div>
-
-        <div class="pull-right">
+        <div class="float-left-mobile">
             <a href="#" class="btn btn-default report-viewer-top-button" 
                style="width:145px;" data-bind="click: EditReportClick">
                 Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
             </a>
         </div>
                     
-            <!-- ko if: ReportInterfaceModel.ExportVisible -->
-            <div class="pull-right" style="margin-right:7px;">
-                <a href="#" data-bind="click: ReportInterfaceModel.ExportCallback" class="btn btn-default report-viewer-top-button">
-                    <i class="glyphicon glyphicon-download-alt"></i> Export
-                </a>
+        <!-- ko if: ReportInterfaceModel.ExportVisible -->
+        <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
+        <div class="float-left-mobile">
+            <a href="#" data-bind="click: ReportInterfaceModel.ExportCallback" class="btn btn-default report-viewer-top-button">
+                <i class="glyphicon glyphicon-download-alt"></i> Export
+            </a>
                 
-                <iframe id="download-frame" style="display:none"></iframe>
-            </div>
-            <!-- /ko -->
+            <iframe id="download-frame" style="display:none"></iframe>
+        </div>
+        <!-- /ko -->
     </div>     
 </script>
 <script type="text/html" id="Report-Viewer-Report-Selector">
@@ -142,7 +158,7 @@
         Select Report &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
     </a>
 
-    <ul class="dropdown-menu" style="width: 300px;">
+    <ul class="dropdown-menu pull-right" style="width: 300px;">
         <!-- ko foreach: SystemDefinedReports -->
         <li>
             <a href="#" data-bind="click: $parent.SelectReportClick">

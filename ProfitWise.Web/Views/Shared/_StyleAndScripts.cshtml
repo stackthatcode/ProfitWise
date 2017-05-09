@@ -20,18 +20,15 @@
 @Scripts.Render("~/Bundles/Highcharts")
 @Scripts.Render("~/Bundles/KO")
 
-@Scripts.Render("~/Scripts/ProfitWise/ProfitWiseFunctions.js")
-@Scripts.Render("~/Scripts/ProfitWise/ProfitWiseCurrency.js")
-
+<!-- ProfitWise JavaScript -->
 @if (commonContext != null && !commonContext.IsImpersonated)
 {
-@Scripts.Render("~/Scripts/ProfitWise/ProfitWiseShopify.js")
+@Scripts.Render("~/Bundles/ProfitWiseFunctions")
 }
 else
 {
-@Scripts.Render("~/Scripts/ProfitWise/ProfitWiseShopifyImpersonated.js")
+@Scripts.Render("~/Bundles/ProfitWiseFunctionsImpersonated")
 }
-
 
 <!-- Style Sheet -->
 @Styles.Render("~/Content/Bootstrap")
