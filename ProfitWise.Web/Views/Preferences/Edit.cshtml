@@ -42,7 +42,8 @@
                 <div class="panel panel-default">
                     <label>Starting Date For Importing Historical Data:</label>
                     &nbsp;&nbsp;&nbsp;
-                    <div style="display: inline-block; top: 10px; position: relative;"
+                    <div id="starting-date" 
+                         style="display: inline-block; top: 10px; position: relative;"
                          data-bind="template: {
                             name: 'Date-Picker-Widget',
                             data: { value: StartingDateForOrders,
@@ -64,7 +65,8 @@
                 <label>Use Default Margin in Reports for all $0 CoGS</label>
 
                 <div style="display: inline-block; width: 125px; margin-left: 30px; position: relative;">
-                    <select class="form-control"
+                    <select id="default-margins"
+                            class="form-control"
                             data-bind="value: UseDefaultMargin, event: { change: UseDefaultMarginChange }">
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -72,11 +74,12 @@
                 </div>
                 
 
-                <div data-bind="visible: ShowDefaultMargin">
+                <div data-bind="visible: ShowDefaultMargin">                
                     <label>Default Margin (%)</label>
 
                     <div style="display: inline-block; width: 90px; margin-left: 30px; position: relative; top: 13px;">
-                        <div data-bind="template: { name: 'Number-Editor-Widget', data: $root.DefaultMarginEditorModel }"></div>
+                        <div id="default-margin-percent" 
+                             data-bind="template: { name: 'Number-Editor-Widget', data: $root.DefaultMarginEditorModel }"></div>
                     </div>
 
                     <div style="display: inline-block; margin-left: 10px; position: relative;">
@@ -102,7 +105,7 @@
             <div class="panel panel-default">
                 <label>When should revenues/profits be recognized for orders?</label>
 
-                <div class="preference-control-cell">
+                <div class="preference-control-cell" id="profit-realization">
                     <div class="radio">
                         <label>
                             <input type="radio" name="optionsRadios"
@@ -136,7 +139,9 @@
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <label>Default Date Range for Dashboard</label>
-                <div class="preference-control-cell" data-bind="foreach: DateRangeOptions">
+                <div id="default-date-range"
+                     class="preference-control-cell" 
+                     data-bind="foreach: DateRangeOptions">
                     <div class="radio">
                         <label>
                             <input type="radio" name="defaultDateRadio"
@@ -181,7 +186,7 @@
                 return;
             }
 
-            console.log('Date Comparison', newdate, self.OldStartingDateForOrders());
+            //console.log('Date Comparison', newdate, self.OldStartingDateForOrders());
                 
             if (newdate < self.OldStartingDateForOrders()) {
                 console.log(typeof newdate, typeof self.OldStartingDateForOrders());
@@ -246,6 +251,53 @@
             var model = new ProfitWise.EditPreferencesModel(data);
             
             ko.applyBindings(model);
+            
+            
+            var tour = new Tour({
+                storage: false,
+                backdrop: true,
+                backdropContainer: 'body',
+
+                steps: [
+                {
+                    orphan: true,
+                    title: "Welcome to ProfitWise Preferences",
+                    content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go."
+                },
+                {
+                    element: "#starting-date",
+                    placement: "bottom",
+                    title: "Starting Date For Import",
+                    content: "Choose how far back you would like ProfitWise to go when importing your order data. You can enter a date or choose one using the date selector. ProfitWise will import all order data from this date forward. This option has no effect on your Cost of Goods data. This only affects which historical orders are imported into ProfitWise for reporting purposes. This date can always be moved further back, so if you want to come back later and add orders going back further in time, you can modify this date and ProfitWise will import the additional orders."
+                },
+                {
+                    element: "#default-margins",
+                    placement: "bottom",
+                    title: "Default Margin",
+                    content: "Choose Yes or No here. If you choose Yes, then any products that do not have a Cost of Goods value set will automatically use the default margin value (which we'll set next). If you choose No, then any products that do not have a Cost of Goods value will be considered to have a zero cost."
+                },
+                {
+                    element: "#default-margin-percent",
+                    placement: "bottom",
+                    title: "Default Margin (%)",
+                    content: "Enter your default margin percentage. This will be used to determine the Cost of Goods Sold for any products without a CoGS value set (assuming you chose to enable this option above). After entering a percentage, click on Save. Note that this percentage represents the default margin. For example, if you set the default margin to 20% and a product sells for $100, then the Cost of Goods Sold for that product will be $80 (resulting in a margin or gross profit of $20)."
+                },
+                {
+                    element: "#profit-realization",
+                    placement: "bottom",
+                    title: "Profit Realization",
+                    content: "ProfitWise reports can be configured to recognize your Shopify revenues in two ways. The first option, 'When the order is placed' will cause order revenues to appear in ProfitWise shortly after the order is received. The second option, 'When payment for the order is captured' will cause order revenues to appear in ProfitWise only once the funds for the order have been captured or marked as paid in Shopify."
+                },
+                {
+                    element: "#default-date-range",
+                    placement: "bottom",
+                    title: "Default Date Range",
+                    content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default."
+                },
+            ]
+            });
+            tour.init();
+            tour.start();
         });
 </script>
 

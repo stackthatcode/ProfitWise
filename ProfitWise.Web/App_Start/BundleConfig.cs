@@ -44,7 +44,7 @@ namespace ProfitWise.Web
             bundles.Add(new StyleBundle("~/Content/Css")
                 .Include("~/Content/daterangepicker.css")
                 .Include("~/Content/datetimepicker.css")
-                .Include("~/Content/bootstrap-tour.min.js"));
+                .Include("~/Content/bootstrap-tour.css"));
 
             // BundleTable.EnableOptimizations = true;
         }

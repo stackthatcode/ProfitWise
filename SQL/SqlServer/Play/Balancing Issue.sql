@@ -176,7 +176,15 @@ WHERE EntryDate >= '2017-05-02' AND EntryDate <= '2017-05-02'
 GROUP BY EntryType;
 
 SELECT *  FROM profitreportentryprocessed(100001, 1, 0.80, 1) 
-WHERE EntryDate >= '2017-05-02' AND EntryDate <= '2017-05-02' ORDER BY ShopifyOrderId;
+WHERE EntryDate >= '2016-01-01' AND EntryDate <= '2016-12-31' 
+AND PwProductId IN ( SELECT PwProductId FROM product(100001) WHERE Vendor LIKE '%LulzBot%' )
+
+SELECT * FROM product(100001) WHERE Vendor LIKE '%LulzBot%' 
+
+
+
+SELECT SUM(NetSales) FROM profitreportentry(100001);
+
 
 SELECT * FROM profitreportentry(100001) WHERE PwProductID = 0;
 

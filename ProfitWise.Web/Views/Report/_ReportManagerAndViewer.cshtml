@@ -22,7 +22,7 @@
 
 <!-- Acts a container that holds the Viewer and the Editor -->
 <script type="text/html" id="Report-Manager">
-    <div data-bind="if: $data.InFilterEditMode" style="min-width: 568px;">
+    <div id="report-editor" data-bind="if: $data.InFilterEditMode" style="min-width: 568px;">
         <div data-bind="template: { name: 'Report-Editor-Top-Level', data: ReportEditorModel }"></div>
     </div>
 
@@ -53,7 +53,7 @@
 <script type="text/html" id="Report-Viewer-Header">
     <div class="col-xs-12 col-sm-6 no-side-padding" style="height:200px;" data-bind="with: $data.ReportInterfaceModel">
         <div data-bind="if: ReportLoaded()" style="overflow: auto;">
-            <h2 class="report-title overflow-gracefully" data-bind="text: Name"></h2>
+            <h2 id="report-viewer-title" class="report-title overflow-gracefully" data-bind="text: Name"></h2>
 
             <span data-bind="if: CopyForEditing">
                 <span style="letter-spacing: 0.1em; font-size:0.9em; color:#888;">
@@ -572,7 +572,7 @@
                     self.InitializeLastAccessedCheck();
                     if (callback) {
                         callback();
-                    }
+                    }                    
                 });
         };
 

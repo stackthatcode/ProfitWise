@@ -20,7 +20,7 @@
 @Html.Partial("~/Views/Report/_ReportManagerAndViewer.cshtml")
 
 <!-- KnockoutJS Root Element -->
-<div data-bind="template: { name: 'Report-Manager', data: $root }"></div>
+<div id="root" data-bind="template: { name: 'Report-Manager', data: $root }"></div>
 
 <!-- KnockoutJS Model -->
 <script>
@@ -29,6 +29,36 @@
             ProfitWiseFunctions.PopOverAutoCloseInit();
             var model = new ProfitWiseWidgets.ReportManagerModel(@ReportType.Profitability);
             ko.applyBindings(model);
-            model.Initialize(@SystemReportFactory.OverallProfitabilityId);
+            model.Initialize(@SystemReportFactory.OverallProfitabilityId);   
+
+
+
+
+            var tour = new Tour({
+                storage: false,
+                backdrop: true,
+                backdropContainer: '#root',
+
+                steps: [
+                {
+                    //element: "#report-editor",
+                    backdrop: true,
+                    backdropContainer: 'body',
+                    orphan: true,
+                    title: "Welcome to ProfitWise",
+                    content:
+                        "We are glad that you chose ProfitWise for your Profitability Reportings needs. " +
+                        "We going to take you on tour of ProfitWise to ensure you get those most out of the product."
+                },
+                {
+                    element: "#report-viewer-title",
+                    placement: "bottom",
+                    title: "Report Title",
+                    content: "Content of my step"
+                }
+                ]
+            });
+            tour.init();
+            tour.start();
         });
 </script>
