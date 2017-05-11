@@ -16,15 +16,16 @@
     .vert-spacer { height:25px; }
     .preference-control-cell { padding-left:10px; }
     .panel-default { padding:30px;}
+    .tour-tour { max-width: 480px; }
 </style>
 
 <script type="text/html" id="Main-Template">
-    <div class="std-outer-padding" style="padding-top:20px; min-width:768px;">
+    <div class="std-outer-padding" style="padding-top:20px; min-width:568px;">
         <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
         <div class="std-inner-padding shadow" style="background-color: #FFF;">
             <div class="row">
                 <div class="col-xs-12" style="padding-top:20px;">
-                    <h2 styl="font-weight:700;">ProfitWise &gt; Preferences</h2>
+                    <h2 id="preferences-title" style="font-weight:700;">ProfitWise &gt; Preferences</h2>
                 </div>
             </div>
 
@@ -39,11 +40,9 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="form-group">
-                <div class="panel panel-default">
-                    <label>Starting Date For Importing Historical Data:</label>
-                    &nbsp;&nbsp;&nbsp;
-                    <div id="starting-date" 
-                         style="display: inline-block; top: 10px; position: relative;"
+                <div class="panel panel-default" id="starting-date">
+                    <label>Starting Date For Importing Historical Data</label>                    
+                    <div style="position: relative;"
                          data-bind="template: {
                             name: 'Date-Picker-Widget',
                             data: { value: StartingDateForOrders,
@@ -61,33 +60,34 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="default-margins">
                 <label>Use Default Margin in Reports for all $0 CoGS</label>
 
-                <div style="display: inline-block; width: 125px; margin-left: 30px; position: relative;">
-                    <select id="default-margins"
-                            class="form-control"
+                <div style="width: 125px; position: relative;">
+                    <select class="form-control"
                             data-bind="value: UseDefaultMargin, event: { change: UseDefaultMarginChange }">
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                     </select>
                 </div>
                 
+                <div style="height:20px;"></div>
 
-                <div data-bind="visible: ShowDefaultMargin">                
+                <div data-bind="visible: ShowDefaultMargin" id="default-margin-percent">                
                     <label>Default Margin (%)</label>
+                    
+                    <div>
+                        <div style="display:inline-block; line-height: 50px;">
+                            <div data-bind="template: { name: 'Number-Editor-Widget', data: $root.DefaultMarginEditorModel }"></div>
+                        </div>
 
-                    <div style="display: inline-block; width: 90px; margin-left: 30px; position: relative; top: 13px;">
-                        <div id="default-margin-percent" 
-                             data-bind="template: { name: 'Number-Editor-Widget', data: $root.DefaultMarginEditorModel }"></div>
-                    </div>
-
-                    <div style="display: inline-block; margin-left: 10px; position: relative;">
-                        <a href="#" class="btn btn-primary"
-                           style="width: 100px; display: inline-block;"
-                           data-bind="click: UseDefaultMarginChange">
-                            Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
-                        </a>
+                        <div style="display: inline-block; line-height: 50px; margin-left: 10px;">
+                            <a href="#" class="btn btn-primary"
+                               style="width: 100px; margin-top:-27px;"
+                               data-bind="click: UseDefaultMarginChange">
+                                Save &nbsp;<i class="glyphicon glyphicon-floppy-disk"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -102,10 +102,10 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="profit-realization">
                 <label>When should revenues/profits be recognized for orders?</label>
 
-                <div class="preference-control-cell" id="profit-realization">
+                <div class="preference-control-cell">
                     <div class="radio">
                         <label>
                             <input type="radio" name="optionsRadios"
@@ -137,10 +137,9 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="default-date-range">
                 <label>Default Date Range for Dashboard</label>
-                <div id="default-date-range"
-                     class="preference-control-cell" 
+                <div class="preference-control-cell" 
                      data-bind="foreach: DateRangeOptions">
                     <div class="radio">
                         <label>
@@ -252,7 +251,6 @@
             
             ko.applyBindings(model);
             
-            
             var tour = new Tour({
                 storage: false,
                 backdrop: true,
@@ -260,39 +258,40 @@
 
                 steps: [
                 {
-                    orphan: true,
+                    element: "#preferences-title",                    
                     title: "Welcome to ProfitWise Preferences",
-                    content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go."
+                    content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go.",
+                    placement: 'bottom',
                 },
-                {
+                {                   
                     element: "#starting-date",
-                    placement: "bottom",
                     title: "Starting Date For Import",
-                    content: "Choose how far back you would like ProfitWise to go when importing your order data. You can enter a date or choose one using the date selector. ProfitWise will import all order data from this date forward. This option has no effect on your Cost of Goods data. This only affects which historical orders are imported into ProfitWise for reporting purposes. This date can always be moved further back, so if you want to come back later and add orders going back further in time, you can modify this date and ProfitWise will import the additional orders."
+                    content: "Choose how far back you would like ProfitWise to go when importing your order data. You can enter a date or choose one using the date selector. ProfitWise will import all order data from this date forward. This option has no effect on your Cost of Goods data. This only affects which historical orders are imported into ProfitWise for reporting purposes. This date can always be moved further back, so if you want to come back later and add orders going back further in time, you can modify this date and ProfitWise will import the additional orders.",
+                    placement: 'bottom',
                 },
                 {
                     element: "#default-margins",
-                    placement: "bottom",
                     title: "Default Margin",
-                    content: "Choose Yes or No here. If you choose Yes, then any products that do not have a Cost of Goods value set will automatically use the default margin value (which we'll set next). If you choose No, then any products that do not have a Cost of Goods value will be considered to have a zero cost."
+                    content: "Choose Yes or No here. If you choose Yes, then any products that do not have a Cost of Goods value set will automatically use the default margin value (which we'll set next). If you choose No, then any products that do not have a Cost of Goods value will be considered to have a zero cost.",
+                    placement: 'bottom',
                 },
                 {
                     element: "#default-margin-percent",
-                    placement: "bottom",
                     title: "Default Margin (%)",
-                    content: "Enter your default margin percentage. This will be used to determine the Cost of Goods Sold for any products without a CoGS value set (assuming you chose to enable this option above). After entering a percentage, click on Save. Note that this percentage represents the default margin. For example, if you set the default margin to 20% and a product sells for $100, then the Cost of Goods Sold for that product will be $80 (resulting in a margin or gross profit of $20)."
+                    content: "Enter your default margin percentage. This will be used to determine the Cost of Goods Sold for any products without a CoGS value set (assuming you chose to enable this option above). After entering a percentage, click on Save. Note that this percentage represents the default margin. For example, if you set the default margin to 20% and a product sells for $100, then the Cost of Goods Sold for that product will be $80 (resulting in a margin or gross profit of $20).",
+                    placement: 'bottom',
                 },
                 {
                     element: "#profit-realization",
-                    placement: "bottom",
                     title: "Profit Realization",
-                    content: "ProfitWise reports can be configured to recognize your Shopify revenues in two ways. The first option, 'When the order is placed' will cause order revenues to appear in ProfitWise shortly after the order is received. The second option, 'When payment for the order is captured' will cause order revenues to appear in ProfitWise only once the funds for the order have been captured or marked as paid in Shopify."
+                    content: "ProfitWise reports can be configured to recognize your Shopify revenues in two ways. The first option, 'When the order is placed' will cause order revenues to appear in ProfitWise shortly after the order is received. The second option, 'When payment for the order is captured' will cause order revenues to appear in ProfitWise only once the funds for the order have been captured or marked as paid in Shopify.",
+                    placement: 'bottom',
                 },
                 {
                     element: "#default-date-range",
-                    placement: "bottom",
                     title: "Default Date Range",
-                    content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default."
+                    content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default.",
+                    placement: 'bottom',
                 },
             ]
             });
