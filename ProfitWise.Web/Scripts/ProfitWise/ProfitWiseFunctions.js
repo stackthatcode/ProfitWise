@@ -95,6 +95,27 @@ ProfitWiseFunctions.CaseInsensitiveContains = function (input, substring) {
     return adjustedInput.indexOf(adjustedSubstring) != -1;
 };
 
+ProfitWiseFunctions.TourFactory = function (steps) {
+    return new Tour({
+        steps: steps,
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        onShown: function (tour) {
+            $(".tour-step-background")
+                .clone()
+                .insertBefore($(".tour-step-background"))
+                .addClass("cover-up")
+                .css("z-index", 1200)
+                .css("opacity", 0);
+        },
+        onHidden: function (tour) {
+            $(".cover-up").remove();
+        },
+    });
+};
+
 
 // Temporary hard-coding of reference to ProfitWiseShopify.js
 ProfitWiseFunctions.AjaxSettings = function (modal) {

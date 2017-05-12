@@ -56,7 +56,7 @@
 <script type="text/html" id="Product-Filter-Widget">
     <div class="popover-container" name="product-filter-widget">
         <div class="form-group" style="margin-bottom: 5px;">
-            <div class="input-group">
+            <div class="input-group filter-textbox-pair">
                 <div class="input-group-btn filter-dropdown">
                     <a class="btn btn-default popover-launcher"
                        type="button"
@@ -68,12 +68,14 @@
                         Filter Products <i class="glyphicon glyphicon-triangle-bottom"></i>
                     </a>
                 </div>
-
-                <input type="text" class="form-control filter-textbox" placeholder="Enter up to 5 search terms for Titles, Vendors or SKU's, separated by comma"
-                       data-bind="value: SearchText,
-                                valueUpdate: 'afterkeydown', 
-                                hasFocus: true,
-                                event: { keyup: KeyPressCallback }"/>
+                
+                <input type="text"
+                        class="form-control"
+                        placeholder="Enter up to 5 search terms for Titles, Vendors or SKU's, separated by comma"
+                        data-bind="value: SearchText,
+                            valueUpdate: 'afterkeydown',
+                            hasFocus: true,
+                            event: { keyup: KeyPressCallback }" />
 
                 <div class="input-group-addon btn btn-primary" data-bind="click: Callback">
                     Search &nbsp;<i class="glyphicon glyphicon-search"></i>

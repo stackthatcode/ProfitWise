@@ -246,12 +246,7 @@
         return self;
     };
 	
-    ProfitWise.PreferrencesTour = new Tour({
-        storage: false,
-        backdrop: true,
-        backdropContainer: 'body',
-
-        steps: [
+    ProfitWise.PreferrencesTour = ProfitWiseFunctions.TourFactory([
         {
             element: "#preferences-title",                    
             title: "Welcome to ProfitWise Preferences",
@@ -286,10 +281,9 @@
             element: "#default-date-range",
             title: "Default Date Range",
             content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default.",
-            placement: 'bottom',
+            placement: 'top',
         },
-        ]
-    });
+    ]);
 
     $(document)
         .ready(function () {

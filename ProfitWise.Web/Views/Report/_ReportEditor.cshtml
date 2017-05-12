@@ -403,7 +403,18 @@
     ProfitWiseWidgets.ReportEditorTour = new Tour({
         storage: false,
         backdrop: true,
-        backdropContainer: 'body',
+        backdropContainer: 'body',        
+        onShown: function(tour) {
+            $(".tour-step-background")
+                .clone()
+                .insertBefore($(".tour-step-background"))
+                .addClass("cover-up")
+                .css("z-index", 1200)
+                .css("opacity", 0);
+        },
+        onHidden: function(tour) {
+            $(".cover-up").remove();
+        },
 
         steps: [
             {
