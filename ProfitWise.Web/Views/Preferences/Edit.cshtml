@@ -60,17 +60,19 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="panel panel-default" id="default-margins">
-                <label>Use Default Margin in Reports for all $0 CoGS</label>
+            <div class="panel panel-default" >
+                <div id="default-margins">
+                    <label>Use Default Margin in Reports for all $0 CoGS</label>
 
-                <div style="width: 125px; position: relative;">
-                    <select class="form-control"
-                            data-bind="value: UseDefaultMargin, event: { change: UseDefaultMarginChange }">
-                        <option value="1">Yes</option>
-                        <option value="0">No</option>
-                    </select>
+                    <div style="width: 125px; position: relative;">
+                        <select class="form-control"
+                                data-bind="value: UseDefaultMargin, event: { change: UseDefaultMarginChange }">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
                 </div>
-                
+
                 <div style="height:20px;"></div>
 
                 <div data-bind="visible: ShowDefaultMargin" id="default-margin-percent">                
@@ -244,59 +246,59 @@
         return self;
     };
 	
+    ProfitWise.PreferrencesTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        steps: [
+        {
+            element: "#preferences-title",                    
+            title: "Welcome to ProfitWise Preferences",
+            content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go.",
+            placement: 'bottom',
+        },
+        {                   
+            element: "#starting-date",
+            title: "Starting Date For Import",
+            content: "Choose how far back you would like ProfitWise to go when importing your order data. You can enter a date or choose one using the date selector. ProfitWise will import all order data from this date forward. This option has no effect on your Cost of Goods data. This only affects which historical orders are imported into ProfitWise for reporting purposes. This date can always be moved further back, so if you want to come back later and add orders going back further in time, you can modify this date and ProfitWise will import the additional orders.",
+            placement: 'bottom',
+        },
+        {
+            element: "#default-margins",
+            title: "Default Margin",
+            content: "Choose Yes or No here. If you choose Yes, then any products that do not have a Cost of Goods value set will automatically use the default margin value (which we'll set next). If you choose No, then any products that do not have a Cost of Goods value will be considered to have a zero cost.",
+            placement: 'bottom',
+        },
+        {
+            element: "#default-margin-percent",
+            title: "Default Margin (%)",
+            content: "Enter your default margin percentage. This will be used to determine the Cost of Goods Sold for any products without a CoGS value set (assuming you chose to enable this option above). After entering a percentage, click on Save. Note that this percentage represents the default margin. For example, if you set the default margin to 20% and a product sells for $100, then the Cost of Goods Sold for that product will be $80 (resulting in a margin or gross profit of $20).",
+            placement: 'bottom',
+        },
+        {
+            element: "#profit-realization",
+            title: "Profit Realization",
+            content: "ProfitWise reports can be configured to recognize your Shopify revenues in two ways. The first option, 'When the order is placed' will cause order revenues to appear in ProfitWise shortly after the order is received. The second option, 'When payment for the order is captured' will cause order revenues to appear in ProfitWise only once the funds for the order have been captured or marked as paid in Shopify.",
+            placement: 'bottom',
+        },
+        {
+            element: "#default-date-range",
+            title: "Default Date Range",
+            content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default.",
+            placement: 'bottom',
+        },
+        ]
+    });
+
     $(document)
         .ready(function () {
             var data = @Html.Raw(Model.SerializeToJson());
-            var model = new ProfitWise.EditPreferencesModel(data);
-            
+            var model = new ProfitWise.EditPreferencesModel(data);            
             ko.applyBindings(model);
             
-            var tour = new Tour({
-                storage: false,
-                backdrop: true,
-                backdropContainer: 'body',
-
-                steps: [
-                {
-                    element: "#preferences-title",                    
-                    title: "Welcome to ProfitWise Preferences",
-                    content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go.",
-                    placement: 'bottom',
-                },
-                {                   
-                    element: "#starting-date",
-                    title: "Starting Date For Import",
-                    content: "Choose how far back you would like ProfitWise to go when importing your order data. You can enter a date or choose one using the date selector. ProfitWise will import all order data from this date forward. This option has no effect on your Cost of Goods data. This only affects which historical orders are imported into ProfitWise for reporting purposes. This date can always be moved further back, so if you want to come back later and add orders going back further in time, you can modify this date and ProfitWise will import the additional orders.",
-                    placement: 'bottom',
-                },
-                {
-                    element: "#default-margins",
-                    title: "Default Margin",
-                    content: "Choose Yes or No here. If you choose Yes, then any products that do not have a Cost of Goods value set will automatically use the default margin value (which we'll set next). If you choose No, then any products that do not have a Cost of Goods value will be considered to have a zero cost.",
-                    placement: 'bottom',
-                },
-                {
-                    element: "#default-margin-percent",
-                    title: "Default Margin (%)",
-                    content: "Enter your default margin percentage. This will be used to determine the Cost of Goods Sold for any products without a CoGS value set (assuming you chose to enable this option above). After entering a percentage, click on Save. Note that this percentage represents the default margin. For example, if you set the default margin to 20% and a product sells for $100, then the Cost of Goods Sold for that product will be $80 (resulting in a margin or gross profit of $20).",
-                    placement: 'bottom',
-                },
-                {
-                    element: "#profit-realization",
-                    title: "Profit Realization",
-                    content: "ProfitWise reports can be configured to recognize your Shopify revenues in two ways. The first option, 'When the order is placed' will cause order revenues to appear in ProfitWise shortly after the order is received. The second option, 'When payment for the order is captured' will cause order revenues to appear in ProfitWise only once the funds for the order have been captured or marked as paid in Shopify.",
-                    placement: 'bottom',
-                },
-                {
-                    element: "#default-date-range",
-                    title: "Default Date Range",
-                    content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default.",
-                    placement: 'bottom',
-                },
-            ]
-            });
-            tour.init();
-            tour.start();
+            ProfitWise.PreferrencesTour.init();
+            ProfitWise.PreferrencesTour.start();
         });
 </script>
 

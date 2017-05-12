@@ -57,7 +57,7 @@
     <div class="popover-container" name="product-filter-widget">
         <div class="form-group" style="margin-bottom: 5px;">
             <div class="input-group">
-                <div class="input-group-btn">
+                <div class="input-group-btn filter-dropdown">
                     <a class="btn btn-default popover-launcher"
                        type="button"
                        rel="popover"
@@ -69,7 +69,7 @@
                     </a>
                 </div>
 
-                <input type="text" class="form-control" placeholder="Enter up to 5 search terms for Titles, Vendors or SKU's, separated by comma"
+                <input type="text" class="form-control filter-textbox" placeholder="Enter up to 5 search terms for Titles, Vendors or SKU's, separated by comma"
                        data-bind="value: SearchText,
                                 valueUpdate: 'afterkeydown', 
                                 hasFocus: true,

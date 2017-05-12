@@ -63,7 +63,7 @@
     <!-- Filtering and Paging -->
     <div class="row">
         <!-- Filtering Widget -->
-        <div class="col-lg-6">
+        <div class="col-lg-6" id="product-search">
             <div style="height: 20px;"></div>
             <div class="pull-left;"
                  data-bind="template: { name: 'Product-Filter-Widget', data: $root.FilterModel }">
@@ -103,29 +103,32 @@
                                 data: { ColumnIndex: 1, ColumnName: 'Product', Model: $root.SortingModel } }"></th>
                     <th>Inventory</th>
                     <th>Price</th>
-                    <th class="popover-container">
+                    <th id="bulk-cogs-update-link" class="popover-container">
                         <a href="#" class="popover-launcher"
                            data-bind="popover: { options: { placement: 'bottom' , trigger: 'click' , },
                                             template: 'Product-Bulk-Edit-Cogs-Confirm', data: $data }">CoGS</a></th>
-                    <th><a href="#" data-bind="click: $root.StockedDirectlyPickListPopup">Stocked<br />Directly</a></th>
-                    <th><a href="#" data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
+                    <th><a href="#" id="bulk-stocked-update-link"
+                           data-bind="click: $root.StockedDirectlyPickListPopup">Stocked<br />Directly</a></th>
+                    <th><a href="#" id="bulk-exclude-update-link"
+                           data-bind="click: $root.ExcludePickListPopup">Exclude</a></th>
                 </tr>
                 </thead>
 
                 <tbody data-bind="foreach: $root.CurrentGrid">
-                    <tr>
-                        <td class="overflow-gracefully">
-                            <span data-bind="if: Vendor">
-                                <span data-bind="text: Vendor"></span>
-                            </span>
-                            <span data-bind="ifnot: Vendor">
-                                (No Vendor)
-                            </span>
-                        </td>
+                <tr>
+                    <td class="overflow-gracefully">
+                        <span data-bind="if: Vendor">
+                            <span data-bind="text: Vendor"></span>
+                        </span>
+                        <span data-bind="ifnot: Vendor">
+                            (No Vendor)
+                        </span>
+                    </td>
 
-                        <td class="overflow-gracefully">
-                            <a href="#" data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor,
-                            tooltip: { title: ProductTitle, placement: 'bottom' }"></a>
+                    <td class="overflow-gracefully">
+                        <a href="#" class="link-to-cogs-detail"
+                           data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor,
+                                     tooltip: { title: ProductTitle, placement: 'bottom' }"></a>
                             @if (HttpContext.Current.AuthenticatedContext().IsImpersonated)
                             {
                                 <span>MPID</span>
@@ -146,7 +149,7 @@
                         </a>
                     </td>
 
-                    <td>
+                    <td class="stocked-directly">
                         <div data-bind="if: StockedDirectlyCount == VariantCount || StockedDirectlyCount == 0">
                             <input type="checkbox" data-bind="click: $root.StockedDirectlyCheckboxClick, checked: $root.StockedDirectlyIsChecked($data)" />
                         </div>
@@ -160,7 +163,7 @@
                         </div>
                     </td>
 
-                    <td>
+                    <td class="excluded-product">
                         <div data-bind="if: ExcludedCount == VariantCount || ExcludedCount == 0">
                             <input type="checkbox" data-bind="click: $root.ExcludedCheckboxClick, checked: $root.ExcludedIsChecked($data)" />
                         </div>
@@ -516,13 +519,79 @@
 
         return self;
     };
+    
+    ProfitWise.CogsGridTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        steps: [
+        {
+            orphan: true,
+            title: "Manage Products and CoGS",
+            content: "This is the Manage Products and CoGS page. From here, you can set the Cost of Goods for all of your products. This is a crucial step, as having accurate Cost of Goods data will enable ProfitWise to provide you with accurate information about your profitability.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-search .filter-textbox",
+            title: "Search by text",
+            content: "Enter text here to search for specific products. You can search by Vendor, Product Title, Variant Title or SKU. Click the Search button to execute your search query and the results below will be updated accordingly.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-search .filter-dropdown",
+            title: "Filter dropdown",
+            content: "Click here to filter the results by Product Type, Vendor, Tags, or Missing CoGS (to display any products without CoGS data entered).",
+            placement: 'bottom',
+        },
+        {
+            element: "#bulk-cogs-update-link",
+            title: "Set CoGS for all results",
+            content: "Click here to set a CoGS value for ALL products and variants at once. Use this carefully, as it will overwrite all of your existing CoGS data!",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-search-grid tr:nth-of-type(1) .stocked-directly",
+            title: "Stocked Directly",
+            content: "Use these checkboxes to set which products are Stocked Directly. This indicates which products are in your warehouse (as opposed to other products that may be drop-shipped from a third party). This will be used to provide an accurate Inventory Valuation Report, which we'll show you later in the tour.",
+            placement: 'bottom',
+        },
+        {
+            element: "#bulk-stocked-update-link",
+            title: "Set Stocked Directly for all results",
+            content: "By clicking on the 'Stocked Directly' column header, you can turn this setting on or off for all of the products in your current results at once.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-search-grid tr:nth-of-type(1) .excluded-product",
+            title: "Exclude Product",
+            content: "Use these checkboxes to set which products should be excluded from ProfitWise reporting. This can be useful for test products or other products you don't want to appear in your reports. Any revenues, costs or profits associated with these excluded products will not be included in ProfitWise totals.",
+            placement: 'bottom',
+        },
+        {
+            element: "#bulk-exclude-update-link",
+            title: "Exclude all results",
+            content: "By clicking on the 'Exclude' column header, you can turn this setting on or off for all of the products in your current results at once.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-search-grid tr:nth-of-type(1) .link-to-cogs-detail",
+            title: "Link to CoGS Detail",
+            content: "Clicking on a Product Title or CoGS value will take you to the Product Detail screen. Go ahead and click here to go to that page now.",
+            placement: 'bottom',
+        },
+        ]
+    });
+
 
     $(document)
         .ready(function () {
             var model = new ProfitWise.ProductSearchModel();
-            model.SearchForProducts(function() {});
             ko.applyBindings(model);
             model.JQueryInit();
             model.SearchForProducts();
+            
+            ProfitWise.CogsGridTour.init();
+            ProfitWise.CogsGridTour.start();
         });
 </script>
