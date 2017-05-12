@@ -424,5 +424,45 @@
         };
 
         return self;
-    };
+    };    
+    
+    ProfitWise.ProductConsolidationTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        steps: [
+        {
+            orphan: true,
+            title: "Product Detail",
+            content: "This is the Product Detail view. Here, you can see all of the variants for the selected product.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-edit-grid tr:nth-of-type(1) .stocked-directly",
+            title: "Stocked Directly checkbox",
+            content: "Use these checkboxes to set which variants are Stocked Directly. This indicates which variants are in your warehouse (as opposed to others that may be drop-shipped from a third party). This will be used to provide an accurate Inventory Valuation Report, which we'll show you later in the tour.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-edit-grid tr:nth-of-type(1) .exclude",
+            title: "Exclude checkbox",
+            content: "Use these checkboxes to set which <strong>variants</strong> should be excluded from ProfitWise reporting. This can be useful for test variants or other items you don't want to appear in your reports. Any revenues, costs or profits associated with these excluded variants will not be included in ProfitWise totals.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-edit-grid tr:nth-of-type(1) .cogs-editor",
+            title: "Individual CoGS value",
+            content: "Revised content pending - please see the spreadsheet for my feedback.",
+            placement: 'bottom',
+        },
+        {
+            element: "#manage-consolidation-button",
+            title: "Manage Consolidation",
+            content: "You can also click here to add detailed Cost of Goods information for any variant. This allows you to define multiple Cost of Goods Values for different date ranges. This is useful if the cost you pay for a product changes over time.",
+            placement: 'bottom',
+        },
+        ]
+    });
 </script>
+

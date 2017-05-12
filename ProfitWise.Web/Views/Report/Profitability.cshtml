@@ -24,41 +24,47 @@
 
 <!-- KnockoutJS Model -->
 <script>
+    var ProfitWise = ProfitWise || {};
+    ProfitWise.ProfitabilityTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        steps: [
+            {
+                orphan: true,
+                title: "Welcome to ProfitWise",
+                content: "Welcome to the ProfitWise Dashboard! Here, you can see reports showing your Revenues, Cost of Goods Sold, and Profits. Let's take a look at how to navigate this page and setup reports to see exactly the information you need."
+            },
+            {
+                element: "#report-viewer-report-selector",
+                placement: "bottom",
+                title: "Select Report",
+                content: "Click here to open a saved report. At first, only one report is available: Overall Profitability. But you can set up as many custom reports as you like, and once you save them, they'll appear here for easy access."
+            },
+            {
+                element: "#report-date-picker",
+                placement: "bottom",
+                title: "Date range selector",
+                content: "Click here to set the date range for your report. You can choose one of the pre-defined date ranges or enter a custom date range."
+            },
+            {
+                element: "#report-title-and-summary",
+                placement: "bottom",
+                title: "Report summary area (upper left)",
+                content: "The report summary area shows your report title, the number of products/variants included in the report, filtering options, and grouping (used for the column chart)."
+            }
+        ]
+    });
+
     $(document)
         .ready(function () {
             ProfitWiseFunctions.PopOverAutoCloseInit();
             var model = new ProfitWiseWidgets.ReportManagerModel(@ReportType.Profitability);
             ko.applyBindings(model);
-            model.Initialize(@SystemReportFactory.OverallProfitabilityId);   
-
-
-
-
-            var tour = new Tour({
-                storage: false,
-                backdrop: true,
-                backdropContainer: '#root',
-
-                steps: [
-                {
-                    //element: "#report-editor",
-                    backdrop: true,
-                    backdropContainer: 'body',
-                    orphan: true,
-                    title: "Welcome to ProfitWise",
-                    content:
-                        "We are glad that you chose ProfitWise for your Profitability Reportings needs. " +
-                        "We going to take you on tour of ProfitWise to ensure you get those most out of the product."
-                },
-                {
-                    element: "#report-viewer-title",
-                    placement: "bottom",
-                    title: "Report Title",
-                    content: "Content of my step"
-                }
-                ]
-            });
-            tour.init();
-            tour.start();
+            model.Initialize(@SystemReportFactory.OverallProfitabilityId);
+            
+            ProfitWise.ProfitabilityTour.init();
+            ProfitWise.ProfitabilityTour.start();
         });
 </script>

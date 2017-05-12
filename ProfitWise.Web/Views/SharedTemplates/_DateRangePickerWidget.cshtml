@@ -12,21 +12,33 @@
         line-height: 25px;
         min-width: 25px;
     }
+
     i.date-range-picker-icon {
         position: absolute; bottom: 10px; right: 10px; top: auto; cursor: pointer;
     }
+
     .ranges ul li {
         line-height: 24px;
         padding: 2px 6px;
         margin-bottom: 2px;
         font-size: 12px;
     }
+    
+    .date-ranger-picker-parent {
+        width: 270px;
+    }
+
+    @@media (min-width: 768px) {
+        .daterangepicker { width: 720px !important; }
+        .date-ranger-picker-parent { width: 220px; }
+    }
 </style>
 
 <script id="Date-Range-Picker-Widget-2" type="text/html">
-    <div class="date-ranger-picker-parent pull-right" style="width: 219px; position: relative;">
+    <div class="date-ranger-picker-parent" style="position: relative;">
         <input data-bind="dateRangeTimePicker: $data.daterange, change: $data.change" 
-               type="text" class="form-control" style="width: 100%; font-size: 1.0em;" />
+               type="text" class="form-control" 
+               style="width: 100%; font-size: 1.0em;" />
         <i class="glyphicon glyphicon-calendar date-range-picker-icon"></i>
     </div>
 </script>

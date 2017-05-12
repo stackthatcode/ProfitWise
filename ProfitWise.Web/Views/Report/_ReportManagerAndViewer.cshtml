@@ -8,17 +8,23 @@
         line-height: 30px;
     }
 
-    /*
     .float-left-mobile {
         float: left !important;
-    }*/
+    }
+    .mobile-menu-left {
+        left:0; right:auto;
+    }
 
-    @@media (min-width: 0px) {
+    @@media (min-width: 768px) {
         .float-left-mobile {
             float: right !important;
         }
+        .mobile-menu-left {
+            right:0; left:auto;
+        }
     }
 </style>
+
 
 <!-- Acts a container that holds the Viewer and the Editor -->
 <script type="text/html" id="Report-Manager">
@@ -50,10 +56,15 @@
         </div>
     </div>
 </script>
+
 <script type="text/html" id="Report-Viewer-Header">
-    <div class="col-xs-12 col-sm-6 no-side-padding" style="height:200px;" data-bind="with: $data.ReportInterfaceModel">
+    <div id="report-title-and-summary" 
+         class="col-xs-12 col-sm-6 no-side-padding" style="height:200px;" 
+         data-bind="with: $data.ReportInterfaceModel">
         <div data-bind="if: ReportLoaded()" style="overflow: auto;">
-            <h2 id="report-viewer-title" class="report-title overflow-gracefully" data-bind="text: Name"></h2>
+            <h2 id="report-viewer-title" 
+                class="report-title overflow-gracefully" 
+                data-bind="text: Name"></h2>
 
             <span data-bind="if: CopyForEditing">
                 <span style="letter-spacing: 0.1em; font-size:0.9em; color:#888;">
@@ -87,12 +98,15 @@
 
     <div class="col-xs-12 col-sm-6 no-side-padding" style="height:150px;">
         <div style="height:20px" class="hidden-xs"></div>
-        <div class="btn-group float-left-mobile"
+
+        <div id="report-viewer-report-selector"
+             class="btn-group float-left-mobile"
              data-bind="template: { name: 'Report-Viewer-Report-Selector',
                                     data: { SystemDefinedReports: $data.SystemDefinedReports,
                                             UserDefinedReports: $data.UserDefinedReports,
                                             SelectReportClick: $data.SelectReportClick} }">
         </div>
+
         <div class="float-left-mobile" data-bind="with: ReportInterfaceModel" >
             <!-- ko if: OnlySaveAsAllowed -->
             <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
@@ -126,9 +140,11 @@
             <!-- /ko -->
         </div>
         <div style="clear: both; height: 10px;"></div>
-        <div id="report-date-picker" class="float-left-mobile" data-bind="with: ReportInterfaceModel">
+
+        <div id="report-date-picker" class="float-left-mobile" 
+             data-bind="with: ReportInterfaceModel">
             <div data-bind="if: DatePickerEnabled">
-                <div data-bind="template: { name: 'Date-Range-Picker-Widget-2',
+                <div class="pull-right" data-bind="template: { name: 'Date-Range-Picker-Widget-2',
                                 data: { daterange: DateRange, change: DateRangePickerCallback } }"></div>
             </div>
         </div>
@@ -158,7 +174,7 @@
         Select Report &nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
     </a>
 
-    <ul class="dropdown-menu pull-right" style="width: 300px;">
+    <ul class="dropdown-menu mobile-menu-left" style="width: 300px;">
         <!-- ko foreach: SystemDefinedReports -->
         <li>
             <a href="#" data-bind="click: $parent.SelectReportClick">
