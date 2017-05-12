@@ -25,7 +25,6 @@
     }
 </style>
 
-
 <!-- Acts a container that holds the Viewer and the Editor -->
 <script type="text/html" id="Report-Manager">
     <div id="report-editor" data-bind="if: $data.InFilterEditMode" style="min-width: 568px;">
@@ -39,7 +38,7 @@
 
 <!-- Report-specific templates -->
 <script id="Report-Viewer" type="text/html">
-    <div id="report-viewer-header" class="std-outer-padding">
+    <div id="report-viewer" class="std-outer-padding">
         <div style="background-color:#FFF;" class="shadow">
             <div style="overflow: visible; padding-top:20px; margin-top:20px;" class="std-inner-padding">
                 <div data-bind="template: { name: 'Report-Viewer-Header' }"></div>
@@ -87,7 +86,7 @@
                     <span data-bind="template: { name: 'Report-Filter-Summary-Widget', data: FilterBullpenModel }"></span>
                 </div>
                 
-                <div style="height: 25px;">
+                <div id="report-grouping" style="height: 25px;">
                     <span>Grouped by </span>
                     <span data-bind="template: { name: 'Selector-Popover-Widget', data: GroupingPopoverModel }">
                     </span>
@@ -107,7 +106,7 @@
                                             SelectReportClick: $data.SelectReportClick} }">
         </div>
 
-        <div class="float-left-mobile" data-bind="with: ReportInterfaceModel" >
+        <div id="save-as-section" class="float-left-mobile" data-bind="with: ReportInterfaceModel">
             <!-- ko if: OnlySaveAsAllowed -->
             <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
             <div class="float-left-mobile">
@@ -150,7 +149,7 @@
         </div>
         <div style="clear: both; height: 10px;"></div>
         <div class="float-left-mobile">
-            <a href="#" class="btn btn-default report-viewer-top-button" 
+            <a href="#" id="edit-filters-button" class="btn btn-default report-viewer-top-button" 
                style="width:145px;" data-bind="click: EditReportClick">
                 Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
             </a>
@@ -159,7 +158,9 @@
         <!-- ko if: ReportInterfaceModel.ExportVisible -->
         <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
         <div class="float-left-mobile">
-            <a href="#" data-bind="click: ReportInterfaceModel.ExportCallback" class="btn btn-default report-viewer-top-button">
+            <a href="#" id="export-button"
+               data-bind="click: ReportInterfaceModel.ExportCallback" 
+               class="btn btn-default report-viewer-top-button">
                 <i class="glyphicon glyphicon-download-alt"></i> Export
             </a>
                 

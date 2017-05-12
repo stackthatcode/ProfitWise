@@ -129,7 +129,8 @@
 
 <script id="Report-Profitability-Detail" type="text/html">
     <div id="details-drillup-button" style="height:40px; overflow:auto;">
-        <a href="#" class="btn btn-default" style="width:170px;" data-bind="click: ExitDetailClick">
+        <a href="#" id="back-to-summary" class="btn btn-default" style="width:170px;" 
+           data-bind="click: ExitDetailClick">
             <i class="glyphicon glyphicon-arrow-left"></i> Back to Summary
         </a>
     </div>
@@ -149,7 +150,8 @@
             </div>
         </div>
 
-        <div data-bind="if: Data().length > 0 && PagingModel.PageCount() > 1" style="text-align: right; margin-top:10px;">
+        <div data-bind="if: Data().length > 0 && PagingModel.PageCount() > 1" 
+             style="text-align: right; margin-top:10px;">
             <div style="overflow:auto;" data-bind="template: { name: 'Paging-Widget', data: PagingModel }"></div>
         </div>
 
@@ -226,7 +228,7 @@
 
     <!-- Column Chart with drilldown -->
     <div class="row margin-less">
-        <div class="col-xs-12" style="overflow:auto;">
+        <div id="main-chart" class="col-xs-12" style="overflow:auto;">
             <div class="panel panel-default" style="padding:30px;">
                 <div style="text-align:center;">
                     <h4 class="report-widget-label">Total Profits by Time Period</h4>
@@ -237,7 +239,7 @@
     </div>
 
     <!-- Pie Charts -->
-    <div data-bind="with: ProfitabilitySummaryContext">
+    <div id="summary-charts" data-bind="with: ProfitabilitySummaryContext">
         <div data-bind="if: Data().ExecutiveSummary.TotalQuantitySold > 0">
             <div class="row margin-less">
                 <div class="col-xs-12 col-sm-12 col-md-6">
@@ -485,6 +487,9 @@
 
                     ProfitWiseWidgets.LoadColumnChart(
                         '#column-chart-detail', 'Profitability', data.series, null, data.currency, self.Drilldown);
+                    
+                    ProfitWise.ProfitDetailTour.init();
+                    ProfitWise.ProfitDetailTour.start();
 
                     if (callback) {
                         callback();

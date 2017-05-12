@@ -24,11 +24,44 @@
 
 <!-- KnockoutJS Model -->
 <script>
+    var ProfitWise = ProfitWise || {};
+    
+    ProfitWise.GoodsOnHandTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        steps: [
+            {
+                orphan: true,
+                title: "Inventory Valuation Report",
+                content: "The Inventory Valuation Report shows you the value of all the inventory currently in your warehouse. To ensure this report accurately reflects your inventory, make sure to select which products are stocked directly using the Manage Products and CoGS interface. Only products that have the <strong>Stocked Directly</strong> checkbox selected will appear in the Inventory Valuation Report. This allows you to exclude products that you drop-ship from a third party, where no inventory is maintained in your warehouse."
+            },
+            {
+                element: "#report-viewer",
+                placement: 'top',
+                title: "Inventory Valuation Report",
+                content: "The upper portion of this screen is similar to the ProfitWise Dashboard, allowing you to adjust the date range, save reports, edit filters, etc."
+            },
+            {
+                element: "#export-button",
+                placement: "bottom",
+                title: "Back to Summary",
+                content: "Data from the Inventory Valuation Report can be easily exported to a CSV file by clicking here."
+            },
+        ]
+    });
+
+
     $(document)
         .ready(function () {
             ProfitWiseFunctions.PopOverAutoCloseInit();
             var model = new ProfitWiseWidgets.ReportManagerModel(@ReportType.GoodsOnHand);
             ko.applyBindings(model);
             model.Initialize(@SystemReportFactory.GoodsOnHandId);
+            
+            ProfitWise.GoodsOnHandTour.init();
+            ProfitWise.GoodsOnHandTour.start();
         });
+
 </script>

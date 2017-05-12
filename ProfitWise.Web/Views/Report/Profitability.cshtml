@@ -25,7 +25,8 @@
 <!-- KnockoutJS Model -->
 <script>
     var ProfitWise = ProfitWise || {};
-    ProfitWise.ProfitabilityTour = new Tour({
+
+    ProfitWise.ProfitSummaryTour = new Tour({
         storage: false,
         backdrop: true,
         backdropContainer: 'body',
@@ -35,6 +36,18 @@
                 orphan: true,
                 title: "Welcome to ProfitWise",
                 content: "Welcome to the ProfitWise Dashboard! Here, you can see reports showing your Revenues, Cost of Goods Sold, and Profits. Let's take a look at how to navigate this page and setup reports to see exactly the information you need."
+            },
+            {
+                element: "#report-title-and-summary",
+                placement: "bottom",
+                title: "Report summary area (upper left)",
+                content: "The report summary area shows your report title, the number of products/variants included in the report, filtering options, and grouping (used for the column chart)."
+            },
+            {
+                element: "#report-grouping",
+                placement: "bottom",
+                title: "Grouping options",
+                content: "Click here to choose grouping options for the main column chart on your report. You can choose to group by Overall (no grouping), Product Type, Vendor, Product, or Variant. The chart will be updated according to your selection."
             },
             {
                 element: "#report-viewer-report-selector",
@@ -49,11 +62,55 @@
                 content: "Click here to set the date range for your report. You can choose one of the pre-defined date ranges or enter a custom date range."
             },
             {
-                element: "#report-title-and-summary",
+                element: "#edit-filters-button",
                 placement: "bottom",
-                title: "Report summary area (upper left)",
-                content: "The report summary area shows your report title, the number of products/variants included in the report, filtering options, and grouping (used for the column chart)."
-            }
+                title: "Edit report filters",
+                content: "Click here (or the Edit Filters button on the right side of the screen) to setup your report filters."
+            },
+            {
+                element: "#save-as-section",
+                placement: "bottom",
+                title: "Save As",
+                content: "Once you have your report setup the way you want, click here to save the report with a custom name. The saved report will then be available from the Select Report drop-down."
+            },
+            {
+                element: "#main-chart",
+                placement: "top",
+                title: "Main Chart",
+                content: "Clicking elements within the main chart allows you to drill-down into the selected data element. There are different drill-down options available, depending on the date range and grouping options you have selected."
+            },
+            {
+                element: "#summary-charts",
+                placement: "top",
+                title: "Summary Tables",
+                content: "Below the main chart, there are four summary tables presented, each with a pie chart. These tables show your Top Products, Top Vendors, Top Variants, and Top Product Types. Each table has a button in the upper right corner for accessing a more detailed report."
+            },
+        ]
+    });
+    
+    ProfitWise.ProfitDetailTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        steps: [
+            {
+                orphan: true,
+                title: "Profit Detail",
+                content: "The detailed reports are similar to the main report presented on the ProfitWise Dashboard, except that they focus on a particular data dimension (Product, Vendor, Variant, or Product Type, depending on which item you selected). The upper region of the report is very similar to the ProfitWise Dashboard, allowing you to adjust the date range, save reports, edit filters, etc."
+            },
+            {
+                element: "#export-button",
+                placement: "bottom",
+                title: "Data Export",
+                content: "One key difference with the detailed report views is that data can be exported to a CSV file, allowing you to open it in third party programs like Microsoft Excel. Clicking the export button will export all of the data for the currently selected date range and filters."
+            },
+            {
+                element: "#back-to-summary",
+                placement: "bottom",
+                title: "Back to Summary",
+                content: "Click here to return to the main ProfitWise Dashboard."
+            },
         ]
     });
 
@@ -64,7 +121,7 @@
             ko.applyBindings(model);
             model.Initialize(@SystemReportFactory.OverallProfitabilityId);
             
-            ProfitWise.ProfitabilityTour.init();
-            ProfitWise.ProfitabilityTour.start();
+            ProfitWise.ProfitSummaryTour.init();
+            ProfitWise.ProfitSummaryTour.start();
         });
 </script>

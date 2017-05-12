@@ -15,7 +15,8 @@
 
                         <div class="col-xs-6 no-side-padding">
                             <div class="pull-right" style="padding-top: 20px;">
-                                <a href="#" class="btn btn-primary" style="width:150px; margin-left:10px;"
+                                <a href="#" id="editor-done-button" 
+                                   class="btn btn-primary" style="width:150px; margin-left:10px;"
                                    data-bind="click: OkButtonClick">
                                     Done <i class="glyphicon glyphicon-ok"></i>
                                 </a>
@@ -38,7 +39,7 @@
                     <div style="height: 15px;"></div>
                     <div class="row" style="height: 43px;">
                         <div class="col-xs-12 col-sm-12 col-md-7">
-                            <div style="overflow:auto; height:40px;">
+                            <div id="filter-type-tabs" style="overflow:visible; height:40px;">
                                 <ul class="nav nav-tabs" role="tablist" style="width: 100%;">
                                     <li role="presentation" class="active">
                                         <a href="#report-filter-product-type" data-bind="click: ProductTypeClick"
@@ -93,7 +94,7 @@
                                 </div>
                             </div>
 
-                            <div data-bind="template: { name: 'Report-Editor-Body' }">
+                            <div id="report-editor-body" data-bind="template: { name: 'Report-Editor-Body' }">
                             </div>
                         </div>
 
@@ -105,7 +106,7 @@
                                 <span data-bind="template: { name: 'Report-Selection-Preview', data: ProductCountModel }"></span>
                                 Add or remove filters from Report, then hit <strong>Done</strong> to view the updated results.
                             </p>
-                            <div data-bind="template: { 
+                            <div id="filter-bullpen" data-bind="template: { 
                                     name: 'Report-Editor-Filter-Bullpen',
                                     data: FilterBullpenModel }"></div>
                         </div>
@@ -383,6 +384,9 @@
                 function (report) {
                     self.ReportContext(report.current);
                     self.ProductTypeClick();
+                    
+                    ProfitWiseWidgets.ReportEditorTour.init();
+                    ProfitWiseWidgets.ReportEditorTour.start();
                 });
         };
 
@@ -395,5 +399,45 @@
 
         return self;
     };
+    
+    ProfitWiseWidgets.ReportEditorTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
+
+        steps: [
+            {
+                element: "#filter-type-tabs",
+                placement: "bottom",
+                title: "Filter types",
+                content: "These tabs allow you to choose different types of filters to add to your report. You can filter by Product Type, Vendor, Product or Variant. Multiple filters can be combined. Selecting specific filters will limit the results shown in subsequent filter views according to your selections."
+            },
+            {
+                element: "#report-editor-body",
+                placement: "top",
+                title: "Selecting filters",
+                content: "Click on individual items in the results list to add those items to the current filter set. The selected filters will appear in blue bubbles on the right side of your screen."
+            },
+            {
+                element: ".filter-search",
+                placement: "bottom",
+                title: "Search box",
+                content: "Each filter type has a search field so you can quickly search for Product Types, Vendors, Products or Variants (depending on which tab you have selected). Enter a search term and click 'Go!' to execute the search."
+            },
+            {
+                element: "#filter-bullpen",
+                placement: "top",
+                title: "Filter summary",
+                content: "The filters summary provides an overview of which filters are currently selected, as well as the resulting number of products and variants that will be included in the report as a result of these filters."
+            },
+            {
+                element: "#editor-done-button",
+                placement: "bottom",
+                title: "Done",
+                content: "When you're finished setting up your filters, click here to return to the Profitability Dashboard and view your filtered report."
+            },
+        ]
+    });
+
 </script>
 
