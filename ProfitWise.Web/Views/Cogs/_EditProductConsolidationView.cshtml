@@ -150,6 +150,7 @@
     <div class="row">
         <div class="col-sm-10 col-xs-12">
             <table class="table product-consol">
+
                 <tbody>
                     <tr class="consol-primary active">
                         <td class="overflow-gracefully">
@@ -435,7 +436,7 @@
         {
             orphan: true,
             title: "Product Detail",
-            content: "This is the Product Detail view. Here, you can see all of the variants for the selected product.",
+            content: "Click here to select one or more products to consolidate with the currently selected product.",
             placement: 'bottom',
         },
         {
@@ -453,7 +454,19 @@
         {
             element: "#product-edit-grid tr:nth-of-type(1) .cogs-editor",
             title: "Individual CoGS value",
-            content: "Revised content pending - please see the spreadsheet for my feedback.",
+            content: "Here you can select which type of CoGS value you want to assign to the variant. You can choose either a fixed CoGS amount, or you can define a margin % and allow ProfitWise to calculate the CoGS for each sale based on the selling price.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-edit-grid tr:nth-of-type(1) .cogs-editor",
+            title: "Individual CoGS value",
+            content: "ProfitWise always uses your store's currency for reporting profits, although you may purchase some products in other currencies. In those cases, ProfitWise will automatically convert the Cost of Goods Sold amount based upon the currency conversion values for the date of any given sale.",
+            placement: 'bottom',
+        },
+        {
+            element: "#product-edit-grid tr:nth-of-type(1) .cogs-editor",
+            title: "Individual CoGS value",
+            content: "Additionally, you can add detailed Cost of Goods information for any variant. This allows you to define multiple Cost of Goods Values for different date ranges. This is useful if the cost you pay for a product changes over time.",
             placement: 'bottom',
         },
         {

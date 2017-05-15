@@ -11,7 +11,8 @@
 
 <style>
     body { overflow-y: scroll !important; padding: 0px !important; }
-    .search-grid tr { height: 60px; }
+    .search-grid tbody tr { height: 60px; }
+
     .search-grid tr td:nth-child(1), .search-heading tr th:nth-child(1) {
         width: 20%; vertical-align: middle;
     }
@@ -23,51 +24,10 @@
     }
 </style>
 
-
 <script type="text/html" id="Main-Template">
-    <div class="fixed-header-container" style="padding-left: 0px; padding-right: 0px;">
-        <div class="standard-header-sleeve" style="height: 163px;">
-
-            <!-- This element will track with the scrollbar via JavaScript wiring to onscroll-->
-            <div class="standard-header" 
-                 style="width:100% !important; min-width: 0 !important; padding-top:20px; padding-right:20px; padding-left:20px; border-bottom: 1px dashed #CCC;">
-                
-                <div data-bind="template: { name: 'Top-Header' }"></div>
-            </div>
-        </div>
-    </div>
-
-    <div style="position: absolute; overflow: auto; width:100%;">
-        <div style="height: 163px;"></div>
-        <div style="width:100%; background-color:#FFF; overflow:auto; padding-top:0px; padding-left:30px; padding-right: 30px;">
-            <table class="table search-grid">
-                <tbody data-bind="foreach: SearchGrid">  
-                <tr>
-                    <td class="overflow-gracefully">
-                        <div data-bind="text: Vendor"></div>
-                    </td>
-                    <td class="overflow-gracefully">
-                        <span data-bind="text: Title"></span>
-                    </td>
-                    <td style="text-align: right;">
-                        <span data-bind="ifnot: Consolidated">
-                            <a href="#" data-bind="click: $parent.AddToConsolidation">
-                                <i class="glyphicon glyphicon-plus"></i> Add to Consolidation
-                            </a>
-                        </span>
-                        <span data-bind="if: Consolidated">N/A</span>
-                    </td>
-                </tr>                  
-                </tbody>
-            </table>
-        </div>
-    </div>
-</script>
-
-<script type="text/html" id="Top-Header">
     <div class="row">
-        <div class="col-xs-12">
-            <div class="form-group" style="margin-bottom: 5px; height:50px;">
+        <div class="col-xs-12 std-inner-padding">
+            <div class="form-group" style="height:60px; padding-top:15px; margin-bottom: 5px;">
                 <div class="input-group">
                     <input type="text" class="form-control"
                            placeholder="Search for Products by Title, Vendor, or Sku"
@@ -85,20 +45,24 @@
     </div>
 
     <div class="row">
-        <div class="col-xs-6" style="text-align: left;"
+        <div class="col-xs-6 std-inner-padding" style="height:50px; text-align: left;"
              data-bind="template: { name: 'Paging-Widget', data: $data.PagingModel }">
         </div>
 
-        <div class="col-xs-6" style="text-align: right;">
+        <div class="col-xs-6 std-inner-padding" style="height:50px; text-align: right;">
             <a href="#" data-bind="click: OkClick"
                style="width: 125px;" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>&nbsp;Close</a>
         </div>
     </div>
 
-    <div class="row" data-bind="visible: ProductsFound">
-        <div class="col-xs-12">
-            <!-- The margin bumps this downward so it hugs the bottom of the header -->
-            <table class="table search-heading" style="margin-top: 10px;">
+    <div data-bind="visible: !ProductsFound()" style="text-align:center; padding-top:120px;">
+        <h1 style="font-weight:700; font-size:2.5em; color:#CCC;">No Products Found</h1>
+        <h4 style="font-weight:100;">Try using different search terms</h4>
+    </div>
+
+    <div data-bind="visible: ProductsFound()" style="overflow: auto; width: 100%;">
+        <div style="width: 100%; background-color: #FFF; overflow: auto; padding-top: 0px; padding-left: 15px; padding-right: 15px;">
+            <table class="table search-grid">
                 <thead>
                 <tr>
                     <th data-bind="template: { name: 'Sortable-Column-Header',
@@ -110,15 +74,30 @@
                     <th></th>
                 </tr>
                 </thead>
+
+                <tbody data-bind="foreach: SearchGrid">
+                <tr>
+                    <td class="overflow-gracefully">
+                        <div data-bind="text: Vendor"></div>
+                    </td>
+                    <td class="overflow-gracefully">
+                        <span data-bind="text: Title"></span>
+                    </td>
+                    <td style="text-align: right;">
+                        <span data-bind="ifnot: Consolidated">
+                            <a href="#" data-bind="click: $parent.AddToConsolidation">
+                                <i class="glyphicon glyphicon-plus"></i> Add to Consolidation
+                            </a>
+                        </span>
+                        <span data-bind="if: Consolidated">N/A</span>
+                    </td>
+                </tr>
+                </tbody>
             </table>
         </div>
     </div>
-    
-    <div data-bind="visible: !ProductsFound()" style="text-align:center; padding-top:120px;">
-        <h1 style="font-weight:700; font-size:2.5em; color:#CCC;">No Products Found</h1>
-        <h4 style="font-weight:100;">Try using different search terms</h4>
-    </div>
 </script>
+
 
 <!-- KnockoutJS Root Element -->
 <div data-bind="template: { name: 'Main-Template' }"></div>
@@ -233,9 +212,57 @@
 
         return self;
     };
+    
+    ProfitWise.ProductConsolidationSearchTour = new Tour({
+        storage: false,
+        backdrop: true,
+        backdropContainer: 'body',
 
-    var model = new ProfitWiseWidgets.ProductConsolSearchModel();
-    ko.applyBindings(model);
-    model.SearchClick();
+        steps: [
+        {
+            orphan: true,
+            title: "Product Consolidation",
+            content: "Product consolidation is an advanced topic, which will be best understood by carefully reading through the ProfitWise documentation<include link here>.",
+            placement: 'bottom',
+        },
+        {
+            element: "#tbd",
+            title: "Product Consolidation",
+            content: "Your selected product consolidations are shown here.",
+            placement: 'bottom',
+        },
+        {
+            element: "#tbd",
+            title: "Add New Consolidations",
+            content: "You can search for and select products to consolidate with the current product by clicking 'Add'.",
+            placement: 'bottom',
+        },
+        {
+            element: "#tbd",
+            title: "Primary Product",
+            content: "This marker identities the Primary product, which determines the Product Title that is displayed in ProfitWise reports. You'll have the ability to set another product to Primary, and to remove any product from the consolidation, as well.",
+            placement: 'bottom',
+        },
+        {
+            element: "#tbd",
+            title: "Variant Consolidations",
+            content: "Your selected variant consolidations are shown here.",
+            placement: 'bottom',
+        },
+        {
+            element: "#tbd",
+            title: "Primary Variant",
+            content: "This marker identities the Primary variant, which determines the Variant Title that is displayed in ProfitWise reports. You'll have the ability to set another variant to Primary, and to remove any variant from the consolidation, as well.",
+            placement: 'bottom',
+        },
+        ]
+    });
+    
+    $(document)
+        .ready(function () {
+            var model = new ProfitWiseWidgets.ProductConsolSearchModel();
+            ko.applyBindings(model);
+            model.SearchClick();
+        });
 </script>
 
