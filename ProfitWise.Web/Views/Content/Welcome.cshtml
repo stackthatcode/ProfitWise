@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Web.Plumbing
+﻿@using System.Configuration
+@using ProfitWise.Web.Plumbing
 @model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
@@ -33,9 +34,15 @@
                     <div style="font-weight: 700; font-size: 1.4em; margin-bottom: 30px;">
                         Your store's data is now loaded into ProfitWise
                     </div>
-                    <a href="@Model.ReturnUrl" class="btn btn-primary btn-lg" style="width: 200px;">
+                    <a href="@(ConfigurationManager.AppSettings["application_root_url"])/Preferences/Edit" 
+                       class="btn btn-primary btn-lg" style="width: 200px;">
                         <i class="glyphicon glyphicon-thumbs-up"></i> Proceed
                     </a>
+                    <div style="height:12px;">
+                    </div>
+                    <p style="text-align: center;">
+                        Click "Proceed" to walk through the initial setup process and get started using ProfitWise.
+                    </p>
                 </div>
             </div>
         </div>
