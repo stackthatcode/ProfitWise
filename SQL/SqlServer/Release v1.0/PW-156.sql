@@ -10,6 +10,9 @@ BEGIN
 END
 
 
+-- *** CRITICAL => the Functions and Views script must be executed before the next script is run before this
+
+
 
 DROP FUNCTION IF EXISTS dbo.profitreportentryprocessed
 GO
