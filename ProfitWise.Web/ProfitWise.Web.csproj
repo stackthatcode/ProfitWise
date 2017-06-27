@@ -535,6 +535,7 @@
     <Content Include="Views\ShopifyAuth\JavaScriptRedirect.cshtml" />
     <Content Include="Views\ShopifyAuth\BillingDeclined.cshtml" />
     <Content Include="Views\ShopifyAuth\ShopifyReturn.cshtml" />
+    <Content Include="Views\Shared\_IsDataLoadedAlert.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

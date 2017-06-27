@@ -92,6 +92,10 @@ ProfitWiseShopify.Confirm = function (settings, callback) {
     ShopifyApp.Modal.confirm(settings, callback);
 };
 
+ProfitWiseShopify.Alert = function (settings, callback) {
+    ShopifyApp.Modal.alert(settings, callback);
+};
+
 ProfitWiseShopify.ErrorMessage =
     "We're sorry for the inconvenience, but the System has encountered an error. " +
     "Please try reloading the page. If the problem persists, reach out to our Support Team!";

@@ -10,7 +10,7 @@
 @Html.Partial("~/Views/SharedTemplates/_DatePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_DateRangePickerWidget.cshtml")
 @Html.Partial("~/Views/SharedTemplates/_NumberEditorWidget.cshtml")
-
+@Html.Partial("_IsDataLoadedAlert")
 
 <style>
     .vert-spacer { height:25px; }
@@ -248,7 +248,7 @@
 	
     ProfitWise.PreferrencesTour = ProfitWiseFunctions.TourFactory([
         {
-            element: "#preferences-title",                    
+            orphan: true,                  
             title: "Welcome to ProfitWise Preferences",
             content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go.",
             placement: 'bottom',

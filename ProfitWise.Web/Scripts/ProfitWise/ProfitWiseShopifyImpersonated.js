@@ -48,6 +48,10 @@ ProfitWiseShopify.Confirm = function (settings) {
     }
 };
 
+ProfitWiseShopify.Alert = function (settings) {
+    alert(settings.message);
+};
+
 ProfitWiseShopify.ErrorMessage =
     "We're sorry for the inconvenience, but the System has encountered an error. " +
     "Please try reloading the page. If the problem persists, reach out to our Support Team!";

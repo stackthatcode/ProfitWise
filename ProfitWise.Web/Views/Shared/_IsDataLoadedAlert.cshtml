@@ -1,0 +1,46 @@
+﻿@using System.Configuration
+
+@using ProfitWise.Web.Attributes
+@using Push.Foundation.Utilities.Json
+@{
+    var commonContext = Context.AuthenticatedContext();
+    var isDataLoaded = commonContext.IdentitySnapshot.PwShop.IsDataLoaded;
+}
+
+<script>
+    $(document).ready(function () {
+        var isDataLoaded =  @Html.Raw(isDataLoaded.SerializeToJson());
+
+        var checkStoreDataLoaded = function () {
+
+            flow.exec(
+                function () {
+                    if (isDataLoaded) {
+                        return;
+                    }
+
+                    var settings = new ProfitWiseFunctions.AjaxSettings();
+                    settings.UseSpinner = false;
+                    settings.ErrorCallbackFunction = null;
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    ajax.HttpGet("/Preferences/StoreDataReady", this);
+                },
+                function (data) {
+                    isDataLoaded = data.storeDataLoaded;
+                    if (isDataLoaded) {
+                        ProfitWiseShopify.Alert({
+                            title: 'Your shop data is now loaded into ProfitWise',
+                            message: 
+                                'We have loaded your data into ProfitWise. ' + 
+                                'You can now begin entering your CoGS data. ' + 
+                                'Click "Navigate to..." from the menu up top to proceeed.'
+                        });
+                    }
+                });
+        };
+
+        var pingInteralMilliseconds = 5000; // Please do not change!
+        setInterval(checkStoreDataLoaded, pingInteralMilliseconds);
+    });
+</script>
+

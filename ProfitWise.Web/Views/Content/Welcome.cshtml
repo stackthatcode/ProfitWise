@@ -78,13 +78,13 @@
                     ajax.HttpGet("/Preferences/StoreDataReady", this);
                 },
                 function (data) {
-                    console.log(data);
+                    // console.log(data);
                     self.StoreDataLoaded(data.storeDataLoaded);
                 });
         };
 
         self.Initialize = function() {
-            var pingInteralMilliseconds = 15000; // Please do not change!
+            var pingInteralMilliseconds = 5000; // Please do not change!
             setInterval(self.CheckStoreDataLoaded, pingInteralMilliseconds);
         };
 
