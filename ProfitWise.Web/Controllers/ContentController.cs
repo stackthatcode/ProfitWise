@@ -1,7 +1,10 @@
 ﻿using System.Web.Mvc;
+using ProfitWise.Data.Factories;
+using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
+using Push.Foundation.Web.Json;
 
 
 namespace ProfitWise.Web.Controllers
@@ -10,6 +13,13 @@ namespace ProfitWise.Web.Controllers
     [IdentityProcessor]
     public class ContentController : Controller
     {
+        private readonly TourService _service;
+
+        public ContentController(TourService service)
+        {
+            _service = service;
+        }
+
 
         [HttpGet]
         public ActionResult Welcome(string returnUrl)
@@ -27,6 +37,14 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Contact()
         {
             return View();
+        }
+        
+        [HttpPost]
+        public ActionResult ShowTour(int tourIdentifier)
+        {
+            var shop = HttpContext.IdentitySnapshot().PwShop;
+            _service.ShowTour(shop, tourIdentifier);
+            return JsonNetResult.Success();
         }
     }
 }

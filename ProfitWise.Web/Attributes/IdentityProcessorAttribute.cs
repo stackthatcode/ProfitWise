@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Models;
@@ -95,6 +96,7 @@ namespace ProfitWise.Web.Attributes
                 return;
             }
 
+            // TODO => move these to transient caching
             // Retrieve User Access Roles
             var user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
             var userRoleIds = user.Roles.Select(x => x.RoleId);
@@ -103,6 +105,8 @@ namespace ProfitWise.Web.Attributes
                     .Where(x => userRoleIds.Contains(x.Id))
                     .Select(x => x.Name)
                     .ToList();
+
+            var tourState = shopRepository.RetreiveTourState(pwShop.PwShopId);
 
             var identity = new IdentitySnapshot()
             {
@@ -114,6 +118,7 @@ namespace ProfitWise.Web.Attributes
                 Impersonated = credentials.Impersonated,
                 PwShop = pwShop,
                 ShopDomain = credentials.ShopDomain,
+                TourState = tourState.ToDictionary(),
             };
 
             logger.Debug($"Successfully hydrated User {user.Id} Identity Snapshot into HttpContext");

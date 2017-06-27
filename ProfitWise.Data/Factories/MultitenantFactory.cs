@@ -1,6 +1,5 @@
 ﻿using System;
 using ProfitWise.Data.Model.Shop;
-using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Services;
 
@@ -26,6 +25,7 @@ namespace ProfitWise.Data.Factories
         private readonly Func<GoodsOnHandRepository> _goodsOnHandRepositoryFactory;
         private readonly Func<DataService> _dataServiceFactory;
         private readonly Func<BillingRepository> _billingRepositoryFactory;
+        private readonly Func<TourRepository> _tourRepositoryFactory;
 
 
         public MultitenantFactory(
@@ -45,7 +45,8 @@ namespace ProfitWise.Data.Factories
                 Func<ConsolidationService> consolidationServiceFactory, 
                 Func<GoodsOnHandRepository> goodsOnHandRepositoryFactory, 
                 Func<DataService> dataServiceFactory, 
-                Func<BillingRepository> billingRepositoryFactory)
+                Func<BillingRepository> billingRepositoryFactory,
+                Func<TourRepository> tourRepositoryFactory)
         {
             _orderRepositoryFactory = orderRepositoryFactory;
             _profitWiseBatchStateRepositoryFactory = profitWiseBatchStateRepositoryFactory;
@@ -64,6 +65,7 @@ namespace ProfitWise.Data.Factories
             _goodsOnHandRepositoryFactory = goodsOnHandRepositoryFactory;
             _dataServiceFactory = dataServiceFactory;
             _billingRepositoryFactory = billingRepositoryFactory;
+            _tourRepositoryFactory = tourRepositoryFactory;
         }
 
         public virtual BatchStateRepository MakeBatchStateRepository(PwShop shop)
@@ -174,6 +176,13 @@ namespace ProfitWise.Data.Factories
         public virtual ShopifyOrderRepository MakeShopifyOrderRepository(PwShop shop)
         {
             var repository = _orderRepositoryFactory();
+            repository.PwShop = shop;
+            return repository;
+        }
+
+        public virtual TourRepository MakeTourRepository(PwShop shop)
+        {
+            var repository = _tourRepositoryFactory();
             repository.PwShop = shop;
             return repository;
         }

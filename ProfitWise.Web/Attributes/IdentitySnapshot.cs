@@ -23,6 +23,8 @@ namespace ProfitWise.Web.Attributes
         public string ShopName => ShopDomain.ShopName();
         public bool Impersonated { get; set; }
         public PwShop PwShop { get; set; }
+
+        public Dictionary<int, bool> TourState { get; set; }
     }
 
     public static class ShopifyExtensions

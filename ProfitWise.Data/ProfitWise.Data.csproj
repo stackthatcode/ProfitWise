@@ -205,6 +205,8 @@
     <Compile Include="Model\Reports\ReportType.cs" />
     <Compile Include="Model\ShopifyImport\ShopifyOrderAdjustment.cs" />
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineRefund.cs" />
+    <Compile Include="Model\Shop\PwTourState.cs" />
+    <Compile Include="Model\Shop\TourIdentifiers.cs" />
     <Compile Include="Model\System\ExchangeRate.cs" />
     <Compile Include="Model\System\Currency.cs" />
     <Compile Include="Model\ShopifyImport\OrderLineItemSubset.cs" />
@@ -233,6 +235,8 @@
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineItem.cs" />
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
+    <Compile Include="Repositories\Multitenant\TourRepository.cs" />
+    <Compile Include="Services\TourService.cs" />
     <Compile Include="Utility\MethodLockResult.cs" />
     <Compile Include="Utility\MultitenantMethodLocker.cs" />
     <Compile Include="Processes\SystemCleanupProcess.cs" />

@@ -145,6 +145,15 @@ namespace ProfitWise.Data.Repositories.System
                         SET DateRangeDefault = @dateRangeDefault
                         WHERE PwShopId = @pwShopId";
             _connectionWrapper.Execute(query, new { pwShopId, dateRangeDefault });
-        }        
+        }
+
+        
+        public PwTourState RetreiveTourState(int pwShopId)
+        {
+            var query = @"SELECT * FROM tour(@pwShopId);";
+            return _connectionWrapper
+                    .Query<PwTourState>(query, new { pwShopId })
+                    .FirstOrDefault();
+        }
     }
 }

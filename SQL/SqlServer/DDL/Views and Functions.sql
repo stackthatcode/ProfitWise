@@ -110,6 +110,7 @@ GO
 
 
 
+-- ### Multitenant Functions ###
 
 DROP FUNCTION IF EXISTS dbo.batchstate
 GO
@@ -314,6 +315,10 @@ RETURNS TABLE
 AS  
 RETURN SELECT * FROM shopifyorderrefund WHERE PwShopId = @PwShopId;
 GO
+
+
+
+
 
 
 -- Views

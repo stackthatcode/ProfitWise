@@ -1,7 +1,10 @@
 ﻿@using ProfitWise.Data.Model.Reports
+@using ProfitWise.Data.Model.Shop
 @using ProfitWise.Web.Attributes
+@using Push.Foundation.Utilities.Json
 @{
     Context.AuthenticatedContext().PageTitle = "Profitability Dashboard";
+    var tourState = Context.IdentitySnapshot().TourState;
 }
 
 <!-- Dependency Widgets -->
@@ -101,6 +104,8 @@
             content: "Click here to return to the main ProfitWise Dashboard."
         },
     ]);
+    
+    var tourState = @Html.Raw(tourState.SerializeToJson());
 
     $(document)
         .ready(function () {
@@ -109,7 +114,11 @@
             ko.applyBindings(model);
             model.Initialize(@SystemReportFactory.OverallProfitabilityId);
             
-            ProfitWise.ProfitSummaryTour.init();
-            ProfitWise.ProfitSummaryTour.start();
+            // Only do this if it hasn't been shown, yet
+            if (tourState[@TourIdentifiers.ShowProfitabilityDashboard]) {
+                ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProfitabilityDashboard);
+                ProfitWise.ProfitSummaryTour.init();
+                ProfitWise.ProfitSummaryTour.start();
+            }
         });
 </script>

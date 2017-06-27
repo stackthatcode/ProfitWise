@@ -1,27 +1,6 @@
 ﻿
 var ProfitWiseFunctions = ProfitWiseFunctions || {};
 
-ProfitWiseFunctions.SynchronizeWidth = function (sourceSelector, targetSelector) {
-    var columnFixed = function () {
-        var sourceCells = $(sourceSelector);
-        var targetCells = $(targetSelector);
-
-        for (var i = 0; i < sourceCells.length; i++) {
-            var widthCSS = $(sourceCells[i]).css("width");
-            $(targetCells[i]).css("width", widthCSS);
-        }
-    };
-
-    $(window).resize(function () {
-        columnFixed();
-    });
-    $(document).ready(function () {
-        columnFixed();
-    });
-
-    columnFixed();
-}
-
 
 String.prototype.trunc = function (n) {
     return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
@@ -114,6 +93,18 @@ ProfitWiseFunctions.TourFactory = function (steps) {
             $(".cover-up").remove();
         },
     });
+};
+
+ProfitWiseFunctions.ShowTour = function (tourIdentifier) {
+    flow.exec(
+		function() {
+		    var settings = new ProfitWiseFunctions.AjaxSettings();
+		    settings.UseSpinner = false;
+		    var ajax = new ProfitWiseFunctions.Ajax(settings);
+		    ajax.HttpPost("/Content/ShowTour?tourIdentifier=" + tourIdentifier, {}, this);
+		}, function(response) {
+			// Do we need to do anything...?
+		});
 };
 
 
@@ -220,3 +211,4 @@ ProfitWiseFunctions.Ajax = function (settings) {
         }
     };
 };
+
