@@ -30,9 +30,13 @@ namespace ProfitWise.Data.Services
             {
                 tour.ShowProductDetails = false;
             }
-            if (identifier == TourIdentifiers.ShowProductConsolidation)
+            if (identifier == TourIdentifiers.ShowProductConsolidationOne)
             {
-                tour.ShowProductConsolidation = false;
+                tour.ShowProductConsolidationOne = false;
+            }
+            if (identifier == TourIdentifiers.ShowProductConsolidationTwo)
+            {
+                tour.ShowProductConsolidationTwo = false;
             }
             if (identifier == TourIdentifiers.ShowProfitabilityDashboard)
             {

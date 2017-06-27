@@ -1,4 +1,6 @@
-﻿<style>
+﻿@using ProfitWise.Data.Model.Shop
+@using ProfitWise.Web.Attributes
+<style>
     .consol-category-label { color: #777; font-weight: 700;font-size: 1.3em; }
     .consol-primary { font-weight: 700; }    
     .product-consol {margin-bottom: 10px;}
@@ -18,7 +20,6 @@
 </style>
 
 <script type="text/html" id="Product-Consolidation-Template">
-    <!-- Filtering and Paging -->
     <div class="row">
         <div class="col-xs-6" style="padding-top: 20px;">            
             <h3 class="drilldown-header overflow-gracefully" 
@@ -64,7 +65,7 @@
         </div>
     </div>
 
-    <div data-bind="foreach: PrimaryVariantGrid">
+    <div id="variant-consolidation-widget" data-bind="foreach: PrimaryVariantGrid">
         <div data-bind="template: { name: 'Product-Consolidation-Variant-Widget' }"
              style="padding-bottom: 30px;">
         </div>
@@ -101,7 +102,7 @@
 <script type="text/html" id="Product-Consolidation-Product-Widget">
     <div class="row">
         <div class="col-sm-10 col-xs-12">
-            <table class="table product-consol">
+            <table id="product-consolidation-widget" class="table product-consol">
                 <tbody>
                 <tr class="consol-primary active ">
                     <td>
@@ -110,7 +111,7 @@
 
                     <td><span data-bind="text: VendorText"></span></td>
                     <td><span data-bind="text: ActiveText"></span></td>
-                    <td><span style="white-space:nowrap;"><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
+                    <td id="primary-product"><span style="white-space:nowrap;"><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
                     <td>&nbsp;</td>
                 </tr>
 
@@ -130,7 +131,9 @@
 
                 <tr>
                     <td colspan="5">
-                        <a href="#" class="consol-link-control"
+                        <a href="#" 
+                           id="add-new-product-consol"
+                           class="consol-link-control"
                            data-bind="click: $parent.SearchForProductsPopup">
                             <i class="glyphicon glyphicon-plus"></i> Add Product
                         </a>
@@ -150,17 +153,16 @@
     <div class="row">
         <div class="col-sm-10 col-xs-12">
             <table class="table product-consol">
-
                 <tbody>
-                    <tr class="consol-primary active">
-                        <td class="overflow-gracefully">
-                            <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />
-                        </td>
-                        <td class="overflow-gracefully">
-                            <span data-bind="text: Product.Title, tooltip: { title: Product.Title }"></span>
-                        </td>
-                        <td><span data-bind="text: ActiveText"></span></td>
-                        <td><span style="white-space:nowrap;"><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
+                <tr class="consol-primary active">
+                    <td class="overflow-gracefully">
+                        <span data-bind="text: SkuTitleText, tooltip: { title: SkuTitleText }"></span><br />
+                    </td>
+                    <td class="overflow-gracefully">
+                        <span data-bind="text: Product.Title, tooltip: { title: Product.Title }"></span>
+                    </td>
+                    <td><span data-bind="text: ActiveText"></span></td>
+                    <td class="primary-variant"><span style="white-space:nowrap;"><i class="glyphicon glyphicon-star-empty"></i> Primary</span></td>
                         <td>&nbsp;</td>
                     </tr>
 
@@ -236,6 +238,7 @@
                 },
                 function () {
                     self.PrimaryProduct().ShowConsolidations(productState);
+
                     var grid = AQ(self.PrimaryVariantGrid());
 
                     AQ(masterVariantIds)
@@ -270,12 +273,12 @@
                     }
                 });
         };
-        
+
         var isPrimary = function (item) { return item.IsPrimary; }
 
         var isNotPrimary = function (item) { return !item.IsPrimary; }
 
-        self.SetPrimaryProduct = function(model) {            
+        self.SetPrimaryProduct = function(model) {
             var settings = new ProfitWiseFunctions.AjaxSettings();
             var ajax = new ProfitWiseFunctions.Ajax(settings);
             var url = "/ConsolService/PrimaryProduct";
@@ -283,7 +286,7 @@
                 pwMasterProductId: self.PwMasterProductId(),
                 pwProductId: model.PwProductId,
             };
-            ajax.HttpPost(url, data, self.Refresh);                
+            ajax.HttpPost(url, data, self.Refresh);
         };
 
         self.DeconsolidateProduct = function(model) {
@@ -329,6 +332,21 @@
 
         self.LoadModel = function (data) {
             self.PrimaryProduct(self.MasterProductModelFactory(data.product));
+
+            var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+            if (data.product.length == 1) {
+                if (tourStateJs[@TourIdentifiers.ShowProductConsolidationOne]) {
+                    ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductConsolidationOne);
+                    ProfitWise.AddProductConsolidationTour.init();
+                    ProfitWise.AddProductConsolidationTour.start();
+                }
+            } else {
+                if (tourStateJs[@TourIdentifiers.ShowProductConsolidationTwo]) {
+                    ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductConsolidationTwo);
+                    ProfitWise.ExistingProductConsolidationTour.init();
+                    ProfitWise.ExistingProductConsolidationTour.start();
+                }
+            }
 
             var masterVariants =
                 AQ(data.variants)
@@ -393,7 +411,7 @@
         self.SearchForProductsPopup = function () {
             var url = ProfitWiseConfig.BaseUrl +
                 '/Cogs/ProductConsolidationSearch?pwMasterProductId=' + self.PwMasterProductId();
-            
+
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Search for Products to Consolidate with ' + self.MasterProductTitle(),
@@ -407,8 +425,6 @@
         self.AddVariantVisible = ko.computed( function () { return self.PrimaryVariantGrid().length > 1; } );
 
         self.AddVariantConsolidationPopup = function(item) {
-            console.log(item.PwMasterVariantId);
-
             var url = ProfitWiseConfig.BaseUrl +
                 '/Cogs/AddVariantToConsolidation?' +
                     'pwMasterVariantId=' + item.PwMasterVariantId +
@@ -425,57 +441,51 @@
         };
 
         return self;
-    };    
-    
-    ProfitWise.ProductConsolidationTour = new Tour({
-        storage: false,
-        backdrop: true,
-        backdropContainer: 'body',
+    };
 
-        steps: [
+    var steps1 = [
         {
-            orphan: true,
-            title: "Product Detail",
-            content: "Click here to select one or more products to consolidate with the currently selected product.",
-            placement: 'bottom',
+        	orphan: true,
+        	title: "Product Consolidation",
+        	content: "Product consolidation is an advanced topic, which will be best understood by carefully reading through the ProfitWise documentation.",
+        	placement: 'bottom',
         },
         {
-            element: "#product-edit-grid tr:nth-of-type(1) .stocked-directly",
-            title: "Stocked Directly checkbox",
-            content: "Use these checkboxes to set which variants are Stocked Directly. This indicates which variants are in your warehouse (as opposed to others that may be drop-shipped from a third party). This will be used to provide an accurate Inventory Valuation Report, which we'll show you later in the tour.",
+            element: "#add-new-product-consol",
+            title: "Add Product to Consolidation",
+            content: "If you're already familiar with consolidation, you can click here to select one or more products to consolidate with the currently selected product.",
             placement: 'bottom',
         },
-        {
-            element: "#product-edit-grid tr:nth-of-type(1) .exclude",
-            title: "Exclude checkbox",
-            content: "Use these checkboxes to set which <strong>variants</strong> should be excluded from ProfitWise reporting. This can be useful for test variants or other items you don't want to appear in your reports. Any revenues, costs or profits associated with these excluded variants will not be included in ProfitWise totals.",
-            placement: 'bottom',
-        },
-        {
-            element: "#product-edit-grid tr:nth-of-type(1) .cogs-editor",
-            title: "Individual CoGS value",
-            content: "Here you can select which type of CoGS value you want to assign to the variant. You can choose either a fixed CoGS amount, or you can define a margin % and allow ProfitWise to calculate the CoGS for each sale based on the selling price.",
-            placement: 'bottom',
-        },
-        {
-            element: "#product-edit-grid tr:nth-of-type(1) .cogs-editor",
-            title: "Individual CoGS value",
-            content: "ProfitWise always uses your store's currency for reporting profits, although you may purchase some products in other currencies. In those cases, ProfitWise will automatically convert the Cost of Goods Sold amount based upon the currency conversion values for the date of any given sale.",
-            placement: 'bottom',
-        },
-        {
-            element: "#product-edit-grid tr:nth-of-type(1) .cogs-editor",
-            title: "Individual CoGS value",
-            content: "Additionally, you can add detailed Cost of Goods information for any variant. This allows you to define multiple Cost of Goods Values for different date ranges. This is useful if the cost you pay for a product changes over time.",
-            placement: 'bottom',
-        },
-        {
-            element: "#manage-consolidation-button",
-            title: "Manage Consolidation",
-            content: "You can also click here to add detailed Cost of Goods information for any variant. This allows you to define multiple Cost of Goods Values for different date ranges. This is useful if the cost you pay for a product changes over time.",
-            placement: 'bottom',
-        },
-        ]
-    });
+    ];
+
+    var steps2 = [
+		{
+		    element: "#product-consolidation-widget",
+		    title: "Product Consolidation",
+			content: "Your selected product consolidations are shown here.",
+			placement: 'bottom',
+		},
+		{
+		    element: "#primary-product",
+			title: "Primary Product",
+			content: "This marker identities the Primary product, which determines the Product Title that is displayed in ProfitWise reports. You can set another product to Primary, and to remove any product from the consolidation, as well.",
+			placement: 'bottom',
+		},
+		{
+		    element: "#variant-consolidation-widget",
+		    title: "Variant Consolidations",
+			content: "Your selected variant consolidations are shown here.",
+			placement: 'top',
+		},
+		{
+			element: ".primary-variant",
+			title: "Primary Variant",
+			content: "This marker identities the Primary variant, which determines the Variant Title that is displayed in ProfitWise reports. You can set another variant to Primary, and to remove any variant from the consolidation, as well.",
+			placement: 'bottom',
+		},
+    ];
+
+    ProfitWise.AddProductConsolidationTour = ProfitWiseFunctions.TourFactory(steps1);
+    ProfitWise.ExistingProductConsolidationTour = ProfitWiseFunctions.TourFactory(steps2);    
 </script>
 

@@ -266,6 +266,14 @@ RETURN SELECT * FROM profitwisereportquerystub WHERE PwShopId = @PwShopId;
 GO
 
 
+DROP FUNCTION IF EXISTS dbo.tour
+GO
+CREATE FUNCTION dbo.tour(@PwShopId bigint)  
+RETURNS TABLE  
+AS  
+RETURN SELECT * FROM profitwisetour WHERE PwShopId = @PwShopId;
+GO
+
 DROP FUNCTION IF EXISTS dbo.shop
 GO
 CREATE FUNCTION dbo.shop(@PwShopId bigint)  
@@ -273,7 +281,6 @@ RETURNS TABLE
 AS  
 RETURN SELECT * FROM profitwiseshop WHERE PwShopId = @PwShopId;
 GO
-
 
 DROP FUNCTION IF EXISTS dbo.variant
 GO

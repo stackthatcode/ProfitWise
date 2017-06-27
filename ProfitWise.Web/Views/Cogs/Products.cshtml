@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Web.Attributes
+﻿@using ProfitWise.Data.Model.Shop
+@using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
 
 @model ProfitWise.Web.Models.EditProductCogsModel
@@ -236,7 +237,7 @@
 
     ProfitWise.ProductSearchModel = function () {
         var self = this;
-        
+
         self.PickListId = ko.observable();
         self.CurrentGrid = ko.observableArray();
         self.ShowNoProductsFound = ko.observable(false);
@@ -245,18 +246,18 @@
         self.PagingModel = new ProfitWiseWidgets.PagingModel();
         self.PagingModel.Callback = function() { self.LoadDataForCurrentPage(); };
         self.PagingModel.ShowPageSizeSelector(true);
-        
+
         self.FilterModel = new ProfitWiseWidgets.ProductFilterModel(productTypes, productVendors);
         self.FilterModel.Callback = function() { self.SearchForProducts(); };
 
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
         self.SortingModel.Callback = function() { self.LoadDataForCurrentPage(); };
-        
+
         // *** Launch Bulk Edit Popup *** //
-        self.BulkEditPopUp = function() {            
+        self.BulkEditPopUp = function() {
             ProfitWiseFunctions.PopOverCloseAll();
 
-            var url = ProfitWiseConfig.BaseUrl + '/Cogs/CogsDetail?pwPickListId=' + self.PickListId();            
+            var url = ProfitWiseConfig.BaseUrl + '/Cogs/CogsDetail?pwPickListId=' + self.PickListId();
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Add CoGS Detail to all Products in current Search',
@@ -266,10 +267,10 @@
                 self.LoadDataForCurrentPage();
             });
         };
-        
+
         // *** Stocked Directly interactivity *** //
         self.StockedDirectlyPickListPopup = function () {
-            var url = 
+            var url =
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/StockedPicklistPopup?pickListId=' + self.PickListId();
 
@@ -296,7 +297,7 @@
             };
 
             ajax.HttpPost(
-                "/CogsService/StockedDirectlyByMasterProductId", 
+                "/CogsService/StockedDirectlyByMasterProductId",
                 data, self.LoadDataForCurrentPage);
         };
 
@@ -343,7 +344,7 @@
                 value: !self.ExcludedIsChecked(model),
             };
 
-            ajax.HttpPost("/CogsService/ExcludeByMasterProductId", 
+            ajax.HttpPost("/CogsService/ExcludeByMasterProductId",
                         data, self.LoadDataForCurrentPage);
         };
 
@@ -365,7 +366,7 @@
 
         // *** Search for Products *** //
         self.SearchForProducts = function (callback, pageOverride) {
-            flow.exec(                
+            flow.exec(
                 function() {
                     var filters = [];
                     ko.utils.arrayForEach(
@@ -401,7 +402,7 @@
             self.ForceRequeryState(true);
         }
 
-        self.LoadDataForCurrentPage = function (callback) {            
+        self.LoadDataForCurrentPage = function (callback) {
             if (self.ForceRequeryState()) {
                 self.ForceRequeryState(false);
                 self.SearchForProducts(self.PagingModel.PageNumber());
@@ -438,8 +439,8 @@
                             "Your query appears to have expired. The page will refresh so you can re-enter parameters.",
                             function(result) { location.reload(); });
                         return;
-                    };                      
-                    
+                    };
+
                     self.ShowNoProductsFound(false);
                     self.CurrentGrid(data.products);
                     self.PagingModel.RecordCount(data.totalRecords);
@@ -477,7 +478,7 @@
         self.ShowCogsEditor = function() {
             self.CogsEditorVisible(true);
             self.ConsolidationEditorVisible(false);
-            
+
             self.EditProductCogsModel.RetrieveMasterProduct(self.EditProductId());
             $('html,body').animate({ scrollTop: 0 });
         };
@@ -492,15 +493,15 @@
 
         // Wire state-management delegates into sub-models
         self.EditProductCogsModel = new ProfitWise.EditProductCogsModel({
-                    exitcallback: self.ReturnToProductSearch,
-                    editconsolidationcallback: self.ShowConsolidationEditor,
-                });
+            exitcallback: self.ReturnToProductSearch,
+            editconsolidationcallback: self.ShowConsolidationEditor,
+        });
 
         self.EditProductConsolidationModel = new ProfitWise.EditProductConsolidationModel({
-                    exitcallback: self.ReturnToProductSearch,
-                    editcogscallback: self.ShowCogsEditor,
-                    forcerequerycallback: self.ForceRequery 
-                });
+            exitcallback: self.ReturnToProductSearch,
+            editcogscallback: self.ShowCogsEditor,
+            forcerequerycallback: self.ForceRequery
+        });
 
         // JQuery and scrolling helper functions
         self.LastScrollTop = null;
@@ -508,16 +509,16 @@
             if (self.LastScrollTop != null) {
                 $(document).scrollTop(self.LastScrollTop);
                 self.LastScrollTop = null;
-            } 
+            }
         };
-        
+
         self.JQueryInit = function() {
             ProfitWiseFunctions.PopOverAutoCloseInit();
         };
 
         return self;
     };
-    
+
     ProfitWise.CogsGridTour = ProfitWiseFunctions.TourFactory([
         {
             orphan: true,
@@ -581,8 +582,12 @@
             ko.applyBindings(model);
             model.JQueryInit();
             model.SearchForProducts();
-            
-            ProfitWise.CogsGridTour.init();
-            ProfitWise.CogsGridTour.start();
+
+            var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+            if (tourStateJs[@TourIdentifiers.ShowProducts]) {
+                ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProducts);
+                ProfitWise.CogsGridTour.init();
+                ProfitWise.CogsGridTour.start();
+            }
         });
 </script>

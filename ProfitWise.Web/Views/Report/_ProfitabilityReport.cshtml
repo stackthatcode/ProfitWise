@@ -1,5 +1,8 @@
 ﻿@using ProfitWise.Data.Model.Profit
 @using ProfitWise.Data.Model.Reports
+@using ProfitWise.Data.Model.Shop
+@using ProfitWise.Web.Attributes
+@using Push.Foundation.Utilities.Json
 
 <style>
     .report-viewer-top-button {
@@ -488,8 +491,14 @@
                     ProfitWiseWidgets.LoadColumnChart(
                         '#column-chart-detail', 'Profitability', data.series, null, data.currency, self.Drilldown);
                     
-                    ProfitWise.ProfitDetailTour.init();
-                    ProfitWise.ProfitDetailTour.start();
+                    var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+                    var showProfitabilityDetail = @TourIdentifiers.ShowProfitabilityDetail;
+
+                    if (tourStateJs[showProfitabilityDetail]) {
+                        ProfitWiseFunctions.ShowTour(showProfitabilityDetail);                        
+                        ProfitWise.ProfitDetailTour.init();
+                        ProfitWise.ProfitDetailTour.start();
+                    }
 
                     if (callback) {
                         callback();

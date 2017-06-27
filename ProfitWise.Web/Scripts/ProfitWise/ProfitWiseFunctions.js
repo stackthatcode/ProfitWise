@@ -102,7 +102,8 @@ ProfitWiseFunctions.ShowTour = function (tourIdentifier) {
 		    settings.UseSpinner = false;
 		    var ajax = new ProfitWiseFunctions.Ajax(settings);
 		    ajax.HttpPost("/Content/ShowTour?tourIdentifier=" + tourIdentifier, {}, this);
-		}, function(response) {
+		},
+        function (response) {
 			// Do we need to do anything...?
 		});
 };

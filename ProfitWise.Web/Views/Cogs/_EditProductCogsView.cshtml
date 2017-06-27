@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Web.Attributes
+﻿@using ProfitWise.Data.Model.Shop
+@using ProfitWise.Web.Attributes
 @{
     var commonContext = Context.AuthenticatedContext();
     var defaultCurrencyId = commonContext.IdentitySnapshot.PwShop.CurrencyId;
@@ -188,9 +189,14 @@
                         return;
                     }
 
-                    self.LoadMasterProduct(data);                    
-                    ProfitWise.CogsDetailTour.init();
-                    ProfitWise.CogsDetailTour.start();
+                    self.LoadMasterProduct(data);
+
+                    var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+                    if (tourStateJs[@TourIdentifiers.ShowProductDetails]) {
+                        ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductDetails);
+                        ProfitWise.CogsDetailTour.init();
+                        ProfitWise.CogsDetailTour.start();
+                    }
 
                     if (callback) {
                         callback();
@@ -203,17 +209,17 @@
         self.Refresh = function() {
             self.RetrieveMasterProduct(self.PwMasterProductId());
         };
-        
+
         self.LoadMasterProduct = function (data) {
             self.MasterProductTitle(data.MasterProduct.Title);
-            
+
             AQ(data.MasterProduct.MasterVariants)
-                .each(function (item) {                    
+                .each(function (item) {
                     item.EditorVisible = ko.observable(false);
-                    
+
                     item.CurrentExcluded = ko.observable(item.Excluded);
                     item.CurrentStockedDirectly = ko.observable(item.StockedDirectly);
-                    
+
                     // Used for undo functions
                     item.OldState = ko.observable();
 
@@ -239,7 +245,7 @@
                         item.EditorVisible(true);
                         item.EditorModel.SetFocus();
                     };
-                    
+
                     item.SummaryModel.EditDetailCallback = function () {
                         var dialogTitle =
                                 item.Sku ?
@@ -285,8 +291,8 @@
                 current.EditorVisible(false);
             }
         };
-        
-        self.SelectCogsByMasterVariantId = function (id) {            
+
+        self.SelectCogsByMasterVariantId = function (id) {
             var item =
                 AQ(self.Grid())
                     .firstOrDefault(function (n) { return n.PwMasterVariantId == id; });
@@ -305,7 +311,7 @@
                 pwMasterVariantId: pwMasterVariantId,
             };
 
-            // Update observables 
+            // Update observables
             ajax.HttpPost("/CogsService/UpdateSimpleCogs", data, callback);
         };
 
@@ -339,7 +345,7 @@
         };
 
         // Bulk Edit interactivity
-        self.StockedDirectlyDialogPopup = function () {            
+        self.StockedDirectlyDialogPopup = function () {
             var url =
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/StockedProductPopup?pwMasterProductId=' + self.PwMasterProductId();
@@ -353,8 +359,8 @@
                 self.Refresh();
             });
         }
-        
-        self.ExcludedDialogPopup = function () {            
+
+        self.ExcludedDialogPopup = function () {
             var url =
                 ProfitWiseConfig.BaseUrl +
                     '/Cogs/ExcludedProductPopup?pwMasterProductId=' + self.PwMasterProductId();
@@ -368,11 +374,11 @@
                 self.Refresh();
             });
         };
-        
+
         self.CogsDetailDialogPopup = function (pwMasterVariantId, dialogTitle) {
             var url = ProfitWiseConfig.BaseUrl +
                         '/Cogs/CogsDetail?pwMasterVariantId=' + pwMasterVariantId;
-            
+
             ProfitWiseShopify.LaunchModal({
                 src: url,
                 title: 'Edit CoGS Detail: ' + dialogTitle,
@@ -382,16 +388,11 @@
                 self.Refresh();
             });
         }
-        
+
         return self;
     };
     
-    ProfitWise.CogsDetailTour = new Tour({
-        storage: false,
-        backdrop: true,
-        backdropContainer: 'body',
-
-        steps: [
+    var steps = [
         {
             orphan: true,
             title: "Product Detail",
@@ -431,9 +432,10 @@
         {
             element: "#manage-consolidation-button",
             title: "Manage Consolidation",
-            content: "You can also click here to add detailed Cost of Goods information for any variant. This allows you to define multiple Cost of Goods Values for different date ranges. This is useful if the cost you pay for a product changes over time.",
+            content: "Sometimes, product names or SKU's change, and this can result in duplicate items appearing in reports. Click here to setup product consolidation and instruct ProfitWise to treat two or more products or variants as the same for reporting purposes.",
             placement: 'bottom',
         },
-        ]
-    });
+        ];
+
+    ProfitWise.CogsDetailTour = ProfitWiseFunctions.TourFactory(steps);
 </script>

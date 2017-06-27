@@ -1,4 +1,6 @@
 ﻿@using ProfitWise.Data.Model.Reports
+@using ProfitWise.Data.Model.Shop
+@using ProfitWise.Web.Attributes
 
 <script type="text/html" id="Report-Editor-Top-Level">
     <div class="std-outer-padding" style="padding-top:20px;">
@@ -384,9 +386,13 @@
                 function (report) {
                     self.ReportContext(report.current);
                     self.ProductTypeClick();
-                    
-                    ProfitWiseWidgets.ReportEditorTour.init();
-                    ProfitWiseWidgets.ReportEditorTour.start();
+
+                    var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+                    if (tourStateJs[@TourIdentifiers.ShowEditFilters]) {
+                        ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowEditFilters);
+                        ProfitWiseWidgets.ReportEditorTour.init();
+                        ProfitWiseWidgets.ReportEditorTour.start();
+                    }
                 });
         };
 
@@ -399,56 +405,41 @@
 
         return self;
     };
-    
-    ProfitWiseWidgets.ReportEditorTour = new Tour({
-        storage: false,
-        backdrop: true,
-        backdropContainer: 'body',        
-        onShown: function(tour) {
-            $(".tour-step-background")
-                .clone()
-                .insertBefore($(".tour-step-background"))
-                .addClass("cover-up")
-                .css("z-index", 1200)
-                .css("opacity", 0);
-        },
-        onHidden: function(tour) {
-            $(".cover-up").remove();
-        },
 
-        steps: [
-            {
-                element: "#filter-type-tabs",
-                placement: "bottom",
-                title: "Filter types",
-                content: "These tabs allow you to choose different types of filters to add to your report. You can filter by Product Type, Vendor, Product or Variant. Multiple filters can be combined. Selecting specific filters will limit the results shown in subsequent filter views according to your selections."
-            },
-            {
-                element: "#report-editor-body",
-                placement: "top",
-                title: "Selecting filters",
-                content: "Click on individual items in the results list to add those items to the current filter set. The selected filters will appear in blue bubbles on the right side of your screen."
-            },
-            {
-                element: ".filter-search",
-                placement: "bottom",
-                title: "Search box",
-                content: "Each filter type has a search field so you can quickly search for Product Types, Vendors, Products or Variants (depending on which tab you have selected). Enter a search term and click 'Go!' to execute the search."
-            },
-            {
-                element: "#filter-bullpen",
-                placement: "top",
-                title: "Filter summary",
-                content: "The filters summary provides an overview of which filters are currently selected, as well as the resulting number of products and variants that will be included in the report as a result of these filters."
-            },
-            {
-                element: "#editor-done-button",
-                placement: "bottom",
-                title: "Done",
-                content: "When you're finished setting up your filters, click here to return to the Profitability Dashboard and view your filtered report."
-            },
-        ]
-    });
+    var steps = [
+        {
+            element: "#filter-type-tabs",
+            placement: "bottom",
+            title: "Filter types",
+            content: "These tabs allow you to choose different types of filters to add to your report. You can filter by Product Type, Vendor, Product or Variant. Multiple filters can be combined. Selecting specific filters will limit the results shown in subsequent filter views according to your selections."
+        },
+        {
+            element: "#report-editor-body",
+            placement: "top",
+            title: "Selecting filters",
+            content: "Click on individual items in the results list to add those items to the current filter set. The selected filters will appear in blue bubbles on the right side of your screen."
+        },
+        {
+            element: ".filter-search",
+            placement: "bottom",
+            title: "Search box",
+            content: "Each filter type has a search field so you can quickly search for Product Types, Vendors, Products or Variants (depending on which tab you have selected). Enter a search term and click 'Go!' to execute the search."
+        },
+        {
+            element: "#filter-bullpen",
+            placement: "top",
+            title: "Filter summary",
+            content: "The filters summary provides an overview of which filters are currently selected, as well as the resulting number of products and variants that will be included in the report as a result of these filters."
+        },
+        {
+            element: "#editor-done-button",
+            placement: "bottom",
+            title: "Done",
+            content: "When you're finished setting up your filters, click here to return to the Profitability Dashboard and view your filtered report."
+        },
+    ];
+
+    ProfitWiseWidgets.ReportEditorTour = ProfitWiseFunctions.TourFactory(steps);
 
 </script>
 

@@ -8,11 +8,12 @@ namespace ProfitWise.Data.Model.Shop
         public const int ShowPreferences = 1;
         public const int ShowProducts = 2;
         public const int ShowProductDetails = 3;
-        public const int ShowProductConsolidation = 4;
-        public const int ShowProfitabilityDashboard = 5;
-        public const int ShowEditFilters = 6;
-        public const int ShowProfitabilityDetail = 7;
-        public const int ShowGoodsOnHand = 8;
+        public const int ShowProductConsolidationOne = 4;
+        public const int ShowProductConsolidationTwo = 5;
+        public const int ShowProfitabilityDashboard = 6;
+        public const int ShowEditFilters = 7;
+        public const int ShowProfitabilityDetail = 8;
+        public const int ShowGoodsOnHand = 9;
     }
 
     public static class TourIdentifierExtensions
@@ -24,7 +25,8 @@ namespace ProfitWise.Data.Model.Shop
                 { TourIdentifiers.ShowPreferences, tourState.ShowPreferences },
                 { TourIdentifiers.ShowProducts, tourState.ShowProducts },
                 { TourIdentifiers.ShowProductDetails, tourState.ShowProductDetails },
-                { TourIdentifiers.ShowProductConsolidation, tourState.ShowProductConsolidation },
+                { TourIdentifiers.ShowProductConsolidationOne, tourState.ShowProductConsolidationOne },
+                { TourIdentifiers.ShowProductConsolidationTwo, tourState.ShowProductConsolidationTwo },
                 { TourIdentifiers.ShowProfitabilityDashboard, tourState.ShowProfitabilityDashboard },
                 { TourIdentifiers.ShowEditFilters, tourState.ShowEditFilters },
                 { TourIdentifiers.ShowProfitabilityDetail, tourState.ShowProfitabilityDetail },

@@ -1,4 +1,5 @@
 ﻿@using ProfitWise.Data.Model.Preferences
+@using ProfitWise.Data.Model.Shop
 @using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
 
@@ -171,10 +172,10 @@
         var self = this;
         self.DateRangeOptions = ProfitWiseWidgets.DateRanges;
 
-        var startingDate = ProfitWiseFunctions.parseToJavascriptDate(data.StartingDateForOrders);        
+        var startingDate = ProfitWiseFunctions.parseToJavascriptDate(data.StartingDateForOrders);
         self.StartingDateForOrders = ko.observable(startingDate);
         self.OldStartingDateForOrders = ko.observable(startingDate);
-        
+
         self.StartingDateChange = function(newdate) {
             if (newdate > self.OldStartingDateForOrders()) {
                 ShopifyApp.Modal.alert({
@@ -188,7 +189,7 @@
             }
 
             //console.log('Date Comparison', newdate, self.OldStartingDateForOrders());
-                
+
             if (newdate < self.OldStartingDateForOrders()) {
                 console.log(typeof newdate, typeof self.OldStartingDateForOrders());
 
@@ -196,7 +197,7 @@
                     function() {
                         var ajax = new ProfitWiseFunctions.Ajax();
                         ajax.HttpPost(
-                            "/Preferences/UpdateStartingDate", 
+                            "/Preferences/UpdateStartingDate",
                             { startDate: self.StartingDateForOrders() }, this);
                     },
                     function() {
@@ -211,7 +212,7 @@
                     });
             }
         };
-        
+
         self.UseDefaultMargin = ko.observable(data.UseDefaultMargin);
         self.DefaultMarginEditorModel =
             new ProfitWiseWidgets.NumberEditorWidgetModel({
@@ -227,7 +228,7 @@
         self.UseDefaultMarginChange = function() {
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/UpdateDefaultMargin",
-                    { useDefaultMargin: self.UseDefaultMargin() == 1, 
+                    { useDefaultMargin: self.UseDefaultMargin() == 1,
                         defaultMargin: self.DefaultMarginEditorModel.Amount() });
         };
 
@@ -236,24 +237,24 @@
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/UpdateProfitRealization", { profitRealizationId: self.ProfitRealization() });
         };
-        
+
         self.DateRangeDefault = ko.observable(data.DateRangeDefault);
         self.UpdateDefaultDateRange = function() {
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/UpdateDefaultDateRange", { dateRangeId: self.DateRangeDefault() });
         };
-        
+
         return self;
     };
-	
+
     ProfitWise.PreferrencesTour = ProfitWiseFunctions.TourFactory([
         {
-            orphan: true,                  
+            orphan: true,
             title: "Welcome to ProfitWise Preferences",
             content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go.",
             placement: 'bottom',
         },
-        {                   
+        {
             element: "#starting-date",
             title: "Starting Date For Import",
             content: "Choose how far back you would like ProfitWise to go when importing your order data. You can enter a date or choose one using the date selector. ProfitWise will import all order data from this date forward. This option has no effect on your Cost of Goods data. This only affects which historical orders are imported into ProfitWise for reporting purposes. This date can always be moved further back, so if you want to come back later and add orders going back further in time, you can modify this date and ProfitWise will import the additional orders.",
@@ -284,15 +285,19 @@
             placement: 'top',
         },
     ]);
-    
+
     $(document)
         .ready(function () {
             var data = @Html.Raw(Model.SerializeToJson());
-            var model = new ProfitWise.EditPreferencesModel(data);            
+            var model = new ProfitWise.EditPreferencesModel(data);
             ko.applyBindings(model);
-            
-            ProfitWise.PreferrencesTour.init();
-            ProfitWise.PreferrencesTour.start();
+
+            var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+            if (tourStateJs[@TourIdentifiers.ShowPreferences]) {
+                ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowPreferences);
+                ProfitWise.PreferrencesTour.init();
+                ProfitWise.PreferrencesTour.start();
+            }
         });
 </script>
 

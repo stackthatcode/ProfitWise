@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using ProfitWise.Web.Models;
+using Push.Foundation.Utilities.Json;
 
 namespace ProfitWise.Web.Attributes
 {
@@ -37,6 +38,11 @@ namespace ProfitWise.Web.Attributes
         public static void AuthenticatedContext(this HttpContext context, AuthenticatedContext commonContext)
         {
             context.Items[Key] = commonContext;
+        }
+
+        public static string CurrentUserTourStateJson(this HttpContextBase context)
+        {
+            return context.IdentitySnapshot().TourState.SerializeToJson();
         }
     }
 }

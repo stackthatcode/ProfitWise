@@ -213,51 +213,6 @@
         return self;
     };
     
-    ProfitWise.ProductConsolidationSearchTour = new Tour({
-        storage: false,
-        backdrop: true,
-        backdropContainer: 'body',
-
-        steps: [
-        {
-            orphan: true,
-            title: "Product Consolidation",
-            content: "Product consolidation is an advanced topic, which will be best understood by carefully reading through the ProfitWise documentation<include link here>.",
-            placement: 'bottom',
-        },
-        {
-            element: "#tbd",
-            title: "Product Consolidation",
-            content: "Your selected product consolidations are shown here.",
-            placement: 'bottom',
-        },
-        {
-            element: "#tbd",
-            title: "Add New Consolidations",
-            content: "You can search for and select products to consolidate with the current product by clicking 'Add'.",
-            placement: 'bottom',
-        },
-        {
-            element: "#tbd",
-            title: "Primary Product",
-            content: "This marker identities the Primary product, which determines the Product Title that is displayed in ProfitWise reports. You'll have the ability to set another product to Primary, and to remove any product from the consolidation, as well.",
-            placement: 'bottom',
-        },
-        {
-            element: "#tbd",
-            title: "Variant Consolidations",
-            content: "Your selected variant consolidations are shown here.",
-            placement: 'bottom',
-        },
-        {
-            element: "#tbd",
-            title: "Primary Variant",
-            content: "This marker identities the Primary variant, which determines the Variant Title that is displayed in ProfitWise reports. You'll have the ability to set another variant to Primary, and to remove any variant from the consolidation, as well.",
-            placement: 'bottom',
-        },
-        ]
-    });
-    
     $(document)
         .ready(function () {
             var model = new ProfitWiseWidgets.ProductConsolSearchModel();

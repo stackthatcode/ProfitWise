@@ -1,10 +1,8 @@
 ﻿@using ProfitWise.Data.Model.Reports
 @using ProfitWise.Data.Model.Shop
 @using ProfitWise.Web.Attributes
-@using Push.Foundation.Utilities.Json
 @{
     Context.AuthenticatedContext().PageTitle = "Profitability Dashboard";
-    var tourState = Context.IdentitySnapshot().TourState;
 }
 
 <!-- Dependency Widgets -->
@@ -84,7 +82,7 @@
             content: "Below the main chart, there are four summary tables presented, each with a pie chart. These tables show your Top Products, Top Vendors, Top Variants, and Top Product Types. Each table has a button in the upper right corner for accessing a more detailed report."
         },
     ]);
-    
+
     ProfitWise.ProfitDetailTour = ProfitWiseFunctions.TourFactory([
         {
             orphan: true,
@@ -104,8 +102,7 @@
             content: "Click here to return to the main ProfitWise Dashboard."
         },
     ]);
-    
-    var tourState = @Html.Raw(tourState.SerializeToJson());
+
 
     $(document)
         .ready(function () {
@@ -113,9 +110,9 @@
             var model = new ProfitWiseWidgets.ReportManagerModel(@ReportType.Profitability);
             ko.applyBindings(model);
             model.Initialize(@SystemReportFactory.OverallProfitabilityId);
-            
-            // Only do this if it hasn't been shown, yet
-            if (tourState[@TourIdentifiers.ShowProfitabilityDashboard]) {
+
+            var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+            if (tourStateJs[@TourIdentifiers.ShowProfitabilityDashboard]) {
                 ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProfitabilityDashboard);
                 ProfitWise.ProfitSummaryTour.init();
                 ProfitWise.ProfitSummaryTour.start();

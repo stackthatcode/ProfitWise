@@ -2,6 +2,7 @@ USE ProfitWise
 
 
 
+
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[profitwisetour]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].profitwisetour(
@@ -9,7 +10,8 @@ CREATE TABLE [dbo].profitwisetour(
 	[ShowPreferences] [bit] NOT NULL,
 	[ShowProducts] [bit] NOT NULL,
 	[ShowProductDetails] [bit] NOT NULL,
-	[ShowProductConsolidation] [bit] NOT NULL,
+	[ShowProductConsolidationOne] [bit] NOT NULL,
+	[ShowProductConsolidationTwo] [bit] NOT NULL,
 	[ShowProfitabilityDashboard] [bit] NOT NULL,
 	[ShowEditFilters] [bit] NOT NULL,
 	[ShowProfitabilityDetail] [bit] NOT NULL,
@@ -35,6 +37,9 @@ GO
 
 
 
-INSERT INTO profitwisetour SELECT PwShopId, 1, 1, 1, 1, 1, 1, 1, 1 FROM profitwiseshop;
+INSERT INTO profitwisetour SELECT PwShopId, 1, 1, 1, 1, 1, 1, 1, 1, 1 FROM profitwiseshop;
+
+SELECT * FROM profitwisetour;
+
 
 
