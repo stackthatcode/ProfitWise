@@ -156,6 +156,19 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default" id="default-date-range">
+                <label>Reset the ProfitWise guided tour</label>
+                <p>If you cancelled the guided tour, this will allow you to start over.</p>
+                <a href="#" class="btn btn-primary" data-bind="click:ResetProfitWiseTour">
+                    <i class="glyphicon glyphicon-education"></i> Reset
+                </a>
+            </div>
+        </div>
+    </div>
+    
     
     <div class="vert-spacer">
     </div>
@@ -242,6 +255,11 @@
         self.UpdateDefaultDateRange = function() {
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/UpdateDefaultDateRange", { dateRangeId: self.DateRangeDefault() });
+        };
+        
+        self.ResetProfitWiseTour = function() {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost("/Preferences/ResetTour", { });
         };
 
         return self;

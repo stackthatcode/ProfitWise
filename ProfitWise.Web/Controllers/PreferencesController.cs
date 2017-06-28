@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
@@ -18,7 +19,7 @@ namespace ProfitWise.Web.Controllers
         private readonly ShopRepository _shopRepository;
         private readonly IPushLogger _logger;
         private readonly TimeZoneTranslator _timeZoneTranslator;
-
+        
         public PreferencesController(
                 MultitenantFactory factory, 
                 ShopRepository shopRepository, 
@@ -99,6 +100,26 @@ namespace ProfitWise.Web.Controllers
             return new JsonNetResult(new { storeDataLoaded });
         }
 
+        [HttpPost]
+        public ActionResult ResetTour()
+        {
+            var tourRepository = 
+                _factory.MakeTourRepository(HttpContext.IdentitySnapshot().PwShop);
+
+            var tour = tourRepository.Retreive();
+            tour.ShowPreferences = true;
+            tour.ShowEditFilters = true;
+            tour.ShowGoodsOnHand = true;
+            tour.ShowProductConsolidationOne = true;
+            tour.ShowProductConsolidationTwo = true;
+            tour.ShowProductDetails = true;
+            tour.ShowProducts = true;
+            tour.ShowProfitabilityDashboard = true;
+            tour.ShowProfitabilityDetail = true;
+            tourRepository.Update(tour);
+
+            return JsonNetResult.Success();
+        }
 
         //[Obsolete]
         //[HttpGet]
