@@ -60,15 +60,14 @@ GO
 
 DROP INDEX IF EXISTS [profitwisevariant].uq_profitwisevariant;
 
-
 ALTER TABLE [profitwisevariant] 
 	ALTER COLUMN [Sku] [nvarchar](100)
 
 -- This logic alone is worthy of discussion...
 
 CREATE UNIQUE INDEX uq_profitwisevariant
-  ON dbo.[profitwisevariant]([PwShopId], [PwProductId], [ShopifyVariantId], [Sku], [Title])
-  WHERE [ShopifyVariantId] IS NOT NULL;
+	ON dbo.[profitwisevariant]([PwShopId], [PwProductId], [ShopifyVariantId], [Sku], [Title])
+	WHERE [ShopifyVariantId] IS NOT NULL;
 
 
 
@@ -86,7 +85,7 @@ CREATE TABLE [dbo].[profitwisemastervariant](
 	[CogsAmount] [decimal](15, 2) NULL,
 	[CogsMarginPercent] [decimal](4, 2) NULL,
 	[CogsDetail] [smallint] NOT NULL,
- CONSTRAINT [PK_profitwisemastervariant_PwMasterVariantId] PRIMARY KEY CLUSTERED 
+CONSTRAINT [PK_profitwisemastervariant_PwMasterVariantId] PRIMARY KEY CLUSTERED 
 (
 	[PwMasterVariantId] ASC,
 	[PwShopId] ASC
