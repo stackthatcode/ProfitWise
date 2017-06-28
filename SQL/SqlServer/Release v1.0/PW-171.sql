@@ -446,10 +446,11 @@ ALTER TABLE [dbo].[profitwisepicklistmasterproduct]
 ADD CONSTRAINT FK_profitwisepicklistmasterproduct_PwPickListId
 FOREIGN KEY (PwPickListId, PwShopId) REFERENCES [dbo].[profitwisepicklist](PwPickListId, PwShopId);
 
+/*
 ALTER TABLE [dbo].[profitwisepicklistmasterproduct]
 ADD CONSTRAINT FK_profitwisepicklistmasterproduct_PwMasterProductId
 FOREIGN KEY (PwMasterProductId, PwShopId) REFERENCES [dbo].[profitwisemasterproduct](PwMasterProductId, PwShopId);
-
+*/
 
 
 ALTER TABLE [dbo].[profitwiseproduct]
@@ -558,15 +559,20 @@ ADD CONSTRAINT FK_profitwisereportfilter_PwShopId
 FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
 
 
-ALTER TABLE [dbo].[profitwiseprofitquerystub]
-ADD CONSTRAINT FK_profitwiseprofitquerystub_PwReportId
-FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
+/** 
 
 -- Clean-up of old data
 DELETE FROM [profitwisegoodsonhandquerystub] WHERE PwReportId NOT IN (SELECT PwReportId FROM profitwisereport);
 
+-- These are on hold for now, as the built-in System Reports (PwReportId { 1, 2 }) won't have 
+-- ... any records present in the profitwisereport table
+
+ALTER TABLE [dbo].[profitwiseprofitquerystub]
+ADD CONSTRAINT FK_profitwiseprofitquerystub_PwReportId
+FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
+
 ALTER TABLE [dbo].[profitwisegoodsonhandquerystub]
 ADD CONSTRAINT FK_profitwisegoodsonhandquerystub_PwReportId
 FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
-
+**/
 
