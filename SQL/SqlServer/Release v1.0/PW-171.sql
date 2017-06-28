@@ -207,6 +207,7 @@ BEGIN
 END
 
 
+
 IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorder_PwShopId' )
 BEGIN
 	ALTER TABLE [dbo].[shopifyorder]
@@ -274,6 +275,11 @@ BEGIN
 	DROP CONSTRAINT FK_profitwiseprofitreportentry_ShopifyOrderId
 END
 
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwiseprofitreportentry_PwVariantId' )
+BEGIN
+	ALTER TABLE [dbo].[profitwiseprofitreportentry]
+	DROP CONSTRAINT FK_profitwiseprofitreportentry_PwVariantId
+END
 
 IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwisereport_PwShopId' )
 BEGIN
@@ -281,6 +287,23 @@ BEGIN
 	DROP CONSTRAINT FK_profitwisereport_PwShopId
 END
 
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwisereportfilter_PwShopId' )
+BEGIN
+	ALTER TABLE [dbo].[profitwisereportfilter]
+	DROP CONSTRAINT FK_profitwisereportfilter_PwShopId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwiseprofitquerystub_PwReportId' )
+BEGIN
+	ALTER TABLE [dbo].[profitwiseprofitquerystub]
+	DROP CONSTRAINT FK_profitwiseprofitquerystub_PwReportId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwisegoodsonhandquerystub_PwReportId' )
+BEGIN
+	ALTER TABLE [dbo].[profitwisegoodsonhandquerystub]
+	DROP CONSTRAINT FK_profitwisegoodsonhandquerystub_PwReportId
+END
 
 
 
@@ -517,6 +540,10 @@ ALTER TABLE [dbo].[profitwiseprofitreportentry]
 ADD CONSTRAINT FK_profitwiseprofitreportentry_ShopifyOrderId
 FOREIGN KEY (PwShopId, ShopifyOrderId) REFERENCES [dbo].[shopifyorder](PwShopId, ShopifyOrderId);
 
+ALTER TABLE [dbo].[profitwiseprofitreportentry]
+ADD CONSTRAINT FK_profitwiseprofitreportentry_PwVariantId
+FOREIGN KEY (PwVariantId, PwShopId) REFERENCES [dbo].[profitwisevariant](PwVariantId, PwShopId);
+
 
 
 
@@ -541,4 +568,5 @@ DELETE FROM [profitwisegoodsonhandquerystub] WHERE PwReportId NOT IN (SELECT PwR
 ALTER TABLE [dbo].[profitwisegoodsonhandquerystub]
 ADD CONSTRAINT FK_profitwisegoodsonhandquerystub_PwReportId
 FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
+
 

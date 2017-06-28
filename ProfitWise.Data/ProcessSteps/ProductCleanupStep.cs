@@ -50,9 +50,9 @@ namespace ProfitWise.Data.ProcessSteps
             // Update Inactive Variant prices using Order Line Items
             UpdateInactiveVariantPrice(shop, masterProductCatalog, orderLineItems);
 
-            // Deletes any orphaned Master Products or Master Variants
-            _pushLogger.Debug($"Deleting Orphaned Master Products and Master Variants");
-            productRepository.DeleteOrphanedMasterProducts();
+            // Deletes any childless Master Products or Master Variants
+            _pushLogger.Debug($"Deleting Childless Master Products and Master Variants");
+            productRepository.DeleteChildlessMasterProducts();
             variantRepository.DeleteChildlessMasterVariants();
         }
 
@@ -83,8 +83,7 @@ namespace ProfitWise.Data.ProcessSteps
                 }
             }
 
-            foreach (var variant in 
-                        masterVariants
+            foreach (var variant in masterVariants
                             .SelectMany(x => x.Variants)
                             .Where(x => x.IsActive == false)
                             .ToList())

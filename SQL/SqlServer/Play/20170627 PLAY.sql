@@ -41,5 +41,9 @@ SELECT * FROM shopifyorderlineitem;
 
 SELECT * FROM profitwiseprofitquerystub
 
+SELECT * FROM profitwisereportquerystub;
+
+
+
 
 

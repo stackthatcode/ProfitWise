@@ -207,7 +207,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .FirstOrDefault();
         }
 
-        public void DeleteOrphanedMasterProducts()
+        public void DeleteChildlessMasterProducts()
         {
             var query = @"DELETE FROM masterproduct(@PwShopId)
                         WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM product(@PwShopId));";

@@ -214,6 +214,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 query, new { PwShop.PwShopId, @PwMasterVariantId = pwMasterVariantId});
         }
 
+        // NOTE => should technically delete the Report Entries tied to this Variant, 
+        // ... but the only circumstance under which a Variant is deleted is that it has
+        // ... no orders tied thereto
         public void DeleteVariantByVariantId(long pwVariantId)
         {
             var query = @"DELETE FROM variant(@PwShopId) WHERE PwVariantId = @pwVariantId;";
