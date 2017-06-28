@@ -207,6 +207,95 @@ BEGIN
 END
 
 
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorder_PwShopId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorder]
+	DROP CONSTRAINT FK_shopifyorder_PwShopId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderlineitem_PwShopId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderlineitem]
+	DROP CONSTRAINT FK_shopifyorderlineitem_PwShopId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderlineitem_PwShopId_And_ShopifyOrderId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderlineitem]
+	DROP CONSTRAINT FK_shopifyorderlineitem_PwShopId_And_ShopifyOrderId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderlineitem_PwProductId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderlineitem]
+	DROP CONSTRAINT FK_shopifyorderlineitem_PwProductId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderlineitem_PwVariantId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderlineitem]
+	DROP CONSTRAINT FK_shopifyorderlineitem_PwVariantId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderadjustment_PwShopId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderadjustment]
+	DROP CONSTRAINT FK_shopifyorderadjustment_PwShopId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderadjustment_PwShopId_And_ShopifyOrderId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderadjustment]
+	DROP CONSTRAINT FK_shopifyorderadjustment_PwShopId_And_ShopifyOrderId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderrefund_PwShopId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderrefund]
+	DROP CONSTRAINT FK_shopifyorderrefund_PwShopId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_shopifyorderrefund_PwShopId_And_ShopifyOrderId' )
+BEGIN
+	ALTER TABLE [dbo].[shopifyorderrefund]
+	DROP CONSTRAINT FK_shopifyorderrefund_PwShopId_And_ShopifyOrderId
+END
+
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwiseprofitreportentry_PwShopId' )
+BEGIN
+	ALTER TABLE [dbo].[profitwiseprofitreportentry]
+	DROP CONSTRAINT FK_profitwiseprofitreportentry_PwShopId
+END
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwiseprofitreportentry_ShopifyOrderId' )
+BEGIN
+	ALTER TABLE [dbo].[profitwiseprofitreportentry]
+	DROP CONSTRAINT FK_profitwiseprofitreportentry_ShopifyOrderId
+END
+
+
+IF EXISTS ( SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_profitwisereport_PwShopId' )
+BEGIN
+	ALTER TABLE [dbo].[profitwisereport]
+	DROP CONSTRAINT FK_profitwisereport_PwShopId
+END
+
+
+
+
+
+
+-- ### Old Table clean-up vendetta
+IF OBJECT_ID('dbo.profitwisemasterproduct_import', 'U') IS NOT NULL 
+  DROP TABLE dbo.profitwisemasterproduct_import; 
+
+  
+DROP FUNCTION IF EXISTS dbo.reportquerystub
+GO
+
+DROP TABLE IF EXISTS profitwisereportquerystub
+GO
 
 
 
@@ -220,40 +309,65 @@ ALTER TABLE [dbo].[profitwiseshop]
 ADD CONSTRAINT [PK_profitwiseshop_PwShopId] PRIMARY KEY (PwShopId);
 
 
+-- ### Temporary fixes for DEV - yah, go figure!
 ALTER TABLE [dbo].[profitwisemasterproduct]
 DROP CONSTRAINT [PK_profitwisemasterproduct_PwMasterProductId];
 
 ALTER TABLE [dbo].[profitwisemasterproduct]
-ADD CONSTRAINT [PK_profitwisemasterproduct_PwMasterProductId] PRIMARY KEY (PwMasterProductId);
+ADD CONSTRAINT [PK_profitwisemasterproduct_PwMasterProductId] PRIMARY KEY (PwMasterProductId, PwShopId);
 
 
-ALTER TABLE [dbo].[profitwisemasterproduct]
-DROP CONSTRAINT [PK_profitwisemasterproduct_PwMasterProductId];
+ALTER TABLE [dbo].[profitwisepicklist]
+DROP CONSTRAINT [PK_profitwisepicklist_PwPickListId];
 
-ALTER TABLE [dbo].[profitwisemasterproduct]
-ADD CONSTRAINT [PK_profitwisemasterproduct_PwMasterProductId] PRIMARY KEY (PwMasterProductId);
+ALTER TABLE [dbo].[profitwisepicklist]
+ADD CONSTRAINT [PK_profitwisepicklist_PwPickListId] PRIMARY KEY (PwPickListId, PwShopId);
 
 
 ALTER TABLE [dbo].[profitwisemastervariant]
 DROP CONSTRAINT [PK_profitwisemastervariant_PwMasterVariantId];
 
 ALTER TABLE [dbo].[profitwisemastervariant]
-ADD CONSTRAINT [PK_profitwisemastervariant_PwMasterVariantId] PRIMARY KEY (PwMasterVariantId);
+ADD CONSTRAINT [PK_profitwisemastervariant_PwMasterVariantId] PRIMARY KEY (PwMasterVariantId, PwShopId);
 
 
 ALTER TABLE [dbo].[profitwisevariant]
 DROP CONSTRAINT [PK_profitwisevariant_PwVariantId];
 
 ALTER TABLE [dbo].[profitwisevariant]
-ADD CONSTRAINT [PK_profitwisevariant_PwVariantId] PRIMARY KEY (PwVariantId);
+ADD CONSTRAINT [PK_profitwisevariant_PwVariantId] PRIMARY KEY (PwVariantId, PwShopId);
 
 
 ALTER TABLE [dbo].[profitwiseproduct]
 DROP CONSTRAINT [PK_profitwiseproduct_PwProductId];
 
 ALTER TABLE [dbo].[profitwiseproduct]
-ADD CONSTRAINT [PK_profitwiseproduct_PwProductId] PRIMARY KEY (PwProductId);
+ADD CONSTRAINT [PK_profitwiseproduct_PwProductId] PRIMARY KEY (PwProductId, PwShopId);
 
+
+
+ALTER TABLE [dbo].[profitwisereport]
+DROP CONSTRAINT [PK_profitwisereport_PwReportId];
+
+ALTER TABLE [dbo].[profitwisereport]
+ADD CONSTRAINT [PK_profitwisereport_PwReportId] PRIMARY KEY (PwReportId, PwShopId);
+
+
+ALTER TABLE [dbo].[profitwisereportfilter]
+DROP CONSTRAINT [PK_profitwisereportfilter_PwReportId];
+
+ALTER TABLE [dbo].[profitwisereportfilter]
+ADD CONSTRAINT [PK_profitwisereportfilter_PwReportId] PRIMARY KEY (PwReportId, PwShopId, PwFilterId);
+
+
+
+/*
+ALTER TABLE [dbo].[profitwiseprofitquerystub]
+DROP CONSTRAINT [PK_profitwiseprofitquerystub_PwReportId];
+
+ALTER TABLE [dbo].[profitwiseprofitquerystub]
+ADD CONSTRAINT [PK_profitwiseprofitquerystub_PwReportId] PRIMARY KEY (PwReportId, PwFilterId);
+*/
 
 
 
@@ -306,27 +420,18 @@ FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
 DELETE FROM [profitwisepicklistmasterproduct] WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM profitwisemasterproduct);
 
 ALTER TABLE [dbo].[profitwisepicklistmasterproduct]
-ADD CONSTRAINT FK_profitwisepicklistmasterproduct_PwShopId
-FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
-
-ALTER TABLE [dbo].[profitwisepicklistmasterproduct]
 ADD CONSTRAINT FK_profitwisepicklistmasterproduct_PwPickListId
-FOREIGN KEY (PwPickListId) REFERENCES [dbo].[profitwisepicklist](PwPickListId);
+FOREIGN KEY (PwPickListId, PwShopId) REFERENCES [dbo].[profitwisepicklist](PwPickListId, PwShopId);
 
 ALTER TABLE [dbo].[profitwisepicklistmasterproduct]
 ADD CONSTRAINT FK_profitwisepicklistmasterproduct_PwMasterProductId
-FOREIGN KEY (PwMasterProductId) REFERENCES [dbo].[profitwisemasterproduct](PwMasterProductId);
+FOREIGN KEY (PwMasterProductId, PwShopId) REFERENCES [dbo].[profitwisemasterproduct](PwMasterProductId, PwShopId);
 
 
-
-ALTER TABLE [dbo].[profitwiseproduct]
-ADD CONSTRAINT FK_profitwiseproduct_PwShopId
-FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
 
 ALTER TABLE [dbo].[profitwiseproduct]
 ADD CONSTRAINT FK_profitwiseproduct_PwMasterProductId
-FOREIGN KEY (PwMasterProductId) REFERENCES [dbo].[profitwisemasterproduct](PwMasterProductId);
-
+FOREIGN KEY (PwMasterProductId, PwShopId) REFERENCES [dbo].[profitwisemasterproduct](PwMasterProductId, PwShopId);
 
 
 ALTER TABLE [dbo].[profitwisemastervariant]
@@ -335,7 +440,7 @@ FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
 
 ALTER TABLE [dbo].[profitwisemastervariant]
 ADD CONSTRAINT FK_profitwisemastervariant_PwMasterProductId
-FOREIGN KEY (PwMasterProductId) REFERENCES [dbo].[profitwisemasterproduct](PwMasterProductId);
+FOREIGN KEY (PwMasterProductId, PwShopId) REFERENCES [dbo].[profitwisemasterproduct](PwMasterProductId, PwShopId);
 
 ALTER TABLE [dbo].[profitwisemastervariant]
 ADD CONSTRAINT FK_profitwisemastervariant_CogsCurrencyId
@@ -344,12 +449,8 @@ FOREIGN KEY (CogsCurrencyId) REFERENCES [dbo].[currency](CurrencyId);
 
 
 ALTER TABLE [dbo].[profitwisemastervariantcogsdetail]
-ADD CONSTRAINT FK_profitwisemastervariantcogsdetail_PwShopId
-FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
-
-ALTER TABLE [dbo].[profitwisemastervariantcogsdetail]
 ADD CONSTRAINT FK_profitwisemastervariantcogsdetail_PwMasterVariantId
-FOREIGN KEY (PwMasterVariantId) REFERENCES [dbo].[profitwisemastervariant](PwMasterVariantId);
+FOREIGN KEY (PwMasterVariantId, PwShopId) REFERENCES [dbo].[profitwisemastervariant](PwMasterVariantId, PwShopId);
 
 ALTER TABLE [dbo].[profitwisemastervariantcogsdetail]
 ADD CONSTRAINT FK_profitwisemastervariantcogsdetail_CogsCurrencyId
@@ -358,12 +459,8 @@ FOREIGN KEY (CogsCurrencyId) REFERENCES [dbo].[currency](CurrencyId);
 
 
 ALTER TABLE [dbo].[profitwisemastervariantcogscalc]
-ADD CONSTRAINT FK_profitwisemastervariantcogscalc_PwShopId
-FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
-
-ALTER TABLE [dbo].[profitwisemastervariantcogscalc]
 ADD CONSTRAINT FK_profitwisemastervariantcogscalc_PwMasterVariantId
-FOREIGN KEY (PwMasterVariantId) REFERENCES [dbo].[profitwisemastervariant](PwMasterVariantId);
+FOREIGN KEY (PwMasterVariantId, PwShopId) REFERENCES [dbo].[profitwisemastervariant](PwMasterVariantId, PwShopId);
 
 ALTER TABLE [dbo].[profitwisemastervariantcogscalc]
 ADD CONSTRAINT FK_profitwisemastervariantcogscalc_SourceCurrencyId
@@ -377,8 +474,71 @@ FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
 
 ALTER TABLE [dbo].[profitwisevariant]
 ADD CONSTRAINT FK_profitwisevariant_PwMasterVariantId
-FOREIGN KEY (PwMasterVariantId) REFERENCES [dbo].[profitwisemastervariant](PwMasterVariantId);
+FOREIGN KEY (PwMasterVariantId, PwShopId) REFERENCES [dbo].[profitwisemastervariant](PwMasterVariantId, PwShopId);
 
 ALTER TABLE [dbo].[profitwisevariant]
 ADD CONSTRAINT FK_profitwisevariant_PwProductId
-FOREIGN KEY (PwProductId) REFERENCES [dbo].[profitwiseproduct](PwProductId);
+FOREIGN KEY (PwProductId, PwShopId) REFERENCES [dbo].[profitwiseproduct](PwProductId, PwShopId);
+
+
+
+
+-- ### Shopify Order, Line Item, Adjustment and Refund tables
+
+ALTER TABLE [dbo].[shopifyorder]
+ADD CONSTRAINT FK_shopifyorder_PwShopId
+FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
+
+
+ALTER TABLE [dbo].[shopifyorderlineitem]
+ADD CONSTRAINT FK_shopifyorderlineitem_PwShopId_And_ShopifyOrderId
+FOREIGN KEY (PwShopId, ShopifyOrderId) REFERENCES [dbo].[shopifyorder](PwShopId, ShopifyOrderId);
+
+ALTER TABLE [dbo].[shopifyorderlineitem]
+ADD CONSTRAINT FK_shopifyorderlineitem_PwProductId
+FOREIGN KEY (PwProductId, PwShopId) REFERENCES [dbo].[profitwiseproduct](PwProductId, PwShopId);
+
+ALTER TABLE [dbo].[shopifyorderlineitem]
+ADD CONSTRAINT FK_shopifyorderlineitem_PwVariantId
+FOREIGN KEY (PwVariantId, PwShopId) REFERENCES [dbo].[profitwisevariant](PwVariantId, PwShopId);
+
+
+ALTER TABLE [dbo].[shopifyorderadjustment]
+ADD CONSTRAINT FK_shopifyorderadjustment_PwShopId_And_ShopifyOrderId
+FOREIGN KEY (PwShopId, ShopifyOrderId) REFERENCES [dbo].[shopifyorder](PwShopId, ShopifyOrderId);
+
+
+ALTER TABLE [dbo].[shopifyorderrefund]
+ADD CONSTRAINT FK_shopifyorderrefund_PwShopId_And_ShopifyOrderId
+FOREIGN KEY (PwShopId, ShopifyOrderId) REFERENCES [dbo].[shopifyorder](PwShopId, ShopifyOrderId);
+
+
+ALTER TABLE [dbo].[profitwiseprofitreportentry]
+ADD CONSTRAINT FK_profitwiseprofitreportentry_ShopifyOrderId
+FOREIGN KEY (PwShopId, ShopifyOrderId) REFERENCES [dbo].[shopifyorder](PwShopId, ShopifyOrderId);
+
+
+
+
+-- ## Report tables
+
+ALTER TABLE [dbo].[profitwisereport]
+ADD CONSTRAINT FK_profitwisereport_PwShopId
+FOREIGN KEY (PwShopId) REFERENCES [dbo].[profitwiseshop](PwShopId);
+
+ALTER TABLE [dbo].[profitwisereportfilter]
+ADD CONSTRAINT FK_profitwisereportfilter_PwShopId
+FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
+
+
+ALTER TABLE [dbo].[profitwiseprofitquerystub]
+ADD CONSTRAINT FK_profitwiseprofitquerystub_PwReportId
+FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
+
+-- Clean-up of old data
+DELETE FROM [profitwisegoodsonhandquerystub] WHERE PwReportId NOT IN (SELECT PwReportId FROM profitwisereport);
+
+ALTER TABLE [dbo].[profitwisegoodsonhandquerystub]
+ADD CONSTRAINT FK_profitwisegoodsonhandquerystub_PwReportId
+FOREIGN KEY (PwReportId, PwShopId) REFERENCES [dbo].[profitwisereport](PwReportId, PwShopId);
+

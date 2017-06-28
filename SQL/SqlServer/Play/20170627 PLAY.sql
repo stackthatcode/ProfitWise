@@ -30,8 +30,16 @@ SELECT * FROM profitwisemastervariantcogscalc
 SELECT * FROM profitwisemastervariantcogsdetail
 
 
-SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-WHERE OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.' + QUOTENAME(CONSTRAINT_NAME)), 'IsPrimaryKey') = 1
-AND TABLE_NAME = 'profitwisemastervariant'
+SELECT * FROM shopifyorder;
+
+SELECT * FROM shopifyorderrefund;
+
+SELECT * FROM shopifyorderadjustment;
+
+SELECT * FROM shopifyorderlineitem;
+
+
+SELECT * FROM profitwiseprofitquerystub
+
+
 

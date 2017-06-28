@@ -257,13 +257,6 @@ RETURN SELECT * FROM profitwisereportfilter WHERE PwShopId = @PwShopId;
 GO
 
 
-DROP FUNCTION IF EXISTS dbo.reportquerystub
-GO
-CREATE FUNCTION dbo.reportquerystub(@PwShopId bigint)  
-RETURNS TABLE  
-AS  
-RETURN SELECT * FROM profitwisereportquerystub WHERE PwShopId = @PwShopId;
-GO
 
 
 DROP FUNCTION IF EXISTS dbo.tour
