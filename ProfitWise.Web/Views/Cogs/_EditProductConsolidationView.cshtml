@@ -330,19 +330,22 @@
             return id || "(None)";
         };
 
+        var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+
         self.LoadModel = function (data) {
             self.PrimaryProduct(self.MasterProductModelFactory(data.product));
 
-            var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
             if (data.product.length == 1) {
                 if (tourStateJs[@TourIdentifiers.ShowProductConsolidationOne]) {
                     ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductConsolidationOne);
                     ProfitWise.AddProductConsolidationTour.start();
+                    tourStateJs[@TourIdentifiers.ShowProductConsolidationOne] = false;
                 }
             } else {
                 if (tourStateJs[@TourIdentifiers.ShowProductConsolidationTwo]) {
                     ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductConsolidationTwo);
                     ProfitWise.ExistingProductConsolidationTour.start();
+                    tourStateJs[@TourIdentifiers.ShowProductConsolidationTwo] = false;
                 }
             }
 
@@ -484,6 +487,6 @@
     ];
 
     ProfitWise.AddProductConsolidationTour = ProfitWiseFunctions.TourFactory(steps1);
-    ProfitWise.ExistingProductConsolidationTour = ProfitWiseFunctions.TourFactory(steps2);    
+    ProfitWise.ExistingProductConsolidationTour = ProfitWiseFunctions.TourFactory(steps2);
 </script>
 

@@ -104,27 +104,30 @@ ProfitWiseFunctions.TourFactory = function (steps) {
                         element: step.element,
                     }
                 }
-
             }
 
             var exitButton = { text: 'Exit', action: tour.cancel, classes: 'shepherd-exit-button' };
             var backButton = { text: 'Back', action: tour.back };
             var nextButton = { text: 'Next', action: tour.next };
 
-            tourStepOptions.buttons = [ exitButton ];
-            if (counter != 1) {
-                tourStepOptions.buttons.push(backButton);
-            }            
-            if (counter != numberOfSteps) {
+            if (counter == numberOfSteps) {
+                tourStepOptions.buttons = [backButton, exitButton];
+            } else {
+                tourStepOptions.buttons = [exitButton];
+                if (counter != 1) {
+                    tourStepOptions.buttons.push(backButton);
+                }
                 tourStepOptions.buttons.push(nextButton);
             }
 
             tourStepOptions.when = {
                 show: function (context) {
                     if (step.element) {
-                        console.log(step.element);
                         $(".shepherd-tour-bg-light").show();
-                        $('html, body').animate({ scrollTop: $(step.element).offset().top }, 250);
+
+                        if (!step.preventScroll) {
+                            $('html, body').animate({ scrollTop: $(step.element).offset().top }, 250);
+                        }
                     } else {
                         $(".shepherd-tour-bg-dark").show();
                     }

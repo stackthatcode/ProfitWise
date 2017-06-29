@@ -11,12 +11,10 @@ UPDATE profitwiseshop SET IsDataLoaded = 1 WHERE PwShopId = 100001;
 
 UPDATE profitwisetour 
 	SET ShowPreferences = 1,
-
 	ShowProducts = 1,
 	ShowProductDetails = 1,
 	ShowProductConsolidationOne = 1,
 	ShowProductConsolidationTwo = 1,
-
 	ShowProfitabilityDashboard = 1,
 	ShowEditFilters = 1,
 	ShowProfitabilityDetail = 1,
