@@ -337,13 +337,11 @@
             if (data.product.length == 1) {
                 if (tourStateJs[@TourIdentifiers.ShowProductConsolidationOne]) {
                     ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductConsolidationOne);
-                    ProfitWise.AddProductConsolidationTour.init();
                     ProfitWise.AddProductConsolidationTour.start();
                 }
             } else {
                 if (tourStateJs[@TourIdentifiers.ShowProductConsolidationTwo]) {
                     ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductConsolidationTwo);
-                    ProfitWise.ExistingProductConsolidationTour.init();
                     ProfitWise.ExistingProductConsolidationTour.start();
                 }
             }

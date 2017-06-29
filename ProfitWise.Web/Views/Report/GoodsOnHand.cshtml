@@ -57,8 +57,7 @@
             var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
             if (tourStateJs[@TourIdentifiers.ShowGoodsOnHand]) {
                 ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowGoodsOnHand);
-
-                ProfitWise.GoodsOnHandTour.init();
+                
                 ProfitWise.GoodsOnHandTour.start();
             }
         });

@@ -114,7 +114,6 @@
             var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
             if (tourStateJs[@TourIdentifiers.ShowProfitabilityDashboard]) {
                 ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProfitabilityDashboard);
-                ProfitWise.ProfitSummaryTour.init();
                 ProfitWise.ProfitSummaryTour.start();
             }
         });

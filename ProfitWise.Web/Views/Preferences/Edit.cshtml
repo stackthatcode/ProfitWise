@@ -3,7 +3,7 @@
 @using ProfitWise.Web.Attributes
 @using Push.Foundation.Utilities.Json
 
-@model ProfitWise.Data.Model.Shop.PwShop
+@model PwShop
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
     Context.AuthenticatedContext().PageTitle = "Edit Preferences";
@@ -61,7 +61,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="panel panel-default" >
+            <div class="panel panel-default" id="default-margin-parent">
                 <div id="default-margins">
                     <label>Use Default Margin in Reports for all $0 CoGS</label>
 
@@ -76,7 +76,7 @@
 
                 <div style="height:20px;"></div>
 
-                <div data-bind="visible: ShowDefaultMargin" id="default-margin-percent">                
+                <div data-bind="visible: ShowDefaultMargin">                
                     <label>Default Margin (%)</label>
                     
                     <div>
@@ -159,7 +159,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="panel panel-default" id="default-date-range">
+            <div class="panel panel-default" id="reset-tour">
                 <label>Reset the ProfitWise guided tour</label>
                 <p>If you cancelled the guided tour, this will allow you to start over.</p>
                 <a href="#" class="btn btn-primary" data-bind="click:ResetProfitWiseTour">
@@ -267,10 +267,8 @@
 
     ProfitWise.PreferrencesTour = ProfitWiseFunctions.TourFactory([
         {
-            orphan: true,
             title: "Welcome to ProfitWise Preferences",
             content: "Welcome to the ProfitWise Preferences screen! Here, you can configure your preferences so that ProfitWise will work exactly as you want it to. We'll walk you through the process and explain each setting as we go.",
-            placement: 'bottom',
         },
         {
             element: "#starting-date",
@@ -279,13 +277,13 @@
             placement: 'bottom',
         },
         {
-            element: "#default-margins",
+            element: "#default-margin-parent",
             title: "Default Margin",
             content: "Choose Yes or No here. If you choose Yes, then any products that do not have a Cost of Goods value set will automatically use the default margin value (which we'll set next). If you choose No, then any products that do not have a Cost of Goods value will be considered to have a zero cost.",
             placement: 'bottom',
         },
         {
-            element: "#default-margin-percent",
+            element: "#default-margin-parent",
             title: "Default Margin (%)",
             content: "Enter your default margin percentage. This will be used to determine the Cost of Goods Sold for any products without a CoGS value set (assuming you chose to enable this option above). After entering a percentage, click on Save. Note that this percentage represents the default margin. For example, if you set the default margin to 20% and a product sells for $100, then the Cost of Goods Sold for that product will be $80 (resulting in a margin or gross profit of $20).",
             placement: 'bottom',
@@ -302,6 +300,12 @@
             content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default.",
             placement: 'top',
         },
+        {
+            element: "#reset-tour",
+            title: "Reset Guided Tour",
+            content: "Each guided tour is designed to only show once. At any time you can reset the guide tours to re-appear.",
+            placement: 'top',
+        },
     ]);
 
     $(document)
@@ -313,7 +317,6 @@
             var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
             if (tourStateJs[@TourIdentifiers.ShowPreferences]) {
                 ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowPreferences);
-                ProfitWise.PreferrencesTour.init();
                 ProfitWise.PreferrencesTour.start();
             }
         });

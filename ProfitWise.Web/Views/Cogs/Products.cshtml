@@ -586,7 +586,6 @@
             var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
             if (tourStateJs[@TourIdentifiers.ShowProducts]) {
                 ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProducts);
-                ProfitWise.CogsGridTour.init();
                 ProfitWise.CogsGridTour.start();
             }
         });

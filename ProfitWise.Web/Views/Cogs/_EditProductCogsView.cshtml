@@ -194,7 +194,6 @@
                     var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
                     if (tourStateJs[@TourIdentifiers.ShowProductDetails]) {
                         ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowProductDetails);
-                        ProfitWise.CogsDetailTour.init();
                         ProfitWise.CogsDetailTour.start();
                     }
 

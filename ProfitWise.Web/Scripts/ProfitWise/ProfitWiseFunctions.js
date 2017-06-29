@@ -74,26 +74,69 @@ ProfitWiseFunctions.CaseInsensitiveContains = function (input, substring) {
     return adjustedInput.indexOf(adjustedSubstring) != -1;
 };
 
-ProfitWiseFunctions.TourFactory = function (steps) {
-    return new Tour({
-        steps: steps,
-        storage: false,
-        backdrop: true,
-        backdropContainer: 'body',
 
-        onShown: function (tour) {
-            $(".tour-step-background")
-                .clone()
-                .insertBefore($(".tour-step-background"))
-                .addClass("cover-up")
-                .css("z-index", 1200)
-                .css("opacity", 0);
-        },
-        onHidden: function (tour) {
-            $(".cover-up").remove();
-        },
+// Move this to the Tour Partial View
+ProfitWiseFunctions.TourFactory = function (steps) {
+    var tour = new Shepherd.Tour({
+        defaults: {
+            classes: 'shepherd-theme-arrows',
+        }
     });
+
+    var counter = 1;
+    var numberOfSteps = steps.length;
+
+    AQ(steps).each(
+        function (step) {            
+            var tourStepOptions = {
+                text: step.content,
+                title: step.title,
+            };
+
+            if (step.element) {
+                if (step.placement) {
+                    tourStepOptions.attachTo = step.element + " " + step.placement
+                } else {
+                    tourStepOptions.attachTo = step.element;
+                }
+            }
+
+            var exitButton = { text: 'Exit', action: tour.cancel, classes: 'shepherd-exit-button' };
+            var backButton = { text: 'Back', action: tour.back };
+            var nextButton = { text: 'Next', action: tour.next };
+
+            tourStepOptions.buttons = [ exitButton ];
+            if (counter != 1) {
+                tourStepOptions.buttons.push(backButton);
+            }            
+            if (counter != numberOfSteps) {
+                tourStepOptions.buttons.push(nextButton);
+            }
+
+            tourStepOptions.when = {
+                show: function (context) {
+                    if (step.element) {
+                        $(".shepherd-tour-bg-light").show();
+                        $('html, body').animate({ scrollTop: $(step.element).offset().top }, 250);
+                    } else {
+                        $(".shepherd-tour-bg-dark").show();
+                    }
+                },
+                hide: function () {
+                    $(".shepherd-tour-bg").hide();
+                },
+            };
+
+            var tourStepName = "tour-step-" + counter++;
+
+            tour.addStep(tourStepName, tourStepOptions);
+        });
+
+    return tour;
 };
+
+
+
 
 ProfitWiseFunctions.ShowTour = function (tourIdentifier) {
     flow.exec(

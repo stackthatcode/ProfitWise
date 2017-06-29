@@ -390,7 +390,6 @@
                     var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
                     if (tourStateJs[@TourIdentifiers.ShowEditFilters]) {
                         ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowEditFilters);
-                        ProfitWiseWidgets.ReportEditorTour.init();
                         ProfitWiseWidgets.ReportEditorTour.start();
                     }
                 });
