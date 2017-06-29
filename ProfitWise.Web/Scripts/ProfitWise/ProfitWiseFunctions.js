@@ -126,7 +126,10 @@ ProfitWiseFunctions.TourFactory = function (steps) {
                         $(".shepherd-tour-bg-light").show();
 
                         if (!step.preventScroll) {
-                            $('html, body').animate({ scrollTop: $(step.element).offset().top }, 250);
+                            $('html, body').animate({
+                                scrollTop: $(step.element).offset().top,
+                                scrollLeft: $(step.element).offset().left,
+                            }, 250);
                         }
                     } else {
                         $(".shepherd-tour-bg-dark").show();
