@@ -93,12 +93,18 @@ ProfitWiseFunctions.TourFactory = function (steps) {
                 title: step.title,
             };
 
-            if (step.element) {
+            if (step.element) {                
                 if (step.placement) {
-                    tourStepOptions.attachTo = step.element + " " + step.placement
+                    tourStepOptions.attachTo = {
+                        element: step.element,
+                        on: step.placement
+                    };
                 } else {
-                    tourStepOptions.attachTo = step.element;
+                    tourStepOptions.attachTo = {
+                        element: step.element,
+                    }
                 }
+
             }
 
             var exitButton = { text: 'Exit', action: tour.cancel, classes: 'shepherd-exit-button' };
@@ -116,6 +122,7 @@ ProfitWiseFunctions.TourFactory = function (steps) {
             tourStepOptions.when = {
                 show: function (context) {
                     if (step.element) {
+                        console.log(step.element);
                         $(".shepherd-tour-bg-light").show();
                         $('html, body').animate({ scrollTop: $(step.element).offset().top }, 250);
                     } else {
