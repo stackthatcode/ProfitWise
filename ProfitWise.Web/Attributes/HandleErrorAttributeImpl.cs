@@ -18,9 +18,17 @@ namespace ProfitWise.Web.Attributes
             {
                 var container = DependencyResolver.Current;
                 var logger = container.GetService<IPushLogger>();
-                logger.Error(
-                    "URL:" + filterContext.HttpContext.Request.Url + " - " +
-                    "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest());
+
+                var identity = filterContext.HttpContext.IdentitySnapshot();
+
+                var message = "URL:" + filterContext.HttpContext.Request.Url + " - " +
+                              "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest();
+                if (identity != null)
+                {
+                    message += " - PwShopId: " + identity.PwShop.PwShopId;
+                }
+
+                logger.Error(message);
                 logger.Error(filterContext.Exception);
             }
             catch

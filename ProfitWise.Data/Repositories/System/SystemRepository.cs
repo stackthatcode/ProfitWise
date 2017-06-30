@@ -106,5 +106,11 @@ namespace ProfitWise.Data.Repositories.System
 
             Connection.Execute(query, new { cutoffDate });
         }
+
+        public int NaughtySystemQuery()
+        {
+            var query = @"SELECT * [NonExistentTable]";
+            return Connection.Query<int>(query, new { }).FirstOrDefault();
+        }
     }
 }
