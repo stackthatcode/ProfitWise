@@ -52,7 +52,7 @@ namespace ProfitWise.Web.Controllers
             // First create the query stub...
             queryRepository.PopulateQueryStub(reportId);
 
-            // Next build the top-performing summary
+            // Next build the Executive Summary
             var summary = BuildSummary(report, userIdentity.PwShop);
 
             List<ReportSeries> seriesDataset;
