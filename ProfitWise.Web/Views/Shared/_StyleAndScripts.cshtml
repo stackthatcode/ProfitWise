@@ -16,6 +16,7 @@
 
 <!-- Scripts -->
 @Scripts.Render("~/Bundles/Utility")
+
 @Scripts.Render("~/Bundles/Bootstrap")
 @Scripts.Render("~/Bundles/Highcharts")
 @Scripts.Render("~/Bundles/KO")
@@ -30,16 +31,12 @@ else
 @Scripts.Render("~/Bundles/ProfitWiseFunctionsImpersonated")
 }
 
-<!-- Experimenting with Shepard Tour -->
-@Scripts.Render("~/Content/tether-1.3.3-dist/js/tether.min.js")
-@Scripts.Render("~/Content/shepherd-dist/js/shepherd.min.js")
-@Styles.Render("~/Content/shepherd-dist/css/shepherd-theme-arrows.css")
-
-
 <!-- Style Sheet -->
 @Styles.Render("~/Content/Bootstrap")
 @Styles.Render("~/Content/Css")
 @Styles.Render("~/Content/site.css")
+@Styles.Render("~/Content/shepherd-dist/css/shepherd-theme-arrows.css")
+
 
 <!-- Shopify JavaScript API -->
 <script src="https://cdn.shopify.com/s/assets/external/app.js"></script>

@@ -362,6 +362,8 @@
                 .SetCheckedItemsByKeyArray(filterKeys, true);
         };
 
+        var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
+
         self.LoadReport = function (reportId) {
             flow.exec(
                 function () {
@@ -387,10 +389,10 @@
                     self.ReportContext(report.current);
                     self.ProductTypeClick();
 
-                    var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
                     if (tourStateJs[@TourIdentifiers.ShowEditFilters]) {
                         ProfitWiseFunctions.ShowTour(@TourIdentifiers.ShowEditFilters);
                         ProfitWiseWidgets.ReportEditorTour.start();
+                        tourStateJs[@TourIdentifiers.ShowEditFilters] = false;
                     }
                 });
         };

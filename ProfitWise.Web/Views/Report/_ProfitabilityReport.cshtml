@@ -468,6 +468,8 @@
                     //console.log(data);
                 });
         }
+        
+        var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
 
         self.LoadDataset = function (reportId, callback) {
             flow.exec(
@@ -491,12 +493,12 @@
                     ProfitWiseWidgets.LoadColumnChart(
                         '#column-chart-detail', 'Profitability', data.series, null, data.currency, self.Drilldown);
                     
-                    var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
                     var showProfitabilityDetail = @TourIdentifiers.ShowProfitabilityDetail;
 
                     if (tourStateJs[showProfitabilityDetail]) {
                         ProfitWiseFunctions.ShowTour(showProfitabilityDetail);                        
                         ProfitWise.ProfitDetailTour.start();
+                        tourStateJs[showProfitabilityDetail] = false;
                     }
 
                     if (callback) {

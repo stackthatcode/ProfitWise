@@ -13,8 +13,10 @@ namespace ProfitWise.Web
                 .Include("~/Scripts/Utility/numeral.min.js")
                 .Include("~/Scripts/Utility/bootstrap-tour.min.js")
                 //.Include("~/Scripts/Utility/modernizr-2.6.2.js")
-                .Include("~/Scripts/Utility/moment.js"));
-
+                .Include("~/Scripts/Utility/moment.js")
+                .Include("~/Content/tether-1.3.3-dist/js/tether.min.js")
+                .Include("~/Content/shepherd-dist/js/shepherd.min.js"));
+            
             bundles.Add(new ScriptBundle("~/Bundles/Bootstrap")
                 .Include("~/Scripts/Bootstrap/bootstrap.min.js")
                 .Include("~/Scripts/Bootstrap/bootstrap-datetimepicker.min.js")
