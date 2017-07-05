@@ -31,16 +31,16 @@ namespace ProfitWise.Data.Model.Cogs
         public MoneyRange Price => new MoneyRange
         {
             CurrencyId = NormalizedCurrencyId,
-            AmountHigh = HighPrice,
-            AmountLow = LowPrice,
+            AmountHigh = HighPriceAll,
+            AmountLow = LowPriceAll,
             IncludesAverages = false
         };
 
         public int NormalizedCurrencyId { get; set; }
 
         // TODO => these need to be populated by the database
-        public decimal LowPrice { get; set; }
-        public decimal HighPrice { get; set; }
+        public decimal LowPriceAll { get; set; }
+        public decimal HighPriceAll { get; set; }
 
         public int? Inventory { get; set; }
         public string InventoryText =>

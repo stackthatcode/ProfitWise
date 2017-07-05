@@ -37,6 +37,12 @@ namespace ProfitWise.Data.Repositories.System
             var query = usersQuery + " WHERE t1.Id = @userId;";
             return _connectionWrapper.Query<ProfitWiseUser>(query, new { userId }).FirstOrDefault();
         }
+
+        public string RetrieveUserIdByUserName(string userName)
+        {
+            var query = "SELECT Id FROM AspNetUsers WHERE UserName = @userName";
+            return _connectionWrapper.Query<string>(query, new {userName}).FirstOrDefault();
+        }
     }
 }
 

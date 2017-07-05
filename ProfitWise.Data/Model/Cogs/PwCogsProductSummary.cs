@@ -89,9 +89,9 @@ namespace ProfitWise.Data.Model.Cogs
             }
         }
 
-        public decimal? HighPrice =>  Variants.Any() ? Variants.Max(x => x.HighPrice) : 0; 
+        public decimal? HighPrice =>  Variants.Any() ? Variants.Max(x => x.HighPriceAll) : 0; 
         
-        public decimal? LowPrice =>  Variants.Any() ? Variants.Min(x => x.LowPrice) : 0; 
+        public decimal? LowPrice =>  Variants.Any() ? Variants.Min(x => x.LowPriceAll) : 0; 
 
         public MoneyRange Price => new MoneyRange()
         {

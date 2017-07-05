@@ -3,10 +3,12 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Interfaces;
 
 namespace ProfitWise.Web.Controllers
 {
@@ -15,12 +17,18 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
+        private readonly AdminRepository _adminRepository;
+        private readonly IShopifyCredentialService _shopifyCredentialService;
 
         public AdminAuthController(
-                ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+                ApplicationUserManager userManager, 
+                ApplicationSignInManager signInManager,
+                AdminRepository adminRepository, IShopifyCredentialService shopifyCredentialService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _adminRepository = adminRepository;
+            _shopifyCredentialService = shopifyCredentialService;
         }
 
 
@@ -58,8 +66,11 @@ namespace ProfitWise.Web.Controllers
                         model.Email, model.Password, model.RememberMe, shouldLockout: false);
 
             switch (result)
-            {
+            {                
                 case SignInStatus.Success:
+                    var userId = _adminRepository.RetrieveUserIdByUserName(model.Email);
+                    _shopifyCredentialService.ClearAdminImpersonation(userId);
+
                     if (returnUrl.IsNullOrEmpty())
                         return RedirectToAction("Index", "AdminHome");
                     else
