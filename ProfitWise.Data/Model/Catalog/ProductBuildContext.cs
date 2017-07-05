@@ -41,9 +41,9 @@ namespace ProfitWise.Data.Model.Catalog
             {
                 MasterProducts = masterProducts,
                 IsActive = false,
-                Title = line.ProductTitle,
+                Title = line.ProductTitle ?? "",
                 ShopifyProductId = line.ProductId,
-                Vendor = line.Vendor,
+                Vendor = line.Vendor ?? "",
                 Tags = "",
                 ProductType = "",
             };
