@@ -25,8 +25,8 @@ namespace ProfitWise.Data.Model.Preferences
                 new DateRange(Today, "Today", today, today),
                 new DateRange(Yesterday, "Yesterday", today.AddDays(-1), today.AddDays(-1)),
 
-                new DateRange(Last7Days, "Last 7 Days", today.AddDays(-7), today),
-                new DateRange(Last30Days, "Last 30 Days", today.AddDays(-30), today),
+                new DateRange(Last7Days, "Last 7 Days", today.AddDays(-7), today.AddDays(-1)),
+                new DateRange(Last30Days, "Last 30 Days", today.AddDays(-30), today.AddDays(-1)),
 
                 new DateRange(ThisMonth, "This Month", today.FirstOfMonth(), today.LastOfMonth()),
                 new DateRange(LastMonth, "Last Month", today.AddMonths(-1).FirstOfMonth(),
