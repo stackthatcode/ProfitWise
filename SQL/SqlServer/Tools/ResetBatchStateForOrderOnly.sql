@@ -22,3 +22,6 @@ DELETE FROM orderadjustment(@PwShopId);
 DELETE FROM ordertable(@PwShopId);
 
 
+
+
+

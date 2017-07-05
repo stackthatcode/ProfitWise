@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using Autofac;
@@ -52,11 +53,13 @@ namespace ProfitWise.Web
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
+            var cookieDomain = ConfigurationManager.AppSettings["CookieDomain"];
+            
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString(UnauthorizedAccessUrl),
-
+                CookieDomain = cookieDomain,
                 Provider = new CookieAuthenticationProvider
                 {
                     // Enables the application to validate the security stamp when the user logs in.
