@@ -139,7 +139,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 query += "AND t2.PwProductId = @pwProductId ";
 
             query += GroupByClause(grouping) + " " +
-                    OrderByClauseAggregate(ordering) + " " +
+                    OrderByClauseAggregate(ordering, grouping) + " " +
                     "OFFSET @StartingIndex ROWS FETCH NEXT @pageSize ROWS ONLY;";
 
             var today = _timeZoneTranslator.Today(PwShop.TimeZone);
@@ -157,7 +157,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 }).ToList();
         }
         
-        private string OrderByClauseAggregate(ColumnOrdering ordering)
+        private string OrderByClauseAggregate(
+                ColumnOrdering ordering, ReportGrouping reportGrouping)
         {
             if (ordering == ColumnOrdering.InventoryAscending)
             {
@@ -194,6 +195,29 @@ namespace ProfitWise.Data.Repositories.Multitenant
             {
                 return "ORDER BY SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) DESC";
             }
+
+            if (ordering == ColumnOrdering.NameAscending || ordering == ColumnOrdering.NameDescending)
+            {
+                var direction = ordering == ColumnOrdering.NameAscending ? " ASC " : " DESC ";
+
+                if (reportGrouping == ReportGrouping.ProductType)
+                {
+                    return $" ORDER BY t2.ProductType " + direction;
+                }
+                if (reportGrouping == ReportGrouping.Vendor)
+                {
+                    return $" ORDER BY t2.Vendor " + direction;
+                }
+                if (reportGrouping == ReportGrouping.Product)
+                {
+                    return $" ORDER BY t2.Title " + direction;
+                }
+                if (reportGrouping == ReportGrouping.Variant)
+                {
+                    return $@" ORDER BY t1.SKU + ' - ' + t2.Title + ' - ' + t1.VariantTitle " + direction;
+                }
+            }
+
             throw new ArgumentException("reportGrouping");
         }        
 

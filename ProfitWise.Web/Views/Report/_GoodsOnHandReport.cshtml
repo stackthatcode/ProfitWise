@@ -167,7 +167,8 @@
         <table class="table table-striped table-hover" id="detail-report-table">
             <thead>
             <tr>
-                <th>Name</th>
+                <th data-bind="template: { name: 'Sortable-Column-Header',
+                                data: { ColumnIndex: 4, ColumnName: 'Name', Model: SortingModel } }"></th>
                 <th class="hidden-xs" style="text-align: center;">Unit Price</th>
                 <th class="hidden-xs" 
                     data-bind="template: { name: 'Sortable-Column-Header',
@@ -184,8 +185,7 @@
             <!-- ko with: Data() -->
             <tbody data-bind="foreach: Details">
             <tr>
-                <td class="overflow-gracefully"
-                         data-bind="text: Name, tooltip: { title: Name, placement: 'bottom' }"></td>
+                <td class="overflow-gracefully" data-bind="text: Name"></td>
                 <td class="hidden-xs" style="text-align: center;">
                     <div data-bind="if: MinimumPrice != MaximumPrice">
                         <span class="overflow-gracefully"
@@ -200,6 +200,7 @@
                     </div>
                 </td>
                 <td class="hidden-xs" data-bind="text: TotalInventory"></td>
+
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCostOfGoodsSold, $parent.CurrencyId)"></td>
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialRevenue, $parent.CurrencyId)"></td>
                 <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalPotentialProfit, $parent.CurrencyId)"></td>
@@ -243,15 +244,22 @@
             if (index == 0)
                 return descending ?
                     '@ColumnOrdering.InventoryDescending' : '@ColumnOrdering.InventoryAscending';
+
             if (index == 1)
                 return descending ?
                     '@ColumnOrdering.CogsDescending' : '@ColumnOrdering.CogsAscending';
+
             if (index == 2)
                 return descending ?
                     '@ColumnOrdering.PotentialRevenueDescending' : '@ColumnOrdering.PotentialRevenueAscending';
+
             if (index == 3)
                 return descending ?
                     '@ColumnOrdering.PotentialProfitDescending' : '@ColumnOrdering.PotentialProfitAscending';
+
+            if (index == 4)
+                return descending ?
+                    '@ColumnOrdering.NameDescending' : '@ColumnOrdering.NameAscending';
 
             return '@ColumnOrdering.CogsDescending';
         });
@@ -287,10 +295,10 @@
 
         self.UrlBuilder = function(baseurl) {
             var output = baseurl +
-                "?reportId=" + self.ReportId() + 
+                "?reportId=" + self.ReportId() +
                 "&ordering=" + self.Ordering() +
                 "&pageNumber=" + self.PagingModel.PageNumber();
-            
+
             if (self.CurrentQueryStringBase()) {
                 output += "&" + self.CurrentQueryStringBase();
             }
@@ -303,7 +311,7 @@
             $('html, body').animate({ scrollTop: 0 });
             self.PopulateAndClearDrilldown(reportId, callback);
         };
-        
+
         self.PopulateAndClearDrilldown = function (reportId, callback) {
             flow.exec(
                 function() {
@@ -360,7 +368,7 @@
             self.RetrieveData();
         };
 
-        self.BackClick = function () {            
+        self.BackClick = function () {
             var stateRecovery = self.DrilldownStack.pop();
 
             self.CurrentQueryStringBase(stateRecovery.querystringbase);

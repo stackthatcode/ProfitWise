@@ -10,5 +10,7 @@
         PotentialRevenueDescending = 6,
         PotentialProfitAscending = 7,
         PotentialProfitDescending = 8,
+        NameAscending = 9,
+        NameDescending = 10,
     };
 }
