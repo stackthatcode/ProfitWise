@@ -8,15 +8,34 @@
     <h2 class="header">ProfitWise - @Model.Title</h2>
     <h4>@Model.Message</h4>
     <div style="height: 25px;"></div>
-    
+
     @if (@Model.ShowLoginLink)
     {
-        <p>You can retry by <a href="@Model.Url">clicking here</a>. 
-            Or you can navigate back to Shopify App and restarting ProfitWise.</p>
+        <p>
+            You can retry by <a href="@Model.Url">clicking here</a>.
+            Or you can navigate back to Shopify App and restarting ProfitWise.
+            If the issue persists, feel free to reach out to our Support Team for assistance.
+        </p>
     }
     else
     {
-        <p>Please navigate back to Shopify Apps and try restarting ProfitWise.</p>
+        <p>
+            Please navigate back to Shopify Apps and try restarting ProfitWise.
+            If the issue persists, feel free to reach out to our Support Team for assistance.
+        </p>
     }
-    <p>If the issue persists, feel free to reach out to our Support Team for assistance.</p>
+    
+
+@if (@Model.ShowBrowserWarning)
+{
+    <div style="height: 30px;"></div>
+
+    <div class="alert alert-danger">
+        <label>Browser Compatibility and Settings</label>
+        <p>
+            NOTE: ProfitWise is optimized for use with Chrome or Firefox web browsers. It is also compatible with Internet Explorer and Safari, however, to use ProfitWise in
+            Safari (including on mobile devices running iOS), you must change the setting for accepting cookies from the default setting (“Allow from websites I visit”) to “Always allow”.
+        </p>
+    </div>
+}
 </div>

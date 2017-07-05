@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
+using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using ProfitWise.Data.Configuration;
@@ -310,7 +311,7 @@ namespace ProfitWise.Web.Controllers
         {
             return AuthorizationProblem(
                 returnUrl, "Unauthorized Access", "It appears you are not logged into ProfitWise.",
-                showLoginLink: true);
+                showLoginLink: true, showBrowserWarning: true);
         }
 
         [HttpGet]
@@ -355,7 +356,8 @@ namespace ProfitWise.Web.Controllers
         }
 
         private ActionResult AuthorizationProblem(
-                string returnUrl, string title, string message, bool showLoginLink = false)
+                string returnUrl, string title, string message, 
+                bool showLoginLink = false, bool showBrowserWarning = false)
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             Response.SuppressFormsAuthenticationRedirect = true;
@@ -369,7 +371,7 @@ namespace ProfitWise.Web.Controllers
                 url += $"?returnUrl={HttpUtility.UrlEncode(returnUrl)}";
 
                 var shop = returnUrl.ExtractQueryParameter("shop");
-                if (shop != null)
+                if (!shop.IsNullOrEmpty())
                 {
                     url += $"&shop={shop}";
                     shopParameterExists = true;
@@ -382,6 +384,7 @@ namespace ProfitWise.Web.Controllers
                     Title = title,
                     Message = message,
                     ShowLoginLink = shopParameterExists && showLoginLink,
+                    ShowBrowserWarning = showBrowserWarning
                 };
 
             return View("AuthorizationProblem", model);

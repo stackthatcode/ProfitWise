@@ -9,6 +9,9 @@
         //public bool UrlContainsShop => !Url.ExtractQueryParameter("shop").IsNullOrEmpty();
        
         public bool ShowLoginLink { get; set; }
+        public bool ShowBrowserWarning { get; set; }
+
+
 
         public AuthorizationProblemModel(string url, bool showLoginLink = false)
         {
