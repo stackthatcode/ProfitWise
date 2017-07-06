@@ -106,7 +106,7 @@ namespace ProfitWise.Data.Services
 
         // A Shopify Product Id may appear under multiple Master Products due to historical data.
         // This updates the Status so the most recent one is Active and all the historical ones Inactive.
-        public void UpdateActiveProduct(ProductBuildContext productBuildContext)
+        public void UpdateActiveProductAcrossCatalog(ProductBuildContext productBuildContext)
         {
             if (!productBuildContext.ShopifyProductId.HasValue)
             {
@@ -200,6 +200,8 @@ namespace ProfitWise.Data.Services
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
             context.TargetMasterVariant.Variants.Add(newVariant);
+
+            // Critical - updates the IsPrimary Variant
             this.AutoUpdateAndSavePrimary(context.TargetMasterVariant);
             return newVariant;
         }
@@ -226,9 +228,7 @@ namespace ProfitWise.Data.Services
             var primaryVariant = masterVariant.AutoPrimaryVariant();
 
             primaryVariant.IsPrimary = true;
-            masterVariant.Variants
-                .Where(x => x != primaryVariant)
-                .ForEach(x => x.IsPrimary = false);
+            masterVariant.Variants.Where(x => x != primaryVariant).ForEach(x => x.IsPrimary = false);
 
             foreach (var variant in masterVariant.Variants)
             {
@@ -236,7 +236,7 @@ namespace ProfitWise.Data.Services
             }
         }
         
-        public void UpdateActiveVariant(IList<PwMasterProduct> allMasterProducts, long? shopifyVariantId)
+        public void UpdateActiveVariantAcrossCatalog(IList<PwMasterProduct> allMasterProducts, long? shopifyVariantId)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
 

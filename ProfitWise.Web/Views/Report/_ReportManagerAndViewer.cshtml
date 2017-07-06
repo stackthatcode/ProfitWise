@@ -410,10 +410,7 @@
                         this);
                 },
                 function(data) {
-                    self.ReportId(data.reportId);
-                    self.LoadReport(self.ReportId(), this);
-                },
-                function() {
+                    self.ReportId(data.reportId);                    
                     self.TriggerReportListRefresh(this);
                 },
                 function () {

@@ -68,8 +68,8 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Update Batch State
             batchState.ProductsLastUpdated = processStartTimeUtc;
-            _pushLogger.Debug($"Updating BatchState -> ProductsLastUpdated to {batchState.ProductsLastUpdated}");
             batchStateRepository.Update(batchState);
+            _pushLogger.Debug($"Updated BatchState -> ProductsLastUpdated to {batchState.ProductsLastUpdated}");
         }
 
         public virtual IList<Product> WriteAllProductsFromShopify(
@@ -129,9 +129,10 @@ namespace ProfitWise.Data.ProcessSteps
 
                     // Finally, mark Variants that weren't in the import as Inactive
                     var activeVariantIds = importedProduct.Variants.Select(x => x.Id).ToList();
-
                     builderService.FlagMissingVariantsAsInactive(
                             existingMasterProducts, product.ShopifyProductId, activeVariantIds);
+
+                    // End transaction
                     transaction.Commit();
                 }
             }
@@ -163,12 +164,13 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and ShopifyProductId: {context.ShopifyProductId}");
 
                 product = service.CreateProductAndAssignToMaster(context, masterProduct);
-                service.UpdateActiveProduct(context);
+                service.UpdateActiveProductAcrossCatalog(context);
             }
             else
             {
                 service.UpdateProduct(context, product);
             }
+
             return product;
         }
 
@@ -199,7 +201,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Sku: {context.Sku} and Shopify Variant Id: {context.ShopifyVariantId}");
 
                 variant = service.CreateVariant(context);                
-                service.UpdateActiveVariant(context.AllMasterProducts, context.ShopifyVariantId);
+                service.UpdateActiveVariantAcrossCatalog(context.AllMasterProducts, context.ShopifyVariantId);
             }
 
             var inventory = context.InventoryTracked ? context.Inventory : (int?) null;
