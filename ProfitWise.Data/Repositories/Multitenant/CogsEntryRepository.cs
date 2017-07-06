@@ -115,7 +115,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 			                t2.CogsCurrencyId, t2.CogsAmount, t2.CogsDetail
                 )
                 SELECT t1.PwMasterProductId, t1.PwMasterVariantId, t1.Exclude, t1.StockedDirectly, t1.CogsTypeId, t1.CogsMarginPercent, 
-				                t1.CogsCurrencyId, t1.CogsAmount, t1.CogsDetail, t1.HighPriceAll, t1.LowPriceAll, t1.TotalInventory,
+				                t1.CogsCurrencyId, t1.CogsAmount, t1.CogsDetail, t1.HighPriceAll, t1.LowPriceAll, t1.TotalInventory AS Inventory,
 				                t3.Title, t3.Sku, t4.Title AS ProductTitle
                 FROM CTE_PriceSummary t1
 	                INNER JOIN variant(@PwShopId) t3 ON t1.PwMasterVariantId = t3.PwMasterVariantId

@@ -223,6 +223,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper.Execute(query, new { PwShop.PwShopId, PwVariantId = pwVariantId });
         }
 
+        public void DeleteVariantByProductId(long pwProductId)
+        {
+            var query = @"DELETE FROM variant(@PwShopId) WHERE PwProductId = @pwProductId;";
+            _connectionWrapper.Execute(query, new { PwShop.PwShopId, pwProductId = pwProductId });
+        }
+
         public void UpdateVariantIsActive(PwVariant variant)
         {
             var query = @"UPDATE variant(@PwShopId) SET IsActive = @IsActive WHERE PwVariantId = @pwVariantId;";

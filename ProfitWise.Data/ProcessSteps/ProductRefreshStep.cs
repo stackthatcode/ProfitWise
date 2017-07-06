@@ -129,6 +129,7 @@ namespace ProfitWise.Data.ProcessSteps
 
                     // Finally, mark Variants that weren't in the import as Inactive
                     var activeVariantIds = importedProduct.Variants.Select(x => x.Id).ToList();
+
                     builderService.FlagMissingVariantsAsInactive(
                             existingMasterProducts, product.ShopifyProductId, activeVariantIds);
                     transaction.Commit();

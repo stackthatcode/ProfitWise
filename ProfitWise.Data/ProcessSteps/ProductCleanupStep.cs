@@ -49,12 +49,12 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Deletes any childless Master Products or Master Variants
             _pushLogger.Debug($"Deleting Childless Master Products and Master Variants");
-            productRepository.DeleteChildlessMasterProducts();
             variantRepository.DeleteChildlessMasterVariants();
+            productRepository.DeleteChildlessMasterProducts();
         }
 
         private void RemoveInactiveWithoutReference(
-                    PwShop shop, IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
+                PwShop shop, IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
@@ -77,7 +77,9 @@ namespace ProfitWise.Data.ProcessSteps
                 }
             }
 
-            // The presumption here is that the Inactive Variants *should* have been removed already
+            // The presumption here is that either:
+            // 1.) Inactive Variants *should* have been removed already
+            // 2.) 
             var inactiveProducts = masterProductCatalog.FindInactiveProducts();
             foreach (var product in inactiveProducts)
             {
@@ -85,12 +87,13 @@ namespace ProfitWise.Data.ProcessSteps
                 {
                     _pushLogger.Debug(
                         $"Inactive Product {product.Title}, {product.PwProductId} " +
-                        "is being removed - no referring Order Line Items");
+                        $"is being removed - no referring Order Line Items");
 
                     product.ParentMasterProduct.Products.Remove(product);
 
                     using (var transaction = productRepository.InitiateTransaction())
                     {
+                        variantRepository.DeleteVariantByProductId(product.PwProductId);
                         productRepository.DeleteProduct(product.PwProductId);
                         catalogService.AutoUpdateAndSavePrimary(product.ParentMasterProduct);
                         transaction.Commit();
