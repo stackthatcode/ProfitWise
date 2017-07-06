@@ -213,8 +213,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public void DeleteReport(long reportId)
         {
-            var query = @"DELETE FROM report(@PwShopId) WHERE PwReportId = @reportId;";
-            _connectionWrapper.Execute(query, new { PwShopId, reportId });
+            var query1 = @"DELETE FROM reportfilter(@PwShopId) WHERE PwReportId = @reportId;";
+            _connectionWrapper.Execute(query1, new { PwShopId, reportId });
+
+            var query2 = @"DELETE FROM report(@PwShopId) WHERE PwReportId = @reportId;";
+            _connectionWrapper.Execute(query2, new { PwShopId, reportId });
         }
     }
 }
