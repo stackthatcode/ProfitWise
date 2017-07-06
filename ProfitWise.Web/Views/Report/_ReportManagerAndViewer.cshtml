@@ -599,6 +599,10 @@
             flow.exec(
                 function() {
                     var reportId = self.ReportInterfaceModel.ReportId();
+                    if (!reportId) {
+                        return;
+                    }
+
                     var settings = new ProfitWiseFunctions.AjaxSettings();
                     settings.UseSpinner = false;
                     settings.ErrorCallbackFunction = null;
