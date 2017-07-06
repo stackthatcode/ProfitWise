@@ -18,6 +18,7 @@ namespace ProfitWise.Data.Model.Catalog
                 .SelectMany(x => x.Products)
                 .FirstOrDefault(x => x.Title.CaselessEquals(context.Title) &&
                                     x.Vendor.CaselessEquals(context.Vendor));
+
             return firstOrDefault?.ParentMasterProduct;
         }
 
@@ -54,27 +55,7 @@ namespace ProfitWise.Data.Model.Catalog
                          x.Title.VariantTitleCorrection().CaselessEquals(context.Title.VariantTitleCorrection())
                          && x.ShopifyVariantId == context.ShopifyVariantId);
         }
-
-
-        public static IList<PwProduct> FindProductByShopifyId(
-                this IList<PwMasterProduct> masterProducts, long? shopifyProductId)
-        {
-            return
-                masterProducts
-                    .SelectMany(x => x.Products)
-                    .Where(x => x.ShopifyProductId == shopifyProductId)
-                    .ToList();
-        }
-
-        public static IList<PwVariant> FindVariantsByShopifyId(
-                this IEnumerable<PwMasterVariant> masterVariants, long? shopifyVariantId)
-        {
-            return masterVariants
-                    .SelectMany(x => x.Variants)
-                    .Where(x => x.ShopifyVariantId == shopifyVariantId)
-                    .ToList();
-        }
-
+        
 
         private const string VariantDefaultTitle = "Default Title";
 

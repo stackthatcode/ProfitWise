@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
@@ -53,7 +54,6 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var shop = _shopRepository.RetrieveByUserId(shopCredentials.ShopOwnerUserId);
             var batchStateRepository = _multitenantFactory.MakeBatchStateRepository(shop);
-            var service = _multitenantFactory.MakeCatalogRetrievalService(shop);
             
             // Retrieve Batch State and compute Event parameter
             var batchState = batchStateRepository.Retrieve();
@@ -62,12 +62,9 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Write Products to our database
             WriteAllProductsFromShopify(shop, shopCredentials, batchState);
-
-            // Retrieve the full catalog against which to update Active Status on
-            var masterProducts = service.RetrieveFullCatalog();
-
+            
             // Delete all Products with "destroy" Events
-            SetDeletedProductsToInactive(shop, masterProducts, shopCredentials, fromDateForDestroyUtc);
+            SetDeletedProductsToInactive(shop, shopCredentials, fromDateForDestroyUtc);
 
             // Update Batch State
             batchState.ProductsLastUpdated = processStartTimeUtc;
@@ -79,8 +76,8 @@ namespace ProfitWise.Data.ProcessSteps
                 PwShop shop, ShopifyCredentials shopCredentials, PwBatchState batchState)
         {
             var productApiRepository = _apiRepositoryFactory.MakeProductApiRepository(shopCredentials);
-            var filter = new ProductFilter();
 
+            var filter = new ProductFilter();
             if (batchState.ProductsLastUpdated != null)
             {
                 filter.UpdatedAtMinUtc = 
@@ -110,27 +107,30 @@ namespace ProfitWise.Data.ProcessSteps
         {
             _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
 
-            var service = _multitenantFactory.MakeCatalogRetrievalService(shop);
-            var masterProducts = service.RetrieveFullCatalog();
+            var retrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
+            var builderService = _multitenantFactory.MakeCatalogBuilderService(shop);
+            var existingMasterProducts = retrievalService.RetrieveFullCatalog();
 
             foreach (var importedProduct in importedProducts)
             {
-                using (var transaction = service.InitiateTransaction())
+                using (var transaction = retrievalService.InitiateTransaction())
                 {
-                    var productBuildContext = 
-                        importedProduct.ToProductBuildContext(masterProducts, isActive: true);
+                    var productBuildContext = new ProductBuildContext(importedProduct, existingMasterProducts);
 
+                    // First save/update the Product and Master Product
                     var product = WriteProductToDatabase(shop, productBuildContext);
-                
+                    
+                    // Next save/update the Variant and Master Variant
                     foreach (var importedVariant in importedProduct.Variants)
                     {
-                        var variantBuildContext =
-                            importedVariant.ToVariantBuildContext(
-                                isActive: true, allMasterProducts: masterProducts, product: product);
+                        var variantBuildContext = new VariantBuildContext(importedVariant, existingMasterProducts, product);
                         WriteVariantToDatabase(shop, variantBuildContext);
                     }
 
-                    FlagMissingVariantsAsInactive(shop, productBuildContext);
+                    // Finally, mark Variants that weren't in the import as Inactive
+                    var activeVariantIds = importedProduct.Variants.Select(x => x.Id).ToList();
+                    builderService.FlagMissingVariantsAsInactive(
+                            existingMasterProducts, product.ShopifyProductId, activeVariantIds);
                     transaction.Commit();
                 }
             }
@@ -139,8 +139,9 @@ namespace ProfitWise.Data.ProcessSteps
         public PwProduct WriteProductToDatabase(PwShop shop, ProductBuildContext context)
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
-            var masterProduct = context.MasterProducts.FindMasterProduct(context);
 
+            // Find or create the Master Product
+            var masterProduct = context.ExistingMasterProducts.FindMasterProduct(context);
             if (masterProduct == null)
             {
                 _pushLogger.Debug(
@@ -148,28 +149,24 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Vendor: {context.Vendor}");
 
                 masterProduct = service.CreateMasterProduct();
-                context.MasterProducts.Add(masterProduct);
+                context.ExistingMasterProducts.Add(masterProduct);
             }
 
+            // Find or create the Product
             var product = masterProduct.FindProduct(context);
             if (product == null)
             {
                 _pushLogger.Debug(
                     $"Unable to find Product for Title: {context.Title} " +
-                    $"and Vendor: {context.Vendor} and Shopify Id: {context.ShopifyProductId}");
+                    $"and Vendor: {context.Vendor} " + 
+                    $"and ShopifyProductId: {context.ShopifyProductId}");
 
-                product = service.CreateProduct(masterProduct, context);
-                service.UpdateActiveProduct(context.MasterProducts, product.ShopifyProductId);
+                product = service.CreateProductAndAssignToMaster(context, masterProduct);
+                service.UpdateActiveProduct(context);
             }
             else
             {
-                _pushLogger.Debug($"Updating existing Product: {product.Title}");
-                product.Tags = context.Tags;
-                product.ProductType = context.ProductType;
-                product.LastUpdated = DateTime.UtcNow;
-                
-                var productRepository = this._multitenantFactory.MakeProductRepository(shop);
-                productRepository.UpdateProduct(product);
+                service.UpdateProduct(context, product);
             }
             return product;
         }
@@ -182,18 +179,18 @@ namespace ProfitWise.Data.ProcessSteps
             var masterVariant = context.MasterProduct.FindMasterVariant(context);
             if (masterVariant == null)
             {
-                _pushLogger.Debug($"Unable to find Master Variant for Title: {context.Title} and Sku: {context.Sku}");
-                var newMasterVariant = service.CreateMasterVariant(context);
+                _pushLogger.Debug(
+                    $"Unable to find Master Variant for Title: {context.Title} and Sku: {context.Sku}");
 
-                context.MasterProduct.MasterVariants.Add(newMasterVariant);
-                context.MasterVariant = newMasterVariant;
+                var newMasterVariant = service.CreateAndAssignMasterVariant(context);
+                context.TargetMasterVariant = newMasterVariant;
             }
             else
             {
-                context.MasterVariant = masterVariant;
+                context.TargetMasterVariant = masterVariant;
             }
 
-            var variant = context.MasterVariant.FindVariant(context);
+            var variant = context.TargetMasterVariant.FindVariant(context);
             if (variant == null)
             {
                 _pushLogger.Debug(
@@ -211,38 +208,43 @@ namespace ProfitWise.Data.ProcessSteps
                 $"{context.Price} to {context.Price} and setting inventory to {inventory}");
 
             variantRepository.UpdateVariant(
-                variant.PwVariantId, context.Price, context.Price, variant.Sku, inventory, DateTime.UtcNow);
+                variant.PwVariantId, context.Price, context.Price, variant.Sku, 
+                inventory, DateTime.UtcNow);
         }
 
         private void SetDeletedProductsToInactive(
-                PwShop shop, IList<PwMasterProduct> masterProducts, ShopifyCredentials shopCredentials, 
-                DateTime fromDateUtc)
+                PwShop shop, ShopifyCredentials shopCredentials, DateTime fromDateUtc)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
+
+            var catalogRetrievalService = this._multitenantFactory.MakeCatalogRetrievalService(shop);
             var catalogService = this._multitenantFactory.MakeCatalogBuilderService(shop);
 
+            var masterProducts = catalogRetrievalService.RetrieveFullCatalog();
             var events = RetrieveAllProductDestroyEvents(shopCredentials, shop, fromDateUtc);
-            foreach (var @event in events)
+
+            foreach (var destoryEvent in events)
             {
-                if (@event.Verb == EventVerbs.Destroy && @event.SubjectType == EventTypes.Product)
+                if (destoryEvent.Verb == EventVerbs.Destroy && destoryEvent.SubjectType == EventTypes.Product)
                 {
-                    var shopifyProductId = @event.SubjectId;
-                    _pushLogger.Debug(
-                        $"Marking all Products with Shopify Id {shopifyProductId} (via 'destroy' event)");
+                    var shopifyProductId = destoryEvent.SubjectId;
+                    _pushLogger.Debug($"Marking all Products with Shopify Id {shopifyProductId} to Inactive (via 'destroy' event)");
 
+                    // Optimized SQL update of IsActive status
                     productRepository.UpdateProductIsActiveByShopifyId(shopifyProductId, false);
-
-                    foreach (
-                        var masterProduct in
-                            masterProducts.Where(
-                                x => x.Products.Any(product => product.ShopifyProductId == shopifyProductId)))
+                    
+                    // Next, using in-memory catalog, update Primary
+                    foreach (var masterProduct in masterProducts.FindMasterProductsByShopifyId(shopifyProductId))
                     {
-                        catalogService.AutoUpdatePrimary(masterProduct);
+                        var products = masterProduct.FindProductsByShopifyId(shopifyProductId);                        
+                        products.ForEach(x => x.IsActive = false);
+                        
+                        catalogService.AutoUpdateAndSavePrimary(masterProduct);
                     }
                 }
             }
         }
-
+        
         private IList<Event> RetrieveAllProductDestroyEvents(
                 ShopifyCredentials shopCredentials, PwShop shop, DateTime fromDateUtc)
         {
@@ -273,33 +275,6 @@ namespace ProfitWise.Data.ProcessSteps
             return results;
         }
 
-        private void FlagMissingVariantsAsInactive(PwShop shop, ProductBuildContext context)
-        {
-            // Mark all Variants as InActive that aren't in the import
-            var variantRepository = _multitenantFactory.MakeVariantRepository(shop);
-            var catalogService = _multitenantFactory.MakeCatalogBuilderService(shop);
-
-            // Extract
-            var allExistingVariants =
-                context.MasterProducts
-                    .SelectMany(x => x.MasterVariants)
-                    .SelectMany(x => x.Variants)
-                    .Where(x => x.ShopifyProductId == context.ShopifyProductId);
-
-            var missingFromActive =
-                allExistingVariants
-                    .Where(x => x.ShopifyVariantId != null)
-                    .Where(x => context.ActiveShopifyVariantIds.All(activeId => activeId != x.ShopifyVariantId))
-                    .ToList();
-
-            missingFromActive.ForEach(variant =>
-            {
-                variant.IsActive = false;
-                _pushLogger.Debug($"Flagging PwVariantId {variant.PwVariantId} as Inactive");
-                variantRepository.UpdateVariantIsActive(variant);
-                catalogService.AutoUpdatePrimary(variant.ParentMasterVariant);
-            });
-        }
     }
 }
 

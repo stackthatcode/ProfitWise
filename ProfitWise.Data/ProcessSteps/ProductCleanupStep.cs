@@ -18,9 +18,7 @@ namespace ProfitWise.Data.ProcessSteps
 
 
         public ProductCleanupStep(
-                BatchLogger logger,
-                MultitenantFactory multitenantFactory,
-                ShopRepository shopRepository)
+                BatchLogger logger, MultitenantFactory multitenantFactory, ShopRepository shopRepository)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
@@ -43,9 +41,8 @@ namespace ProfitWise.Data.ProcessSteps
             var masterProductCatalog = service.RetrieveFullCatalog();
             var orderLineItems = orderRepository.RetrieveLineItemSubset();
 
-            // TODO - this is on hold for now
             // Remove Inactive Products and Variants that don't reference Order Line Items
-            // RemoveInactiveWithoutReference(shop, masterProductCatalog, orderLineItems);
+            RemoveInactiveWithoutReference(shop, masterProductCatalog, orderLineItems);
 
             // Update Inactive Variant prices using Order Line Items
             UpdateInactiveVariantPrice(shop, masterProductCatalog, orderLineItems);
@@ -57,45 +54,47 @@ namespace ProfitWise.Data.ProcessSteps
         }
 
         private void RemoveInactiveWithoutReference(
-                PwShop shop, IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
+                    PwShop shop, IList<PwMasterProduct> masterProductCatalog, IList<OrderLineItemSubset> orderLineItems)
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(shop);
             var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
             var catalogService = this._multitenantFactory.MakeCatalogBuilderService(shop);
 
-            var masterVariants = masterProductCatalog.SelectMany(x => x.MasterVariants).ToList();
-
-            foreach (var product in 
-                        masterProductCatalog
-                            .SelectMany(x => x.Products)
-                            .Where(x => x.IsActive == false)
-                            .ToList())
+            foreach (var variant in masterProductCatalog.FindInactiveVariants())
             {
-                if (orderLineItems.All(x => x.PwProductId != product.PwProductId))
-                {
-                    _pushLogger.Debug($"Inactive Product {product.Title}, {product.PwProductId} " +
-                                      "is being removed - no referring Order Line Items");
-                    product.ParentMasterProduct.Products.Remove(product);
-
-                    productRepository.DeleteProduct(product.PwProductId);
-
-                    catalogService.AutoUpdatePrimary(product.ParentMasterProduct);
-                }
-            }
-
-            foreach (var variant in masterVariants
-                            .SelectMany(x => x.Variants)
-                            .Where(x => x.IsActive == false)
-                            .ToList())
-            {
-                if (orderLineItems.All(x => x.PwProductId != variant.PwProductId))
+                if (orderLineItems.All(x => x.PwVariantId != variant.PwVariantId))
                 {
                     _pushLogger.Debug($"Inactive Variant {variant.Title}, {variant.Sku}, {variant.PwVariantId} " +
                                       "is being removed - no referring Order Line Items");
                     variant.ParentMasterVariant.Variants.Remove(variant);
 
-                    variantRepository.DeleteVariantByVariantId(variant.PwVariantId);
-                    catalogService.AutoUpdatePrimary(variant.ParentMasterVariant);
+                    using (var transaction = variantRepository.InitiateTransaction())
+                    {
+                        variantRepository.DeleteVariantByVariantId(variant.PwVariantId);
+                        catalogService.AutoUpdateAndSavePrimary(variant.ParentMasterVariant);
+                        transaction.Commit();
+                    }
+                }
+            }
+
+            // The presumption here is that the Inactive Variants *should* have been removed already
+            var inactiveProducts = masterProductCatalog.FindInactiveProducts();
+            foreach (var product in inactiveProducts)
+            {
+                if (orderLineItems.All(x => x.PwProductId != product.PwProductId))
+                {
+                    _pushLogger.Debug(
+                        $"Inactive Product {product.Title}, {product.PwProductId} " +
+                        "is being removed - no referring Order Line Items");
+
+                    product.ParentMasterProduct.Products.Remove(product);
+
+                    using (var transaction = productRepository.InitiateTransaction())
+                    {
+                        productRepository.DeleteProduct(product.PwProductId);
+                        catalogService.AutoUpdateAndSavePrimary(product.ParentMasterProduct);
+                        transaction.Commit();
+                    }
                 }
             }
         }

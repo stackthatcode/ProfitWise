@@ -49,7 +49,7 @@ namespace ProfitWise.Data.Model.Catalog
             product.IsPrimary = true;
         }
 
-        public PwProduct AutoPrimaryProduct()
+        public PwProduct WhichProductIsPrimary()
         {
             if (Products.Count(x => x.IsPrimary) > 1 ||
                 Products.Count(x => x.IsPrimaryManual) > 1)
@@ -75,6 +75,18 @@ namespace ProfitWise.Data.Model.Catalog
                 
             // Rule #3 - the Primary that will default to the most recently updated
             return Products.OrderByDescending(x => x.LastUpdated).First();
+        }
+
+        public void AutoUpdatePrimary()
+        {
+            if (Products.Count == 0)
+            {
+                return;
+            }
+
+            var primaryProduct = WhichProductIsPrimary();
+            primaryProduct.IsPrimary = true;
+            Products.Where(x => x != primaryProduct).ForEach(x => x.IsPrimary = false);
         }
     }
 

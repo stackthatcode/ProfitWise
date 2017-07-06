@@ -163,6 +163,7 @@
     <Compile Include="HangFire\ProfitWiseQueues.cs" />
     <Compile Include="Model\Admin\ProfitWiseUser.cs" />
     <Compile Include="Model\Catalog\FinancialStatus.cs" />
+    <Compile Include="Model\Catalog\FindingUtilityExtensions.cs" />
     <Compile Include="Model\Cogs\CalcContext.cs" />
     <Compile Include="Model\Cogs\CogsDto.cs" />
     <Compile Include="Model\Cogs\CogsDateBlockContext.cs" />

@@ -283,7 +283,7 @@ namespace ProfitWise.Data.ProcessSteps
                     _pushLogger.Trace(translatedLineItem.ToString());
                 }
 
-                var productBuildContext = lineItem.ToProductBuildContext(context.MasterProducts);
+                var productBuildContext =  new ProductBuildContext(lineItem, context.MasterProducts);
                 var variantBuildContext = lineItem.ToVariantBuildContext(allMasterProducts: context.MasterProducts);
 
                 var pwVariant = FindCreateProductVariant(context.PwShop, productBuildContext, variantBuildContext);
@@ -375,7 +375,7 @@ namespace ProfitWise.Data.ProcessSteps
         {
             var service = _multitenantFactory.MakeCatalogBuilderService(shop);
             
-            var masterProduct = productBuildContext.MasterProducts.FindMasterProduct(productBuildContext);
+            var masterProduct = productBuildContext.ExistingMasterProducts.FindMasterProduct(productBuildContext);
             if (masterProduct == null)
             {
                 _pushLogger.Debug(
@@ -383,7 +383,7 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Vendor: {productBuildContext.Vendor}");
 
                 masterProduct = service.CreateMasterProduct();
-                productBuildContext.MasterProducts.Add(masterProduct);
+                productBuildContext.ExistingMasterProducts.Add(masterProduct);
             }
 
             variantBuildContext.Product = masterProduct.FindProduct(productBuildContext);            
@@ -394,21 +394,22 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and Vendor: {productBuildContext.Vendor} and " +
                     $"Shopify Id: {productBuildContext.ShopifyProductId}");
 
-                variantBuildContext.Product = service.CreateProduct(masterProduct, productBuildContext);
+                variantBuildContext.Product = 
+                    service.CreateProductAndAssignToMaster(productBuildContext, masterProduct);
             }
 
-            variantBuildContext.MasterVariant = masterProduct.FindMasterVariant(variantBuildContext);            
-            if (variantBuildContext.MasterVariant == null)
+            variantBuildContext.TargetMasterVariant = masterProduct.FindMasterVariant(variantBuildContext);            
+            if (variantBuildContext.TargetMasterVariant == null)
             {
                 _pushLogger.Debug(
                     $"Unable to find Master Variant for Title: {variantBuildContext.Title} " +
                     $"and Sku: {variantBuildContext.Sku}");
 
-                variantBuildContext.MasterVariant = service.CreateMasterVariant(variantBuildContext);
-                masterProduct.MasterVariants.Add(variantBuildContext.MasterVariant);
+                variantBuildContext.TargetMasterVariant = service.CreateAndAssignMasterVariant(variantBuildContext);
+                masterProduct.MasterVariants.Add(variantBuildContext.TargetMasterVariant);
             }
 
-            var variant = variantBuildContext.MasterVariant.FindVariant(variantBuildContext);            
+            var variant = variantBuildContext.TargetMasterVariant.FindVariant(variantBuildContext);            
             if (variant == null)
             {
                 _pushLogger.Debug(

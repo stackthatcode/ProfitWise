@@ -61,15 +61,13 @@ namespace ProfitWise.Data.Services
             _pushLogger.Debug($"Created new Master Product: (Master Product Id = {masterProductId})");
             return masterProduct;
         }
-
-        public PwProduct CreateProduct(
-                PwMasterProduct masterProduct, ProductBuildContext productBuildContext)
+        
+        public PwProduct CreateProductAndAssignToMaster(
+                    ProductBuildContext productBuildContext, PwMasterProduct masterProduct)
         {
-            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-            _pushLogger.Debug(
-                $"Create new Product: {productBuildContext.Title} (Id = {productBuildContext.ShopifyProductId})");
+            _pushLogger.Debug($"Create new Product: {productBuildContext.Title} (Id = {productBuildContext.ShopifyProductId})");
 
-            // Create the new Product
+            // Create and save new Product
             PwProduct finalProduct = new PwProduct();
             finalProduct.PwShopId = PwShop.PwShopId;
             finalProduct.PwMasterProductId = masterProduct.PwMasterProductId;
@@ -82,18 +80,65 @@ namespace ProfitWise.Data.Services
             finalProduct.IsPrimary = false;
             finalProduct.IsPrimaryManual = false;
             finalProduct.LastUpdated = DateTime.UtcNow;
-            finalProduct.ParentMasterProduct = masterProduct;
-            
+
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var productId = productRepository.InsertProduct(finalProduct);
+            
             finalProduct.PwProductId = productId;
             finalProduct.ParentMasterProduct = masterProduct;
             masterProduct.Products.Add(finalProduct);
 
-            this.AutoUpdatePrimary(masterProduct);
+            this.AutoUpdateAndSavePrimary(masterProduct);
             return finalProduct;
         }
 
-        public PwMasterVariant CreateMasterVariant(VariantBuildContext context)
+        public void UpdateProduct(ProductBuildContext context, PwProduct product)
+        {
+            _pushLogger.Debug($"Updating existing Product: {context.Title}");
+
+            product.Tags = context.Tags;
+            product.ProductType = context.ProductType;
+            product.LastUpdated = DateTime.UtcNow;
+
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
+            productRepository.UpdateProduct(product);
+        }
+
+        // A Shopify Product Id may appear under multiple Master Products due to historical data.
+        // This updates the Status so the most recent one is Active and all the historical ones Inactive.
+        public void UpdateActiveProduct(ProductBuildContext productBuildContext)
+        {
+            if (!productBuildContext.ShopifyProductId.HasValue)
+            {
+                return;
+            }
+
+            // Locate all Products with ShopifyProductId across all Master Products
+            var products = 
+                productBuildContext
+                    .ExistingMasterProducts
+                    .FindProductByShopifyId(productBuildContext.ShopifyProductId);
+            if (products.Count == 1)
+            {
+                return;
+            }
+
+            // The Active Product is the most recently updated
+            var activeProduct = products.OrderByDescending(x => x.LastUpdated).First();
+            activeProduct.IsActive = true;
+            products.Where(x => x != activeProduct).ForEach(x => x.IsActive = false);
+
+            _pushLogger.Debug($"Updated Active Shopify Product to {activeProduct.PwProductId}");
+            
+            // Write all of the IsActive statuses to persistence
+            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
+            foreach (var product in products)
+            {
+                productRepository.UpdateProductIsActive(product);
+            }
+        }
+        
+        public PwMasterVariant CreateAndAssignMasterVariant(VariantBuildContext context)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var cogsService = this._multitenantFactory.MakeCogsService(this.PwShop);
@@ -120,6 +165,10 @@ namespace ProfitWise.Data.Services
             };
 
             masterVariant.PwMasterVariantId = variantRepository.InsertMasterVariant(masterVariant);
+
+            context.MasterProduct.MasterVariants.Add(masterVariant);
+
+            // Update CoGS data that will be used downstream
             cogsService.UpdateGoodsOnHandForMasterVariant(
                     CogsDateBlockContext.Make(masterVariant, this.PwShop.CurrencyId));
 
@@ -135,8 +184,8 @@ namespace ProfitWise.Data.Services
             var newVariant = new PwVariant();
             newVariant.PwShopId = this.PwShop.PwShopId;
             newVariant.PwProductId = context.Product.PwProductId;  // This is a permanent association :-)
-            newVariant.PwMasterVariantId = context.MasterVariant.PwMasterVariantId;
-            newVariant.ParentMasterVariant = context.MasterVariant;
+            newVariant.PwMasterVariantId = context.TargetMasterVariant.PwMasterVariantId;
+            newVariant.ParentMasterVariant = context.TargetMasterVariant;
             newVariant.ShopifyProductId = context.ShopifyProductId;
             newVariant.ShopifyVariantId = context.ShopifyVariantId;
             newVariant.Sku = context.Sku;
@@ -150,35 +199,23 @@ namespace ProfitWise.Data.Services
             newVariant.LastUpdated = DateTime.UtcNow;
 
             newVariant.PwVariantId = variantRepository.InsertVariant(newVariant);
-            context.MasterVariant.Variants.Add(newVariant);
-            this.AutoUpdatePrimary(context.MasterVariant);
+            context.TargetMasterVariant.Variants.Add(newVariant);
+            this.AutoUpdateAndSavePrimary(context.TargetMasterVariant);
             return newVariant;
         }
-
-
-        public void AutoUpdatePrimary(PwMasterProduct masterProduct)
+        
+        public void AutoUpdateAndSavePrimary(PwMasterProduct masterProduct)
         {
+            masterProduct.AutoUpdatePrimary();
+
             var repository = _multitenantFactory.MakeProductRepository(this.PwShop);
-
-            if (masterProduct.Products.Count == 0)
-            {
-                return;
-            }
-
-            var primaryProduct = masterProduct.AutoPrimaryProduct();
-            primaryProduct.IsPrimary = true;
-
-            masterProduct.Products
-                .Where(x => x != primaryProduct)
-                .ForEach(x => x.IsPrimary = false);
-
             foreach (var product in masterProduct.Products)
             {
                 repository.UpdateProductIsPrimary(product);
             }
         }
 
-        public void AutoUpdatePrimary(PwMasterVariant masterVariant)
+        public void AutoUpdateAndSavePrimary(PwMasterVariant masterVariant)
         {
             var repository = _multitenantFactory.MakeVariantRepository(this.PwShop);
 
@@ -198,37 +235,14 @@ namespace ProfitWise.Data.Services
                 repository.UpdateVariantIsPrimary(variant);
             }
         }
-
-
-        // A Shopify Product or Variant Id may appear under multiple Master Products due to historical data.
-        // This updates the Status so the most recent one is Active and all the historical ones Inactive.
-        public void UpdateActiveProduct(IList<PwMasterProduct> allMasterProducts, long? shopifyProductId)
-        {
-            var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
-            var products = allMasterProducts.FindProductByShopifyId(shopifyProductId);
-            if (products.Count == 1)
-            {
-                return;
-            }
-
-            var activeProduct = products.OrderByDescending(x => x.LastUpdated).First();
-            _pushLogger.Debug($"Updating Active Shopify Product to {activeProduct.PwProductId}");
-
-            activeProduct.IsActive = true;
-            products.Where(x => x != activeProduct).ForEach(x => x.IsActive = false);
-
-            foreach (var product in products)
-            {
-                productRepository.UpdateProductIsActive(product);
-            }
-        }
-
+        
         public void UpdateActiveVariant(IList<PwMasterProduct> allMasterProducts, long? shopifyVariantId)
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
+
             var variants = allMasterProducts
                 .SelectMany(x => x.MasterVariants)
-                .FindVariantsByShopifyId(shopifyVariantId);
+                .FindVariantsByShopifyVariantId(shopifyVariantId);
 
             if (variants.Count == 1)
             {
@@ -246,8 +260,40 @@ namespace ProfitWise.Data.Services
             {
                 variantRepository.UpdateVariantIsActive(variant);
             }
-        }        
+        }
+        
+        public void FlagMissingVariantsAsInactive(
+                IList<PwMasterProduct> allMasterProducts, 
+                long? shopifyProductId, 
+                List<long> activeShopifyVariantIds)
+        {
+            // Mark all Variants as InActive that aren't in the import
+            var variantRepository = _multitenantFactory.MakeVariantRepository(this.PwShop);
+            var catalogService = _multitenantFactory.MakeCatalogBuilderService(PwShop);
 
+            // Locate all Variants with the Product's ShopifyProductId across all Master Products and Products
+            // NOTE: there are Variants with ShopifyProductId but without ShopifyVariantId
+            var allVariantsForShopifyProduct =
+                allMasterProducts
+                    .FindVariantsByShopifyProductId(shopifyProductId)
+                    .Where(x => x.ShopifyVariantId != null)
+                    .ToList();
+
+            // Identify Variants that are not in the list of Active Shopify Variants from the latest import
+            var missingFromActive =
+                allVariantsForShopifyProduct                    
+                    .Where(x => activeShopifyVariantIds.All(activeId => activeId != x.ShopifyVariantId))
+                    .ToList();
+
+            missingFromActive.ForEach(variant =>
+            {
+                _pushLogger.Debug($"Flagging PwVariantId {variant.PwVariantId} as Inactive");
+
+                variant.IsActive = false;
+                variantRepository.UpdateVariantIsActive(variant);
+                catalogService.AutoUpdateAndSavePrimary(variant.ParentMasterVariant);
+            });
+        }
     }
 }
 

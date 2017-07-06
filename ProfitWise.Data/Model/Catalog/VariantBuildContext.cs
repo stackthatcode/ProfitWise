@@ -6,7 +6,7 @@ namespace ProfitWise.Data.Model.Catalog
     public class VariantBuildContext
     {
         public IList<PwMasterProduct> AllMasterProducts { get; set; }
-        public PwMasterVariant MasterVariant { get; set; }
+        public PwMasterVariant TargetMasterVariant { get; set; }
         public PwProduct Product { get; set; }
         public PwMasterProduct MasterProduct => Product.ParentMasterProduct;
 
@@ -18,32 +18,29 @@ namespace ProfitWise.Data.Model.Catalog
         public bool IsActive { get; set; }
         public int Inventory { get; set; }
         public bool InventoryTracked { get; set; }
+
+        public VariantBuildContext()
+        {            
+        }
+
+        public VariantBuildContext(
+                Variant importedVariant, IList<PwMasterProduct> allMasterProducts, PwProduct product)
+        {
+            IsActive = true;    // This was constructed from an Imported (live) Shopify Variant
+            AllMasterProducts = allMasterProducts;
+            Sku = importedVariant.Sku;
+            Title = importedVariant.Title;
+            Price = importedVariant.Price;
+            ShopifyProductId = importedVariant.ParentProduct.Id;
+            ShopifyVariantId = importedVariant.Id;
+            Product = product;
+            Inventory = importedVariant.Inventory;
+            InventoryTracked = importedVariant.InventoryTracked;
+        }
     }
 
     public static class VariantBuildContextExtensions
     {
-        public static VariantBuildContext ToVariantBuildContext(
-                    this Variant importedVariant,
-                    bool isActive = false,
-                    IList<PwMasterProduct> allMasterProducts = null,
-                    PwProduct product = null, 
-                    PwMasterVariant masterVariant = null)
-        {
-            return new VariantBuildContext
-            {
-                IsActive = isActive,
-                AllMasterProducts = allMasterProducts,
-                Sku = importedVariant.Sku,
-                Title = importedVariant.Title,
-                Price = importedVariant.Price,
-                ShopifyProductId = importedVariant.ParentProduct.Id,
-                ShopifyVariantId = importedVariant.Id,
-                Product = product,
-                MasterVariant = masterVariant,
-                Inventory = importedVariant.Inventory,
-                InventoryTracked = importedVariant.InventoryTracked,
-            };
-        }
 
         public static VariantBuildContext ToVariantBuildContext(
                     this OrderLineItem orderLineItem,
@@ -60,7 +57,7 @@ namespace ProfitWise.Data.Model.Catalog
                 ShopifyProductId = orderLineItem.ProductId,
                 ShopifyVariantId = orderLineItem.VariantId,
                 Product = null,
-                MasterVariant = null,
+                TargetMasterVariant = null,
                 Inventory = 0,
                 InventoryTracked = false,
             };
