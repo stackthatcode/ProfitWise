@@ -188,7 +188,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"SELECT t1.PwMasterProductId AS GroupingKey, t1.ProductTitle AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.PwMasterProductId, t1.ProductTitle " +
-                OrderingAndPagingForTotals(queryContext);
+                OrderingAndPagingForTotals(queryContext, "t1.ProductTitle");
 
             return _connectionWrapper
                 .Query<GroupedTotal>(query, queryContext).ToList()
@@ -201,7 +201,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.PwMasterVariantId, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) " +
-                OrderingAndPagingForTotals(queryContext);
+                OrderingAndPagingForTotals(queryContext, "CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle)");
 
             return _connectionWrapper
                 .Query<GroupedTotal>(query, queryContext).ToList()
@@ -214,7 +214,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"SELECT t1.ProductType AS GroupingKey, t1.ProductType AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.ProductType " +
-                OrderingAndPagingForTotals(queryContext);
+                OrderingAndPagingForTotals(queryContext, "t1.ProductType");
 
             return _connectionWrapper
                 .Query<GroupedTotal>(query, queryContext).ToList()
@@ -227,14 +227,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"SELECT t1.Vendor AS GroupingKey, t1.Vendor AS GroupingName, " +
                 QueryGutsForTotals() +
                 @"GROUP BY t1.Vendor " +
-                OrderingAndPagingForTotals(queryContext);
+                OrderingAndPagingForTotals(queryContext, "t1.Vendor");
 
             return _connectionWrapper
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Vendor);
         }
         
-        private string OrderingAndPagingForTotals(TotalQueryContext queryContext)
+        private string OrderingAndPagingForTotals(TotalQueryContext queryContext, string nameField)
         {
             string orderByClause = "";
             if (queryContext.Ordering == ColumnOrdering.AverageMarginDescending)
@@ -257,6 +257,10 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 orderByClause = "ORDER BY TotalQuantitySold DESC ";
             if (queryContext.Ordering == ColumnOrdering.QuantitySoldAscending)
                 orderByClause = "ORDER BY TotalQuantitySold ASC ";
+            if (queryContext.Ordering == ColumnOrdering.NameDescending)
+                orderByClause = $"ORDER BY {nameField} DESC ";
+            if (queryContext.Ordering == ColumnOrdering.NameAscending)
+                orderByClause = $"ORDER BY {nameField} ASC ";
 
             return orderByClause + "OFFSET @StartingIndex ROWS FETCH NEXT @PageSize ROWS ONLY;";
         }

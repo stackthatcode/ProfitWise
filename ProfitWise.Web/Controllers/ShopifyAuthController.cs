@@ -16,6 +16,7 @@ using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
 using ProfitWise.Web.Models;
 using ProfitWise.Web.Plumbing;
+using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Utilities.Security;
 using Push.Foundation.Web.Helpers;
@@ -91,6 +92,11 @@ namespace ProfitWise.Web.Controllers
                 ShopifyAuthorizationScope.ReadOrders,
                 ShopifyAuthorizationScope.ReadProducts,
             };
+
+            if (ProfitWiseConfiguration.Settings.ShopifyApiKey.IsNullOrEmpty())
+            {
+                throw new Exception("Null or empty ShopifyApiKey - please check configuration");
+            }
 
             var authUrl = 
                 ShopifyAuthorizationService.BuildAuthorizationUrl(
@@ -371,7 +377,7 @@ namespace ProfitWise.Web.Controllers
                 url += $"?returnUrl={HttpUtility.UrlEncode(returnUrl)}";
 
                 var shop = returnUrl.ExtractQueryParameter("shop");
-                if (!shop.IsNullOrEmpty())
+                if (!CollectionExtensions.IsNullOrEmpty(shop))
                 {
                     url += $"&shop={shop}";
                     shopParameterExists = true;

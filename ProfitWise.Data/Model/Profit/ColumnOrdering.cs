@@ -1,7 +1,7 @@
 ﻿namespace ProfitWise.Data.Model.Profit
 {
     public enum ColumnOrdering
-    {
+    {        
         ProfitDescending = 1,
         ProfitAscending = 2,
         NetSalesDescending = 3,
@@ -12,5 +12,7 @@
         QuantitySoldAscending = 8,
         AverageMarginDescending = 9,
         AverageMarginAscending = 10,
+        NameDescending = 11,
+        NameAscending = 12,
     };
 }

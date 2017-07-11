@@ -163,7 +163,10 @@
                    id="detail-report-table" style="margin-top: 10px;">
                 <thead>
                 <tr>
-                    <th>Name</th>
+                    <th class="hidden-xs"
+                        data-bind="template: { name: 'Sortable-Column-Header',
+                            data: { ColumnIndex: 6, ColumnName: 'Name', Model: SortingModel } }"></th>
+
                     <th class="hidden-xs"
                         data-bind="template: { name: 'Sortable-Column-Header',
                             data: { ColumnIndex: 0, ColumnName: 'Items Sold', Model: SortingModel } }"></th>
@@ -398,7 +401,7 @@
 
         self.Data = ko.observableArray();
         self.Grouping = ko.observable('@ReportGrouping.Product');
-        
+
         self.GroupDescription = ko.computed(function() {
             if (self.Grouping() == '@ReportGrouping.Product') {
                 return "Product";
@@ -450,6 +453,8 @@
                 return descending ? '@ColumnOrdering.ProfitDescending' : '@ColumnOrdering.ProfitAscending';
             if (index == 5)
                 return descending ? '@ColumnOrdering.ProfitDescending' : '@ColumnOrdering.ProfitAscending';
+            if (index == 6)
+                return descending ? '@ColumnOrdering.NameDescending' : '@ColumnOrdering.NameAscending';
 
             return '@ColumnOrdering.ProfitDescending';
         });
@@ -468,7 +473,7 @@
                     //console.log(data);
                 });
         }
-        
+
         var tourStateJs = @Html.Raw(Context.CurrentUserTourStateJson());
 
         self.LoadDataset = function (reportId, callback) {
@@ -492,11 +497,11 @@
 
                     ProfitWiseWidgets.LoadColumnChart(
                         '#column-chart-detail', 'Profitability', data.series, null, data.currency, self.Drilldown);
-                    
+
                     var showProfitabilityDetail = @TourIdentifiers.ShowProfitabilityDetail;
 
                     if (tourStateJs[showProfitabilityDetail]) {
-                        ProfitWiseFunctions.ShowTour(showProfitabilityDetail);                        
+                        ProfitWiseFunctions.ShowTour(showProfitabilityDetail);
                         ProfitWise.ProfitDetailTour.start();
                         tourStateJs[showProfitabilityDetail] = false;
                     }
@@ -546,7 +551,7 @@
                 self.ProfitabilityDetailContext.LoadDataset(reportId, callback);
             }
         };
-
+        
         self.ExportDetailCallback = function (downloadIframeId) {
             var url = ProfitWiseConfig.BaseUrl + "/ProfitService/ExportDetail?" +
                 "reportId=" + self.ReportId() + "&" +
