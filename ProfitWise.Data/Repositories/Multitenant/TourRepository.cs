@@ -18,13 +18,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper = connectionWrapper;
         }
 
-        public void Insert()
-        {
-            var query = @"INSERT INTO tour(@PwShopId) VALUES (
-                            @PwShopId, 1, 1, 1, 1,  1, 1, 1, 1 )";
-            _connectionWrapper.Execute(query, new { PwShop.PwShopId });
-        }
-
         public PwTourState Retreive()
         {
             var query = @"SELECT * FROM tour(@PwShopId);";

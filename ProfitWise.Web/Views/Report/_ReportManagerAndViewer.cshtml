@@ -606,6 +606,7 @@
                     var settings = new ProfitWiseFunctions.AjaxSettings();
                     settings.UseSpinner = false;
                     settings.ErrorCallbackFunction = null;
+
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
                     ajax.HttpPost("/ReportService/Accessed", { reportId: reportId }, this);
                 },

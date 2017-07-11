@@ -155,5 +155,13 @@ namespace ProfitWise.Data.Repositories.System
                     .Query<PwTourState>(query, new { pwShopId })
                     .FirstOrDefault();
         }
+
+        public void InsertTour(int pwShopId)
+        {
+            var query = @"INSERT INTO tour(@PwShopId) VALUES (
+                            @PwShopId,   1, 1, 1,   1, 1, 1,   1, 1, 1 )";
+            _connectionWrapper.Execute(query, new { pwShopId });
+        }
+
     }
 }

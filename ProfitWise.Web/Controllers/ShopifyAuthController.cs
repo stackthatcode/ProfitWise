@@ -157,7 +157,7 @@ namespace ProfitWise.Web.Controllers
 
         private async Task<ApplicationUser> UpsertAspNetUserAcct(ProfitWiseSignIn signin)
         {
-            // FYI, UserName == Domain
+            // FYI, UserName == Shopify Shop Domain
             try
             {
                 var existingUser = await _userManager.FindByNameAsync(signin.AspNetUserName);

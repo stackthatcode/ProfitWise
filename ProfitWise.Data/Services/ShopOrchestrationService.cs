@@ -85,7 +85,10 @@ namespace ProfitWise.Data.Services
                 shopOwnerUserId, shop.Id, currencyId, shop.TimeZoneIana, shop.Domain, orderDatasetStartDate);
 
             newShop.PwShopId = _shopRepository.Insert(newShop);
-            _logger.Info($"Created new Shop - UserId: {newShop.ShopOwnerUserId}");
+            _logger.Info($"Created new Shop: {newShop.PwShopId} - UserId: {newShop.ShopOwnerUserId}");
+
+            _shopRepository.InsertTour(newShop.PwShopId);
+            _logger.Debug($"Created Tour for Shop {newShop.PwShopId}");
 
             // Create the Batch State for Shop
             var profitWiseBatchStateRepository = _factory.MakeBatchStateRepository(newShop);

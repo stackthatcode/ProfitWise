@@ -23,10 +23,9 @@ namespace ProfitWise.Web.Attributes
 
                 var message = "URL:" + filterContext.HttpContext.Request.Url + " - " +
                               "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest();
-                if (identity != null)
-                {
-                    message += " - PwShopId: " + identity.PwShop.PwShopId;
-                }
+
+                message += " - PwShopId: ";
+                message += identity?.PwShop.PwShopId.ToString() ?? "(No Shop Id)";
 
                 logger.Error(message);
                 logger.Error(filterContext.Exception);
