@@ -32,7 +32,7 @@ namespace ProfitWise.Data.Services
 
 
         private static readonly int _orderStartOffsetMonths = 
-                ConfigurationManager.AppSettings.GetAndTryParseAsInt("InitialOrderStartDateOffsetMonths", 3);
+                ConfigurationManager.AppSettings.GetAndTryParseAsInt("InitialOrderStartDateOffsetMonths", 24);
 
         private static readonly bool TestRecurringCharges =
                 ConfigurationManager.AppSettings.GetAndTryParseAsBool("TestRecurringCharges", false);
