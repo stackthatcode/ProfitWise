@@ -43,10 +43,11 @@ namespace ProfitWise.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string shopName)
+        public ActionResult ExternalLogin(string shop)
         {
-            return RedirectToAction("Login", "ShopifyAuth", new {shop = shopName});
+            return RedirectToAction("Login", "ShopifyAuth", new {shop});
         }
+
 
         // POST: /AdminAuth/Login
         [HttpPost]

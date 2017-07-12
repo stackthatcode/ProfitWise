@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Web.Models
+﻿@using Microsoft.Owin.Security
+@using ProfitWise.Web.Models
 @model LoginViewModel
 
 <div class="admin-arena">
@@ -41,7 +42,7 @@
 
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Log in" class="btn btn-default"/>
+                        <input type="submit" value="Login to ProfitWise Admin" class="btn btn-default"/>
                     </div>
                 </div>
 
@@ -58,9 +59,22 @@
         </div>
 
         <div class="col-md-5">
-            <section id="socialLoginForm">
-                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel {ReturnUrl = ViewBag.ReturnUrl})
-            </section>
+            @using (Html.BeginForm("ExternalLogin", "AdminAuth"))
+            {
+                @Html.AntiForgeryToken()
+                <h4>Login to ProfitWise as a Shop</h4>
+                <hr />
+
+                <div id="socialLoginList">
+                    <div class="form-group">
+                        <label>Enter Full Shop Url <span style="font-weight: 400;">e.g. shopname.myshopify.com</span></label>
+                        <input class="form-control" name="shop" id="shop" style="margin-bottom: 8px;" />
+                    </div>
+                    <button type="submit" class="btn btn-default">
+                        Login to ProfitWise
+                    </button>
+                </div>
+            }
         </div>
     </div>
 </div>
