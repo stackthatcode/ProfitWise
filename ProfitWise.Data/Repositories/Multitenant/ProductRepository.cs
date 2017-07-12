@@ -30,23 +30,24 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public IList<PwMasterProduct> RetrieveAllMasterProducts()
         {
             var products = RetrieveAllProducts();
+            var masterProductIds = products.Select(x => x.PwMasterProductId).Distinct();
+            var masterProducts = new List<PwMasterProduct>();
 
-            var masterProducts = 
-                products
-                    .Distinct()    
-                    .Select(masterProduct => new PwMasterProduct
-                    {
-                        PwShopId = this.PwShop.PwShopId,
-                        PwMasterProductId = masterProduct.PwMasterProductId,
-                        Products = products.Where(product => masterProduct.PwMasterProductId == product.PwMasterProductId).ToList()
-                    }).ToList();
-
-            foreach (var masterProduct in masterProducts)
+            foreach (var masterProductId in masterProductIds)
             {
+                var masterProduct = new PwMasterProduct()
+                {
+                    PwShopId = this.PwShopId,
+                    PwMasterProductId = masterProductId,
+                    Products = products.Where(x => x.PwMasterProductId == masterProductId).ToList()
+                };
+
                 foreach (var product in masterProduct.Products)
                 {
                     product.ParentMasterProduct = masterProduct;
                 }
+
+                masterProducts.Add(masterProduct);
             }
 
             return masterProducts;

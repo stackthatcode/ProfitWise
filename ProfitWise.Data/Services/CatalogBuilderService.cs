@@ -225,7 +225,7 @@ namespace ProfitWise.Data.Services
             {
                 return;
             }
-            var primaryVariant = masterVariant.AutoPrimaryVariant();
+            var primaryVariant = masterVariant.AutoSelectPrimary();
 
             primaryVariant.IsPrimary = true;
             masterVariant.Variants.Where(x => x != primaryVariant).ForEach(x => x.IsPrimary = false);

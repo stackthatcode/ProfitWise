@@ -23,7 +23,8 @@ namespace ProfitWise.Web.Controllers
         public AdminAuthController(
                 ApplicationUserManager userManager, 
                 ApplicationSignInManager signInManager,
-                AdminRepository adminRepository, IShopifyCredentialService shopifyCredentialService)
+                AdminRepository adminRepository, 
+                IShopifyCredentialService shopifyCredentialService)
         {
             _userManager = userManager;
             _signInManager = signInManager;

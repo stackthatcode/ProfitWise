@@ -150,6 +150,8 @@
                        data-bind="click: function() { $root.ScheduleRoutineRefresh(user.UserId); }">Schedule Routine Refresh</a>
                     <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
                        data-bind="click: function() { $root.SingleOrderRefresh(user.UserId); }">Single Order Refresh</a>
+                    <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
+                       data-bind="click: function() { $root.ForceAllProductsRefresh(user.UserId); }">Force All Products Refresh</a>
                 </div>
             </div>
 
@@ -273,30 +275,36 @@
             var url = "/AdminHome/RecreateLedger?userId=" + userId;
             var token = self.AntiForgeryToken();
             var ajax = self.AjaxFactory();
-            ajax.HttpPost(url, { }, function () { alert("Ledger Rebuilt"); }, token);
-        }
+            ajax.HttpPost(url, {}, function () { alert("Ledger Rebuilt"); }, token);
+        };
 
-        self.KillBatchJobs = function(userId) {
+        self.KillBatchJobs = function (userId) {
             var url = "/AdminHome/KillBatchJobs?userId=" + userId;
             var token = self.AntiForgeryToken();
             var ajax = self.AjaxFactory();
             ajax.HttpPost(url, {}, function () { self.RefreshUser(); }, token);
-
-        }
+        };
 
         self.ScheduleInitialRefresh = function (userId) {
             var url = "/AdminHome/ScheduleInitialRefresh?userId=" + userId;
             var token = self.AntiForgeryToken();
             var ajax = self.AjaxFactory();
             ajax.HttpPost(url, {}, function () { self.RefreshUser(); }, token);
-        }
+        };
 
         self.ScheduleRoutineRefresh = function (userId) {
             var url = "/AdminHome/ScheduleRoutineRefresh?userId=" + userId;
             var token = self.AntiForgeryToken();
             var ajax = self.AjaxFactory();
             ajax.HttpPost(url, {}, function () { self.RefreshUser(); }, token);
-        }
+        };
+        
+        self.ForceAllProductsRefresh = function (userId) {
+            var url = "/AdminHome/ForceAllProductsRefresh?userId=" + userId;
+            var token = self.AntiForgeryToken();
+            var ajax = self.AjaxFactory();
+            ajax.HttpPost(url, {}, function () { alert("All Products will be Refreshed with next Shop Refresh") }, token);
+        };
 
         self.SingleOrderRefresh = function (userId) {
             var orderId = prompt("Please enter Order Id");

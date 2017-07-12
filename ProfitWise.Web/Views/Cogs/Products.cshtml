@@ -129,7 +129,8 @@
                     <td class="overflow-gracefully">
                         <a href="#" class="link-to-cogs-detail"
                            data-bind="text: ProductTitle, click: $root.DrilldownToCogsEditor,
-                                     tooltip: { title: ProductTitle, placement: 'bottom' }"></a>
+                                     tooltip: { title: function() { return ProductTitle + ' - (MPID: ' + PwMasterProductId + ')'; }, 
+                                                placement: 'bottom' }"></a>
                             @if (HttpContext.Current.AuthenticatedContext().IsImpersonated)
                             {
                                 <span>MPID</span>

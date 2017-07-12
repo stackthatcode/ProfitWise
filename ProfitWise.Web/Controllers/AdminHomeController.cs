@@ -176,6 +176,18 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult ForceAllProductsRefresh(string userId)
+        {
+            var pwShop = _shopRepository.RetrieveByUserId(userId);
+            var batchRepository = _factory.MakeBatchStateRepository(pwShop);
+            var state = batchRepository.Retrieve();
+            state.ProductsLastUpdated = null;
+            batchRepository.Update(state);
+            return JsonNetResult.Success();
+        }
+
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken]

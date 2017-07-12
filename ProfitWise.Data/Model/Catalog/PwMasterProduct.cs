@@ -49,13 +49,12 @@ namespace ProfitWise.Data.Model.Catalog
             product.IsPrimary = true;
         }
 
-        public PwProduct WhichProductIsPrimary()
+        public PwProduct AutoSelectPrimary()
         {
-            if (Products.Count(x => x.IsPrimary) > 1 ||
-                Products.Count(x => x.IsPrimaryManual) > 1)
+            if (Products.Count(x => x.IsPrimary && x.IsPrimaryManual) > 1)
             {
                 var msg = $"Inconsistent data - Master Product {PwMasterProductId} " +
-                            $"has more than one Primary / PrimaryManual Products";
+                            $"has more than one PrimaryManual Products";
                 throw new Exception(msg);
             }
 
@@ -84,7 +83,7 @@ namespace ProfitWise.Data.Model.Catalog
                 return;
             }
 
-            var primaryProduct = WhichProductIsPrimary();
+            var primaryProduct = AutoSelectPrimary();
             primaryProduct.IsPrimary = true;
             Products.Where(x => x != primaryProduct).ForEach(x => x.IsPrimary = false);
         }

@@ -64,13 +64,12 @@ namespace ProfitWise.Data.Model.Catalog
             return Variants.FirstOrDefault(x => x.PwVariantId == pwVariantId);
         }
 
-        public PwVariant AutoPrimaryVariant()
+        public PwVariant AutoSelectPrimary()
         {
-            if (Variants.Count(x => x.IsPrimary) > 1 ||
-                Variants.Count(x => x.IsPrimaryManual) > 1)
+            if (Variants.Count(x => x.IsPrimary && x.IsPrimaryManual) > 1)
             {
                 var msg = $"Inconsistent data - Master Variant {PwMasterVariantId} " +
-                            $"has more than one Primary / PrimaryManual Variant";
+                            $"has more than one PrimaryManual Variant";
                 throw new Exception(msg);
             }
 

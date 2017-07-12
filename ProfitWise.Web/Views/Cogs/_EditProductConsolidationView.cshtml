@@ -106,7 +106,9 @@
                 <tbody>
                 <tr class="consol-primary active ">
                     <td>
-                        <span data-bind="text: Title, tooltip: { title: Title }"></span>
+                        <span data-bind="text: Title, tooltip: { 
+                                        title: function() { return Title + ' (SPID: ' + ShopifyProductId + ')'; }
+                                      }"></span>
                     </td>
 
                     <td><span data-bind="text: VendorText"></span></td>
@@ -119,7 +121,8 @@
                 <!-- ko foreach: Consolidations -->
                 <tr>
                     <td class="overflow-gracefully">
-                        <span data-bind="text: Title, tooltip: { title: Title }"></span>
+                        <span data-bind="text: Title, tooltip: {
+                                        title: function() { return Title + ' (SPID: ' + ShopifyProductId + ')'; } }"></span>
                     </td>
                     <td><span data-bind="text: VendorText"></span></td>
                     <td><span data-bind="text: ActiveText"></span></td>

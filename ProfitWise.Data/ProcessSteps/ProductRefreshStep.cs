@@ -164,13 +164,14 @@ namespace ProfitWise.Data.ProcessSteps
                     $"and ShopifyProductId: {context.ShopifyProductId}");
 
                 product = service.CreateProductAndAssignToMaster(context, masterProduct);
-                service.UpdateActiveProductAcrossCatalog(context);
             }
             else
             {
                 service.UpdateProduct(context, product);
             }
 
+            // Not super-performant, but gets the job done (right)
+            service.UpdateActiveProductAcrossCatalog(context);
             return product;
         }
 
