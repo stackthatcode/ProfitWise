@@ -166,10 +166,14 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public void RefreshEntryLedger(EntryRefreshContext context)
         {
-            var query = InsertLineItemEntriesQuery(context) +
-                        InsertRefundEntriesQuery(context) +
-                        InsertAdjustmentEntriesQuery(context);
+            var query = InsertLineItemEntriesQuery(context);
             ExecuteLedgeQuery(context, query);
+
+            var query2 = InsertRefundEntriesQuery(context);
+            ExecuteLedgeQuery(context, query2);
+
+            var query3 = InsertAdjustmentEntriesQuery(context);
+            ExecuteLedgeQuery(context, query3);
         }
 
         private void ExecuteLedgeQuery(EntryRefreshContext context, string query)

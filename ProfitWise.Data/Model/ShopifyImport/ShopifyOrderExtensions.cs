@@ -150,7 +150,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
             // Monumentally important => uses Date-only from Shopify Shop timezone
             newRefund.RefundDate = refundLineFromShopify.ParentRefund.CreatedAtShopTz.Date;
-
+            
             newRefund.OrderLineItem = parentLineItem;
             newRefund.Amount = refundLineFromShopify.SubTotal;
             newRefund.RestockQuantity = refundLineFromShopify.RestockQuantity;

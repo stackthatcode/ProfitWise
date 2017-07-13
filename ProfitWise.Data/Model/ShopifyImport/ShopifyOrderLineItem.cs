@@ -64,13 +64,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public void SetProfitWiseVariant(PwVariant pwVariant)
         {
             this.PwProductId = pwVariant.PwProductId;
-            this.PwVariantId = pwVariant.PwVariantId;
-
-            foreach (var refund in this.Refunds)
-            {
-                refund.PwProductId = pwVariant.PwProductId;
-                refund.PwVariantId = pwVariant.PwVariantId;
-            }
+            this.PwVariantId = pwVariant.PwVariantId;            
         }
 
         public override string ToString()

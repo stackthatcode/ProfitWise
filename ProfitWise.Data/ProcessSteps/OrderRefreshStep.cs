@@ -350,12 +350,16 @@ namespace ProfitWise.Data.ProcessSteps
                 var existingLineItem =
                     existingOrder.LineItems.First(x => x.ShopifyOrderLineId == importedLineItem.ShopifyOrderLineId);
 
+                importedLineItem.PwProductId = existingLineItem.PwProductId;
+                importedLineItem.PwVariantId = existingLineItem.PwVariantId;
+
                 foreach (var refund in importedLineItem.Refunds)
                 {
                     if (existingLineItem.Refunds.Any(x => x.ShopifyRefundId == refund.ShopifyRefundId))
                     {
                         continue;
                     }
+
                     orderRepository.InsertRefund(refund);
                 }
             }

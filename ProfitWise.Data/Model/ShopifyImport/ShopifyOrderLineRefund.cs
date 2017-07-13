@@ -11,8 +11,8 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public long ShopifyOrderLineId { get; set; }
         public ShopifyOrderLineItem OrderLineItem { get; set; }
 
-        public long PwProductId { get; set; }
-        public long PwVariantId { get; set; }
+        public long? PwProductId => OrderLineItem.PwProductId;
+        public long? PwVariantId => OrderLineItem.PwVariantId;
 
         public DateTime RefundDate { get; set; }
         public decimal Amount { get; set; }
