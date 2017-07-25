@@ -151,24 +151,24 @@
 
         <div class="float-left-mobile">
             <a href="#" id="edit-filters-button" class="btn btn-default report-viewer-top-button" 
-               style="width:140px;" data-bind="click: EditReportClick">
-                Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
+               style="width:110px;" data-bind="click: EditReportClick">
+                Edit Filters <i class="glyphicon glyphicon-filter"></i>
             </a>
         </div>
         <!-- ko if: ClearFiltersVisible -->
-        <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
+        <div class="float-left-mobile" style="width:5px;">&nbsp;</div>
         <div class="float-left-mobile">
             <a href="#" id="clear-filters-button" class="btn btn-default report-viewer-top-button"
-               style="width:140px;" data-bind="click: ClearFiltersClick">
-                Clear Filters &nbsp;<i class="glyphicon glyphicon-remove"></i>
+               style="width:115px;" data-bind="click: ClearFiltersClick">
+                Clear Filters <i class="glyphicon glyphicon-remove"></i>
             </a>
         </div>
         <!-- /ko -->       
           
         <!-- ko if: ReportInterfaceModel.ExportVisible -->
-        <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
+        <div class="float-left-mobile" style="width:5px;">&nbsp;</div>
         <div class="float-left-mobile">
-            <a href="#" id="export-button"
+            <a href="#" id="export-button" style="width:90px;" 
                data-bind="click: ReportInterfaceModel.ExportCallback" 
                class="btn btn-default report-viewer-top-button">
                 <i class="glyphicon glyphicon-download-alt"></i> Export
