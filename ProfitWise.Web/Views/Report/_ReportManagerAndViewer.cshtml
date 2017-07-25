@@ -148,13 +148,23 @@
             </div>
         </div>
         <div style="clear: both; height: 10px;"></div>
+
         <div class="float-left-mobile">
             <a href="#" id="edit-filters-button" class="btn btn-default report-viewer-top-button" 
-               style="width:145px;" data-bind="click: EditReportClick">
+               style="width:140px;" data-bind="click: EditReportClick">
                 Edit Filters &nbsp;<i class="glyphicon glyphicon-filter"></i>
             </a>
         </div>
-                    
+        <!-- ko if: ClearFiltersVisible -->
+        <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
+        <div class="float-left-mobile">
+            <a href="#" id="clear-filters-button" class="btn btn-default report-viewer-top-button"
+               style="width:140px;" data-bind="click: ClearFiltersClick">
+                Clear Filters &nbsp;<i class="glyphicon glyphicon-remove"></i>
+            </a>
+        </div>
+        <!-- /ko -->       
+          
         <!-- ko if: ReportInterfaceModel.ExportVisible -->
         <div class="float-left-mobile" style="width:7px;">&nbsp;</div>
         <div class="float-left-mobile">
@@ -305,6 +315,18 @@
                 }
             );
         };
+        
+        self.ClearFilters = function(callback) {
+            flow.exec(
+                function() {                    
+                    var ajax = new ProfitWiseFunctions.Ajax();
+                    ajax.HttpPost("/FilterService/RemoveAllFilters", 
+                                { reportId: self.ReportId() }, this);
+                },
+                function() {
+                    self.LoadReport(self.ReportId());
+                });
+        };
 
         self.PopulateModel = function(data) {
             var current = data.current;
@@ -361,7 +383,7 @@
                     var ajax = new ProfitWiseFunctions.Ajax();
                     ajax.HttpGet("/ReportService/Report?reportId=" + reportId, this);
                 },
-                function (data) {
+                function (data) {                    
                     self.PopulateModel(data);
                     self.ProductCountModel.Refresh(this);
                 },
@@ -571,6 +593,20 @@
                 },
                 function() {
                     self.EditReportCallback(self.ReportInterfaceModel.ReportId());
+                });
+        };
+        
+        self.ClearFiltersVisible = ko.computed( function() {
+            return self.ReportInterfaceModel.FilterBullpenModel.FilterCount() > 0;
+        });
+
+        self.ClearFiltersClick = function() {
+            flow.exec(
+                function() {
+                    self.ReportInterfaceModel.MakeCopyForEditing(this);
+                }, 
+                function() {
+                    self.ReportInterfaceModel.ClearFilters();
                 });
         };
 

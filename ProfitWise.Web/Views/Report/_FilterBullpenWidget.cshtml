@@ -84,6 +84,10 @@
                 .toArray();
         };
         
+        self.FilterCount = ko.computed(function () {
+            return self.FiltersGrid().length;
+            });
+
         self.ProductTypesGrid = ko.computed(
             function () { return self.GetFiltersByType(ProfitWiseWidgets.ProductTypeFilter); });
         self.VendorsGrid = ko.computed(

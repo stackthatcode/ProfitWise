@@ -221,6 +221,15 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
+
+        [HttpPost]
+        public ActionResult RemoveAllFilters(long reportId)
+        {
+            var userIdentity = HttpContext.IdentitySnapshot();
+            var repository = _factory.MakeReportFilterRepository(userIdentity.PwShop);
+            repository.DeleteFilters(reportId);
+            return JsonNetResult.Success();
+        }
     }
 }
 
