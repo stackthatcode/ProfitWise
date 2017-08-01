@@ -44,7 +44,8 @@ namespace ProfitWise.Web.Controllers
         private readonly ShopRepository _shopRepository;
         private readonly IPushLogger _logger;
         private readonly HmacCryptoService _hmacCryptoService;
-        private readonly ApiRepositoryFactory _factory;    
+        private readonly ApiRepositoryFactory _factory;
+        private readonly CurrencyService _currencyService;
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
@@ -56,7 +57,8 @@ namespace ProfitWise.Web.Controllers
                 IPushLogger logger, 
                 ShopRepository shopRepository, 
                 HmacCryptoService hmacCryptoService, 
-                ApiRepositoryFactory factory)
+                ApiRepositoryFactory factory,
+                CurrencyService currencyService)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
@@ -67,6 +69,7 @@ namespace ProfitWise.Web.Controllers
             _shopRepository = shopRepository;
             _hmacCryptoService = hmacCryptoService;
             _factory = factory;
+            _currencyService = currencyService;
             _shopOrchestrationService = shopSynchronizationService;
         }
 
@@ -104,7 +107,6 @@ namespace ProfitWise.Web.Controllers
 
             return Redirect(authUrl.ToString());
         }
-
         
         [AllowAnonymous]
         public async Task<ActionResult> ShopifyReturn(string code, string shop, string returnUrl)
@@ -115,14 +117,20 @@ namespace ProfitWise.Web.Controllers
             {
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
             }
-            
+
+            // Redirect to error page for invalid currency
+            if (!_currencyService.CurrencyExists(profitWiseSignIn.Shop.Currency))
+            {
+                return GlobalConfig.Redirect(AuthConfig.UnsupportedCurrency, returnUrl);
+            }
+
             // Create User
             ApplicationUser user = await UpsertAspNetUserAcct(profitWiseSignIn);
             if (user == null)
             {
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
             }
-
+            
             // Create/Update the Shop
             PwShop profitWiseShop = UpsertProfitWiseShop(profitWiseSignIn, user);
             if (profitWiseShop == null)
@@ -322,6 +330,16 @@ namespace ProfitWise.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        public ActionResult UnsupportedCurrency(string returnUrl)
+        {
+            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            Response.SuppressFormsAuthenticationRedirect = true;
+            Response.TrySkipIisCustomErrors = true;
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         public ActionResult ExternalLoginFailure(string returnUrl)
         {
             var msg = "It appears that something went wrong while authorizing your Shopify Account.";
@@ -362,8 +380,11 @@ namespace ProfitWise.Web.Controllers
         }
 
         private ActionResult AuthorizationProblem(
-                string returnUrl, string title, string message, 
-                bool showLoginLink = false, bool showBrowserWarning = false)
+                string returnUrl, 
+                string title, 
+                string message, 
+                bool showLoginLink = false, 
+                bool showBrowserWarning = false)
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             Response.SuppressFormsAuthenticationRedirect = true;

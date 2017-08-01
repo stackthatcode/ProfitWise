@@ -199,5 +199,11 @@ namespace ProfitWise.Data.Services
         {
             return CurrencyCache.Exists(x => x.CurrencyId == currencyId);
         }
+
+        public bool CurrencyExists(string abbr)
+        {
+            return CurrencyCache.Exists(x => x.Abbreviation == abbr);
+        }
     }
 }
+

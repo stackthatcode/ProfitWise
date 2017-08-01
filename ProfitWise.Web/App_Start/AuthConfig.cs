@@ -27,8 +27,12 @@ namespace ProfitWise.Web
     public class AuthConfig
     {
         // For Convenient Access
+        // *** CRITICAL NOTE => Every URL described here must be added to the 
+        // ... AuthorizationProblemUrls below to circumvent MVC's quirky behavior
+        // ... that auto redirects on detecting its *own* HTTP 401
         public const string UnauthorizedAccessUrl = "/ShopifyAuth/UnauthorizedAccess";
         public const string ExternalLoginFailureUrl = "/ShopifyAuth/ExternalLoginFailure";
+        public const string UnsupportedCurrency = "/ShopifyAuth/UnsupportedCurrency";
         public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
         public const string SevereAuthorizationFailureUrl = "/ShopifyAuth/SevereAuthorizationFailure";
         public const string BillingProblemUrl = "/ShopifyAuth/BillingProblem";
@@ -40,9 +44,10 @@ namespace ProfitWise.Web
             var authorizationProblemUrls = new[]
             {
                 AuthConfig.UnauthorizedAccessUrl,
-                AuthConfig.SevereAuthorizationFailureUrl,
-                AuthConfig.AccessTokenRefreshUrl,
                 AuthConfig.ExternalLoginFailureUrl,
+                AuthConfig.UnsupportedCurrency,
+                AuthConfig.AccessTokenRefreshUrl,
+                AuthConfig.SevereAuthorizationFailureUrl,
                 AuthConfig.BillingProblemUrl,
                 AuthConfig.BillingIncomplete,
             };
