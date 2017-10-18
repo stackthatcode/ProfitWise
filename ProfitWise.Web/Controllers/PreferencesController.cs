@@ -17,17 +17,20 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
         private readonly ShopRepository _shopRepository;
+        private readonly ShopOrchestrationService _shopOrchestrationService;
         private readonly IPushLogger _logger;
         private readonly TimeZoneTranslator _timeZoneTranslator;
         
         public PreferencesController(
                 MultitenantFactory factory, 
                 ShopRepository shopRepository, 
+                ShopOrchestrationService shopOrchestrationService,
                 IPushLogger logger,
                 TimeZoneTranslator timeZoneTranslator)
         {
             _factory = factory;
             _shopRepository = shopRepository;
+            _shopOrchestrationService = shopOrchestrationService;
             _logger = logger;
             _timeZoneTranslator = timeZoneTranslator;
         }
@@ -92,10 +95,18 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
-
-        [HttpGet]
+        [HttpPost]
         public ActionResult StoreDataReady()
         {
+            var shop = HttpContext.IdentitySnapshot().PwShop;
+            var batchRepository = _factory.MakeBatchStateRepository(shop);
+
+            var batchState = batchRepository.Retrieve();
+            if (batchState.HasNoShopRefreshJobs)
+            {
+                _shopOrchestrationService.EnsureInitialShopRefreshScheduled(shop.ShopOwnerUserId);
+            }
+
             var storeDataLoaded = this.HttpContext.IdentitySnapshot().PwShop.IsDataLoaded;
             return new JsonNetResult(new { storeDataLoaded });
         }

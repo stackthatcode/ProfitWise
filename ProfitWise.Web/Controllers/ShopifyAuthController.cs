@@ -282,8 +282,6 @@ namespace ProfitWise.Web.Controllers
         [HttpGet]
         public ActionResult VerifyBilling(string charge_id)
         {
-            // Notice: we don't use charge_id, as we rely on our cookies - maybe we should use charge_id?
-            // ... or if userId is null, Redirect to Login            
             var chargeAccepted = 
                 _shopOrchestrationService.VerifyChargeAndScheduleRefresh(charge_id);            
 

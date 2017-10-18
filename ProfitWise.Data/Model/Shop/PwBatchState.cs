@@ -8,12 +8,11 @@ namespace ProfitWise.Data.Model.Shop
         public DateTime? ProductsLastUpdated { get; set; }
         public DateTime? OrderDatasetStart { get; set; }
         public DateTime? OrderDatasetEnd { get; set; }
-
-
+        
         public string InitialRefreshJobId { get; set; }
         public string RoutineRefreshJobId { get; set; }
-
-
+        public bool HasNoShopRefreshJobs => InitialRefreshJobId == null && RoutineRefreshJobId == null;
+        
         public override string ToString()
         {
             return 

@@ -7,10 +7,8 @@
 
 <script type="text/html" id="Welcome-Page">
     <div class="system-page" style="text-align: center;">
-
         <div style="max-width: 500px; margin-left: auto; margin-right: auto;">
-            <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg"
-                 class="img-responsive" />
+            <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg" class="img-responsive" />
         </div>
 
         <div class="top-spacer"></div>
@@ -78,16 +76,15 @@
                     settings.UseSpinner = false;
                     settings.ErrorCallbackFunction = null;
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpGet("/Preferences/StoreDataReady", this);
+                    ajax.HttpPost("/Preferences/StoreDataReady", {}, this);
                 },
                 function (data) {
-                    // console.log(data);
                     self.StoreDataLoaded(data.storeDataLoaded);
                 });
         };
 
         self.Initialize = function() {
-            var pingInteralMilliseconds = 5000; // Please do not change!
+            var pingInteralMilliseconds = 15000; // Please do not change!
             setInterval(self.CheckStoreDataLoaded, pingInteralMilliseconds);
         };
 

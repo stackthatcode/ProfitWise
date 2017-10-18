@@ -27,7 +27,6 @@ namespace ProfitWise.Data.Services
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly HangFireService _hangFireService;
         private readonly IShopifyCredentialService _credentialService;
-        private readonly TimeZoneTranslator _timeZoneTranslator;
         private readonly IPushLogger _logger;
 
 
@@ -64,7 +63,6 @@ namespace ProfitWise.Data.Services
             _apifactory = apifactory;
             _hangFireService = hangFireService;
             _credentialService = credentialService;
-            _timeZoneTranslator = timeZoneTranslator;
         }
 
         public IDbTransaction InitiateTransaction()
@@ -245,6 +243,16 @@ namespace ProfitWise.Data.Services
             return currentCharge;
         }
 
+        public void EnsureInitialShopRefreshScheduled(string userId)
+        {
+            // Protective measure to prevent multiple background updates
+            _hangFireService.KillInitialRefresh(userId);
+            _hangFireService.KillRoutineRefresh(userId);
+
+            // ... and finally schedule an immediate update
+            _hangFireService.AddOrUpdateInitialShopRefresh(userId);
+        }
+
         public bool VerifyChargeAndScheduleRefresh(string chargeId)
         {
             // Synchronize the Charge record in ProfitWise with Shopify API
@@ -254,12 +262,7 @@ namespace ProfitWise.Data.Services
             // The Shop should reflect the status
             if (billingIsValid)
             {
-                // Protective measure to prevent multiple background updates
-                _hangFireService.KillInitialRefresh(shop.ShopOwnerUserId);
-                _hangFireService.KillRoutineRefresh(shop.ShopOwnerUserId);
-
-                // ... and finally schedule an immediate update
-                _hangFireService.AddOrUpdateInitialShopRefresh(shop.ShopOwnerUserId);
+                EnsureInitialShopRefreshScheduled(shop.ShopOwnerUserId);
                 return true;
             }
             else

@@ -23,7 +23,7 @@
                     settings.UseSpinner = false;
                     settings.ErrorCallbackFunction = null;
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
-                    ajax.HttpGet("/Preferences/StoreDataReady", this);
+                    ajax.HttpPost("/Preferences/StoreDataReady", {}, this);
                 },
                 function (data) {
                     isDataLoaded = data.storeDataLoaded;
@@ -39,7 +39,7 @@
                 });
         };
 
-        var pingInteralMilliseconds = 5000; // Please do not change!
+        var pingInteralMilliseconds = 15000; // Please do not change!
         setInterval(checkStoreDataLoaded, pingInteralMilliseconds);
     });
 </script>
