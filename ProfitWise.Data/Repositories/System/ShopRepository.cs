@@ -45,6 +45,16 @@ namespace ProfitWise.Data.Repositories.System
                 .FirstOrDefault();
         }
 
+        public PwShop RetrieveShopByRecurringChargeId(string chargeId)
+        {
+            var query = @"SELECT * FROM vw_profitwiseshop WHERE PwShopId IN 
+                        ( SELECT PwShopId FROM profitwiserecurringcharge 
+                        WHERE ShopifyRecurringChargeId = @chargeId );";
+
+            return _connectionWrapper.Query<PwShop>(query, new { chargeId }).FirstOrDefault();
+        }
+
+
         public int Insert(PwShop shop)
         {
             var query =

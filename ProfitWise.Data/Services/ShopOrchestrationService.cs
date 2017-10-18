@@ -143,10 +143,9 @@ namespace ProfitWise.Data.Services
                 _shopRepository.UpdateShopifyUninstallId(credentials.ShopOwnerUserId, webhook.Id);
             }
         }
-
-
+        
         // Recurring Application Charge methods
-        public static RecurringApplicationCharge MakeCharge()
+        public static RecurringApplicationCharge RecurringChargeFactory()
         {
             var charge = new RecurringApplicationCharge()
             {
@@ -163,12 +162,12 @@ namespace ProfitWise.Data.Services
             var credentials = _credentialService.Retrieve(userId).ToShopifyCredentials();
             var repository = _apifactory.MakeRecurringApiRepository(credentials);
             var shop = _shopRepository.RetrieveByUserId(userId);
+            var billingRepository = _factory.MakeBillingRepository(shop);
 
             // Invoke Shopify API to create the Recurring Application Charge
-            var chargeParameter = MakeCharge();
+            var chargeParameter = RecurringChargeFactory();
             chargeParameter.return_url = returnUrl;
-
-            var billingRepository = _factory.MakeBillingRepository(shop);
+            
             if (shop.TempFreeTrialOverride.HasValue)
             {
                 // If a Free Trial Override has been set, then use that
@@ -179,11 +178,14 @@ namespace ProfitWise.Data.Services
                 // If this has been a previous User, set the Trial to 0
                 chargeParameter.trial_days = 0;
             }
+
+            // Create Recurring Charge in Shopify API
             var apiChargeResult = repository.UpsertCharge(chargeParameter);
 
-            // Write a record in ProfitWise's Recurring Charge table
+            // Save to Recurring Charge to ProfitWise SQL
             using (var transaction = billingRepository.InitiateTransaction())
             {
+                // Clear out the old Temp Free Trial
                 _shopRepository.UpdateTempFreeTrialOverride(shop.PwShopId, null);
 
                 var nextChargeId = billingRepository.RetrieveNextKey();
@@ -198,13 +200,18 @@ namespace ProfitWise.Data.Services
                     LastJson = apiChargeResult.SerializeToJson(),
                 };
                 billingRepository.Insert(profitWiseCharge);
-                // Important: Update Primary to nuke the previous Charge
+                
+                // Important: Update Primary to reflect the newest Charge
                 billingRepository.UpdatePrimary(nextChargeId);
                 transaction.Commit();
+
+                _logger.Info($"Created new Recurring Charge ({nextChargeId} for PwShopId={shop.PwShopId}");
                 return profitWiseCharge;
             }
         }
 
+        // If there's an existing Recurring Charge (IsPrimary = true), this method will invoke the
+        // ... Shopify API and pull down latest data therefrom
         public PwRecurringCharge SyncAndRetrieveCurrentCharge(string userId)
         {
             var shopifyFromClaims = _credentialService.Retrieve(userId);
@@ -215,6 +222,7 @@ namespace ProfitWise.Data.Services
             var shop = _shopRepository.RetrieveByUserId(userId);
             var billingRepository = _factory.MakeBillingRepository(shop);
 
+            // Get the current ProfitWise Charge from SQL
             var currentCharge = billingRepository.RetrieveCurrent();
             if (currentCharge == null)
             {
@@ -228,7 +236,7 @@ namespace ProfitWise.Data.Services
                 return null;
             }
 
-            // Update ProfitWise's local database record
+            // Update ProfitWise's local SQL database record
             currentCharge.ConfirmationUrl = result.confirmation_url;
             currentCharge.LastStatus = result.status.ToChargeStatus();
             currentCharge.LastJson = result.SerializeToJson();
@@ -237,21 +245,21 @@ namespace ProfitWise.Data.Services
             return currentCharge;
         }
 
-        public bool VerifyChargeAndScheduleRefresh(string userId)
+        public bool VerifyChargeAndScheduleRefresh(string chargeId)
         {
             // Synchronize the Charge record in ProfitWise with Shopify API
-            SyncAndRetrieveCurrentCharge(userId);
+            var shop = _shopRepository.RetrieveShopByRecurringChargeId(chargeId);
+            var billingIsValid = SyncAndValidateBilling(shop);
 
             // The Shop should reflect the status
-            var shop = _shopRepository.RetrieveByUserId(userId);
-            if (shop.IsBillingValid)
+            if (billingIsValid)
             {
                 // Protective measure to prevent multiple background updates
-                _hangFireService.KillInitialRefresh(userId);
-                _hangFireService.KillRoutineRefresh(userId);
+                _hangFireService.KillInitialRefresh(shop.ShopOwnerUserId);
+                _hangFireService.KillRoutineRefresh(shop.ShopOwnerUserId);
 
                 // ... and finally schedule an immediate update
-                _hangFireService.AddOrUpdateInitialShopRefresh(userId);
+                _hangFireService.AddOrUpdateInitialShopRefresh(shop.ShopOwnerUserId);
                 return true;
             }
             else
@@ -358,8 +366,7 @@ namespace ProfitWise.Data.Services
 
             billingRepository.Update(charge);
         }
-
-
+        
         // Uninstallation process
         public void UninstallShop(long shopifyShopId)
         {

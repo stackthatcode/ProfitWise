@@ -19,6 +19,8 @@ namespace ProfitWise.Data.Model.Shop
         public bool IsProfitWiseInstalled { get; set; }
         public bool IsBillingValid => LastBillingStatus.IsValid();
 
+        // This property is populated from the data layer via vw_profitwiseshop, which pulls
+        // ... this value from the IsPrimary == true RecurringCharge
         public ChargeStatus? LastBillingStatus { get; set; }
 
         public bool IsDataLoaded { get; set; }

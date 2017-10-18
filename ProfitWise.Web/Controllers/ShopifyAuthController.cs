@@ -256,14 +256,19 @@ namespace ProfitWise.Web.Controllers
 
             if (charge != null && charge.LastStatus == ChargeStatus.Pending)
             {
+                _logger.Info($"User attempting to login with Pending Shopify Charge {charge.PwChargeId}");
+
                 // Redirect for Shopify Charge approval
                 return View("JavaScriptRedirect", 
                     JavaScriptRedirectModel.BuildForChargeConfirm(charge.ConfirmationUrl));
             }
+
             if (charge == null || charge.LastStatus.SystemMustCreateNewCharge())
             {
                 // Create ProfitWise subscription and save
-                var verifyUrl = GlobalConfig.BaseUrl + "/ShopifyAuth/VerifyBilling";
+                var verifyUrl = GlobalConfig.BaseUrl + $"/ShopifyAuth/VerifyBilling";
+
+                // Invoke the Shopify API and save to ProfitWise SQL
                 var newCharge = _shopOrchestrationService.CreateCharge(user.Id, verifyUrl);
 
                 // Redirect for Shopify Charge approval
@@ -278,13 +283,12 @@ namespace ProfitWise.Web.Controllers
         public ActionResult VerifyBilling(string charge_id)
         {
             // Notice: we don't use charge_id, as we rely on our cookies - maybe we should use charge_id?
-            // ... or if userId is null, Redirect to Login
-            _logger.Info(Request.Cookies["Test"] != null ? Request.Cookies["Test"].Value : "No cookie for you!");
+            // ... or if userId is null, Redirect to Login            
+            var chargeAccepted = 
+                _shopOrchestrationService.VerifyChargeAndScheduleRefresh(charge_id);            
 
-            var userId = HttpContext.User.ExtractUserId();
-            var chargeAccepted =_shopOrchestrationService.VerifyChargeAndScheduleRefresh(userId);            
             if (chargeAccepted)
-            {           
+            {
                 return Redirect("~");
             }
             else
