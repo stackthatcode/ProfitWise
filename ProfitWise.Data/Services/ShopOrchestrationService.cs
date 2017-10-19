@@ -138,6 +138,8 @@ namespace ProfitWise.Data.Services
             {
                 var request = Webhook.MakeUninstallHookRequest(WebhookAddress);
                 var webhook = apiRepository.Subscribe(request);
+                _logger.Info($"Created Uninstall Webhook for UserId: {credentials.ShopOwnerUserId}");
+
                 _shopRepository.UpdateShopifyUninstallId(credentials.ShopOwnerUserId, webhook.Id);
             }
         }
