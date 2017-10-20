@@ -2,10 +2,10 @@
 {
     public class ShopifyCredentials
     {
-        public string ShopOwnerUserId { get; set; } // This doesn't belong here!
-
+        public string ShopOwnerUserId { get; set; } // This doesn't belong here! - TODO => substantiate why!
         public string ShopDomain { get; set; }
         public string AccessToken { get; set; }
+
         public string ShopBaseUrl => ShopUrlFromDomain(ShopDomain);
 
 

@@ -120,12 +120,11 @@ namespace ProfitWise.Data.Services
 
 
         // Webhook subscription & maintenance service
-        public void UpsertUninstallWebhook(ShopifyCredentials credentials)
+        public void UpsertUninstallWebhook(string shopOwnerUserId, ShopifyCredentials credentials)
         {
             // Create the Webhook via Shopify API
             var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);
-            var shop = _shopRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
-
+            
             var existingWebhook = apiRepository.Retrieve(Webhook.UninstallTopic, WebhookAddress);
             if (existingWebhook != null)
             {
@@ -138,9 +137,9 @@ namespace ProfitWise.Data.Services
             {
                 var request = Webhook.MakeUninstallHookRequest(WebhookAddress);
                 var webhook = apiRepository.Subscribe(request);
-                _logger.Info($"Created Uninstall Webhook for UserId: {credentials.ShopOwnerUserId}");
+                _logger.Info($"Created Uninstall Webhook for UserId: {shopOwnerUserId}");
 
-                _shopRepository.UpdateShopifyUninstallId(credentials.ShopOwnerUserId, webhook.Id);
+                _shopRepository.UpdateShopifyUninstallId(shopOwnerUserId, webhook.Id);
             }
         }
         
@@ -205,7 +204,7 @@ namespace ProfitWise.Data.Services
                 billingRepository.UpdatePrimary(nextChargeId);
                 transaction.Commit();
 
-                _logger.Info($"Created new Recurring Charge ({nextChargeId} for PwShopId={shop.PwShopId}");
+                _logger.Info($"Created new Recurring Charge (PwChargeId={nextChargeId}) for PwShopId={shop.PwShopId}");
                 return profitWiseCharge;
             }
         }

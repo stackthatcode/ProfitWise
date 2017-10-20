@@ -239,7 +239,7 @@ namespace ProfitWise.Web.Controllers
                 }
 
                 // Ensure that the Uninstall Webhook is in place
-                _shopOrchestrationService.UpsertUninstallWebhook(credentials);
+                _shopOrchestrationService.UpsertUninstallWebhook(user.Id, credentials);
                 return pwShop;
             }
             catch (Exception ex)
