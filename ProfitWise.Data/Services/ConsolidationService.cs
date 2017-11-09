@@ -38,11 +38,6 @@ namespace ProfitWise.Data.Services
             return _connectionWrapper.InitiateTransaction();
         }
         
-        public void CommitTransaction()
-        {
-            _connectionWrapper.CommitTranscation();
-        }
-
         
         
         public void ConsolidateProduct(long inboundProductId, long targetMasterProductId)

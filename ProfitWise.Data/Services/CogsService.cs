@@ -15,7 +15,6 @@ namespace ProfitWise.Data.Services
     [Intercept(typeof(ShopRequired))]
     public class CogsService
     {
-        private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly CurrencyService _currencyService;
         private readonly ConnectionWrapper _connectionWrapper;
@@ -23,10 +22,10 @@ namespace ProfitWise.Data.Services
         public PwShop PwShop { get; set; }
 
         public CogsService(
-                IPushLogger logger, MultitenantFactory multitenantFactory, 
-                CurrencyService currencyService, ConnectionWrapper connectionWrapper)
+                MultitenantFactory multitenantFactory, 
+                CurrencyService currencyService, 
+                ConnectionWrapper connectionWrapper)
         {
-            _pushLogger = logger;
             _multitenantFactory = multitenantFactory;
             _currencyService = currencyService;
             _connectionWrapper = connectionWrapper;

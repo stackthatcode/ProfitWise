@@ -27,12 +27,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             return _connectionWrapper.InitiateTransaction();
         }
-
-        public void CommitTransaction()
-        {
-            _connectionWrapper.CommitTranscation();
-        }
-
+        
 
         // Orders
         public virtual ShopifyOrder RetrieveOrders()

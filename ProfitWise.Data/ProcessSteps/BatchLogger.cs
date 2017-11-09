@@ -1,5 +1,4 @@
 ﻿using System;
-using ProfitWise.Data.Model.Shop;
 using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.ProcessSteps

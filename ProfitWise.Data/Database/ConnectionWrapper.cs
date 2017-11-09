@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Castle.Core.Logging;
 using Dapper;
 
 namespace ProfitWise.Data.Database
@@ -11,11 +12,12 @@ namespace ProfitWise.Data.Database
         public IDbTransaction Transaction { get; private set; }
         public Guid Identifier { get; } = Guid.NewGuid();
         public IDbConnection DbConn => _connection;
+        private readonly ILogger _logger;
 
-
-        public ConnectionWrapper(IDbConnection connection)
+        public ConnectionWrapper(IDbConnection connection, ILogger logger)
         {
             _connection = connection;
+            _logger = logger;
         }
 
         public IDbTransaction InitiateTransaction()

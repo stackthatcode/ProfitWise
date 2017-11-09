@@ -41,12 +41,7 @@ namespace ProfitWise.Data.Services
         {
             return _connectionWrapper.InitiateTransaction();            
         }
-
-        public void CommitTransaction()
-        {
-            _connectionWrapper.CommitTranscation();
-        }
-
+        
         public PwMasterProduct CreateMasterProduct()
         {
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);

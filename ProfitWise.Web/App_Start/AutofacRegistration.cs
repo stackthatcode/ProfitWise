@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -36,9 +37,13 @@ namespace ProfitWise.Web
 
             // Inject configuration after everything else to make sure it overwrites prior registrations
 
-            // Logging
-            LoggerSingleton.Get =
-                NLoggerImpl.LoggerFactory("ProfitWise.Web", ActivityId.MessageFormatter);
+            // Logging - configure to use HTTP context-stored Activity ID
+            Func<string, string> activityIdFormatter = x => ActivityId.Current + "|" + x;
+
+            // The Singleton should only be used by the Application Start and End events
+            // *** FAIL 
+            LoggerSingleton.Get = NLoggerImpl.LoggerFactory("ProfitWise.Web", activityIdFormatter);
+
             builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
 
             // Push.Shopify API registration

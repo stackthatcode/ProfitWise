@@ -32,9 +32,14 @@ namespace ProfitWise.Batch
             // ProfitWise.Data registration - which invokes downstream dependent registrations
             Data.AutofacRegistration.Build(builder);
 
-            // Logging and metering interceptor
-            builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
+            // Sets the logging singleton
+            LoggerSingleton.Get =
+                NLoggerImpl.LoggerFactory(
+                    "ProfitWise.Batch", Formatters.TypeAndMethodNameFormatFactory());
 
+            builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
+            
+            
             // This registration ensures that within a Background Job, always the same logger will be 
             // used - thus the ScopePrefix need only be set once. :-)
             builder.RegisterType<BatchLogger>().InstancePerBackgroundJobIfTrue(runningHangFire);

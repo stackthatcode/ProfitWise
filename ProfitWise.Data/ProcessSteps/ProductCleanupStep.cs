@@ -15,6 +15,7 @@ namespace ProfitWise.Data.ProcessSteps
         private readonly BatchLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly ShopRepository _shopRepository;
+        private readonly object _lock = new object();
 
 
         public ProductCleanupStep(
@@ -49,8 +50,14 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Deletes any childless Master Products or Master Variants
             _pushLogger.Debug($"Deleting Childless Master Products and Master Variants");
-            variantRepository.DeleteChildlessMasterVariants();
-            productRepository.DeleteChildlessMasterProducts();
+
+            // Exclusive lock this section to prevent SQL from deadlocking on 
+            // object-level locks from the DELETE's esp. masterproducts
+            lock (_lock)
+            {
+                variantRepository.DeleteChildlessMasterVariants();
+                productRepository.DeleteChildlessMasterProducts();
+            }
         }
 
         private void RemoveInactiveWithoutReference(

@@ -17,6 +17,7 @@ namespace Push.Foundation.Utilities.Logging
         public NLoggerImpl(string loggerName, Func<string, string> formatter)
         {
             _loggerName = loggerName;
+
             if (formatter != null)
             {
                 _messageFormatter = formatter;
@@ -24,7 +25,7 @@ namespace Push.Foundation.Utilities.Logging
         }
 
         // Get the actual NLog Logger
-        public Logger GetLogger => LogManager.GetLogger(_loggerName);
+        private Logger GetLogger => LogManager.GetLogger(_loggerName);
 
         public bool IsTraceEnabled => GetLogger.IsTraceEnabled;
         public bool IsDebugEnabled => GetLogger.IsDebugEnabled;

@@ -14,13 +14,10 @@ namespace ProfitWise.Batch
         {
             var container = AutofacRegistration.Build(runningHangFire);
 
-            // Logger wiring
-            LoggerSingleton.Get =
-                NLoggerImpl.LoggerFactory(
-                    "ProfitWise.Batch", Formatters.TypeAndMethodNameFormatFactory());
-
-            // HangFire wiring
+            // Connects the Autofac Container directly into HangFire
             GlobalConfiguration.Configuration.UseAutofacActivator(container);
+
+            // HangFireLogProvider 
             LogProvider.SetCurrentLogProvider(new HangFireLogProvider());
             var options = new SqlServerStorageOptions
             {

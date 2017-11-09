@@ -18,10 +18,5 @@ namespace Push.Foundation.Web.Helpers
                 return Guid.Parse(HttpContext.Current.Items[ActivityIdKey].ToString());
             }
         }
-
-        public static string MessageFormatter(string message)
-        {
-            return Current + "|" + (message ?? "");
-        }
     }
 }
