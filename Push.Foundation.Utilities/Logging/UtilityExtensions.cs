@@ -2,7 +2,7 @@
 
 namespace Push.Foundation.Utilities.Logging
 {
-    public static class ExtensionMethods
+    public static class UtilityExtensions
     {
         public static string FullStackTraceDump(this Exception exception)
         {
