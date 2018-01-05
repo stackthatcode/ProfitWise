@@ -8,7 +8,6 @@ using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
-using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Utilities.CastleProxies;
 

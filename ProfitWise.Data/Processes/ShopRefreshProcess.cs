@@ -6,6 +6,7 @@ using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Utility;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.HttpClient;
@@ -23,7 +24,7 @@ namespace ProfitWise.Data.Processes
         private readonly HangFireService _hangFireService;
         private readonly ShopRepository _pwShopRepository;
         private readonly ConnectionWrapper _connectionWrapper;
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
 
         private static readonly 
                 MultitenantMethodLock RefreshLock = new MultitenantMethodLock("ShopRefresh");
@@ -35,7 +36,7 @@ namespace ProfitWise.Data.Processes
                 OrderRefreshStep orderRefreshStep,
                 ProductCleanupStep productCleanupStep,
                 HangFireService hangFireService,
-                BatchLogger logger, 
+                IPushLogger logger, 
                 ShopRepository pwShopRepository,
                 ConnectionWrapper connectionWrapper)
         {

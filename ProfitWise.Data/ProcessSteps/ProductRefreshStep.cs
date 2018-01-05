@@ -7,6 +7,7 @@ using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -16,7 +17,7 @@ namespace ProfitWise.Data.ProcessSteps
 {
     public class ProductRefreshStep
     {
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _configuration;
@@ -29,7 +30,7 @@ namespace ProfitWise.Data.ProcessSteps
         
 
         public ProductRefreshStep(
-                BatchLogger logger,
+                IPushLogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration configuration,

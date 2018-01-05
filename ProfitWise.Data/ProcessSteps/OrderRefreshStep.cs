@@ -8,6 +8,7 @@ using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -17,7 +18,7 @@ namespace ProfitWise.Data.ProcessSteps
 {
     public class OrderRefreshStep
     {
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
         private readonly TimeZoneTranslator _timeZoneTranslator;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
@@ -34,7 +35,7 @@ namespace ProfitWise.Data.ProcessSteps
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration refreshServiceConfiguration,
                 ShopRepository shopRepository,
-                BatchLogger logger,
+                IPushLogger logger,
                 TimeZoneTranslator timeZoneTranslator)
         {
             _pushLogger = logger;

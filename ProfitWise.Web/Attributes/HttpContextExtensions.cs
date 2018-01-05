@@ -6,8 +6,15 @@ namespace ProfitWise.Web.Attributes
 {
     public static class HttpContextExtensions
     {
-        public const string Key = "ProfitWise.CommonContext";        
-        
+        public const string Key = "ProfitWise.CommonContext";
+
+
+        public static string CurrentPwShopId(this HttpContextBase context)
+        {
+            var identity = context.IdentitySnapshot();
+            return identity?.PwShop.PwShopId.ToString();
+        }
+
         public static IdentitySnapshot IdentitySnapshot(this HttpContextBase context)
         {
             var commonContext = context.Items[Key] as AuthenticatedContext;

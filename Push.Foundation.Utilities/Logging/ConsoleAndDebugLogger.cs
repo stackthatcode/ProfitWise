@@ -35,13 +35,13 @@ namespace Push.Foundation.Utilities.Logging
             System.Diagnostics.Debug.WriteLine(message);
         }
 
-        public void Error(string message)
+        public void Error(string message, string userId = null)
         {
             Console.WriteLine(message);
             System.Diagnostics.Debug.WriteLine(message);
         }
 
-        public void Error(Exception exception)
+        public void Error(Exception exception, string userId = null)
         {
             Console.WriteLine(exception.StackTrace);
             System.Diagnostics.Debug.WriteLine(exception.StackTrace);

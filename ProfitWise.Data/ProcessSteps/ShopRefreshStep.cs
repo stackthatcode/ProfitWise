@@ -3,6 +3,7 @@ using System.Configuration;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Helpers;
+using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 
@@ -11,13 +12,13 @@ namespace ProfitWise.Data.ProcessSteps
 {
     public class ShopRefreshService
     {
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
         private readonly ShopRepository _shopDataRepository;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly ShopOrchestrationService _shopOrchestrationService;
 
         public ShopRefreshService(
-                    BatchLogger pushLogger, 
+                    IPushLogger pushLogger, 
                     ShopRepository shopDataRepository,
                     ApiRepositoryFactory apiRepositoryFactory,
                     ShopOrchestrationService shopSynchronizationService)

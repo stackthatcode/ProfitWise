@@ -6,16 +6,12 @@ namespace Push.Foundation.Utilities.Logging
     public class NLogger : IPushLogger
     {
         private readonly Logger _nLoggerReference;
-        private readonly Func<string, string> _messageFormatter = x => x;
-
-        public NLogger(string loggerName, Func<string, string> formatter = null)
+        private readonly ILogFormatter _formatter;
+        
+        public NLogger(string loggerName, ILogFormatter formatter = null)
         {
+            _formatter = formatter ?? new DefaultFormatter();
             _nLoggerReference = LogManager.GetLogger(loggerName);
-
-            if (formatter != null)
-            {
-                _messageFormatter = formatter;
-            }
         }
         
         public bool IsTraceEnabled => _nLoggerReference.IsTraceEnabled;
@@ -28,42 +24,47 @@ namespace Push.Foundation.Utilities.Logging
 
         public void Trace(string message)
         {
-            _nLoggerReference.Trace(_messageFormatter(message));
+            _nLoggerReference.Trace(_formatter.Do(message));
         }
 
         public void Debug(string message)
         {
-            _nLoggerReference.Debug(_messageFormatter(message));
+            _nLoggerReference.Debug(_formatter.Do(message));
         }
 
         public void Info(string message)
         {
-            _nLoggerReference.Info(_messageFormatter(message));
+            _nLoggerReference.Info(_formatter.Do(message));
         }
 
         public void Warn(string message)
         {
-            _nLoggerReference.Warn(_messageFormatter(message));
+            _nLoggerReference.Warn(_formatter.Do(message));
         }
 
-        public void Error(string message)
+        private string UserIdFormatter(string userId)
         {
-            _nLoggerReference.Error(_messageFormatter(message));
+            return userId != null ? $"UserId: {userId}|" : "";
         }
 
-        public void Error(Exception exception)
+        public void Error(string message, string userId = null)
         {
-            _nLoggerReference.Error(_messageFormatter(exception.FullStackTraceDump()));
+            _nLoggerReference.Error(_formatter.Do(UserIdFormatter(userId) + message));
+        }
+
+        public void Error(Exception exception, string userId = null)
+        {
+            _nLoggerReference.Error(_formatter.Do(UserIdFormatter(userId) + exception.FullStackTraceDump()));
         }
 
         public void Fatal(string message)
         {
-            _nLoggerReference.Fatal(_messageFormatter(message));
+            _nLoggerReference.Fatal(_formatter.Do(message));
         }
 
         public void Fatal(Exception exception)
         {
-            _nLoggerReference.Fatal(_messageFormatter(exception.FullStackTraceDump()));
+            _nLoggerReference.Fatal(_formatter.Do(exception.FullStackTraceDump()));
         }
     }
 }
