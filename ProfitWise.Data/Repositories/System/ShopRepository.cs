@@ -82,12 +82,21 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, shop);
         }
 
-        public void UpdateIsAccessTokenValid(int pwShopId, bool isAccessTokenValid)
+        public void IncrementFailedAuthorizationCount(int pwShopId)
         {
             var query = @"UPDATE profitwiseshop 
-                        SET IsAccessTokenValid = @isAccessTokenValid
+                        SET FailedAuthorizationCount = FailedAuthorizationCount + 1
                         WHERE PwShopId = @pwShopId";
-            _connectionWrapper.Execute(query, new { pwShopId, isAccessTokenValid });
+            _connectionWrapper.Execute(query, new { pwShopId });
+        }
+
+        public void UpdateIsAccessTokenValid(int pwShopId, bool isAccessTokenValid)
+        {
+            var query = isAccessTokenValid
+                ? @"UPDATE profitwiseshop SET IsAccessTokenValid = 1, FailedAuthorizationCount = 0 WHERE PwShopId = @pwShopId"
+                : @"UPDATE profitwiseshop SET IsAccessTokenValid = 0 WHERE PwShopId = @pwShopId";
+            
+            _connectionWrapper.Execute(query, new { pwShopId });
         }
 
         public void UpdateIsProfitWiseInstalled(

@@ -44,6 +44,7 @@ namespace ProfitWise.Data.Model.Shop
         public int? TempFreeTrialOverride { get; set; }
         public long? ShopifyUninstallId { get; set; }
         public DateTime? UninstallDateTime { get; set; }
+        public int FailedAuthorizationCount { get; set; }
 
 
 

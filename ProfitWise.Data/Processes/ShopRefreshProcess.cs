@@ -87,6 +87,8 @@ namespace ProfitWise.Data.Processes
             }
         }
 
+
+        // TODO => This belongs in a different Process
         [AutomaticRetry(Attempts = 1)]
         [Queue(ProfitWiseQueues.InitialShopRefresh)]
         [DisableConcurrentExecution(600)]
@@ -123,10 +125,14 @@ namespace ProfitWise.Data.Processes
             var lockResult = RefreshLock.AttemptToLockMethod(userId);
             _pushLogger.Info(
                 $"Process Lock -> AttemptToLockMethod for UserId:{userId} / Lock Result:{lockResult.Success}");
+
             if (!lockResult.Success)
             {
                 if (lockResult.Exception != null)
+                {
                     _pushLogger.Error(lockResult.Exception);
+                }
+
                 return false;
             }
             else
@@ -170,8 +176,8 @@ namespace ProfitWise.Data.Processes
                 if (exception.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var shop = _pwShopRepository.RetrieveByUserId(userId);
-                    _pwShopRepository.UpdateIsAccessTokenValid(shop.PwShopId, false);
-                    _pushLogger.Info($"Access Token is no longer valid for Shop {shop.PwShopId}");
+                    _pwShopRepository.IncrementFailedAuthorizationCount(shop.PwShopId);
+                    _pushLogger.Info($"Shopify Invocation return HTTP 401 for {shop.PwShopId}");
                 }
             }
             finally

@@ -101,7 +101,7 @@ namespace ProfitWise.Data.Services
             return newShop;
         }
 
-        public void UpdateShop(string userId, string currencySymbol, string timeZoneIana)
+        public void UpdateShopAndAccessTokenValid(string userId, string currencySymbol, string timeZoneIana)
         {
             var pwShop = _shopRepository.RetrieveByUserId(userId);
             pwShop.CurrencyId = _currencyService.AbbreviationToCurrencyId(currencySymbol); ;

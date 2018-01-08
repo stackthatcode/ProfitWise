@@ -32,9 +32,15 @@ namespace ProfitWise.Data.ProcessSteps
         public readonly int UninstallationFinalizeHours =
             ConfigurationManager.AppSettings.GetAndTryParseAsInt("UninstallationFinalizeHours", 2);
 
+        public readonly int MaximumShopifyApiHttp401Count =
+            ConfigurationManager.AppSettings.GetAndTryParseAsInt("MaximumShopifyApiHttp401Count", 10);
+
         public bool Execute(ShopifyCredentials credentials)
         {            
-            _pushLogger.Info($"Shop Refresh Service for Shop: {credentials.ShopDomain}, UserId: {credentials.ShopOwnerUserId}");
+            _pushLogger.Info(
+                $"Shop Refresh Service for Shop: {credentials.ShopDomain}, " +
+                $"UserId: {credentials.ShopOwnerUserId}");
+
             var shop = _shopDataRepository.RetrieveByUserId(credentials.ShopOwnerUserId);
             
             // Routing check on existing Shop status flags
@@ -53,9 +59,14 @@ namespace ProfitWise.Data.ProcessSteps
                 return false;
             }
 
-            if (shop.IsAccessTokenValid == false)
+            if (shop.FailedAuthorizationCount > MaximumShopifyApiHttp401Count)
             {
-                _pushLogger.Warn($"Shop {shop.PwShopId} has an invalid Access Token - skipping Refresh");
+                _pushLogger.Warn(
+                    $"Shop {shop.PwShopId} has an invalid Access Token after {MaximumShopifyApiHttp401Count} failed attempts" +
+                    $" - flagging, uninstalling and skipping Refresh");
+
+                _shopDataRepository.UpdateIsAccessTokenValid(shop.PwShopId, false);
+                _shopDataRepository.UpdateIsProfitWiseInstalled(shop.PwShopId, false, DateTime.UtcNow);
                 return false;
             }
 
@@ -69,7 +80,8 @@ namespace ProfitWise.Data.ProcessSteps
             // Update Shop with the latest from Shopify API
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(credentials);
             var shopFromShopify = shopApiRepository.Retrieve();
-            _shopOrchestrationService.UpdateShop(
+
+            _shopOrchestrationService.UpdateShopAndAccessTokenValid(
                 credentials.ShopOwnerUserId, shopFromShopify.Currency, shopFromShopify.TimeZoneIana);
 
             return true;

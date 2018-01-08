@@ -235,7 +235,9 @@ namespace ProfitWise.Web.Controllers
                 }
                 else
                 {
-                    _shopOrchestrationService.UpdateShop(user.Id, signIn.Shop.Currency, signIn.Shop.TimeZoneIana);
+                    _shopOrchestrationService
+                            .UpdateShopAndAccessTokenValid(
+                                user.Id, signIn.Shop.Currency, signIn.Shop.TimeZoneIana);
                 }
 
                 // Ensure that the Uninstall Webhook is in place
