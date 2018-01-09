@@ -15,7 +15,7 @@ namespace Push.Foundation.Utilities.Logging
 
         public string Do(string message)
         {
-            return $"{ScopedPrefix} - {UtilityExtensions.TypeAndMethodName()} - {message}";
+            return $"{ScopedPrefix} - {UtilityExtensions.TypeAndMethodName()}|{message}";
         }
     }
 }

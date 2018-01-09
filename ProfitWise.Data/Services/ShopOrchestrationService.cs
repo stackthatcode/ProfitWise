@@ -144,15 +144,16 @@ namespace ProfitWise.Data.Services
         }
         
         // Recurring Application Charge methods
-        public static RecurringApplicationCharge RecurringChargeFactory()
+        public static RecurringApplicationCharge RecurringChargeFactory(bool is3duniverse)
         {
             var charge = new RecurringApplicationCharge()
             {
                 name = "ProfitWise Monthly Charge",
                 trial_days = DefaultFreeTrial,
                 price = ProfitWiseMonthlyPrice,
-                test = TestRecurringCharges ? true : (bool?)null,
+                test = TestRecurringCharges || is3duniverse ? true : (bool?)null,
             };
+
             return charge;
         }
 
@@ -164,7 +165,7 @@ namespace ProfitWise.Data.Services
             var billingRepository = _factory.MakeBillingRepository(shop);
 
             // Invoke Shopify API to create the Recurring Application Charge
-            var chargeParameter = RecurringChargeFactory();
+            var chargeParameter = RecurringChargeFactory(shop.IsOwnedBy3duniverse);
             chargeParameter.return_url = returnUrl;
             
             if (shop.TempFreeTrialOverride.HasValue)

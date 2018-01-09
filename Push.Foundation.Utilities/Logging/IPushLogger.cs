@@ -15,8 +15,8 @@ namespace Push.Foundation.Utilities.Logging
         void Debug(string message);
         void Info(string message);
         void Warn(string message);
-        void Error(string message, string userId = null);
-        void Error(Exception exception, string userId = null);
+        void Error(string message);
+        void Error(Exception exception);
         void Fatal(string message);
         void Fatal(Exception exception);
     }

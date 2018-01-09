@@ -15,7 +15,7 @@ namespace Push.Foundation.Web.Helpers
 
         public static bool IsHttpExceptionWithCode(this Exception exception, HttpStatusCode code)
         {
-            return exception.IsHttpExceptionWithCode((int) code);
+            return exception.IsHttpExceptionWithCode((int)code);
         }
 
         public static bool IsHttpException(this Exception exception)

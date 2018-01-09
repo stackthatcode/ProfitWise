@@ -94,7 +94,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
+                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
 
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
@@ -106,7 +106,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void WriteProductsToDatabase(PwShop shop, IList<Product> importedProducts)
         {
-            _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
+            _pushLogger.Debug($"{importedProducts.Count} Products to process from Shopify");
 
             var retrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var builderService = _multitenantFactory.MakeCatalogBuilderService(shop);
@@ -272,7 +272,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
+                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
                 var events = eventApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(events);
             }

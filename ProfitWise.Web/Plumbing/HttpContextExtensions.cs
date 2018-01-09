@@ -11,7 +11,13 @@ namespace ProfitWise.Web.Attributes
 
         public static string CurrentPwShopId(this HttpContextBase context)
         {
-            var identity = context.IdentitySnapshot();
+            var identity = context?.IdentitySnapshot();
+            return identity?.PwShop.PwShopId.ToString();
+        }
+
+        public static string CurrentPwShopId(this HttpContext context)
+        {
+            var identity = context?.IdentitySnapshot();
             return identity?.PwShop.PwShopId.ToString();
         }
 

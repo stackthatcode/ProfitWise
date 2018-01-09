@@ -15,6 +15,7 @@ using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Shopify.HttpClient;
+using LogFormatter = ProfitWise.Web.Plumbing.LogFormatter;
 
 
 namespace ProfitWise.Web
@@ -38,7 +39,7 @@ namespace ProfitWise.Web
             // The Singleton should only be used by the Application Start and End events
             var loggerName = "ProfitWise.Web";
 
-            builder.RegisterType<RequestActivityIdLogFormatter>()
+            builder.RegisterType<LogFormatter>()
                     .As<ILogFormatter>()
                     .InstancePerLifetimeScope();
 

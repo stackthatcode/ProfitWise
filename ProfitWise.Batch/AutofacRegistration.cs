@@ -46,7 +46,7 @@ namespace ProfitWise.Batch
 
             // Register a singleton with HangFireLogProvider
             HangFireLogProvider.RegisterInstance(
-                    new NLogger(loggerName, new TypeAndMethodNameFormatter()));
+                    new NLogger(loggerName, new BackgroundJobTraceFormatter()));
 
 
             // This registration ensures that within a Background Job, always the same logger will be 

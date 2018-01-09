@@ -155,7 +155,6 @@
     <Compile Include="Helpers\HttpExceptionUtilities.cs" />
     <Compile Include="Helpers\QueryStringBuilder.cs" />
     <Compile Include="Helpers\RequestActivityId.cs" />
-    <Compile Include="Helpers\RequestActivityIdLogFormatter.cs" />
     <Compile Include="Helpers\RouteValueDictionaryExtensions.cs" />
     <Compile Include="Helpers\UrlExtensions.cs" />
     <Compile Include="Http\TooManyHttpRequestsException.cs" />

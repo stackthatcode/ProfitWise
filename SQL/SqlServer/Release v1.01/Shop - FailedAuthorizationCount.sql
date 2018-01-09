@@ -15,3 +15,8 @@ ALTER TABLE dbo.profitwiseshop ALTER COLUMN FailedAuthorizationCount int NOT NUL
 -- PROD data fix to force Failed Authorization -> and ultimately Shop Uninstall
 
 
+UPDATE dbo.profitwiseshop SET IsAccessTokenValid = 1
+WHERE IsAccessTokenValid = 0 AND IsProfitWiseInstalled = 1
+
+
+

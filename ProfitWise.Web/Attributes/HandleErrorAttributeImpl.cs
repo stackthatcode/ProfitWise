@@ -30,12 +30,11 @@ namespace ProfitWise.Web.Attributes
             {
                 var container = DependencyResolver.Current;
                 var logger = container.GetService<IPushLogger>();
-                
-                var message = 
-                    "URL:" + filterContext.HttpContext.Request.Url + " - " +
-                    "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest() + " - " +
-                    "PwShopId: " + filterContext.HttpContext.CurrentPwShopId() ?? "(No Shop Id)";
 
+                var message =
+                    "URL:" + filterContext.HttpContext.Request.Url + " - " +
+                    "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest();
+                                    
                 logger.Error(message);
                 logger.Error(filterContext.Exception);
             }
@@ -85,3 +84,4 @@ namespace ProfitWise.Web.Attributes
         public bool NavigatedFromAdminArea { get; set; }
     }
 }
+

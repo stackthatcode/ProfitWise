@@ -188,7 +188,7 @@ namespace ProfitWise.Data.ProcessSteps
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
-                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages - {importedOrders.Count} Orders to process");
+                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages - {importedOrders.Count} Orders to process");
 
                 WriteOrdersToPersistence(importedOrders, shop);
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using Castle.Core.Logging;
 using Dapper;
+using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Database
 {
@@ -12,9 +12,9 @@ namespace ProfitWise.Data.Database
         public IDbTransaction Transaction { get; private set; }
         public Guid Identifier { get; } = Guid.NewGuid();
         public IDbConnection DbConn => _connection;
-        private readonly ILogger _logger;
+        private readonly IPushLogger _logger;
 
-        public ConnectionWrapper(IDbConnection connection, ILogger logger)
+        public ConnectionWrapper(IDbConnection connection, IPushLogger logger)
         {
             _connection = connection;
             _logger = logger;

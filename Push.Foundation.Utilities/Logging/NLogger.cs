@@ -41,20 +41,15 @@ namespace Push.Foundation.Utilities.Logging
         {
             _nLoggerReference.Warn(_formatter.Do(message));
         }
-
-        private string UserIdFormatter(string userId)
+        
+        public void Error(string message)
         {
-            return userId != null ? $"UserId: {userId}|" : "";
+            _nLoggerReference.Error(_formatter.Do(message));
         }
 
-        public void Error(string message, string userId = null)
+        public void Error(Exception exception)
         {
-            _nLoggerReference.Error(_formatter.Do(UserIdFormatter(userId) + message));
-        }
-
-        public void Error(Exception exception, string userId = null)
-        {
-            _nLoggerReference.Error(_formatter.Do(UserIdFormatter(userId) + exception.FullStackTraceDump()));
+            _nLoggerReference.Error(_formatter.Do(exception.FullStackTraceDump()));
         }
 
         public void Fatal(string message)
