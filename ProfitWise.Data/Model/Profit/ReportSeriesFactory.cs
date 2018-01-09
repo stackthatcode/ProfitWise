@@ -98,7 +98,10 @@ namespace ProfitWise.Data.Model.Profit
             }
             if (periodType >= PeriodType.Week)
             {
-                output.Week = periodStart.WeekOfYearIso8601();
+                var firstDayOfWeek = periodStart.StartOfWeek(DayOfWeek.Sunday);
+                var weekNumber = firstDayOfWeek.WeekOfYearIso8601();
+                var canonizedWeek = periodStart.Year * 100 + weekNumber;
+                output.Week = canonizedWeek;
             }
             if (periodType >= PeriodType.Day)
             {

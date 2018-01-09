@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Newtonsoft.Json;
 using ProfitWise.Data.Model.Reports;
 using Push.Foundation.Utilities.Helpers;
@@ -53,8 +54,14 @@ namespace ProfitWise.Data.Model.Profit
         public int? Year { get; set; }
         public int? Quarter { get; set; }
         public int? Month { get; set; }
-        public int? Week { get; set; }
         public int? Day { get; set; }
+        public int? Week { get; set; }
+
+        public int? DayOfWeek => Day.HasValue ? (int) Start.DayOfWeek + 1 : (int?)null;
+        public string MonthName => Month.HasValue ? Start.ToString("MMMM", CultureInfo.InvariantCulture) : null;
+        public string DayName => Day.HasValue ? Start.ToString("dddd") : null;
+        public bool IsWeekday => DayOfWeek.HasValue && (DayOfWeek == 1 || DayOfWeek == 7);
+
 
         [JsonIgnore]
         public ReportSeries Parent { get; set; }
@@ -144,8 +151,7 @@ namespace ProfitWise.Data.Model.Profit
                 return true;
             }
             if (this.PeriodType == PeriodType.Week
-                && input.Year == this.Year
-                && input.Week == this.Week)
+                && input.Week == this.Week) // Our "Week" contains the Year e.g. Week 07 of 2016 == 201607
             {
                 return true;
             }

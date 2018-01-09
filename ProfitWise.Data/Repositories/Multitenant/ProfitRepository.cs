@@ -281,8 +281,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                (" + innerQuery + ")";
 
             var cteBody = 
-                @" GroupingKey, GroupingName, SUM(NetSales) AS TotalRevenue, SUM(CoGS) AS TotalCogs 
-                FROM InnerQuery ";
+                @" GroupingKey, GroupingName, SUM(NetSales) AS TotalRevenue, SUM(CoGS) AS TotalCogs FROM InnerQuery ";
 
             string query = "";
             if (periodType == PeriodType.Year)

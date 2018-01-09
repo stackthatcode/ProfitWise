@@ -58,6 +58,7 @@ namespace ProfitWise.Data
             builder.RegisterType<HangFireService>();
             builder.RegisterType<DataService>();
             builder.RegisterType<TourService>();
+            builder.RegisterType<CalendarPopulationService>();
             
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();

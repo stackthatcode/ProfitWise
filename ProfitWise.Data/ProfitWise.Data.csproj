@@ -237,6 +237,7 @@
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
     <Compile Include="Repositories\Multitenant\TourRepository.cs" />
+    <Compile Include="Services\CalendarPopulationService.cs" />
     <Compile Include="Services\TourService.cs" />
     <Compile Include="Utility\MethodLockResult.cs" />
     <Compile Include="Utility\MultitenantMethodLocker.cs" />
