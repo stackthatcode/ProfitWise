@@ -9,11 +9,16 @@ namespace ProfitWise.Data.HangFire
     // NOTE: Requires registration of LoggerSingleton delegate
     public class HangFireLogger : ILog
     {
-        private static readonly IPushLogger Logger = LoggerSingleton.Get();
+        private readonly IPushLogger _logger;
+
+        public HangFireLogger(IPushLogger logger)
+        {
+            _logger = logger;
+        }
 
         public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception = null)
         {
-            if (Logger == null)
+            if (_logger == null)
             {
                 return false;
             }
@@ -23,34 +28,34 @@ namespace ProfitWise.Data.HangFire
             }
 
 
-            if (logLevel == LogLevel.Trace && Logger.IsTraceEnabled)
+            if (logLevel == LogLevel.Trace && _logger.IsTraceEnabled)
             {
-                Logger.Trace(messageFunc());
+                _logger.Trace(messageFunc());
             }
-            if (logLevel == LogLevel.Debug && Logger.IsDebugEnabled)
+            if (logLevel == LogLevel.Debug && _logger.IsDebugEnabled)
             {
-                Logger.Debug(messageFunc());
+                _logger.Debug(messageFunc());
             }
-            if (logLevel == LogLevel.Info && Logger.IsInfoEnabled)
+            if (logLevel == LogLevel.Info && _logger.IsInfoEnabled)
             {
-                Logger.Info(messageFunc());
+                _logger.Info(messageFunc());
             }
-            if (logLevel == LogLevel.Warn && Logger.IsWarnEnabled)
+            if (logLevel == LogLevel.Warn && _logger.IsWarnEnabled)
             {
-                Logger.Warn(messageFunc());
+                _logger.Warn(messageFunc());
             }
-            if (logLevel == LogLevel.Error && Logger.IsErrorEnabled)
+            if (logLevel == LogLevel.Error && _logger.IsErrorEnabled)
             {
                 var message = messageFunc();
                 if (!message.IsNullOrEmpty())
                 {
-                    Logger.Error(message);
+                    _logger.Error(message);
                 }
-                Logger.Error(exception);
+                _logger.Error(exception);
             }
-            if (logLevel == LogLevel.Fatal && Logger.IsFatalEnabled)
+            if (logLevel == LogLevel.Fatal && _logger.IsFatalEnabled)
             {
-                Logger.Fatal(messageFunc());
+                _logger.Fatal(messageFunc());
 
             }
             return true;

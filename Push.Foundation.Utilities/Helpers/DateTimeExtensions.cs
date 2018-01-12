@@ -105,5 +105,6 @@ namespace Push.Foundation.Utilities.Helpers
         {
             return input.ToString("s", CultureInfo.InvariantCulture) + "-00:00";
         }
+
     }
 }

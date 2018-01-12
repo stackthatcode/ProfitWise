@@ -9,24 +9,32 @@ namespace ProfitWise.Web.Attributes
     {
         public override void OnException(ExceptionContext filterContext)
         {
-            if (filterContext.ExceptionHandled) return;
-            if (new HttpException(null, filterContext.Exception).GetHttpCode() != 500) return;
-            if (!ExceptionType.IsInstanceOfType(filterContext.Exception)) return;
 
+            if (filterContext.ExceptionHandled) return;
+
+            // 12/28/2017 - the previous logic was not correctly verifying the Status Code
+            // ... and thus 403's and 404's were appearing in system logs
+            if (filterContext.Exception is HttpException &&
+                !filterContext.Exception.IsHttpExceptionWithCode(500))
+            {
+                // Every other non server error code will be handled by Global e.g. 403, 404
+                return;
+            }
+
+            // NOTE: under what circumstances would the type of filterContext.Exception
+            // ... differ from the Filter's Exception?
+            if (!ExceptionType.IsInstanceOfType(filterContext.Exception)) return;
+            
             // Log the Exception
             try
             {
                 var container = DependencyResolver.Current;
                 var logger = container.GetService<IPushLogger>();
 
-                var identity = filterContext.HttpContext.IdentitySnapshot();
-
-                var message = "URL:" + filterContext.HttpContext.Request.Url + " - " +
-                              "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest();
-
-                message += " - PwShopId: ";
-                message += identity?.PwShop.PwShopId.ToString() ?? "(No Shop Id)";
-
+                var message =
+                    "URL:" + filterContext.HttpContext.Request.Url + " - " +
+                    "IsAjaxRequest: " + filterContext.HttpContext.Request.IsAjaxRequest();
+                                    
                 logger.Error(message);
                 logger.Error(filterContext.Exception);
             }
@@ -43,7 +51,7 @@ namespace ProfitWise.Web.Attributes
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet,
                     Data = new
                     {
-                        activityId = ActivityId.Current,
+                        activityId = RequestActivityId.Current,
                         error = true,
                         message = "System Fault - check Logs for Activity Id"
                     }
@@ -76,3 +84,4 @@ namespace ProfitWise.Web.Attributes
         public bool NavigatedFromAdminArea { get; set; }
     }
 }
+

@@ -112,5 +112,13 @@ namespace ProfitWise.Data.Repositories.System
             var query = @"SELECT * [NonExistentTable]";
             return Connection.Query<int>(query, new { }).FirstOrDefault();
         }
+
+
+        public void InsertCalendarEntry(
+                DateTime date, int y, int q, int m, int d, int dw, string monthName, string dayName, int w, bool isWeekday)
+        {
+            var query = @"INSERT INTO calendar_table VALUES (@date, @y,  @q, @m, @d, @dw, @monthName, @dayName, @w, @isWeekday, 0, '', 0)";
+            Connection.Execute(query, new { date, y, q, m, d, dw, monthName, dayName, w, isWeekday });
+        }
     }
 }

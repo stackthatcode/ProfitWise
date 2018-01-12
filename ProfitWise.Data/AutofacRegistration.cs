@@ -8,7 +8,6 @@ using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories.Multitenant;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
-using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.CastleProxies;
 using Push.Utilities.CastleProxies;
 
@@ -59,6 +58,7 @@ namespace ProfitWise.Data
             builder.RegisterType<HangFireService>();
             builder.RegisterType<DataService>();
             builder.RegisterType<TourService>();
+            builder.RegisterType<CalendarPopulationService>();
             
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();

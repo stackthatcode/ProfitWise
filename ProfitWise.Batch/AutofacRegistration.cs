@@ -10,6 +10,7 @@ using Hangfire;
 using ProfitWise.Data.Configuration;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.ExchangeRateApis;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
@@ -33,16 +34,23 @@ namespace ProfitWise.Batch
             Data.AutofacRegistration.Build(builder);
 
             // Sets the logging singleton
-            LoggerSingleton.Get =
-                NLoggerImpl.LoggerFactory(
-                    "ProfitWise.Batch", Formatters.TypeAndMethodNameFormatFactory());
+            const string loggerName = "ProfitWise.Batch";
 
-            builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
-            
-            
+            builder.RegisterType<BackgroundJobTraceFormatter>()
+                    .As<ILogFormatter>()
+                    .InstancePerBackgroundJobIfTrue(runningHangFire);
+
+            builder.Register(x => new NLogger(loggerName, x.Resolve<ILogFormatter>()))
+                    .As<IPushLogger>()
+                    .InstancePerBackgroundJobIfTrue(runningHangFire);
+
+            // Register a singleton with HangFireLogProvider
+            HangFireLogProvider.RegisterInstance(
+                    new NLogger(loggerName, new BackgroundJobTraceFormatter()));
+
+
             // This registration ensures that within a Background Job, always the same logger will be 
-            // used - thus the ScopePrefix need only be set once. :-)
-            builder.RegisterType<BatchLogger>().InstancePerBackgroundJobIfTrue(runningHangFire);
+            // used - thus the ScopePrefix need only be set once. :-)            
             builder.Register(ctx =>
                 {
                     var connectionstring =

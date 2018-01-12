@@ -249,7 +249,7 @@
     <Compile Include="Attributes\MaintenanceAttribute.cs" />
     <Compile Include="Attributes\ValidateJsonAntiForgeryTokenAttribute.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
-    <Compile Include="Attributes\HttpContextExtensions.cs" />
+    <Compile Include="Plumbing\HttpContextExtensions.cs" />
     <Compile Include="Attributes\RequiresStoreDataAttribute.cs" />
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
     <Compile Include="Controllers\ConsolServiceController.cs" />
@@ -299,6 +299,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ShopifyAuthModels.cs" />
     <Compile Include="Attributes\IdentitySnapshot.cs" />
+    <Compile Include="Plumbing\LogFormatter.cs" />
     <Compile Include="Plumbing\ShopifyExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

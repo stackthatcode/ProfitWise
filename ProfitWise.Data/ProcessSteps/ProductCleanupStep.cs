@@ -6,20 +6,21 @@ using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
+using Push.Foundation.Utilities.Logging;
 using Push.Shopify.HttpClient;
 
 namespace ProfitWise.Data.ProcessSteps
 {
     public class ProductCleanupStep
     {
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly ShopRepository _shopRepository;
         private readonly object _lock = new object();
 
 
         public ProductCleanupStep(
-                BatchLogger logger, MultitenantFactory multitenantFactory, ShopRepository shopRepository)
+                IPushLogger logger, MultitenantFactory multitenantFactory, ShopRepository shopRepository)
         {
             _pushLogger = logger;
             _multitenantFactory = multitenantFactory;

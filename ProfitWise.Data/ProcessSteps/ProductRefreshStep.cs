@@ -7,6 +7,7 @@ using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using Push.Foundation.Utilities.Logging;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -16,7 +17,7 @@ namespace ProfitWise.Data.ProcessSteps
 {
     public class ProductRefreshStep
     {
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
         private readonly ApiRepositoryFactory _apiRepositoryFactory;
         private readonly MultitenantFactory _multitenantFactory;
         private readonly RefreshServiceConfiguration _configuration;
@@ -29,7 +30,7 @@ namespace ProfitWise.Data.ProcessSteps
         
 
         public ProductRefreshStep(
-                BatchLogger logger,
+                IPushLogger logger,
                 ApiRepositoryFactory apiRepositoryFactory,
                 MultitenantFactory multitenantFactory,
                 RefreshServiceConfiguration configuration,
@@ -93,7 +94,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
+                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
 
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
@@ -105,7 +106,7 @@ namespace ProfitWise.Data.ProcessSteps
 
         private void WriteProductsToDatabase(PwShop shop, IList<Product> importedProducts)
         {
-            _pushLogger.Info($"{importedProducts.Count} Products to process from Shopify");
+            _pushLogger.Debug($"{importedProducts.Count} Products to process from Shopify");
 
             var retrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var builderService = _multitenantFactory.MakeCatalogBuilderService(shop);
@@ -271,7 +272,7 @@ namespace ProfitWise.Data.ProcessSteps
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                _pushLogger.Info($"Page {pagenumber} of {numberofpages} pages");
+                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
                 var events = eventApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(events);
             }

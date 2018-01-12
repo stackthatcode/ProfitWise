@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ProfitWise.Data.Model.Preferences;
 using ProfitWise.Data.Model.Profit;
 using Push.Shopify.Model;
@@ -18,6 +20,17 @@ namespace ProfitWise.Data.Model.Shop
         public bool IsAccessTokenValid { get; set; }
         public bool IsProfitWiseInstalled { get; set; }
         public bool IsBillingValid => LastBillingStatus.IsValid();
+
+        public bool IsOwnedBy3duniverse => _3dUniverseOwnedSites.Any(x => Domain.ToLower().Trim() == x);
+
+        private static readonly List<string> _3dUniverseOwnedSites = new List<string>
+        {
+            "3duniverse.myshopify.com",
+            "super-great-deals.myshopify.com",
+            "3d-universe-staging.myshopify.com",
+            "3du-test-store-2.myshopify.com",
+        };
+
 
         // This property is populated from the data layer via vw_profitwiseshop, which pulls
         // ... this value from the IsPrimary == true RecurringCharge
@@ -44,6 +57,7 @@ namespace ProfitWise.Data.Model.Shop
         public int? TempFreeTrialOverride { get; set; }
         public long? ShopifyUninstallId { get; set; }
         public DateTime? UninstallDateTime { get; set; }
+        public int FailedAuthorizationCount { get; set; }
 
 
 

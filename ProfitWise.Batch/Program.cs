@@ -6,6 +6,7 @@ using Hangfire;
 using Microsoft.AspNet.Identity.EntityFramework;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
+using ProfitWise.Data.Services;
 using Push.Foundation.Web.Identity;
 
 
@@ -18,6 +19,7 @@ namespace ProfitWise.Batch
         private const string ScheduleBackgroundSystemJobsOption = "3";
         private const string EmitTimeZones = "4";
         private const string ManualShopRefresh = "5";
+        private const string PopulateCalendar = "6";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
@@ -30,6 +32,7 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{ScheduleBackgroundSystemJobsOption} - Schedule the default ProfitWise System Jobs");
             Console.WriteLine($"{EmitTimeZones} - Save all Time Zone Id's on the current machine to a text file");
             Console.WriteLine($"{ManualShopRefresh} - Execute a manual Shop Refresh");
+            Console.WriteLine($"{PopulateCalendar} - Populate the SQL calendar_table");
 
             Console.WriteLine("");
             return Console.ReadLine();
@@ -79,6 +82,11 @@ namespace ProfitWise.Batch
             if (choice.Trim() == ManualShopRefresh)
             {
                 ExecuteManualShopRefresh();
+                return;
+            }
+            if (choice.Trim() == PopulateCalendar)
+            {
+                PopulateCalendarProcess();
                 return;
             }
 
@@ -180,6 +188,17 @@ namespace ProfitWise.Batch
                 refreshProcess.RoutineShopRefresh(userId);
 
                 Console.ReadLine();
+            }
+        }
+
+
+        public static void PopulateCalendarProcess()
+        {
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<CalendarPopulationService>();
+                service.Execute();
             }
         }
 

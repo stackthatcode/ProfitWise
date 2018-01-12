@@ -117,8 +117,7 @@ namespace ProfitWise.Data.HangFire
         {
             BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.RefreshSingleOrder(userId, orderId));
         }
-
-
+        
         public void AddOrUpdateSystemCleanupProcess()
         {
             var jobId = "SystemCleanupProcess";

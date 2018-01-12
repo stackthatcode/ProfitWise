@@ -9,6 +9,7 @@ using ProfitWise.Data.Model;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using Push.Foundation.Utilities.Logging;
 
 
 namespace ProfitWise.Data.Processes
@@ -18,7 +19,7 @@ namespace ProfitWise.Data.Processes
         private readonly CurrencyService _currencyService;
         private readonly ExchangeRateRepository _exchangeRateRepository;
         private readonly FixerApiRepository _fixerApiRepository;
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
         private readonly SystemRepository _systemRepository;
 
 
@@ -32,7 +33,7 @@ namespace ProfitWise.Data.Processes
                 CurrencyService currencyService,
                 ExchangeRateRepository exchangeRateRepository,
                 FixerApiRepository fixerApiRepository,
-                BatchLogger pushLogger,
+                IPushLogger pushLogger,
                 SystemRepository systemRepository)
         {
             _currencyService = currencyService;

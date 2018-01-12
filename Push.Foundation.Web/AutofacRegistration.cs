@@ -88,6 +88,7 @@ namespace Push.Foundation.Web
             builder.RegisterType<HttpClientFacadeConfig>();
             builder.RegisterType<HttpClient>().As<IHttpClient>();
             builder.RegisterType<HttpClientFacade>().As<IHttpClientFacade>();
+
         }
     }
 }

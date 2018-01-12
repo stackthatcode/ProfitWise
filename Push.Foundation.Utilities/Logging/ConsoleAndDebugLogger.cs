@@ -58,6 +58,5 @@ namespace Push.Foundation.Utilities.Logging
             Console.WriteLine(exception.StackTrace);
             System.Diagnostics.Debug.WriteLine(exception.StackTrace);
         }
-
     }
 }

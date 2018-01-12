@@ -15,6 +15,7 @@ using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Shopify.HttpClient;
+using LogFormatter = ProfitWise.Web.Plumbing.LogFormatter;
 
 
 namespace ProfitWise.Web
@@ -34,17 +35,18 @@ namespace ProfitWise.Web
             // ProfitWise.Data API registration
             Data.AutofacRegistration.Build(builder);
 
-
-            // Inject configuration after everything else to make sure it overwrites prior registrations
-
-            // Logging - configure to use HTTP context-stored Activity ID
-            Func<string, string> activityIdFormatter = x => ActivityId.Current + "|" + x;
-
+            
             // The Singleton should only be used by the Application Start and End events
-            // *** FAIL 
-            LoggerSingleton.Get = NLoggerImpl.LoggerFactory("ProfitWise.Web", activityIdFormatter);
+            var loggerName = "ProfitWise.Web";
 
-            builder.Register(c => LoggerSingleton.Get()).As<IPushLogger>();
+            builder.RegisterType<LogFormatter>()
+                    .As<ILogFormatter>()
+                    .InstancePerLifetimeScope();
+
+            builder.Register(x => new NLogger(loggerName, x.Resolve<ILogFormatter>()))
+                    .As<IPushLogger>()
+                    .InstancePerLifetimeScope();
+
 
             // Push.Shopify API registration
             Push.Shopify.AutofacRegistration.Build(builder);

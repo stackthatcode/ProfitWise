@@ -29,7 +29,11 @@ namespace ProfitWise.Data.Repositories.System
 
         public IList<ProfitWiseUser> RetrieveUsers()
         {
-            return _connectionWrapper.Query<ProfitWiseUser>(usersQuery, new {}).ToList();
+            return _connectionWrapper
+                    .Query<ProfitWiseUser>(usersQuery, new {})
+                    .OrderByDescending(x => x.IsBillingValid) 
+                    .ThenByDescending(x => x.PwShopId)
+                    .ToList();
         }
 
         public ProfitWiseUser RetrieveUser(string userId)

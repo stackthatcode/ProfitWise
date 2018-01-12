@@ -6,6 +6,7 @@ using ProfitWise.Data.HangFire;
 using ProfitWise.Data.ProcessSteps;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Utility;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Http;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.HttpClient;
@@ -23,7 +24,7 @@ namespace ProfitWise.Data.Processes
         private readonly HangFireService _hangFireService;
         private readonly ShopRepository _pwShopRepository;
         private readonly ConnectionWrapper _connectionWrapper;
-        private readonly BatchLogger _pushLogger;
+        private readonly IPushLogger _pushLogger;
 
         private static readonly 
                 MultitenantMethodLock RefreshLock = new MultitenantMethodLock("ShopRefresh");
@@ -35,7 +36,7 @@ namespace ProfitWise.Data.Processes
                 OrderRefreshStep orderRefreshStep,
                 ProductCleanupStep productCleanupStep,
                 HangFireService hangFireService,
-                BatchLogger logger, 
+                IPushLogger logger, 
                 ShopRepository pwShopRepository,
                 ConnectionWrapper connectionWrapper)
         {
@@ -86,6 +87,8 @@ namespace ProfitWise.Data.Processes
             }
         }
 
+
+        // TODO => This belongs in a different Process
         [AutomaticRetry(Attempts = 1)]
         [Queue(ProfitWiseQueues.InitialShopRefresh)]
         [DisableConcurrentExecution(600)]
@@ -122,10 +125,14 @@ namespace ProfitWise.Data.Processes
             var lockResult = RefreshLock.AttemptToLockMethod(userId);
             _pushLogger.Info(
                 $"Process Lock -> AttemptToLockMethod for UserId:{userId} / Lock Result:{lockResult.Success}");
+
             if (!lockResult.Success)
             {
                 if (lockResult.Exception != null)
+                {
                     _pushLogger.Error(lockResult.Exception);
+                }
+
                 return false;
             }
             else
@@ -169,8 +176,8 @@ namespace ProfitWise.Data.Processes
                 if (exception.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var shop = _pwShopRepository.RetrieveByUserId(userId);
-                    _pwShopRepository.UpdateIsAccessTokenValid(shop.PwShopId, false);
-                    _pushLogger.Info($"Access Token is no longer valid for Shop {shop.PwShopId}");
+                    _pwShopRepository.IncrementFailedAuthorizationCount(shop.PwShopId);
+                    _pushLogger.Info($"Shopify Invocation return HTTP 401 for {shop.PwShopId}");
                 }
             }
             finally
