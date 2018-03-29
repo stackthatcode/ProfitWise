@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProfitWise.Data.Model
+namespace ProfitWise.Data.Model.ExchangeRates
 {
     public class ExchangeRate
     {

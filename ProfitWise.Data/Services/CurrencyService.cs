@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.ExchangeRates;
 using ProfitWise.Data.Model.System;
 using ProfitWise.Data.Repositories.System;
 using Push.Foundation.Utilities.Logging;
@@ -19,6 +19,8 @@ namespace ProfitWise.Data.Services
         private const int MaxDaysOfRateProjection = 30;
 
         private static readonly TimeSpan CacheRefreshLockInterval = new TimeSpan(4, 0, 0);
+
+        public string BaseCurrency = "USD";
 
         // This sets the next allowed time to the past, thus guaraneteeing a refresh
         private static DateTime _nextRateRefreshAllowed = DateTime.UtcNow.Add(-CacheRefreshLockInterval);
@@ -124,8 +126,8 @@ namespace ProfitWise.Data.Services
         
 
         // Conversion method
-        public decimal Convert(
-                decimal amount, int sourceCurrencyId, int destinationCurrencyId, DateTime date)
+        public decimal Convert(decimal amount, 
+                int sourceCurrencyId, int destinationCurrencyId, DateTime date)
         {
             List<ExchangeRate> rateEntry;
 
@@ -175,7 +177,7 @@ namespace ProfitWise.Data.Services
             return CurrencyCache;
         }
 
-        public int AbbreviationToCurrencyId(string abbr)
+        public int AbbrToCurrencyId(string abbr)
         {
             var currency = CurrencyCache.FirstOrDefault(x => x.Abbreviation == abbr);
             if (currency == null)

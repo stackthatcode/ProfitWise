@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
-using Castle.Core.Internal;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;

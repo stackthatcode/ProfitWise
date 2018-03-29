@@ -55,6 +55,7 @@ namespace ProfitWise.Data.Repositories.System
             var query = "SELECT ExchangeRateLastDate FROM systemstate;";
             return Connection.Query<DateTime?>(query, new {  }).First();
         }
+
         public void UpdateLastExchangeRateDate(DateTime lastDate)
         {
             var query = "UPDATE systemstate SET ExchangeRateLastDate = @lastDate;";

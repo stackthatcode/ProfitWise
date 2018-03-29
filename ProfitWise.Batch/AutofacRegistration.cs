@@ -90,16 +90,19 @@ namespace ProfitWise.Batch
 
 
             // Exchange Rate API configuration
-            builder.Register(x => new FixerApiConfig()
+            builder.Register(x => new ExchangeRateApiConfig()
             {
                 RetryLimit =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("FixerApiRetryLimit", 3),
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("ExchangeRateApiRetryLimit", 3),
                 Timeout =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("FixerApiHttpTimeout", 60000),
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("ExchangeRateApiHttpTimeout", 60000),
                 ThrottlingDelay =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("FixerApiThrottlingDelay", 500),
+                    ConfigurationManager.AppSettings.GetAndTryParseAsInt("ExchangeRateApiThrottlingDelay", 500),
                 RetriesEnabled =
-                    ConfigurationManager.AppSettings.GetAndTryParseAsBool("FixerApiRetriesEnabled", true)
+                    ConfigurationManager.AppSettings.GetAndTryParseAsBool("FixerApiRetriesEnabled", true),
+
+                OerApiKey = ConfigurationManager.AppSettings["OerApiKey"],
+                FixerApiKey = ConfigurationManager.AppSettings["FixerApiKey"],
             });
 
             // Push.Foundation.Web relies on consumers to supply Key and IV for its Encryption Service

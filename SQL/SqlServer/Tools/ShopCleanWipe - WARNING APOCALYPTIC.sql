@@ -9,10 +9,10 @@ GO
 
 
 /*** Insert the appropriate PwShopId and uncomment the below line ***/
---DECLARE @PwShopId bigint = 100001;
+DECLARE @PwShopId bigint = 100001;
 
 
-DELETE FROM reportquerystub(@PwShopId);
+--DELETE FROM reportquerystub(@PwShopId);
 DELETE FROM reportfilter(@PwShopId);
 DELETE FROM report(@PwShopId);
 DELETE FROM profitreportentry(@PwShopId);
@@ -42,6 +42,7 @@ DECLARE @UserId nvarchar(128);
 
 SELECT @UserId = ShopOwnerUserId FROM shop(@PwShopId);
 
+DELETE FROM tour(@PwShopId);
 DELETE FROM shop(@PwShopId);
 
 DELETE FROM AspNetUserClaims WHERE UserId = @UserId;

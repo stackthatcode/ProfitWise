@@ -154,8 +154,10 @@
     <Compile Include="Aspect\ShopRequired.cs" />
     <Compile Include="Configuration\ProfitWiseConfiguration.cs" />
     <Compile Include="Database\ConnectionWrapper.cs" />
+    <Compile Include="ExchangeRateApis\OerApiRepository.cs" />
+    <Compile Include="ExchangeRateApis\OerApiRequestFactory.cs" />
     <Compile Include="ExchangeRateApis\FixerApiRequestFactory.cs" />
-    <Compile Include="ExchangeRateApis\FixerApiConfig.cs" />
+    <Compile Include="ExchangeRateApis\ExchangeRateApiConfig.cs" />
     <Compile Include="Factories\MultitenantFactory.cs" />
     <Compile Include="HangFire\HangFireLogger.cs" />
     <Compile Include="HangFire\HangFireLogProvider.cs" />
@@ -175,6 +177,8 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
+    <Compile Include="Model\ExchangeRates\ExtensionMethods.cs" />
+    <Compile Include="Model\ExchangeRates\ExtrapolateFunctions.cs" />
     <Compile Include="Model\GoodsOnHand\ChartData.cs" />
     <Compile Include="Model\GoodsOnHand\HighChartElement.cs" />
     <Compile Include="Model\GoodsOnHand\ColumnOrdering.cs" />
@@ -208,8 +212,8 @@
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineRefund.cs" />
     <Compile Include="Model\Shop\PwTourState.cs" />
     <Compile Include="Model\Shop\TourIdentifiers.cs" />
-    <Compile Include="Model\System\ExchangeRate.cs" />
-    <Compile Include="Model\System\Currency.cs" />
+    <Compile Include="Model\ExchangeRates\ExchangeRate.cs" />
+    <Compile Include="Model\ExchangeRates\Currency.cs" />
     <Compile Include="Model\ShopifyImport\OrderLineItemSubset.cs" />
     <Compile Include="Model\Cogs\ProductSearchFilter.cs" />
     <Compile Include="Model\Cogs\PwCogsVariantSummary.cs" />
@@ -252,7 +256,7 @@
     <Compile Include="Repositories\Multitenant\PickListRepository.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Aspect\IShopFilter.cs" />
-    <Compile Include="Processes\ExchangeRateRefreshProcess.cs" />
+    <Compile Include="Processes\ExchangeRateProcess.cs" />
     <Compile Include="Processes\ShopRefreshProcess.cs" />
     <Compile Include="ProcessSteps\OrderRefreshContext.cs" />
     <Compile Include="ProcessSteps\OrderRefreshStep.cs" />

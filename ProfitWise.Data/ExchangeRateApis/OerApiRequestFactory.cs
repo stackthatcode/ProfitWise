@@ -3,13 +3,13 @@ using Push.Foundation.Web.Http;
 
 namespace ProfitWise.Data.ExchangeRateApis
 {
-    public class FixerApiRequestFactory
+    public class OerApiRequestFactory
     {
         private readonly HttpClientFacadeConfig _configuration;
-        private const string BaseUrl = "http://data.fixer.io/api/";
+        private const string BaseUrl = "https://openexchangerates.org/api/";
 
 
-        public FixerApiRequestFactory(HttpClientFacadeConfig configuration)
+        public OerApiRequestFactory(HttpClientFacadeConfig configuration)
         {
             _configuration = configuration;
         }

@@ -20,9 +20,12 @@ namespace ProfitWise.Batch
         private const string EmitTimeZones = "4";
         private const string ManualShopRefresh = "5";
         private const string PopulateCalendar = "6";
+        private const string SingleExchangeRateLoad = "7";
+        private const string AllExchangeRateLoad = "8";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
+        
 
         private static string SolicitUserInput()
         {
@@ -33,6 +36,8 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{EmitTimeZones} - Save all Time Zone Id's on the current machine to a text file");
             Console.WriteLine($"{ManualShopRefresh} - Execute a manual Shop Refresh");
             Console.WriteLine($"{PopulateCalendar} - Populate the SQL calendar_table");
+            Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
+            Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
 
             Console.WriteLine("");
             return Console.ReadLine();
@@ -47,46 +52,56 @@ namespace ProfitWise.Batch
             var choice =
                 args.Length > 0 && args[0].ToLower() == "service"
                     ? HangFireBackgroundServiceOption
-                    : SolicitUserInput();
+                    : SolicitUserInput()?.Trim();
 
-            if (choice.Trim() == HangFireBackgroundServiceOption)
+            if (choice == HangFireBackgroundServiceOption)
             {
                 HangFireBackgroundService();
                 return;
             }
-            if (choice.Trim() == ScheduleBackgroundSystemJobsOption)
+            if (choice == ScheduleBackgroundSystemJobsOption)
             {
                 ScheduleBackgroundSystemJobs();
                 return;
             }
-            if (choice.Trim() == ScheduleInitialShopRefreshOption)
+            if (choice == ScheduleInitialShopRefreshOption)
             {
                 ScheduleInitialShopRefresh();
                 return;
             }
-            if (choice.Trim() == ResetAdminPasswordOption)
+            if (choice == ResetAdminPasswordOption)
             {
                 ResetAdminPassword();
                 return;
             }
-            if (choice.Trim() == AppUninstallTestRequest)
+            if (choice == AppUninstallTestRequest)
             {
                 AppUninstallTest.Execute();
                 return;
             }
-            if (choice.Trim() == EmitTimeZones)
+            if (choice == EmitTimeZones)
             {
                 EmitTimeZonesToConsoleAndTextFile();
                 return;
             }
-            if (choice.Trim() == ManualShopRefresh)
+            if (choice == ManualShopRefresh)
             {
                 ExecuteManualShopRefresh();
                 return;
             }
-            if (choice.Trim() == PopulateCalendar)
+            if (choice == PopulateCalendar)
             {
                 PopulateCalendarProcess();
+                return;
+            }
+            if (choice == SingleExchangeRateLoad)
+            {
+                LoadNewCurrencyAndExchangeRates();
+                return;
+            }
+            if (choice == AllExchangeRateLoad)
+            {
+                RunExchangeRateLoad();
                 return;
             }
 
@@ -94,6 +109,50 @@ namespace ProfitWise.Batch
         }
 
 
+        private static void RunExchangeRateLoad()
+        {
+            Console.WriteLine(
+                $"Are you sure you want to run this process? If so, type 'YES'");
+            var confirm = Console.ReadLine();
+            if (confirm != "YES")
+            {
+                return;
+            }
+
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var currencyService = scope.Resolve<ExchangeRateProcess>();
+                currencyService.Execute();
+            }
+            ExitWithAnyKey();
+        }
+
+
+        private static void LoadNewCurrencyAndExchangeRates()
+        {
+            Console.WriteLine("NOTE: the new Currency must already be loaded in the 'currency' table");
+            Console.WriteLine("Enter the Currency Symbol e.g. USD");
+            var symbol = Console.ReadLine();
+            Console.WriteLine("Enter Start Date e.g. 2008-03-01");
+            var date = Console.ReadLine();
+
+            Console.WriteLine($"Are you sure you want to run this process for '{symbol}'? Type 'YES' if so.");
+            var confirm = Console.ReadLine();
+            if (confirm != "YES")
+            {
+                return;
+            }
+
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var currencyService = scope.Resolve<ExchangeRateProcess>();
+                currencyService.LoadNewCurrency(symbol, DateTime.Parse(date));
+            }
+            ExitWithAnyKey();
+        }
+        
         public static void ExecuteManualShopRefresh()
         {
             Console.WriteLine("Please enter the Shop Owner's User Id");

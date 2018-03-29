@@ -61,14 +61,18 @@ namespace ProfitWise.Data
             builder.RegisterType<CalendarPopulationService>();
             
             builder.RegisterType<ShopRefreshProcess>();
-            builder.RegisterType<ExchangeRateRefreshProcess>();
+            builder.RegisterType<ExchangeRateProcess>();
             builder.RegisterType<SystemCleanupProcess>();
             
             builder.RegisterType<ShopRequired>();
 
-            builder.RegisterType<FixerApiConfig>();
+            builder.RegisterType<ExchangeRateApiConfig>();
+
             builder.RegisterType<FixerApiRepository>();
             builder.RegisterType<FixerApiRequestFactory>();
+
+            builder.RegisterType<OerApiRepository>();
+            builder.RegisterType<OerApiRequestFactory>();
 
             builder.RegisterType<TimeZoneTranslator>();
         }

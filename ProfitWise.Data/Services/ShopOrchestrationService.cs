@@ -75,7 +75,7 @@ namespace ProfitWise.Data.Services
         public PwShop CreateShop(string shopOwnerUserId, Shop shop, ShopifyCredentials credentials)
         {
             // Create the Shop record in SQL
-            var currencyId = _currencyService.AbbreviationToCurrencyId(shop.Currency);
+            var currencyId = _currencyService.AbbrToCurrencyId(shop.Currency);
 
             var orderDatasetStartDate = DateTime.UtcNow.AddMonths(-Math.Abs(_orderStartOffsetMonths));
             
@@ -104,7 +104,7 @@ namespace ProfitWise.Data.Services
         public void UpdateShopAndAccessTokenValid(string userId, string currencySymbol, string timeZoneIana)
         {
             var pwShop = _shopRepository.RetrieveByUserId(userId);
-            pwShop.CurrencyId = _currencyService.AbbreviationToCurrencyId(currencySymbol); ;
+            pwShop.CurrencyId = _currencyService.AbbrToCurrencyId(currencySymbol); ;
             pwShop.TimeZone = timeZoneIana;
 
             using (var transaction = _shopRepository.InitiateTransaction())

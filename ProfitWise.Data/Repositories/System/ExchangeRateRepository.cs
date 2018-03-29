@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using ProfitWise.Data.Database;
-using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.ExchangeRates;
 using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Repositories.System
@@ -29,15 +29,20 @@ namespace ProfitWise.Data.Repositories.System
             return _connection.DbConn.Query<Currency>(query, new { }, _connection.Transaction).ToList();
         }
         
-
-        [Obsolete]
-        public DateTime? LatestExchangeRateDate()
+        
+        public DateTime? MaxExchangeRateDate()
         {
             var query = @"SELECT MAX(Date) FROM exchangerate;";
             return _connection.DbConn.Query<DateTime ?>(
                     query, new { }, _connection.Transaction).FirstOrDefault();
         }
 
+        public DateTime? MinExchangeRateDate()
+        {
+            var query = @"SELECT MIN(Date) FROM exchangerate;";
+            return _connection.DbConn.Query<DateTime?>(
+                    query, new { }, _connection.Transaction).FirstOrDefault();
+        }
 
         public List<ExchangeRate> RetrieveExchangeRates()
         {
@@ -75,6 +80,22 @@ namespace ProfitWise.Data.Repositories.System
         {
             var query = @"DELETE FROM exchangerate WHERE Date = @date;";
             _connection.DbConn.Execute(query, new { @date }, _connection.Transaction);
+        }
+        public void DeleteForDateAndCurrency(DateTime date, int currencyId)
+        {
+            var query = 
+                @"DELETE FROM exchangerate 
+                WHERE Date = @date 
+                AND ( SourceCurrencyId = @currencyId OR DestinationCurrencyId = @currencyId );";
+            _connection.DbConn.Execute(query, new { @date, currencyId }, _connection.Transaction);
+        }
+
+        public List<DateTime> RetrieveMissingRateDates()
+        {
+            var query = @"SELECT * FROM dbo.missingratedata ORDER BY Date;";
+
+            return _connection.DbConn.Query<DateTime>(
+                    query, new {  }, _connection.Transaction).ToList();
         }
     }
 }
