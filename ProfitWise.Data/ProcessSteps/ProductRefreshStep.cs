@@ -65,7 +65,8 @@ namespace ProfitWise.Data.ProcessSteps
             WriteAllProductsFromShopify(shop, shopCredentials, batchState);
             
             // Delete all Products with "destroy" Events
-            SetDeletedProductsToInactive(shop, shopCredentials, fromDateForDestroyUtc);
+            // *** DISABLED pending contact with Shopify
+            //SetDeletedProductsToInactive(shop, shopCredentials, fromDateForDestroyUtc);
 
             // Update Batch State
             batchState.ProductsLastUpdated = processStartTimeUtc;
