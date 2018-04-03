@@ -208,28 +208,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .FirstOrDefault();
         }
 
-        public void DeleteChildlessMasterProducts()
-        {
-            var query1 = @"DELETE t1 FROM mastervariantcogscalc(@PwShopId) t1
-	                        INNER JOIN mastervariant(@PwShopId) t2 
-		                        ON t1.PwMasterVariantId = t2.PwMasterVariantId
-                        WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM product(@PwShopId));";
-            _connectionWrapper.Execute(query1, new { PwShop.PwShopId, });
-
-            var query2 = @"DELETE t1 FROM mastervariantcogsdetail(@PwShopId) t1
-	                        INNER JOIN mastervariant(@PwShopId) t2 
-		                        ON t1.PwMasterVariantId = t2.PwMasterVariantId
-                        WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM product(@PwShopId));";
-            _connectionWrapper.Execute(query1, new { PwShop.PwShopId, });
-
-            var query3 = @"DELETE FROM mastervariant(@PwShopId)
-                        WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM product(@PwShopId));";
-            _connectionWrapper.Execute(query3, new { PwShop.PwShopId, });
-            
-            var query4 = @"DELETE FROM masterproduct(@PwShopId)
-                        WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM product(@PwShopId));";
-            _connectionWrapper.Execute(query4, new { PwShop.PwShopId,});
-        }
     }
 }
 

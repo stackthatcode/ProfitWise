@@ -121,5 +121,57 @@ namespace ProfitWise.Data.Repositories.System
             var query = @"INSERT INTO calendar_table VALUES (@date, @y,  @q, @m, @d, @dw, @monthName, @dayName, @w, @isWeekday, 0, '', 0)";
             Connection.Execute(query, new { date, y, q, m, d, dw, monthName, dayName, w, isWeekday });
         }
+
+
+        // Clean-up Queries
+        public void DeleteChildlessMasterVariants()
+        {
+            var query1 =
+                @"DELETE FROM profitwisemastervariantcogsdetail
+                WHERE PwMasterVariantId NOT IN ( SELECT PwMasterVariantId FROM profitwisevariant )";
+
+            _connectionWrapper.Execute(query1);
+
+            var query2 =
+                @"DELETE FROM profitwisemastervariantcogscalc
+                WHERE PwMasterVariantId NOT IN ( SELECT PwMasterVariantId FROM profitwisevariant )";
+
+            _connectionWrapper.Execute(query2);
+
+            var query3 =
+                @"DELETE FROM profitwisemastervariant
+                WHERE PwMasterVariantId NOT IN ( SELECT PwMasterVariantId FROM profitwisevariant )";
+
+            _connectionWrapper.Execute(query3);
+        }
+
+        public void DeleteChildlessMasterProducts()
+        {
+            var query1 = 
+                    @"DELETE t1 FROM profitwisemastervariantcogscalc t1
+	                    INNER JOIN profitwisemastervariant t2 
+		                    ON t1.PwMasterVariantId = t2.PwMasterVariantId
+                    WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM profitwiseproduct);";
+            _connectionWrapper.Execute(query1);
+
+            var query2 = 
+                    @"DELETE t1 FROM profitwisemastervariantcogsdetail t1
+	                    INNER JOIN profitwisemastervariant t2 
+		                        ON t1.PwMasterVariantId = t2.PwMasterVariantId
+                    WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM profitwiseproduct);";
+            _connectionWrapper.Execute(query2);
+
+            var query3 = 
+                    @"DELETE FROM profitwisemastervariant
+                    WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM profitwiseproduct);";
+            _connectionWrapper.Execute(query3);
+
+            var query4 =
+                    @"DELETE FROM profitwisemasterproduct
+                    WHERE PwMasterProductId NOT IN (SELECT PwMasterProductId FROM profitwiseproduct);";
+            _connectionWrapper.Execute(query4);
+        }
+
+
     }
 }

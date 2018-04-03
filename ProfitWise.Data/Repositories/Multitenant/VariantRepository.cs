@@ -267,23 +267,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper.Execute(query, variant);
         }
 
-        public void DeleteChildlessMasterVariants()
-        {
-            var query =
-                    @"DELETE FROM mastervariantcogsdetail(@PwShopId)
-                    WHERE PwMasterVariantId NOT IN 
-                        ( SELECT PwMasterVariantId FROM variant(@PwShopId) );
-                    
-                    DELETE FROM mastervariantcogscalc(@PwShopId)
-                    WHERE PwMasterVariantId NOT IN 
-                        ( SELECT PwMasterVariantId FROM variant(@PwShopId) );
-
-                    DELETE FROM mastervariant(@PwShopId) 
-                    WHERE PwMasterVariantId NOT IN 
-                        ( SELECT PwMasterVariantId FROM variant(@PwShopId) );";
-
-            _connectionWrapper.Execute(query, new {PwShop.PwShopId,});
-        }
     }
 }
 

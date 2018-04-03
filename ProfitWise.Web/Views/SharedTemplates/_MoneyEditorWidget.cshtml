@@ -19,8 +19,8 @@
 <script type="text/html" id="Money-Editor-Widget-Popover">
     <div class="currency-popover" data-bind="foreach: ProfitWiseFunctions.CurrencyCache">
         <a href="#" data-bind="click: $parent.ChangeCurrencySelection">
-            <span data-bind="text: Abbr" style="display: inline-block; width: 32px;"></span> 
-            (<span data-bind="text: Symbol"></span>) 
+            <span data-bind="text: Abbr" style="display: inline-block; width: 32px;"></span>            
+            <span data-bind="if: Symbol">(<span data-bind="text: Symbol"></span>) </span>            
         </a>
     </div>
 </script>
@@ -77,7 +77,11 @@
             {
                 return "";
             }
-            return self.SelectedCurrency().Abbr + " (" + self.SelectedCurrency().Symbol + ")";
+            var currency = self.SelectedCurrency();
+
+            return currency.Symbol 
+                    ? currency.Abbr + " (" + currency.Symbol + ")"
+                    : currency.Abbr;
         });
 
         self.ChangeCurrencySelection = function (model) {

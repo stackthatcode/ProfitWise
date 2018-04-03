@@ -14,7 +14,8 @@ namespace ProfitWise.Data.Processes
     {
         private readonly SystemRepository _systemRepository;
         private readonly IPushLogger _pushLogger;
-        
+        private readonly object _lock = new object();
+
 
         public SystemCleanupProcess(
                 IPushLogger pushLogger, SystemRepository systemRepository)
@@ -22,7 +23,6 @@ namespace ProfitWise.Data.Processes
             _pushLogger = pushLogger;
             _systemRepository = systemRepository;
         }
-
 
         [Queue(ProfitWiseQueues.CleanupService)]
         public void Execute()
@@ -47,6 +47,19 @@ namespace ProfitWise.Data.Processes
             _systemRepository.CleanupReportData(reportDataCutOffDate);
 
             _pushLogger.Info("System Clean-up Service for Report Data - FIN");
+
+            // Deletes any childless Master Products or Master Variants
+            _pushLogger.Info($"Deleting Childless Master Products and Master Variants");
+
+            // Exclusive lock this section to prevent SQL from deadlocking on 
+            // object-level locks from the DELETE's esp. masterproducts
+            lock (_lock)
+            {
+                _systemRepository.DeleteChildlessMasterVariants();
+                _systemRepository.DeleteChildlessMasterProducts();
+            }
+
+            _pushLogger.Info("System Clean-up Service for Childless Master Variants and Master Products - FIN");
 
         }
     }

@@ -35,8 +35,6 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Create an instance of multi-tenant-aware repositories
             var service = this._multitenantFactory.MakeCatalogRetrievalService(shop);
-            var productRepository = this._multitenantFactory.MakeProductRepository(shop);
-            var variantRepository = this._multitenantFactory.MakeVariantRepository(shop);
             var orderRepository = this._multitenantFactory.MakeShopifyOrderRepository(shop);
 
             // Get all existing ProfitWise Products and Order Line Items
@@ -48,17 +46,6 @@ namespace ProfitWise.Data.ProcessSteps
 
             // Update Inactive Variant prices using Order Line Items
             UpdateInactiveVariantPrice(shop, masterProductCatalog, orderLineItems);
-
-            // Deletes any childless Master Products or Master Variants
-            _pushLogger.Debug($"Deleting Childless Master Products and Master Variants");
-
-            // Exclusive lock this section to prevent SQL from deadlocking on 
-            // object-level locks from the DELETE's esp. masterproducts
-            lock (_lock)
-            {
-                variantRepository.DeleteChildlessMasterVariants();
-                productRepository.DeleteChildlessMasterProducts();
-            }
         }
 
         private void RemoveInactiveWithoutReference(

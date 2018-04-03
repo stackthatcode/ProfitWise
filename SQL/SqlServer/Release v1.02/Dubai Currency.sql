@@ -13,6 +13,7 @@ DELETE FROM exchangerate;
 
 SELECT MAX(DATE) FROM  exchangerate;
 
-UPDATE systemstate SET ExchangeRateLastDate = '2018-04-27';
+UPDATE systemstate SET ExchangeRateLastDate = '2018-03-28';
 
+SELECT * FROM systemstate;
 

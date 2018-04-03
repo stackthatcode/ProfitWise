@@ -9,6 +9,7 @@ ProfitWiseFunctions.CurrencyCache = [
     { Id: 5, Abbr: "AUD", Symbol: "$" },
     { Id: 6, Abbr: "CHF", Symbol: "Fr" },
     { Id: 7, Abbr: "CAD", Symbol: "$" },
+    { Id: 8, Abbr: "AED", Symbol: "د.إ" },
 ];
 
 ProfitWiseFunctions.FormatCurrencyWithAbbr = function (amount, currencyId) {
