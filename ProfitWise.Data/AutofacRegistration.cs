@@ -61,7 +61,7 @@ namespace ProfitWise.Data
             builder.RegisterType<CalendarPopulationService>();
             
             builder.RegisterType<ShopRefreshProcess>();
-            builder.RegisterType<ExchangeRateProcess>();
+            builder.RegisterType<ExchangeRateRefreshProcess>();
             builder.RegisterType<SystemCleanupProcess>();
             
             builder.RegisterType<ShopRequired>();

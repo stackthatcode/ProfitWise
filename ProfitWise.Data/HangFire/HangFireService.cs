@@ -109,7 +109,7 @@ namespace ProfitWise.Data.HangFire
             var jobId = "ExchangeRateRefresh";
             _logger.Info($"Scheduling ExchangeRateRefreshProcess");
 
-            RecurringJob.AddOrUpdate<ExchangeRateProcess>(
+            RecurringJob.AddOrUpdate<ExchangeRateRefreshProcess>(
                     jobId, x => x.Execute(), _exchangeRefreshInterval, HangFireTimeZone);
         }
         

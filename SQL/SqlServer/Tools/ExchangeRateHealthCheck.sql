@@ -21,3 +21,6 @@ SELECT FORMATMESSAGE(
 SELECT SourceCurrencyId, COUNT(*), MIN(Date), MAX(Date) 
 FROM exchangerate
 GROUP BY SourceCurrencyId;
+
+SELECT Date, SUM(Rate), COUNT(*) FROM dbo.exchangerate WHERE Date >= '2018-03-01' GROUP BY Date
+ORDER BY Date;

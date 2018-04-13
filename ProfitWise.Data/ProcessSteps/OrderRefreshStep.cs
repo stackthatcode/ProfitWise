@@ -196,13 +196,13 @@ namespace ProfitWise.Data.ProcessSteps
                 var batchState = batchStateRepository.Retrieve();
                 if (filter.ShopifySortOrder == ShopifySortOrder.Ascending)
                 {
-                    var latestOrderUpdatedShopTz = importedOrders.Max(x => x.UpdatedAtShopTz);
-                    batchState.OrderDatasetEnd = latestOrderUpdatedShopTz.ToUtcFromShopTz(shop.TimeZone);
+                    var latestOrderUpdatedShopTz = importedOrders.Max(x => x.UpdatedAt);
+                    batchState.OrderDatasetEnd = latestOrderUpdatedShopTz.UtcDateTime;
                 }
                 else
                 {
-                    var earliestOrderCreatedShopTz = importedOrders.Min(x => x.CreatedAtShopTz);
-                    batchState.OrderDatasetStart = earliestOrderCreatedShopTz.ToUtcFromShopTz(shop.TimeZone);
+                    var earliestOrderCreatedShopTz = importedOrders.Min(x => x.CreatedAt);
+                    batchState.OrderDatasetStart = earliestOrderCreatedShopTz.UtcDateTime;
                 }
                 batchStateRepository.Update(batchState);
             }

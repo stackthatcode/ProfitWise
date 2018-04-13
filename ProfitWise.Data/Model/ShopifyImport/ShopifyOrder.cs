@@ -60,6 +60,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 $"ShopifyOrderId = {ShopifyOrderId}" + Environment.NewLine +
                 $"Email = {Email}" + Environment.NewLine +
                 $"OrderNumber = {OrderNumber}" + Environment.NewLine +
+                $"OrderDate = {OrderDate}" + Environment.NewLine +
                 $"OrderLevelDiscount = {OrderLevelDiscount}" + Environment.NewLine +
                 $"CreatedAt = {CreatedAt}" + Environment.NewLine +
                 $"UpdatedAt = {UpdatedAt}" + Environment.NewLine +

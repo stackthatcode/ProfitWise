@@ -61,12 +61,13 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 Email = order.Email,
                 OrderNumber = order.Name,
 
-                // This is monumentally important => we use the Date from the Shopify Shop's timezone
-                OrderDate = order.CreatedAtShopTz.Date,
-                
                 // OTOH, these dates will be translated to UTC   
-                CreatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.CreatedAtShopTz, pwshop.TimeZone),
-                UpdatedAt = timeZoneTranslator.ToUtcFromShopifyTimeZone(order.UpdatedAtShopTz, pwshop.TimeZone),
+                CreatedAt = order.CreatedAt.UtcDateTime,
+                UpdatedAt = order.UpdatedAt.UtcDateTime,
+                
+                // This is monumentally important => we use the Date from the Shopify Shop's timezone
+                OrderDate = 
+                    timeZoneTranslator.FromUtcToShopTz(order.CreatedAt.UtcDateTime, pwshop.TimeZone),
 
                 OrderLevelDiscount = order.OrderDiscount,
                 FinancialStatus = order.FinancialStatus.ToFinancialStatus(),
@@ -75,7 +76,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 LineItems = new List<ShopifyOrderLineItem>(),
                 Adjustments = new List<ShopifyOrderAdjustment>(),
 
-                Cancelled = order.CancelledAtShopTz.HasValue, // only used during Refresh to DELETE Cancelled Orders
+                Cancelled = order.CancelledAt.HasValue, // only used during Refresh to DELETE Cancelled Orders
             };
 
             foreach (var lineItem in order.LineItems)
@@ -98,7 +99,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
                 // I know, I know... but we don't have any other way to provision numbers for this
                 balancingAdjustment.ShopifyAdjustmentId = shopifyOrder.ShopifyOrderId;
                 balancingAdjustment.ShopifyOrderId = shopifyOrder.ShopifyOrderId;
-                balancingAdjustment.AdjustmentDate = order.CreatedAtShopTz;
+                balancingAdjustment.AdjustmentDate = shopifyOrder.OrderDate;
 
                 balancingAdjustment.Amount = -difference;
                 balancingAdjustment.TaxAmount = 0;

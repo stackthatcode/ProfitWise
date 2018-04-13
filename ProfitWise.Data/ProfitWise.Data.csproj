@@ -256,7 +256,7 @@
     <Compile Include="Repositories\Multitenant\PickListRepository.cs" />
     <Compile Include="AutofacRegistration.cs" />
     <Compile Include="Aspect\IShopFilter.cs" />
-    <Compile Include="Processes\ExchangeRateProcess.cs" />
+    <Compile Include="Processes\ExchangeRateRefreshProcess.cs" />
     <Compile Include="Processes\ShopRefreshProcess.cs" />
     <Compile Include="ProcessSteps\OrderRefreshContext.cs" />
     <Compile Include="ProcessSteps\OrderRefreshStep.cs" />

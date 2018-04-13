@@ -6,6 +6,7 @@ using Hangfire;
 using Microsoft.AspNet.Identity.EntityFramework;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
+using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using Push.Foundation.Web.Identity;
 
@@ -22,6 +23,7 @@ namespace ProfitWise.Batch
         private const string PopulateCalendar = "6";
         private const string SingleExchangeRateLoad = "7";
         private const string AllExchangeRateLoad = "8";
+        private const string RefreshSingleOrder = "9";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
@@ -38,6 +40,7 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{PopulateCalendar} - Populate the SQL calendar_table");
             Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
             Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
+            Console.WriteLine($"{RefreshSingleOrder} - Refresh a Single Order");
 
             Console.WriteLine("");
             return Console.ReadLine();
@@ -104,8 +107,34 @@ namespace ProfitWise.Batch
                 RunExchangeRateLoad();
                 return;
             }
+            if (choice == RefreshSingleOrder)
+            {
+                RunRefreshSingleOrder();
+                return;
+            }
 
             Console.WriteLine("Invalid option - exiting. Bye!");
+        }
+
+        private static void RunRefreshSingleOrder()
+        {
+            Console.WriteLine($"Enter Shop Id");
+            var shopId = Int32.Parse(Console.ReadLine());
+
+            Console.WriteLine($"Enter Shopify Order Id");
+            var orderId = long.Parse(Console.ReadLine());
+            
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var repository = scope.Resolve<ShopRepository>();
+                var shop = repository.RetrieveByShopId(shopId);
+
+                var process = scope.Resolve<ShopRefreshProcess>();
+                process.RefreshSingleOrder(shop.ShopOwnerUserId, orderId);
+            }
+
+            ExitWithAnyKey();
         }
 
 
@@ -122,7 +151,7 @@ namespace ProfitWise.Batch
             var container = Bootstrapper.ConfigureApp(false);
             using (var scope = container.BeginLifetimeScope())
             {
-                var currencyService = scope.Resolve<ExchangeRateProcess>();
+                var currencyService = scope.Resolve<ExchangeRateRefreshProcess>();
                 currencyService.Execute();
             }
             ExitWithAnyKey();
@@ -147,7 +176,7 @@ namespace ProfitWise.Batch
             var container = Bootstrapper.ConfigureApp(false);
             using (var scope = container.BeginLifetimeScope())
             {
-                var currencyService = scope.Resolve<ExchangeRateProcess>();
+                var currencyService = scope.Resolve<ExchangeRateRefreshProcess>();
                 currencyService.LoadNewCurrency(symbol, DateTime.Parse(date));
             }
             ExitWithAnyKey();

@@ -14,11 +14,11 @@ namespace Push.Shopify.Model
         public decimal SubTotal { get; set; }
 
         // All of these dates are represented in Shop Timezone
-        public DateTime CreatedAtShopTz { get; set; }
-        public DateTime UpdatedAtShopTz { get; set; }
-        public DateTime? CancelledAtShopTz { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset? CancelledAt { get; set; }
 
-        public bool Cancelled => this.CancelledAtShopTz.HasValue;
+        public bool Cancelled => this.CancelledAt.HasValue;
 
         public decimal TotalRefunds => Refunds.Sum(x => x.TransactionAmount);
         public decimal TotalShippingRefund => Refunds.Sum(x => x.ShippingAdjustment);
