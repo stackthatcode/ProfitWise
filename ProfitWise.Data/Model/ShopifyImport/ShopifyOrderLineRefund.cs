@@ -15,7 +15,13 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public long? PwVariantId => OrderLineItem.PwVariantId;
 
         public DateTime RefundDate { get; set; }
-        public decimal Amount { get; set; }
+
+        private decimal _amount = 0m;
+        public decimal Amount
+        {
+            get { return OrderLineItem.IsGiftCard ? 0 : _amount; }
+            set { _amount = value; }
+        }
         public int RestockQuantity { get; set; }
     }
 }

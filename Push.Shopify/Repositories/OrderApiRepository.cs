@@ -133,6 +133,7 @@ namespace Push.Shopify.Repositories
                 orderLineItemResult.ProductId = line_item.product_id;
                 orderLineItemResult.VariantId = line_item.variant_id;
                 orderLineItemResult.Price = line_item.price;
+                orderLineItemResult.IsGiftCard = line_item.gift_card;
                 orderLineItemResult.Quantity = line_item.quantity;
                 orderLineItemResult.Sku = line_item.sku;
 

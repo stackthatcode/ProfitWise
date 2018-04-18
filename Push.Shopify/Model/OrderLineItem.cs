@@ -12,6 +12,7 @@ namespace Push.Shopify.Model
         public int Quantity { get; set; }
         public decimal Discount { get; set; }
         public decimal Price { get; set; }
+        public bool IsGiftCard { get; set; }
 
         public string ProductTitle { get; set; }
         public string VariantTitle { get; set; }

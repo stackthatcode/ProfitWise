@@ -126,6 +126,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
             newLineItem.ShopifyOrderId = parentOrder.ShopifyOrderId;
             newLineItem.ShopifyOrderLineId = lineFromShopify.Id;
+            newLineItem.IsGiftCard = lineFromShopify.IsGiftCard;
             newLineItem.UnitPrice = lineFromShopify.Price;
             newLineItem.Quantity = lineFromShopify.Quantity;
             newLineItem.LineDiscount = lineFromShopify.Discount;

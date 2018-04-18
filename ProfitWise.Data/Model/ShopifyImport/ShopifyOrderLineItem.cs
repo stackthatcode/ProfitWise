@@ -10,6 +10,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public long PwShopId { get; set; }
         public long ShopifyOrderLineId { get; set; }
         public long ShopifyOrderId { get; set; }
+        public bool IsGiftCard { get; set; }
 
         public ShopifyOrder ParentOrder { get; set; }
         public IList<ShopifyOrderLineRefund> Refunds { get; set; }
@@ -29,7 +30,9 @@ namespace ProfitWise.Data.Model.ShopifyImport
         public int NetQuantity => Quantity - Refunds.Sum(x => x.RestockQuantity);  
          
         public decimal UnitPrice { get; set; }      // From Shopify - we store this
-        public decimal GrossTotal => Quantity * UnitPrice;
+        public decimal GrossTotal 
+            => IsGiftCard ? 0 : Quantity * UnitPrice;
+
         public decimal LineDiscount { get; set; }   // From Shopify - we store this
 
 

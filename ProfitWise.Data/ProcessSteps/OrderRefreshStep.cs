@@ -201,7 +201,7 @@ namespace ProfitWise.Data.ProcessSteps
                 }
                 else
                 {
-                    var earliestOrderCreatedShopTz = importedOrders.Min(x => x.CreatedAt);
+                    var earliestOrderCreatedShopTz = importedOrders.Min(x => x.UpdatedAt);
                     batchState.OrderDatasetStart = earliestOrderCreatedShopTz.UtcDateTime;
                 }
                 batchStateRepository.Update(batchState);
@@ -213,7 +213,7 @@ namespace ProfitWise.Data.ProcessSteps
             var catalogBuilderService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
             
-            var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();                
+            var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();
             var orderIdList = importedOrders.Select(x => x.Id).ToList();
             var existingOrders = orderRepository.RetrieveOrdersFullDepth(orderIdList);
 
