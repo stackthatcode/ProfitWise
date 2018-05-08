@@ -18,17 +18,20 @@ namespace ProfitWise.Data.Services
         private readonly MultitenantFactory _multitenantFactory;
         private readonly CurrencyService _currencyService;
         private readonly ConnectionWrapper _connectionWrapper;
+        private readonly IPushLogger _logger;
 
         public PwShop PwShop { get; set; }
 
         public CogsService(
                 MultitenantFactory multitenantFactory, 
                 CurrencyService currencyService, 
-                ConnectionWrapper connectionWrapper)
+                ConnectionWrapper connectionWrapper, 
+                IPushLogger logger)
         {
             _multitenantFactory = multitenantFactory;
             _currencyService = currencyService;
             _connectionWrapper = connectionWrapper;
+            _logger = logger;
         }
 
         
@@ -135,7 +138,7 @@ namespace ProfitWise.Data.Services
 
             foreach (var dateBlockContext in dateBlockContexts)
             {
-                cogsDownstreamRepository.UpdateOrderLines(dateBlockContext);
+               cogsDownstreamRepository.UpdateOrderLines(dateBlockContext);
             }
         }
         
@@ -215,38 +218,47 @@ namespace ProfitWise.Data.Services
         }
 
 
-        //[Obsolete]
-        //public void OneTimeCogsDataFixer()
-        //{
-        //    var cogsEntryRepository = _multitenantFactory.MakeCogsEntryRepository(this.PwShop);
-        //    var service = _multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
-        //    var fullcatalog = service.RetrieveFullCatalog();
+        public void RecomputeCogsFullDatalog()
+        {
+            var service = _multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
+            var fullcatalog = service.RetrieveFullCatalog();
+            var downstreamRepository = _multitenantFactory.MakeCogsDownstreamRepository(this.PwShop);
+            
+            foreach (var masterVariant in fullcatalog.SelectMany(x => x.MasterVariants))
+            {
+                using (var transaction = _connectionWrapper.InitiateTransaction())
+                {
+                    CogsDto defaults = new CogsDto()
+                    {
+                        CogsAmount = masterVariant.CogsAmount,
+                        CogsCurrencyId = masterVariant.CogsCurrencyId,
+                        CogsMarginPercent = masterVariant.CogsMarginPercent,
+                        CogsTypeId = masterVariant.CogsTypeId
+                    };
 
-        //    foreach (var masterVariant in fullcatalog.SelectMany(x => x.MasterVariants))
-        //    {
-        //        using (var transaction = _connectionWrapper.StartTransactionForScope())
-        //        {
-        //            CogsDto defaults = new CogsDto()
-        //            {
-        //                CogsAmount = masterVariant.CogsAmount,
-        //                CogsCurrencyId = masterVariant.CogsCurrencyId,
-        //                CogsMarginPercent = masterVariant.CogsMarginPercent,
-        //                CogsTypeId = masterVariant.CogsTypeId
-        //            };
+                    var dateBlockContexts =
+                        CogsDateBlockContext.Make(
+                            defaults, null, PwShop.CurrencyId, null, masterVariant.PwMasterVariantId);
 
-        //            var dateBlockContexts =
-        //                CogsDateBlockContext.Make(
-        //                    defaults, null, PwShop.CurrencyId, null, masterVariant.PwMasterVariantId);
+                    // Refresh CoGS for Master Variants
+                    UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
 
-        //            UpdateGoodsOnHandForMasterVariant(dateBlockContexts);
-        //            UpdateOrderLinesAndReportEntries(dateBlockContexts);
+                    // Refresh Order Line CoGS
+                    UpdateOrderLinesCogs(dateBlockContexts);
 
-        //            transaction.Commit();                    
-        //        }
-        //    }
+                    // Refresh the Ledger
+                    var refreshContext = new EntryRefreshContext();
+                    refreshContext.PwMasterVariantId = masterVariant.PwMasterVariantId;
+                    downstreamRepository.DeleteEntryLedger(refreshContext);
+                    downstreamRepository.RefreshEntryLedger(refreshContext);
 
-        //}
+                    transaction.Commit();
 
+                    _logger.Info($"Completed Master Variant {masterVariant.PwMasterVariantId}");
+                }
+            }
+        }
     }
 }
+
 

@@ -253,21 +253,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return query + "; ";
         }
 
-        [Obsolete("Should not need these corrections - provided Shopify rectifies their reporting")]
-        private string InsertCorrectionEntriesQuery(EntryRefreshContext context)
-        {
-            var query =
-                @"INSERT INTO profitreportentry(@PwShopId)
-                SELECT	PwShopId, LastActivityDate, @CorrectionEntry AS EntryType, ShopifyOrderId, ShopifyOrderId, 
-		                NULL, NULL, BalancingCorrection AS NetSales, 0 AS CoGS, NULL AS Quantity, " + 
-                _paymentStatusInsertField +
-                @" FROM ordertable(@PwShopId) o WHERE BalancingCorrection <> 0 ";
-
-            if (context.ShopifyOrderId != null)
-                query += OrderIdWhereClause("o", "AND");
-            return query + "; ";
-        }
-
         private string DeleteEntriesQuery(EntryRefreshContext context)
         {
             var query = @"DELETE FROM profitreportentry(@PwShopId) ";
@@ -343,19 +328,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         ON oa.ShopifyOrderId = o.ShopifyOrderId ";
             return query + "; ";
         }
-
-        [Obsolete]
-        private string UpdateCorrectionEntriesQuery(EntryRefreshContext context)
-        {
-            var query =
-                @"UPDATE pr SET " + PaymentStatusUpdateField +
-                $@" FROM profitreportentry(@PwShopId) pr
-                    INNER JOIN ordertable(@PwShopId) o 
-                        ON pr.ShopifyOrderId = o.ShopifyOrderId 
-                        AND pr.EntryType = {EntryType.CorrectionEntry} ";
-            return query + "; ";
-        }
-
+        
         private string UpdateFilterAppender(string query, string orderLineAlias, EntryRefreshContext context)
         {
             if (context.ShopifyOrderId != null)

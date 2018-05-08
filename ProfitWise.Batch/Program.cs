@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Hangfire;
 using Microsoft.AspNet.Identity.EntityFramework;
+using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories.System;
@@ -24,6 +25,7 @@ namespace ProfitWise.Batch
         private const string SingleExchangeRateLoad = "7";
         private const string AllExchangeRateLoad = "8";
         private const string RefreshSingleOrder = "9";
+        private const string RebuildOrderLineCogsAndLedger = "10";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
@@ -41,6 +43,7 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
             Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
             Console.WriteLine($"{RefreshSingleOrder} - Refresh a Single Order");
+            Console.WriteLine($"{RebuildOrderLineCogsAndLedger} - Rebuild Order Line Unit CoGS and the Report Ledger for a single Shop");
 
             Console.WriteLine("");
             return Console.ReadLine();
@@ -112,8 +115,32 @@ namespace ProfitWise.Batch
                 RunRefreshSingleOrder();
                 return;
             }
+            if (choice == RebuildOrderLineCogsAndLedger)
+            {
+                RunRebuildOrderLineCogsAndLedger();
+                return;
+            }
 
             Console.WriteLine("Invalid option - exiting. Bye!");
+        }
+
+        private static void RunRebuildOrderLineCogsAndLedger()
+        {
+            Console.WriteLine($"Enter Shop Id");
+            var shopId = Int32.Parse(Console.ReadLine());
+
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var repository = scope.Resolve<ShopRepository>();
+                var factory = scope.Resolve<MultitenantFactory>();
+                var shop = repository.RetrieveByShopId(shopId);
+                var service = factory.MakeCogsService(shop);
+
+                service.RecomputeCogsFullDatalog();
+            }
+
+            ExitWithAnyKey();
         }
 
         private static void RunRefreshSingleOrder()
