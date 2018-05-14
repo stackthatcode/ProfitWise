@@ -41,7 +41,7 @@ namespace ProfitWise.Data.Services
                     .AppSettings.GetAndTryParseAsString("UninstallWebHookAddress", "");
 
         private const int DefaultFreeTrial = 14;
-        private const decimal ProfitWiseMonthlyPrice = 14.95m;
+        private const decimal ProfitWiseMonthlyPrice = 9.95m;
 
 
         public ShopOrchestrationService(

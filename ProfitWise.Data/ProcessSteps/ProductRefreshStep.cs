@@ -211,10 +211,10 @@ namespace ProfitWise.Data.ProcessSteps
 
             _pushLogger.Debug(
                 $"Updating Variant {variant.PwVariantId} price range: " +
-                $"{context.Price} to {context.Price} and setting inventory to {inventory}");
+                $"{context.Price} to {context.Price} / inventory to {inventory} / SKU {context.Sku}");
 
             variantRepository.UpdateVariant(
-                variant.PwVariantId, context.Price, context.Price, variant.Sku, 
+                variant.PwVariantId, context.Price, context.Price, context.Sku, 
                 inventory, DateTime.UtcNow);
         }
 

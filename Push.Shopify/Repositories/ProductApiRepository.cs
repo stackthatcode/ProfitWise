@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
@@ -17,17 +18,20 @@ namespace Push.Shopify.Repositories
     {
         private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;
+        private readonly IPushLogger _logger;
         public ShopifyCredentials ShopifyCredentials { get; set; }
 
 
         public ProductApiRepository(
                 IHttpClientFacade client,
                 ShopifyClientConfig configuration,
-                ShopifyRequestFactory requestFactory)
+                ShopifyRequestFactory requestFactory, 
+                IPushLogger logger)
         {
             _client = client;
             _client.Configuration = configuration;
             _requestFactory = requestFactory;
+            _logger = logger;
         }
 
         public virtual int RetrieveCount(ProductFilter filter)
@@ -55,6 +59,7 @@ namespace Push.Shopify.Repositories
 
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
+            _logger.Trace(clientResponse.Body);
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             var results = new List<Product>();
