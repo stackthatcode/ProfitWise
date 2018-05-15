@@ -265,7 +265,9 @@ namespace ProfitWise.Web.Controllers
                     JavaScriptRedirectModel.BuildForChargeConfirm(charge.ConfirmationUrl));
             }
 
-            if (charge == null || charge.LastStatus.SystemMustCreateNewCharge())
+            if (charge == null || 
+                charge.LastStatus.SystemMustCreateNewCharge() ||
+                charge.MustDestroyOnNextLogin)
             {
                 // Create ProfitWise subscription and save
                 var verifyUrl = GlobalConfig.BaseUrl + $"/ShopifyAuth/VerifyBilling";

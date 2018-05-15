@@ -50,11 +50,7 @@ namespace Push.Shopify.Model
         {
             return input.HasValue && input.Value == ChargeStatus.Frozen;
         }
-
-        public static bool SystemMustCreateNewCharge(this ChargeStatus? input)
-        {
-            return !input.HasValue || input.Value.SystemMustCreateNewCharge();
-        }
+        
 
         public static bool SystemMustCreateNewCharge(this ChargeStatus input)
         {

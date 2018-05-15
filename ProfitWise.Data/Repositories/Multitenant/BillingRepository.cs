@@ -78,7 +78,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             var query = @"INSERT INTO recurringcharge(@PwShopId) VALUES (
                             @PwShopId, @PwChargeId, @ShopifyRecurringChargeId, @ConfirmationUrl, 
-                            @LastStatus, @IsPrimary, @DateCreated, @LastUpdated, @LastJson );";
+                            @LastStatus, @IsPrimary, @DateCreated, @LastUpdated, @LastJson,
+                            @MustDestroyOnNextLogin );";
             _connectionWrapper.Execute(query, charge);
         }
 

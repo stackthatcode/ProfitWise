@@ -9,7 +9,12 @@ using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
+using ProfitWise.Data.Utility;
 using Push.Foundation.Web.Identity;
+using Push.Foundation.Web.Interfaces;
+using Push.Foundation.Web.Shopify;
+using Push.Shopify.Factories;
+using Push.Shopify.Repositories;
 
 
 namespace ProfitWise.Batch
@@ -26,6 +31,7 @@ namespace ProfitWise.Batch
         private const string AllExchangeRateLoad = "8";
         private const string RefreshSingleOrder = "9";
         private const string RebuildOrderLineCogsAndLedger = "10";
+        private const string UpdateRecurringCharge = "11";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
@@ -44,7 +50,8 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
             Console.WriteLine($"{RefreshSingleOrder} - Refresh a Single Order");
             Console.WriteLine($"{RebuildOrderLineCogsAndLedger} - Rebuild Order Line Unit CoGS and the Report Ledger for a single Shop");
-
+            Console.WriteLine($"{UpdateRecurringCharge} - Update Recurring Charge for a single Shop");
+            
             Console.WriteLine("");
             return Console.ReadLine();
         }
@@ -120,8 +127,42 @@ namespace ProfitWise.Batch
                 RunRebuildOrderLineCogsAndLedger();
                 return;
             }
+            if (choice == UpdateRecurringCharge)
+            {
+                RunUpdateRecurringCharge();
+                return;
+            }
 
             Console.WriteLine("Invalid option - exiting. Bye!");
+        }
+
+        private static void RunUpdateRecurringCharge()
+        {
+            Console.WriteLine($"Enter Shop Id");
+            var shopId = Int32.Parse(Console.ReadLine());
+
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var repository = scope.Resolve<ShopRepository>();
+                var shop = repository.RetrieveByShopId(shopId);
+
+                var factory = scope.Resolve<MultitenantFactory>();
+                var billingRepository = factory.MakeBillingRepository(shop);
+
+                var charge = billingRepository.RetrieveCurrent();
+
+                var apiFactory = scope.Resolve<ApiRepositoryFactory>();
+                var credentialService = scope.Resolve<IShopifyCredentialService>();
+                var credentials = credentialService.Retrieve(shop.ShopOwnerUserId);
+                var shopifyBillingApi = 
+                    apiFactory.MakeRecurringApiRepository(credentials.ToShopifyCredentials());
+
+                var result = shopifyBillingApi.UpdateChargeAmount(charge.ShopifyRecurringChargeId, 8.95m);
+                var results2 = shopifyBillingApi.RetrieveCharge(charge.ShopifyRecurringChargeId);
+            }
+
+            ExitWithAnyKey();
         }
 
         private static void RunRebuildOrderLineCogsAndLedger()

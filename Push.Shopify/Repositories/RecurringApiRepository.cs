@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Autofac.Extras.DynamicProxy2;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.Json;
@@ -40,7 +41,22 @@ namespace Push.Shopify.Repositories
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
-        }        
+        }
+
+        [Obsolete]
+        public virtual RecurringApplicationCharge UpdateChargeAmount(long id, decimal amount)
+        {
+            var path = 
+                $"/admin/recurring_application_charges/{id}/customize.json" +
+                $"?recurring_application_charge[capped_amount]={amount}";
+
+            var request = _requestFactory.HttpPut(ShopifyCredentials, path, "");
+            var clientResponse = _client.ExecuteRequest(request);
+
+            dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
+
+            return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
+        }
 
         public virtual RecurringApplicationCharge RetrieveCharge(long id)
         {
@@ -70,6 +86,7 @@ namespace Push.Shopify.Repositories
 
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
         }
+        
 
         public virtual void CancelCharge(long id)
         {

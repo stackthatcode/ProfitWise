@@ -198,6 +198,7 @@ namespace ProfitWise.Data.Services
                     ConfirmationUrl = apiChargeResult.confirmation_url,
                     LastStatus = apiChargeResult.status.ToChargeStatus(),
                     LastJson = apiChargeResult.SerializeToJson(),
+                    MustDestroyOnNextLogin = false,
                 };
                 billingRepository.Insert(profitWiseCharge);
                 
@@ -240,6 +241,7 @@ namespace ProfitWise.Data.Services
             currentCharge.ConfirmationUrl = result.confirmation_url;
             currentCharge.LastStatus = result.status.ToChargeStatus();
             currentCharge.LastJson = result.SerializeToJson();
+
             billingRepository.Update(currentCharge);
 
             return currentCharge;

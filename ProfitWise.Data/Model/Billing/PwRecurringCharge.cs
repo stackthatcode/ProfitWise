@@ -15,6 +15,7 @@ namespace ProfitWise.Data.Model.Billing
         
         
         public bool IsPrimary { get; set; }
+        public bool MustDestroyOnNextLogin { get; set; }
 
         public DateTime DateCreated { get; set; }
         public DateTime LastUpdated { get; set; }
