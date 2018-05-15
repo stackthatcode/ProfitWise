@@ -4,8 +4,8 @@ GO
 
 -- This script will rename a Shop's Domain in ASP.NET Users, thereby preventing PW from verifying their existence
 
-DECLARE @PwShopId int = 100008;
-DECLARE @NewShopifyShopId bigint = 123890238590; -- Set this to prevent collisions when reinstalling
+DECLARE @PwShopId int = 100091;
+DECLARE @NewShopifyShopId bigint = 16666286590; -- Set this to prevent collisions when reinstalling
 
 UPDATE t1
 SET UserName = UserName + 'DISABLED'

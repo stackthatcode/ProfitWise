@@ -157,7 +157,7 @@ namespace ProfitWise.Data.Services
             return charge;
         }
 
-        public PwRecurringCharge CreateCharge(string userId, string returnUrl)
+        public PwRecurringCharge CreateCharge(string userId, string returnUrl, int? freeTrialOverride = null)
         {
             var credentials = _credentialService.Retrieve(userId).ToShopifyCredentials();
             var repository = _apifactory.MakeRecurringApiRepository(credentials);
@@ -167,8 +167,12 @@ namespace ProfitWise.Data.Services
             // Invoke Shopify API to create the Recurring Application Charge
             var chargeParameter = RecurringChargeFactory(shop.IsOwnedBy3duniverse);
             chargeParameter.return_url = returnUrl;
-            
-            if (shop.TempFreeTrialOverride.HasValue)
+
+            if (freeTrialOverride.HasValue)
+            {
+                chargeParameter.trial_days = freeTrialOverride.Value;
+            }
+            else if (shop.TempFreeTrialOverride.HasValue)
             {
                 // If a Free Trial Override has been set, then use that
                 chargeParameter.trial_days = shop.TempFreeTrialOverride.Value;

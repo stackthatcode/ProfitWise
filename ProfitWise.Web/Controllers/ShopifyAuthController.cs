@@ -273,7 +273,10 @@ namespace ProfitWise.Web.Controllers
                 var verifyUrl = GlobalConfig.BaseUrl + $"/ShopifyAuth/VerifyBilling";
 
                 // Invoke the Shopify API and save to ProfitWise SQL
-                var newCharge = _shopOrchestrationService.CreateCharge(user.Id, verifyUrl);
+                var newCharge =
+                    charge != null && charge.MustDestroyOnNextLogin
+                        ? _shopOrchestrationService.CreateCharge(user.Id, verifyUrl, 0)
+                        : _shopOrchestrationService.CreateCharge(user.Id, verifyUrl);
 
                 // Redirect for Shopify Charge approval
                 return View("JavaScriptRedirect",

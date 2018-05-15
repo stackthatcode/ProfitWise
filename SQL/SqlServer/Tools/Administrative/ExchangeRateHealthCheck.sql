@@ -18,6 +18,7 @@ SELECT FORMATMESSAGE(
 		'Number of Days = %i / Expected # of Entries = %i / Actual # of Entries = %i',
 		@NumberOfDays, @ExpectedExchangeRateEntries, @ActualExchangeRateEntries);
 
+
 SELECT SourceCurrencyId, COUNT(*), MIN(Date), MAX(Date) 
 FROM exchangerate
 GROUP BY SourceCurrencyId;
