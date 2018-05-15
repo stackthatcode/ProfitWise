@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Owin;
 using Owin;
 using ProfitWise.Web;
 
@@ -14,6 +15,10 @@ namespace ProfitWise.Web
             DefaultSecurityDataConfig.Execute(autofacContainer);
 
             HangFireStartup.Configure(app);
+
+            #if DEBUG
+            TelemetryConfiguration.Active.DisableTelemetry = true;
+            #endif
         }
     }
 }

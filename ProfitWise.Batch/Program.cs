@@ -211,13 +211,15 @@ namespace ProfitWise.Batch
         
         public static void ExecuteManualShopRefresh()
         {
-            Console.WriteLine("Please enter the Shop Owner's User Id");
-            string userId = Console.ReadLine();
+            Console.WriteLine("Please enter the Shop Id");
+            var shopId =  Int32.Parse(Console.ReadLine());
             var container = Bootstrapper.ConfigureApp(false);
             using (var scope = container.BeginLifetimeScope())
             {
+                var repository = scope.Resolve<ShopRepository>();
+                var shop = repository.RetrieveByShopId(shopId);
                 var service = scope.Resolve<ShopRefreshProcess>();
-                service.RoutineShopRefresh(userId);
+                service.RoutineShopRefresh(shop.ShopOwnerUserId);
             }
             ExitWithAnyKey();
         }
