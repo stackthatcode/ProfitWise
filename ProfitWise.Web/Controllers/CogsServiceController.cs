@@ -125,6 +125,8 @@ namespace ProfitWise.Web.Controllers
                 PwMasterProductId = masterProductSummary.PwMasterProductId,
                 Title = masterProductSummary.Title,
                 MasterVariants = cogsRepository.RetrieveVariants(new[] {pwMasterProductId}),
+                ProductType = masterProductSummary.ProductType.IsNullOrEmptyAlt(SearchConstants.NoProductType),
+                Vendor = masterProductSummary.Vendor.IsNullOrEmptyAlt(SearchConstants.NoVendor),
             };
 
             foreach (var variant in masterProduct.MasterVariants)

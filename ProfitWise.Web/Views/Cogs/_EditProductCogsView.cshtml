@@ -33,6 +33,13 @@
         <div class="col-xs-6" style="padding-top: 20px;">            
             <h3 class="drilldown-header overflow-gracefully" 
                 data-bind="text: MasterProductTitle"></h3>
+            
+            <div>
+                <span data-bind="text:ProductType"></span>
+                <span>-</span>
+                <span data-bind="text:Vendor"></span>
+            </div>
+
             <div class="drilldown-subtitle" data-bind="text: VariantTitle"></div>
             
             <div style="height:5px;"></div>
@@ -146,6 +153,8 @@
 
         self.PwMasterProductId = ko.observable(null);
         self.MasterProductTitle = ko.observable("");
+        self.ProductType = ko.observable("");
+        self.Vendor = ko.observable("");
 
         self.Grid = ko.observable([]);
         self.SortingModel = new ProfitWiseWidgets.SortingModel();
@@ -213,6 +222,8 @@
 
         self.LoadMasterProduct = function (data) {
             self.MasterProductTitle(data.MasterProduct.Title);
+            self.ProductType(data.MasterProduct.ProductType);
+            self.Vendor(data.MasterProduct.Vendor);
 
             AQ(data.MasterProduct.MasterVariants)
                 .each(function (item) {

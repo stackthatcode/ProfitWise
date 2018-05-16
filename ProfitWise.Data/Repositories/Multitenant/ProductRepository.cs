@@ -110,8 +110,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public IList<PwProduct> RetrieveProducts(long pwMasterProductId)
         {
-            var query = @"SELECT * FROM product(@PwShopId) 
-                        WHERE PwMasterProductId = @pwMasterProductId";
+            var query = @"SELECT * FROM product(@PwShopId) WHERE PwMasterProductId = @pwMasterProductId";
             return _connectionWrapper.Query<PwProduct>(query, new { PwShopId, pwMasterProductId }).ToList();
         }
 

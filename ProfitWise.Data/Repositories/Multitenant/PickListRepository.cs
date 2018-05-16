@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.AspNet.Identity;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Utilities.Helpers;
@@ -116,12 +118,28 @@ namespace ProfitWise.Data.Repositories.Multitenant
             if (filters.Any(x => x.Type == ProductSearchFilterType.ProductVendor))
             {
                 searchByVendor = filters.First(x => x.Type == ProductSearchFilterType.ProductVendor).Value;
-                filterClause = filterClause + " AND Vendor = @searchByVendor";
+
+                if (searchByVendor == SearchConstants.NoVendor)
+                {
+                    filterClause = filterClause + " AND (Vendor IS NULL OR Vendor = '')";
+                }
+                else
+                {
+                    filterClause = filterClause + " AND Vendor = @searchByVendor";
+                }
             }
             if (filters.Any(x => x.Type == ProductSearchFilterType.ProductType))
             {
                 searchByProductType = filters.First(x => x.Type == ProductSearchFilterType.ProductType).Value;
-                filterClause = filterClause + " AND ProductType = @searchByProductType";
+
+                if (searchByProductType == SearchConstants.NoProductType)
+                {
+                    filterClause = filterClause + " AND (ProductType IS NULL OR ProductType = '')";
+                }
+                else
+                {
+                    filterClause = filterClause + " AND ProductType = @searchByProductType";
+                }
             }
             if (filters.Any(x => x.Type == ProductSearchFilterType.TaggedWith))
             {
@@ -162,7 +180,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 AND PwMasterProductId NOT IN (
                     SELECT PwMasterProductId
                     FROM product(@PwShopId)
-                    WHERE PwShopId = PwShopId " + filterClause + ");";
+                    WHERE PwShopId = PwShopId AND IsPrimary = 1 " + filterClause + ");";
 
             _connectionWrapper.Execute(query, new
             {

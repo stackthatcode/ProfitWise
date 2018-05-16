@@ -19,6 +19,9 @@ namespace ProfitWise.Data.Model.Cogs
         public string Vendor { get; set; }
         public string VendorText => Vendor.IsNullOrEmptyAlt("(No Vendor)");
 
+        public string ProductType { get; set; }
+        public string ProductTypeText => ProductType.IsNullOrEmptyAlt("(No Product Type)");
+
         [JsonIgnore]
         public IList<PwCogsVariantSummary> Variants { get; set; }
 

@@ -35,7 +35,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public PwCogsProductSummary RetrieveProduct(long masterProductId)
         {
             var query =
-                @"SELECT PwMasterProductId, PwProductId, Title, Vendor
+                @"SELECT PwMasterProductId, PwProductId, Title, Vendor, ProductType
                 FROM product(@PwShopId)
                 WHERE PwMasterProductId = @PwMasterProductId AND IsPrimary = 1;";
 
@@ -67,7 +67,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var isPrimaryClause = primaryOnly ? "AND IsPrimary = 1 " : "";
 
             var query =
-                @"SELECT PwMasterProductId, PwProductId, Title, Vendor
+                @"SELECT PwMasterProductId, PwProductId, Title, Vendor, ProductType
                 FROM product(@PwShopId) WHERE PwShopId = PwShopId " + 
                 isPrimaryClause +
                 @"AND PwMasterProductId IN ( 
@@ -221,8 +221,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         WHERE Vendor IS NOT NULL AND Vendor <> ''
                         ORDER BY Vendor;";
 
-            return _connectionWrapper.Query<string>(
-                query, new {PwShopId = this.PwShop.PwShopId}).ToList();
+            var output = new List<string>() { SearchConstants.NoVendor };
+            output.AddRange(
+                _connectionWrapper.Query<string>(query, new {PwShopId = this.PwShop.PwShopId}).ToList());
+
+            return output;
         }
 
         public IList<string> RetrieveProductType()
@@ -232,7 +235,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         WHERE ProductType IS NOT NULL AND ProductType <> ''
                         ORDER BY ProductType;";
 
-            return _connectionWrapper.Query<string>(query, new { PwShop.PwShopId}).ToList();
+            var output = new List<string>() { SearchConstants.NoProductType};
+            output.AddRange(
+                _connectionWrapper.Query<string>(query, new {PwShop.PwShopId}).ToList());
+
+            return output;
         }
 
 
