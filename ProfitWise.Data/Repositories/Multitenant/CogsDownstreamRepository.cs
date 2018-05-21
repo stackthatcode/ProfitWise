@@ -213,7 +213,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         Quantity * ISNULL(UnitCogs, 0) AS CoGS,
                         Quantity AS Quantity, " + 
                         _paymentStatusInsertField +
-                        @", ShopifyOrderId FROM orderlineitem(@PwShopId) ";
+                        @", ShopifyOrderId, UnitPrice
+                        FROM orderlineitem(@PwShopId) ";
 
             if (context.ShopifyOrderId != null)
                 query += OrderIdWhereClause();
@@ -228,7 +229,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, 	
                         -t1.RestockQuantity * ISNULL(t2.UnitCoGS, 0) AS CoGS, 	
 	                    -t1.RestockQuantity AS Quantity, " +
-                        _paymentStatusInsertField + @", NULL " + 
+                        _paymentStatusInsertField + @", NULL, t2.UnitPrice " + 
                     @" FROM orderrefund(@PwShopId) t1
 		            INNER JOIN orderlineitem(@PwShopId) t2
 			            ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId ";
@@ -244,7 +245,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"INSERT INTO profitreportentry(@PwShopId)
                 SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.ShopifyOrderId, 
                     t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 
-                    0 AS CoGS, NULL AS Quantity, " + _paymentStatusInsertField + @", NULL " +
+                    0 AS CoGS, NULL AS Quantity, " + _paymentStatusInsertField + @", NULL, NULL " +
                 @"FROM orderadjustment(@PwShopId) t1 
                     INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
 
@@ -329,7 +330,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return query + "; ";
         }
         
-        private string UpdateFilterAppender(string query, string orderLineAlias, EntryRefreshContext context)
+        private string UpdateFilterAppender(
+                    string query, string orderLineAlias, EntryRefreshContext context)
         {
             if (context.ShopifyOrderId != null)
             {

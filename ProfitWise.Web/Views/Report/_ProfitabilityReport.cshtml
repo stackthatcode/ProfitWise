@@ -186,7 +186,14 @@
                 <tbody data-bind="foreach: Data">
                 <tr>
                     <td class="overflow-gracefully">
-                    <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span></td>
+                        <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span>
+                        <div style="font-size:8px;" data-bind="if: ProductType && Vendor">
+                            <span data-bind="text: ProductType"></span>
+                            <span>-</span>
+                            <span data-bind="text: Vendor"></span>
+                        </div>
+                    </td>
+
                     <td class="hidden-xs" data-bind="text: TotalQuantitySold"></td>
                     <td class="hidden-xs">
                         <span data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(AverageMargin)"></span>%

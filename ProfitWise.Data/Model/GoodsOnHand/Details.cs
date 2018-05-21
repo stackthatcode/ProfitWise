@@ -10,6 +10,7 @@ namespace ProfitWise.Data.Model.GoodsOnHand
         public string GroupingKey { get; set; }
         [IgnoreDataMember]
         public string GroupingName { get; set; }
+        public string ProductType { get; set; }
         public string Name => GroupingName.IsNullOrEmpty() ? "(none)" : GroupingName;
         public int TotalInventory { get; set; }
         public decimal MinimumPrice { get; set; }

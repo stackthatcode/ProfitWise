@@ -6,7 +6,8 @@
         ProductType = 2,
         Vendor = 3,
         Product = 4,
-        Variant = 5
+        Variant = 5,        
+        DetailExport = 6,
     }
-
 }
+

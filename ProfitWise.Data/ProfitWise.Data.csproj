@@ -190,7 +190,10 @@
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
     <Compile Include="Model\Preferences\ProfitRealizationConstants.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />
+    <Compile Include="Model\Profit\ExportDetailRow.cs" />
+    <Compile Include="Model\Profit\GroupedTotalWithTypeAndVendor.cs" />
     <Compile Include="Model\Profit\GroupingKeyAndName.cs" />
+    <Compile Include="Model\Profit\IGroupedTotal.cs" />
     <Compile Include="Model\Profit\JsonSeries.cs" />
     <Compile Include="Model\Profit\PaymentStatus.cs" />
     <Compile Include="Model\Profit\PeriodType.cs" />

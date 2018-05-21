@@ -146,7 +146,18 @@ namespace ProfitWise.Web.Controllers
             var dataService = _factory.MakeDataService(userIdentity.PwShop);            
             var totals = dataService.ProfitabilityDetails(reportId, grouping, ordering, 1, 100000);
 
-            string csv = CsvSerializer.SerializeToCsv(totals);
+            string csv;
+
+            // Maintenance hack - not
+            if (grouping == ReportGrouping.Variant)
+            {
+                csv = CsvSerializer.SerializeToCsv(totals.Cast<GroupedTotalWithTypeAndVendor>());
+            }
+            else
+            {
+                csv = CsvSerializer.SerializeToCsv(totals);
+            }
+
             return File(
                 new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "ProfitabilityDetail.csv");
         }

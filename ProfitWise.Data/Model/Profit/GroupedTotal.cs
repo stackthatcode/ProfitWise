@@ -6,7 +6,7 @@ using Castle.Core.Internal;
 
 namespace ProfitWise.Data.Model.Profit
 {
-    public class GroupedTotal
+    public class GroupedTotal : IGroupedTotal
     {
         public GroupedTotal()
         {
@@ -56,6 +56,7 @@ namespace ProfitWise.Data.Model.Profit
             }
             set { _groupingName = value; }
         }
+
         public decimal TotalCogs { get; set; }
         public decimal TotalRevenue { get; set; }
         public decimal TotalProfit { get; set; }
@@ -63,7 +64,7 @@ namespace ProfitWise.Data.Model.Profit
         public int TotalOrders { get; set; }
         public decimal AverageMargin { get; set; }
 
-        // Needs to be manually computed
+        // Needs to be manually computed using the totals from the Executive Summary
         public decimal ProfitPercentage { get; set; }
     }
 

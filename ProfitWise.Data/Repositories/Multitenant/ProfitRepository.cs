@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Castle.Core.Internal;
 using Dapper;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
+using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Profit;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
+using Push.Foundation.Utilities.Helpers;
 
 namespace ProfitWise.Data.Repositories.Multitenant
 {
@@ -127,10 +130,24 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 CASE WHEN SUM(t3.NetSales) = 0 THEN 0 
                     ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin ";
 
+
+        // *** TODO - in progress - add appropriate aliases
+        
+        private string ExportDetailTotalsFields =
+            @"SUM(Quantity * UnitPrice) / SUM(Quantity) AS UnitPriceAverage, 
+            SUM(Quantity * UnitCoGS) / SUM(Quantity) AS UnitCogsAverage,
+            SUM((UnitPrice - UnitCoGS) * Quantity) / SUM(Quantity) AS UnitMarginAverage,
+            (SUM(NetSales) - SUM(CoGS)) / SUM(Quantity) AS AverageMarginPerUnitSold ";
+
         // CRUCIAL *** Joining with Query Stub enables Grouping, but at the expense of excluding Adjustments
-        private string QueryGutsForTotals()
+        private string QueryGutsForTotals(bool includeExportDetails = false)
         {
-            return TotalsFields +
+            var output = 
+                includeExportDetails 
+                    ? TotalsFields + ", " + ExportDetailTotalsFields 
+                    : TotalsFields;
+
+            output +=
                 @"FROM profitquerystub(@PwShopId) t1
 		        INNER JOIN variant(@PwShopId) t2
 		            ON t1.PwMasterVariantId = t2.PwMasterVariantId 
@@ -140,16 +157,21 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         AND t3.EntryDate >= @StartDate
                         AND t3.EntryDate <= @EndDate             
                 WHERE t1.PwReportId = @PwReportId ";
+
+            return output;
         }
         
         public List<GroupedTotal> RetrieveTotalsByContext(TotalQueryContext queryContext)
         {
             if (queryContext.Grouping == ReportGrouping.Product)
                 return RetreiveTotalsByProduct(queryContext);
+
             if (queryContext.Grouping == ReportGrouping.Variant)
                 return RetreiveTotalsByVariant(queryContext);
+
             if (queryContext.Grouping == ReportGrouping.ProductType)
                 return RetreiveTotalsByProductType(queryContext);
+
             if (queryContext.Grouping == ReportGrouping.Vendor)
                 return RetreiveTotalsByVendor(queryContext);
 
@@ -198,14 +220,50 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public List<GroupedTotal> RetreiveTotalsByVariant(TotalQueryContext queryContext)
         {
             var query =
-                @"SELECT t1.PwMasterVariantId AS GroupingKey, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) AS GroupingName, " +
+                @"SELECT t1.PwMasterVariantId AS GroupingKey, t1.ProductType, t1.Vendor,
+                        CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) AS GroupingName, " +
                 QueryGutsForTotals() +
-                @"GROUP BY t1.PwMasterVariantId, CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) " +
+                @"GROUP BY t1.PwMasterVariantId, t1.ProductType, t1.Vendor, 
+                        CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle) " +
                 OrderingAndPagingForTotals(queryContext, "CONCAT(t1.Sku, ' - ', t1.ProductTitle, ' - ', t1.VariantTitle)");
 
-            return _connectionWrapper
-                .Query<GroupedTotal>(query, queryContext).ToList()
-                .AssignGrouping(ReportGrouping.Variant);
+            var output = _connectionWrapper.Query<GroupedTotalWithTypeAndVendor>(query, queryContext);
+
+            output.ForEach(x =>
+                {
+                    x.ProductType = x.ProductType.IsNullOrEmptyAlt(SearchConstants.NoProductType);
+                    x.Vendor = x.Vendor.IsNullOrEmptyAlt(SearchConstants.NoVendor);
+                });
+            
+            return output
+                    .Select(x => x as GroupedTotal)
+                    .ToList()
+                    .AssignGrouping(ReportGrouping.Variant);
+        }
+
+
+        public List<ExportDetailRow> RetreiveTotalsForExportDetail(TotalQueryContext queryContext)
+        {
+            var query =
+                @"SELECT t1.Vendor, 
+                        t1.ProductType,
+                        t1.ProductTitle,
+                        t1.VariantTitle,
+                        t1.Sku, " +
+                
+                QueryGutsForTotals(includeExportDetails: true) +
+
+                @"GROUP BY t1.Vendor, t1.ProductType, t1.ProductTitle, t1.VariantTitle, t1.Sku";
+                
+            var output = _connectionWrapper.Query<ExportDetailRow>(query, queryContext);
+
+            output.ForEach(x =>
+            {
+                x.ProductType = x.ProductType.IsNullOrEmptyAlt(SearchConstants.NoProductType);
+                x.Vendor = x.Vendor.IsNullOrEmptyAlt(SearchConstants.NoVendor);
+            });
+
+            return output.ToList();
         }
 
         public List<GroupedTotal> RetreiveTotalsByProductType(TotalQueryContext queryContext)

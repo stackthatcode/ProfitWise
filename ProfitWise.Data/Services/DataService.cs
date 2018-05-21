@@ -61,7 +61,39 @@ namespace ProfitWise.Data.Services
                 groupTotal.ProfitPercentage =
                     allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
             }
-                
+              
+            return totals;
+        }
+
+
+        // Overwhelmingly similar to ProfitabilityDetails, although with the addition
+        // several key calculations and descriptive fields.
+        public List<GroupedTotal> ProfitabilityDetailAllFields(long reportId)
+        {
+            var repository = _factory.MakeReportRepository(PwShop);
+            var queryRepository = _factory.MakeProfitRepository(PwShop);
+            var report = repository.RetrieveReport(reportId);
+
+            queryRepository.PopulateQueryStub(reportId);
+            var queryContext = new TotalQueryContext(PwShop)
+            {
+                PwReportId = reportId,
+                StartDate = report.StartDate,
+                EndDate = report.EndDate,
+            };
+
+            var totals = queryRepository.RetreiveTotalsForExportDetail(queryContext);
+            var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
+
+            var allProfit = executiveSummary.TotalProfit;
+
+            // Compute Profit % for each line item
+            foreach (var groupTotal in totals)
+            {
+                groupTotal.ProfitPercentage =
+                    allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
+            }
+
             return totals;
         }
 

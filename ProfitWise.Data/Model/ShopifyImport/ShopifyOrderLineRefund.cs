@@ -13,7 +13,7 @@ namespace ProfitWise.Data.Model.ShopifyImport
 
         public long? PwProductId => OrderLineItem.PwProductId;
         public long? PwVariantId => OrderLineItem.PwVariantId;
-
+        
         public DateTime RefundDate { get; set; }
 
         private decimal _amount = 0m;
