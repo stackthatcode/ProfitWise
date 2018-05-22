@@ -49,7 +49,7 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
             Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
             Console.WriteLine($"{RefreshSingleOrder} - Refresh a Single Order");
-            Console.WriteLine($"{RebuildOrderLineCogsAndLedger} - Rebuild Order Line Unit CoGS and the Report Ledger for a single Shop");
+            Console.WriteLine($"{RebuildOrderLineCogsAndLedger} - Rebuild Report Ledger for a single Shop");
             Console.WriteLine($"{UpdateRecurringCharge} - Update Recurring Charge for a single Shop");
             
             Console.WriteLine("");
@@ -124,7 +124,7 @@ namespace ProfitWise.Batch
             }
             if (choice == RebuildOrderLineCogsAndLedger)
             {
-                RunRebuildOrderLineCogsAndLedger();
+                RunRebuildOrderLineLedger();
                 return;
             }
             if (choice == UpdateRecurringCharge)
@@ -165,24 +165,29 @@ namespace ProfitWise.Batch
             ExitWithAnyKey();
         }
 
-        private static void RunRebuildOrderLineCogsAndLedger()
+        private static void RunRebuildOrderLineLedger()
         {
             Console.WriteLine($"Enter Shop Id");
             var shopId = Int32.Parse(Console.ReadLine());
 
             var container = Bootstrapper.ConfigureApp(false);
-            using (var scope = container.BeginLifetimeScope())
-            {
-                var repository = scope.Resolve<ShopRepository>();
-                var factory = scope.Resolve<MultitenantFactory>();
-                var shop = repository.RetrieveByShopId(shopId);
-                var service = factory.MakeCogsService(shop);
+            
+            container.ExecuteInScopeWithErrorLogging(
+                scope =>
+                {
+                    var repository = scope.Resolve<ShopRepository>();
+                    var factory = scope.Resolve<MultitenantFactory>();
+                    var shop = repository.RetrieveByShopId(shopId);
+                    var service = factory.MakeCogsService(shop);
 
-                service.RecomputeCogsFullDatalog();
-            }
+                    service.RebuildCompleteReportLedger();
 
+                    //service.RecomputeCogsFullDatalog();
+                });
+            
             ExitWithAnyKey();
         }
+        
 
         private static void RunRefreshSingleOrder()
         {

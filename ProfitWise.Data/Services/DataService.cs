@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
@@ -68,13 +69,13 @@ namespace ProfitWise.Data.Services
 
         // Overwhelmingly similar to ProfitabilityDetails, although with the addition
         // several key calculations and descriptive fields.
-        public List<GroupedTotal> ProfitabilityDetailAllFields(long reportId)
+        public List<ExportDetailRow> ProfitabilityDetailAllFields(long reportId)
         {
-            var repository = _factory.MakeReportRepository(PwShop);
+            var reportRepository = _factory.MakeReportRepository(PwShop);
             var queryRepository = _factory.MakeProfitRepository(PwShop);
-            var report = repository.RetrieveReport(reportId);
-
             queryRepository.PopulateQueryStub(reportId);
+
+            var report = reportRepository.RetrieveReport(reportId);
             var queryContext = new TotalQueryContext(PwShop)
             {
                 PwReportId = reportId,
@@ -88,11 +89,8 @@ namespace ProfitWise.Data.Services
             var allProfit = executiveSummary.TotalProfit;
 
             // Compute Profit % for each line item
-            foreach (var groupTotal in totals)
-            {
-                groupTotal.ProfitPercentage =
-                    allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
-            }
+            totals.ForEach(x => x.ProfitPercentage = allProfit == 0 
+                                    ? 0m : Math.Round((x.TotalProfit / allProfit) * 100m, 4));
 
             return totals;
         }

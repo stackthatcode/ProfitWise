@@ -560,8 +560,7 @@
             self.ReportInterfaceModel.DefaultReportId(@SystemReportFactory.OverallProfitabilityId);
 
             // Export only visible for Profitability in the Detail Views
-            self.ReportInterfaceModel.ExportVisible = ko.computed( 
-                function() { return self.ReportDataModel.SummaryActive() == false; });
+            self.ReportInterfaceModel.ExportVisible = ko.computed( function() { return true;});
 
             self.ReportInterfaceModel.ExportCallback = function() {
                 self.ReportDataModel.ExportDetailCallback("download-frame");

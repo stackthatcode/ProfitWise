@@ -218,11 +218,11 @@ namespace ProfitWise.Data.Services
         }
 
 
-        public void RecomputeCogsFullDatalog()
+        
+        public void RebuildMasterVariantCogsDateBlocks()
         {
             var service = _multitenantFactory.MakeCatalogRetrievalService(this.PwShop);
             var fullcatalog = service.RetrieveFullCatalog();
-            var downstreamRepository = _multitenantFactory.MakeCogsDownstreamRepository(this.PwShop);
             
             foreach (var masterVariant in fullcatalog.SelectMany(x => x.MasterVariants))
             {
@@ -246,16 +246,29 @@ namespace ProfitWise.Data.Services
                     // Refresh Order Line CoGS
                     UpdateOrderLinesCogs(dateBlockContexts);
 
-                    // Refresh the Ledger
-                    var refreshContext = new EntryRefreshContext();
-                    refreshContext.PwMasterVariantId = masterVariant.PwMasterVariantId;
-                    downstreamRepository.DeleteEntryLedger(refreshContext);
-                    downstreamRepository.RefreshEntryLedger(refreshContext);
-
                     transaction.Commit();
 
                     _logger.Info($"Completed Master Variant {masterVariant.PwMasterVariantId}");
                 }
+            }
+        }
+        
+
+        public void RebuildCompleteReportLedger()
+        {
+            using (var transaction = _connectionWrapper.InitiateTransaction())
+            {
+                var downstreamRepository = _multitenantFactory.MakeCogsDownstreamRepository(this.PwShop);
+
+                // Refresh the Ledger
+                var refreshContext = new EntryRefreshContext();
+                downstreamRepository.DeleteEntryLedger(refreshContext);
+                downstreamRepository.CreateEntryLedger(refreshContext);
+                downstreamRepository.ExecuteRemoveEntriesForCancelledOrders();
+
+                transaction.Commit();
+
+                _logger.Info($"Completed RebuildCompleteReportLedger {PwShop.PwShopId}");
             }
         }
     }

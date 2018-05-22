@@ -164,7 +164,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             ExecuteLedgeQuery(context, query);
         }
 
-        public void RefreshEntryLedger(EntryRefreshContext context)
+        public void CreateEntryLedger(EntryRefreshContext context)
         {
             var query = InsertLineItemEntriesQuery(context);
             ExecuteLedgeQuery(context, query);
@@ -213,7 +213,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         Quantity * ISNULL(UnitCogs, 0) AS CoGS,
                         Quantity AS Quantity, " + 
                         _paymentStatusInsertField +
-                        @", ShopifyOrderId, UnitPrice
+                        @", ShopifyOrderId, UnitPrice, UnitCogs
                         FROM orderlineitem(@PwShopId) ";
 
             if (context.ShopifyOrderId != null)
@@ -229,7 +229,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, 	
                         -t1.RestockQuantity * ISNULL(t2.UnitCoGS, 0) AS CoGS, 	
 	                    -t1.RestockQuantity AS Quantity, " +
-                        _paymentStatusInsertField + @", NULL, t2.UnitPrice " + 
+                        _paymentStatusInsertField + @", NULL, t2.UnitPrice, t2.UnitCogs " + 
                     @" FROM orderrefund(@PwShopId) t1
 		            INNER JOIN orderlineitem(@PwShopId) t2
 			            ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId ";
@@ -245,7 +245,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"INSERT INTO profitreportentry(@PwShopId)
                 SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.ShopifyOrderId, 
                     t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 
-                    0 AS CoGS, NULL AS Quantity, " + _paymentStatusInsertField + @", NULL, NULL " +
+                    0 AS CoGS, NULL AS Quantity, " + _paymentStatusInsertField + @", NULL, NULL, NULL " +
                 @"FROM orderadjustment(@PwShopId) t1 
                     INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
 
@@ -262,6 +262,17 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 query += OrderIdWhereClause();
             return query + "; ";
         }
+
+        // *** CRITICAL - if the Insert queries above are executed, this will clean-up the 
+        // ... cancelled Orders that would've been coarsely added
+        public void ExecuteRemoveEntriesForCancelledOrders()
+        {
+            var query = @"DELETE FROM profitreportentry(@PwShopId) WHERE ShopifyOrderId IN 
+                        ( SELECT ShopifyOrderId FROM ordertable(PwShopId) WHERE Cancelled = 1 );";
+
+            _connectionWrapper.Execute(query, new { PwShopId, });
+        }
+
 
 
         // NOTE: this must never be called by the Order Refresh Process

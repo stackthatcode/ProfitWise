@@ -186,8 +186,11 @@
                 <tbody data-bind="foreach: Data">
                 <tr>
                     <td class="overflow-gracefully">
-                        <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }"></span>
-                        <div style="font-size:8px;" data-bind="if: ProductType && Vendor">
+                        <span data-bind="text: GroupingName, tooltip: { title: GroupingName, placement: 'bottom' }">
+                        </span>
+                        
+                        <div style="font-size:10px;" 
+                             data-bind="if: $data.hasOwnProperty('ProductType') && $data.hasOwnProperty('Vendor')">
                             <span data-bind="text: ProductType"></span>
                             <span>-</span>
                             <span data-bind="text: Vendor"></span>
@@ -559,11 +562,23 @@
             }
         };
         
-        self.ExportDetailCallback = function (downloadIframeId) {
-            var url = ProfitWiseConfig.BaseUrl + "/ProfitService/ExportDetail?" +
-                "reportId=" + self.ReportId() + "&" +
-                "grouping=" + self.ProfitabilityDetailContext.Grouping() + "&" +
-                "ordering=" + self.ProfitabilityDetailContext.Ordering();
+        self.ExportDetailCallback = function (downloadIframeId) {            
+            var url = "";
+
+            if (self.SummaryActive()) {
+                url = ProfitWiseConfig.BaseUrl + 
+                        "/ProfitService/ExportDetailAllColumns?" +
+                            "reportId=" + self.ReportId() +
+                            "&_=" + new Date().getTime();
+
+            } else {
+                url = ProfitWiseConfig.BaseUrl + 
+                        "/ProfitService/ExportDetail?" +
+                            "reportId=" + self.ReportId() + 
+                            "&grouping=" + self.ProfitabilityDetailContext.Grouping() + 
+                            "&ordering=" + self.ProfitabilityDetailContext.Ordering() +
+                            "&_=" + new Date().getTime();
+            }
 
             document.getElementById(downloadIframeId).src = url;
         };

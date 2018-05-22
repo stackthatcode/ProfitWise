@@ -25,8 +25,13 @@
         public decimal TotalProfit { get; set; }
         public int TotalQuantitySold { get; set; }
         public int TotalOrders { get; set; }
-        public decimal AverageMargin { get; set; }
+       
+        public decimal UnitPriceAverage { get; set; }
+        public decimal UnitCogsAverage { get; set; }
+        public decimal UnitMarginAverage { get; set; }
 
+        public decimal AverageMargin { get; set; }
+        
         // Needs to be manually computed
         public decimal ProfitPercentage { get; set; }
     }

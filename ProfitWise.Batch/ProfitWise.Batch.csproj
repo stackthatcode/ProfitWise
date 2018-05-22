@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacRegistration.cs" />
+    <Compile Include="BatchHelperExtensions.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="AppUninstallTest.cs" />
     <Compile Include="Program.cs" />

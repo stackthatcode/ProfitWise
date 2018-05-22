@@ -161,6 +161,18 @@ namespace ProfitWise.Web.Controllers
             return File(
                 new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "ProfitabilityDetail.csv");
         }
+        
+        [HttpGet]
+        public FileContentResult ExportDetailAllColumns(long reportId)
+        {
+            var userIdentity = HttpContext.IdentitySnapshot();
+            var dataService = _factory.MakeDataService(userIdentity.PwShop);
+            var totals = dataService.ProfitabilityDetailAllFields(reportId);
+            
+            string csv = CsvSerializer.SerializeToCsv(totals);
+            return File(new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "ProfitabilityDetail.csv");
+        }
+
 
         // Profitability Drilldown
         [HttpGet]

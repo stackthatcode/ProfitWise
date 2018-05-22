@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using ProfitWise.Data.Database;
@@ -54,6 +55,14 @@ namespace ProfitWise.Data.Repositories.System
             return _connectionWrapper.Query<PwShop>(query, new { chargeId }).FirstOrDefault();
         }
 
+        
+        public List<PwShop> RetrieveAllShops()
+        {
+            var query = @"SELECT * FROM vw_profitwiseshop ORDER BY PwShopId";
+            return _connectionWrapper
+                .Query<PwShop>(query)
+                .ToList();
+        }
 
         public int Insert(PwShop shop)
         {

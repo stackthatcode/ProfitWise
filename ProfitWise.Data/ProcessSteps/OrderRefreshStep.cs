@@ -256,9 +256,10 @@ namespace ProfitWise.Data.ProcessSteps
 
                 // Important Rule: ProfitWise does not maintain Ledge Entries for Orders that are:
                 // ... both Cancelled and with Payment that is Not Captured
+                // *** CRITICAL => CreateEntryLedger should not be invoked for Cancelled Orders
                 if (!(orderFromShopify.Cancelled)) // && !orderFromShopify.FinancialStatus.PaymentCaptured()))
                 {
-                    cogsUpdateRepository.RefreshEntryLedger(refreshContext);
+                    cogsUpdateRepository.CreateEntryLedger(refreshContext);
                 }
 
                 transaction.Commit();

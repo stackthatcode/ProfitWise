@@ -139,7 +139,9 @@ namespace ProfitWise.Web.Controllers
             var shop = _shopRepository.RetrieveByUserId(userId);
             var repository = _factory.MakeCogsDownstreamRepository(shop);
             repository.DeleteEntryLedger(new EntryRefreshContext());
-            repository.RefreshEntryLedger(new EntryRefreshContext());
+            repository.CreateEntryLedger(new EntryRefreshContext());
+            repository.ExecuteRemoveEntriesForCancelledOrders();
+
             return JsonNetResult.Success();
         }
 

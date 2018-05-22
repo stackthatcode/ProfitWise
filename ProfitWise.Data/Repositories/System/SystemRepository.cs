@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
 using ProfitWise.Data.Database;
+using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Repositories.System
@@ -172,6 +174,7 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query4);
         }
 
+        
 
     }
 }

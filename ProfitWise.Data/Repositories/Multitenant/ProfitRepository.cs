@@ -122,22 +122,22 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }
 
         private string TotalsFields =
-                @"SUM(t3.NetSales) As TotalRevenue,
-                SUM(t3.Quantity) AS TotalQuantitySold,
-                COUNT(DISTINCT(t3.OrderCountOrderId)) AS TotalOrders,
-		        SUM(t3.CoGS) AS TotalCogs, 
-                SUM(t3.NetSales) - SUM(t3.CoGS) AS TotalProfit,
-                CASE WHEN SUM(t3.NetSales) = 0 THEN 0 
-                    ELSE 100.0 - (100.0 * SUM(t3.CoGS) / SUM(t3.NetSales)) END AS AverageMargin ";
 
-
-        // *** TODO - in progress - add appropriate aliases
+            @"SUM(t3.NetSales) As TotalRevenue, 
+            SUM(t3.Quantity) AS TotalQuantitySold, 
+            COUNT(DISTINCT(t3.OrderCountOrderId)) AS TotalOrders, 
+            CONVERT(decimal(18, 2), SUM(t3.CoGS)) AS TotalCogs, 
+            CONVERT(decimal(18, 2), SUM(t3.NetSales) - SUM(t3.CoGS)) AS TotalProfit, 
+            100.0 - dbo.SaveDivideAlt(100.0 * SUM(t3.CoGS), SUM(t3.NetSales), 100.0) AS AverageMargin ";
         
+                
         private string ExportDetailTotalsFields =
-            @"SUM(Quantity * UnitPrice) / SUM(Quantity) AS UnitPriceAverage, 
-            SUM(Quantity * UnitCoGS) / SUM(Quantity) AS UnitCogsAverage,
-            SUM((UnitPrice - UnitCoGS) * Quantity) / SUM(Quantity) AS UnitMarginAverage,
-            (SUM(NetSales) - SUM(CoGS)) / SUM(Quantity) AS AverageMarginPerUnitSold ";
+
+            @"dbo.SaveDivide(SUM(Quantity * UnitPrice), SUM(Quantity)) AS UnitPriceAverage, 
+            dbo.SaveDivide(SUM(Quantity * UnitCoGS), SUM(Quantity)) AS UnitCogsAverage, 
+            dbo.SaveDivide(SUM((UnitPrice - UnitCoGS) * Quantity), SUM(Quantity)) AS UnitMarginAverage, 
+            dbo.SaveDivide((SUM(NetSales) - SUM(CoGS)), SUM(Quantity)) AS AverageMarginPerUnitSold ";
+
 
         // CRUCIAL *** Joining with Query Stub enables Grouping, but at the expense of excluding Adjustments
         private string QueryGutsForTotals(bool includeExportDetails = false)
