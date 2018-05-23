@@ -27,5 +27,4 @@ INNER JOIN profitreportentryprocessed(@PwShopId, @UseDefaultMargin, @DefaultCogs
 	
 WHERE t1.PwReportId = @PwReportId GROUP BY t1.Vendor, t1.ProductType, t1.ProductTitle, t1.VariantTitle, t1.Sku
 
---SELECT * FROM profitreportentry(100001);
 
