@@ -66,6 +66,7 @@ SELECT	t2.PwProductId,
 		t2.Sku, 
 		dbo.ufnNegToZero(t2.Inventory) AS Inventory, 
 		t1.StockedDirectly,
+		t1.Exclude,
 		t2.IsActive,
 		t2.HighPrice AS CurrentUnitPrice, 
         CASE WHEN (t4.PercentMultiplier = 0 AND t4.FixedAmount = 0 AND DefaultMargin <> 0) THEN (DefaultMargin / 100.0) * t2.HighPrice
@@ -84,5 +85,7 @@ INNER JOIN exchangerate t5
 		AND t5.Date = @QueryDate 
 		AND t5.DestinationCurrencyId = t0.CurrencyId
 GO
+
+
 
 

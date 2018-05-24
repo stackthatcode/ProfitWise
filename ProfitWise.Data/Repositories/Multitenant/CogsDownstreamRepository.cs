@@ -300,7 +300,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query =
                 @"UPDATE pr
-                SET pr.CoGS = pr.Quantity * ISNULL(ol.UnitCogs, 0), " +
+                SET pr.CoGS = pr.Quantity * ISNULL(ol.UnitCogs, 0), 
+                    pr.UnitCoGS = ol.UnitCogs, " +
                 PaymentStatusUpdateField + 
                 @" FROM profitreportentry(@PwShopId) pr
 	                INNER JOIN orderlineitem(@PwShopId) ol 
@@ -314,7 +315,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query =
                 @"UPDATE pr
-                SET pr.CoGS = -orf.RestockQuantity * ISNULL(oli.UnitCoGS, 0), " +
+                SET pr.CoGS = -orf.RestockQuantity * ISNULL(oli.UnitCoGS, 0),
+                    pr.UnitCoGS = -oli.UnitCogs, " +
                 PaymentStatusUpdateField +
                 @" FROM profitreportentry(@PwShopId) pr
 	                INNER JOIN orderrefund(@PwShopId) orf

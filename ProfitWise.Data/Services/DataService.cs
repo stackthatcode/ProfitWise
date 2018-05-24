@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
@@ -52,9 +53,8 @@ namespace ProfitWise.Data.Services
             };
 
             var totals = queryRepository.RetrieveTotalsByContext(queryContext);
-            var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
-
-            var allProfit = executiveSummary.TotalProfit;
+                        
+            var allProfit = totals.Sum(x => x.TotalProfit);
 
             // Compute Profit % for each line item
             foreach (var groupTotal in totals)
@@ -83,14 +83,23 @@ namespace ProfitWise.Data.Services
                 EndDate = report.EndDate,
             };
 
-            var totals = queryRepository.RetreiveTotalsForExportDetail(queryContext);
-            var executiveSummary = queryRepository.RetreiveTotalsForAll(queryContext);
-
-            var allProfit = executiveSummary.TotalProfit;
-
-            // Compute Profit % for each line item
+            var totals = queryRepository.RetreiveTotalsForExportDetail(queryContext);            
+            var allProfit = totals.Sum(x => x.TotalProfit);
             totals.ForEach(x => x.ProfitPercentage = allProfit == 0 
                                     ? 0m : Math.Round((x.TotalProfit / allProfit) * 100m, 4));
+
+            var unitAmounts = queryRepository.RetrieveCurrentUnitCogsAndPrice();
+
+            foreach (var total in totals)
+            {
+                var unitAmount = unitAmounts.FirstOrDefault(x => x.PwVariantId == total.PwVariantId);
+                if (unitAmount != null)
+                {
+                    total.CurrentUnitCogs = unitAmount.CurrentUnitCogs;
+                    total.CurrentUnitPrice = unitAmount.CurrentUnitPrice;
+                    total.CurrentMargin = unitAmount.CurrentMargin;
+                }
+            }
 
             return totals;
         }
