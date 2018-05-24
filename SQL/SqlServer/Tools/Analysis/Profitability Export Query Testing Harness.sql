@@ -16,8 +16,6 @@ CONVERT(decimal(18, 2), SUM(t3.NetSales) - SUM(t3.CoGS)) AS TotalProfit,
 
 dbo.SaveDivide(SUM(Quantity * UnitPrice), SUM(Quantity)) AS UnitPriceAverage, 
 dbo.SaveDivide(SUM(Quantity * UnitCoGS), SUM(Quantity)) AS UnitCogsAverage, 
-dbo.SaveDivide(SUM((UnitPrice - UnitCoGS) * Quantity), SUM(Quantity)) AS UnitMarginAverage, 
-
 dbo.SaveDivide((SUM(NetSales) - SUM(CoGS)), SUM(Quantity)) AS AverageMarginPerUnitSold
 
 FROM profitquerystub(@PwShopId) t1 

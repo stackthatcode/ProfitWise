@@ -16,7 +16,7 @@ ALTER TABLE profitwiseprofitreportentry ADD UnitPrice decimal(18, 2) NULL;
 ALTER TABLE profitwiseprofitreportentry ADD UnitCoGS decimal(18, 2) NULL;
 
 
-ALTER TABLE dbo.shopifyorderlineitem ALTER COLUMN Quantity DECIMAL(18,2);
+ALTER TABLE dbo.shopifyorderlineitem ALTER COLUMN Quantity int;
 
 
 -- This serves the Inventory Valuation Report query
@@ -54,9 +54,9 @@ GO
 
 
 
-DROP FUNCTION IF EXISTS dbo.inventoryvaluebydate
+DROP FUNCTION IF EXISTS dbo.costofgoodsbydate
 GO
-CREATE FUNCTION dbo.inventoryvaluebydate(@PwShopId bigint, @QueryDate datetime)  
+CREATE FUNCTION dbo.costofgoodsbydate(@PwShopId bigint, @QueryDate datetime)  
 RETURNS TABLE  
 AS  
 RETURN
@@ -65,10 +65,11 @@ SELECT	t2.PwProductId,
 		t2.Title, 
 		t2.Sku, 
 		dbo.ufnNegToZero(t2.Inventory) AS Inventory, 
-		t2.HighPrice AS Price, 
-        CASE WHEN (t4.PercentMultiplier = 0 AND t4.FixedAmount = 0 AND DefaultMargin <> 0) THEN (DefaultMargin / 100.0) * t2.HighPrice * dbo.ufnNegToZero(t2.Inventory)
-        ELSE (ISNULL(t4.PercentMultiplier, 0) / 100 * t2.HighPrice + ISNULL(t4.FixedAmount, 0) * t5.Rate) * dbo.ufnNegToZero(t2.Inventory) END AS CostOfGoodsOnHand,
-        dbo.ufnNegToZero(t2.Inventory) * t2.HighPrice AS PotentialRevenue
+		t1.StockedDirectly,
+		t2.IsActive,
+		t2.HighPrice AS CurrentUnitPrice, 
+        CASE WHEN (t4.PercentMultiplier = 0 AND t4.FixedAmount = 0 AND DefaultMargin <> 0) THEN (DefaultMargin / 100.0) * t2.HighPrice
+        ELSE (ISNULL(t4.PercentMultiplier, 0) / 100 * t2.HighPrice + ISNULL(t4.FixedAmount, 0) * t5.Rate) END AS UnitCogsByDate
 FROM shop(@PwShopId) t0
 INNER JOIN mastervariant(@PwShopId) t1
 	ON t0.PwShopId = t1.PwShopId
@@ -82,20 +83,6 @@ INNER JOIN exchangerate t5
     ON t4.SourceCurrencyId = t5.SourceCurrencyId
 		AND t5.Date = @QueryDate 
 		AND t5.DestinationCurrencyId = t0.CurrencyId
-WHERE t1.StockedDirectly = 1
-AND t2.Inventory IS NOT NULL
-AND t2.IsActive = 1 
 GO
-
-
-DECLARE @PwShopId int = 100001, @PwReportId int = 99821;
-DECLARE @QueryDate datetime = '05/23/2018';
-
-
-SELECT * FROM dbo.inventoryvaluebydate(@PwShopId, @QueryDate) 
-WHERE PwVariantId IN ( SELECT PwVariantId FROM goodsonhandquerystub(@PwShopId) WHERE PwReportId = @PwReportId )
-
-
-
 
 

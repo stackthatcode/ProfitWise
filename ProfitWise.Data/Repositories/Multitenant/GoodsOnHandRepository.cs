@@ -264,31 +264,19 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }
 
         private string CTE_Query=
-            @"WITH Data_CTE ( PwProductId, PwVariantId, VariantTitle, Sku, Inventory, Price, CostOfGoodsOnHand, PotentialRevenue )
-                AS (
-                    SELECT	t2.PwProductId, t2.PwVariantId, t2.Title, t2.Sku, dbo.ufnNegToZero(t2.Inventory) AS Inventory, t2.HighPrice AS Price, 
-                            CASE WHEN (t4.PercentMultiplier = 0 AND t4.FixedAmount = 0 AND DefaultMargin <> 0) THEN (DefaultMargin / 100.0) * t2.HighPrice * dbo.ufnNegToZero(t2.Inventory)
-                            ELSE (ISNULL(t4.PercentMultiplier, 0) / 100 * t2.HighPrice + ISNULL(t4.FixedAmount, 0) * t5.Rate) * dbo.ufnNegToZero(t2.Inventory) END
-                            AS CostOfGoodsOnHand,
-                            dbo.ufnNegToZero(t2.Inventory) * t2.HighPrice AS PotentialRevenue
-                    FROM shop(@PwShopId) t0
-	                    INNER JOIN mastervariant(@PwShopId) t1
-		                    ON t0.PwShopId = t1.PwShopId
-	                    INNER JOIN variant(@PwShopId) t2 
-                            ON t1.PwMasterVariantId = t2.PwMasterVariantId	
-	                    INNER JOIN mastervariantcogscalc(@PwShopId) t4 
-		                    ON t1.PwMasterVariantId = t4.PwMasterVariantId 
-			                    AND t4.StartDate <= @QueryDate 
-                                AND t4.EndDate > @QueryDate
-	                    INNER JOIN exchangerate t5 
-                            ON t4.SourceCurrencyId = t5.SourceCurrencyId
-			                    AND t5.Date = @QueryDate 
-			                    AND t5.DestinationCurrencyId = t0.CurrencyId
-                    WHERE t1.StockedDirectly = 1
-                    AND t2.Inventory IS NOT NULL
-                    AND t2.IsActive = 1 
-                    AND t2.PwVariantId IN ( SELECT PwVariantId FROM goodsonhandquerystub(@PwShopId) WHERE PwReportId = @PwReportId )
-                )  ";
+            @"WITH Data_CTE ( 
+                PwProductId, PwVariantId, VariantTitle, Sku, Inventory, Price, CostOfGoodsOnHand, PotentialRevenue 
+            ) AS (
+                SELECT  PwProductId, PwVariantId, Title, Sku, Inventory, CurrentUnitPrice, 
+                        Inventory * UnitCogsByDate AS CostOfGoodsOnHand, Inventory * CurrentUnitPrice AS PotentialRevenue
+                FROM dbo.costofgoodsbydate(@PwShopId, @QueryDate)
+                WHERE PwVariantId IN ( 
+                    SELECT PwVariantId FROM goodsonhandquerystub(@PwShopId) WHERE PwReportId = @PwReportId 
+                )
+                AND StockedDirectly = 1
+                AND Inventory IS NOT NULL
+                AND IsActive = 1
+            ) ";
     }
 }
 
