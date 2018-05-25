@@ -30,8 +30,9 @@ namespace ProfitWise.Batch
         private const string SingleExchangeRateLoad = "7";
         private const string AllExchangeRateLoad = "8";
         private const string RefreshSingleOrder = "9";
-        private const string RebuildOrderLineCogsAndLedger = "10";
+        private const string RebuildReportLedgeForSingleShop = "10";
         private const string UpdateRecurringCharge = "11";
+        private const string RebuildReportLedgeForAllShops = "12";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
@@ -49,9 +50,10 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
             Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
             Console.WriteLine($"{RefreshSingleOrder} - Refresh a Single Order");
-            Console.WriteLine($"{RebuildOrderLineCogsAndLedger} - Rebuild Report Ledger for a single Shop");
+            Console.WriteLine($"{RebuildReportLedgeForSingleShop} - Rebuild Report Ledger for a single Shop");
             Console.WriteLine($"{UpdateRecurringCharge} - Update Recurring Charge for a single Shop");
-            
+            Console.WriteLine($"{RebuildReportLedgeForAllShops} - Rebuild Report Ledger for ALL Active Shops");
+
             Console.WriteLine("");
             return Console.ReadLine();
         }
@@ -122,7 +124,7 @@ namespace ProfitWise.Batch
                 RunRefreshSingleOrder();
                 return;
             }
-            if (choice == RebuildOrderLineCogsAndLedger)
+            if (choice == RebuildReportLedgeForSingleShop)
             {
                 RunRebuildOrderLineLedger();
                 return;
@@ -130,6 +132,11 @@ namespace ProfitWise.Batch
             if (choice == UpdateRecurringCharge)
             {
                 RunUpdateRecurringCharge();
+                return;
+            }
+            if (choice == RebuildReportLedgeForAllShops)
+            {
+                RunRebuildOrderLineLedgerAllShops();
                 return;
             }
 
@@ -187,7 +194,34 @@ namespace ProfitWise.Batch
             
             ExitWithAnyKey();
         }
-        
+
+        //
+        private static void RunRebuildOrderLineLedgerAllShops()
+        {
+            Console.WriteLine(
+                $"Are you absolutely sure you want to do this for all Shops? If so, type 'YES'.");
+            var answer = Console.ReadLine();
+            if (answer != "YES")
+                return;
+
+            var container = Bootstrapper.ConfigureApp(false);
+
+            container.ExecuteInScopeWithErrorLogging(
+                scope =>
+                {
+                    var repository = scope.Resolve<ShopRepository>();
+                    var factory = scope.Resolve<MultitenantFactory>();
+                    var shops = repository.RetrieveAllActiveShops();
+
+                    foreach (var shop in shops)
+                    {
+                        var service = factory.MakeCogsService(shop);
+                        service.RebuildCompleteReportLedger();
+                    }
+                });
+
+            ExitWithAnyKey();
+        }
 
         private static void RunRefreshSingleOrder()
         {

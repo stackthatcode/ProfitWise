@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Castle.Core.Internal;
-using Dapper;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model;
@@ -244,7 +243,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     dbo.SaveDivide(SUM(Quantity * UnitCoGS), SUM(Quantity)) AS UnitCogsAverage,
                     t4.CurrentUnitPrice,
                     t4.UnitCogsByDate AS CurrentUnitCogs,
-                    t4.CurrentUnitPrice - t4.UnitCogsByDate AS CurrentMargin
+                    t4.CurrentUnitPrice - t4.UnitCogsByDate AS CurrentMargin,
+                    t4.StockedDirectly
 
                 FROM profitquerystub(@PwShopId) t1
                     INNER JOIN variant(@PwShopId)t2
@@ -258,7 +258,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         ON t2.PwVariantId = t4.PwVariantId
                 WHERE t1.PwReportId = @PwReportId
                 GROUP BY t2.PwVariantId, t1.Vendor, t1.ProductType, t1.ProductTitle, t1.VariantTitle, t1.Sku, 
-                    CurrentUnitPrice, UnitCogsByDate, CurrentUnitPrice - UnitCogsByDate";
+                    CurrentUnitPrice, UnitCogsByDate, CurrentUnitPrice - UnitCogsByDate, StockedDirectly";
             
             var output = _connectionWrapper.Query<ExportDetailRow>(query, queryContext);
 
@@ -524,20 +524,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     new { PwShopId, PwShop.UseDefaultMargin, PwShop.DefaultCogsPercent, PwShop.MinPaymentStatus,
                             PwReportId = reportId, StartDate = startDate, EndDate = endDate })
                 .ToList();
-        }
-
-
-        public List<CurrentUnitCogsAndPrice> RetrieveCurrentUnitCogsAndPrice()
-        {
-            var query =
-                @"SELECT PwVariantId,
-                        CONVERT(decimal(18, 2), CurrentUnitPrice) AS CurrentUnitPrice,
-		                CONVERT(decimal(18, 2), UnitCogsByDate) AS CurrentUnitCogs,
-		                CONVERT(decimal(18, 2), CurrentUnitPrice - UnitCogsByDate) AS CurrentMargin,
-		                StockedDirectly
-                FROM costofgoodsbydate(@PwShopId, DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0))";
-
-            return _connectionWrapper.Query<CurrentUnitCogsAndPrice>(query, new { PwShop.PwShopId }).ToList();
         }
     }
 }

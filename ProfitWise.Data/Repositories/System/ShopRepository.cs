@@ -56,9 +56,15 @@ namespace ProfitWise.Data.Repositories.System
         }
 
         
-        public List<PwShop> RetrieveAllShops()
+        public List<PwShop> RetrieveAllActiveShops()
         {
-            var query = @"SELECT * FROM vw_profitwiseshop ORDER BY PwShopId";
+            var query =
+                @"SELECT * FROM vw_profitwiseshop 
+                WHERE IsAccessTokenValid = 1 
+                AND IsProfitWiseInstalled = 1 
+                AND LastBillingStatus = 3 
+                ORDER BY PwShopId;";
+            
             return _connectionWrapper
                 .Query<PwShop>(query)
                 .ToList();

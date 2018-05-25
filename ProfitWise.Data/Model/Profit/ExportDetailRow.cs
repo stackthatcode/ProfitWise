@@ -4,6 +4,7 @@ namespace ProfitWise.Data.Model.Profit
 {
     public class ExportDetailRow
     {
+        [IgnoreDataMember]
         public int PwVariantId { get; set; }
         public string Vendor { get; set; }
         public string ProductType { get; set; }

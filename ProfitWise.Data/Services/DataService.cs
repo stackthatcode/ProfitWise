@@ -86,7 +86,7 @@ namespace ProfitWise.Data.Services
             var totals = queryRepository.RetreiveTotalsForExportDetail(queryContext);            
             var allProfit = totals.Sum(x => x.TotalProfit);
             totals.ForEach(x => x.ProfitPercentage = allProfit == 0 
-                                    ? 0m : Math.Round((x.TotalProfit / allProfit) * 100m, 4));
+                                    ? 0m : Math.Round((x.TotalProfit / allProfit), 8));
 
             return totals;
         }
@@ -97,9 +97,9 @@ namespace ProfitWise.Data.Services
                 long? pwProductId = null)
         {
             var repository = _factory.MakeGoodsOnHandRepository(PwShop);
-            var details = repository.RetrieveDetails(
-                reportId, grouping.Value, ordering, pageNumber, pageSize,
-                productType, vendor, pwProductId);
+            var details = 
+                repository.RetrieveDetails(
+                    reportId, grouping.Value, ordering, pageNumber, pageSize, productType, vendor, pwProductId);
 
             return details;
         }
