@@ -97,7 +97,7 @@ GO
 
 
 
---SELECT * FROM exchangerate WHERE Date = '05/23/2018';
+--SELECT * FROM dbo.costofgoodsbydate(100001, '05/23/2018');
 
 
 

@@ -60,7 +60,7 @@ namespace ProfitWise.Data.Services
             foreach (var groupTotal in totals)
             {
                 groupTotal.ProfitPercentage =
-                    allProfit == 0 ? 0m : (groupTotal.TotalProfit / allProfit) * 100m;
+                    allProfit == 0 ? 0m : Math.Round((groupTotal.TotalProfit / allProfit), 8);
             }
               
             return totals;

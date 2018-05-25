@@ -204,7 +204,7 @@
                     <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.Currency())">
                     </td><td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.Currency())"></td>
                     <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.Currency())"></td>
-                    <td><span data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage)"></span>%</td>
+                    <td><span data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage * 100.0)"></span>%</td>
                 </tr>
                 </tbody>
             </table>
