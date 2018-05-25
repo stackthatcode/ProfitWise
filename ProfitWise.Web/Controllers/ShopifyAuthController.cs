@@ -125,17 +125,32 @@ namespace ProfitWise.Web.Controllers
             }
 
             // Create User
-            ApplicationUser user = await UpsertAspNetUserAcct(profitWiseSignIn);
+            var user = await UpsertAspNetUserAcct(profitWiseSignIn);
             if (user == null)
             {
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
             }
             
             // Create/Update the Shop
-            PwShop profitWiseShop = UpsertProfitWiseShop(profitWiseSignIn, user);
-            if (profitWiseShop == null)
+            var result = UpsertProfitWiseShop(profitWiseSignIn, user);
+
+            if (!result.Success)
             {
-                return GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, returnUrl);
+                if (result.Reason == ShopUpsertionFailureReason.ShopCurrencyChange)
+                {
+                    var queryString =
+                        new QueryStringBuilder()
+                            .Add("newCurrency", profitWiseSignIn.Shop.Currency)
+                            .ToString();
+
+                    var url = $"{AuthConfig.ShopCurrencyChangeUrl}?{queryString}";
+
+                    return GlobalConfig.Redirect(url, returnUrl);
+                }
+                else
+                {
+                    return GlobalConfig.Redirect(AuthConfig.SevereAuthorizationFailureUrl, returnUrl);
+                }
             }
 
             return UpsertBilling(user, returnUrl);
@@ -217,7 +232,7 @@ namespace ProfitWise.Web.Controllers
             }
         }
 
-        private PwShop UpsertProfitWiseShop(ProfitWiseSignIn signIn, ApplicationUser user)
+        private ShopUpsertionResult UpsertProfitWiseShop(ProfitWiseSignIn signIn, ApplicationUser user)
         {
             try
             {
@@ -235,19 +250,26 @@ namespace ProfitWise.Web.Controllers
                 }
                 else
                 {
+                    var newCurrencyId = _currencyService.AbbrToCurrencyId(signIn.Shop.Currency);
+
+                    if (pwShop.CurrencyId != newCurrencyId)
+                    {
+                        return ShopUpsertionResult.Fail(ShopUpsertionFailureReason.ShopCurrencyChange);
+                    }
+
                     _shopOrchestrationService
-                            .UpdateShopAndAccessTokenValid(
-                                user.Id, signIn.Shop.Currency, signIn.Shop.TimeZoneIana);
+                        .UpdateShopAndAccessTokenValid(
+                            user.Id, signIn.Shop.Currency, signIn.Shop.TimeZoneIana);
                 }
 
                 // Ensure that the Uninstall Webhook is in place
                 _shopOrchestrationService.UpsertUninstallWebhook(user.Id, credentials);
-                return pwShop;
+                return ShopUpsertionResult.Succeed();
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                return null;
+                return ShopUpsertionResult.Fail(ShopUpsertionFailureReason.Exception);
             }
 
         }
@@ -387,6 +409,19 @@ namespace ProfitWise.Web.Controllers
             var msg = "It appears that your ProfitWise billing hasn't been set up correctly.";
             return AuthorizationProblem(returnUrl, "Billing Incomplete", msg, showLoginLink: true);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult ShopCurrencyChange(string newCurrency, string returnUrl)
+        {
+            var model = new ShopCurrencyChange
+            {
+                NewCurrencyAbbr = newCurrency,
+                NewCurrencyName = _currencyService.CurrencyByAbbr(newCurrency).Name,
+            };
+            return View(model);
+        }
+
 
         private ActionResult AuthorizationProblem(
                 string returnUrl, 

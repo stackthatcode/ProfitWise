@@ -1,0 +1,18 @@
+@model ProfitWise.Web.Models.ShopCurrencyChange
+@{
+    ViewBag.Title = "ProfitWise - Currency Change";
+    Layout = "~/Views/Shared/_PageLayout.cshtml";
+}
+
+<div class="system-page">
+    <h2 class="header">ProfitWise - Currency Change</h2>
+    <h4>Your Shopify store's currency has changed.</h4>
+    <div style="height: 25px;"></div>
+    <p>
+        ProfitWise has detected that your store's Currency has changed to <strong>@Model.NewCurrencyAbbr (@Model.NewCurrencyName)</strong>.
+        We'll need to perform a clean-slate reload of your store's data for ProfitWise to work properly.
+        Contact ProfitWise Support <a href="mailto:support@profitwiseapp.com">support@profitwiseapp.com</a>
+        and we'll take of this for you as soon as possible.
+    </p>
+</div>
+

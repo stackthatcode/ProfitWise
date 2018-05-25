@@ -35,6 +35,8 @@ namespace ProfitWise.Web
         public const string UnsupportedCurrency = "/ShopifyAuth/UnsupportedCurrency";
         public const string AccessTokenRefreshUrl = "/ShopifyAuth/AccessTokenRefresh";
         public const string SevereAuthorizationFailureUrl = "/ShopifyAuth/SevereAuthorizationFailure";
+        public const string ShopCurrencyChangeUrl = "/ShopifyAuth/ShopCurrencyChange";
+
         public const string BillingProblemUrl = "/ShopifyAuth/BillingProblem";
         public const string BillingIncomplete = "/ShopifyAuth/BillingIncomplete";
 

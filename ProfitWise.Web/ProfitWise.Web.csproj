@@ -221,6 +221,8 @@
     <Compile Include="Attributes\MaintenanceAttribute.cs" />
     <Compile Include="Attributes\ValidateJsonAntiForgeryTokenAttribute.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
+    <Compile Include="Models\ShopCurrencyChange.cs" />
+    <Compile Include="Models\ShopUpsertionResult.cs" />
     <Compile Include="Plumbing\HttpContextExtensions.cs" />
     <Compile Include="Attributes\RequiresStoreDataAttribute.cs" />
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />
@@ -531,6 +533,7 @@
     <Content Include="Views\ShopifyAuth\ShopifyReturn.cshtml" />
     <Content Include="Views\Shared\_IsDataLoadedAlert.cshtml" />
     <Content Include="Views\ShopifyAuth\UnsupportedCurrency.cshtml" />
+    <Content Include="Views\ShopifyAuth\ShopCurrencyChange.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
