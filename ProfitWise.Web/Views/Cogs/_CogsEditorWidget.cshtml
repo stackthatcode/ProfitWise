@@ -100,8 +100,6 @@
         };
 
         self.PushState = function(state) {
-            console.log("Pushing State!", state);
-
             self.SelectedCogsType(state.CogsTypeId);
             self.MoneyEditor.CurrencyId(state.CogsCurrencyId || self.DefaultCurrencyId());
             self.MoneyEditor.Amount(state.CogsAmount);
