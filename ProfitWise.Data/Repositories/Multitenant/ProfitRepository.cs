@@ -129,9 +129,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             CONVERT(decimal(18, 2), SUM(t3.CoGS)) AS TotalCogs, 
             CONVERT(decimal(18, 2), SUM(t3.NetSales) - SUM(t3.CoGS)) AS TotalProfit, 
             100.0 - dbo.SaveDivideAlt(100.0 * SUM(t3.CoGS), SUM(t3.NetSales), 100.0) AS AverageMarginPercent ";
-        
 
-        // CRUCIAL *** Joining with Query Stub enables Grouping, but at the expense of excluding Adjustments
         private string QueryGutsForTotalDrilldowns()
         {
             var output =
@@ -243,7 +241,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     TotalsFields + ", " +
                     @"dbo.SaveDivide((SUM(NetSales) - SUM(CoGS)), SUM(Quantity)) AS AverageMarginPerUnitSold,
                     dbo.SaveDivide(SUM(Quantity * UnitPrice), SUM(Quantity)) AS UnitPriceAverage,
-                    dbo.SaveDivide(SUM(Quantity * UnitCoGS), SUM(Quantity)) AS UnitCogsAverage
+                    dbo.SaveDivide(SUM(Quantity * UnitCoGS), SUM(Quantity)) AS UnitCogsAverage,
+                    t4.CurrentUnitPrice,
+                    t4.UnitCogsByDate AS CurrentUnitCogs,
+                    t4.CurrentUnitPrice - t4.UnitCogsByDate AS CurrentMargin
+
                 FROM profitquerystub(@PwShopId) t1
                     INNER JOIN variant(@PwShopId)t2
                         ON t1.PwMasterVariantId = t2.PwMasterVariantId   
@@ -252,8 +254,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
                             AND t2.PwVariantId = t3.PwVariantId
                             AND t3.EntryDate >= @StartDate
                             AND t3.EntryDate <= @EndDate
-                WHERE t1.PwReportId = @PwReportId                
-                GROUP BY t1.Vendor, t1.ProductType, t1.ProductTitle, t1.VariantTitle, t1.Sku";
+                    INNER JOIN dbo.costofgoodsbydate(@PwShopId, DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0)) t4
+                        ON t2.PwVariantId = t4.PwVariantId
+                WHERE t1.PwReportId = @PwReportId
+                GROUP BY t2.PwVariantId, t1.Vendor, t1.ProductType, t1.ProductTitle, t1.VariantTitle, t1.Sku, 
+                    CurrentUnitPrice, UnitCogsByDate, CurrentUnitPrice - UnitCogsByDate";
             
             var output = _connectionWrapper.Query<ExportDetailRow>(query, queryContext);
 
@@ -532,7 +537,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                StockedDirectly
                 FROM costofgoodsbydate(@PwShopId, DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0))";
 
-            return _connectionWrapper.Query<CurrentUnitCogsAndPrice>(query).ToList();
+            return _connectionWrapper.Query<CurrentUnitCogsAndPrice>(query, new { PwShop.PwShopId }).ToList();
         }
     }
 }

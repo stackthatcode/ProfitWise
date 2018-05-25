@@ -88,19 +88,6 @@ namespace ProfitWise.Data.Services
             totals.ForEach(x => x.ProfitPercentage = allProfit == 0 
                                     ? 0m : Math.Round((x.TotalProfit / allProfit) * 100m, 4));
 
-            var unitAmounts = queryRepository.RetrieveCurrentUnitCogsAndPrice();
-
-            foreach (var total in totals)
-            {
-                var unitAmount = unitAmounts.FirstOrDefault(x => x.PwVariantId == total.PwVariantId);
-                if (unitAmount != null)
-                {
-                    total.CurrentUnitCogs = unitAmount.CurrentUnitCogs;
-                    total.CurrentUnitPrice = unitAmount.CurrentUnitPrice;
-                    total.CurrentMargin = unitAmount.CurrentMargin;
-                }
-            }
-
             return totals;
         }
 
