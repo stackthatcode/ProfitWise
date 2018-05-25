@@ -55,8 +55,10 @@
     ProfitWiseWidgets.MoneyEditorWidgetModel = function(parameters) {
         var self = this;
         self.CurrencyCache = ProfitWiseFunctions.CurrencyCache;
+        
+        //console.log(parameters);
 
-        var defaultCurrencyId = @Currency.DefaultCurrencyId; // USD
+        var defaultCurrencyId = parameters.defaultcurrencyid; // @Currency.DefaultCurrencyId
         
         // Populate the input amounts
         self.Identifier = ko.observable(parameters.identifier);

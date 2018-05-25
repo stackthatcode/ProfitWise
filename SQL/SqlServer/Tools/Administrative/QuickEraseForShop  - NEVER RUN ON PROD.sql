@@ -2,10 +2,16 @@
 USE ProfitWise
 GO
 
+
+SELECT * FROM currency;
+
+SELECT * FROM profitwiseshop;
+
+
 -- This script will rename a Shop's Domain in ASP.NET Users, thereby preventing PW from verifying their existence
 
-DECLARE @PwShopId int = 100091;
-DECLARE @NewShopifyShopId bigint = 16666286590; -- Set this to prevent collisions when reinstalling
+DECLARE @PwShopId int = 100003;
+DECLARE @NewShopifyShopId bigint = 84432590; -- Set this to prevent collisions when reinstalling
 
 UPDATE t1
 SET UserName = UserName + 'DISABLED'

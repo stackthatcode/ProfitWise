@@ -51,7 +51,7 @@
     // Parameters = { CogsTypeId, CogsCurrencyId, CogsAmount, CogsMarginPercent }
     ProfitWiseWidgets.CogsEditorWidgetModel = function(parameters) {
         var self = this;
-
+        
         self.DefaultCurrencyId = ko.observable(parameters.DefaultCurrencyId);
         self.HorizontalEditor = ko.observable(false);
         self.CssClass = ko.computed(
@@ -61,12 +61,15 @@
         );
 
         // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount, CogsCurrencyId }
+        //console.log("Parent Object Woes!", parameters);
+        
         self.MoneyEditor = new ProfitWiseWidgets.MoneyEditorWidgetModel({
             identifier: "money-" + parameters.identifier,
             lowconstraint: 0,
             highconstraint: 999999999.99,
             defaultcurrencyid: parameters.DefaultCurrencyId,
             defaultamount: parameters.CogsAmount,
+            currencyid: parameters.CogsCurrencyId
         });
 
         // Parameters = { identifier, placeholder, lowconstraint, highconstraint, defaultamount }
@@ -97,6 +100,8 @@
         };
 
         self.PushState = function(state) {
+            console.log("Pushing State!", state);
+
             self.SelectedCogsType(state.CogsTypeId);
             self.MoneyEditor.CurrencyId(state.CogsCurrencyId || self.DefaultCurrencyId());
             self.MoneyEditor.Amount(state.CogsAmount);
