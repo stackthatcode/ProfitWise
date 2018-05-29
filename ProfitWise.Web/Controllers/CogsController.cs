@@ -164,6 +164,12 @@ namespace ProfitWise.Web.Controllers
 
             return product;
         }
+
+
+        public ActionResult Upload()
+        {
+            return View();
+        }
     }
 }
 

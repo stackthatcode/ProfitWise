@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using ProfitWise.Data.Factories;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;

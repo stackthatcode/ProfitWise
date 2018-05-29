@@ -534,6 +534,7 @@
     <Content Include="Views\Shared\_IsDataLoadedAlert.cshtml" />
     <Content Include="Views\ShopifyAuth\UnsupportedCurrency.cshtml" />
     <Content Include="Views\ShopifyAuth\ShopCurrencyChange.cshtml" />
+    <Content Include="Views\Cogs\Upload.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

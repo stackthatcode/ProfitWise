@@ -1,0 +1,106 @@
+﻿@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Models.WelcomeModel
+@{
+    Layout = "~/Views/Shared/_PageLayout.cshtml";
+}
+
+@Html.Partial("_IsDataLoadedAlert")
+
+@Scripts.Render("~/Bundles/FileUpload")
+@Styles.Render("~/StyleBundles/FileUpload")
+
+
+<div class="system-page shadow" style="text-align: center;">
+    
+    <div style="max-width: 200px; margin-left: auto; margin-right: auto;">
+        <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg"
+             class="img-responsive"  />        
+    </div>
+
+    <div style="height: 25px;"></div>
+
+    <h2 class="header">Bulk CoGS Upload</h2>
+    <h4>Upload your Cost of Goods data in a comma-delimited (CSV) file.</h4>
+
+    <div class="below-header-spacer"></div>
+
+    <div class="system-page-content">
+        <div class="panel panel-default">
+
+            <div class="panel-body" style="padding: 50px;">
+                <p style="text-align: center;">
+                    <strong>The process of mass-entering your ProfitWise Cost of Goods data in a CSV file is easy!</strong>
+                    <br />
+                    Start by downloading the Excel template, which contains detailed instructions.
+                    Next, once you've entered your data, hit the "Upload CoGS" button to proceed.
+                </p>
+                
+                <div style="height: 25px;"></div>
+
+                <a href="#" class="btn btn-primary" style="width: 225px;">
+                    <i class="glyphicon glyphicon-arrow-down"></i>
+                    Download XLS Template
+                </a>
+
+                <span style="width: 225px;" class="btn btn-primary fileinput-button">
+                    <i class="glyphicon glyphicon-file"></i>
+                    Upload CoGS
+
+                    <input id="bulk-cogs-upload" type="file" name="files[]" multiple>
+                </span>
+            </div>
+        </div>
+
+        <!--
+        <p>
+            We believe strongly in providing exceptional customer service. Your questions will be answered promptly, and we will do
+            everything possible to accomodate new feature requests in a timely manner.
+        </p>-->
+    </div>
+</div>
+
+<script>
+    var ProfitWise = ProfitWise || {};
+
+    ProfitWise.CreateFileUpload = function (launchSelector, uploadUrl, postSuccessFunc) {
+        'use strict';
+        $(launchSelector).fileupload({
+            url: uploadUrl,
+            autoUpload: true,
+            add: function (e, data) {
+                data.submit();
+            },
+            start: function () {
+                alert("loading!");
+            },
+            success: function (response, status) {
+                postSuccessFunc(response, status);
+            },
+            fail: function (e, data) {
+                alert('Something went wrong while attempting to upload your file. Please contact support if the issue persists.');
+            },
+            progress: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css('width', progress + '%');
+            },
+            stop: function () {
+                alert("stop");
+                //EnableFunctions.HideLoading();
+            },
+        }).prop('disabled', !$.support.fileInput)
+            .parent()
+            .addClass($.support.fileInput ? undefined : 'disabled');
+    };
+    
+    
+    $(document).ready(function () {
+        var uploadUrl = '/Cogs/UploadPost';
+
+        ProfitWise
+            .CreateFileUpload(
+                '#bulk-cogs-upload',
+                uploadUrl,
+                function () { alert('Upload complete!') });
+    });
+
+</script>

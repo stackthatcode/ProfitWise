@@ -32,6 +32,7 @@ ProfitWiseShopify.BarInitialize = function (title) {
                             linkBuilder("", "Profitability Report"),
                             linkBuilder("/Report/GoodsOnHand", "Inventory Valuation Report"),
                             linkBuilder("/Cogs/Products", "Manage Products and CoGS"),
+                            linkBuilder("/Cogs/Upload", "Bulk Upload CoGS"),
                             linkBuilder("/Preferences/Edit", "Edit Preferences"),
                             //linkBuilder("/Error/ThrowAnonymousError", "Error Page - Anon (Remove for Prod)"),
                         ]

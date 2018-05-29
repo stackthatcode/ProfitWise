@@ -6,6 +6,16 @@ namespace ProfitWise.Web
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
+            // File Upload jazz...
+            bundles.Add(new ScriptBundle("~/Bundles/FileUpload")
+                .Include("~/Scripts/FileUpload/js/vendor/jquery.ui.widget.js")
+                .Include("~/Scripts/FileUpload/js/jquery.iframe-transport.js")
+                .Include("~/Scripts/FileUpload/js/jquery.fileupload.js"));
+
+            bundles.Add(new StyleBundle("~/StyleBundles/FileUpload")
+                .Include("~/Scripts/FileUpload/css/jquery.fileupload.css"));
+
+
             bundles.Add(new ScriptBundle("~/Bundles/Utility")
                 .Include("~/Scripts/Utility/jquery.min.js")
                 .Include("~/Scripts/Utility/aQuery-1.0-min.js")
@@ -17,6 +27,7 @@ namespace ProfitWise.Web
                 .Include("~/Content/tether-1.3.3-dist/js/tether.min.js")
                 .Include("~/Content/shepherd-dist/js/shepherd.min.js"));
             
+
             bundles.Add(new ScriptBundle("~/Bundles/Bootstrap")
                 .Include("~/Scripts/Bootstrap/bootstrap.min.js")
                 .Include("~/Scripts/Bootstrap/bootstrap-datetimepicker.min.js")
