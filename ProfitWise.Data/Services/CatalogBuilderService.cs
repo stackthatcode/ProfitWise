@@ -235,6 +235,12 @@ namespace ProfitWise.Data.Services
         {
             var variantRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
 
+            // IsActive simply flags the most recent instance of a Variant
+            // This query will illustrate the behavior of IsActive:
+            // SELECT PwShopId, ShopifyVariantId, COUNT(*)
+            // FROM profitwisevariant WHERE IsActive = 1
+            // GROUP BY PwShopId, ShopifyVariantId ORDER BY COUNT(*) DESC;
+
             var variants = allMasterProducts
                 .SelectMany(x => x.MasterVariants)
                 .FindVariantsByShopifyVariantId(shopifyVariantId);
