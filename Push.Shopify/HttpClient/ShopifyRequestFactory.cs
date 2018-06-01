@@ -72,14 +72,16 @@ namespace Push.Shopify.HttpClient
             var req = (HttpWebRequest)WebRequest.Create(url);
             req.Timeout = _configuration.Timeout;
 
-            if (credentials.AccessToken.IsNullOrEmpty())
+            if (!credentials.Key.IsNullOrEmpty() && !credentials.Secret.IsNullOrEmpty())
             {
                 // This is what we would use for 3D Universe Automation only
                 var credentialCache = new CredentialCache();
-                credentialCache.Add(new Uri(url), "Basic", new NetworkCredential(credentials.Key, credentials.Secret));
+                credentialCache.Add(
+                    new Uri(url), "Basic", new NetworkCredential(credentials.Key, credentials.Secret));
                 req.Credentials = credentialCache;
             }
-            else
+
+            if (!credentials.AccessToken.IsNullOrEmpty())
             {
                 // This is normal Shopify Owner plug-in authentication
                 req.Headers["X-Shopify-Access-Token"] = credentials.AccessToken;
