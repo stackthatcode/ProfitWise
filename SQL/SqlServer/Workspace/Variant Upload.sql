@@ -3,7 +3,7 @@ USE ProfitWise;
 GO
 
 
-SELECT t0.ShopifyVariantId, t0.PwVariantId, t1.Title AS ProductTile, t0.Title AS VariantTitle, Sku, 
+SELECT t0.ShopifyVariantId, t0.PwVariantId, t1.Title AS ProductTitle, t0.Title AS VariantTitle, Sku, 
 		LowPrice, HighPrice, CurrentUnitPrice, MarginPercent / 100.0 AS MarginPercent, FixedAmount, Abbreviation
 FROM dbo.costofgoodsbydate(100001, DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0)) t0
 	INNER JOIN dbo.product(100001) t1

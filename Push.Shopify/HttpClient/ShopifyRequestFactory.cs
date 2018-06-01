@@ -65,7 +65,7 @@ namespace Push.Shopify.HttpClient
         private HttpWebRequest FactoryWorker(ShopifyCredentials credentials, string path)
         {
             ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
             var url = credentials.ShopBaseUrl + path;
