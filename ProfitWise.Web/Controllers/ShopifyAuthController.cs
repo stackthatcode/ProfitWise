@@ -163,9 +163,12 @@ namespace ProfitWise.Web.Controllers
 
             try
             {
-                var accessToken = 
-                    await ShopifyAuthorizationService
-                        .Authorize(code, shopDomain, apikey, apisecret);
+                var nonAccessTokenCredentials =
+                    ShopifyCredentials.Build(shopDomain, apikey, apisecret);
+
+                var oauthRepository = _factory.MakeOAuthRepository(nonAccessTokenCredentials);
+
+                var accessToken = oauthRepository.RetrieveAccessToken(code);
 
                 var credentials = ShopifyCredentials.Build(shopDomain, accessToken);
                 var shopApiRepository = _factory.MakeShopApiRepository(credentials);

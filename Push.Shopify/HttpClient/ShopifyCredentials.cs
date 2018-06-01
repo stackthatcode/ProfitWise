@@ -26,5 +26,15 @@
                 AccessToken = accessToken,
             };
         }
+
+        public static ShopifyCredentials Build(string domain, string key, string secret)
+        {
+            return new ShopifyCredentials()
+            {
+                ShopDomain = domain,
+                Key = key,
+                Secret = secret,
+            };
+        }
     }
 }
