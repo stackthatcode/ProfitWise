@@ -78,7 +78,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             var query = @"INSERT INTO recurringcharge(@PwShopId) VALUES (
                             @PwShopId, @PwChargeId, @ShopifyRecurringChargeId, @ConfirmationUrl, 
-                            @LastStatus, @IsPrimary, @DateCreated, @LastUpdated, @LastJson,
+                            @LastStatus, @IsPrimary, GETDATE(), GETDATE(), @LastJson,
                             @MustDestroyOnNextLogin );";
             _connectionWrapper.Execute(query, charge);
         }
@@ -88,7 +88,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query = @"UPDATE recurringcharge(@PwShopId) 
                         SET ConfirmationUrl	= @ConfirmationUrl,
                             LastStatus = @LastStatus, 
-                            LastUpdated = @LastUpdated,
+                            LastUpdated = GETDATE(),
                             LastJson = @LastJson,
                             IsPrimary = @IsPrimary
                         WHERE PwChargeId = @PwChargeId;";
