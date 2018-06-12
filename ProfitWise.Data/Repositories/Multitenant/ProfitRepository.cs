@@ -254,7 +254,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                             AND t2.PwVariantId = t3.PwVariantId
                             AND t3.EntryDate >= @StartDate
                             AND t3.EntryDate <= @EndDate
-                    INNER JOIN dbo.costofgoodsbydate(@PwShopId, DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0)) t4
+                    INNER JOIN dbo.costofgoodsbydate(@PwShopId, @DateForCostOfGoods) t4
                         ON t2.PwVariantId = t4.PwVariantId
                 WHERE t1.PwReportId = @PwReportId
                 GROUP BY t2.PwVariantId, t1.Vendor, t1.ProductType, t1.ProductTitle, t1.VariantTitle, t1.Sku, 

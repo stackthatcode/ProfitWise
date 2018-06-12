@@ -75,14 +75,17 @@ namespace ProfitWise.Data.Services
             var queryRepository = _factory.MakeProfitRepository(PwShop);
             queryRepository.PopulateQueryStub(reportId);
 
+            var today = _timeZoneTranslator.Today(PwShop.TimeZone);
+
             var report = reportRepository.RetrieveReport(reportId);
             var queryContext = new TotalQueryContext(PwShop)
             {
                 PwReportId = reportId,
                 StartDate = report.StartDate,
                 EndDate = report.EndDate,
+                DateForCostOfGoods = today,
             };
-
+            
             var totals = queryRepository.RetreiveTotalsForExportDetail(queryContext);            
             var allProfit = totals.Sum(x => x.TotalProfit);
             totals.ForEach(x => x.ProfitPercentage = allProfit == 0 

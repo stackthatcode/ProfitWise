@@ -35,7 +35,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
                         t1.CogsTypeId, t1.CogsCurrencyId, t1.CogsAmount, t1.CogsMarginPercent, t1.CogsDetail,                        
                         t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyProductId, t2.ShopifyVariantId, 
-                        t2.Sku, t2.Title, t2.LowPrice, t2.HighPrice, t2.IsActive, t2.IsPrimary
+                        t2.Sku, t2.Title, t2.LowPrice, t2.HighPrice, t2.CurrentPrice, t2.IsActive, t2.IsPrimary
                 FROM mastervariant(@PwShopId) t1
 	                INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
@@ -100,6 +100,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     variant.Title = row.Title;
                     variant.LowPrice = row.LowPrice;
                     variant.HighPrice = row.HighPrice;
+                    variant.CurrentPrice = row.CurrentPrice;
                     variant.IsActive = row.IsActive == dynamicTrue;
                     variant.IsPrimary = row.IsPrimary == dynamicTrue;
                     variant.ParentMasterVariant = masterVariant;
@@ -245,18 +246,24 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }
 
         public void UpdateVariant(long pwVariantId, 
-                decimal lowPrice, decimal highPrice, string sku, int? inventory, DateTime lastUpdated)
+                decimal lowPrice, decimal highPrice, decimal? currentPrice,
+                string sku, int? inventory, DateTime lastUpdated)
         {
             var query = @"UPDATE variant(@PwShopId) 
                         SET LowPrice = @lowPrice, 
                             HighPrice = @highPrice, 
+                            CurrentPrice = @currentPrice,
                             Sku = @sku,
                             Inventory = @inventory,
                             LastUpdated = @lastUpdated
                         WHERE PwVariantId = @pwVariantId;";
 
             _connectionWrapper.Execute(
-                query, new { PwShop.PwShopId, pwVariantId, lowPrice, highPrice, inventory, sku, lastUpdated });
+                query, new
+                {
+                    PwShop.PwShopId, pwVariantId, lowPrice, highPrice, currentPrice,
+                    inventory, sku, lastUpdated
+                });
         }
 
         public void UpdateVariantsMasterVariant(PwVariant variant)

@@ -128,7 +128,8 @@ namespace ProfitWise.Data.ProcessSteps
                         $"{lowPrice} to {highPrice} and setting inventory to NULL");
 
                     variantRepository.UpdateVariant(
-                        variant.PwVariantId, lowPrice, highPrice, variant.Sku, null, DateTime.UtcNow);
+                        variant.PwVariantId, lowPrice, highPrice, null, 
+                        variant.Sku, null, DateTime.UtcNow);
                 }
             }
         }

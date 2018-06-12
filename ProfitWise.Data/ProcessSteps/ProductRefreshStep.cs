@@ -214,7 +214,7 @@ namespace ProfitWise.Data.ProcessSteps
                 $"{context.Price} to {context.Price} / inventory to {inventory} / SKU {context.Sku}");
 
             variantRepository.UpdateVariant(
-                variant.PwVariantId, context.Price, context.Price, context.Sku, 
+                variant.PwVariantId, context.Price, context.Price, context.Price, context.Sku, 
                 inventory, DateTime.UtcNow);
         }
 

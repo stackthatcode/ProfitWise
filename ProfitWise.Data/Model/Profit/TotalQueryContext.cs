@@ -2,7 +2,7 @@
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Reports;
 using ProfitWise.Data.Model.Shop;
-using ProfitWise.Data.Services;
+
 
 namespace ProfitWise.Data.Model.Profit
 {
@@ -19,7 +19,9 @@ namespace ProfitWise.Data.Model.Profit
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        
+        public DateTime DateForCostOfGoods { get; set; }
+
+
         public ReportGrouping Grouping { get; set; }
         public ColumnOrdering Ordering { get; set; }
 

@@ -93,7 +93,7 @@ namespace ProfitWise.Web.Controllers
             var scopes = new List<ShopifyAuthorizationScope>()
             {
                 ShopifyAuthorizationScope.ReadOrders,
-                ShopifyAuthorizationScope.ReadProducts,
+                ShopifyAuthorizationScope.ReadProducts,                
             };
 
             if (ProfitWiseConfiguration.Settings.ShopifyApiKey.IsNullOrEmpty())

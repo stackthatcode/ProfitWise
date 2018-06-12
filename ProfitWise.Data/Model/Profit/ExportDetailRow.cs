@@ -22,7 +22,7 @@ namespace ProfitWise.Data.Model.Profit
         public decimal UnitPriceAverage { get; set; }
         public decimal UnitCogsAverage { get; set; }
 
-        public decimal CurrentUnitPrice { get; set; }
+        public decimal? CurrentUnitPrice { get; set; }
         public decimal CurrentUnitCogs { get; set; }
         public decimal CurrentMargin { get; set; }
 

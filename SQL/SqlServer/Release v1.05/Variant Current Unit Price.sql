@@ -19,6 +19,7 @@ FROM profitwisevariant t1
 		ON t1.PwShopId = t2.PwShopId
 		AND t1.ShopifyVariantId = t2.ShopifyVariantId
 		AND t2.IsActive = 1
+
 --WHERE t1.PwShopId = 100001
 
 
@@ -30,6 +31,7 @@ FROM profitwisevariant t1
 		ON t1.PwShopId = t2.PwShopId
 		AND t1.ShopifyVariantId = t2.ShopifyVariantId
 		AND t2.IsActive = 1
+
 --WHERE t1.PwShopId = 100001
 
 

@@ -122,11 +122,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query = CTE_Query + " " +
                         SelectGroupingKeyAndName(grouping) +
                         @"  SUM(Inventory) AS TotalInventory,
-		                    MIN(Price) AS MinimumPrice,
-		                    MAX(Price) AS MaximumPrice, 
-		                    SUM(CostOfGoodsOnHand) AS TotalCostOfGoodsSold, 
-		                    SUM(PotentialRevenue) AS TotalPotentialRevenue,	
-		                    SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) AS TotalPotentialProfit
+		                    CAST(MIN(Price) AS decimal(18, 2)) AS MinimumPrice,
+		                    CAST(MAX(Price) AS decimal(18, 2)) AS MaximumPrice, 
+		                    CAST(SUM(CostOfGoodsOnHand) AS decimal(18, 2)) AS TotalCostOfGoodsSold, 
+		                    CAST(SUM(PotentialRevenue) AS decimal(18, 2)) AS TotalPotentialRevenue,	
+		                    CAST(SUM(PotentialRevenue) - SUM(CostOfGoodsOnHand) AS decimal(18, 2)) AS TotalPotentialProfit
                         FROM Data_CTE t1
 	                        INNER JOIN product(@PwShopId) t2 ON t1.PwProductId = t2.PwProductId
                         WHERE PwShopId = @PwShopId ";
