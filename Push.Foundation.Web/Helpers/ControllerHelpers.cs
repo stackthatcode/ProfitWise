@@ -8,6 +8,7 @@ namespace Push.Foundation.Web.Helpers
 {
     public static class ControllerHelpers
     {
+        
         public static void AddErrors(this Controller controller, IdentityResult result)
         {
             foreach (var error in result.Errors)

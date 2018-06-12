@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -79,38 +80,39 @@ namespace ProfitWise.Web.Controllers
         public ActionResult Login(string shop, string returnUrl)
         {
             // First strip everything off so we can standardize
-            var correctedShopName = shop.ShopNameFromDomain();
-            
-            // Next create the Shop URL
-            // TODO - move to our Extensions methods thingy
-            var shopUrl = $"https://{correctedShopName}.myshopify.com";
-
-            // If the return url is empty, let's fix that - do we need Return URL...??
-            //returnUrl = returnUrl ?? $"{GlobalConfig.BaseUrl}/?shop={shop}";
+            var correctedShopName = shop.ShopNameFromDomain();            
+            var fullShopDomain = $"{correctedShopName}.myshopify.com";
 
             var redirectUrl = GlobalConfig.BuildUrl("/ShopifyAuth/ShopifyReturn");
+            
+            var urlBase = $"https://{fullShopDomain}/admin/oauth/authorize";
+            var queryString =
+                new QueryStringBuilder()
+                    .Add("client_id", ProfitWiseConfiguration.Settings.ShopifyApiKey)
+                    .Add("scope", "read_orders,read_products,read_all_orders")
+                    .Add("redirect_uri", redirectUrl)
+                    .ToString();
 
-            var scopes = new List<ShopifyAuthorizationScope>()
-            {
-                ShopifyAuthorizationScope.ReadOrders,
-                ShopifyAuthorizationScope.ReadProducts,                
-            };
-
+            var finalUrl = $"{urlBase}?{queryString}";
+            
             if (ProfitWiseConfiguration.Settings.ShopifyApiKey.IsNullOrEmpty())
             {
                 throw new Exception("Null or empty ShopifyApiKey - please check configuration");
             }
-
-            var authUrl = 
-                ShopifyAuthorizationService.BuildAuthorizationUrl(
-                    scopes, shopUrl, ProfitWiseConfiguration.Settings.ShopifyApiKey, redirectUrl);
-
-            return Redirect(authUrl.ToString());
+            
+            return Redirect(finalUrl);
         }
-        
+
+
         [AllowAnonymous]
         public async Task<ActionResult> ShopifyReturn(string code, string shop, string returnUrl)
         {
+            if (!VerifyShopifyHmac())
+            {
+                _logger.Error("Warning - failed HMAC verification!");
+                return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
+            }
+
             // Attempt to complete Shopify Authentication
             var profitWiseSignIn = await CompleteShopifyAuth(code, shop);
             if (profitWiseSignIn == null)
@@ -155,7 +157,30 @@ namespace ProfitWise.Web.Controllers
 
             return UpsertBilling(user, returnUrl);
         }
-        
+
+
+        private bool VerifyShopifyHmac()
+        {
+            // Extract and remove Shopify's HMAC parameter
+            var queryStringDictionary = HttpContext.QueryStringToDictionary();
+            var shopifyHmacHash = queryStringDictionary["hmac"].ToString();
+            queryStringDictionary.Remove("hmac");
+
+            // Lexographically order parameters and regenerate Query String
+            var builder = new QueryStringBuilder();
+            queryStringDictionary
+                .OrderBy(x => x.Key)
+                .ForEach(x => builder.Add(x.Key, x.Value));
+            var queryString = builder.ToString();
+
+            // Build HMAC digestion of query string...
+            var hmacCrypto = new HmacCryptoService(ProfitWiseConfiguration.Settings.ShopifyApiSecret);
+            var hashedResult = hmacCrypto.ToHexStringSha256(queryString);
+
+            // ... and compare
+            return hashedResult == shopifyHmacHash;
+        }
+
         private async Task<ProfitWiseSignIn> CompleteShopifyAuth(string code, string shopDomain)
         {
             var apikey = ProfitWiseConfiguration.Settings.ShopifyApiKey;
