@@ -90,15 +90,22 @@ td.overflow-gracefully {
     width: 100%; margin-top: 25px; margin-bottom: 25px; text-align: center;
 }
 
+.subtitle-header {
+    font-weight: 600;
+    color: #555;
+    font-size: 1.0em;
+    text-transform: uppercase;
+    letter-spacing: 0.30em;
+}
 
 
 /** Bootstrap customizations **/
- .btn-sample { 
-         color: #FFFFFF; 
-         background-color: #329CDA; 
-         border-color: #329CDA; 
-     } 
- 
+ .btn-sample {
+    color: #FFFFFF; 
+    background-color: #329CDA; 
+    border-color: #329CDA; 
+}
+
 .btn-sample:hover, 
 .btn-sample:focus, 
 .btn-sample:active, 

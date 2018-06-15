@@ -18,10 +18,6 @@ ORDER BY t1.Title, t0.Title, Sku;
 
 
 
-
-
-
 -- For example, this one has NULL CurrentUnitPrice - non existing product, but there's Order History
-SELECT * FROM orderlineitem(100001) WHERE PwVariantId = 842;
-
+-- SELECT * FROM orderlineitem(100001) WHERE PwVariantId = 842;
 

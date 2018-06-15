@@ -26,16 +26,16 @@
 
     <div class="system-page-content">
         <div class="panel panel-default">
-
+            
             <div class="panel-body" style="padding: 50px;">
                 <p style="text-align: center;">
-                    <strong>The process of mass-entering your ProfitWise Cost of Goods data in a CSV file is easy!</strong>
+                    <strong>The process of bulk updating your ProfitWise Cost of Goods data in a CSV file is easy!</strong>
                     <br />
-                    Start by downloading the Excel template, which contains detailed instructions.
-                    Next, once you've entered your data, hit the "Upload CoGS" button to proceed.
+                    Start by downloading the Excel template and entering your CoGS data.
+                    Once you're ready, hit the "Upload CoGS" button to proceed.
+                    If this is your first time, you may read the 
+                    <a href="#help">detailed instructions below</a>.
                 </p>
-                
-                <div style="height: 25px;"></div>
 
                 <a href="#" class="btn btn-primary" style="width: 225px;">
                     <i class="glyphicon glyphicon-arrow-down"></i>
@@ -47,7 +47,55 @@
                     Upload CoGS
 
                     <input id="bulk-cogs-upload" type="file" name="files[]" multiple>
-                </span>
+                </span>                
+
+                <div style="height: 25px;"></div>
+
+                <p style="font-weight: bold; text-align: center; color: #F00;">
+                    WARNING: this will overwrite existing data, including any
+                    detail CoGS data.
+                </p>
+            </div>
+        </div>
+
+        <div style="height: 25px;"></div>
+        
+        <a name="help"></a>
+
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding: 50px;">                
+                <h4 class="subtitle-header">Uploading your Cost of Goods Data to ProfitWise</h4>
+
+                <div style="height: 25px;"></div>
+
+                <p>Start by downloading the template, which you can edit using Excel or Google Sheets.
+                    The template will come preloaded with all of your store's Products and Variants.</p>
+
+                <p style="font-weight: bold;">NOTE: for consolidated Products/Variants, only the Primary Variant will appear</p>
+                
+                <p>You may have multiple Variants consolidated. The download template will only include the data 
+                e.g. Title, Price, CoGS for the Primary Variant.</p>
+
+                <p>Enter either a Margin Percent or a Fixed Amount as the Cost of Goods for each Variant.
+                    When using Margin Percent, enter percentages as decimals (i.e. enter 0.15 for 15%).
+                    You can leave zero-amounts for both values, if necessary.</p>
+
+                <p style="font-weight: bold;">IMPORTANT: this process overwrites all existing CoGS data</p>
+
+                <p>
+                    For every single Product-Variant found in the upload file,
+                    the non-detail <em>and</em> detail CoGS data will be overwritten with non-detail CoGS.
+                    In order to exclude a Product-Variant from being updated, 
+                    remove that row from the spreadsheet, and ProfitWise will skip updating it.
+                </p>
+
+                <p>The "Abbreviation" column is for specifying the currency for your Cost of Goods values.
+                    You purchase goods in a different currency, enter the appropriate currency abbreviation in this column,
+                    and ProfitWise will convert those costs to your store's currency based upon current conversion rates.
+                    ProfitWise accepts the following currencies: <strong>USD, EUR, JPY, GBP, AUD, CHF, CAD, AED.</strong>
+                </p>
+
+                <p>Once you have completed entry of your data, save as a comma delimited (CSV) file and upload to ProfitWise.</p>
             </div>
         </div>
 

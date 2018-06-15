@@ -504,6 +504,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             _connectionWrapper.Execute(query, new { PwShop.PwShopId, pwPickListId });
         }
+
+
+
     }
 }
 

@@ -170,6 +170,11 @@ namespace ProfitWise.Web.Controllers
         {
             return View();
         }
+
+        public ActionResult UploadTemplate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 
