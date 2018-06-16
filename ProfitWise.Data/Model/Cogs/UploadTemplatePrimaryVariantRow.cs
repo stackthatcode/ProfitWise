@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProfitWise.Data.Model.Cogs
+﻿namespace ProfitWise.Data.Model.Cogs
 {
     public class UploadTemplatePrimaryVariantRow
     {
@@ -12,6 +6,7 @@ namespace ProfitWise.Data.Model.Cogs
         public string ProductTitle { get; set; }
         public string VariantTitle { get; set; }
         public string Sku { get; set; }
+
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
 
@@ -21,3 +16,4 @@ namespace ProfitWise.Data.Model.Cogs
         public string Abbreviation { get; set; }
     }
 }
+

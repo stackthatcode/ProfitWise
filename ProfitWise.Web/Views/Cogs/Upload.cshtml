@@ -24,46 +24,46 @@
 
     <div class="below-header-spacer"></div>
 
-    <div class="system-page-content">
+    <div class="system-page-content"
+         data-bind="afterRender: function() { InitializeUpload('#bulk-cogs-upload'); }">
+        
         <div class="panel panel-default">
-            
             <div class="panel-body" style="padding: 50px;">
                 <p style="text-align: center;">
                     <strong>The process of bulk updating your ProfitWise Cost of Goods data in a CSV file is easy!</strong>
-                    <br />
+                    <br/>
                     Start by downloading the Excel template and entering your CoGS data.
                     Once you're ready, hit the "Upload CoGS" button to proceed.
-                    If this is your first time, you may read the 
+                    If this is your first time, you may read the
                     <a href="#help">detailed instructions below</a>.
                 </p>
 
-                <a href="#" class="btn btn-primary" style="width: 225px;">
+                <a href="#" data-bind="click: function() { DownloadTemplate('download-caddy'); }"
+                   class="btn btn-primary" style="width: 225px;">
                     <i class="glyphicon glyphicon-arrow-down"></i>
                     Download XLS Template
                 </a>
+                
+                <iframe id="download-caddy" style="display: none;"></iframe>
 
                 <span style="width: 225px;" class="btn btn-primary fileinput-button">
-                    <i class="glyphicon glyphicon-file"></i>
-                    Upload CoGS
-
+                    <i class="glyphicon glyphicon-file"></i> Upload CoGS
                     <input id="bulk-cogs-upload" type="file" name="files[]" multiple>
-                </span>                
+                </span>
 
                 <div style="height: 25px;"></div>
 
                 <p style="font-weight: bold; text-align: center; color: #F00;">
-                    WARNING: this will overwrite existing data, including any
-                    detail CoGS data.
+                    WARNING: this will overwrite existing data, including any detail CoGS data.
                 </p>
             </div>
         </div>
 
         <div style="height: 25px;"></div>
-        
         <a name="help"></a>
 
         <div class="panel panel-default">
-            <div class="panel-body" style="padding: 50px;">                
+            <div class="panel-body" style="padding: 50px;">
                 <h4 class="subtitle-header">Uploading your Cost of Goods Data to ProfitWise</h4>
 
                 <div style="height: 25px;"></div>
@@ -72,9 +72,9 @@
                     The template will come preloaded with all of your store's Products and Variants.</p>
 
                 <p style="font-weight: bold;">NOTE: for consolidated Products/Variants, only the Primary Variant will appear</p>
-                
-                <p>You may have multiple Variants consolidated. The download template will only include the data 
-                e.g. Title, Price, CoGS for the Primary Variant.</p>
+
+                <p>You may have multiple Variants consolidated. The download template will only include the data
+                    e.g. Title, Price, CoGS for the Primary Variant.</p>
 
                 <p>Enter either a Margin Percent or a Fixed Amount as the Cost of Goods for each Variant.
                     When using Margin Percent, enter percentages as decimals (i.e. enter 0.15 for 15%).
@@ -85,7 +85,7 @@
                 <p>
                     For every single Product-Variant found in the upload file,
                     the non-detail <em>and</em> detail CoGS data will be overwritten with non-detail CoGS.
-                    In order to exclude a Product-Variant from being updated, 
+                    In order to exclude a Product-Variant from being updated,
                     remove that row from the spreadsheet, and ProfitWise will skip updating it.
                 </p>
 
@@ -98,12 +98,6 @@
                 <p>Once you have completed entry of your data, save as a comma delimited (CSV) file and upload to ProfitWise.</p>
             </div>
         </div>
-
-        <!--
-        <p>
-            We believe strongly in providing exceptional customer service. Your questions will be answered promptly, and we will do
-            everything possible to accomodate new feature requests in a timely manner.
-        </p>-->
     </div>
 </div>
 
@@ -140,15 +134,27 @@
             .addClass($.support.fileInput ? undefined : 'disabled');
     };
     
+    ProfitWise.UploadModel = function () {
+        var self = this;
+        
+        self.UploadUrl = '/Cogs/UploadPost';
+        
+        self.InitializeUpload = function () {
+            ProfitWise.CreateFileUpload(
+                '#bulk-cogs-upload', uploadUrl, function () { alert('Upload complete!') });
+        };
+        
+        self.DownloadTemplate = function (downloadIframeId) {
+            var url = '@GlobalConfig.BuildUrl("/Cogs/UploadTemplate")';
+            document.getElementById(downloadIframeId).src = url;
+        };
+        
+        return self;
+    };
     
     $(document).ready(function () {
-        var uploadUrl = '/Cogs/UploadPost';
-
-        ProfitWise
-            .CreateFileUpload(
-                '#bulk-cogs-upload',
-                uploadUrl,
-                function () { alert('Upload complete!') });
+        var model = new ProfitWise.UploadModel();
+        ko.applyBindings(model);
     });
-
 </script>
+

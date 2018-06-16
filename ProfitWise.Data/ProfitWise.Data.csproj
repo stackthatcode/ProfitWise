@@ -178,6 +178,7 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
+    <Compile Include="Model\Cogs\UploadTemplatePrimaryVariantRow.cs" />
     <Compile Include="Model\ExchangeRates\ExtensionMethods.cs" />
     <Compile Include="Model\ExchangeRates\ExtrapolateFunctions.cs" />
     <Compile Include="Model\GoodsOnHand\ChartData.cs" />

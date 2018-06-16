@@ -506,7 +506,24 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }
 
 
+        // Upload Template repository method
+        public List<UploadTemplatePrimaryVariantRow> 
+                                RetrieveImportTemplateData(DateTime dateInTimeZone)
+        {
+            var query =
+                @"SELECT t0.PwMasterVariantId, t1.Title AS ProductTitle, t0.Title AS VariantTitle, Sku, 
+		                LowPrice, HighPrice, CurrentUnitPrice, CAST(MarginPercent / 100.0 AS decimal(18,2)) AS MarginPercent, FixedAmount, Abbreviation
+                FROM dbo.costofgoodsbydate(@PwShopId, @Today) t0
+	                INNER JOIN dbo.product(@PwShopId) t1
+		                ON t0.PwProductId = t1.PwProductId
+                WHERE t0.IsPrimary = 1
+                ORDER BY t1.Title, t0.Title, Sku;";
 
+            return _connectionWrapper
+                    .Query<UploadTemplatePrimaryVariantRow>(
+                            query, new {PwShop.PwShopId, Today = dateInTimeZone })
+                    .ToList();
+        }
     }
 }
 

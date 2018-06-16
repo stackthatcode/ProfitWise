@@ -8,6 +8,7 @@ using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Web.Json;
+using ServiceStack.Text;
 
 
 namespace ProfitWise.Web.Controllers
@@ -165,15 +166,24 @@ namespace ProfitWise.Web.Controllers
             return product;
         }
 
-
+        [HttpGet]
         public ActionResult Upload()
         {
             return View();
         }
 
+        [HttpGet]
         public ActionResult UploadTemplate()
         {
-            throw new NotImplementedException();
+            var identity = HttpContext.IdentitySnapshot();
+            var cogsRepository = _factory.MakeCogsEntryRepository(identity.PwShop);
+
+            var today = _timeZoneTranslator.Today(identity.PwShop.TimeZone);
+            var data = cogsRepository.RetrieveImportTemplateData(today);
+            var csv = CsvSerializer.SerializeToCsv(data);
+
+            return File(new System.Text.UTF8Encoding().GetBytes(csv), 
+                        "text/csv", "ProfitWiseUploadTemplate.csv");
         }
     }
 }
