@@ -24,38 +24,54 @@
 
     <div class="below-header-spacer"></div>
 
-    <div class="system-page-content"
-         data-bind="afterRender: function() { InitializeUpload('#bulk-cogs-upload'); }">
+    <div class="system-page-content">
         
-        <div class="panel panel-default">
-            <div class="panel-body" style="padding: 50px;">
-                <p style="text-align: center;">
-                    <strong>The process of bulk updating your ProfitWise Cost of Goods data in a CSV file is easy!</strong>
-                    <br/>
-                    Start by downloading the Excel template and entering your CoGS data.
-                    Once you're ready, hit the "Upload CoGS" button to proceed.
-                    If this is your first time, you may read the
-                    <a href="#help">detailed instructions below</a>.
-                </p>
+        <div data-bind="ifnot: ProcessingUpload">
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding: 50px;">
+                    <p style="text-align: center;">
+                        <strong>The process of bulk updating your ProfitWise Cost of Goods data in a CSV file is easy!</strong>
+                        <br />
+                        Start by downloading the Excel template and entering your CoGS data.
+                        Once you're ready, hit the "Upload CoGS" button to proceed.
+                        If this is your first time, you may read through
+                        <a href="#help">detailed instructions below</a>.
+                        If you have any questions, you can always reach out to the 
+                        <a href="mailto:support@profitwiseapp.com">ProfitWise Support Team</a>.
+                    </p>
 
-                <a href="#" data-bind="click: function() { DownloadTemplate('download-caddy'); }"
-                   class="btn btn-primary" style="width: 225px;">
-                    <i class="glyphicon glyphicon-arrow-down"></i>
-                    Download XLS Template
-                </a>
-                
-                <iframe id="download-caddy" style="display: none;"></iframe>
+                    <a href="#" data-bind="click: function() { DownloadTemplate('download-caddy'); }"
+                       class="btn btn-primary" style="width: 225px;">
+                        <i class="glyphicon glyphicon-arrow-down"></i>
+                        Download XLS Template
+                    </a>
+                    <iframe id="download-caddy" style="display: none;"></iframe>
 
-                <span style="width: 225px;" class="btn btn-primary fileinput-button">
-                    <i class="glyphicon glyphicon-file"></i> Upload CoGS
-                    <input id="bulk-cogs-upload" type="file" name="files[]" multiple>
-                </span>
+                    <span data-bind="template: { name: 'Upload-Panel', data: $data, afterRender: function() { InitializeUpload('#bulk-cogs-upload'); } }">
+                    </span>
 
-                <div style="height: 25px;"></div>
+                    <div style="height: 25px;"></div>
 
-                <p style="font-weight: bold; text-align: center; color: #F00;">
-                    WARNING: this will overwrite existing data, including any detail CoGS data.
-                </p>
+                    <p style="font-weight: bold; text-align: center; color: #F00;">
+                        WARNING: this will overwrite existing data, including any detail CoGS data.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div data-bind="if: ProcessingUpload">
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding: 50px;">
+                    <p style="text-align: center;">
+                        <img src="@GlobalConfig.BuildUrl("/Content/images/spinner.gif")"
+                             style="width: 75px;" />
+                        <div style="height: 15px;"></div>
+                        <strong>ProfitWise is processing your file upload</strong>
+                        <br />
+                        Depending on the size of your file, it may take ProfitWise up to 10 minutes to
+                        process your Cost of Goods file upload. Stay tuned!
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -68,17 +84,23 @@
 
                 <div style="height: 25px;"></div>
 
-                <p>Start by downloading the template, which you can edit using Excel or Google Sheets.
-                    The template will come preloaded with all of your store's Products and Variants.</p>
+                <p>
+                    Start by downloading the template, which you can edit using Excel or Google Sheets.
+                    The template will come preloaded with all of your store's Products and Variants.
+                </p>
 
                 <p style="font-weight: bold;">NOTE: for consolidated Products/Variants, only the Primary Variant will appear</p>
 
-                <p>You may have multiple Variants consolidated. The download template will only include the data
-                    e.g. Title, Price, CoGS for the Primary Variant.</p>
+                <p>
+                    You may have multiple Variants consolidated. The download template will only include the data
+                    e.g. Title, Price, CoGS for the Primary Variant.
+                </p>
 
-                <p>Enter either a Margin Percent or a Fixed Amount as the Cost of Goods for each Variant.
+                <p>
+                    Enter either a Margin Percent or a Fixed Amount as the Cost of Goods for each Variant.
                     When using Margin Percent, enter percentages as decimals (i.e. enter 0.15 for 15%).
-                    You can leave zero-amounts for both values, if necessary.</p>
+                    You can leave zero-amounts for both values, if necessary.
+                </p>
 
                 <p style="font-weight: bold;">IMPORTANT: this process overwrites all existing CoGS data</p>
 
@@ -89,7 +111,8 @@
                     remove that row from the spreadsheet, and ProfitWise will skip updating it.
                 </p>
 
-                <p>The "Abbreviation" column is for specifying the currency for your Cost of Goods values.
+                <p>
+                    The "Abbreviation" column is for specifying the currency for your Cost of Goods values.
                     You purchase goods in a different currency, enter the appropriate currency abbreviation in this column,
                     and ProfitWise will convert those costs to your store's currency based upon current conversion rates.
                     ProfitWise accepts the following currencies: <strong>USD, EUR, JPY, GBP, AUD, CHF, CAD, AED.</strong>
@@ -99,7 +122,14 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
+
+<script type="text/html" id="Upload-Panel">
+    <span style="width: 225px;" class="btn btn-primary fileinput-button">
+        <i class="glyphicon glyphicon-file"></i> Upload CoGS
+        <input id="bulk-cogs-upload" type="file" name="files[]" multiple>
+    </span>
+</script>
 
 <script>
     var ProfitWise = ProfitWise || {};
@@ -113,7 +143,6 @@
                 data.submit();
             },
             start: function () {
-                alert("loading!");
             },
             success: function (response, status) {
                 postSuccessFunc(response, status);
@@ -126,32 +155,39 @@
                 $('#progress .progress-bar').css('width', progress + '%');
             },
             stop: function () {
-                alert("stop");
+                //alert("stop");
                 //EnableFunctions.HideLoading();
             },
         }).prop('disabled', !$.support.fileInput)
             .parent()
             .addClass($.support.fileInput ? undefined : 'disabled');
     };
-    
+
     ProfitWise.UploadModel = function () {
         var self = this;
-        
-        self.UploadUrl = '/Cogs/UploadPost';
-        
-        self.InitializeUpload = function () {
-            ProfitWise.CreateFileUpload(
-                '#bulk-cogs-upload', uploadUrl, function () { alert('Upload complete!') });
-        };
-        
+
         self.DownloadTemplate = function (downloadIframeId) {
             var url = '@GlobalConfig.BuildUrl("/Cogs/UploadTemplate")';
             document.getElementById(downloadIframeId).src = url;
         };
+
+        self.InitializeUpload = function () {
+            ProfitWise.CreateFileUpload(
+                '#bulk-cogs-upload',
+                '@GlobalConfig.BuildUrl("/CogsService/UploadCostOfGoods")',
+                function () { self.UploadComplete(); });
+        };
         
+        self.UploadComplete = function () {
+            self.ProcessingUpload(true);
+
+        };
+
+        self.ProcessingUpload = ko.observable(false);
+
         return self;
     };
-    
+
     $(document).ready(function () {
         var model = new ProfitWise.UploadModel();
         ko.applyBindings(model);

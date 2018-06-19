@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
@@ -8,6 +11,7 @@ using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
 using Push.Foundation.Utilities.Helpers;
+using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -19,11 +23,18 @@ namespace ProfitWise.Web.Controllers
     {
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
+        private readonly IPushLogger _logger;
+        private readonly string _uploadDirectory;
 
-        public CogsServiceController(MultitenantFactory factory, CurrencyService currencyService)
+        public CogsServiceController(
+            MultitenantFactory factory, 
+            CurrencyService currencyService, 
+            IPushLogger logger)
         {
             _factory = factory;
             _currencyService = currencyService;
+            _logger = logger;
+            _uploadDirectory = ConfigurationManager.AppSettings["FileUploadDirectory"];
         }
         
 
@@ -258,7 +269,51 @@ namespace ProfitWise.Web.Controllers
             service.SaveCogsForMasterProduct(masterProductId, defaults, details);
             
             return JsonNetResult.Success();
-        }        
+        }
+
+
+        [HttpPost]
+        public ActionResult UploadCostOfGoods()
+        {
+            var identity = HttpContext.IdentitySnapshot();
+
+            if (Request.Files.Count == 0)
+            {
+                throw new Exception("Request contains no file uploads; something is wrong!");
+            }
+
+            var fileContent = Request.Files[0];
+            if (fileContent == null)               
+            {
+                throw new Exception("NULL fileContent");
+            }
+            if (fileContent.ContentLength == 0)
+            {
+                throw new Exception("Empty file uploaded");
+            }
+
+            // Arrange the path for upload
+            var uploadFileName = Path.GetFileName(fileContent.FileName);
+            var imageLockerId = Guid.NewGuid().ToString();
+            var targetDirectory = Path.Combine(_uploadDirectory, imageLockerId);
+            var targetPath = Path.Combine(targetDirectory, "Upload.csv");
+
+            Directory.CreateDirectory(targetDirectory);
+
+            _logger.Info(
+                $"Shop: {identity.PwShop.PwShopId} is attempting to upload a new file (Original filename: {uploadFileName})" +
+                $" to the following location: {targetPath}");
+            
+            var stream = fileContent.InputStream;
+            using (var fileStream = System.IO.File.Create(targetPath))
+            {
+                stream.CopyTo(fileStream);
+            }
+                
+            _logger.Info("File upload successful!");
+            return JsonNetResult.Success();
+        }
+
     }
 }
 
