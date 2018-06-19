@@ -24,8 +24,7 @@
 
     <div class="below-header-spacer"></div>
 
-    <div class="system-page-content">
-        
+    <div class="system-page-content">        
         <div data-bind="ifnot: ProcessingUpload">
             <div class="panel panel-default">
                 <div class="panel-body" style="padding: 50px;">
@@ -122,7 +121,7 @@
             </div>
         </div>
     </div>
-    </div>
+</div>
 
 <script type="text/html" id="Upload-Panel">
     <span style="width: 225px;" class="btn btn-primary fileinput-button">
@@ -179,11 +178,30 @@
         };
         
         self.UploadComplete = function () {
-            self.ProcessingUpload(true);
+            self.ProcessingUpload(true);            
+        };
+        
+        self.PingUploadStatus = function () {
+            flow.exec(
+                function () {
+                    var settings = new ProfitWiseFunctions.AjaxSettings();
+                    settings.UseSpinner = false;
+                    settings.ErrorCallbackFunction = null;
 
+                    var ajax = new ProfitWiseFunctions.Ajax(settings);
+                    ajax.HttpGet("/CogsService/UploadStatus", this);
+                },
+                function (data) {                    
+                    console.log(data);
+                });
         };
 
         self.ProcessingUpload = ko.observable(false);
+        
+        self.InitializeStatusRefresh = function () {
+            var pingInteralMilliseconds = 5000;    // Please do not change!
+            setInterval(self.PingUploadStatus, pingInteralMilliseconds);
+        };
 
         return self;
     };
@@ -191,6 +209,7 @@
     $(document).ready(function () {
         var model = new ProfitWise.UploadModel();
         ko.applyBindings(model);
+        model.InitializeStatusRefresh();
     });
 </script>
 

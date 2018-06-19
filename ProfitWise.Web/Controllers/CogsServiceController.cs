@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -25,16 +24,19 @@ namespace ProfitWise.Web.Controllers
         private readonly CurrencyService _currencyService;
         private readonly IPushLogger _logger;
         private readonly string _uploadDirectory;
+        private readonly FileLocator _fileLocator;
+
 
         public CogsServiceController(
             MultitenantFactory factory, 
             CurrencyService currencyService, 
-            IPushLogger logger)
+            IPushLogger logger, 
+            FileLocator fileLocator)
         {
             _factory = factory;
             _currencyService = currencyService;
             _logger = logger;
-            _uploadDirectory = ConfigurationManager.AppSettings["FileUploadDirectory"];
+            _fileLocator = fileLocator;
         }
         
 
@@ -272,6 +274,15 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+        [HttpGet]
+        public ActionResult UploadStatus()
+        {
+            var identity = HttpContext.IdentitySnapshot();
+            var repository = _factory.MakeUploadRepository(identity.PwShop);
+            var uploads = repository.RetrieveByStatus(UploadStatusCode.Processing);
+            return new JsonNetResult(new { IsProcessing = uploads.Any() });
+        }
+
         [HttpPost]
         public ActionResult UploadCostOfGoods()
         {
@@ -293,15 +304,14 @@ namespace ProfitWise.Web.Controllers
             }
 
             // Arrange the path for upload
-            var uploadFileName = Path.GetFileName(fileContent.FileName);
-            var imageLockerId = Guid.NewGuid().ToString();
-            var targetDirectory = Path.Combine(_uploadDirectory, imageLockerId);
-            var targetPath = Path.Combine(targetDirectory, "Upload.csv");
+            var originalFileName = Path.GetFileName(fileContent.FileName);
 
-            Directory.CreateDirectory(targetDirectory);
+            var fileLocker = FileLocker.MakeNewForCogsUpload();
+            Directory.CreateDirectory(_fileLocator.Directory(fileLocker));
+            var targetPath = _fileLocator.Path(fileLocker);
 
             _logger.Info(
-                $"Shop: {identity.PwShop.PwShopId} is attempting to upload a new file (Original filename: {uploadFileName})" +
+                $"Shop: {identity.PwShop.PwShopId} is attempting to upload a new file (Original filename: {originalFileName})" +
                 $" to the following location: {targetPath}");
             
             var stream = fileContent.InputStream;
@@ -309,11 +319,20 @@ namespace ProfitWise.Web.Controllers
             {
                 stream.CopyTo(fileStream);
             }
-                
+
+            var repository = _factory.MakeUploadRepository(identity.PwShop);
+
+            var upload = new Upload();
+            upload.PwShopId = identity.PwShop.PwShopId;
+            upload.FileLockerId = fileLocker.FileLockerId;
+            upload.OriginalFileName = originalFileName;
+            upload.FileName = fileLocker.FileName;
+            upload.UploadStatus = UploadStatusCode.Processing;            
+            repository.Insert(upload);
+
             _logger.Info("File upload successful!");
             return JsonNetResult.Success();
         }
-
     }
 }
 

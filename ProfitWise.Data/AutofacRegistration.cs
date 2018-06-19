@@ -40,6 +40,7 @@ namespace ProfitWise.Data
             builder.RegisterType<AdminRepository>();
             builder.RegisterType<BillingRepository>();
             builder.RegisterType<TourRepository>();
+            builder.RegisterType<UploadRepository>();
 
             var registry = new InceptorRegistry();
             registry.Add(typeof(ExecutionTime));
@@ -59,7 +60,8 @@ namespace ProfitWise.Data
             builder.RegisterType<DataService>();
             builder.RegisterType<TourService>();
             builder.RegisterType<CalendarPopulationService>();
-            
+            builder.RegisterType<FileLocator>();
+
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();
             builder.RegisterType<SystemCleanupProcess>();

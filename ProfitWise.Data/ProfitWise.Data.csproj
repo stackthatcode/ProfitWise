@@ -170,6 +170,7 @@
     <Compile Include="Model\Cogs\CalcContext.cs" />
     <Compile Include="Model\Cogs\CogsDto.cs" />
     <Compile Include="Model\Cogs\CogsDateBlockContext.cs" />
+    <Compile Include="Model\Cogs\FileLocker.cs" />
     <Compile Include="Model\Cogs\SearchConstants.cs" />
     <Compile Include="Model\Cogs\EntryRefreshContext.cs" />
     <Compile Include="Model\Cogs\EntryType.cs" />
@@ -179,6 +180,8 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
+    <Compile Include="Model\Cogs\Upload.cs" />
+    <Compile Include="Model\Cogs\UploadStatusCode.cs" />
     <Compile Include="Model\Cogs\UploadTemplatePrimaryVariantRow.cs" />
     <Compile Include="Model\ExchangeRates\ExtensionMethods.cs" />
     <Compile Include="Model\ExchangeRates\ExtrapolateFunctions.cs" />
@@ -248,7 +251,9 @@
     <Compile Include="Model\Shop\PwShop.cs" />
     <Compile Include="Model\System\SystemState.cs" />
     <Compile Include="Repositories\Multitenant\TourRepository.cs" />
+    <Compile Include="Repositories\Multitenant\UploadRepository.cs" />
     <Compile Include="Services\CalendarPopulationService.cs" />
+    <Compile Include="Services\FileLocator.cs" />
     <Compile Include="Services\TourService.cs" />
     <Compile Include="Utility\MethodLockResult.cs" />
     <Compile Include="Utility\MultitenantMethodLocker.cs" />
