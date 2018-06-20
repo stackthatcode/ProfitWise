@@ -61,6 +61,8 @@ namespace ProfitWise.Data
             builder.RegisterType<TourService>();
             builder.RegisterType<CalendarPopulationService>();
             builder.RegisterType<FileLocator>();
+            builder.RegisterType<BulkImportService>();
+
 
             builder.RegisterType<ShopRefreshProcess>();
             builder.RegisterType<ExchangeRateRefreshProcess>();

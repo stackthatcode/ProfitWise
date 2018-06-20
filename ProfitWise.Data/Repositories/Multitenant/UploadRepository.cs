@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Shop;
+
 
 namespace ProfitWise.Data.Repositories.Multitenant
 {
@@ -27,7 +26,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             upload.LastUpdated = DateTime.UtcNow;
             var query =
                 @"INSERT INTO uploads(@PwShopId) VALUES ( 
-                    @PwShopId, @FileLockerId, @OriginalFileName, @FileName, @UploadStatus,
+                    @PwShopId, @FileLockerId, @UploadFileName, @FeedbackFileName, @UploadStatus,
                     @DateCreated, @LastUpdated, @TotalNumberOfRows, @RowsProcessed );";
             _connectionWrapper.Execute(query, upload);
         }
@@ -35,10 +34,20 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public void UpdateStatus(long fileUploadId, int status)
         {
             var query = @"UPDATE uploads(@PwShopId) 
-                        SET UploadStatus = @status
+                        SET UploadStatus = @status,
+                        LastUpdated = GETUTCNOW()
                         WHERE FileUploadId = @fileUploadId";
 
             _connectionWrapper.Execute(query, new { PwShopId, fileUploadId, status });
+        }
+        public void UpdateFeedbackFilename(long fileUploadId, string feedbackFilename)
+        {
+            var query = @"UPDATE uploads(@PwShopId) 
+                        SET FeedbackFilename = @feedbackFilename,
+                        LastUpdated = GETUTCNOW()
+                        WHERE FileUploadId = @fileUploadId";
+
+            _connectionWrapper.Execute(query, new { PwShopId, fileUploadId, feedbackFilename });
         }
 
         public List<Upload> RetrieveByStatus(int status)
@@ -50,10 +59,10 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 .ToList();
         }
 
-        public List<Upload> RetrieveByAge(int maximumAgeHours, int? status = null)
+        public List<Upload> RetrieveByAgeOfLastUpdate(int maximumAgeHours, int? status = null)
         {
             var query =
-                @"SELECT * FROM uploads(@PwShopId) WHERE DateCreated > DATEADD(hour, -1, GETUTCDATE());";
+                @"SELECT * FROM uploads(@PwShopId) WHERE LastUpdated > DATEADD(hour, -1, GETUTCDATE());";
 
             if (status.HasValue)
             {
@@ -61,7 +70,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
             }
             return _connectionWrapper
                     .Query<Upload>(query, new { PwShopId, maximumAgeHours, status })
+                    .OrderByDescending(x => x.LastUpdated)
                     .ToList();
         }
     }
 }
+

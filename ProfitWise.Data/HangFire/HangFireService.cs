@@ -5,6 +5,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Repositories.System;
+using ProfitWise.Data.Services;
 using Push.Foundation.Web.Interfaces;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
@@ -151,6 +152,14 @@ namespace ProfitWise.Data.HangFire
                 BackgroundJob.Delete(batch.InitialRefreshJobId);
                 batchRepository.UpdateInitialRefreshJobId(null);
             }
+        }
+
+        
+        public void ScheduleCogsBulkImport(int pwShopId, Guid fileLocker)
+        {
+            BackgroundJob
+                .Enqueue<BulkImportService>(
+                    x => x.Process(pwShopId, fileLocker));
         }
     }
 }

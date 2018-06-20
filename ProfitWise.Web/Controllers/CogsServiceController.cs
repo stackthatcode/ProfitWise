@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Services;
@@ -23,20 +24,24 @@ namespace ProfitWise.Web.Controllers
         private readonly MultitenantFactory _factory;
         private readonly CurrencyService _currencyService;
         private readonly IPushLogger _logger;
-        private readonly string _uploadDirectory;
         private readonly FileLocator _fileLocator;
-
+        private readonly TimeZoneTranslator _translator;
+        private readonly HangFireService _hangFireService;
 
         public CogsServiceController(
-            MultitenantFactory factory, 
-            CurrencyService currencyService, 
-            IPushLogger logger, 
-            FileLocator fileLocator)
+                MultitenantFactory factory, 
+                CurrencyService currencyService, 
+                IPushLogger logger, 
+                FileLocator fileLocator, 
+                TimeZoneTranslator translator, 
+                HangFireService hangFireService)
         {
             _factory = factory;
             _currencyService = currencyService;
             _logger = logger;
             _fileLocator = fileLocator;
+            _translator = translator;
+            _hangFireService = hangFireService;
         }
         
 
@@ -279,15 +284,54 @@ namespace ProfitWise.Web.Controllers
         {
             var identity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeUploadRepository(identity.PwShop);
-            var uploads = repository.RetrieveByStatus(UploadStatusCode.Processing);
-            return new JsonNetResult(new { IsProcessing = uploads.Any() });
-        }
 
+            const int numberOfHoursAgo = 4;
+            var uploads = repository.RetrieveByAgeOfLastUpdate(numberOfHoursAgo);
+            if (!uploads.Any())
+            {
+                return new JsonNetResult(new UploadStatusModel { IsProcessing = false, });
+            }
+
+            var mostRecent = uploads.MostRecentlyUpdated();
+            var lastToComplete = uploads.LastToComplete();
+
+            var output = new UploadStatusModel();
+            output.IsProcessing = mostRecent.UploadStatus == UploadStatusCode.Processing;
+
+            if (lastToComplete != null)
+            {
+                var timeZone = identity.PwShop.TimeZone;
+
+                var uploadResult = new UploadResultModel();
+                uploadResult.UploadStatus = lastToComplete.UploadStatus;
+                uploadResult.LastUpdatedAt =
+                    _translator
+                        .FromUtcToShopTz(lastToComplete.LastUpdated, timeZone)
+                        .ToString("G");
+
+                uploadResult.RowsProcessed = lastToComplete.RowsProcessed;
+                uploadResult.TotalNumberOfRows = lastToComplete.TotalNumberOfRows;
+                uploadResult.FeedbackFileUrl = "http://google.com";
+                // TODO: build this URL using the File Locker Id
+
+                output.PreviousUploadResult = uploadResult;
+            }
+            
+            return new JsonNetResult(output);
+        }
+        
         [HttpPost]
         public ActionResult UploadCostOfGoods()
         {
             var identity = HttpContext.IdentitySnapshot();
-
+            
+            var repository = _factory.MakeUploadRepository(identity.PwShop);
+            var currentlyProcessing = repository.RetrieveByStatus(UploadStatusCode.Processing);
+            if (currentlyProcessing.Any())
+            {
+                throw new Exception("Already processing a file upload!");
+            }
+            
             if (Request.Files.Count == 0)
             {
                 throw new Exception("Request contains no file uploads; something is wrong!");
@@ -320,19 +364,23 @@ namespace ProfitWise.Web.Controllers
                 stream.CopyTo(fileStream);
             }
 
-            var repository = _factory.MakeUploadRepository(identity.PwShop);
-
             var upload = new Upload();
             upload.PwShopId = identity.PwShop.PwShopId;
             upload.FileLockerId = fileLocker.FileLockerId;
-            upload.OriginalFileName = originalFileName;
-            upload.FileName = fileLocker.FileName;
+            upload.UploadFileName = fileLocker.FileName;
             upload.UploadStatus = UploadStatusCode.Processing;            
             repository.Insert(upload);
 
             _logger.Info("File upload successful!");
+
+            _hangFireService
+                .ScheduleCogsBulkImport(
+                    identity.PwShop.PwShopId, fileLocker.FileLockerId);
+
             return JsonNetResult.Success();
         }
     }
 }
+
+
 

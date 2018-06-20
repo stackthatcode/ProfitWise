@@ -1,4 +1,5 @@
-﻿@using ProfitWise.Web.Plumbing
+﻿@using ProfitWise.Data.Model.Cogs
+@using ProfitWise.Web.Plumbing
 @model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
@@ -24,18 +25,46 @@
 
     <div class="below-header-spacer"></div>
 
-    <div class="system-page-content">        
+    <div class="system-page-content">    
         <div data-bind="ifnot: ProcessingUpload">
+            <div data-bind="if: PreviousUploadResult">
+                <div class="alert alert-info"
+                     data-bind="with: PreviousUploadResult">
+
+                    <div data-bind="if: UploadStatus == @UploadStatusCode.Success"
+                            style="text-align: center;">
+                        <strong>Your previous CoGS Bulk Import succeeeded!</strong>
+                        <div>
+                            Your upload finished processing at <span data-bind="text: LastUpdatedAt"></span>;
+                            a total of <span data-bind="text: RowsProcessed"></span> out of 
+                            <span data-bind="text: TotalNumberOfRows"></span> rows of data were processed.
+                        </div>
+                        <div>
+                            <!-- Provide synopsis of data -->
+                        </div>
+                    </div>
+
+                    <div data-bind="if: UploadStatus == @UploadStatusCode.Failure"
+                         style="text-align: center;">
+                        <strong>Your previous CoGS Bulk Import failed!</strong>
+                        <div>
+                            Feel free to contact <a href="@GlobalConfig.BuildUrl("/Content/Contact")">ProfitWise Support</a>
+                            to assist you loading your data using Bulk Import.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="panel panel-default">
                 <div class="panel-body" style="padding: 50px;">
                     <p style="text-align: center;">
                         <strong>The process of bulk updating your ProfitWise Cost of Goods data in a CSV file is easy!</strong>
-                        <br />
+                        <br/>
                         Start by downloading the Excel template and entering your CoGS data.
                         Once you're ready, hit the "Upload CoGS" button to proceed.
                         If this is your first time, you may read through
                         <a href="#help">detailed instructions below</a>.
-                        If you have any questions, you can always reach out to the 
+                        If you have any questions, you can always reach out to the
                         <a href="mailto:support@profitwiseapp.com">ProfitWise Support Team</a>.
                     </p>
 
@@ -178,10 +207,14 @@
         };
         
         self.UploadComplete = function () {
-            self.ProcessingUpload(true);            
+            self.ProcessingUpload(true);
+            self.PingUploadStatus();
         };
         
-        self.PingUploadStatus = function () {
+        self.ProcessingUpload = ko.observable(false);        
+        self.PreviousUploadResult = ko.observable();
+
+        self.PingUploadStatus = function (callback) {
             flow.exec(
                 function () {
                     var settings = new ProfitWiseFunctions.AjaxSettings();
@@ -191,16 +224,27 @@
                     var ajax = new ProfitWiseFunctions.Ajax(settings);
                     ajax.HttpGet("/CogsService/UploadStatus", this);
                 },
-                function (data) {                    
+                function (data) {
                     console.log(data);
+
+                    self.ProcessingUpload(data.IsProcessing);
+                    self.PreviousUploadResult(data.PreviousUploadResult);
+                    
+                    if (callback) {
+                        callback();
+                    }
                 });
         };
 
-        self.ProcessingUpload = ko.observable(false);
-        
-        self.InitializeStatusRefresh = function () {
-            var pingInteralMilliseconds = 5000;    // Please do not change!
-            setInterval(self.PingUploadStatus, pingInteralMilliseconds);
+        self.Initialize = function () {
+            flow.exec(
+                function () {
+                    self.PingUploadStatus(this);
+                },
+                function () {
+                    var pingInteralMilliseconds = 5000;    // Please do not change!
+                    setInterval(self.PingUploadStatus, pingInteralMilliseconds);
+                });
         };
 
         return self;
@@ -209,7 +253,7 @@
     $(document).ready(function () {
         var model = new ProfitWise.UploadModel();
         ko.applyBindings(model);
-        model.InitializeStatusRefresh();
+        model.Initialize();
     });
 </script>
 

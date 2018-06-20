@@ -7,8 +7,8 @@ namespace ProfitWise.Data.Model.Cogs
         public long FileUploadId { get; set; }
         public long PwShopId { get; set; }
         public Guid FileLockerId { get; set; }
-        public string OriginalFileName { get; set; }
-        public string FileName { get; set; }
+        public string UploadFileName { get; set; }
+        public string FeedbackFileName { get; set; }
         public int UploadStatus { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime LastUpdated { get; set; }

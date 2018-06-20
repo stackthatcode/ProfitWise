@@ -223,6 +223,7 @@
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
     <Compile Include="Models\ShopCurrencyChange.cs" />
     <Compile Include="Models\ShopUpsertionResult.cs" />
+    <Compile Include="Models\UploadStatusModel.cs" />
     <Compile Include="Plumbing\HttpContextExtensions.cs" />
     <Compile Include="Attributes\RequiresStoreDataAttribute.cs" />
     <Compile Include="Attributes\IdentityProcessorAttribute.cs" />

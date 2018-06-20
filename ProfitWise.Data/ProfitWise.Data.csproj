@@ -252,6 +252,7 @@
     <Compile Include="Model\System\SystemState.cs" />
     <Compile Include="Repositories\Multitenant\TourRepository.cs" />
     <Compile Include="Repositories\Multitenant\UploadRepository.cs" />
+    <Compile Include="Services\BulkImportService.cs" />
     <Compile Include="Services\CalendarPopulationService.cs" />
     <Compile Include="Services\FileLocator.cs" />
     <Compile Include="Services\TourService.cs" />
