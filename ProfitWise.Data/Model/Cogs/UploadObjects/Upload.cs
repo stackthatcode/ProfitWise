@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProfitWise.Data.Model.Cogs
+namespace ProfitWise.Data.Model.Cogs.UploadObjects
 {
     public class Upload
     {

@@ -7,6 +7,7 @@ using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
 using ProfitWise.Data.Model;
 using ProfitWise.Data.Model.Cogs;
+using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
@@ -279,13 +280,15 @@ namespace ProfitWise.Web.Controllers
         }
 
 
+        const int numberOfHoursAgo = 4;
+
+
         [HttpGet]
         public ActionResult UploadStatus()
         {
             var identity = HttpContext.IdentitySnapshot();
             var repository = _factory.MakeUploadRepository(identity.PwShop);
 
-            const int numberOfHoursAgo = 4;
             var uploads = repository.RetrieveByAgeOfLastUpdate(numberOfHoursAgo);
             if (!uploads.Any())
             {
@@ -352,7 +355,7 @@ namespace ProfitWise.Web.Controllers
 
             var fileLocker = FileLocker.MakeNewForCogsUpload();
             Directory.CreateDirectory(_fileLocator.Directory(fileLocker));
-            var targetPath = _fileLocator.Path(fileLocker);
+            var targetPath = _fileLocator.UploadFilePath(fileLocker);
 
             _logger.Info(
                 $"Shop: {identity.PwShop.PwShopId} is attempting to upload a new file (Original filename: {originalFileName})" +
@@ -367,15 +370,14 @@ namespace ProfitWise.Web.Controllers
             var upload = new Upload();
             upload.PwShopId = identity.PwShop.PwShopId;
             upload.FileLockerId = fileLocker.FileLockerId;
-            upload.UploadFileName = fileLocker.FileName;
+            upload.UploadFileName = fileLocker.UploadFileName;
             upload.UploadStatus = UploadStatusCode.Processing;            
-            repository.Insert(upload);
+            var uploadFileId = repository.Insert(upload);
 
             _logger.Info("File upload successful!");
 
             _hangFireService
-                .ScheduleCogsBulkImport(
-                    identity.PwShop.PwShopId, fileLocker.FileLockerId);
+                .ScheduleCogsBulkImport(identity.PwShop.PwShopId, uploadFileId);
 
             return JsonNetResult.Success();
         }

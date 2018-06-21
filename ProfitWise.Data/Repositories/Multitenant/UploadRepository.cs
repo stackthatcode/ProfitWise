@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs;
+using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Model.Shop;
 
 
@@ -19,7 +20,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper = connectionWrapper;
         }
 
-        public void Insert(Upload upload)
+        public long Insert(Upload upload)
         {
             upload.PwShopId = PwShopId;
             upload.DateCreated = DateTime.UtcNow;
@@ -27,15 +28,17 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query =
                 @"INSERT INTO uploads(@PwShopId) VALUES ( 
                     @PwShopId, @FileLockerId, @UploadFileName, @FeedbackFileName, @UploadStatus,
-                    @DateCreated, @LastUpdated, @TotalNumberOfRows, @RowsProcessed );";
-            _connectionWrapper.Execute(query, upload);
+                    @DateCreated, @LastUpdated, @TotalNumberOfRows, @RowsProcessed );
+                SELECT CAST(SCOPE_IDENTITY() as int)";
+
+           return _connectionWrapper.Query<long>(query, upload).Single();
         }
 
         public void UpdateStatus(long fileUploadId, int status)
         {
             var query = @"UPDATE uploads(@PwShopId) 
                         SET UploadStatus = @status,
-                        LastUpdated = GETUTCNOW()
+                        LastUpdated = GETUTCDATE()
                         WHERE FileUploadId = @fileUploadId";
 
             _connectionWrapper.Execute(query, new { PwShopId, fileUploadId, status });
@@ -72,6 +75,16 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .Query<Upload>(query, new { PwShopId, maximumAgeHours, status })
                     .OrderByDescending(x => x.LastUpdated)
                     .ToList();
+        }
+
+        public Upload Retrieve(long fileUploadId)
+        {
+            var query = 
+                @"SELECT * FROM uploads(@PwShopId) WHERE FileUploadId = @fileUploadId";
+
+            return _connectionWrapper
+                .Query<Upload>(query, new {PwShopId, fileUploadId})
+                .FirstOrDefault();
         }
     }
 }

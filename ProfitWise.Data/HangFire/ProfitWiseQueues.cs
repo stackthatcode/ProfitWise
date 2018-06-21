@@ -6,5 +6,6 @@
         public const string RoutineShopRefresh = "routineshoprefresh";
         public const string ExchangeRateRefresh = "exchangeraterefresh";
         public const string CleanupService = "cleanupservice";
+        public const string BulkImportService = "bulkimportservice";
     }
 }

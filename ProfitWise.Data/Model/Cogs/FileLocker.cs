@@ -1,11 +1,14 @@
 ﻿using System;
+using ProfitWise.Data.Model.Cogs.UploadObjects;
 
 namespace ProfitWise.Data.Model.Cogs
 {
     public class FileLocker
     {
         public Guid FileLockerId { get; set; }
-        public string FileName { get; set; }
+        public string UploadFileName { get; set; }
+        public string FeedbackFileName { get; set; }
+
 
         public FileLocker()
         {
@@ -16,7 +19,17 @@ namespace ProfitWise.Data.Model.Cogs
         {
             return new FileLocker()
             {
-                FileName = "upload.csv"
+                UploadFileName = "upload.csv"
+            };
+        }
+
+        public static FileLocker MakeFromUpload(Upload upload)
+        {
+            return new FileLocker()
+            {
+                FileLockerId = upload.FileLockerId,
+                UploadFileName = upload.UploadFileName,
+                FeedbackFileName = upload.FeedbackFileName,
             };
         }
     }

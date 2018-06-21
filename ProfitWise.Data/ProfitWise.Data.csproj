@@ -109,6 +109,7 @@
       <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -180,9 +181,13 @@
     <Compile Include="Model\Catalog\ProductBuildContext.cs" />
     <Compile Include="Model\Catalog\VariantBuildContext.cs" />
     <Compile Include="Model\Cogs\MasterVariantUpdateContext.cs" />
-    <Compile Include="Model\Cogs\Upload.cs" />
-    <Compile Include="Model\Cogs\UploadStatusCode.cs" />
-    <Compile Include="Model\Cogs\UploadTemplatePrimaryVariantRow.cs" />
+    <Compile Include="Model\Cogs\UploadObjects\UploadAnatomy.cs" />
+    <Compile Include="Model\Cogs\UploadObjects\ValidationResult.cs" />
+    <Compile Include="Model\Cogs\UploadObjects\Rule.cs" />
+    <Compile Include="Model\Cogs\UploadObjects\Upload.cs" />
+    <Compile Include="Model\Cogs\UploadObjects\UploadStatusCode.cs" />
+    <Compile Include="Model\Cogs\UploadObjects\UploadTemplatePrimaryVariantRow.cs" />
+    <Compile Include="Model\Cogs\UploadObjects\ValidationSequence.cs" />
     <Compile Include="Model\ExchangeRates\ExtensionMethods.cs" />
     <Compile Include="Model\ExchangeRates\ExtrapolateFunctions.cs" />
     <Compile Include="Model\GoodsOnHand\ChartData.cs" />

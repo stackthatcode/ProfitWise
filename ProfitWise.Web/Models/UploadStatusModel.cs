@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
 using ProfitWise.Data.Model.Cogs;
+using ProfitWise.Data.Model.Cogs.UploadObjects;
 
 namespace ProfitWise.Web.Models
 {

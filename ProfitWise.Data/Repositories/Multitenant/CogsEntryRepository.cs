@@ -6,6 +6,7 @@ using Autofac.Extras.DynamicProxy2;
 using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs;
+using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Services;
 

@@ -66,7 +66,7 @@ namespace ProfitWise.Data.HangFire
             }
 
             _logger.Info($"Scheduling Initial Shop Refresh for Shop: UserId: {userId}");
-            var jobId =  BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));            
+            var jobId = BackgroundJob.Enqueue<ShopRefreshProcess>(x => x.InitialShopRefresh(userId));            
             batchRepository.UpdateInitialRefreshJobId(jobId);
 
             return jobId;
@@ -155,11 +155,9 @@ namespace ProfitWise.Data.HangFire
         }
 
         
-        public void ScheduleCogsBulkImport(int pwShopId, Guid fileLocker)
+        public void ScheduleCogsBulkImport(int pwShopId, long uploadFileId)
         {
-            BackgroundJob
-                .Enqueue<BulkImportService>(
-                    x => x.Process(pwShopId, fileLocker));
+            BackgroundJob.Enqueue<BulkImportService>(x => x.Process(pwShopId, uploadFileId));
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
+using System.IO;
 using ProfitWise.Data.Model.Cogs;
+
 
 namespace ProfitWise.Data.Services
 {
@@ -20,15 +22,22 @@ namespace ProfitWise.Data.Services
 
         public string Directory(FileLocker fileLocker)
         {
-            return System.IO.Path.Combine(
-                        _uploadDirectory, fileLocker.FileLockerId.ToString());
+            return Path.Combine(_uploadDirectory, fileLocker.FileLockerId.ToString());
         }
 
-        public string Path(FileLocker fileLocker)
+        public string UploadFilePath(FileLocker fileLocker)
         {
             var targetDirectory = Directory(fileLocker);
-            var targetPath = System.IO.Path.Combine(targetDirectory, fileLocker.FileName);
+            var targetPath = Path.Combine(targetDirectory, fileLocker.UploadFileName);
+            return targetPath;
+        }
+        
+        public string FeedbackFilePath(FileLocker fileLocker)
+        {
+            var targetDirectory = Directory(fileLocker);
+            var targetPath = Path.Combine(targetDirectory, fileLocker.FeedbackFileName);
             return targetPath;
         }
     }
 }
+

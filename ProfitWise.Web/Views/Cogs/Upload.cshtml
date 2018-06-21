@@ -1,4 +1,4 @@
-﻿@using ProfitWise.Data.Model.Cogs
+﻿@using ProfitWise.Data.Model.Cogs.UploadObjects;
 @using ProfitWise.Web.Plumbing
 @model ProfitWise.Web.Models.WelcomeModel
 @{
@@ -65,7 +65,7 @@
                         If this is your first time, you may read through
                         <a href="#help">detailed instructions below</a>.
                         If you have any questions, you can always reach out to the
-                        <a href="mailto:support@profitwiseapp.com">ProfitWise Support Team</a>.
+                        <a href="@GlobalConfig.BuildUrl("/Content/Contact")">ProfitWise Support Team</a>.
                     </p>
 
                     <a href="#" data-bind="click: function() { DownloadTemplate('download-caddy'); }"

@@ -9,6 +9,7 @@
                     ProfitWiseQueues.RoutineShopRefresh,
                     ProfitWiseQueues.ExchangeRateRefresh,
                     ProfitWiseQueues.CleanupService,
+                    ProfitWiseQueues.BulkImportService
                 };
     }
 }
