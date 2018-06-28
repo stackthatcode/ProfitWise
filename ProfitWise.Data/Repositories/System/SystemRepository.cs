@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using ProfitWise.Data.Database;
-using ProfitWise.Data.Model.Shop;
+using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Model.System;
 
 namespace ProfitWise.Data.Repositories.System
@@ -174,7 +174,24 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query4);
         }
 
-        
+        public List<Upload> RetrieveOldUploads(int maximumAgeDays)
+        {
+            var query =
+                @"SELECT * FROM profitwiseuploads
+                WHERE UploadStatus <> 1 
+                AND LastUpdated <= DATEADD(day, -@maximumAgeDays, GETUTCDATE())
+                ORDER BY [LastUpdated] DESC;";
 
+            return _connectionWrapper
+                .Query<Upload>(query, new {maximumAgeDays})
+                .ToList();
+        }
+
+        public void DeleteFileUpload(long fileUploadId)
+        {
+            var query = @"DELETE FROM profitwiseuploads WHERE FileUploadId = @fileUploadId";
+            _connectionWrapper.Execute(query, new { fileUploadId });
+        }
     }
 }
+

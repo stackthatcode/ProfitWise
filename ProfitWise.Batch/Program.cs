@@ -12,9 +12,7 @@ using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
-using Push.Foundation.Web.Shopify;
 using Push.Shopify.Factories;
-using Push.Shopify.Repositories;
 
 
 namespace ProfitWise.Batch
@@ -37,6 +35,7 @@ namespace ProfitWise.Batch
         private const string AllExchangeRateLoad = "33";
 
         private const string ExecuteSingleUpload = "40";
+        private const string CleanupOldFileUploads = "41";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
@@ -64,6 +63,7 @@ namespace ProfitWise.Batch
             Console.WriteLine("");
 
             Console.WriteLine($"{ExecuteSingleUpload} - Process a single file upload");
+            Console.WriteLine($"{CleanupOldFileUploads} - Clean-up old file uploads");
             Console.WriteLine();
             return Console.ReadLine();
         }
@@ -154,8 +154,26 @@ namespace ProfitWise.Batch
                 RunExecuteSingleUpload();
                 return;
             }
+            if (choice == CleanupOldFileUploads)
+            {
+                RunCleanupOldFileUploads();
+                return;
+            }
 
             Console.WriteLine("Invalid option - exiting. Bye!");
+        }
+
+        private static void RunCleanupOldFileUploads()
+        {
+            var container = Bootstrapper.ConfigureApp(false);
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<BulkImportService>();
+                service.CleanupOldFiles();
+            }
+
+            ExitWithAnyKey();
         }
 
         private static void RunExecuteSingleUpload()

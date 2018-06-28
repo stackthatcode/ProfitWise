@@ -21,20 +21,22 @@ namespace ProfitWise.Data.Services
         private readonly IPushLogger _logger;
         private readonly ShopRepository _shopRepository;
         private readonly CurrencyService _currencyService;
-
+        private readonly SystemRepository _systemRepository;
 
         public BulkImportService(
                     FileLocator fileLocator, 
                     MultitenantFactory factory, 
                     IPushLogger logger, 
                     ShopRepository shopRepository, 
-                    CurrencyService currencyService)
+                    CurrencyService currencyService, 
+                    SystemRepository systemRepository)
         {
             _fileLocator = fileLocator;
             _factory = factory;
             _logger = logger;
             _shopRepository = shopRepository;
             _currencyService = currencyService;
+            _systemRepository = systemRepository;
         }
 
 
@@ -109,6 +111,20 @@ namespace ProfitWise.Data.Services
             }
         }
 
+        public void CleanupOldFiles()
+        {
+            const int maximumFileAgeDays = 7;
+            var files = _systemRepository.RetrieveOldUploads(maximumFileAgeDays);
+            foreach (var file in files)
+            {
+                var locker = FileLocker.MakeFromUpload(file);
+                var path = _fileLocator.Directory(locker);
+                if (System.IO.Directory.Exists(path))
+                    System.IO.Directory.Delete(path, true);
+
+                _systemRepository.DeleteFileUpload(file.FileUploadId);
+            }
+        }
 
         public void ReportUploadSystemFault(int pwShopId, long fileUploadId)
         {
