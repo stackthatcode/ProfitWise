@@ -22,17 +22,21 @@ namespace ProfitWise.Batch
     class Program
     {
         private const string HangFireBackgroundServiceOption = "1";
-        private const string ScheduleInitialShopRefreshOption = "2";
-        private const string ScheduleBackgroundSystemJobsOption = "3";
-        private const string EmitTimeZones = "4";
-        private const string ManualShopRefresh = "5";
-        private const string PopulateCalendar = "6";
-        private const string SingleExchangeRateLoad = "7";
-        private const string AllExchangeRateLoad = "8";
-        private const string RefreshSingleOrder = "9";
-        private const string RebuildReportLedgeForSingleShop = "10";
-        private const string UpdateRecurringCharge = "11";
-        private const string RebuildReportLedgeForAllShops = "12";
+        private const string ScheduleInitialShopRefreshOption = "10";
+        private const string ScheduleBackgroundSystemJobsOption = "11";
+
+        private const string ManualShopRefresh = "20";
+        private const string RefreshSingleOrder = "21";
+        private const string RebuildReportLedgeForSingleShop = "22";
+        private const string UpdateRecurringCharge = "23";
+        private const string RebuildReportLedgeForAllShops = "24";
+
+        private const string EmitTimeZones = "30";
+        private const string PopulateCalendar = "31";
+        private const string SingleExchangeRateLoad = "32";
+        private const string AllExchangeRateLoad = "33";
+
+        private const string ExecuteSingleUpload = "40";
 
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
@@ -44,17 +48,23 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{HangFireBackgroundServiceOption} - Run HangFire Background Service");
             Console.WriteLine($"{ScheduleInitialShopRefreshOption} - Schedule an Initial Shop Refresh");
             Console.WriteLine($"{ScheduleBackgroundSystemJobsOption} - Schedule the default ProfitWise System Jobs");
-            Console.WriteLine($"{EmitTimeZones} - Save all Time Zone Id's on the current machine to a text file");
+            Console.WriteLine($"");
+
             Console.WriteLine($"{ManualShopRefresh} - Execute a manual Shop Refresh");
-            Console.WriteLine($"{PopulateCalendar} - Populate the SQL calendar_table");
-            Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
-            Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
             Console.WriteLine($"{RefreshSingleOrder} - Refresh a Single Order");
             Console.WriteLine($"{RebuildReportLedgeForSingleShop} - Rebuild Report Ledger for a single Shop");
             Console.WriteLine($"{UpdateRecurringCharge} - Update Recurring Charge for a single Shop");
             Console.WriteLine($"{RebuildReportLedgeForAllShops} - Rebuild Report Ledger for ALL Active Shops");
-
             Console.WriteLine("");
+
+            Console.WriteLine($"{EmitTimeZones} - Save all Time Zone Id's on the current machine to a text file");
+            Console.WriteLine($"{PopulateCalendar} - Populate the SQL calendar_table");
+            Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
+            Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
+            Console.WriteLine("");
+
+            Console.WriteLine($"{ExecuteSingleUpload} - Process a single file upload");
+            Console.WriteLine();
             return Console.ReadLine();
         }
         
@@ -139,8 +149,31 @@ namespace ProfitWise.Batch
                 RunRebuildOrderLineLedgerAllShops();
                 return;
             }
+            if (choice == ExecuteSingleUpload)
+            {
+                RunExecuteSingleUpload();
+                return;
+            }
 
             Console.WriteLine("Invalid option - exiting. Bye!");
+        }
+
+        private static void RunExecuteSingleUpload()
+        {
+            Console.WriteLine($"Enter ShopId");
+            var shopId = Int32.Parse(Console.ReadLine());
+
+            Console.WriteLine($"Enter FileUploadId");
+            var fileUploadId = Int32.Parse(Console.ReadLine());
+
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<BulkImportService>();
+                service.Process(shopId, fileUploadId);
+            }
+            
+            ExitWithAnyKey();
         }
 
         private static void RunUpdateRecurringCharge()

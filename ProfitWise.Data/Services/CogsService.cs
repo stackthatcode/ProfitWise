@@ -35,8 +35,10 @@ namespace ProfitWise.Data.Services
         }
 
         
-       // Top-level orchestration functions
-        public void SaveCogsForMasterVariant(long pwMasterVariantId, CogsDto defaults, List<CogsDto> details)
+
+        // Top-level orchestration functions
+        public void SaveCogsForMasterVariant(
+                        long pwMasterVariantId, CogsDto defaults, List<CogsDto> details)
         {
             using (var transaction = _connectionWrapper.InitiateTransaction())
             {

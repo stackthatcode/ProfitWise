@@ -6,7 +6,7 @@ namespace ProfitWise.Data.Model.Cogs.UploadObjects
 
     public class ValidationResult
     {
-        public bool Success => FailureMessages.Any();
+        public bool Success => !FailureMessages.Any();
         public List<string> FailureMessages { get; set; }
 
         public ValidationResult()

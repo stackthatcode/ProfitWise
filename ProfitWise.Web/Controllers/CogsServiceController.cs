@@ -306,6 +306,7 @@ namespace ProfitWise.Web.Controllers
                 var timeZone = identity.PwShop.TimeZone;
 
                 var uploadResult = new UploadResultModel();
+
                 uploadResult.UploadStatus = lastToComplete.UploadStatus;
                 uploadResult.LastUpdatedAt =
                     _translator

@@ -197,6 +197,13 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return _connectionWrapper.Query<long>(query, new { PwShop.PwShopId, pwVariantId }).First();
         }
 
+        public bool MasterVariantExists(long pwVariantId)
+        {
+            return _connectionWrapper.Query<long>(
+                    "SELECT PwMasterVariantId FROM mastervariant(@PwShopId) WHERE PwMasterVariantId = @pwVariantId",
+                    new {PwShopId, pwVariantId}).Any();
+        }
+
         public long InsertVariant(PwVariant variant)
         {
             var query = @"INSERT INTO variant(@PwShopId) 

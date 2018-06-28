@@ -1,0 +1,9 @@
+Line 2 - Missing one or more column - cannot read row if any data is missing
+Line 3 - PwMasterVariantId is not a valid number
+Line 4 - Neither MarginPercent or FixedAmount are populated with a valid number
+Line 5 - Both MarginPercent and FixedAmount are populated - please only enter a value for or the other
+Line 6 - MarginPercent is not a valid number between -1.00 and 1.00 (-100.00% and 100.00%)
+Line 7 - FixedAmount is not a valid number between 0 and 999,999,999.99
+Line 8 - Invalid currency for FixedAmount
+Line 9 - SATAN!!!
+Line 10 - Non-existent PwMasterVariantId
