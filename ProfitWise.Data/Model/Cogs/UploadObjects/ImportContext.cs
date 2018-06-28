@@ -12,7 +12,9 @@ namespace ProfitWise.Data.Model.Cogs.UploadObjects
 
         public int SuccessfulRowCount { get; private set; }
         public List<FailedRow> FailedRows { get; private set; }
-        public bool ExceededFailureLimit => FailedRows.Count > FailureLimit;
+        public bool ReachedFailureLimit => FailedRows.Count >= FailureLimit;
+        public int TotalRows => SuccessfulRowCount + FailedRows.Count;
+
 
         public void ReportSuccess()
         {

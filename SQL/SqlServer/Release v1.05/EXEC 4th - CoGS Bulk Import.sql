@@ -25,7 +25,7 @@ CREATE TABLE [profitwiseuploads]
 	DateCreated DATETIME NOT NULL,
 	LastUpdated DATETIME NOT NULL,
 	TotalNumberOfRows INT NULL,
-	RowsProcessed INT NULL,
+	SuccessfulRows INT NULL,
 	PRIMARY KEY (FileUploadId)
 );
 
@@ -33,5 +33,15 @@ ALTER TABLE [profitwiseuploads]
 	ADD CONSTRAINT [FK_profitwiseupload_PwShopId]
 	FOREIGN KEY (PwShopId) REFERENCES profitwiseshop (PwShopId);
 
+
+
+	
+DROP FUNCTION IF EXISTS dbo.uploads
+GO
+CREATE FUNCTION dbo.uploads(@PwShopId bigint)  
+RETURNS TABLE  
+AS  
+RETURN SELECT * FROM profitwiseuploads WHERE PwShopId = @PwShopId;
+GO
 
 

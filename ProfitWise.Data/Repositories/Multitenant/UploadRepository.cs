@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProfitWise.Data.Database;
-using ProfitWise.Data.Model.Cogs;
 using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Model.Shop;
 
@@ -28,7 +27,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query =
                 @"INSERT INTO uploads(@PwShopId) VALUES ( 
                     @PwShopId, @FileLockerId, @UploadFileName, @FeedbackFileName, @UploadStatus,
-                    @DateCreated, @LastUpdated, @TotalNumberOfRows, @RowsProcessed );
+                    @DateCreated, @LastUpdated, @TotalNumberOfRows, @SuccessfulRows );
                 SELECT CAST(SCOPE_IDENTITY() as int)";
 
            return _connectionWrapper.Query<long>(query, upload).Single();
@@ -43,11 +42,29 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             _connectionWrapper.Execute(query, new { PwShopId, fileUploadId, status });
         }
+
+        public void UpdateStatus(
+                long fileUploadId, int status, int totalNumberOfRows, int successfulRows)
+        {
+            var query = @"UPDATE uploads(@PwShopId) 
+                        SET UploadStatus = @status,
+                        LastUpdated = GETUTCDATE(),
+                        TotalNumberOfRows = @totalNumberOfRows,
+                        SuccessfulRows = @successfulRows
+                        WHERE FileUploadId = @fileUploadId";
+
+            _connectionWrapper.Execute(query, new
+            {
+                PwShopId, fileUploadId, status, totalNumberOfRows, successfulRows,
+
+            });
+        }
+
         public void UpdateFeedbackFilename(long fileUploadId, string feedbackFilename)
         {
             var query = @"UPDATE uploads(@PwShopId) 
                         SET FeedbackFilename = @feedbackFilename,
-                        LastUpdated = GETUTCNOW()
+                            LastUpdated = GETUTCDATE()
                         WHERE FileUploadId = @fileUploadId";
 
             _connectionWrapper.Execute(query, new { PwShopId, fileUploadId, feedbackFilename });
@@ -65,7 +82,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public List<Upload> RetrieveByAgeOfLastUpdate(int maximumAgeHours, int? status = null)
         {
             var query =
-                @"SELECT * FROM uploads(@PwShopId) WHERE LastUpdated > DATEADD(hour, -1, GETUTCDATE());";
+                @"SELECT * FROM uploads(@PwShopId) 
+                WHERE LastUpdated > DATEADD(hour, -1, GETUTCDATE());";
 
             if (status.HasValue)
             {

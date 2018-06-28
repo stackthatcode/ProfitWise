@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Hangfire;
 using Microsoft.VisualBasic.FileIO;
 using ProfitWise.Data.Factories;
@@ -67,7 +68,7 @@ namespace ProfitWise.Data.Services
                     {
                         ProcessRow(index++, parser.ReadFields(), context);
 
-                        if (context.ExceededFailureLimit)
+                        if (context.ReachedFailureLimit)
                         {
                             break;
                         }
@@ -84,24 +85,52 @@ namespace ProfitWise.Data.Services
             }
         }
 
-        // TODO - pad this in error handling in case it fails
+
         public void ReportUploadSystemFault(int pwShopId, long fileUploadId)
         {
-            var shop = _shopRepository.RetrieveByShopId(pwShopId);
-            var repository = _factory.MakeUploadRepository(shop);
-
-            repository.UpdateStatus(fileUploadId, UploadStatusCode.Success);
+            try
+            {
+                var shop = _shopRepository.RetrieveByShopId(pwShopId);
+                var repository = _factory.MakeUploadRepository(shop);
+                repository.UpdateStatus(fileUploadId, UploadStatusCode.FailureSystemFault);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Unable to update status for file upload");
+                _logger.Error(ex);
+            }
         }
         
         public void ReportUploadResults(ImportContext context)
         {
             var repository = _factory.MakeUploadRepository(context.PwShop);
 
-            // TODO - add failure or success metrics...?
-            repository.UpdateStatus(context.FileUploadId, UploadStatusCode.Success);
+            // Flag the upload according to import context
+            var code =
+                context.ReachedFailureLimit
+                    ? UploadStatusCode.FailureTooManyErrors
+                    : UploadStatusCode.Success;
+
+            repository.UpdateStatus(context.FileUploadId, code, context.TotalRows, context.SuccessfulRowCount);
+
+            // Generate feedback file
+            var feedBackFile = new List<string>();
+            feedBackFile.Add(
+                $"Imported {context.SuccessfulRowCount} rows successfully; " + 
+                $"{context.FailedRows.Count} rows failed");            
+            feedBackFile.AddRange(context.FailedRows.Select(x => x.ToString()));
+
+            // Save the upload
+            var upload = repository.Retrieve(context.FileUploadId);
+            var locker = FileLocker.MakeFromUpload(upload);
+            locker.ProvisionFeedbackFileName();
+            var path = _fileLocator.FeedbackFilePath(locker);
+            System.IO.File.WriteAllText(path, feedBackFile.ToDelimited(Environment.NewLine));
+
+            // Update feedback filename record
+            repository.UpdateFeedbackFilename(context.FileUploadId, locker.FeedbackFileName);
         }
-
-
+        
 
         public ValidationSequence<List<string>> BuildValidator()
         {
@@ -192,8 +221,6 @@ namespace ProfitWise.Data.Services
             }
         }
         
-
-
         // This presumes valid data -- validation logic being strictly isolated to ValidationSequence stuff
         public CogsDto BuildCogsDto(List<string> importRow)
         {

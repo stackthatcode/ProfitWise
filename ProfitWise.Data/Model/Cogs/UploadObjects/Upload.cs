@@ -13,6 +13,6 @@ namespace ProfitWise.Data.Model.Cogs.UploadObjects
         public DateTime DateCreated { get; set; }
         public DateTime LastUpdated { get; set; }
         public int TotalNumberOfRows { get; set; }
-        public int RowsProcessed { get; set; }
+        public int SuccessfulRows { get; set; }
     }
 }

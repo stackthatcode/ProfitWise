@@ -4,6 +4,7 @@
     {
         public const int Processing = 1;
         public const int Success = 2;
-        public const int Failure = 3;
+        public const int FailureSystemFault = 3;
+        public const int FailureTooManyErrors = 4;
     }
 }

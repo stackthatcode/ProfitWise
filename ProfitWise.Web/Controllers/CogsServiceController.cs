@@ -11,9 +11,11 @@ using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Services;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
+using ProfitWise.Web.Plumbing;
 using Push.Foundation.Utilities.Helpers;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Json;
+using ServiceStack;
 
 namespace ProfitWise.Web.Controllers
 {
@@ -313,17 +315,36 @@ namespace ProfitWise.Web.Controllers
                         .FromUtcToShopTz(lastToComplete.LastUpdated, timeZone)
                         .ToString("G");
 
-                uploadResult.RowsProcessed = lastToComplete.RowsProcessed;
+                uploadResult.RowsProcessed = lastToComplete.SuccessfulRows;
                 uploadResult.TotalNumberOfRows = lastToComplete.TotalNumberOfRows;
-                uploadResult.FeedbackFileUrl = "http://google.com";
-                // TODO: build this URL using the File Locker Id
+                uploadResult.FeedbackFileUrl = FeedbackFileUrl(lastToComplete.FileUploadId);
 
                 output.PreviousUploadResult = uploadResult;
             }
             
             return new JsonNetResult(output);
         }
-        
+
+        public ActionResult Feedback(long fileUploadId)
+        {
+            var identity = HttpContext.IdentitySnapshot();
+            var repository = _factory.MakeUploadRepository(identity.PwShop);
+            var upload = repository.Retrieve(fileUploadId);
+            var locker = FileLocker.MakeFromUpload(upload);
+            var path = _fileLocator.FeedbackFilePath(locker);
+            var content = System.IO.File.ReadAllText(path);
+
+            return File(new System.Text.UTF8Encoding().GetBytes(content),
+                    "text/csv", upload.FeedbackFileName);
+        }
+
+
+        public string FeedbackFileUrl(long fileUploadId)
+        {
+            return GlobalConfig.BuildUrl($"/CogsService/Feedback?fileUploadId={fileUploadId}");
+        }
+
+
         [HttpPost]
         public ActionResult UploadCostOfGoods()
         {

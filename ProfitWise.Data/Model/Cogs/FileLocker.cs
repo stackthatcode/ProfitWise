@@ -15,6 +15,11 @@ namespace ProfitWise.Data.Model.Cogs
             FileLockerId = Guid.NewGuid();
         }
 
+        public void ProvisionFeedbackFileName()
+        {
+            FeedbackFileName = "feedback.txt";
+        }
+
         public static FileLocker MakeNewForCogsUpload()
         {
             return new FileLocker()

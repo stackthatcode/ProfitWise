@@ -184,7 +184,6 @@
     <Compile Include="Model\Cogs\UploadObjects\FailedRow.cs" />
     <Compile Include="Model\Cogs\UploadObjects\ImportContext.cs" />
     <Compile Include="Model\Cogs\UploadObjects\UploadAnatomy.cs" />
-    <Compile Include="Model\Cogs\UploadObjects\UploadFailureType.cs" />
     <Compile Include="Model\Cogs\UploadObjects\ValidationResult.cs" />
     <Compile Include="Model\Cogs\UploadObjects\Rule.cs" />
     <Compile Include="Model\Cogs\UploadObjects\Upload.cs" />
