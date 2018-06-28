@@ -159,5 +159,10 @@ namespace ProfitWise.Data.HangFire
         {
             BackgroundJob.Enqueue<BulkImportService>(x => x.Process(pwShopId, uploadFileId));
         }
+
+        public void ScheduleOldUploadCleanup(int pwShopId)
+        {
+            BackgroundJob.Enqueue<BulkImportService>(x => x.CleanupOldFiles(pwShopId));
+        }
     }
 }

@@ -95,6 +95,17 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .ToList();
         }
 
+
+        public List<Upload> RetrieveCompleted()
+        {
+            var query = @"SELECT * FROM uploads(@PwShopId) 
+                        WHERE UploadStatus <> 1 ORDER BY [LastUpdated] DESC;";
+
+            return _connectionWrapper
+                .Query<Upload>(query, new { PwShopId })
+                .ToList();
+        }
+
         public Upload Retrieve(long fileUploadId)
         {
             var query = 
@@ -103,6 +114,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return _connectionWrapper
                 .Query<Upload>(query, new {PwShopId, fileUploadId})
                 .FirstOrDefault();
+        }
+
+        public void Delete(long fileUploadId)
+        {
+            var query = @"DELETE FROM uploads(100001)  WHERE FileUploadId = @fileUploadId";
+            _connectionWrapper.Execute(query, new {PwShopId, fileUploadId});
         }
     }
 }

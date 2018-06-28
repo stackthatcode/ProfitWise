@@ -86,6 +86,30 @@ namespace ProfitWise.Data.Services
         }
 
 
+        // This is aka anti-knucklehead service
+        [AutomaticRetry(Attempts = 1)]
+        [Queue(ProfitWiseQueues.BulkImportService)]
+        public void CleanupOldFiles(int pwShopId)
+        {
+            _logger.Info($"Executing CleanupOldFilesfor {pwShopId}");
+            var shop = _shopRepository.RetrieveByShopId(pwShopId);
+            var repository = _factory.MakeUploadRepository(shop);
+
+            //const int maximumAgeDays = 7;
+            var files = repository.RetrieveCompleted();
+
+            foreach (var file in files.OrderByDescending(x => x.LastUpdated).Skip(4))
+            {
+                var locker = FileLocker.MakeFromUpload(file);
+                var path = _fileLocator.Directory(locker);
+                if (System.IO.Directory.Exists(path))
+                    System.IO.Directory.Delete(path, true);
+
+                repository.Delete(file.FileUploadId);
+            }
+        }
+
+
         public void ReportUploadSystemFault(int pwShopId, long fileUploadId)
         {
             try
@@ -153,7 +177,7 @@ namespace ProfitWise.Data.Services
                 
                 .Add(new Rule<List<string>>(
                         x => !(x[UploadAnatomy.MarginPercent].IsNonZeroDecimal() && x[UploadAnatomy.FixedAmount].IsNonZeroDecimal()),
-                            "Both MarginPercent and FixedAmount are populated - please only enter a value for or the other"))
+                            "Both MarginPercent and FixedAmount are populated - please only enter a value for one or the other"))
                 
                 .Add(new Rule<List<string>>(
                         x => x[UploadAnatomy.MarginPercent].IsZero() || x[UploadAnatomy.MarginPercent].IsWithinRange(-1.0m, 1.0m),

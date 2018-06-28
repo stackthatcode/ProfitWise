@@ -401,6 +401,8 @@ namespace ProfitWise.Web.Controllers
             _hangFireService
                 .ScheduleCogsBulkImport(identity.PwShop.PwShopId, uploadFileId);
 
+            _hangFireService.ScheduleOldUploadCleanup(identity.PwShop.PwShopId);
+
             return JsonNetResult.Success();
         }
     }
