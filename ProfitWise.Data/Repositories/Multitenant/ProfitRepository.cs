@@ -127,7 +127,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             SUM(t3.NetSales) As TotalRevenue, 
             CONVERT(decimal(18, 2), SUM(t3.CoGS)) AS TotalCogs, 
             CONVERT(decimal(18, 2), SUM(t3.NetSales) - SUM(t3.CoGS)) AS TotalProfit, 
-            100.0 - dbo.SaveDivideAlt(100.0 * SUM(t3.CoGS), SUM(t3.NetSales), 100.0) AS AverageMarginPercent ";
+            100.0 - dbo.SaveDivideAlt(100.0 * SUM(t3.CoGS), SUM(t3.NetSales), 100.0) AS AverageMargin ";
 
         private string QueryGutsForTotalDrilldowns()
         {
