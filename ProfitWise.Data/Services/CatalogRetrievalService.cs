@@ -6,6 +6,7 @@ using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
+using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Services
 {
@@ -14,15 +15,18 @@ namespace ProfitWise.Data.Services
     {
         private readonly ConnectionWrapper _connectionWrapper;
         private readonly MultitenantFactory _multitenantFactory;
+        private readonly IPushLogger _logger;
 
         public PwShop PwShop { get; set; }
         
         public CatalogRetrievalService(
-                ConnectionWrapper connectionWrapper, 
-                MultitenantFactory multitenantFactory)
+                    ConnectionWrapper connectionWrapper, 
+                    MultitenantFactory multitenantFactory,
+                    IPushLogger logger)
         {
             _connectionWrapper = connectionWrapper;
             _multitenantFactory = multitenantFactory;
+            _logger = logger;
         }
 
         public IDbTransaction Transaction { get; set; }
@@ -34,16 +38,19 @@ namespace ProfitWise.Data.Services
         
         public IList<PwMasterProduct> RetrieveFullCatalog()
         {
+            _logger.Debug("RetrieveFullCatalog - start");
+            
             var productRepository = this._multitenantFactory.MakeProductRepository(this.PwShop);
             var variantDataRepository = this._multitenantFactory.MakeVariantRepository(this.PwShop);
             var cogsRepository = this._multitenantFactory.MakeCogsEntryRepository(this.PwShop);
 
             var masterProductCatalog = productRepository.RetrieveAllMasterProducts();
-            var masterVariants = variantDataRepository.RetrieveMasterVariants();
+            var masterVariants = variantDataRepository.RetrieveMasterVariantsAlt();
             var cogsDetails = cogsRepository.RetrieveCogsDetailAll();
-
             masterProductCatalog.LoadMasterVariants(masterVariants);
             masterVariants.LoadCogsDetail(cogsDetails);
+
+            _logger.Debug("RetrieveFullCatalog - finish");
 
             return masterProductCatalog;
         }

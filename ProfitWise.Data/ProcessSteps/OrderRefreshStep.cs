@@ -79,7 +79,11 @@ namespace ProfitWise.Data.ProcessSteps
             var shop = _shopRepository.RetrieveByUserId(shopifyCredentials.ShopOwnerUserId);
             var orderApiRepository = _apiRepositoryFactory.MakeOrderApiRepository(shopifyCredentials);
             var order = orderApiRepository.Retrieve(orderId);
-            WriteOrdersToPersistence(new List<Order> { order }, shop);
+
+            var catalogRetrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
+            var masterProductCatalog = catalogRetrievalService.RetrieveFullCatalog();
+
+            WriteOrdersToPersistence(masterProductCatalog, new List<Order> { order }, shop);
         }
         
         private void RoutineUpdateWorker(ShopifyCredentials shopCredentials, PwShop shop)
@@ -185,12 +189,15 @@ namespace ProfitWise.Data.ProcessSteps
                     PagingFunctions.NumberOfPages(
                         _refreshServiceConfiguration.MaxOrderRate, count);
 
+            var catalogRetrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
+            var masterProductCatalog = catalogRetrievalService.RetrieveFullCatalog();
+
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
                 _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages - {importedOrders.Count} Orders to process");
 
-                WriteOrdersToPersistence(importedOrders, shop);
+                WriteOrdersToPersistence(masterProductCatalog, importedOrders, shop);
 
                 // Update the Batch State based on Order Filter's Sort
                 var batchState = batchStateRepository.Retrieve();
@@ -208,12 +215,11 @@ namespace ProfitWise.Data.ProcessSteps
             }
         }
 
-        public void WriteOrdersToPersistence(IList<Order> importedOrders, PwShop shop)
+        public void WriteOrdersToPersistence(
+                IList<PwMasterProduct> masterProductCatalog, IList<Order> importedOrders, PwShop shop)
         {
-            var catalogBuilderService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(shop);
             
-            var masterProductCatalog = catalogBuilderService.RetrieveFullCatalog();
             var orderIdList = importedOrders.Select(x => x.Id).ToList();
             var existingOrders = orderRepository.RetrieveOrdersFullDepth(orderIdList);
 

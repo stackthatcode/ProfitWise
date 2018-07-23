@@ -7,6 +7,7 @@ using ProfitWise.Data.Aspect;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Shop;
+using Push.Foundation.Utilities.Logging;
 
 namespace ProfitWise.Data.Repositories.Multitenant
 {
@@ -14,13 +15,15 @@ namespace ProfitWise.Data.Repositories.Multitenant
     public class VariantRepository : IShopFilter
     {
         public PwShop PwShop { get; set; }
+        
         public long PwShopId => PwShop.PwShopId;
         private readonly ConnectionWrapper _connectionWrapper;
-
+        private readonly IPushLogger _logger;
         
-        public VariantRepository(ConnectionWrapper connectionWrapper)
+        public VariantRepository(ConnectionWrapper connectionWrapper, IPushLogger logger)
         {
             _connectionWrapper = connectionWrapper;
+            _logger = logger;
         }
 
         public IDbTransaction InitiateTransaction()
@@ -33,9 +36,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             var query =
                 @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
-                        t1.CogsTypeId, t1.CogsCurrencyId, t1.CogsAmount, t1.CogsMarginPercent, t1.CogsDetail,                        
+                        t1.CogsTypeId, t1.CogsCurrencyId, t1.CogsAmount, t1.CogsMarginPercent, t1.CogsDetail,
+                       
                         t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyProductId, t2.ShopifyVariantId, 
                         t2.Sku, t2.Title, t2.LowPrice, t2.HighPrice, t2.IsActive, t2.IsPrimary
+
                 FROM mastervariant(@PwShopId) t1
 	                INNER JOIN variant(@PwShopId) t2
 		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
@@ -63,7 +68,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
             foreach (var row in rawoutput)
             {
                 var masterVariant = 
-                    output.FirstOrDefault(x => x.PwMasterVariantId == row.PwMasterVariantId);
+                        output.FirstOrDefault(x => x.PwMasterVariantId == row.PwMasterVariantId);
 
                 // Bool true is stored in the dynamic object as such
                 var dynamicTrue = (sbyte) 1;
@@ -109,7 +114,115 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             return output.ToList();
         }
+
+
+        public class MasterVariantQuerySet
+        {
+            public long PwMasterVariantId { get; set; }
+            public long PwShopId { get; set; }
+            public long PwMasterProductId { get; set; }
+            public bool Exclude { get; set; }
+            public bool StockedDirectly { get; set; }
+            public int CogsTypeId { get; set; }
+            public int CogsCurrencyId { get; set; }
+            public decimal CogsAmount { get; set; }
+            public decimal CogsMarginPercent { get; set; }
+            public bool CogsDetail { get; set; }
+            public long PwVariantId { get; set; }
+            public long PwProductId { get; set; }
+            public long ShopifyProductId { get; set; }
+            public long ShopifyVariantId { get; set; }
+            public string Sku { get; set; }
+            public string Title { get; set; }
+            public decimal LowPrice { get; set; }
+            public decimal HighPrice { get; set; }
+            public bool IsActive { get; set; }
+            public bool IsPrimary { get; set; }
+        }
+
+        public IList<PwMasterVariant>
+                    RetrieveMasterVariantsAlt(
+                        long? pwMasterProductId = null, long? pwMasterVariantId = null)
+        {
+            var query =
+                @"SELECT t1.PwMasterVariantId, t1.PwShopId, t1.PwMasterProductId, t1.Exclude, t1.StockedDirectly, 
+                        t1.CogsTypeId, t1.CogsCurrencyId, t1.CogsAmount, t1.CogsMarginPercent, t1.CogsDetail,                        
+                        
+                        t2.PwVariantId, t2.PwShopId, t2.PwProductId, t2.ShopifyProductId, t2.ShopifyVariantId, 
+                        t2.Sku, t2.Title, t2.LowPrice, t2.HighPrice, t2.IsActive, t2.IsPrimary
+                
+                FROM mastervariant(@PwShopId) t1
+	                INNER JOIN variant(@PwShopId) t2
+		                ON t1.PwMasterVariantId = t2.PwMasterVariantId
+                WHERE t1.PwShopId = @PwShopId ";
+
+            if (pwMasterProductId.HasValue)
+            {
+                query = query + " AND t1.PwMasterProductId = @PwMasterProductId ";
+            }
+            if (pwMasterVariantId.HasValue)
+            {
+                query = query + " AND t1.PwMasterVariantId = @PwMasterVariantId ";
+            }
+
+            var data = new
+            {
+                PwShop.PwShopId,
+                PwMasterProductId = pwMasterProductId,
+                PwMasterVariantId = pwMasterVariantId,
+            };
+
+            var allMasterVariantsRaw = _connectionWrapper.Query<MasterVariantQuerySet>(query, data);
+
+            var pwMasterVariantIds = allMasterVariantsRaw.Select(x => x.PwMasterVariantId).Distinct();
+            var output = new List<PwMasterVariant>();
+
+            foreach (var currentMvId in pwMasterVariantIds)
+            {
+                var dataForCurrentMv = 
+                        allMasterVariantsRaw.Where(x => x.PwMasterVariantId == currentMvId).ToList();
+                var row = dataForCurrentMv.First();
+
+                var masterVariant = new PwMasterVariant();
+                masterVariant.PwMasterVariantId = row.PwMasterVariantId;
+                masterVariant.PwShopId = row.PwShopId;
+                masterVariant.PwMasterProductId = row.PwMasterProductId;
+                masterVariant.Variants = new List<PwVariant>();
+                masterVariant.Exclude = row.Exclude;
+                masterVariant.StockedDirectly = row.StockedDirectly;
+
+                masterVariant.CogsTypeId = row.CogsTypeId;
+                masterVariant.CogsCurrencyId = row.CogsCurrencyId;
+                masterVariant.CogsAmount = row.CogsAmount;
+                masterVariant.CogsMarginPercent = row.CogsMarginPercent;
+                masterVariant.CogsDetail = row.CogsDetail;
+
+                output.Add(masterVariant);
+                
+                foreach (var iterator in dataForCurrentMv)
+                {
+                    var variant = new PwVariant();
+                    variant.PwVariantId = iterator.PwVariantId;
+                    variant.PwShopId = iterator.PwShopId;
+                    variant.PwProductId = iterator.PwProductId;
+                    variant.PwMasterVariantId = iterator.PwMasterVariantId;
+                    variant.ShopifyProductId = iterator.ShopifyProductId;
+                    variant.ShopifyVariantId = iterator.ShopifyVariantId;
+                    variant.Sku = iterator.Sku;
+                    variant.Title = iterator.Title;
+                    variant.LowPrice = iterator.LowPrice;
+                    variant.HighPrice = iterator.HighPrice;
+                    variant.IsActive = iterator.IsActive;
+                    variant.IsPrimary = iterator.IsPrimary;
+                    variant.ParentMasterVariant = masterVariant;
+                    masterVariant.Variants.Add(variant);
+                }
+            }
+            
+            return output;
+        }
         
+
         public long InsertMasterVariant(PwMasterVariant masterVariant)
         {
             var query =
