@@ -348,3 +348,12 @@ RETURN SELECT * FROM vw_standaloneproductandvariantsearch WHERE PwShopId = @PwSh
 GO
 
 
+DROP FUNCTION IF EXISTS dbo.uploads
+GO
+CREATE FUNCTION dbo.uploads(@PwShopId bigint)  
+RETURNS TABLE  
+AS  
+RETURN SELECT * FROM profitwiseuploads WHERE PwShopId = @PwShopId;
+GO
+
+
