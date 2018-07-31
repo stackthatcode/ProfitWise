@@ -93,29 +93,31 @@ namespace ProfitWise.Data.ProcessSteps
             var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
             var results = new List<Product>();
 
+            var retrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
+            var existingMasterProducts = retrievalService.RetrieveFullCatalog();
+
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
                 _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
 
                 var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
                 results.AddRange(products);
-                WriteProductsToDatabase(shop, products);
+                WriteProductsToDatabase(existingMasterProducts, shop, products);
             }
 
             return results;
         }
 
-        private void WriteProductsToDatabase(PwShop shop, IList<Product> importedProducts)
+        private void WriteProductsToDatabase(
+                        IList<PwMasterProduct> existingMasterProducts, PwShop shop, IList<Product> importedProducts)
         {
             _pushLogger.Debug($"{importedProducts.Count} Products to process from Shopify");
 
-            var retrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var builderService = _multitenantFactory.MakeCatalogBuilderService(shop);
-            var existingMasterProducts = retrievalService.RetrieveFullCatalog();
-
+            
             foreach (var importedProduct in importedProducts)
             {
-                using (var transaction = retrievalService.InitiateTransaction())
+                using (var transaction = builderService.InitiateTransaction())
                 {
                     var productBuildContext = new ProductBuildContext(importedProduct, existingMasterProducts);
 
@@ -125,7 +127,9 @@ namespace ProfitWise.Data.ProcessSteps
                     // Next save/update the Variant and Master Variant
                     foreach (var importedVariant in importedProduct.Variants)
                     {
-                        var variantBuildContext = new VariantBuildContext(importedVariant, existingMasterProducts, product);
+                        var variantBuildContext = 
+                                new VariantBuildContext(importedVariant, existingMasterProducts, product);
+
                         WriteVariantToDatabase(shop, variantBuildContext);
                     }
 
