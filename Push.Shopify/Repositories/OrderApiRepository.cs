@@ -40,6 +40,9 @@ namespace Push.Shopify.Repositories
             var url = "/admin/orders/count.json?" + filter.ToQueryStringBuilder();
             var request = _requestFactory.HttpGet(ShopifyCredentials, url);
             var clientResponse = _client.ExecuteRequest(request);
+            
+            _logger.Debug($"Status Code: {clientResponse.StatusCode}");
+            _logger.Debug($"Response Body: {clientResponse.Body}");
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             var count = parent.count;
@@ -59,6 +62,9 @@ namespace Push.Shopify.Repositories
 
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
+
+            _logger.Debug($"Status Code: {clientResponse.StatusCode}");
+            _logger.Debug($"Response Body: {clientResponse.Body}");
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             var results = new List<Order>();
