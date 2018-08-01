@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Castle.Core.Internal;
 using Hangfire;
 using Microsoft.VisualBasic.FileIO;
 using ProfitWise.Data.Factories;
@@ -88,7 +89,6 @@ namespace ProfitWise.Data.Services
         }
 
 
-        // This is aka anti-knucklehead service
         [AutomaticRetry(Attempts = 1)]
         [Queue(ProfitWiseQueues.BulkImportService)]
         public void CleanupOldFiles(int pwShopId)
@@ -174,7 +174,6 @@ namespace ProfitWise.Data.Services
 
         public ValidationSequence<List<string>> BuildValidator()
         {
-
             return new ValidationSequence<List<string>>()
                 .Add(new Rule<List<string>>(
                         x => x.Count >= 10, 
@@ -196,15 +195,15 @@ namespace ProfitWise.Data.Services
                             "Both MarginPercent and FixedAmount are populated - please only enter a value for one or the other"))
                 
                 .Add(new Rule<List<string>>(
-                        x => x[UploadAnatomy.MarginPercent].IsZero() || x[UploadAnatomy.MarginPercent].IsWithinRange(-1.0m, 1.0m),
+                        x => x[UploadAnatomy.MarginPercent].IsNullOrEmpty() || x[UploadAnatomy.MarginPercent].IsWithinRange(-1.0m, 1.0m),
                             "MarginPercent is not a valid number between -1.00 and 1.00 (-100.00% and 100.00%)"))
 
                 .Add(new Rule<List<string>>(
-                        x => x[UploadAnatomy.FixedAmount].IsZero() || x[UploadAnatomy.FixedAmount].IsWithinRange(0m, 999999999.99m),
+                        x => x[UploadAnatomy.FixedAmount].IsNullOrEmpty() || x[UploadAnatomy.FixedAmount].IsWithinRange(0m, 999999999.99m),
                             "FixedAmount is not a valid number between 0 and 999,999,999.99"))
 
                 .Add(new Rule<List<string>>(
-                        x => x[UploadAnatomy.FixedAmount].IsZero() || 
+                        x => x[UploadAnatomy.FixedAmount].IsNullOrEmpty() || 
                             _currencyService.CurrencyExists(x[UploadAnatomy.Abbreviation]),
                             "Invalid currency for FixedAmount"));
         }
@@ -218,7 +217,9 @@ namespace ProfitWise.Data.Services
                     throw new Exception("Artificially triggered row-level fault");
                 }
 
-                var validation = BuildValidator().Run(input.ToList());
+                var validation = 
+                    BuildValidator()
+                        .Run(input.ToList());
 
                 if (validation.Success)
                 {
@@ -265,15 +266,36 @@ namespace ProfitWise.Data.Services
         public CogsDto BuildCogsDto(List<string> importRow)
         {
             var output = new CogsDto();
-            output.CogsCurrencyId = _currencyService.AbbrToCurrencyId(importRow[UploadAnatomy.Abbreviation]);
+
+            output.CogsCurrencyId = 
+                _currencyService.AbbrToCurrencyId(importRow[UploadAnatomy.Abbreviation]);
+
             output.CogsMarginPercent = importRow[UploadAnatomy.MarginPercent].ToDecimal() * 100.00m;
             output.CogsAmount = importRow[UploadAnatomy.FixedAmount].ToDecimal();
+
             output.ApplyConstraints();
-            output.CogsTypeId =
-                    !importRow[UploadAnatomy.FixedAmount].IsZero()
-                        ? CogsType.FixedAmount
-                        : CogsType.MarginPercentage;
+
+            output.CogsTypeId = 
+                DetermineCogsType(
+                    importRow[UploadAnatomy.FixedAmount],
+                    importRow[UploadAnatomy.MarginPercent]);
+            
             return output;
+        }
+
+        public int DetermineCogsType(string fixedAmountInput, string marginPercentageInput)
+        {
+            if (fixedAmountInput.IsNullOrEmpty())
+                return CogsType.MarginPercentage;
+
+            if (marginPercentageInput.IsNullOrEmpty())
+                return CogsType.FixedAmount;
+
+            if (fixedAmountInput.IsNonZeroDecimal() &&
+                marginPercentageInput.IsZero())
+                return CogsType.FixedAmount;
+
+            return CogsType.MarginPercentage;
         }
     }
 }

@@ -42,6 +42,12 @@ namespace ProfitWise.Data.Services
         {
             using (var transaction = _connectionWrapper.InitiateTransaction())
             {
+                _logger.Debug(
+                    $"Updating PWMVID (defaults) {pwMasterVariantId} - " +
+                    $"CoGS Type Id: {defaults.CogsTypeId} - " +
+                    $"Fixed Amount: {defaults.CogsAmount} - " +
+                    $"Margin Percent: {defaults.CogsMarginPercent}");
+
                 var context = MasterVariantUpdateContext.Make(pwMasterVariantId, defaults, details);
                 var dateBlockContexts =
                     CogsDateBlockContext.Make(

@@ -2,6 +2,11 @@
 {
     public static class HelperMethods
     {
+        public static bool IsNonEmpty(this string input)
+        {
+            return !input.IsNullOrEmpty();
+        }
+
         public static bool IsNullOrEmpty(this string input)
         {
             return string.IsNullOrEmpty(input);

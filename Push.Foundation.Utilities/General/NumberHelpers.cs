@@ -1,4 +1,7 @@
-﻿namespace Push.Foundation.Utilities.General
+﻿using Castle.Core.Internal;
+using Push.Foundation.Utilities.Helpers;
+
+namespace Push.Foundation.Utilities.General
 {
     public static class NumberHelpers
     {
@@ -18,15 +21,22 @@
             return !input.IsNonZeroDecimal();
         }
 
+        public static bool IsZeroOrEmpty(this string input)
+        {
+            return (input ?? "").Trim().IsNullOrEmpty() || input.IsZero();
+        }
+
         public static bool IsDecimal(this string input)
         {
             decimal value;
             return decimal.TryParse(input, out value);
         }
+        
 
-        public static decimal ToDecimal(this string input)
+        public static decimal ToDecimal(this string input, bool nullEmptyToZero = true)
         {
-            return decimal.Parse(input);
+            var processedInput = nullEmptyToZero ? input.IsNullOrEmptyAlt("0") : input;
+            return decimal.Parse(processedInput);
         }
 
         public static int ToInteger(this string input)
@@ -41,7 +51,7 @@
 
         public static bool IsWithinRange(this string input, decimal low, decimal high)
         {
-            var value = decimal.Parse(input);
+            var value = input.ToDecimal();
             return value >= low && value <= high;
         }
     }
