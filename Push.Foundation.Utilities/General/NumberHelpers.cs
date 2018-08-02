@@ -21,6 +21,11 @@ namespace Push.Foundation.Utilities.General
             return !input.IsNonZeroDecimal();
         }
 
+        public static bool IsEmptyOrNumber(this string input)
+        {
+            return input.IsNullOrEmpty() || input.IsDecimal();
+        }
+
         public static bool IsZeroOrEmpty(this string input)
         {
             return (input ?? "").Trim().IsNullOrEmpty() || input.IsZero();

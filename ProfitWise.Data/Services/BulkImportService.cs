@@ -50,6 +50,8 @@ namespace ProfitWise.Data.Services
             var repository = _factory.MakeUploadRepository(shop);
             var context = new ImportContext(shop, fileUploadId);
 
+            const int maximumNumberOfRows = 50000;
+
             try
             {
                 var upload = repository.Retrieve(fileUploadId);
@@ -72,6 +74,11 @@ namespace ProfitWise.Data.Services
                         ProcessRow(index++, parser.ReadFields(), context);
 
                         if (context.ReachedFailureLimit)
+                        {
+                            break;
+                        }
+
+                        if (index > maximumNumberOfRows)
                         {
                             break;
                         }
@@ -184,7 +191,13 @@ namespace ProfitWise.Data.Services
                         x => x[UploadAnatomy.PwMasterVariantId].IsInteger(),
                             "PwMasterVariantId is not a valid number",
                             instantFailure: true))
-                
+                            
+                .Add(new Rule<List<string>>(
+                        x => x[UploadAnatomy.MarginPercent].IsEmptyOrNumber() 
+                                && x[UploadAnatomy.FixedAmount].IsEmptyOrNumber(),
+                            "Invalid data entry for Margin Percent or Fixed Amount - please enter a number value or leave the field blank",
+                            instantFailure: true))
+
                 .Add(new Rule<List<string>>(
                         x => x[UploadAnatomy.MarginPercent].IsDecimal() || x[UploadAnatomy.FixedAmount].IsDecimal(), 
                             "Neither MarginPercent or FixedAmount are populated with a valid number", 
