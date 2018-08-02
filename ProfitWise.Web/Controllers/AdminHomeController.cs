@@ -153,6 +153,17 @@ namespace ProfitWise.Web.Controllers
             _hangFire.KillRoutineRefresh(userId);
             return JsonNetResult.Success();
         }
+        
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult KillUploadsJobs(string userId)
+        {
+            var shop = _shopRepository.RetrieveByUserId(userId);
+            _hangFire.ZombieAllProcessingUploads(shop.PwShopId);
+            return JsonNetResult.Success();
+        }
+
+
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken]

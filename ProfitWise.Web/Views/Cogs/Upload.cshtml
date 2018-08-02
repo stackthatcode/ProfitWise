@@ -48,7 +48,8 @@
                         </div>
                     </div>
 
-                    <div data-bind="if: UploadStatus == @UploadStatusCode.FailureSystemFault"
+                    <div data-bind="if: UploadStatus == @UploadStatusCode.FailureSystemFault ||
+                                        UploadStatus == @UploadStatusCode.FailureZombied"
                          style="text-align: center;">
                         <strong>Your previous CoGS Bulk Import failed!</strong>
                         <div>
@@ -69,6 +70,7 @@
                             <a href="#" data-bind="attr: { href: FeedbackFileUrl }">Click here to download a feedback file.</a>
                         </div>
                     </div>
+                    
                 </div>
             </div>
 

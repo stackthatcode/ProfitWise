@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs.UploadObjects;
@@ -19,6 +20,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper = connectionWrapper;
         }
 
+        public IDbTransaction InitiateTransaction()
+        {
+            return _connectionWrapper.InitiateTransaction();
+        }
+
+
         public long Insert(Upload upload)
         {
             upload.PwShopId = PwShopId;
@@ -27,7 +34,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query =
                 @"INSERT INTO uploads(@PwShopId) VALUES ( 
                     @PwShopId, @FileLockerId, @UploadFileName, @FeedbackFileName, @UploadStatus,
-                    @DateCreated, @LastUpdated, @TotalNumberOfRows, @SuccessfulRows );
+                    @DateCreated, @LastUpdated, @TotalNumberOfRows, @SuccessfulRows,
+                    @JobId );
                 SELECT CAST(SCOPE_IDENTITY() as int)";
 
            return _connectionWrapper.Query<long>(query, upload).Single();
@@ -43,8 +51,18 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper.Execute(query, new { PwShopId, fileUploadId, status });
         }
 
+        public void UpdateJobId(long fileUploadId, string jobId)
+        {
+            var query = @"UPDATE uploads(@PwShopId) 
+                        SET JobId = @jobId,
+                        LastUpdated = GETUTCDATE()
+                        WHERE FileUploadId = @fileUploadId";
+
+            _connectionWrapper.Execute(query, new { PwShopId, fileUploadId, jobId });
+        }
+        
         public void UpdateStatus(
-                long fileUploadId, int status, int totalNumberOfRows, int successfulRows)
+                long fileUploadId, int status, int? totalNumberOfRows, int? successfulRows)
         {
             var query = @"UPDATE uploads(@PwShopId) 
                         SET UploadStatus = @status,
@@ -56,7 +74,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
             _connectionWrapper.Execute(query, new
             {
                 PwShopId, fileUploadId, status, totalNumberOfRows, successfulRows,
-
             });
         }
 

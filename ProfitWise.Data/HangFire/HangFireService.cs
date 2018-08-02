@@ -2,6 +2,7 @@ using System;
 using System.Configuration;
 using Hangfire;
 using ProfitWise.Data.Factories;
+using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories;
 using ProfitWise.Data.Repositories.System;
@@ -157,12 +158,38 @@ namespace ProfitWise.Data.HangFire
         
         public void ScheduleCogsBulkImport(int pwShopId, long uploadFileId)
         {
-            BackgroundJob.Enqueue<BulkImportService>(x => x.Process(pwShopId, uploadFileId));
+            var shop = _shopRepository.RetrieveByShopId(pwShopId);
+            var repository = _multitenantFactory.MakeUploadRepository(shop);
+
+            var jobId = BackgroundJob.Enqueue<BulkImportService>(x => x.Process(pwShopId, uploadFileId));
+            repository.UpdateJobId(uploadFileId, jobId);
         }
 
         public void ScheduleOldUploadCleanup(int pwShopId)
         {
             BackgroundJob.Enqueue<BulkImportService>(x => x.CleanupOldFiles(pwShopId));
+        }
+
+        public void ZombieAllProcessingUploads(int pwShopId)
+        {
+            var shop = _shopRepository.RetrieveByShopId(pwShopId);
+            var repository = _multitenantFactory.MakeUploadRepository(shop);
+
+            var uploads = repository.RetrieveByStatus(UploadStatusCode.Processing);
+
+            foreach (var upload in uploads)
+            {
+                using (var transaction = repository.InitiateTransaction())
+                {
+                    if (!upload.JobId.IsNullOrEmpty())
+                    {
+                        BackgroundJob.Delete(upload.JobId);
+                    }
+                    repository.UpdateStatus(upload.FileUploadId, UploadStatusCode.FailureZombied);
+
+                    transaction.Commit();
+                }
+            }
         }
     }
 }

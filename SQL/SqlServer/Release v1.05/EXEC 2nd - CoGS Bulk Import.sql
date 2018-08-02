@@ -26,6 +26,7 @@ CREATE TABLE [profitwiseuploads]
 	LastUpdated DATETIME NOT NULL,
 	TotalNumberOfRows INT NULL,
 	SuccessfulRows INT NULL,
+	JobId VARCHAR(100) NULL,
 	PRIMARY KEY (FileUploadId)
 );
 

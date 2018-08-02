@@ -145,6 +145,9 @@
                     <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
                        data-bind="click: function() { $root.KillBatchJobs(user.UserId); }">Kill Batch Jobs</a>
                     <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
+                       data-bind="click: function() { $root.KillUploadsJobs(user.UserId); }">Zombie Uploads</a>
+
+                    <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
                        data-bind="click: function() { $root.ScheduleInitialRefresh(user.UserId); }">Schedule Initial Refresh</a>
                     <a style="font-weight: 700;" class="btn btn-default btn-sm" href="#"
                        data-bind="click: function() { $root.ScheduleRoutineRefresh(user.UserId); }">Schedule Routine Refresh</a>
@@ -285,6 +288,13 @@
             ajax.HttpPost(url, {}, function () { self.RefreshUser(); }, token);
         };
 
+        self.KillUploadsJobs = function (userId) {
+            var url = "/AdminHome/KillUploadsJobs?userId=" + userId;
+            var token = self.AntiForgeryToken();
+            var ajax = self.AjaxFactory();
+            ajax.HttpPost(url, {}, function () { self.RefreshUser(); }, token);
+        };
+        
         self.ScheduleInitialRefresh = function (userId) {
             var url = "/AdminHome/ScheduleInitialRefresh?userId=" + userId;
             var token = self.AntiForgeryToken();

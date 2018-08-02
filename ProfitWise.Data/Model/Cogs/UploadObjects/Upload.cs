@@ -14,5 +14,6 @@ namespace ProfitWise.Data.Model.Cogs.UploadObjects
         public DateTime LastUpdated { get; set; }
         public int TotalNumberOfRows { get; set; }
         public int SuccessfulRows { get; set; }
+        public string JobId { get; set; }
     }
 }
