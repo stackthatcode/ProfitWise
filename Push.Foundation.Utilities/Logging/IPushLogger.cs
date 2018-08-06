@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Push.Foundation.Utilities.Logging
 {
@@ -15,6 +16,7 @@ namespace Push.Foundation.Utilities.Logging
         void Debug(string message);
         void Info(string message);
         void Warn(string message);
+        void Warn(List<Exception> exceptions, string message = null);
         void Error(string message);
         void Error(Exception exception);
         void Fatal(string message);

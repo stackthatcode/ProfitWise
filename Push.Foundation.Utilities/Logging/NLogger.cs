@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NLog;
+using Push.Foundation.Utilities.Helpers;
 
 namespace Push.Foundation.Utilities.Logging
 {
@@ -50,6 +53,25 @@ namespace Push.Foundation.Utilities.Logging
         public void Error(Exception exception)
         {
             _nLoggerReference.Error(_formatter.Do(exception.FullStackTraceDump()));
+        }
+        public void Warn(List<Exception> exceptions, string message = null)
+        {
+            if (exceptions == null)
+            {
+                return;
+            }
+
+            var header  = 
+                message.IsNullOrEmpty() ? "" : message + Environment.NewLine;
+
+            var body = 
+                exceptions
+                    .Select(x => x.FullStackTraceDump())
+                    .StringJoin(Environment.NewLine);
+
+            var entry = header + body;
+
+            _nLoggerReference.Warn(_formatter.Do(entry));
         }
 
         public void Fatal(string message)

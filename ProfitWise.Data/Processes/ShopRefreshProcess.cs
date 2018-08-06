@@ -63,7 +63,6 @@ namespace ProfitWise.Data.Processes
             catch (Exception e)
             {
                 _pushLogger.Error($"InitialShopRefresh failure for User Id: {userId}");
-                _pushLogger.Error(e);
             }
             finally
             {
@@ -82,7 +81,6 @@ namespace ProfitWise.Data.Processes
             }
             catch (Exception e)
             {
-                _pushLogger.Error($"RoutineShopRefresh failure for User Id: {userId}");
                 _pushLogger.Error(e);
             }
         }
@@ -102,7 +100,6 @@ namespace ProfitWise.Data.Processes
             }
             catch (Exception e)
             {
-                _pushLogger.Error($"RefreshSingleOrder failure for UserId: {userId}, OrderId: {orderId}");
                 _pushLogger.Error(e);
             }
         }

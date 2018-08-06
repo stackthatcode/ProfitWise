@@ -96,9 +96,11 @@ namespace Push.Foundation.Web.Http
             }
         }
 
-        private HttpClientResponse HttpInvocationWithRetries(HttpWebRequest request)
+        private HttpClientResponse 
+                    HttpInvocationWithRetries(HttpWebRequest request)
         {
             var counter = 1;
+            var exceptions = new List<Exception>();
 
             while (true)
             {
@@ -113,12 +115,12 @@ namespace Push.Foundation.Web.Http
                 }
                 catch (Exception ex)
                 {
-                    _pushLogger.Error(ex);
+                    exceptions.Add(ex);
                     counter++;
 
                     if (counter > _configuration.RetryLimit)
                     {
-                        _pushLogger.Fatal("Retry Limit has been exceeded... throwing exception");
+                        _pushLogger.Warn(exceptions, "Retry Limit has been exceeded... throwing exception");
                         throw;
                     }
                     else
