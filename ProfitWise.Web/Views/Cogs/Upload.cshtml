@@ -100,7 +100,12 @@
                     <div style="height: 25px;"></div>
 
                     <p style="font-weight: bold; text-align: center; color: #F00;">
-                        WARNING: this will overwrite existing data, including any detail CoGS data.
+                        WARNING: using Bulk CoGS Upload will overwrite existing data, including any CoGS detailed date entries.
+
+                        <br />
+                        <span style="font-weight: normal;">
+                            If you'd like avoid making changes to a Variant's CoGS, delete those rows from your CSV file. More info below...
+                        </span>                    
                     </p>
                 </div>
             </div>
@@ -131,41 +136,43 @@
 
                 <div style="height: 25px;"></div>
 
-                <p>
-                    Start by downloading the template, which you can edit using Excel or Google Sheets.
-                    The template will come preloaded with all of your store's Products and Variants.
+                <p style="font-weight: bold;">Getting started</p>
+
+                <p>Start with downloading the template by hitting the "Download XLS Template" button.
+                    The template will come preloaded with your store's entire catalog of Products and Variants.
+                    If you have multiple Variants consolidated, the download template will only include information e.g. Title, Price, CoGS for the Primary Variant.
+                    You can edit this file using Excel or Google Sheets.
+                </p>
+                <p> There are only 3 columns you'll ever need to alter (more on this below): the Margin Percent, the Fixed Amount
+                    and the Abbreviation (currency) columns - depending on which method you choose.
+                    The PwMasterVariantId column is used internally by ProfitWise and must not be altered.
+                    All of the other columns are for display purposes only, to help verify your data entry.                    
                 </p>
 
-                <p style="font-weight: bold;">NOTE: for consolidated Products/Variants, only the Primary Variant will appear</p>
+                <p style="font-weight: bold;">Excluding CoGS from the update</p>
 
-                <p>
-                    You may have multiple Variants consolidated. The download template will only include the data
-                    e.g. Title, Price, CoGS for the Primary Variant.
+                <p><em>Important:</em> This process overwrites existing CoGS data. 
+                    If you <strong>do not</strong> want to update a Product Variant, delete that row 
+                    entirely from the spreadsheet before uploading, and ProfitWise will skip it altogether.
+                </p>
+                
+                <p style="font-weight: bold;">Entering CoGS as a Margin Percent</p>
+
+                <p>To enter data as a Margin Percent, enter percentages as decimals (i.e. enter 0.15 for 15%) under the MarginPercent column.
                 </p>
 
-                <p>
-                    Enter either a Margin Percent or a Fixed Amount as the Cost of Goods for each Variant.
-                    When using Margin Percent, enter percentages as decimals (i.e. enter 0.15 for 15%).
-                    You can leave zero-amounts for both values, if necessary.
-                </p>
-
-                <p style="font-weight: bold;">IMPORTANT: this process overwrites all existing CoGS data</p>
-
-                <p>
-                    For every single Product-Variant found in the upload file,
-                    the non-detail <em>and</em> detail CoGS data will be overwritten with non-detail CoGS.
-                    In order to exclude a Product-Variant from being updated,
-                    remove that row from the spreadsheet, and ProfitWise will skip updating it.
-                </p>
-
-                <p>
+                <p style="font-weight: bold;">Entering CoGS as a Fixed Amount</p>
+                <p>To enter data as a Fixed Amount, you'll use the FixedAmount and Abbreviation columns.
                     The "Abbreviation" column is for specifying the currency for your Cost of Goods values.
-                    You purchase goods in a different currency, enter the appropriate currency abbreviation in this column,
-                    and ProfitWise will convert those costs to your store's currency based upon current conversion rates.
-                    ProfitWise accepts the following currencies: <strong>USD, EUR, JPY, GBP, AUD, CHF, CAD, AED.</strong>
+                    ProfitWise accepts the following currencies: <em>USD, EUR, JPY, GBP, AUD, CHF, CAD, AED.</em>
+                    Enter the fixed CoGS amount for the appropriate currency in the FixedAmount column.
+                    Do not include currency symbols e.g. enter 55.00, and not $55.00. 
                 </p>
 
-                <p>Once you have completed entry of your data, save as a comma delimited (CSV) file and upload to ProfitWise.</p>
+                <p style="font-weight: bold;">Finishing up</p>
+                <p>Once you have completed entry of your data, save as a comma-delimited (.CSV) file.
+                    Finally, upload your file to ProfitWise and allow up to 10 minutes for ProfitWise
+                    to import your data.</p>
             </div>
         </div>
     </div>
