@@ -29,6 +29,7 @@ namespace ProfitWise.Data.Repositories.System
                 .Query<PwShop>(query, new { shopifyShopId })
                 .FirstOrDefault();
         }
+        
 
         public PwShop RetrieveByShopId(int pwShopId)
         {

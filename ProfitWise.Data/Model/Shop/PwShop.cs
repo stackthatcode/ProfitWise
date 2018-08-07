@@ -31,6 +31,8 @@ namespace ProfitWise.Data.Model.Shop
             "3du-test-store-2.myshopify.com",
         };
 
+        public int? DisabledCode { get; set; }
+
 
         // This property is populated from the data layer via vw_profitwiseshop, which pulls
         // ... this value from the IsPrimary == true RecurringCharge

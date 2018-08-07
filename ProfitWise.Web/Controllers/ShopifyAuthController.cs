@@ -120,6 +120,12 @@ namespace ProfitWise.Web.Controllers
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
             }
 
+            var profitWiseShop = _shopRepository.RetrieveByShopifyShopId(profitWiseSignIn.Shop.Id);
+            if (profitWiseShop.DisabledCode.HasValue)
+            {
+                return GlobalConfig.Redirect(AuthConfig.ShopDisabled, returnUrl);
+            }
+
             // Redirect to error page for invalid currency
             if (!_currencyService.CurrencyExists(profitWiseSignIn.Shop.Currency))
             {
@@ -448,6 +454,12 @@ namespace ProfitWise.Web.Controllers
                 NewCurrencyName = _currencyService.CurrencyByAbbr(newCurrency).Name,
             };
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult ShopDisabled(string returnUrl)
+        {
+            return View();
         }
 
 
