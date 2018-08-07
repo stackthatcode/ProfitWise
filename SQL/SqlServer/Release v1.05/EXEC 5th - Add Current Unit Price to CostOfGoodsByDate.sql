@@ -12,6 +12,7 @@ RETURN
 SELECT	t2.PwProductId, 
 		t2.PwVariantId, 
 		t2.ShopifyVariantId,
+		t2.PwMasterVariantId,
 		t2.Title, 
 		t2.Sku, 
 		dbo.ufnNegToZero(t2.Inventory) AS Inventory, 
