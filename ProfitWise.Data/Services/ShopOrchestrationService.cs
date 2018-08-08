@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Linq;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.HangFire;
@@ -136,10 +138,38 @@ namespace ProfitWise.Data.Services
         // Webhook subscription & maintenance service
         public void UpsertAllWebhooks(string userId, ShopifyCredentials credentials)
         {
-            UpsertWebhook(userId, credentials, Webhook.UninstallTopic, UninstallWebhook);
-            UpsertWebhook(userId, credentials, Webhook.CustomerRedactTopic, CustomerRedactWebhook);
-            UpsertWebhook(userId, credentials, Webhook.ShopRedactTopic, ShopRedactWebhook);
-            UpsertWebhook(userId, credentials, Webhook.CustomerDataRequestTopic, CustomerDataRequestWebhook);
+            var battery = new Dictionary<string, string>()
+            {
+                { Webhook.UninstallTopic, UninstallWebhook },
+                { Webhook.CustomerRedactTopic, CustomerRedactWebhook },
+                { Webhook.ShopRedactTopic, ShopRedactWebhook },
+                { Webhook.CustomerDataRequestTopic, CustomerDataRequestWebhook },
+            };
+
+            // Create the Webhook via Shopify API
+            var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);
+            var allHooks = apiRepository.RetrieveAll();
+
+            foreach (var entry in allHooks)
+            {
+                if (!battery.Any(x => x.Key == entry.Topic && x.Value == entry.Address))
+                {
+                    _logger.Info($"Deleting {entry.Topic} Webhook to {entry.Address}");
+                    apiRepository.Delete(entry.Id);
+                }
+            }
+
+            foreach (var item in battery)
+            {
+                if (!allHooks.Any(x => x.Topic == item.Key && x.Address == item.Value))
+                {
+                    var request = Webhook.MakeUninstallHookRequest(item.Value);
+                    var webhook = apiRepository.Subscribe(request);
+                    _logger.Info($"Creating {item.Key} Webhook to {item.Value} for Shop: {credentials.ShopDomain}");
+
+                    //_shopRepository.UpdateShopifyUninstallId(userId, webhook.Id);
+                }
+            }
         }
 
 
@@ -149,15 +179,19 @@ namespace ProfitWise.Data.Services
             // Create the Webhook via Shopify API
             var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);
             
-            var existingWebhook = apiRepository.Retrieve(topic, endpointAddress);
+            //var existingWebhook = apiRepository.Retrieve(topic, endpointAddress);
+            var allHooks = apiRepository.RetrieveAll();
+
+            var existingWebhook = apiRepository.Retrieve(topic);
             if (existingWebhook != null)
             {
                 if (existingWebhook.Address != endpointAddress)
                 {
+                    _logger.Info($"Updating {topic} Webhook address to {endpointAddress} for UserId: {userId}");
+                
                     var updateRequest =
                         Webhook.MakeAddressUpdateRequest(existingWebhook.Id, endpointAddress);
-                    _logger.Info($"Updated {topic} Webhook address to {endpointAddress} for UserId: {userId}");
-
+                    
                     apiRepository.UpdateAddress(updateRequest);
                     return;
                 }
@@ -166,9 +200,9 @@ namespace ProfitWise.Data.Services
             {
                 var request = Webhook.MakeUninstallHookRequest(endpointAddress);
                 var webhook = apiRepository.Subscribe(request);
-                _logger.Info($"Created {topic} Webhook to {endpointAddress} for UserId: {userId}");
+                _logger.Info($"Creating {topic} Webhook to {endpointAddress} for UserId: {userId}");
 
-                _shopRepository.UpdateShopifyUninstallId(userId, webhook.Id);
+                //_shopRepository.UpdateShopifyUninstallId(userId, webhook.Id);
             }
         }
         

@@ -13,5 +13,9 @@ CREATE TABLE systemwebhookinvocations
 	Topic VARCHAR(100) NOT NULL,
 	BodyText VARCHAR(MAX) NOT NULL,
 	DateCreated DATETIME NOT NULL,
+	Handled BIT NOT NULL
 	PRIMARY KEY (Id)
 );
+
+-- SELECT * FROM systemwebhookinvocations;
+---SELECT GETUTCDATE();

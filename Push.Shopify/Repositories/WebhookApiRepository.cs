@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Security.Policy;
 using System.Web;
@@ -88,6 +89,20 @@ namespace Push.Shopify.Repositories
             return webhooks.FirstOrDefault();
         }
 
+        public List<Webhook> RetrieveAll()
+        {
+            var path = $"/admin/webhooks.json";
+            var httpRequest = _requestFactory.HttpGet(ShopifyCredentials, path);
+
+            var clientResponse = _client.ExecuteRequest(httpRequest);
+            if (clientResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            return clientResponse.Body.ToMultipleWebhooks();
+        }
+
         public Webhook Retrieve(string topic)
         {
             var encodedTopic = HttpUtility.UrlEncode(topic);
@@ -102,6 +117,13 @@ namespace Push.Shopify.Repositories
 
             var webhooks = clientResponse.Body.ToMultipleWebhooks();
             return webhooks.FirstOrDefault();
+        }
+
+        public void Delete(long webHookId)
+        {
+            var path = $"/admin/webhooks/{webHookId}.json";
+            var httpRequest = _requestFactory.HttpDelete(ShopifyCredentials, path);
+            var clientResponse = _client.ExecuteRequest(httpRequest);
         }
     }
 }
