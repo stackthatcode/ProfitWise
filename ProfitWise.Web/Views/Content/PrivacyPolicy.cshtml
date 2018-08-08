@@ -1,0 +1,50 @@
+﻿@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Models.WelcomeModel
+@{
+    Layout = "~/Views/Shared/_PageLayout.cshtml";
+}
+
+@Html.Partial("_IsDataLoadedAlert")
+
+<div class="system-page shadow" style="text-align: center;">
+    
+    <div style="max-width: 350px; margin-left: auto; margin-right: auto;">
+        <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg"
+             class="img-responsive"  />        
+    </div>
+
+    <div class="top-spacer"></div>
+
+    <h2 class="header">Privacy Policy</h2>
+    <h4>ProfitWise's Usage of Data and GDPR Compliance</h4>
+
+    <div class="below-header-spacer"></div>
+
+    <div class="system-page-content">
+        <p><strong>ProfitWise Privacy Policy</strong></p>
+        <p>ProfitWise ("the App") provides cost of goods (CoGS) and profitability analysis ("the Service") to merchants who use Shopify to power their stores. This Privacy Policy describes how personal information is collected, used, and shared when you install or use the App in connection with your Shopify-supported store.</p>
+
+        <p><strong>Personal Information the App Collects</strong></p>   
+        <p>When you install the App, we are automatically able to access certain types of information from your Shopify account: your Shopify shop including its timezone, address, currency, contact email; also your Shopify shop’s product catalog and orders.</p> 
+       
+        <p><strong>How Do We Use Your Personal Information?</strong></p>   
+        <p>We use the personal information we collect from you and your customers in order to provide the Service and to operate the App. All of the information is stored in a SQL database for purposes of tabulating figures and providing CoGS and profitability analysis to you. System logs also occasionally store information strictly for the purpose of maintaining ProfitWise’s internal infrastructure.</p>
+
+        <p><strong>Sharing Your Personal Information</strong></p>   
+        <p>Push Automated Commerce does not share any of your private information with any 3rd parties, unless required to do so to comply with applicable laws and regulations, to respond to a subpoena, search warrant or other lawful request for information we receive, or to otherwise protect our rights.<p>
+
+        <p><strong>Changes</strong></p>   
+        <p>We may update this privacy policy from time to time in order to reflect, for example, changes to our practices or for other operational, legal or regulatory reasons.</p>
+        
+        <p><strong>Contact Us </strong></p>
+        <p>For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by e-mail at info@3duniverse.org or by mail using the details provided below:</p>
+            
+            <p>
+                Push Automated Commerce LLC<br />
+                ATTN: GDPR Compliance<br />
+                1727 Bonita Avenue<br />
+                Mount Prospect, IL 60056
+            </p>
+        </p>
+    </div>
+</div>

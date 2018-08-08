@@ -562,6 +562,7 @@
     <Content Include="Views\ShopifyAuth\ShopCurrencyChange.cshtml" />
     <Content Include="Views\Cogs\Upload.cshtml" />
     <Content Include="Views\ShopifyAuth\ShopDisabled.cshtml" />
+    <Content Include="Views\Content\PrivacyPolicy.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

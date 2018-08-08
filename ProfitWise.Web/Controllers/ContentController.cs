@@ -37,7 +37,13 @@ namespace ProfitWise.Web.Controllers
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public ActionResult PrivacyPolicy()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult ShowTour(int tourIdentifier)
         {

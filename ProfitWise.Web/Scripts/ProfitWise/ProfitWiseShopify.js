@@ -42,6 +42,8 @@ ProfitWiseShopify.BarInitialize = function (title) {
                         type: "dropdown",
                         links: [
                             linkBuilder("/Content/About", "About ProfitWise"),
+                            linkBuilder("/Content/PrivacyPolicy", "Privacy Policy"),
+
                             linkBuilder("/Content/Contact", "Contact Us"),
                             {
                                 label: "ProfitWise User Manual",
