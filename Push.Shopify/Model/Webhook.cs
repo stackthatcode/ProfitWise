@@ -15,6 +15,10 @@ namespace Push.Shopify.Model
 
 
         public const string UninstallTopic = "app/uninstalled";
+        public const string CustomerRedactTopic = "customers/redact";
+        public const string ShopRedactTopic = "shop/redact";
+        public const string CustomerDataRequestTopic = "customers/data_request";
+
 
         public static Webhook MakeUninstallHookRequest(string address)
         {

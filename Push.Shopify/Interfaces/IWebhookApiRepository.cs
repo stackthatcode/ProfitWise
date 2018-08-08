@@ -7,6 +7,7 @@ namespace Push.Shopify.Interfaces
     {
         Webhook Subscribe(Webhook request);
         Webhook Retrieve(string topic, string address);
+        Webhook Retrieve(string topic);
         Webhook UpdateAddress(Webhook request);
     }
 }

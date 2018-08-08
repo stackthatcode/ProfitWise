@@ -35,6 +35,8 @@ DELETE FROM mastervariant(@PwShopId);
 DELETE FROM product(@PwShopId);
 DELETE FROM masterproduct(@PwShopId);
 
+DELETE FROM uploads(@PwShopId);
+
 DELETE FROM recurringcharge(@PwShopId);
 DELETE FROM batchstate(@PwShopId);
 

@@ -6,6 +6,7 @@ using Dapper;
 using ProfitWise.Data.Database;
 using ProfitWise.Data.Model.Cogs.UploadObjects;
 using ProfitWise.Data.Model.System;
+using Push.Shopify.Model;
 
 namespace ProfitWise.Data.Repositories.System
 {
@@ -191,6 +192,30 @@ namespace ProfitWise.Data.Repositories.System
         {
             var query = @"DELETE FROM profitwiseuploads WHERE FileUploadId = @fileUploadId";
             _connectionWrapper.Execute(query, new { fileUploadId });
+        }
+
+        public void InsertWebhookInvocations(string topic, string body)
+        {
+            var query =
+                @"INSERT INTO systemwebhookinvocations 
+                    ( Topic, BodyText, DateCreated, Handled )
+                    VALUES ( @topic, @body, GETUTCDATE(), 0 );";
+            _connectionWrapper.Execute(query, new { topic, body });
+        }
+
+        public int RetrieveNumberOfUnhandledGdprInvocations()
+        {
+            var gdprTopics = new[]
+            {
+                Webhook.CustomerRedactTopic,
+                Webhook.ShopRedactTopic,
+                Webhook.CustomerDataRequestTopic,
+            };
+
+            var query =
+                @"SELECT COUNT(*) FROM systemwebhookinvocations
+                WHERE Topic IN @gdprTopics";
+            return _connectionWrapper.Query<int>(query, new { gdprTopics }).First();
         }
     }
 }

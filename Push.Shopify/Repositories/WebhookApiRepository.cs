@@ -87,6 +87,22 @@ namespace Push.Shopify.Repositories
             var webhooks = clientResponse.Body.ToMultipleWebhooks();
             return webhooks.FirstOrDefault();
         }
+
+        public Webhook Retrieve(string topic)
+        {
+            var encodedTopic = HttpUtility.UrlEncode(topic);
+            var path = $"/admin/webhooks.json?topic={encodedTopic}";
+            var httpRequest = _requestFactory.HttpGet(ShopifyCredentials, path);
+
+            var clientResponse = _client.ExecuteRequest(httpRequest);
+            if (clientResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            var webhooks = clientResponse.Body.ToMultipleWebhooks();
+            return webhooks.FirstOrDefault();
+        }
     }
 }
 

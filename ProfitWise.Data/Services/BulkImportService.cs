@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using Castle.Core.Internal;
@@ -120,7 +122,7 @@ namespace ProfitWise.Data.Services
 
         public void CleanupOldFiles()
         {
-            const int maximumFileAgeDays = 7;
+            const int maximumFileAgeDays = 5;
             var files = _systemRepository.RetrieveOldUploads(maximumFileAgeDays);
             foreach (var file in files)
             {
@@ -130,6 +132,18 @@ namespace ProfitWise.Data.Services
                     System.IO.Directory.Delete(path, true);
 
                 _systemRepository.DeleteFileUpload(file.FileUploadId);
+            }
+
+            var fileStorage = ConfigurationManager.AppSettings["FileUploadDirectory"];
+            var cutoffDate = DateTime.UtcNow.AddDays(-maximumFileAgeDays);
+            foreach (var directory in Directory.GetDirectories(fileStorage))
+            {
+                var createdUtc = Directory.GetCreationTimeUtc(directory);
+                if (createdUtc < cutoffDate)
+                {
+                    _logger.Info($"Deleting old file storage: {directory} - created {createdUtc}");
+                    Directory.Delete(directory, true);
+                }
             }
         }
 

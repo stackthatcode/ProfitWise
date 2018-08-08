@@ -37,8 +37,22 @@ namespace ProfitWise.Data.Services
                 ConfigurationManager.AppSettings.GetAndTryParseAsBool("TestRecurringCharges", false);
 
         private static readonly string
-                WebhookAddress = ConfigurationManager
+                UninstallWebhook = ConfigurationManager
                     .AppSettings.GetAndTryParseAsString("UninstallWebHookAddress", "");
+
+        private static readonly string
+                CustomerRedactWebhook = ConfigurationManager
+                    .AppSettings.GetAndTryParseAsString("CustomerRedactWebHookAddress", "");
+
+        private static readonly string
+                ShopRedactWebhook = ConfigurationManager
+                    .AppSettings.GetAndTryParseAsString("ShopRedactWebHookAddress", "");
+
+        private static readonly string
+                CustomerDataRequestWebhook = ConfigurationManager
+                    .AppSettings.GetAndTryParseAsString("CustomerDataWebHookAddress", "");
+
+
 
         private const int DefaultFreeTrial = 14;
         private const decimal ProfitWiseMonthlyPrice = 9.95m;
@@ -120,26 +134,41 @@ namespace ProfitWise.Data.Services
 
 
         // Webhook subscription & maintenance service
-        public void UpsertUninstallWebhook(string shopOwnerUserId, ShopifyCredentials credentials)
+        public void UpsertAllWebhooks(string userId, ShopifyCredentials credentials)
+        {
+            UpsertWebhook(userId, credentials, Webhook.UninstallTopic, UninstallWebhook);
+            UpsertWebhook(userId, credentials, Webhook.CustomerRedactTopic, CustomerRedactWebhook);
+            UpsertWebhook(userId, credentials, Webhook.ShopRedactTopic, ShopRedactWebhook);
+            UpsertWebhook(userId, credentials, Webhook.CustomerDataRequestTopic, CustomerDataRequestWebhook);
+        }
+
+
+        public void UpsertWebhook(
+                string userId, ShopifyCredentials credentials, string topic, string endpointAddress)
         {
             // Create the Webhook via Shopify API
             var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);
             
-            var existingWebhook = apiRepository.Retrieve(Webhook.UninstallTopic, WebhookAddress);
+            var existingWebhook = apiRepository.Retrieve(topic, endpointAddress);
             if (existingWebhook != null)
             {
-                var updateRequest = 
-                    Webhook.MakeAddressUpdateRequest(existingWebhook.Id, WebhookAddress);
-                apiRepository.UpdateAddress(updateRequest);
-                return;
+                if (existingWebhook.Address != endpointAddress)
+                {
+                    var updateRequest =
+                        Webhook.MakeAddressUpdateRequest(existingWebhook.Id, endpointAddress);
+                    _logger.Info($"Updated {topic} Webhook address to {endpointAddress} for UserId: {userId}");
+
+                    apiRepository.UpdateAddress(updateRequest);
+                    return;
+                }
             }
             else
             {
-                var request = Webhook.MakeUninstallHookRequest(WebhookAddress);
+                var request = Webhook.MakeUninstallHookRequest(endpointAddress);
                 var webhook = apiRepository.Subscribe(request);
-                _logger.Info($"Created Uninstall Webhook for UserId: {shopOwnerUserId}");
+                _logger.Info($"Created {topic} Webhook to {endpointAddress} for UserId: {userId}");
 
-                _shopRepository.UpdateShopifyUninstallId(shopOwnerUserId, webhook.Id);
+                _shopRepository.UpdateShopifyUninstallId(userId, webhook.Id);
             }
         }
         

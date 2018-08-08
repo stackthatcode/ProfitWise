@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,7 +10,6 @@ using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using ProfitWise.Data.Configuration;
-using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
@@ -28,8 +26,6 @@ using Push.Foundation.Web.Shopify;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
-using ShopifySharp;
-using ShopifySharp.Enums;
 
 
 namespace ProfitWise.Web.Controllers
@@ -47,6 +43,7 @@ namespace ProfitWise.Web.Controllers
         private readonly HmacCryptoService _hmacCryptoService;
         private readonly ApiRepositoryFactory _factory;
         private readonly CurrencyService _currencyService;
+        private readonly SystemRepository _systemRepository;
 
         public ShopifyAuthController(
                 IAuthenticationManager authenticationManager, 
@@ -59,7 +56,8 @@ namespace ProfitWise.Web.Controllers
                 ShopRepository shopRepository, 
                 HmacCryptoService hmacCryptoService, 
                 ApiRepositoryFactory factory,
-                CurrencyService currencyService)
+                CurrencyService currencyService, 
+                SystemRepository systemRepository)
         {
             _authenticationManager = authenticationManager;
             _userManager = userManager;
@@ -71,6 +69,7 @@ namespace ProfitWise.Web.Controllers
             _hmacCryptoService = hmacCryptoService;
             _factory = factory;
             _currencyService = currencyService;
+            _systemRepository = systemRepository;
             _shopOrchestrationService = shopSynchronizationService;
         }
 
@@ -120,12 +119,6 @@ namespace ProfitWise.Web.Controllers
                 return GlobalConfig.Redirect(AuthConfig.ExternalLoginFailureUrl, returnUrl);
             }
 
-            var profitWiseShop = _shopRepository.RetrieveByShopifyShopId(profitWiseSignIn.Shop.Id);
-            if (profitWiseShop.DisabledCode.HasValue)
-            {
-                return GlobalConfig.Redirect(AuthConfig.ShopDisabled, returnUrl);
-            }
-
             // Redirect to error page for invalid currency
             if (!_currencyService.CurrencyExists(profitWiseSignIn.Shop.Currency))
             {
@@ -161,6 +154,13 @@ namespace ProfitWise.Web.Controllers
                 }
             }
 
+
+            var profitWiseShop = _shopRepository.RetrieveByShopifyShopId(profitWiseSignIn.Shop.Id);
+            if (profitWiseShop.DisabledCode.HasValue)
+            {
+                return GlobalConfig.Redirect(AuthConfig.ShopDisabled, returnUrl);
+            }
+            
             return UpsertBilling(user, returnUrl);
         }
 
@@ -296,8 +296,6 @@ namespace ProfitWise.Web.Controllers
                             user.Id, signIn.Shop.Currency, signIn.Shop.TimeZoneIana);
                 }
 
-                // Ensure that the Uninstall Webhook is in place
-                _shopOrchestrationService.UpsertUninstallWebhook(user.Id, credentials);
                 return ShopUpsertionResult.Succeed();
             }
             catch (Exception ex)
@@ -366,21 +364,39 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult Uninstall(UninstallWebhook message)
         {
-            _logger.Info($"App Uninstall Webhook invocation Shopify Shop Id: {message.id}");
-            var shopifyHash = Request.Headers["X-Shopify-Hmac-Sha256"];
             Request.InputStream.Position = 0;
             var rawRequest = new StreamReader(Request.InputStream).ReadToEnd();
-            var verifyHash = _hmacCryptoService.ToBase64EncodedSha256(rawRequest);
+            _logger.Info($"App Uninstall Webhook invocation Shopify Shop Id: {message.id} - {rawRequest}");
 
-            if (shopifyHash != verifyHash)
-            {
-                _logger.Error($"Hash Verification failure {shopifyHash}/{verifyHash}");
-            }
+            VerifyWebhookHash(rawRequest);
 
             _shopOrchestrationService.UninstallShop(message.id);
             return JsonNetResult.Success();
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult GDPR(string topic)
+        {
+            Request.InputStream.Position = 0;
+            var rawRequest = new StreamReader(Request.InputStream).ReadToEnd();
+            _logger.Info($"GDPR invocation: {topic} - {rawRequest}");
+
+            VerifyWebhookHash(rawRequest);
+            _systemRepository.InsertWebhookInvocations(topic, rawRequest);
+
+            return JsonNetResult.Success();
+        }
+
+        private void VerifyWebhookHash(string rawRequest)
+        {
+            var shopifyHash = Request.Headers["X-Shopify-Hmac-Sha256"];
+            var verifyHash = _hmacCryptoService.ToBase64EncodedSha256(rawRequest);
+            if (shopifyHash != verifyHash)
+            {
+                _logger.Error($"Hash Verification failure {shopifyHash}/{verifyHash}");                
+            }
+        }
 
 
         // Authorization error pages

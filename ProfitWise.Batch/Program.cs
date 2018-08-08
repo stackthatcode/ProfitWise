@@ -33,6 +33,7 @@ namespace ProfitWise.Batch
         private const string PopulateCalendar = "31";
         private const string SingleExchangeRateLoad = "32";
         private const string AllExchangeRateLoad = "33";
+        private const string RunSystemCleanupProcessChoice = "34";
 
         private const string ExecuteSingleUpload = "40";
         private const string CleanupOldFileUploads = "41";
@@ -60,6 +61,8 @@ namespace ProfitWise.Batch
             Console.WriteLine($"{PopulateCalendar} - Populate the SQL calendar_table");
             Console.WriteLine($"{SingleExchangeRateLoad} - Import Exchange Rate for a specific Currency");
             Console.WriteLine($"{AllExchangeRateLoad} - Import Complete Exchange Rate data set");
+            Console.WriteLine($"{RunSystemCleanupProcessChoice} - Run System Cleanup Process");
+            
             Console.WriteLine("");
 
             Console.WriteLine($"{ExecuteSingleUpload} - Process a single file upload");
@@ -159,10 +162,26 @@ namespace ProfitWise.Batch
                 RunCleanupOldFileUploads();
                 return;
             }
-
+            if (choice == RunSystemCleanupProcessChoice)
+            {
+                RunSystemCleanupProcess();
+                return;
+            }
             Console.WriteLine("Invalid option - exiting. Bye!");
         }
 
+        private static void RunSystemCleanupProcess()
+        {
+            var container = Bootstrapper.ConfigureApp(false);
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<SystemCleanupProcess>();
+                service.Execute();
+            }
+
+            ExitWithAnyKey();
+        }
         private static void RunCleanupOldFileUploads()
         {
             var container = Bootstrapper.ConfigureApp(false);
