@@ -205,17 +205,23 @@ namespace ProfitWise.Data.Repositories.System
 
         public int RetrieveNumberOfUnhandledGdprInvocations()
         {
-            var gdprTopics = new[]
+            var gdprTopicIds = new[]
             {
-                Webhook.CustomerRedactTopic,
-                Webhook.ShopRedactTopic,
-                Webhook.CustomerDataRequestTopic,
+                Topics.CustomerDataRequestTopicId,
+                Topics.ShopRedactTopicId,
+                Topics.CustomerDataRequestTopicId,
             };
+
+            var topics =
+                RequiredWebhooks.Lookup
+                    .Where(x => gdprTopicIds.Contains(x.TopicId))
+                    .Select(x => x.Topic)
+                    .ToList();
 
             var query =
                 @"SELECT COUNT(*) FROM systemwebhookinvocations
                 WHERE Topic IN @gdprTopics";
-            return _connectionWrapper.Query<int>(query, new { gdprTopics }).First();
+            return _connectionWrapper.Query<int>(query, new { topics }).First();
         }
     }
 }

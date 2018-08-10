@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -374,16 +375,45 @@ namespace ProfitWise.Web.Controllers
             return JsonNetResult.Success();
         }
 
+
+
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult GDPR(string topic)
+        public ActionResult CustomerRedact()
         {
+            return GDPR(Topics.CustomerRedactTopicId);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult ShopRedact()
+        {
+            return GDPR(Topics.ShopRedactTopicId);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult CustomerDataRequest()
+        {
+            return GDPR(Topics.CustomerDataRequestTopicId);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult GDPR(int topicId)
+        {
+            var webhook = RequiredWebhooks.Lookup.FirstOrDefault(x => x.TopicId == topicId);
+            if (webhook == null)
+            {
+                throw new Exception($"Unrecognized TopicId {topicId}");
+            }
+
             Request.InputStream.Position = 0;
             var rawRequest = new StreamReader(Request.InputStream).ReadToEnd();
-            _logger.Info($"GDPR invocation: {topic} - {rawRequest}");
+            _logger.Info($"GDPR invocation: {webhook.Topic} - {rawRequest}");
 
             VerifyWebhookHash(rawRequest);
-            _systemRepository.InsertWebhookInvocations(topic, rawRequest);
+            _systemRepository.InsertWebhookInvocations(webhook.Topic, rawRequest);
 
             return JsonNetResult.Success();
         }
