@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.Helpers;
 
@@ -43,12 +44,17 @@ namespace Push.Shopify.Model
                 CustomerDataRequestWebhookAddr = ConfigurationManager
                     .AppSettings.GetAndTryParseAsString("CustomerDataWebHookAddress", "");
 
-        public static readonly List<Webhook> Lookup = new List<Webhook>()
+        public static readonly List<Webhook> All = new List<Webhook>()
             {
                 Webhook.MakeHookRequest(Topics.UninstallTopicId, UninstallWebhookAddr),
                 Webhook.MakeHookRequest(Topics.CustomerRedactTopicId, CustomerRedactWebhookAddr),
                 Webhook.MakeHookRequest(Topics.ShopRedactTopicId, ShopRedactWebhookAddr),
                 Webhook.MakeHookRequest(Topics.CustomerDataRequestTopicId, CustomerDataRequestWebhookAddr),
+            };
+
+        public static readonly List<Webhook> Subscriptions = new List<Webhook>()
+            {
+                Webhook.MakeHookRequest(Topics.UninstallTopicId, UninstallWebhookAddr),
             };
     }
 

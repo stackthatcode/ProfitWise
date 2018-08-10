@@ -119,9 +119,9 @@ namespace ProfitWise.Data.Services
 
 
         // Webhook subscription & maintenance service
-        public void UpsertAllWebhooks(string userId, ShopifyCredentials credentials)
+        public void UpsertWebhookSubscriptions(string userId, ShopifyCredentials credentials)
         {
-            var requiredHooks = RequiredWebhooks.Lookup;
+            var requiredHooks = RequiredWebhooks.Subscriptions;
 
             // Create the Webhook via Shopify API
             var apiRepository = _apifactory.MakeWebhookApiRepository(credentials);

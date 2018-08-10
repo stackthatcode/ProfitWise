@@ -402,7 +402,7 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult GDPR(int topicId)
         {
-            var webhook = RequiredWebhooks.Lookup.FirstOrDefault(x => x.TopicId == topicId);
+            var webhook = RequiredWebhooks.All.FirstOrDefault(x => x.TopicId == topicId);
             if (webhook == null)
             {
                 throw new Exception($"Unrecognized TopicId {topicId}");

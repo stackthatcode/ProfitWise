@@ -79,7 +79,7 @@ namespace ProfitWise.Data.ProcessSteps
             }
 
             // Webhook installation
-            _shopOrchestrationService.UpsertAllWebhooks(shop.ShopOwnerUserId, credentials);
+            _shopOrchestrationService.UpsertWebhookSubscriptions(shop.ShopOwnerUserId, credentials);
 
             // Update Shop with the latest from Shopify API
             var shopApiRepository = _apiRepositoryFactory.MakeShopApiRepository(credentials);

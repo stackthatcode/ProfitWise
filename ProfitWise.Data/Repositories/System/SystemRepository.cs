@@ -213,7 +213,7 @@ namespace ProfitWise.Data.Repositories.System
             };
 
             var topics =
-                RequiredWebhooks.Lookup
+                RequiredWebhooks.All
                     .Where(x => gdprTopicIds.Contains(x.TopicId))
                     .Select(x => x.Topic)
                     .ToList();
