@@ -8,11 +8,9 @@ USE ProfitWise
 GO
 
 
-DECLARE @PwShopId bigint = 100001;
+DECLARE @PwShopId bigint = 100099;
 
-UPDATE batchstate(@PwShopId) SET OrderDatasetStart = NULL, OrderDatasetEnd = NULL, ProductsLastUpdated = NULL
-
--- ALSO - nix the Products 
+UPDATE batchstate(@PwShopId) SET OrderDatasetStart = NULL, OrderDatasetEnd = NULL;
 
 DELETE FROM profitreportentry(@PwShopId);
 
@@ -21,7 +19,7 @@ DELETE FROM orderlineitem(@PwShopId);
 DELETE FROM orderadjustment(@PwShopId);
 DELETE FROM ordertable(@PwShopId);
 
-
+SELECT * FROM batchstate(@PwShopId);
 
 
 

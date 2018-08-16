@@ -128,10 +128,10 @@ namespace ProfitWise.Data.ProcessSteps
             // ** Critical => OrderEndFudgeFactor accounts for any changes to Timezone
             var filter = new OrderFilter()
                 {
-                    UpdatedAtMinUtc = startDateFromPreferencesUtc.AddMinutes(OrderStartFudgeFactor),
-                    UpdatedAtMaxUtc = oldStartDateUtc.AddMinutes(OrderEndFudgeFactor),
+                    CreatedAtMinUtc = startDateFromPreferencesUtc.AddMinutes(OrderStartFudgeFactor),
+                    CreatedAtMaxUtc = oldStartDateUtc.AddMinutes(OrderEndFudgeFactor),
                 }
-                .OrderByUpdateAtDescending();
+                .OrderByCreatedAtAscending();
 
             RefreshOrders(filter, shopCredentials, shop);
 
@@ -148,13 +148,15 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"Loading Orders first time for Shop {shop.PwShopId}");
             
             // Translate the Starting Date for Orders to Shop Timezone for the API invocation
-            var startDateShopUtc = shop.StartingDateForOrders.ToUtcFromShopTz(shop.TimeZone);
+            var startDateShopUtc = 
+                shop.StartingDateForOrders.ToUtcFromShopTz(shop.TimeZone);
+
             var endDateShopUtc = DateTime.UtcNow;
             
             var filter = new OrderFilter
                 {                
-                    UpdatedAtMinUtc = startDateShopUtc.AddMinutes(OrderStartFudgeFactor),
-                    UpdatedAtMaxUtc = endDateShopUtc.AddMinutes(OrderEndFudgeFactor),
+                    CreatedAtMinUtc = startDateShopUtc.AddMinutes(OrderStartFudgeFactor),
+                    CreatedAtMaxUtc = endDateShopUtc.AddMinutes(OrderEndFudgeFactor),
                 }
                 .OrderByUpdateAtDescending();
 
@@ -185,16 +187,19 @@ namespace ProfitWise.Data.ProcessSteps
             var count = orderApiRepository.RetrieveCount(filter);
             _pushLogger.Info($"{count} Orders to process ({filter})");
 
-            var numberofpages =
-                    PagingFunctions.NumberOfPages(
-                        _refreshServiceConfiguration.MaxOrderRate, count);
+            var numberofpages = 
+                PagingFunctions.NumberOfPages(
+                    _refreshServiceConfiguration.MaxOrderRate, count);
 
             var catalogRetrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var masterProductCatalog = catalogRetrievalService.RetrieveFullCatalog();
 
             for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
             {
-                var importedOrders = orderApiRepository.Retrieve(filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+                var importedOrders = 
+                    orderApiRepository.Retrieve(
+                        filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+
                 _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages - {importedOrders.Count} Orders to process");
 
                 WriteOrdersToPersistence(masterProductCatalog, importedOrders, shop);

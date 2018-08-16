@@ -37,15 +37,15 @@ namespace Push.Shopify.Model
         public string Status { get; set;  }
 
         // At time of writing, these are all represented in the actual Shop's timezone i.e. the offset is implicit
-        public DateTime? ProcessedAtMinUtc { get; set; }
-        public DateTime? ProcessedAtMaxUtc { get; set; }
+        public DateTime? CreatedAtMinUtc { get; set; }
+        public DateTime? CreatedAtMaxUtc { get; set; }
         public DateTime? UpdatedAtMinUtc { get; set; }
         public DateTime? UpdatedAtMaxUtc { get; set; }
 
 
         public override string ToString()
         {
-            return $"Order Filter dump: ProcessedAtMin: {ProcessedAtMinUtc} - ProcessedAtMax: {ProcessedAtMaxUtc} - UpdatedAtMin: {UpdatedAtMinUtc}";
+            return $"Order Filter dump: ProcessedAtMin: {CreatedAtMinUtc} - ProcessedAtMax: {CreatedAtMaxUtc} - UpdatedAtMin: {UpdatedAtMinUtc}";
         }
 
         public OrderFilter OrderByUpdateAtDescending()
@@ -61,7 +61,14 @@ namespace Push.Shopify.Model
             _shopifySortOrder = ShopifySortOrder.Ascending;
             return this;
         }
-        
+
+        public OrderFilter OrderByCreatedAtAscending()
+        {
+            _orderByClause = "created_at asc";
+            _shopifySortOrder = ShopifySortOrder.Ascending;
+            return this;
+        }
+
         public QueryStringBuilder ToQueryStringBuilder()
         {
             var builder = 
@@ -69,13 +76,13 @@ namespace Push.Shopify.Model
                     .Add("status", this.Status)
                     .Add("order", this.OrderByClause);
 
-            if (ProcessedAtMinUtc != null)
+            if (CreatedAtMinUtc != null)
             {
-                builder.Add("processed_at_min", ProcessedAtMinUtc.Value);
+                builder.Add("created_at_min", CreatedAtMinUtc.Value);
             }
-            if (ProcessedAtMaxUtc != null)
+            if (CreatedAtMaxUtc != null)
             {
-                builder.Add("processed_at_max", ProcessedAtMaxUtc.Value);
+                builder.Add("created_at_max", CreatedAtMaxUtc.Value);
             }
             if (UpdatedAtMinUtc != null)
             {

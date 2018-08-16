@@ -103,7 +103,8 @@ namespace Push.Foundation.Utilities.Helpers
 
         public static string ToIso8601Utc(this DateTime input)
         {
-            return input.ToString("s", CultureInfo.InvariantCulture) + "-00:00";
+            var output =  input.ToString("s", CultureInfo.InvariantCulture) + "Z";
+            return output;
         }
 
     }

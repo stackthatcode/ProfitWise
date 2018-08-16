@@ -49,7 +49,7 @@ namespace Push.Shopify.Repositories
             return count;
         }
 
-        public virtual IList<Order> Retrieve(OrderFilter filter, int page = 1, int limit = 250)
+        public virtual IList<Order> Retrieve(OrderFilter filter, int page = 1, int limit = 50)
         {
             var querystring
                 = new QueryStringBuilder()

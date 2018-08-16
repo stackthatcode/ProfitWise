@@ -9,7 +9,7 @@ GO
 
 
 /*** Insert the appropriate PwShopId and uncomment the below line ***/
-DECLARE @PwShopId bigint = 100001;
+DECLARE @PwShopId bigint = 100008;
 
 
 --DELETE FROM reportquerystub(@PwShopId);
