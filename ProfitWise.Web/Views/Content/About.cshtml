@@ -1,13 +1,20 @@
-﻿@using ProfitWise.Web.Plumbing
+﻿@using ProfitWise.Web.Attributes
+@using ProfitWise.Web.Plumbing
+
 @model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
+    var authenticatedContext = Context.AuthenticatedContext();
+    var authenticated = (authenticatedContext != null && !authenticatedContext.IsImpersonated);
 }
 
-@Html.Partial("_IsDataLoadedAlert")
+@if (authenticated)
+{
+    @Html.Partial("_IsDataLoadedAlert")
+}
 
-<div class="system-page shadow" style="text-align: center;">
-    
+
+<div class="system-page shadow" style="text-align: center;">    
     <div style="max-width: 350px; margin-left: auto; margin-right: auto;">
         <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg"
              class="img-responsive"  />        

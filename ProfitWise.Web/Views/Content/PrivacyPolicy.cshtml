@@ -1,13 +1,14 @@
 ﻿@using ProfitWise.Web.Attributes
 @using ProfitWise.Web.Plumbing
+
 @model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
     var authenticatedContext = Context.AuthenticatedContext();
-    var notAuthenticated = (authenticatedContext != null && !authenticatedContext.IsImpersonated);
+    var authenticated = (authenticatedContext != null && !authenticatedContext.IsImpersonated);
 }
 
-@if (notAuthenticated)
+@if (authenticated)
 {
     @Html.Partial("_IsDataLoadedAlert")
 }
@@ -15,11 +16,14 @@
 
 <div class="system-page shadow" style="text-align: center;">
     
+@if (!authenticated)
+{
     <div style="margin-bottom: 50px;">
         <a href="https://apps.shopify.com/profitwise" class="btn btn-default">
-            Use ProfitWise With Your Store
-        </a>        
+            Use ProfitWise With Your Shop
+        </a>
     </div>
+}
 
     <div style="max-width: 350px; margin-left: auto; margin-right: auto;">
         <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg"
