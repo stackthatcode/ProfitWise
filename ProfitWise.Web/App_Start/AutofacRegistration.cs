@@ -97,7 +97,9 @@ namespace ProfitWise.Web
             builder.RegisterType<PreferencesController>();
             builder.RegisterType<ContentController>();
             builder.RegisterType<ConsolServiceController>();
-                
+            builder.RegisterType<PublicController>();
+
+
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

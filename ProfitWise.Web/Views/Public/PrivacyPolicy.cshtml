@@ -1,15 +1,17 @@
-﻿@using ProfitWise.Web.Attributes
-@using ProfitWise.Web.Plumbing
+﻿@using ProfitWise.Web.Plumbing
 
 @model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
 }
 
-@Html.Partial("_IsDataLoadedAlert")
-
 <div class="system-page shadow" style="text-align: center;">
-
+    
+    <div style="margin-bottom: 50px;">
+        <a href="https://apps.shopify.com/profitwise" class="btn btn-default">
+            Use ProfitWise With Your Shop
+        </a>
+    </div>
 
     <div style="max-width: 350px; margin-left: auto; margin-right: auto;">
         <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg"

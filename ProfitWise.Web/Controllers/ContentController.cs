@@ -8,6 +8,8 @@ using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
 {
+    [Authorize(Roles = "ADMIN, USER")]
+    [IdentityProcessor]
     public class ContentController : Controller
     {
         private readonly TourService _service;
@@ -19,8 +21,6 @@ namespace ProfitWise.Web.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "ADMIN, USER")]
-        [IdentityProcessor]
         public ActionResult Welcome(string returnUrl)
         {            
             return View(new WelcomeModel { ReturnUrl = returnUrl ?? GlobalConfig.BaseUrl });
@@ -45,8 +45,6 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMIN, USER")]
-        [IdentityProcessor]
         public ActionResult ShowTour(int tourIdentifier)
         {
             var shop = HttpContext.IdentitySnapshot().PwShop;

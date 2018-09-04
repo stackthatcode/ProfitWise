@@ -221,6 +221,7 @@
     <Compile Include="Attributes\MaintenanceAttribute.cs" />
     <Compile Include="Attributes\ValidateJsonAntiForgeryTokenAttribute.cs" />
     <Compile Include="Attributes\HandleErrorAttributeImpl.cs" />
+    <Compile Include="Controllers\PublicController.cs" />
     <Compile Include="Models\ShopCurrencyChange.cs" />
     <Compile Include="Models\ShopUpsertionResult.cs" />
     <Compile Include="Models\UploadStatusModel.cs" />
@@ -563,6 +564,8 @@
     <Content Include="Views\Cogs\Upload.cshtml" />
     <Content Include="Views\ShopifyAuth\ShopDisabled.cshtml" />
     <Content Include="Views\Content\PrivacyPolicy.cshtml" />
+    <Content Include="Views\Shared\_PrivacyContent.cshtml" />
+    <Content Include="Views\Public\PrivacyPolicy.cshtml" />
     <None Include="Web.Debug Aleks.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
