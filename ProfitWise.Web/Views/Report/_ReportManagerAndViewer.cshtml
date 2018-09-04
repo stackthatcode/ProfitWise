@@ -60,7 +60,7 @@
     <div id="report-title-and-summary" 
          class="col-xs-12 col-sm-6 no-side-padding" style="height:200px;" 
          data-bind="with: $data.ReportInterfaceModel">
-        <div data-bind="if: ReportLoaded()" style="overflow: auto;">
+        <div data-bind="if: ReportLoaded()" style="overflow: auto; overflow-y:hidden;">
             <h2 id="report-viewer-title" 
                 class="report-title overflow-gracefully" 
                 data-bind="text: Name"></h2>

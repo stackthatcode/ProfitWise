@@ -83,7 +83,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
         {
             order.PwShopId = PwShopId;
             var query = @"UPDATE ordertable(@PwShopId) SET
-                                Email = @Email,
                                 FinancialStatus = @FinancialStatus,
                                 Tags = @Tags,
                                 UpdatedAt = @UpdatedAt,
