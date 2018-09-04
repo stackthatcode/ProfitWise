@@ -1,13 +1,26 @@
-﻿@using ProfitWise.Web.Plumbing
+﻿@using ProfitWise.Web.Attributes
+@using ProfitWise.Web.Plumbing
 @model ProfitWise.Web.Models.WelcomeModel
 @{
     Layout = "~/Views/Shared/_PageLayout.cshtml";
+    var authenticatedContext = Context.AuthenticatedContext();
+    var notAuthenticated = (authenticatedContext != null && !authenticatedContext.IsImpersonated);
 }
 
-@Html.Partial("_IsDataLoadedAlert")
+@if (notAuthenticated)
+{
+    @Html.Partial("_IsDataLoadedAlert")
+}
+
 
 <div class="system-page shadow" style="text-align: center;">
     
+    <div style="margin-bottom: 50px;">
+        <a href="https://apps.shopify.com/profitwise" class="btn btn-default">
+            Use ProfitWise With Your Store
+        </a>        
+    </div>
+
     <div style="max-width: 350px; margin-left: auto; margin-right: auto;">
         <img src="@GlobalConfig.BaseUrl/Content/images/Logo400x101HighRes.jpg"
              class="img-responsive"  />        
@@ -39,12 +52,11 @@
         <p><strong>Contact Us </strong></p>
         <p>For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by e-mail at info@3duniverse.org or by mail using the details provided below:</p>
             
-            <p>
-                Push Automated Commerce LLC<br />
-                ATTN: GDPR Compliance<br />
-                1727 Bonita Avenue<br />
-                Mount Prospect, IL 60056
-            </p>
+        <p style="font-weight: bold; font-color: #555;">
+            Push Automated Commerce LLC<br />
+            ATTN: GDPR Compliance<br />
+            1727 Bonita Avenue<br />
+            Mount Prospect, IL 60056
         </p>
     </div>
 </div>

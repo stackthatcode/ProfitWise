@@ -66,7 +66,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
             var query = @"INSERT INTO ordertable(@PwShopId) 
                         VALUES( @PwShopId, 
                                 @ShopifyOrderId,
-                                @Email, 
                                 @OrderNumber, 
                                 @OrderDate,
                                 @OrderLevelDiscount,

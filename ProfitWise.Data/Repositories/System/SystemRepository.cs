@@ -220,7 +220,7 @@ namespace ProfitWise.Data.Repositories.System
 
             var query =
                 @"SELECT COUNT(*) FROM systemwebhookinvocations
-                WHERE Topic IN @gdprTopics";
+                WHERE Topic IN @topics";
             return _connectionWrapper.Query<int>(query, new { topics }).First();
         }
     }
