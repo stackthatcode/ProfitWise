@@ -174,7 +174,10 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             var query3 = InsertAdjustmentEntriesQuery(context);
             ExecuteLedgeQuery(context, query3);
-        }
+
+            var query4 = UpdateIsNonZeroValue(context);
+            ExecuteLedgeQuery(context, query4);
+       }
 
         private void ExecuteLedgeQuery(EntryRefreshContext context, string query)
         {
@@ -251,6 +254,27 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             if (context.ShopifyOrderId != null)
                 query += OrderIdWhereClause("t1");
+            return query + "; ";
+        }
+
+        private string UpdateIsNonZeroValue(EntryRefreshContext context)
+        {
+            var query = 
+                @"WITH CTE ( ShopifyOrderId, Total ) AS
+                    (
+	                    SELECT ShopifyOrderId, SUM(TotalAfterAllDiscounts) 
+	                    FROM orderlineitem(@PwShopId)
+	                    GROUP BY ShopifyOrderId
+                    )
+                    UPDATE t2
+                    SET IsNonZeroValue = CASE WHEN Total <> 0 THEN 1 ELSE 0 END
+                    FROM CTE t1 INNER JOIN 
+	                    profitreportentry(@PwShopId) t2
+		                    ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
+            
+            if (context.ShopifyOrderId != null)
+                query += OrderIdWhereClause("t2");
+
             return query + "; ";
         }
 

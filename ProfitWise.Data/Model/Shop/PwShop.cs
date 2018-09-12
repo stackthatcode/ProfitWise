@@ -20,7 +20,7 @@ namespace ProfitWise.Data.Model.Shop
         public bool IsAccessTokenValid { get; set; }
         public bool IsProfitWiseInstalled { get; set; }
         public bool IsBillingValid => LastBillingStatus.IsValid();
-
+        
         public bool IsOwnedBy3duniverse => _3dUniverseOwnedSites.Any(x => Domain.ToLower().Trim() == x);
 
         private static readonly List<string> _3dUniverseOwnedSites = new List<string>
@@ -54,6 +54,8 @@ namespace ProfitWise.Data.Model.Shop
                     ProfitRealization == ProfitRealizationConstants.PaymentClears 
                         ? PaymentStatus.Captured 
                         : PaymentStatus.NotCaptured;
+
+        public int MinIsNonZeroValue { get; set; }
 
         public int DateRangeDefault { get; set; }
         public int? TempFreeTrialOverride { get; set; }

@@ -14,6 +14,7 @@ namespace ProfitWise.Data.Model.Profit
         public bool UseDefaultMargin => PwShop.UseDefaultMargin;
         public decimal DefaultCogsPercent => PwShop.DefaultCogsPercent;
         public int MinPaymentStatus => PwShop.MinPaymentStatus;
+        public int MinIsNonZeroValue => PwShop.MinIsNonZeroValue;
 
         public long PwReportId { get; set; }
 

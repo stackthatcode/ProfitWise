@@ -78,12 +78,12 @@ namespace ProfitWise.Data.Repositories.System
                     ShopOwnerUserId, ShopifyShopId, Domain, CurrencyId, TimeZone, 
                     IsAccessTokenValid, IsProfitWiseInstalled, IsDataLoaded, IsBillingValid,
                     StartingDateForOrders, UseDefaultMargin, DefaultMargin, ProfitRealization, 
-                    DateRangeDefault, TempFreeTrialOverride, ShopifyUninstallId
+                    DateRangeDefault, TempFreeTrialOverride, ShopifyUninstallId, MinIsNonZeroValue
                 ) VALUES (
                     @ShopOwnerUserId, @ShopifyShopId, @Domain, @CurrencyId, @TimeZone,
                     @IsAccessTokenValid, @IsProfitWiseInstalled, @IsDataLoaded, @IsBillingValid,
                     @StartingDateForOrders, @UseDefaultMargin,  @DefaultMargin, @ProfitRealization, 
-                    @DateRangeDefault, @TempFreeTrialOverride, @ShopifyUninstallId );
+                    @DateRangeDefault, @TempFreeTrialOverride, @ShopifyUninstallId, @MinIsNonZeroValue );
                 SELECT SCOPE_IDENTITY();";
             return _connectionWrapper
                 .Query<int>(query, shop)
@@ -182,7 +182,15 @@ namespace ProfitWise.Data.Repositories.System
             _connectionWrapper.Execute(query, new { pwShopId, dateRangeDefault });
         }
 
-        
+        public void UpdateMinIsNonZeroValue(int pwShopId, int minIsNonZeroValue)
+        {
+            var query = @"UPDATE profitwiseshop 
+                        SET MinIsNonZeroValue = @minIsNonZeroValue
+                        WHERE PwShopId = @pwShopId";
+            _connectionWrapper.Execute(query, new { pwShopId, minIsNonZeroValue });
+        }
+
+
         public PwTourState RetreiveTourState(int pwShopId)
         {
             var query = @"SELECT * FROM tour(@pwShopId);";

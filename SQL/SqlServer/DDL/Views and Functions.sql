@@ -217,7 +217,11 @@ GO
 DROP FUNCTION IF EXISTS dbo.profitreportentryprocessed
 GO
 CREATE FUNCTION dbo.profitreportentryprocessed (
-		@PwShopId bigint, @UseDefaultMargin tinyint, @DefaultCogsPercent decimal(15, 2), @MinPaymentStatus tinyint)  
+		@PwShopId bigint, 
+		@UseDefaultMargin tinyint, 
+		@DefaultCogsPercent decimal(15, 2), 
+		@MinPaymentStatus tinyint,
+		@MinIsNonZeroValue tinyint)  
 RETURNS TABLE
 AS  
 RETURN SELECT PwShopId, EntryDate, EntryType, ShopifyOrderId, SourceId, PwProductId, PwVariantId, NetSales, 
@@ -226,6 +230,7 @@ RETURN SELECT PwShopId, EntryDate, EntryType, ShopifyOrderId, SourceId, PwProduc
 	CASE WHEN (@UseDefaultMargin = 1 AND ISNULL(UnitCoGS, 0) = 0) THEN NetSales * @DefaultCoGSPercent / Quantity ELSE UnitCoGS END AS UnitCoGS	
 FROM dbo.profitreportentry(@PwShopId)
 WHERE PaymentStatus >= @MinPaymentStatus
+AND IsNonZeroValue >= @MinIsNonZeroValue
 GO
 
 
