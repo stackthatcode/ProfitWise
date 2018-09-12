@@ -216,8 +216,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
                         Quantity * ISNULL(UnitCogs, 0) AS CoGS,
                         Quantity AS Quantity, " + 
                         _paymentStatusInsertField +
-                        @", ShopifyOrderId, UnitPrice, UnitCogs
+                        @", ShopifyOrderId, UnitPrice, UnitCogs, 1                        
                         FROM orderlineitem(@PwShopId) ";
+            // Notice - that "IsNonZeroValue" is defaulting to "1"
 
             if (context.ShopifyOrderId != null)
                 query += OrderIdWhereClause();
@@ -232,10 +233,11 @@ namespace ProfitWise.Data.Repositories.Multitenant
 		                t1.PwProductId, t1.PwVariantId, -t1.Amount AS NetSales, 	
                         -t1.RestockQuantity * ISNULL(t2.UnitCoGS, 0) AS CoGS, 	
 	                    -t1.RestockQuantity AS Quantity, " +
-                        _paymentStatusInsertField + @", NULL, t2.UnitPrice, t2.UnitCogs " + 
+                        _paymentStatusInsertField + @", NULL, t2.UnitPrice, t2.UnitCogs, 1 " + 
                     @" FROM orderrefund(@PwShopId) t1
 		            INNER JOIN orderlineitem(@PwShopId) t2
 			            ON t1.ShopifyOrderId = t2.ShopifyOrderId AND t1.ShopifyOrderLineId = t2.ShopifyOrderLineId ";
+            // Notice - that "IsNonZeroValue" is defaulting to "1"
 
             if (context.ShopifyOrderId != null)
                 query += OrderIdWhereClause("t1");
@@ -248,9 +250,10 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 @"INSERT INTO profitreportentry(@PwShopId)
                 SELECT t1.PwShopId, t1.AdjustmentDate, @AdjustmentEntry AS EntryType, t1.ShopifyOrderId, 
                     t1.ShopifyAdjustmentId AS SourceId, NULL, NULL, t1.Amount AS NetSales, 
-                    0 AS CoGS, NULL AS Quantity, " + _paymentStatusInsertField + @", NULL, NULL, NULL " +
+                    0 AS CoGS, NULL AS Quantity, " + _paymentStatusInsertField + @", NULL, NULL, NULL, 1 " +
                 @"FROM orderadjustment(@PwShopId) t1 
                     INNER JOIN ordertable(@PwShopId) t2 ON t1.ShopifyOrderId = t2.ShopifyOrderId ";
+            // Notice - that "IsNonZeroValue" is defaulting to "1"
 
             if (context.ShopifyOrderId != null)
                 query += OrderIdWhereClause("t1");
