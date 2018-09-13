@@ -200,6 +200,7 @@
     <Compile Include="Model\GoodsOnHand\Totals.cs" />
     <Compile Include="Model\Preferences\DateRange.cs" />
     <Compile Include="Model\Preferences\DateRangeDefaults.cs" />
+    <Compile Include="Model\Preferences\MinIsNonZeroValueConstants.cs" />
     <Compile Include="Model\Preferences\ProfitRealizationConstants.cs" />
     <Compile Include="Model\Profit\CurrentUnitCogsAndPrice.cs" />
     <Compile Include="Model\Profit\DateTotal.cs" />

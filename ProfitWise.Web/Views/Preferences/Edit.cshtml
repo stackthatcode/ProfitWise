@@ -140,6 +140,41 @@
 
     <div class="row">
         <div class="col-xs-12">
+            <div class="panel panel-default" id="min-is-nonzero-value">
+                <label>Do you want reports to include or exclude orders with $0 value?</label>
+
+                <div class="preference-control-cell">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="minNonZeroRadios"
+                                   data-bind="value:@MinIsNonZeroValueConstants.AllOrders,
+                                            checked: $root.MinIsNonZeroValue,
+                                            event: { change: $root.UpdateMinIsNonZeroValue }">
+                            Include all orders, both $0 value and non-zero value
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="minNonZeroRadios"
+                                   data-bind="value:@MinIsNonZeroValueConstants.ExcludeZeroValueOrders,
+                                            checked: $root.MinIsNonZeroValue,
+                                            event: { change: $root.UpdateMinIsNonZeroValue }">
+                            Exclude orders that have $0 value
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="vert-spacer"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
             <div class="panel panel-default" id="default-date-range">
                 <label>Default Date Range for Dashboard</label>
                 <div class="preference-control-cell" 
@@ -154,6 +189,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="vert-spacer"></div>
         </div>
     </div>
 
@@ -246,6 +287,9 @@
         };
 
         self.ProfitRealization = ko.observable(data.ProfitRealization);
+        
+        self.MinIsNonZeroValue = ko.observable(data.MinIsNonZeroValue);
+
         self.UpdateProfitRealization = function() {
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/UpdateProfitRealization", { profitRealizationId: self.ProfitRealization() });
@@ -257,6 +301,11 @@
             ajax.HttpPost("/Preferences/UpdateDefaultDateRange", { dateRangeId: self.DateRangeDefault() });
         };
         
+        self.UpdateMinIsNonZeroValue = function() {
+            var ajax = new ProfitWiseFunctions.Ajax();
+            ajax.HttpPost("/Preferences/UpdateMinIsNonZeroValue", { minIsNonZeroValue: self.MinIsNonZeroValue() });
+        };
+
         self.ResetProfitWiseTour = function() {
             var ajax = new ProfitWiseFunctions.Ajax();
             ajax.HttpPost("/Preferences/ResetTour", { });
@@ -295,10 +344,16 @@
             placement: 'bottom',
         },
         {
+            element: "#min-is-nonzero-value",
+            title: "Exclude $0 orders for accuracy",
+            content: "You can configure ProfitWise to either include or exclude $0 value orders.",
+            placement: 'top',
+        },
+        {
             element: "#default-date-range",
             title: "Default Date Range",
             content: "Here, you can choose which date range you would like to have displayed by default when you visit the ProfitWise Dashboard. You can always choose a different date range on the dashboard and save custom report views, but this is the date range that will be displayed by default.",
-            placement: 'top',
+            placement: 'bottom',
         },
         {
             element: "#reset-tour",

@@ -96,6 +96,15 @@ namespace ProfitWise.Web.Controllers
         }
 
         [HttpPost]
+        public ActionResult UpdateMinIsNonZeroValue(int minIsNonZeroValue)
+        {
+            var shop = HttpContext.IdentitySnapshot().PwShop;
+            _shopRepository.UpdateMinIsNonZeroValue(shop.PwShopId, minIsNonZeroValue);
+            shop.MinIsNonZeroValue = minIsNonZeroValue; // Need to update the in-memory value!
+            return JsonNetResult.Success();
+        }
+
+        [HttpPost]
         public ActionResult StoreDataReady()
         {
             var shop = HttpContext.IdentitySnapshot().PwShop;
