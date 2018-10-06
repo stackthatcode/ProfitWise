@@ -89,6 +89,7 @@
     <Compile Include="Interfaces\IRecurringApiRepository.cs" />
     <Compile Include="Interfaces\IWebhookApiRepository.cs" />
     <Compile Include="Interfaces\IShopApiRepository.cs" />
+    <Compile Include="Model\ApplicationCredit.cs" />
     <Compile Include="Model\ChargeStatus.cs" />
     <Compile Include="Model\Event.cs" />
     <Compile Include="Model\EventFilter.cs" />

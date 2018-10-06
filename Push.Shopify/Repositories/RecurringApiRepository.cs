@@ -48,6 +48,29 @@ namespace Push.Shopify.Repositories
             return RecurringApplicationCharge.FromDynamic(parent.recurring_application_charge);
         }
 
+        public virtual ApplicationCreditParent
+                    CreateApplicationCredit(decimal amount, string description)
+        {
+            var json = new
+            {
+                application_credit = new
+                {
+                    description = description,
+                    amount = amount
+                }
+            }.SerializeToJson();
+
+            var path = "/admin/application_credits.json";
+            var request = 
+                _requestFactory.HttpPost(
+                    ShopifyCredentials, path, json);
+            var response = _client.ExecuteRequest(request);
+
+            return response
+                    .Body
+                    .DeserializeFromJson<ApplicationCreditParent>();
+        }
+
         [Obsolete]
         public virtual RecurringApplicationCharge UpdateChargeAmount(long id, decimal amount)
         {

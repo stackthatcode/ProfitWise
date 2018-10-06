@@ -10,6 +10,7 @@ using ProfitWise.Data.Processes;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using ProfitWise.Data.Utility;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Web.Identity;
 using Push.Foundation.Web.Interfaces;
 using Push.Shopify.Factories;
@@ -38,6 +39,8 @@ namespace ProfitWise.Batch
         private const string ExecuteSingleUpload = "40";
         private const string CleanupOldFileUploads = "41";
 
+        private const string RefundOneMonth = "50";
+
         private const string AppUninstallTestRequest = "UNI";
         private const string ResetAdminPasswordOption = "W";
         
@@ -65,6 +68,9 @@ namespace ProfitWise.Batch
             
             Console.WriteLine("");
 
+            Console.WriteLine($"{RefundOneMonth} - Refund one month to customer");
+            Console.WriteLine("");
+
             Console.WriteLine($"{ExecuteSingleUpload} - Process a single file upload");
             Console.WriteLine($"{CleanupOldFileUploads} - Clean-up old file uploads");
             Console.WriteLine();
@@ -82,6 +88,11 @@ namespace ProfitWise.Batch
                     ? HangFireBackgroundServiceOption
                     : SolicitUserInput()?.Trim();
 
+            if (choice == RefundOneMonth)
+            {
+                ExecuteRefund();
+                return;
+            }
             if (choice == HangFireBackgroundServiceOption)
             {
                 HangFireBackgroundService();
@@ -182,6 +193,45 @@ namespace ProfitWise.Batch
 
             ExitWithAnyKey();
         }
+
+        private static void ExecuteRefund()
+        {
+            var container = Bootstrapper.ConfigureApp(false);
+
+            Console.WriteLine("Enter Shop Id to issue one month refund to:");
+            var shopId = Console.ReadLine().ToInteger();
+
+            Console.WriteLine(
+                    $"Enter refund amount - current monthly price is " + 
+                    $"{ShopOrchestrationService.ProfitWiseMonthlyPrice:C}");
+
+            var amount = Console.ReadLine().ToDecimal();
+
+            if (amount > ShopOrchestrationService.ProfitWiseMonthlyPrice)
+            {
+                Console.WriteLine($"{amount} exceeds the current monthly price");
+                ExitWithAnyKey();
+            }
+
+            Console.WriteLine(
+                $"Type REFUND to confirm you'd like to refund " +
+                $"{amount:C} to PwShopId {shopId}");
+
+            if (Console.ReadLine() != "REFUND")
+            {
+                ExitWithAnyKey();
+                return;
+            };
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<ShopOrchestrationService>();
+                service.IssueRefund(shopId, amount);
+            }
+
+            ExitWithAnyKey();
+        }
+
         private static void RunCleanupOldFileUploads()
         {
             var container = Bootstrapper.ConfigureApp(false);

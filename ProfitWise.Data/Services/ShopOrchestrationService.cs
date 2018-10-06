@@ -38,8 +38,8 @@ namespace ProfitWise.Data.Services
         private static readonly bool TestRecurringCharges =
                 ConfigurationManager.AppSettings.GetAndTryParseAsBool("TestRecurringCharges", false);
         
-        private const int DefaultFreeTrial = 14;
-        private const decimal ProfitWiseMonthlyPrice = 9.95m;
+        public const int DefaultFreeTrial = 14;
+        public const decimal ProfitWiseMonthlyPrice = 9.95m;
 
 
         public ShopOrchestrationService(
@@ -164,6 +164,32 @@ namespace ProfitWise.Data.Services
             };
 
             return charge;
+        }
+
+        public ApplicationCreditParent IssueRefund(int shopId, decimal amount)
+        {
+            if (amount > ProfitWiseMonthlyPrice)
+            {
+                throw new 
+                    ArgumentException(
+                        $"Amount {amount} exceeds monthly price");
+            }
+
+            var shop = _shopRepository.RetrieveByShopId(shopId);
+            var credentials = 
+                    _credentialService
+                        .Retrieve(shop.ShopOwnerUserId)
+                        .ToShopifyCredentials();
+
+            var repository = _apifactory.MakeRecurringApiRepository(credentials);
+            var result = 
+                repository.CreateApplicationCredit(ProfitWiseMonthlyPrice, "Customer refund");
+
+            _logger.Info(
+                $"Application Credit created: " + 
+                result.SerializeToJson());
+
+            return result;
         }
 
         public PwRecurringCharge CreateCharge(string userId, string returnUrl, int? freeTrialOverride = null)
