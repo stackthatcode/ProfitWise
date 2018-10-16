@@ -207,11 +207,11 @@ namespace ProfitWise.Batch
 
             var amount = Console.ReadLine().ToDecimal();
 
-            if (amount > ShopOrchestrationService.ProfitWiseMonthlyPrice)
-            {
-                Console.WriteLine($"{amount} exceeds the current monthly price");
-                ExitWithAnyKey();
-            }
+            //if (amount > ShopOrchestrationService.ProfitWiseMonthlyPrice)
+            //{
+            //    Console.WriteLine($"{amount} exceeds the current monthly price");
+            //    ExitWithAnyKey();
+            //}
 
             Console.WriteLine(
                 $"Type REFUND to confirm you'd like to refund " +

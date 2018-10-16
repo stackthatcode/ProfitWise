@@ -168,12 +168,12 @@ namespace ProfitWise.Data.Services
 
         public ApplicationCreditParent IssueRefund(int shopId, decimal amount)
         {
-            if (amount > ProfitWiseMonthlyPrice)
-            {
-                throw new 
-                    ArgumentException(
-                        $"Amount {amount} exceeds monthly price");
-            }
+            //if (amount > ProfitWiseMonthlyPrice)
+            //{
+            //    throw new 
+            //        ArgumentException(
+            //            $"Amount {amount} exceeds monthly price");
+            //}
 
             var shop = _shopRepository.RetrieveByShopId(shopId);
             var credentials = 
@@ -183,7 +183,7 @@ namespace ProfitWise.Data.Services
 
             var repository = _apifactory.MakeRecurringApiRepository(credentials);
             var result = 
-                repository.CreateApplicationCredit(ProfitWiseMonthlyPrice, "Customer refund");
+                repository.CreateApplicationCredit(amount, "Customer refund");
 
             _logger.Info(
                 $"Application Credit created: " + 
