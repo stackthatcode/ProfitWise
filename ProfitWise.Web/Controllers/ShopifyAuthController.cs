@@ -85,7 +85,7 @@ namespace ProfitWise.Web.Controllers
 
             var redirectUrl = GlobalConfig.BuildUrl("/ShopifyAuth/ShopifyReturn");
             
-            var urlBase = $"https://{fullShopDomain}/admin/oauth/authorize";
+            var oAuthBase = $"/oauth/authorize";
             var queryString =
                 new QueryStringBuilder()
                     .Add("client_id", ProfitWiseConfiguration.Settings.ShopifyApiKey)
@@ -93,14 +93,16 @@ namespace ProfitWise.Web.Controllers
                     .Add("redirect_uri", redirectUrl)
                     .ToString();
 
-            var finalUrl = $"{urlBase}?{queryString}";
+            var oAuthPath = $"{oAuthBase}?{queryString}";
             
             if (ProfitWiseConfiguration.Settings.ShopifyApiKey.IsNullOrEmpty())
             {
                 throw new Exception("Null or empty ShopifyApiKey - please check configuration");
             }
-            
-            return Redirect(finalUrl);
+
+            // Redirect for Shopify Charge approval
+            return View("OAuthRedirect", 
+                        new OAuthRedirectModel(oAuthPath, fullShopDomain));
         }
 
 

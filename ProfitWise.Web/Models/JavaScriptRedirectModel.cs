@@ -16,5 +16,15 @@
                 SubTitle = "Redirecting to Shopify...",
             };
         }
+        
+        public static JavaScriptRedirectModel BuildForOAuth(string url)
+        {
+            return new JavaScriptRedirectModel
+            {
+                Url = url,
+                Header = "ProfitWise - Authorizing through Shopify",
+                SubTitle = "Redirecting to Shopify...",
+            };
+        }
     }
 }

@@ -1,0 +1,38 @@
+@using ProfitWise.Data.Configuration
+@using ProfitWise.Web.Plumbing
+@model ProfitWise.Web.Models.OAuthRedirectModel
+
+
+<!-- Shopify JavaScript API -->
+<script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+
+
+<script type='text/javascript'>
+    var apiKey = '@ProfitWiseConfiguration.Settings.ShopifyApiKey';
+    var domain = '@Model.ShopDomain';
+    var oAuthAdminPath = '@Model.OAuthAdminPath';
+
+    ShopifyApp.init({
+        apiKey: apiKey,
+        shopOrigin: "https://3duniverse.myshopify.com",
+    });
+
+    // If the current window is the 'parent', change the URL by setting location.href
+    if (window.top == window.self) {
+        //alert("Redirecting via Javascript");
+
+        window.location.assign('https://' + domain + '/admin' + oAuthAdminPath);
+
+    // If the current window is the 'child', change the parent's URL with ShopifyApp.redirect
+    } else {
+        //alert("Redirecting via Embedded SDK");
+
+        ShopifyApp.redirect(oAuthAdminPath);
+    }
+</script>
+
+<div style="font-family: Arial; color: #AAA;">
+    <h2 class="header">ProfitWise - Authorizing through Shopify</h2>
+    <h4>Redirecting to Shopify...</h4>
+    <img src="@GlobalConfig.BaseUrl/Content/images/spinner.gif"/>
+</div>
