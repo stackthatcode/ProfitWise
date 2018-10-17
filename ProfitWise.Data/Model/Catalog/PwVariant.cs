@@ -33,7 +33,7 @@ namespace ProfitWise.Data.Model.Catalog
         public string Title { get; set; }
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
-        public decimal CurrentPrice { get; set; }
+        public decimal? CurrentPrice { get; set; }
         public int? Inventory { get; set; }
 
         public bool IsActive { get; set; }
