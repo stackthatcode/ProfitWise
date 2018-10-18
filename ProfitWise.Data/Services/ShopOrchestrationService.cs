@@ -200,7 +200,20 @@ namespace ProfitWise.Data.Services
             var billingRepository = _factory.MakeBillingRepository(shop);
 
             // Invoke Shopify API to create the Recurring Application Charge
-            var chargeParameter = RecurringChargeFactory(shop.IsOwnedBy3duniverse);
+            var chargeParameter = 
+                RecurringChargeFactory(shop.IsOwnedBy3duniverse 
+                        || shop.Domain.Contains("bridge-over-monsters"));
+
+
+            if (chargeParameter.test == true)
+            {
+                _logger.Info($"Test Charge flagged for {shop.Domain}");
+            }
+            else
+            {
+                _logger.Info($"LIVE Charge flagged for {shop.Domain}");
+            }
+
             chargeParameter.return_url = returnUrl;
 
             if (freeTrialOverride.HasValue)

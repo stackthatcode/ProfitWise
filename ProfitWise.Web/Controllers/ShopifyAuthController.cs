@@ -74,11 +74,49 @@ namespace ProfitWise.Web.Controllers
             _shopOrchestrationService = shopSynchronizationService;
         }
 
-
-        // Shopify OAuth authentication & authorization flow
         [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
         {
+            var userId = HttpContext.User.ExtractUserId();
+            if (userId != null)
+            {
+                Redirect("~");
+            }
+
+            // First strip everything off so we can standardize
+            var correctedShopName = shop.ShopNameFromDomain();
+            var fullShopDomain = $"{correctedShopName}.myshopify.com";
+
+            var redirectUrl = GlobalConfig.BuildUrl("/ShopifyAuth/ShopifyReturn");
+
+            var urlBase = $"https://{fullShopDomain}/admin/oauth/authorize";
+            var queryString =
+                new QueryStringBuilder()
+                    .Add("client_id", ProfitWiseConfiguration.Settings.ShopifyApiKey)
+                    .Add("scope", "read_orders,read_products,read_all_orders")
+                    .Add("redirect_uri", redirectUrl)
+                    .ToString();
+
+            var finalUrl = $"{urlBase}?{queryString}";
+
+            if (ProfitWiseConfiguration.Settings.ShopifyApiKey.IsNullOrEmpty())
+            {
+                throw new Exception("Null or empty ShopifyApiKey - please check configuration");
+            }
+
+            return Redirect(finalUrl);
+        }
+
+        // Shopify OAuth authentication & authorization flow
+        [AllowAnonymous]
+        public ActionResult LoginJavascript(string shop, string returnUrl)
+        {
+            var userId = HttpContext.User.ExtractUserId();
+            if (userId != null)
+            {
+                Redirect("~");
+            }
+
             // First strip everything off so we can standardize
             var correctedShopName = shop.ShopNameFromDomain();            
             var fullShopDomain = $"{correctedShopName}.myshopify.com";
@@ -315,8 +353,11 @@ namespace ProfitWise.Web.Controllers
 
             if (charge != null && charge.LastStatus == ChargeStatus.Pending)
             {
-                _logger.Info($"User attempting to login with Pending Shopify Charge {charge.PwChargeId}");
+                _logger.Info(
+                    $"User attempting to login with Pending Shopify Charge {charge.PwChargeId}");
 
+                _logger.Info($"Charge Confirmation URL {charge.ConfirmationUrl}");
+                
                 // Redirect for Shopify Charge approval
                 return View("JavaScriptRedirect", 
                     JavaScriptRedirectModel.BuildForChargeConfirm(charge.ConfirmationUrl));
@@ -328,7 +369,7 @@ namespace ProfitWise.Web.Controllers
             {
                 // Create ProfitWise subscription and save
                 var verifyUrl = GlobalConfig.BaseUrl + $"/ShopifyAuth/VerifyBilling";
-
+                
                 // Invoke the Shopify API and save to ProfitWise SQL
                 var newCharge =
                     charge != null && charge.MustDestroyOnNextLogin
@@ -521,8 +562,8 @@ namespace ProfitWise.Web.Controllers
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             Response.SuppressFormsAuthenticationRedirect = true;
             Response.TrySkipIisCustomErrors = true;
-           
-            var url = GlobalConfig.BaseUrl + $"/ShopifyAuth/Login";
+
+            var url = GlobalConfig.LoginUrl;
             var shopParameterExists = false;
             
             if (returnUrl != null)

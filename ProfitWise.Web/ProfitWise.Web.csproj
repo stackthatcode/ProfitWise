@@ -553,7 +553,7 @@
   <ItemGroup>
     <Content Include="App_Browsers\generic.browser" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\Rackspace Jonze Is At it!.pubxml" />
+    <None Include="Properties\PublishProfiles\ProfitWise.Web to Rackspace.pubxml" />
     <Content Include="Views\Shared\_Impersonation.cshtml" />
     <Content Include="Views\Error\Maintenance.cshtml" />
     <Content Include="Views\ShopifyAuth\JavaScriptRedirect.cshtml" />

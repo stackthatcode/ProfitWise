@@ -32,7 +32,16 @@ namespace ProfitWise.Web.Attributes
             // Pull the User ID from OWIN plumbing...
             var currentUrl = filterContext.HttpContext.Request.Url.ToString();
             var shopParameter = filterContext.HttpContext.Request.QueryString["shop"];
-            var userId = filterContext.HttpContext.User.ExtractUserId();            
+            var userId = filterContext.HttpContext.User.ExtractUserId();
+
+            if (userId == null)
+            {
+                logger.Info($"(No User Id) - redirecting to Login {shopParameter} / {currentUrl}");
+                filterContext.Result = 
+                    GlobalConfig.Redirect(
+                        GlobalConfig.BuildLoginUrl(shopParameter), currentUrl);
+                return;
+            }
 
 
             // Get the Shop Credentials

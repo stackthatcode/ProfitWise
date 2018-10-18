@@ -2,6 +2,9 @@
 using ProfitWise.Data.Factories;
 using ProfitWise.Web.Attributes;
 using ProfitWise.Web.Models;
+using ProfitWise.Web.Plumbing;
+using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Json;
 
 namespace ProfitWise.Web.Controllers
@@ -13,15 +16,18 @@ namespace ProfitWise.Web.Controllers
     public class ReportController : Controller
     {
         private readonly MultitenantFactory _factory;
+        private readonly IPushLogger _logger;
 
-        public ReportController(MultitenantFactory factory)
+        public ReportController(MultitenantFactory factory, IPushLogger logger)
         {
             _factory = factory;
+            _logger = logger;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Profitability()
-        {
+        {            
             return View();
         }
 

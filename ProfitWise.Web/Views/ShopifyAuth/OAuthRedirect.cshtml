@@ -10,11 +10,11 @@
 <script type='text/javascript'>
     var apiKey = '@ProfitWiseConfiguration.Settings.ShopifyApiKey';
     var domain = '@Model.ShopDomain';
-    var oAuthAdminPath = '@Model.OAuthAdminPath';
+    var oAuthAdminPath = '@(new HtmlString(Model.OAuthAdminPath))';
 
     ShopifyApp.init({
         apiKey: apiKey,
-        shopOrigin: "https://3duniverse.myshopify.com",
+        shopOrigin: "@Model.Origin",
     });
 
     // If the current window is the 'parent', change the URL by setting location.href
