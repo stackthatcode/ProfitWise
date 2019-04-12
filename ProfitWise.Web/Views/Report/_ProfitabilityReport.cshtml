@@ -441,7 +441,7 @@
 
         self.ReportId = ko.observable();
 
-        self.Initialize = function() {
+        self.Initialize = function () {
             self.PagingModel.PageNumber(1);
             self.SortingModel.SelectedColumnIndex(4);
             self.SortingModel.SortByDirectionDown(true);
@@ -554,10 +554,21 @@
 
         self.RefreshReportData = function (reportId, callback) {
             self.ReportId(reportId);
+            
             if (self.SummaryActive()) {
                 self.ProfitabilitySummaryContext.LoadDataset(reportId, callback);
             } else {
                 self.ProfitabilityDetailContext.Initialize();
+
+                // PRODUCTION PATCH - pull the Currency Id from the Summary, which is always
+                // ... rendered first
+                if (self.ProfitabilitySummaryContext.Data() &&
+                    self.ProfitabilitySummaryContext.Data().CurrencyId) {
+
+                    var currencyId = self.ProfitabilitySummaryContext.Data().CurrencyId;
+                    self.ProfitabilityDetailContext.Currency(currencyId);
+                }
+
                 self.ProfitabilityDetailContext.LoadDataset(reportId, callback);
             }
         };
