@@ -79,7 +79,7 @@ namespace ProfitWise.Batch
         
         static void Main(string[] args)
         {
-            Console.WriteLine("ProfitWise.Batch v1.0 - Push Automated Commerce LLC");
+            Console.WriteLine("ProfitWise.Batch v1.0 - Logic Automated LLC");
             Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++");
             Console.WriteLine("");
 
