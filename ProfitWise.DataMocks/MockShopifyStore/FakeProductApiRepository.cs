@@ -123,9 +123,9 @@ namespace ProfitWise.DataMocks
             return Products.Count;
         }
 
-        public IList<Product> Retrieve(ProductFilter filter, int page = 1, int limit = 250)
+        public IList<Product> Retrieve(ProductFilter filter, int page = 1, int limit = 250, bool includeCost = false)
         {
-            return Products.Skip((page - 1)*limit).Take(limit).ToList();
+            return Products.Skip((page - 1) * limit).Take(limit).ToList();
         }
     }
 }

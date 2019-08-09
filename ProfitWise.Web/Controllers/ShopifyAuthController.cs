@@ -93,7 +93,7 @@ namespace ProfitWise.Web.Controllers
             var queryString =
                 new QueryStringBuilder()
                     .Add("client_id", ProfitWiseConfiguration.Settings.ShopifyApiKey)
-                    .Add("scope", "read_orders,read_products,read_all_orders")
+                    .Add("scope", "read_orders,read_products,read_all_orders,read_inventory")
                     .Add("redirect_uri", redirectUrl)
                     .ToString();
 

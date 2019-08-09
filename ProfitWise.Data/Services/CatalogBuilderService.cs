@@ -153,7 +153,7 @@ namespace ProfitWise.Data.Services
                 Variants = new List<PwVariant>(),
 
                 CogsTypeId = CogsType.FixedAmount,
-                CogsAmount = 0,
+                CogsAmount = context.Cost,
                 CogsCurrencyId = this.PwShop.CurrencyId,
                 CogsMarginPercent = null,
                 CogsDetail = false,

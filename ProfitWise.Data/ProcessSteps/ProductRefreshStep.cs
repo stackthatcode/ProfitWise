@@ -100,7 +100,8 @@ namespace ProfitWise.Data.ProcessSteps
             {
                 _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
 
-                var products = productApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
+                var products = productApiRepository
+                    .Retrieve(filter, pagenumber, _configuration.MaxProductRate, true);
                 results.AddRange(products);
                 WriteProductsToDatabase(existingMasterProducts, shop, products);
             }

@@ -94,6 +94,7 @@
     <Compile Include="Model\Event.cs" />
     <Compile Include="Model\EventFilter.cs" />
     <Compile Include="Model\FinancialStatus.cs" />
+    <Compile Include="Model\InventoryItem.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderAdjustment.cs" />
     <Compile Include="Model\OrderFilter.cs" />

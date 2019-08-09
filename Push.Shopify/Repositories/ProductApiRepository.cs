@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac.Extras.DynamicProxy2;
+using Castle.Components.DictionaryAdapter.Xml;
 using Newtonsoft.Json;
+using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
@@ -46,7 +49,8 @@ namespace Push.Shopify.Repositories
             return count;
         }
 
-        public virtual IList<Product> Retrieve(ProductFilter filter, int page = 1, int limit = 250)
+        public virtual IList<Product> Retrieve(
+                ProductFilter filter, int page = 1, int limit = 250, bool includeCost = false)
         {
             var querystring
                 = new QueryStringBuilder()
@@ -91,13 +95,45 @@ namespace Push.Shopify.Repositories
                             UpdatedAt = variant.updated_at,
                             Inventory = variant.inventory_quantity,
                             InventoryManagement = variant.inventory_management,
+                            InventoryItemId = variant.inventory_item_id,
                         });
+                }
+
+                var ids = resultProduct.Variants.Select(x => x.InventoryItemId).ToList();
+
+                var inventoryItems = RetrieveInventoryItems(ids);
+
+                foreach (var item in inventoryItems.inventory_items)
+                {
+                    var variant =
+                        resultProduct.Variants.FirstOrDefault(x => x.InventoryItemId == item.id);
+
+                    if (variant != null)
+                    {
+                        variant.Cost = item.cost ?? 0m;
+                    }
                 }
 
                 results.Add(resultProduct);
             }
 
             return results;
+        }
+
+        public virtual InventoryItemList RetrieveInventoryItems(IList<long> inventoryItemIds)
+        {
+            var querystring
+                = new QueryStringBuilder()
+                    .Add("ids", inventoryItemIds.ToCommaSeparatedList())
+                    .ToString();
+
+            var path = "/admin/inventory_items.json?" + querystring;
+
+            var request = _requestFactory.HttpGet(ShopifyCredentials, path);
+            var clientResponse = _client.ExecuteRequest(request);
+            _logger.Trace(clientResponse.Body);
+
+            return JsonConvert.DeserializeObject<InventoryItemList>(clientResponse.Body);
         }
     }
 }

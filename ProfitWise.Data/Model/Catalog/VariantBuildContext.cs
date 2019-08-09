@@ -15,10 +15,11 @@ namespace ProfitWise.Data.Model.Catalog
         public long? ShopifyProductId { get; set; }
         public long? ShopifyVariantId { get; set; }
         public decimal Price { get; set; }
+        public decimal Cost { get; set; }
         public bool IsActive { get; set; }
         public int Inventory { get; set; }
         public bool InventoryTracked { get; set; }
-
+        
         public VariantBuildContext()
         {            
         }
@@ -31,6 +32,7 @@ namespace ProfitWise.Data.Model.Catalog
             Sku = importedVariant.Sku;
             Title = importedVariant.Title;
             Price = importedVariant.Price;
+            Cost = importedVariant.Cost;
             ShopifyProductId = importedVariant.ParentProduct.Id;
             ShopifyVariantId = importedVariant.Id;
             Product = product;
