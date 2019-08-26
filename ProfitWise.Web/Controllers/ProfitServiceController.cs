@@ -270,8 +270,7 @@ namespace ProfitWise.Web.Controllers
 
             var tagTotals =
                 queryRepository
-                    .RetreiveTotalsByTag(queryContext)
-                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+                    .RetreiveTotalsByTag(queryContext);
 
             var summary = new Summary()
             {
