@@ -99,23 +99,29 @@ namespace ProfitWise.Data.Services
             return newShop;
         }
 
-        public void UpdateShopAndAccessTokenValid(string userId, string currencySymbol, string timeZoneIana)
+        public void UpdateShop(string userId, string currencySymbol, string timeZoneIana)
         {
             var pwShop = _shopRepository.RetrieveByUserId(userId);
             pwShop.CurrencyId = _currencyService.AbbrToCurrencyId(currencySymbol); ;
             pwShop.TimeZone = timeZoneIana;
-
-            using (var transaction = _shopRepository.InitiateTransaction())
-            {
-                _shopRepository.Update(pwShop);
-                _shopRepository.UpdateIsAccessTokenValid(pwShop.PwShopId, true);
-                _shopRepository.UpdateIsProfitWiseInstalled(pwShop.PwShopId, true, null);
-                transaction.Commit();
-            }
+            _shopRepository.Update(pwShop);
 
             _logger.Debug($"Updated Shop - UserId: {pwShop.ShopOwnerUserId}");
         }
 
+        public void UpdateAccessTokenValid(string userId)
+        {
+            var pwShop = _shopRepository.RetrieveByUserId(userId);
+
+            using (var transaction = _shopRepository.InitiateTransaction())
+            {
+                _shopRepository.UpdateIsAccessTokenValid(pwShop.PwShopId, true);
+                _shopRepository.UpdateIsProfitWiseInstalled(pwShop.PwShopId, true, null);
+                transaction.Commit();
+
+                _logger.Debug($"UpdateAccessTokenValid Shop {pwShop.Domain}");
+            }
+        }
 
 
         // Webhook subscription & maintenance service

@@ -122,7 +122,6 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }
 
         private string TotalsFields =
-
             @"SUM(t3.Quantity) AS TotalQuantitySold, 
             COUNT(DISTINCT(t3.OrderCountOrderId)) AS TotalOrders, 
             SUM(t3.NetSales) As TotalRevenue, 
@@ -229,9 +228,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
                     .AssignGrouping(ReportGrouping.Variant);
         }
 
-
-        public List<ExportDetailRow> 
-                RetreiveTotalsForExportDetail(TotalQueryContext queryContext)
+        public List<ExportDetailRow> RetreiveTotalsForExportDetail(TotalQueryContext queryContext)
         {
             var query =
                 @"SELECT 

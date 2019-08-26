@@ -77,11 +77,13 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult Login(string shop, string returnUrl)
         {
-            var userId = HttpContext.User.ExtractUserId();
-            if (userId != null)
-            {
-                Redirect("~");
-            }
+            //var userId = HttpContext.User.ExtractUserId();
+            //if (userId != null)
+            //{
+            //    Redirect("~");
+            //}
+
+            _logger.Info($"Logging in for shop {shop}");
 
             // First strip everything off so we can standardize
             var correctedShopName = shop.ShopNameFromDomain();
@@ -111,11 +113,13 @@ namespace ProfitWise.Web.Controllers
         [AllowAnonymous]
         public ActionResult LoginJavascript(string shop, string returnUrl)
         {
-            var userId = HttpContext.User.ExtractUserId();
-            if (userId != null)
-            {
-                Redirect("~");
-            }
+            _logger.Info($"Logging in for shop {shop}");
+
+            //var userId = HttpContext.User.ExtractUserId();
+            //if (userId != null)
+            //{
+            //    Redirect("~");
+            //}
 
             // First strip everything off so we can standardize
             var correctedShopName = shop.ShopNameFromDomain();            
@@ -139,8 +143,7 @@ namespace ProfitWise.Web.Controllers
             }
 
             // Redirect for Shopify Charge approval
-            return View("OAuthRedirect", 
-                        new OAuthRedirectModel(oAuthPath, fullShopDomain));
+            return View("OAuthRedirect", new OAuthRedirectModel(oAuthPath, fullShopDomain));
         }
 
 
@@ -236,7 +239,7 @@ namespace ProfitWise.Web.Controllers
             try
             {
                 var nonAccessTokenCredentials =
-                    ShopifyCredentials.Build(shopDomain, apikey, apisecret);
+                        ShopifyCredentials.Build(shopDomain, apikey, apisecret);
 
                 var oauthRepository = _factory.MakeOAuthRepository(nonAccessTokenCredentials);
 
@@ -333,8 +336,9 @@ namespace ProfitWise.Web.Controllers
                     }
 
                     _shopOrchestrationService
-                        .UpdateShopAndAccessTokenValid(
-                            user.Id, signIn.Shop.Currency, signIn.Shop.TimeZoneIana);
+                        .UpdateShop(user.Id, signIn.Shop.Currency, signIn.Shop.TimeZoneIana);
+
+                    _shopOrchestrationService.UpdateAccessTokenValid(user.Id);
                 }
 
                 return ShopUpsertionResult.Succeed();

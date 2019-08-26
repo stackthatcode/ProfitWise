@@ -19,10 +19,10 @@ namespace Push.Foundation.Web.Helpers
 
         public static string ExtractUserId(this IPrincipal user)
         {
-            var identity = user.Identity as ClaimsIdentity;
-            if (identity != null && identity.GetUserId() != null)
+            var claimsIdentity = user.Identity as ClaimsIdentity;
+            if (claimsIdentity != null && claimsIdentity.GetUserId() != null)
             {
-                return identity.GetUserId();
+                return claimsIdentity.GetUserId();
             }
             else
             {
