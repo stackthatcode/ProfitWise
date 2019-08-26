@@ -1,5 +1,5 @@
 ﻿using Autofac.Extras.DynamicProxy2;
-using Newtonsoft.Json;
+using Push.Foundation.Utilities.Json;
 using Push.Foundation.Utilities.Logging;
 using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
@@ -41,7 +41,7 @@ namespace Push.Shopify.Repositories
             var output = Shop.MakeFromJson(clientResponse.Body);
             return output;
         }
-        
+
     }
 }
 

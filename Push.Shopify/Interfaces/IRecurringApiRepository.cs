@@ -10,7 +10,7 @@ namespace Push.Shopify.Interfaces
         RecurringApplicationCharge RetrieveCharge(long id);
         RecurringApplicationCharge ActivateCharge(RecurringApplicationCharge charge);
         RecurringApplicationCharge UpdateChargeAmount(long id, decimal amount);
-        ApplicationCreditParent CreateApplicationCredit(decimal amount, string description);
+        ApplicationCreditParent CreateApplicationCredit(decimal amount, string description, bool test);
         void CancelCharge(long id);
     }
 }

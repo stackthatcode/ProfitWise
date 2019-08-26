@@ -189,13 +189,26 @@ namespace ProfitWise.Data.Services
 
             var repository = _apifactory.MakeRecurringApiRepository(credentials);
             var result = 
-                repository.CreateApplicationCredit(amount, "Customer refund");
+                repository.CreateApplicationCredit(amount, "Customer refund", true);
 
             _logger.Info(
                 $"Application Credit created: " + 
                 result.SerializeToJson());
 
             return result;
+        }
+
+        public ApplicationCreditParent 
+                CreateApplicationCredit(int shopId, decimal amount, string description)
+        {
+            var shop = _shopRepository.RetrieveByShopId(shopId);
+            var userId = shop.ShopOwnerUserId;
+            var credentials = _credentialService.Retrieve(userId).ToShopifyCredentials();
+
+            var api = _apifactory.MakeRecurringApiRepository(credentials);
+
+            var test = shop.Domain.Contains("onemoreteststorecanthurt");
+            return api.CreateApplicationCredit(amount, description, test);
         }
 
         public PwRecurringCharge CreateCharge(string userId, string returnUrl, int? freeTrialOverride = null)
@@ -208,7 +221,8 @@ namespace ProfitWise.Data.Services
             // Invoke Shopify API to create the Recurring Application Charge
             var chargeParameter = 
                 RecurringChargeFactory(shop.IsOwnedBy3duniverse 
-                        || shop.Domain.Contains("bridge-over-monsters"));
+                        || shop.Domain.Contains("bridge-over-monsters")
+                        || shop.Domain.Contains("onemoreteststorecanthurt"));
 
 
             if (chargeParameter.test == true)

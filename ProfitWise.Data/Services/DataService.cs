@@ -57,12 +57,15 @@ namespace ProfitWise.Data.Services
             var allProfit = totals.Sum(x => x.TotalProfit);
 
             // Compute Profit % for each line item
-            foreach (var groupTotal in totals)
+            if (grouping != ReportGrouping.Tag)
             {
-                groupTotal.ProfitPercentage =
-                    allProfit == 0 ? 0m : Math.Round((groupTotal.TotalProfit / allProfit), 8);
+                foreach (var groupTotal in totals)
+                {
+                    groupTotal.ProfitPercentage =
+                        allProfit == 0 ? 0m : Math.Round((groupTotal.TotalProfit / allProfit), 8);
+                }
             }
-              
+
             return totals;
         }
 

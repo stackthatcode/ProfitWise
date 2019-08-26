@@ -29,6 +29,7 @@ namespace ProfitWise.Batch
         private const string RebuildReportLedgeForSingleShop = "22";
         private const string UpdateRecurringCharge = "23";
         private const string RebuildReportLedgeForAllShops = "24";
+        private const string ApplicationCredit = "25";
 
         private const string EmitTimeZones = "30";
         private const string PopulateCalendar = "31";
@@ -127,6 +128,11 @@ namespace ProfitWise.Batch
             {
                 ExecuteManualShopRefresh();
                 return;
+            }
+
+            if (choice == ApplicationCredit)
+            {
+                CreateApplicationCredit();
             }
             if (choice == PopulateCalendar)
             {
@@ -424,6 +430,33 @@ namespace ProfitWise.Batch
             }
             ExitWithAnyKey();
         }
+
+        public static void CreateApplicationCredit()
+        {
+            Console.WriteLine("Please enter the Shop Id");
+            var shopId = Int32.Parse(Console.ReadLine());
+            Console.WriteLine("Please enter the Amount");
+            var amount = Decimal.Parse(Console.ReadLine());
+            Console.WriteLine("Please enter the Description");
+            var description = Console.ReadLine();
+
+            Console.WriteLine(
+                $"Are you sure you want to run this process? If so, type 'YES'");
+            var confirm = Console.ReadLine();
+            if (confirm != "YES")
+            {
+                return;
+            }
+
+            var container = Bootstrapper.ConfigureApp(false);
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<ShopOrchestrationService>();
+                service.CreateApplicationCredit(shopId, amount, description);
+            }
+            ExitWithAnyKey();
+        }
+
 
         public static void EmitTimeZonesToConsoleAndTextFile()
         {

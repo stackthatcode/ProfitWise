@@ -204,7 +204,11 @@
                     <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalRevenue, $parent.Currency())">
                     </td><td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalCogs, $parent.Currency())"></td>
                     <td data-bind="text: ProfitWiseFunctions.FormatCurrency(TotalProfit, $parent.Currency())"></td>
-                    <td><span data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage * 100.0)"></span>%</td>
+                    <td>
+                        <span data-bind="ifnot: $parent.Grouping() == '@ReportGrouping.Tag'">
+                            <span data-bind="text: ProfitWiseFunctions.ToDecimalPlaces(ProfitPercentage * 100.0)"></span>%
+                        </span>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -263,7 +267,7 @@
                         <div class="summary-header">
                             <h4 class="report-widget-label pull-left">Top Performing Products</h4>
                             <a href="#" id="product-detail-link"
-                                    class="btn btn-default pull-right"
+                               class="btn btn-default pull-right"
                                data-bind="click: function() { DetailCallback('@ReportGrouping.Product') }">
                                 <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Product Detail
                             </a>
@@ -326,6 +330,24 @@
                         <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
                                     data: { ProfitData: Data().ProductTypeByMostProfitable,
                                             CurrencyId: Data().CurrencyId } }"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row margin-less">
+                <div class="col-xs-12 col-sm-12 col-md-6">
+                    <div class="panel panel-default" style="padding:15px;">
+                        <div class="summary-header">
+                            <h4 class="report-widget-label pull-left">Top Performing Tags</h4>
+                            <a href="#" id="variant-detail-link" class="btn btn-default pull-right"
+                               data-bind="click: function() { DetailCallback('@ReportGrouping.Tag') }">
+                                <i class="glyphicon glyphicon-zoom-in"></i>&nbsp; Tag Detail
+                            </a>
+                        </div>
+                        <div id="tags-pie-chart" class="pie-chart"></div>
+                        <div data-bind="template: { name: 'Report-Profitability-Summary-Widget',
+                                        data: { ProfitData: Data().TagsByMostProfitable,
+                                                CurrencyId: Data().CurrencyId } }"></div>
                     </div>
                 </div>
             </div>
@@ -393,6 +415,7 @@
                         ProfitWiseWidgets.LoadPieChart('vendors-pie-chart', 'Top Vendors', summary.VendorsByMostProfitable, data.CurrencyId);
                         ProfitWiseWidgets.LoadPieChart('variants-pie-chart', 'Top Variants', summary.VariantByMostProfitable, data.CurrencyId);
                         ProfitWiseWidgets.LoadPieChart('product-types-pie-chart', 'Top Product Types', summary.ProductTypeByMostProfitable, data.CurrencyId);
+                        ProfitWiseWidgets.LoadPieChart('tags-pie-chart', 'Top Tags', summary.TagsByMostProfitable, data.CurrencyId);
                     }
 
                     if (callback) {

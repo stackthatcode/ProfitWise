@@ -180,10 +180,10 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 return RetreiveTotalsByProductType(queryContext);
 
             if (queryContext.Grouping == ReportGrouping.Vendor)
-                return RetreiveTotalsByTag(queryContext);
+                return RetreiveTotalsByVendor(queryContext);
 
             if (queryContext.Grouping == ReportGrouping.Tag)
-                return RetreiveTotalsByVendor(queryContext);
+                return RetreiveTotalsByTag(queryContext);
 
             throw new ArgumentException("RetrieveTotals does not support that ReportGrouping");
         }
@@ -200,6 +200,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
                             AND t2.PwVariantId = t3.PwVariantId  
 			                AND t3.EntryDate >= @StartDate 
                             AND t3.EntryDate <= @EndDate             
+                    INNER JOIN ordertag(@PwShopId) t4
+                        ON t3.ShopifyOrderId = t4.ShopifyOrderId
                 WHERE t1.PwReportId = @PwReportId";
 
             var query = "";
@@ -211,6 +213,8 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 query = "SELECT COUNT(DISTINCT(t1.ProductType)) " + queryGuts;
             if (queryContext.Grouping == ReportGrouping.Vendor)
                 query = "SELECT COUNT(DISTINCT(t1.Vendor)) " + queryGuts;
+            if (queryContext.Grouping == ReportGrouping.Tag)
+                query = "SELECT COUNT(DISTINCT(t4.Tag))" + queryGuts;
 
             return _connectionWrapper.Query<int>(query, queryContext).First();
         }
