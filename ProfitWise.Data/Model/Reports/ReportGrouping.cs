@@ -8,6 +8,7 @@
         Product = 4,
         Variant = 5,        
         DetailExport = 6,
+        Tag = 7,
     }
 }
 

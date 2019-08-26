@@ -146,7 +146,28 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
             return output;
         }
-        
+
+
+        private string QueryGutsForTotalDrilldownsByTag()
+        {
+            var output =
+                TotalsFields +
+                @"FROM profitquerystub(@PwShopId) t1
+		        INNER JOIN variant(@PwShopId) t2
+		            ON t1.PwMasterVariantId = t2.PwMasterVariantId 
+	            INNER JOIN profitreportentryprocessed(
+                        @PwShopId, @UseDefaultMargin, @DefaultCogsPercent, @MinPaymentStatus, @MinIsNonZeroValue) t3
+		            ON t2.PwProductId = t3.PwProductId 
+                        AND t2.PwVariantId = t3.PwVariantId
+                        AND t3.EntryDate >= @StartDate
+                        AND t3.EntryDate <= @EndDate
+                INNER JOIN ordertag(@PwShopId) t4
+                    ON t3.ShopifyOrderId = t4.ShopifyOrderId
+                WHERE t1.PwReportId = @PwReportId ";
+
+            return output;
+        }
+
         public List<GroupedTotal> RetrieveTotalsByContext(TotalQueryContext queryContext)
         {
             if (queryContext.Grouping == ReportGrouping.Product)
@@ -159,6 +180,9 @@ namespace ProfitWise.Data.Repositories.Multitenant
                 return RetreiveTotalsByProductType(queryContext);
 
             if (queryContext.Grouping == ReportGrouping.Vendor)
+                return RetreiveTotalsByTag(queryContext);
+
+            if (queryContext.Grouping == ReportGrouping.Tag)
                 return RetreiveTotalsByVendor(queryContext);
 
             throw new ArgumentException("RetrieveTotals does not support that ReportGrouping");
@@ -202,6 +226,19 @@ namespace ProfitWise.Data.Repositories.Multitenant
             return _connectionWrapper
                 .Query<GroupedTotal>(query, queryContext).ToList()
                 .AssignGrouping(ReportGrouping.Product);
+        }
+
+        public List<GroupedTotal> RetreiveTotalsByTag(TotalQueryContext queryContext)
+        {
+            var query =
+                @"SELECT t4.Tag AS GroupingKey, t4.Tag AS GroupingName, " +
+                QueryGutsForTotalDrilldownsByTag() +
+                @"GROUP BY t4.Tag " +
+                OrderingAndPagingForTotals(queryContext, "t4.Tag");
+
+            return _connectionWrapper
+                .Query<GroupedTotal>(query, queryContext).ToList()
+                .AssignGrouping(ReportGrouping.Tag);
         }
 
         public List<GroupedTotal> RetreiveTotalsByVariant(TotalQueryContext queryContext)

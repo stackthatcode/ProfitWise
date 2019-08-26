@@ -115,6 +115,23 @@ namespace ProfitWise.Data.Repositories.Multitenant
         }        
 
 
+        // Order Tags
+        public virtual void InsertOrderTags(long shopifyOrderId)
+        {
+            var sql = @"INSERT INTO ordertag(@PwShopId)
+                        SELECT PwShopId, ShopifyOrderId, IIF(TRIM(value) = '', '(empty)', TRIM(value))
+                        FROM ordertable(@PwShopId)
+                            CROSS APPLY STRING_SPLIT(Tags, ',')
+                        WHERE ShopifyOrderId = @shopifyOrderId";
+            _connectionWrapper.Execute(sql, new { PwShopId, shopifyOrderId });
+        }
+
+        public virtual void DeleteOrderTags(long shopifyOrderId)
+        {
+            var sql = @"DELETE FROM ordertag(@PwShopId) WHERE ShopifyOrderId = @shopifyOrderId;";
+            _connectionWrapper.Execute(sql, new { PwShopId, shopifyOrderId });
+        }
+
 
         // Line Items
         public virtual IList<ShopifyOrderLineItem> RetrieveLineItems(long shopifyOrderId)

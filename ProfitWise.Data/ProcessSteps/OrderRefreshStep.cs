@@ -342,6 +342,8 @@ namespace ProfitWise.Data.ProcessSteps
                 _pushLogger.Trace($"Inserting new Order Adjustment: {adjustment.ShopifyAdjustmentId}");
                 orderRepository.InsertAdjustment(adjustment);
             }
+
+            orderRepository.InsertOrderTags(orderFromShopify.Id);
         }
 
         public void UpdateOrderToPersistence(
@@ -385,6 +387,9 @@ namespace ProfitWise.Data.ProcessSteps
                 }
                 orderRepository.InsertAdjustment(adjustment);
             }
+
+            orderRepository.DeleteOrderTags(orderFromShopify.Id);
+            orderRepository.InsertOrderTags(orderFromShopify.Id);
         }
 
         public PwVariant FindCreateProductVariant(

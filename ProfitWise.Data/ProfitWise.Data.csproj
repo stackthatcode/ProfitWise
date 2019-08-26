@@ -228,6 +228,7 @@
     <Compile Include="Model\Reports\ReportType.cs" />
     <Compile Include="Model\ShopifyImport\ShopifyOrderAdjustment.cs" />
     <Compile Include="Model\ShopifyImport\ShopifyOrderLineRefund.cs" />
+    <Compile Include="Model\ShopifyImport\ShopifyOrderTag.cs" />
     <Compile Include="Model\Shop\PwTourState.cs" />
     <Compile Include="Model\Shop\TourIdentifiers.cs" />
     <Compile Include="Model\ExchangeRates\ExchangeRate.cs" />

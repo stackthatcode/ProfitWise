@@ -13,6 +13,7 @@ namespace ProfitWise.Data.Model.Profit
         public IList<GroupedTotal> VendorsByMostProfitable { get; set; }
         public IList<GroupedTotal> VariantByMostProfitable { get; set; }
         public IList<GroupedTotal> ProductTypeByMostProfitable { get; set; }
+        public List<GroupedTotal> TagsByMostProfitable { get; set; }
 
         public IList<GroupedTotal> TotalsByGroupingId(ReportGrouping groupingId)
         {

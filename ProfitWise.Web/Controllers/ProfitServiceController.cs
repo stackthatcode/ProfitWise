@@ -268,6 +268,11 @@ namespace ProfitWise.Web.Controllers
                     .RetreiveTotalsByVendor(queryContext)
                     .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
 
+            var tagTotals =
+                queryRepository
+                    .RetreiveTotalsByTag(queryContext)
+                    .AppendAllOthersAsDifferenceOfSummary(executiveSummary);
+
             var summary = new Summary()
             {
                 CurrencyId = shop.CurrencyId,
@@ -276,6 +281,7 @@ namespace ProfitWise.Web.Controllers
                 VariantByMostProfitable = variantTotals,
                 ProductTypeByMostProfitable = productTypeTotals,
                 VendorsByMostProfitable = vendorTotals,
+                TagsByMostProfitable = tagTotals,
             };
             return summary;
         }
