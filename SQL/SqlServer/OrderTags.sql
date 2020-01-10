@@ -1,16 +1,6 @@
 USE ProfitWise;
 GO
 
-/*
-SELECT * FROM profitreportentry(100001);
-
-SELECT * FROM ordertable(100001);
-
-SELECT TOP 100 * FROM shopifyorder;
-
-SELECT * FROM ordertag(100001);
-*/
-
 
 -- ### Table definition ###
 
@@ -44,16 +34,41 @@ AS
 RETURN SELECT * FROM shopifyordertag WHERE PwShopId = @PwShopId;
 GO
 
-INSERT INTO shopifyordertag
 
+
+-- Data population script
+DELETE FROM shopifyordertag;
+INSERT INTO shopifyordertag
+SELECT PwShopId, ShopifyOrderId, IIF(TRIM(value) = '', '(empty)', TRIM(value))
+FROM shopifyorder  
+    CROSS APPLY STRING_SPLIT(Tags, ',')  
+
+
+
+/*
+
+SELECT * FROM profitwiseshop;
+
+SELECT * FROM profitreportentry(100001);
+
+SELECT * FROM ordertable(100001);
+
+SELECT TOP 100 * FROM shopifyorder;
+
+SELECT * FROM ordertag(100001);
+
+DELETE FROM ordertag(100001) WHERE ShopifyOrderId = 1234;
+INSERT INTO ordertag(100001)
+SELECT PwShopId, ShopifyOrderId, IIF(TRIM(value) = '', '(empty)', TRIM(value))
+FROM ordertable(100001)
+    CROSS APPLY STRING_SPLIT(Tags, ',');
 
 
 WITH TagQuery (PwShopId, ShopifyOrderId, Tag) AS
 (
-SELECT PwShopId, ShopifyOrderId, TRIM(value)  
-FROM shopifyorder  
-    CROSS APPLY STRING_SPLIT(Tags, ',')  
-WHERE Tags <> ''
+	SELECT PwShopId, ShopifyOrderId, IIF(TRIM(value) = '', '(empty)', TRIM(value))
+	FROM shopifyorder  
+		CROSS APPLY STRING_SPLIT(Tags, ',')  
 )
 SELECT PwShopId, ShopifyOrderId, COUNT(Tag) 
 FROM TagQuery 
@@ -63,5 +78,6 @@ GROUP BY PwShopId, ShopifyOrderId;
 SELECT * FROM shopifyorder WHERE ShopifyOrderId = 111534080024;
 
 SELECT * FROM shopifyordertag WHERE ShopifyOrderId = 111534080024;
+*/
 
 

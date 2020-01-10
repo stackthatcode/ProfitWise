@@ -251,19 +251,19 @@ namespace ProfitWise.Data.ProcessSteps
             
             var repository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
 
+            var refreshContext = new EntryRefreshContext() { ShopifyOrderId = orderFromShopify.Id };
+            
             using (var transaction = repository.InitiateTransaction())
             {
-                if (existingOrder == null)
+                if (existingOrder != null)
                 {
-                    InsertOrderToPersistence(orderFromShopify, context);
-                }
-                else
-                {
-                    UpdateOrderToPersistence(orderFromShopify, existingOrder, context);
+                    cogsUpdateRepository.DeleteEntryLedger(refreshContext);
+                    var orderRepository = _multitenantFactory.MakeShopifyOrderRepository(context.PwShop);
+                    orderRepository.DeleteOrderTags(orderFromShopify.Id);
+                    orderRepository.DeleteOrderFullDepth(existingOrder.ShopifyOrderId);
                 }
 
-                var refreshContext = new EntryRefreshContext() { ShopifyOrderId = orderFromShopify.Id };
-                cogsUpdateRepository.DeleteEntryLedger(refreshContext);
+                InsertOrderToPersistence(orderFromShopify, context);
 
                 // Important Rule: ProfitWise does not maintain Ledge Entries for Orders that are:
                 // ... both Cancelled and with Payment that is Not Captured

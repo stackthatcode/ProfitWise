@@ -72,9 +72,12 @@
                     },
                     function (start, end, label) {
                         var newDate = {
-                            startdate: ProfitWiseFunctions.MomentStartOfDay(start).toDate(),
-                            enddate: ProfitWiseFunctions.MomentStartOfDay(end).toDate(),
+                            startdate: start.toDate(),
+                            enddate: end.toDate(),
                         };
+
+                        console.log("Datepicker Date:", newDate);
+
                         var value = valueAccessor();
                         value(newDate);
                         value.valueHasMutated();

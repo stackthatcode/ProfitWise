@@ -355,13 +355,25 @@
         self.Update = function(callback) {
             flow.exec(
                 function () {
+                    var startdate = 
+                        (self.DateRange().startdate.getMonth() + 1).toString() + "/" +
+                        (self.DateRange().startdate.getDate()).toString() + "/" +
+                        (self.DateRange().startdate.getFullYear()).toString();
+
+                    var enddate = 
+                        (self.DateRange().enddate.getMonth() + 1).toString() + "/" +
+                        (self.DateRange().enddate.getDate()).toString() + "/" +
+                        (self.DateRange().enddate.getFullYear()).toString();
+
+                    console.log(startdate, enddate);
+
                     var ajax = new ProfitWiseFunctions.Ajax();
                     var data = {
                         reportId: self.ReportId(),
                         groupingId: self.GroupingPopoverModel.Selection(),
                         orderingId: self.OrderingPopoverModel.Selection(),
-                        startDate: self.DateRange().startdate,
-                        endDate: self.DateRange().enddate,
+                        startDate: startdate,
+                        endDate: enddate,
                     };
 
                     ajax.HttpPost("/ReportService/Update", data, this);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
@@ -95,12 +94,12 @@ namespace ProfitWise.Data.Repositories.Multitenant
 
         public virtual void DeleteOrderFullDepth(long shopifyOrderId)
         {
-            var query = @"DELETE FROM ordertable(@PwShopId) WHERE ShopifyOrderId = @shopifyOrderId";
-            _connectionWrapper.Execute(query, new { PwShopId, shopifyOrderId });
-
             DeleteRefunds(shopifyOrderId);
             DeleteLineItems(shopifyOrderId);
             DeleteAdjustments(shopifyOrderId);
+
+            var query = @"DELETE FROM ordertable(@PwShopId) WHERE ShopifyOrderId = @shopifyOrderId";
+            _connectionWrapper.Execute(query, new { PwShopId, shopifyOrderId });
         }
 
         public virtual void MassDelete(IList<ShopifyOrder> orders)
@@ -119,7 +118,7 @@ namespace ProfitWise.Data.Repositories.Multitenant
         public virtual void InsertOrderTags(long shopifyOrderId)
         {
             var sql = @"INSERT INTO ordertag(@PwShopId)
-                        SELECT PwShopId, ShopifyOrderId, IIF(TRIM(value) = '', '(empty)', TRIM(value))
+                        SELECT PwShopId, ShopifyOrderId, IIF(RTRIM(LTRIM(value)) = '', '(empty)', RTRIM(LTRIM(value)))
                         FROM ordertable(@PwShopId)
                             CROSS APPLY STRING_SPLIT(Tags, ',')
                         WHERE ShopifyOrderId = @shopifyOrderId";
