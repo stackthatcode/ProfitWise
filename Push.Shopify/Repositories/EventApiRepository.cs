@@ -35,7 +35,7 @@ namespace Push.Shopify.Repositories
         
         public virtual int RetrieveCount(EventFilter filter)
         {
-            var url = "/admin/api/2019-07/api/2019-07/events/count.json?" + filter.ToQueryStringBuilder();
+            var url = "/admin/api/2019-07/events/count.json?" + filter.ToQueryStringBuilder();
             var request = _requestFactory.HttpGet(ShopifyCredentials, url);
             var clientResponse = _client.ExecuteRequest(request);
 
@@ -54,7 +54,7 @@ namespace Push.Shopify.Repositories
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
 
-            var url = "/admin/api/2019-07/api/2019-07/events.json?" + querystring;
+            var url = "/admin/api/2019-07/events.json?" + querystring;
             var request = _requestFactory.HttpGet(ShopifyCredentials, url);
             var clientResponse = _client.ExecuteRequest(request);
 

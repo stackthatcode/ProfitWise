@@ -10,6 +10,7 @@ using ProfitWise.Data.Model.ShopifyImport;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Web.Helpers;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -190,23 +191,24 @@ namespace ProfitWise.Data.ProcessSteps
 
             var catalogRetrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var masterProductCatalog = catalogRetrievalService.RetrieveFullCatalog();
+
             var pagenumber = 1;
-            string current_page_info = String.Empty;
+            string next_link = String.Empty;
 
             while (true)
             {
                 ListOfOrders importedOrders;
 
-                if (current_page_info == String.Empty)
+                if (next_link == String.Empty)
                 {
                     importedOrders = orderApiRepository.Retrieve(filter, _refreshServiceConfiguration.MaxOrderRate);
                 }
                 else
                 {
-                    importedOrders = orderApiRepository.Retrieve(current_page_info);
+                    importedOrders = orderApiRepository.Retrieve(next_link);
                 }
 
-                _pushLogger.Debug($"Page {pagenumber} - {importedOrders.Orders.Count} Orders to process");
+                _pushLogger.Debug($"Page {pagenumber++} - {importedOrders.Orders.Count} Orders to process");
 
                 WriteOrdersToPersistence(masterProductCatalog, importedOrders.Orders, shop);
 
@@ -224,12 +226,13 @@ namespace ProfitWise.Data.ProcessSteps
                 }
                 batchStateRepository.Update(batchState);
 
-                if (importedOrders.Link.IsNullOrEmpty() || importedOrders.Link == current_page_info)
+                var linkHeader = LinkHeader.FromHeader(importedOrders.Link);
+                if (linkHeader.Empty || linkHeader.EOF)
                 {
                     break;
                 }
 
-                current_page_info = importedOrders.Link;
+                next_link = linkHeader.NextLink;
             }
         }
 

@@ -8,6 +8,7 @@ using ProfitWise.Data.Model.Shop;
 using ProfitWise.Data.Repositories.System;
 using ProfitWise.Data.Services;
 using Push.Foundation.Utilities.Logging;
+using Push.Foundation.Web.Helpers;
 using Push.Shopify.Factories;
 using Push.Shopify.HttpClient;
 using Push.Shopify.Model;
@@ -91,22 +92,41 @@ namespace ProfitWise.Data.ProcessSteps
             _pushLogger.Info($"Executing Refresh for {count} Products");
 
             var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
-            var results = new List<Product>();
+            var output = new List<Product>();
 
             var retrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var existingMasterProducts = retrievalService.RetrieveFullCatalog();
 
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
-            {
-                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
+            var pagenumber = 1;
+            string next_link = String.Empty;
 
-                var products = productApiRepository
-                    .Retrieve(filter, pagenumber, _configuration.MaxProductRate, true);
-                results.AddRange(products);
-                WriteProductsToDatabase(existingMasterProducts, shop, products);
+            while (true)
+            {
+                _pushLogger.Debug($"Page {pagenumber++} of {numberofpages} pages");
+
+                ListOfProducts results;
+                if (next_link == String.Empty)
+                {
+                    results = productApiRepository.Retrieve(filter, _configuration.MaxProductRate);
+                }
+                else
+                {
+                    results = productApiRepository.RetrieveByPath(next_link);
+                }
+
+                output.AddRange(results.Products);
+                WriteProductsToDatabase(existingMasterProducts, shop, results.Products);
+
+                var linkHeader = LinkHeader.FromHeader(results.Link);
+                if (linkHeader.Empty || linkHeader.EOF)
+                {
+                    break;
+                }
+
+                next_link = linkHeader.NextLink;
             }
 
-            return results;
+            return output;
         }
 
         private void WriteProductsToDatabase(

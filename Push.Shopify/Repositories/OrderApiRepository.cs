@@ -36,7 +36,7 @@ namespace Push.Shopify.Repositories
 
         public int RetrieveCount(OrderFilter filter)
         {
-            var url = "/admin/api/2019-07/api/2019-07/orders/count.json?" + filter.ToQueryStringBuilder();
+            var url = "/admin/api/2019-07/orders/count.json?" + filter.ToQueryStringBuilder();
             var request = _requestFactory.HttpGet(ShopifyCredentials, url);
             var clientResponse = _client.ExecuteRequest(request);
             
@@ -55,25 +55,24 @@ namespace Push.Shopify.Repositories
                     .Add("limit", limit)
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
-            var path = string.Format("/admin/api/2019-07/api/2019-07/orders.json?" + querystring);
-            return ProcessRetrieve(path);
-        }
+            var path = string.Format("/admin/api/2019-07/orders.json?" + querystring);
 
-        public ListOfOrders Retrieve(string page_info)
-        {
-            var querystring
-                = new QueryStringBuilder()
-                    .Add("page_info", page_info)
-                    .ToString();
-
-            var path = string.Format("/admin/api/2019-07/api/2019-07/orders.json?" + querystring);
-            return ProcessRetrieve(path);
-        }
-
-        public ListOfOrders ProcessRetrieve(string path)
-        {
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
+
+            return ProcessRetrieve(clientResponse);
+        }
+
+        public ListOfOrders Retrieve(string path)
+        {
+            var request = _requestFactory.HttpGet(ShopifyCredentials, path, excludeBaseUrl:true);
+            var clientResponse = _client.ExecuteRequest(request);
+            return ProcessRetrieve(clientResponse);
+        }
+
+        public ListOfOrders ProcessRetrieve(HttpClientResponse clientResponse)
+        {
+
             var link = clientResponse.Headers.ContainsKey("Link") ? clientResponse.Headers["Link"] : "";
 
             _logger.Debug($"Status Code: {clientResponse.StatusCode}");
@@ -99,7 +98,7 @@ namespace Push.Shopify.Repositories
 
         public Order Retrieve(long orderId)
         {
-            var path = $"/admin/api/2019-07/api/2019-07/orders/{orderId}.json";  
+            var path = $"/admin/api/2019-07/orders/{orderId}.json";  
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
@@ -226,7 +225,7 @@ namespace Push.Shopify.Repositories
 
         public void Insert(string orderJson)
         {
-            var path = "/admin/api/2019-07/api/2019-07/orders.json";
+            var path = "/admin/api/2019-07/orders.json";
             var request = _requestFactory.HttpPost(ShopifyCredentials, path, orderJson);
             var clientResponse = _client.ExecuteRequest(request);
         }

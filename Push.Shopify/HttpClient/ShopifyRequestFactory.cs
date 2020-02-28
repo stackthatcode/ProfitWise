@@ -16,9 +16,9 @@ namespace Push.Shopify.HttpClient
             _configuration = configuration;
         }
 
-        public HttpWebRequest HttpGet(ShopifyCredentials credentials, string path)
+        public HttpWebRequest HttpGet(ShopifyCredentials credentials, string path, bool excludeBaseUrl = false)
         {
-            var request = FactoryWorker(credentials, path);
+            var request = FactoryWorker(credentials, path, excludeBaseUrl);
             request.Method = "GET";
             return request;
         }
@@ -62,13 +62,14 @@ namespace Push.Shopify.HttpClient
             return request;
         }
 
-        private HttpWebRequest FactoryWorker(ShopifyCredentials credentials, string path)
+        private HttpWebRequest FactoryWorker(ShopifyCredentials credentials, string path, bool excludeBaseUrl = false)
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            var url = credentials.ShopBaseUrl + path;
+            var url = excludeBaseUrl ? path : credentials.ShopBaseUrl + path;
+
             var req = (HttpWebRequest)WebRequest.Create(url);
             req.Timeout = _configuration.Timeout;
 

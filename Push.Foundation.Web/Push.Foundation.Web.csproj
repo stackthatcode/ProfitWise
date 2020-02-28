@@ -157,6 +157,7 @@
     <Compile Include="Helpers\RouteValueDictionaryExtensions.cs" />
     <Compile Include="Helpers\UrlExtensions.cs" />
     <Compile Include="Helpers\UtilityExtensions.cs" />
+    <Compile Include="Helpers\WebLinkHeader.cs" />
     <Compile Include="Http\TooManyHttpRequestsException.cs" />
     <Compile Include="Http\BadHttpStatusCodeException.cs" />
     <Compile Include="Http\HttpClient.cs" />

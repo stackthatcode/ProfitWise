@@ -45,16 +45,12 @@ namespace Push.Shopify.Repositories
             return count;
         }
 
-        public ListOfProducts Retrieve(string page_info)
+        public ListOfProducts RetrieveByPath(string path)
         {
-            var querystring
-                = new QueryStringBuilder()
-                    .Add("page_info", page_info)
-                    .ToString();
+            var request = _requestFactory.HttpGet(ShopifyCredentials, path, excludeBaseUrl:true);
+            var clientResponse = _client.ExecuteRequest(request);
 
-            var path = "/admin/api/2019-07/products.json?" + querystring;
-
-            return ProcessRetrieve(path);
+            return ProcessRetrieve(clientResponse);
         }
 
         public ListOfProducts Retrieve(ProductFilter filter, int limit = 250)
@@ -67,16 +63,16 @@ namespace Push.Shopify.Repositories
 
             var path = "/admin/api/2019-07/products.json?" + querystring;
 
-            return ProcessRetrieve(path);
+            var request = _requestFactory.HttpGet(ShopifyCredentials, path);
+            var clientResponse = _client.ExecuteRequest(request);
+            
+            return ProcessRetrieve(clientResponse);
         }
 
 
-        public ListOfProducts ProcessRetrieve(string path)
+        public ListOfProducts ProcessRetrieve(HttpClientResponse clientResponse)
         {
-            var request = _requestFactory.HttpGet(ShopifyCredentials, path);
-            var clientResponse = _client.ExecuteRequest(request);
             _logger.Trace(clientResponse.Body);
-
             var link = clientResponse.Headers.ContainsKey("Link") ? clientResponse.Headers["Link"] : "";
 
             _logger.Debug($"Status Code: {clientResponse.StatusCode}");
