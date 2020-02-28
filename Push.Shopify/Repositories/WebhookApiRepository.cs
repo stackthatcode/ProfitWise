@@ -34,7 +34,7 @@ namespace Push.Shopify.Repositories
 
         public Webhook Subscribe(Webhook request)
         {
-            var path = "/admin/webhooks.json";
+            var path = "/admin/api/2019-07/webhooks.json";
             var json = new
             {
                 webhook = new
@@ -54,7 +54,7 @@ namespace Push.Shopify.Repositories
 
         public Webhook UpdateAddress(Webhook request)
         {
-            var path = $"/admin/webhooks/{request.Id}.json";
+            var path = $"/admin/api/2019-07/webhooks/{request.Id}.json";
             var json = new
             {
                 webhook = new
@@ -76,7 +76,7 @@ namespace Push.Shopify.Repositories
             var encodedTopic = HttpUtility.UrlEncode(topic);
             var encodedAddress = HttpUtility.UrlEncode(address);
 
-            var path = $"/admin/webhooks.json?address={encodedAddress}&topic={encodedTopic}";
+            var path = $"/admin/api/2019-07/webhooks.json?address={encodedAddress}&topic={encodedTopic}";
             var httpRequest = _requestFactory.HttpGet(ShopifyCredentials, path);
 
             var clientResponse = _client.ExecuteRequest(httpRequest);
@@ -91,7 +91,7 @@ namespace Push.Shopify.Repositories
 
         public List<Webhook> RetrieveAll()
         {
-            var path = $"/admin/webhooks.json";
+            var path = $"/admin/api/2019-07/webhooks.json";
             var httpRequest = _requestFactory.HttpGet(ShopifyCredentials, path);
 
             var clientResponse = _client.ExecuteRequest(httpRequest);
@@ -106,7 +106,7 @@ namespace Push.Shopify.Repositories
         public Webhook Retrieve(string topic)
         {
             var encodedTopic = HttpUtility.UrlEncode(topic);
-            var path = $"/admin/webhooks.json?topic={encodedTopic}";
+            var path = $"/admin/api/2019-07/webhooks.json?topic={encodedTopic}";
             var httpRequest = _requestFactory.HttpGet(ShopifyCredentials, path);
 
             var clientResponse = _client.ExecuteRequest(httpRequest);
@@ -121,7 +121,7 @@ namespace Push.Shopify.Repositories
 
         public void Delete(long webHookId)
         {
-            var path = $"/admin/webhooks/{webHookId}.json";
+            var path = $"/admin/api/2019-07/webhooks/{webHookId}.json";
             var httpRequest = _requestFactory.HttpDelete(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(httpRequest);
         }

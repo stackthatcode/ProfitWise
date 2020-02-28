@@ -42,6 +42,7 @@ DELETE FROM batchstate(@PwShopId);
 
 DECLARE @UserId nvarchar(128);
 
+/*
 SELECT @UserId = ShopOwnerUserId FROM shop(@PwShopId);
 
 DELETE FROM tour(@PwShopId);
@@ -51,4 +52,5 @@ DELETE FROM AspNetUserClaims WHERE UserId = @UserId;
 DELETE FROM AspNetUserLogins WHERE UserId = @UserId;
 DELETE FROM AspNetUserRoles WHERE UserId = @UserId;
 DELETE FROM AspNetUsers WHERE Id = @UserId;
+*/
 

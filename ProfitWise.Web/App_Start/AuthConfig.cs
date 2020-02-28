@@ -68,6 +68,7 @@ namespace ProfitWise.Web
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString(UnauthorizedAccessUrl),
+                CookieManager = new SameSiteCookieManager(),
                 // CookieDomain = cookieDomain,
                 Provider = new CookieAuthenticationProvider
                 {

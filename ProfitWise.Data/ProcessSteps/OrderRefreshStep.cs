@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using ProfitWise.Data.Factories;
 using ProfitWise.Data.Model.Catalog;
 using ProfitWise.Data.Model.Cogs;
@@ -187,36 +188,48 @@ namespace ProfitWise.Data.ProcessSteps
             var count = orderApiRepository.RetrieveCount(filter);
             _pushLogger.Info($"{count} Orders to process ({filter})");
 
-            var numberofpages = 
-                PagingFunctions.NumberOfPages(
-                    _refreshServiceConfiguration.MaxOrderRate, count);
-
             var catalogRetrievalService = _multitenantFactory.MakeCatalogRetrievalService(shop);
             var masterProductCatalog = catalogRetrievalService.RetrieveFullCatalog();
+            var pagenumber = 1;
+            string current_page_info = String.Empty;
 
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
+            while (true)
             {
-                var importedOrders = 
-                    orderApiRepository.Retrieve(
-                        filter, pagenumber, _refreshServiceConfiguration.MaxOrderRate);
+                ListOfOrders importedOrders;
 
-                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages - {importedOrders.Count} Orders to process");
+                if (current_page_info == String.Empty)
+                {
+                    importedOrders = orderApiRepository.Retrieve(filter, _refreshServiceConfiguration.MaxOrderRate);
+                }
+                else
+                {
+                    importedOrders = orderApiRepository.Retrieve(current_page_info);
+                }
 
-                WriteOrdersToPersistence(masterProductCatalog, importedOrders, shop);
+                _pushLogger.Debug($"Page {pagenumber} - {importedOrders.Orders.Count} Orders to process");
+
+                WriteOrdersToPersistence(masterProductCatalog, importedOrders.Orders, shop);
 
                 // Update the Batch State based on Order Filter's Sort
                 var batchState = batchStateRepository.Retrieve();
                 if (filter.ShopifySortOrder == ShopifySortOrder.Ascending)
                 {
-                    var latestOrderUpdatedShopTz = importedOrders.Max(x => x.UpdatedAt);
+                    var latestOrderUpdatedShopTz = importedOrders.Orders.Max(x => x.UpdatedAt);
                     batchState.OrderDatasetEnd = latestOrderUpdatedShopTz.UtcDateTime;
                 }
                 else
                 {
-                    var earliestOrderCreatedShopTz = importedOrders.Min(x => x.UpdatedAt);
+                    var earliestOrderCreatedShopTz = importedOrders.Orders.Min(x => x.UpdatedAt);
                     batchState.OrderDatasetStart = earliestOrderCreatedShopTz.UtcDateTime;
                 }
                 batchStateRepository.Update(batchState);
+
+                if (importedOrders.Link.IsNullOrEmpty() || importedOrders.Link == current_page_info)
+                {
+                    break;
+                }
+
+                current_page_info = importedOrders.Link;
             }
         }
 

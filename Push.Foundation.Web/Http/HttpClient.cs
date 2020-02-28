@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Push.Foundation.Utilities.Logging;
@@ -22,10 +23,21 @@ namespace Push.Foundation.Web.Http
                     var sr = new StreamReader(resp.GetResponseStream());
                     var messageResponse = sr.ReadToEnd();
 
+                    var headers = new Dictionary<string, string>();
+
+                    if (resp.Headers != null && resp.Headers.Count > 0)
+                    {
+                        foreach (var responseHeaderKey in resp.Headers.AllKeys)
+                        {
+                            headers[responseHeaderKey] = resp.Headers[responseHeaderKey];
+                        }
+                    }
+
                     return new HttpClientResponse
                     {
                         StatusCode = resp.StatusCode,
                         Body = messageResponse,
+                        Headers = headers,
                     };
                 }
             }

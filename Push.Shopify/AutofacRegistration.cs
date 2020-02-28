@@ -23,11 +23,9 @@ namespace Push.Shopify
             registry.Add(typeof(ExecutionTime));
 
             builder.RegisterType<OrderApiRepository>()
-                .As<IOrderApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<ProductApiRepository>()
-                .As<IProductApiRepository>()
                 .EnableClassInterceptorsWithRegistry(registry);
 
             builder.RegisterType<EventApiRepository>()

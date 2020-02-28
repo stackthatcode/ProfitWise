@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.DynamicProxy2;
-using Castle.Components.DictionaryAdapter.Xml;
 using Newtonsoft.Json;
 using Push.Foundation.Utilities.General;
 using Push.Foundation.Utilities.Logging;
@@ -10,14 +8,13 @@ using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
-using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Repositories
 {
 
     [Intercept(typeof(ShopifyCredentialRequired))]
-    public class ProductApiRepository : IShopifyCredentialConsumer, IProductApiRepository
+    public class ProductApiRepository : IShopifyCredentialConsumer
     {
         private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;
@@ -37,10 +34,9 @@ namespace Push.Shopify.Repositories
             _logger = logger;
         }
 
-        public virtual int RetrieveCount(ProductFilter filter)
+        public int RetrieveCount(ProductFilter filter)
         {
-            var path = "/admin/products/count.json?" + filter.ToQueryStringBuilder();
-
+            var path = "/admin/api/2019-07/products/count.json?" + filter.ToQueryStringBuilder();
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
@@ -49,21 +45,43 @@ namespace Push.Shopify.Repositories
             return count;
         }
 
-        public virtual IList<Product> Retrieve(
-                ProductFilter filter, int page = 1, int limit = 250, bool includeCost = false)
+        public ListOfProducts Retrieve(string page_info)
         {
             var querystring
                 = new QueryStringBuilder()
-                    .Add("page", page)
+                    .Add("page_info", page_info)
+                    .ToString();
+
+            var path = "/admin/api/2019-07/products.json?" + querystring;
+
+            return ProcessRetrieve(path);
+        }
+
+        public ListOfProducts Retrieve(ProductFilter filter, int limit = 250)
+        {
+            var querystring
+                = new QueryStringBuilder()
                     .Add("limit", limit)
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
 
-            var path = "/admin/products.json?" + querystring;
+            var path = "/admin/api/2019-07/products.json?" + querystring;
 
+            return ProcessRetrieve(path);
+        }
+
+
+        public ListOfProducts ProcessRetrieve(string path)
+        {
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
             _logger.Trace(clientResponse.Body);
+
+            var link = clientResponse.Headers.ContainsKey("Link") ? clientResponse.Headers["Link"] : "";
+
+            _logger.Debug($"Status Code: {clientResponse.StatusCode}");
+            _logger.Debug($"Response Body: {clientResponse.Body}");
+            _logger.Debug($"Link: {link}");
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             var results = new List<Product>();
@@ -117,17 +135,21 @@ namespace Push.Shopify.Repositories
                 results.Add(resultProduct);
             }
 
-            return results;
+            return new ListOfProducts()
+            {
+                Products = results,
+                Link = link,
+            };
         }
 
-        public virtual InventoryItemList RetrieveInventoryItems(IList<long> inventoryItemIds)
+        public InventoryItemList RetrieveInventoryItems(IList<long> inventoryItemIds)
         {
             var querystring
                 = new QueryStringBuilder()
                     .Add("ids", inventoryItemIds.ToCommaSeparatedList())
                     .ToString();
 
-            var path = "/admin/inventory_items.json?" + querystring;
+            var path = "/admin/api/2019-07/inventory_items.json?" + querystring;
 
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);

@@ -7,13 +7,12 @@ using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
-using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Repositories
 {
     [Intercept(typeof(ShopifyCredentialRequired))]
-    public class OrderApiRepository : IShopifyCredentialConsumer, IOrderApiRepository
+    public class OrderApiRepository : IShopifyCredentialConsumer
     {
         private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;
@@ -35,9 +34,9 @@ namespace Push.Shopify.Repositories
         }
 
 
-        public virtual int RetrieveCount(OrderFilter filter)
+        public int RetrieveCount(OrderFilter filter)
         {
-            var url = "/admin/orders/count.json?" + filter.ToQueryStringBuilder();
+            var url = "/admin/api/2019-07/api/2019-07/orders/count.json?" + filter.ToQueryStringBuilder();
             var request = _requestFactory.HttpGet(ShopifyCredentials, url);
             var clientResponse = _client.ExecuteRequest(request);
             
@@ -49,22 +48,37 @@ namespace Push.Shopify.Repositories
             return count;
         }
 
-        public virtual IList<Order> Retrieve(OrderFilter filter, int page = 1, int limit = 50)
+        public ListOfOrders Retrieve(OrderFilter filter, int limit = 50)
         {
             var querystring
                 = new QueryStringBuilder()
-                    .Add("page", page)
                     .Add("limit", limit)
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
+            var path = string.Format("/admin/api/2019-07/api/2019-07/orders.json?" + querystring);
+            return ProcessRetrieve(path);
+        }
 
-            var path = string.Format("/admin/orders.json?" + querystring);
+        public ListOfOrders Retrieve(string page_info)
+        {
+            var querystring
+                = new QueryStringBuilder()
+                    .Add("page_info", page_info)
+                    .ToString();
 
+            var path = string.Format("/admin/api/2019-07/api/2019-07/orders.json?" + querystring);
+            return ProcessRetrieve(path);
+        }
+
+        public ListOfOrders ProcessRetrieve(string path)
+        {
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
+            var link = clientResponse.Headers.ContainsKey("Link") ? clientResponse.Headers["Link"] : "";
 
             _logger.Debug($"Status Code: {clientResponse.StatusCode}");
             _logger.Debug($"Response Body: {clientResponse.Body}");
+            _logger.Debug($"Link: {link}");
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
             var results = new List<Order>();
@@ -73,15 +87,19 @@ namespace Push.Shopify.Repositories
             {
                 var orderIdCatcher = order.id;
                 var orderResult = DeserializeOrder(order);
-                results.Add(orderResult); 
+                results.Add(orderResult);
             }
 
-            return results;
+            return new ListOfOrders
+            {
+                Orders = results,
+                Link = link,
+            };
         }
 
-        public virtual Order Retrieve(long orderId)
+        public Order Retrieve(long orderId)
         {
-            var path = $"/admin/orders/{orderId}.json";  
+            var path = $"/admin/api/2019-07/api/2019-07/orders/{orderId}.json";  
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
@@ -208,7 +226,7 @@ namespace Push.Shopify.Repositories
 
         public void Insert(string orderJson)
         {
-            var path = "/admin/orders.json";
+            var path = "/admin/api/2019-07/api/2019-07/orders.json";
             var request = _requestFactory.HttpPost(ShopifyCredentials, path, orderJson);
             var clientResponse = _client.ExecuteRequest(request);
         }

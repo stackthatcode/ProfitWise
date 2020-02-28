@@ -37,7 +37,7 @@ namespace Push.Shopify.Repositories
                     .Add("code", code)
                     .ToString();
 
-            var url = $"/admin/oauth/access_token?{queryString}";
+            var url = $"/admin/api/2019-07/oauth/access_token?{queryString}";
             
             var request = _requestFactory.HttpPost(ShopifyCredentials, url, "");
             var clientResponse = _client.ExecuteRequest(request);
