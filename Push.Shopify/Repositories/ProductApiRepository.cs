@@ -36,7 +36,7 @@ namespace Push.Shopify.Repositories
 
         public int RetrieveCount(ProductFilter filter)
         {
-            var path = "/admin/api/2019-07/products/count.json?" + filter.ToQueryStringBuilder();
+            var path = "/admin/api/2019-10/products/count.json?" + filter.ToQueryStringBuilder();
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
@@ -61,7 +61,7 @@ namespace Push.Shopify.Repositories
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
 
-            var path = "/admin/api/2019-07/products.json?" + querystring;
+            var path = "/admin/api/2019-10/products.json?" + querystring;
 
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
@@ -145,7 +145,7 @@ namespace Push.Shopify.Repositories
                     .Add("ids", inventoryItemIds.ToCommaSeparatedList())
                     .ToString();
 
-            var path = "/admin/api/2019-07/inventory_items.json?" + querystring;
+            var path = "/admin/api/2019-10/inventory_items.json?" + querystring;
 
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);

@@ -32,11 +32,11 @@ namespace Push.Shopify.Repositories
 
         public virtual Shop Retrieve()
         {
-            var path = "/admin/api/2019-07/shop.json";                       
+            var path = "/admin/api/2019-10/shop.json";                       
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
-            _logger.Info($"/admin/api/2019-07/shop.json response body: {clientResponse.Body}");
+            _logger.Info($"/admin/api/2019-10/shop.json response body: {clientResponse.Body}");
 
             var output = Shop.MakeFromJson(clientResponse.Body);
             return output;

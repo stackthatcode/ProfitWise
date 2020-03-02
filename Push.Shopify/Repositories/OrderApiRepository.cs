@@ -36,7 +36,7 @@ namespace Push.Shopify.Repositories
 
         public int RetrieveCount(OrderFilter filter)
         {
-            var url = "/admin/api/2019-07/orders/count.json?" + filter.ToQueryStringBuilder();
+            var url = "/admin/api/2019-10/orders/count.json?" + filter.ToQueryStringBuilder();
             var request = _requestFactory.HttpGet(ShopifyCredentials, url);
             var clientResponse = _client.ExecuteRequest(request);
             
@@ -55,7 +55,7 @@ namespace Push.Shopify.Repositories
                     .Add("limit", limit)
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
-            var path = string.Format("/admin/api/2019-07/orders.json?" + querystring);
+            var path = string.Format("/admin/api/2019-10/orders.json?" + querystring);
 
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
@@ -98,7 +98,7 @@ namespace Push.Shopify.Repositories
 
         public Order Retrieve(long orderId)
         {
-            var path = $"/admin/api/2019-07/orders/{orderId}.json";  
+            var path = $"/admin/api/2019-10/orders/{orderId}.json";  
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
 
@@ -225,7 +225,7 @@ namespace Push.Shopify.Repositories
 
         public void Insert(string orderJson)
         {
-            var path = "/admin/api/2019-07/orders.json";
+            var path = "/admin/api/2019-10/orders.json";
             var request = _requestFactory.HttpPost(ShopifyCredentials, path, orderJson);
             var clientResponse = _client.ExecuteRequest(request);
         }

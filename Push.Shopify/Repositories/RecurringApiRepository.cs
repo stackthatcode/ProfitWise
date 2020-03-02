@@ -37,7 +37,7 @@ namespace Push.Shopify.Repositories
         
         public virtual RecurringApplicationCharge UpsertCharge(RecurringApplicationCharge input)
         {
-            var path = "/admin/api/2019-07/recurring_application_charges.json";
+            var path = "/admin/api/2019-10/recurring_application_charges.json";
             var json = new { recurring_application_charge = input }.SerializeToJson();
 
             var request = _requestFactory.HttpPost(ShopifyCredentials, path, json);
@@ -62,7 +62,7 @@ namespace Push.Shopify.Repositories
                 }
             }.SerializeToJson();
 
-            var path = "/admin/api/2019-07/application_credits.json";
+            var path = "/admin/api/2019-10/application_credits.json";
             var request = 
                 _requestFactory.HttpPost(
                     ShopifyCredentials, path, json);
@@ -77,7 +77,7 @@ namespace Push.Shopify.Repositories
         public virtual RecurringApplicationCharge UpdateChargeAmount(long id, decimal amount)
         {
             var path = 
-                $"/admin/api/2019-07/recurring_application_charges/{id}/customize.json" +
+                $"/admin/api/2019-10/recurring_application_charges/{id}/customize.json" +
                 $"?recurring_application_charge[capped_amount]={amount}";
 
             var request = _requestFactory.HttpPut(ShopifyCredentials, path, "");
@@ -90,7 +90,7 @@ namespace Push.Shopify.Repositories
 
         public virtual RecurringApplicationCharge RetrieveCharge(long id)
         {
-            var path = $"/admin/api/2019-07/recurring_application_charges/{id}.json";
+            var path = $"/admin/api/2019-10/recurring_application_charges/{id}.json";
             var request = _requestFactory.HttpGet(ShopifyCredentials, path);
             var clientResponse = _client.ExecuteRequest(request);
             
@@ -109,7 +109,7 @@ namespace Push.Shopify.Repositories
 
         public virtual RecurringApplicationCharge ActivateCharge(RecurringApplicationCharge input)
         {
-            var path = $"/admin/api/2019-07/recurring_application_charges/{input.id}/activate.json";
+            var path = $"/admin/api/2019-10/recurring_application_charges/{input.id}/activate.json";
             var json = new { recurring_application_charge = input }.SerializeToJson();
 
             var request = _requestFactory.HttpPost(ShopifyCredentials, path, json);
@@ -123,7 +123,7 @@ namespace Push.Shopify.Repositories
 
         public virtual void CancelCharge(long id)
         {
-            var path = $"/admin/api/2019-07/recurring_application_charges/{id}.json";
+            var path = $"/admin/api/2019-10/recurring_application_charges/{id}.json";
             var request = _requestFactory.HttpDelete(ShopifyCredentials, path);
             _client.ExecuteRequest(request);
         }
