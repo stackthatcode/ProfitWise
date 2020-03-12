@@ -212,6 +212,11 @@ namespace ProfitWise.Data.ProcessSteps
 
                 WriteOrdersToPersistence(masterProductCatalog, importedOrders.Orders, shop);
 
+                if (importedOrders.Orders.Count == 0)
+                {
+                    break;
+                }
+
                 // Update the Batch State based on Order Filter's Sort
                 var batchState = batchStateRepository.Retrieve();
                 if (filter.ShopifySortOrder == ShopifySortOrder.Ascending)

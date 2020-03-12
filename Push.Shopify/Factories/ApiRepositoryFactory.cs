@@ -9,7 +9,7 @@ namespace Push.Shopify.Factories
     {
         private readonly Func<OrderApiRepository> _orderApiRepositoryFactory;
         private readonly Func<ProductApiRepository> _productApiRepositoryFactory;
-        private readonly Func<IEventApiRepository> _eventApiRepositoryFactory;
+        private readonly Func<EventApiRepository> _eventApiRepositoryFactory;
         private readonly Func<IShopApiRepository> _shopApiRepositoryFactory;
         private readonly Func<IRecurringApiRepository> _recurringApiRepositoryFactory;
         private readonly Func<IWebhookApiRepository> _webhookApiRepositoryFactory;
@@ -19,7 +19,7 @@ namespace Push.Shopify.Factories
         public ApiRepositoryFactory(
             Func<OrderApiRepository> orderApiRepositoryFactory,
             Func<ProductApiRepository> productApiRepositoryFactory,
-            Func<IEventApiRepository> eventApiRepositoryFactory,
+            Func<EventApiRepository> eventApiRepositoryFactory,
             Func<IShopApiRepository> shopApiRepositoryFactory, 
             Func<IRecurringApiRepository> recurringApiRepositoryFactory, 
             Func<IWebhookApiRepository> webhookApiRepositoryFactory, 
@@ -34,8 +34,7 @@ namespace Push.Shopify.Factories
             _oAuthRepositoryFactory = oAuthRepositoryFactory;
         }
 
-        public virtual IWebhookApiRepository 
-                MakeWebhookApiRepository(ShopifyCredentials credentials)
+        public virtual IWebhookApiRepository MakeWebhookApiRepository(ShopifyCredentials credentials)
         {
             var repository = _webhookApiRepositoryFactory();
             repository.ShopifyCredentials = credentials;
@@ -56,7 +55,7 @@ namespace Push.Shopify.Factories
             return repository;
         }
 
-        public virtual IEventApiRepository MakeEventApiRepository(ShopifyCredentials credentials)
+        public virtual EventApiRepository MakeEventApiRepository(ShopifyCredentials credentials)
         {
             var repository = _eventApiRepositoryFactory();
             repository.ShopifyCredentials = credentials;

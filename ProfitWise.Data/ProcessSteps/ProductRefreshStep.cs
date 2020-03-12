@@ -293,17 +293,23 @@ namespace ProfitWise.Data.ProcessSteps
             var count = eventApiRepository.RetrieveCount(filter);
 
             _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
-            var numberofpages = PagingFunctions.NumberOfPages(_configuration.MaxProductRate, count);
-            var results = new List<Event>();
+            ListOfEvents results = eventApiRepository.Retrieve(filter, _configuration.MaxProductRate);
+            var output = new List<Event>();
 
-            for (int pagenumber = 1; pagenumber <= numberofpages; pagenumber++)
+            while (true)
             {
-                _pushLogger.Debug($"Page {pagenumber} of {numberofpages} pages");
-                var events = eventApiRepository.Retrieve(filter, pagenumber, _configuration.MaxProductRate);
-                results.AddRange(events);
+                output.AddRange(results.Events);
+                var linkHeader = LinkHeader.FromHeader(results.Link);
+
+                if (linkHeader.Empty || linkHeader.EOF)
+                {
+                    break;
+                }
+
+                results = eventApiRepository.Retrieve(linkHeader.NextLink);
             }
 
-            return results;
+            return output;
         }
 
     }

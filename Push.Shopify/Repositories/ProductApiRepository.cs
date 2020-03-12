@@ -49,7 +49,6 @@ namespace Push.Shopify.Repositories
         {
             var request = _requestFactory.HttpGet(ShopifyCredentials, path, excludeBaseUrl:true);
             var clientResponse = _client.ExecuteRequest(request);
-
             return ProcessRetrieve(clientResponse);
         }
 

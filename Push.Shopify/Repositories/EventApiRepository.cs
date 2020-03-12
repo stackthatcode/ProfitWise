@@ -6,7 +6,6 @@ using Push.Foundation.Web.Helpers;
 using Push.Foundation.Web.Http;
 using Push.Shopify.Aspect;
 using Push.Shopify.HttpClient;
-using Push.Shopify.Interfaces;
 using Push.Shopify.Model;
 
 namespace Push.Shopify.Repositories
@@ -14,7 +13,7 @@ namespace Push.Shopify.Repositories
 
 
     [Intercept(typeof(ShopifyCredentialRequired))]
-    public class EventApiRepository : IShopifyCredentialConsumer, IEventApiRepository
+    public class EventApiRepository : IShopifyCredentialConsumer
     {
         private readonly IHttpClientFacade _client;
         private readonly ShopifyRequestFactory _requestFactory;
@@ -24,7 +23,7 @@ namespace Push.Shopify.Repositories
         public EventApiRepository(
                 IHttpClientFacade client,
                 ShopifyClientConfig configuration,
-                ShopifyRequestFactory requestFactory, 
+                ShopifyRequestFactory requestFactory,
                 IPushLogger logger)
         {
             _client = client;
@@ -32,7 +31,7 @@ namespace Push.Shopify.Repositories
             _requestFactory = requestFactory;
             _logger = logger;
         }
-        
+
         public virtual int RetrieveCount(EventFilter filter)
         {
             var url = "/admin/api/2019-10/events/count.json?" + filter.ToQueryStringBuilder();
@@ -45,11 +44,10 @@ namespace Push.Shopify.Repositories
         }
 
 
-        public virtual IList<Event> Retrieve(EventFilter filter, int page = 1, int limit = 250)
+        public ListOfEvents Retrieve(EventFilter filter, int limit = 250)
         {
             var querystring
                 = new QueryStringBuilder()
-                    .Add("page", page)
                     .Add("limit", limit)
                     .Add(filter.ToQueryStringBuilder())
                     .ToString();
@@ -58,11 +56,33 @@ namespace Push.Shopify.Repositories
             var request = _requestFactory.HttpGet(ShopifyCredentials, url);
             var clientResponse = _client.ExecuteRequest(request);
 
-            _logger.Info(clientResponse.Body);
+            return ProcessRetrieve(clientResponse);
+        }
+
+        public ListOfEvents Retrieve(string path)
+        {
+            var request = _requestFactory.HttpGet(ShopifyCredentials, path, true);
+            var clientResponse = _client.ExecuteRequest(request);
+
+            return ProcessRetrieve(clientResponse);
+        }
+
+        public ListOfEvents ProcessRetrieve(HttpClientResponse clientResponse)
+        {
+            _logger.Trace(clientResponse.Body);
+            var link = clientResponse.Headers.ContainsKey("Link") ? clientResponse.Headers["Link"] : "";
+
+            _logger.Debug($"Status Code: {clientResponse.StatusCode}");
+            _logger.Debug($"Response Body: {clientResponse.Body}");
+            _logger.Debug($"Link: {link}");
 
             dynamic parent = JsonConvert.DeserializeObject(clientResponse.Body);
 
-            var output = new List<Event>();
+            var output = new ListOfEvents();
+
+            output.Events = new List<Event>();
+            output.Link = link;
+
             foreach (var @event in parent.events)
             {
                 var result = new Event();
@@ -70,8 +90,9 @@ namespace Push.Shopify.Repositories
                 result.SubjectId = @event.subject_id;
                 result.SubjectType = @event.subject_type;
                 result.Verb = @event.verb;
-                output.Add(result);
+                output.Events.Add(result);
             }
+
             return output;
         }
     }
