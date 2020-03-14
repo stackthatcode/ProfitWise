@@ -42,6 +42,7 @@ namespace ProfitWise.Web
             if (options.SameSite == null || options.SameSite != SameSiteMode.None)
             {
                 options.SameSite = SameSiteMode.None;
+                options.Path += "; samesite=None";
             }
         }
     }

@@ -291,21 +291,27 @@ namespace ProfitWise.Data.ProcessSteps
 
             _pushLogger.Debug($"Retrieve all Product Destroy Events from {filter.CreatedAtMinUtc}");
             var count = eventApiRepository.RetrieveCount(filter);
+            var output = new List<Event>();
 
             _pushLogger.Info($"Executing Refresh for {count} Product 'destroy' Events");
             ListOfEvents results = eventApiRepository.Retrieve(filter, _configuration.MaxProductRate);
-            var output = new List<Event>();
-
+            
             while (true)
             {
+                // Process
+                //
                 output.AddRange(results.Events);
-                var linkHeader = LinkHeader.FromHeader(results.Link);
 
+                // Test
+                //
+                var linkHeader = LinkHeader.FromHeader(results.Link);
                 if (linkHeader.Empty || linkHeader.EOF)
                 {
                     break;
                 }
 
+                // Retrieve next set
+                //
                 results = eventApiRepository.Retrieve(linkHeader.NextLink);
             }
 
