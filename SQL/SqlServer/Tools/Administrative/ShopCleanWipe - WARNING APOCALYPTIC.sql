@@ -9,8 +9,9 @@ GO
 
 
 /*** Insert the appropriate PwShopId and uncomment the below line ***/
-DECLARE @PwShopId bigint = 100008;
+DECLARE @PwShopId bigint = 100241;
 
+UPDATE batchstate(@PwShopId) SET ProductsLastUpdated = NULL, OrderDatasetStart = NULL, OrderDatasetEnd = NULL;
 
 --DELETE FROM reportquerystub(@PwShopId);
 DELETE FROM reportfilter(@PwShopId);
@@ -20,6 +21,7 @@ DELETE FROM profitreportentry(@PwShopId);
 DELETE FROM goodsonhandquerystub(@PwShopId);
 DELETE FROM profitquerystub(@PwShopId);
 
+DELETE FROM ordertag(@PwShopId);
 DELETE FROM orderrefund(@PwShopId);
 DELETE FROM orderlineitem(@PwShopId);
 DELETE FROM orderadjustment(@PwShopId);
@@ -37,12 +39,11 @@ DELETE FROM masterproduct(@PwShopId);
 
 DELETE FROM uploads(@PwShopId);
 
-DELETE FROM recurringcharge(@PwShopId);
-DELETE FROM batchstate(@PwShopId);
-
 DECLARE @UserId nvarchar(128);
 
 /*
+DELETE FROM recurringcharge(@PwShopId);
+
 SELECT @UserId = ShopOwnerUserId FROM shop(@PwShopId);
 
 DELETE FROM tour(@PwShopId);
